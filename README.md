@@ -1,7 +1,7 @@
 # Tekton
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-org/tekton)
-[![Coverage](https://img.shields.io/badge/coverage-98.04%25-brightgreen)](https://github.com/your-org/tekton)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/asleep/tekton)
+[![Coverage](https://img.shields.io/badge/coverage-98.7%25-brightgreen)](https://github.com/asleep/tekton)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
@@ -488,6 +488,6 @@ MIT © 2026
 
 ---
 
-**Built with** [MoAI-ADK](https://github.com/your-org/moai-adk) - AI-Driven Development Kit
+**Built with** [MoAI-ADK](https://github.com/asleep/moai-adk) - AI-Driven Development Kit
 
 **Generated using** SPEC-First TDD workflow for quality-first development
