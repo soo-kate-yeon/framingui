@@ -3,9 +3,11 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { generate } from '../../src/commands/generate.js';
 
-// Mock enquirer
+// Mock enquirer with default export
 vi.mock('enquirer', () => ({
-  prompt: vi.fn(),
+  default: {
+    prompt: vi.fn()
+  }
 }));
 
 // Mock token wrapper
@@ -27,7 +29,8 @@ describe('Generate Command', () => {
 
   describe('Interactive Q&A workflow', () => {
     it('should prompt for primary color', async () => {
-      const { prompt } = await import('enquirer');
+      const enquirer = await import('enquirer');
+      const { prompt } = enquirer.default;
       const projectDir = path.join(testDir, 'color-prompt');
       await fs.ensureDir(projectDir);
 
@@ -56,7 +59,8 @@ describe('Generate Command', () => {
     });
 
     it('should prompt for preset selection', async () => {
-      const { prompt } = await import('enquirer');
+      const enquirer = await import('enquirer');
+      const { prompt } = enquirer.default;
       const projectDir = path.join(testDir, 'preset-prompt');
       await fs.ensureDir(projectDir);
 
@@ -86,7 +90,8 @@ describe('Generate Command', () => {
     });
 
     it('should validate hex color format', async () => {
-      const { prompt } = await import('enquirer');
+      const enquirer = await import('enquirer');
+      const { prompt } = enquirer.default;
       const projectDir = path.join(testDir, 'color-validation');
       await fs.ensureDir(projectDir);
 
