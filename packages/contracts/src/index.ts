@@ -15,3 +15,6 @@ export * from './definitions/dialog.js';
 export * from './definitions/form.js';
 export * from './definitions/input.js';
 export * from './definitions/select.js';
+
+// Screen contract exports
+export * from './definitions/screen/index.js';
