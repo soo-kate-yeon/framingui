@@ -70,12 +70,17 @@ export interface UseInputProps {
   /**
    * ARIA label for the input
    */
-  ariaLabel?: string;
+  'aria-label'?: string;
 
   /**
-   * Additional ARIA attributes
+   * ARIA labelledby for the input
    */
-  ariaAttributes?: Partial<AriaAttributes>;
+  'aria-labelledby'?: string;
+
+  /**
+   * ARIA describedby for the input
+   */
+  'aria-describedby'?: string;
 }
 
 /**
@@ -177,18 +182,115 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
     onFocus,
     onBlur,
     id: customId,
-    ariaLabel,
-    ariaAttributes = {},
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
   } = props;
 
-  // TODO: Implement controlled/uncontrolled state management
-  // TODO: Implement change handler
-  // TODO: Implement focus/blur handlers
-  // TODO: Implement validation state tracking
-  // TODO: Generate unique IDs for input and error message
-  // TODO: Generate ARIA props with aria-invalid based on errorMessage
-  // TODO: Return inputProps with all necessary attributes
-  // TODO: Return utility functions (setValue, clear)
+  // Determine if component is controlled
+  const isControlled = controlledValue !== undefined;
 
-  throw new Error('useInput: Implementation pending');
+  // Internal state for uncontrolled mode
+  const [internalValue, setInternalValue] = useState(defaultValue);
+
+  // Use controlled value if provided, otherwise use internal state
+  const value = isControlled ? controlledValue : internalValue;
+
+  // Generate unique IDs
+  const inputId = useUniqueId(customId, 'input');
+  const errorId = useUniqueId(undefined, 'input-error');
+
+  // Determine if input is invalid
+  const isInvalid = Boolean(errorMessage);
+
+  // Handle change event
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      if (disabled || readOnly) return;
+
+      const newValue = event.target.value;
+
+      // Update internal state in uncontrolled mode
+      if (!isControlled) {
+        setInternalValue(newValue);
+      }
+
+      // Call onChange callback
+      onChange?.(newValue);
+    },
+    [disabled, readOnly, isControlled, onChange]
+  );
+
+  // Handle focus event
+  const handleFocus = useCallback(
+    (event: FocusEvent<HTMLInputElement>) => {
+      onFocus?.();
+    },
+    [onFocus]
+  );
+
+  // Handle blur event
+  const handleBlur = useCallback(
+    (event: FocusEvent<HTMLInputElement>) => {
+      onBlur?.();
+    },
+    [onBlur]
+  );
+
+  // Programmatically set value
+  const setValue = useCallback(
+    (newValue: string) => {
+      if (!isControlled) {
+        setInternalValue(newValue);
+      }
+      onChange?.(newValue);
+    },
+    [isControlled, onChange]
+  );
+
+  // Clear value
+  const clear = useCallback(() => {
+    if (!isControlled) {
+      setInternalValue('');
+    }
+    onChange?.('');
+  }, [isControlled, onChange]);
+
+  // Build input props
+  const inputProps = {
+    id: inputId,
+    value,
+    type,
+    ...(placeholder && { placeholder }),
+    disabled,
+    readOnly,
+    required,
+    'aria-disabled': disabled,
+    'aria-invalid': isInvalid,
+    'aria-required': required,
+    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
+    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+    ...(isInvalid && { 'aria-errormessage': errorId }),
+    onChange: handleChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+  };
+
+  // Build error props
+  const errorProps = errorMessage
+    ? {
+        id: errorId,
+        role: 'alert' as const,
+      }
+    : undefined;
+
+  return {
+    inputProps,
+    value,
+    isInvalid,
+    setValue,
+    clear,
+    ...(errorProps && { errorProps }),
+  };
 }

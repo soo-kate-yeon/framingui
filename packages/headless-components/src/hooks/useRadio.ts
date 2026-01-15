@@ -51,12 +51,17 @@ export interface UseRadioProps {
   /**
    * ARIA label for the radio
    */
-  ariaLabel?: string;
+  'aria-label'?: string;
 
   /**
-   * Additional ARIA attributes
+   * ARIA labelledby for the radio
    */
-  ariaAttributes?: Partial<AriaAttributes>;
+  'aria-labelledby'?: string;
+
+  /**
+   * ARIA describedby for the radio
+   */
+  'aria-describedby'?: string;
 }
 
 /**
@@ -131,12 +136,17 @@ export interface UseRadioGroupProps {
   /**
    * ARIA label for the radio group
    */
-  ariaLabel?: string;
+  'aria-label'?: string;
 
   /**
-   * Additional ARIA attributes
+   * ARIA labelledby for the radio group
    */
-  ariaAttributes?: Partial<AriaAttributes>;
+  'aria-labelledby'?: string;
+
+  /**
+   * ARIA describedby for the radio group
+   */
+  'aria-describedby'?: string;
 }
 
 /**
@@ -167,7 +177,7 @@ export interface UseRadioGroupReturn {
   /**
    * Get props for an individual radio in this group
    */
-  getRadioProps: (radioProps: Pick<UseRadioProps, 'value' | 'disabled' | 'id' | 'ariaLabel'>) => UseRadioReturn;
+  getRadioProps: (radioProps: Pick<UseRadioProps, 'value' | 'disabled' | 'id' | 'aria-label'>) => UseRadioProps;
 }
 
 /**
@@ -204,27 +214,70 @@ export interface UseRadioGroupReturn {
 export function useRadio(props: UseRadioProps): UseRadioReturn {
   const {
     value,
-    selectedValue: controlledValue,
-    defaultValue,
+    selectedValue,
     onChange,
     disabled = false,
     required = false,
     name,
     id: customId,
-    ariaLabel,
-    ariaAttributes = {},
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
   } = props;
 
-  // TODO: Implement controlled/uncontrolled state management
-  // TODO: Implement select handler
-  // TODO: Implement keyboard handler (Space key to select)
-  // TODO: Generate unique ID
-  // TODO: Calculate checked state (value === selectedValue)
-  // TODO: Generate ARIA props with role=radio
-  // TODO: Return radioProps with keyboard and click handlers
-  // TODO: Handle tabIndex based on checked state (0 if checked, -1 if not)
+  // Generate unique ID
+  const radioId = useUniqueId(customId, 'radio');
 
-  throw new Error('useRadio: Implementation pending');
+  // Calculate checked state
+  const checked = value === selectedValue;
+
+  // Handle select
+  const handleSelect = useCallback(() => {
+    if (disabled) return;
+    onChange?.(value);
+  }, [disabled, onChange, value]);
+
+  // Handle click
+  const handleClick = useCallback(() => {
+    handleSelect();
+  }, [handleSelect]);
+
+  // Handle keyboard events
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (disabled) return;
+
+      // Only handle Space key
+      if (isKeyboardKey(event, ' ')) {
+        event.preventDefault();
+        handleSelect();
+      }
+    },
+    [disabled, handleSelect]
+  );
+
+  // Build radio props
+  const radioProps = {
+    id: radioId,
+    role: 'radio' as const,
+    tabIndex: checked ? 0 : -1,
+    'aria-checked': checked,
+    'aria-disabled': disabled,
+    ...(required && { 'aria-required': true }),
+    ...(name && { name }),
+    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
+    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+    value,
+    onKeyDown: handleKeyDown,
+    onClick: handleClick,
+  };
+
+  return {
+    radioProps,
+    checked,
+    select: handleSelect,
+  };
 }
 
 /**
@@ -269,18 +322,72 @@ export function useRadioGroup(props: UseRadioGroupProps = {}): UseRadioGroupRetu
     required = false,
     name,
     id: customId,
-    ariaLabel,
-    ariaAttributes = {},
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
   } = props;
 
-  // TODO: Implement controlled/uncontrolled state management
-  // TODO: Implement keyboard navigation (Arrow keys, Home, End)
-  // TODO: Track radio elements in the group for navigation
-  // TODO: Generate unique ID for group
-  // TODO: Generate ARIA props with role=radiogroup
-  // TODO: Implement getRadioProps factory function
-  // TODO: Handle focus management between radios
-  // TODO: Return groupProps and radio factory
+  // Determine if component is controlled
+  const isControlled = controlledValue !== undefined;
 
-  throw new Error('useRadioGroup: Implementation pending');
+  // Internal state for uncontrolled mode
+  const [internalValue, setInternalValue] = useState(defaultValue);
+
+  // Use controlled value if provided, otherwise use internal state
+  const value = isControlled ? controlledValue : internalValue;
+
+  // Generate unique ID for group
+  const groupId = useUniqueId(customId, 'radiogroup');
+
+  // Handle value change
+  const handleChange = useCallback(
+    (newValue: string) => {
+      if (!isControlled) {
+        setInternalValue(newValue);
+      }
+      onChange?.(newValue);
+    },
+    [isControlled, onChange]
+  );
+
+  // Set value programmatically
+  const setValue = useCallback(
+    (newValue: string) => {
+      handleChange(newValue);
+    },
+    [handleChange]
+  );
+
+  // Factory function to create radio props
+  const getRadioProps = useCallback(
+    (radioProps: Pick<UseRadioProps, 'value' | 'disabled' | 'id' | 'aria-label'>) => {
+      return {
+        ...radioProps,
+        selectedValue: value,
+        onChange: handleChange,
+        disabled: radioProps.disabled ?? disabled,
+        required,
+        name,
+      };
+    },
+    [value, handleChange, disabled, required, name]
+  );
+
+  // Build group props
+  const groupProps = {
+    id: groupId,
+    role: 'radiogroup' as const,
+    'aria-disabled': disabled,
+    ...(required && { 'aria-required': true }),
+    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
+    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+  };
+
+  return {
+    groupProps,
+    value,
+    setValue,
+    getRadioProps,
+  };
 }

@@ -39,6 +39,11 @@ export interface UseCheckboxProps {
   indeterminate?: boolean;
 
   /**
+   * Callback when indeterminate state changes
+   */
+  onIndeterminateChange?: (indeterminate: boolean) => void;
+
+  /**
    * Custom ID for the checkbox element
    */
   id?: string;
@@ -46,12 +51,17 @@ export interface UseCheckboxProps {
   /**
    * ARIA label for the checkbox
    */
-  ariaLabel?: string;
+  'aria-label'?: string;
 
   /**
-   * Additional ARIA attributes
+   * ARIA labelledby for the checkbox
    */
-  ariaAttributes?: Partial<AriaAttributes>;
+  'aria-labelledby'?: string;
+
+  /**
+   * ARIA describedby for the checkbox
+   */
+  'aria-describedby'?: string;
 }
 
 /**
@@ -136,19 +146,103 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
     disabled = false,
     required = false,
     indeterminate = false,
+    onIndeterminateChange,
     id: customId,
-    ariaLabel,
-    ariaAttributes = {},
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedby,
   } = props;
 
-  // TODO: Implement controlled/uncontrolled state management
-  // TODO: Implement toggle handler
-  // TODO: Implement keyboard handler (Space key)
-  // TODO: Generate unique ID
-  // TODO: Calculate aria-checked value (true, false, or 'mixed' for indeterminate)
-  // TODO: Generate ARIA props with role=checkbox
-  // TODO: Return checkboxProps with keyboard and click handlers
-  // TODO: Return utility functions (setChecked, toggle)
+  // Determine if component is controlled
+  const isControlled = controlledChecked !== undefined;
 
-  throw new Error('useCheckbox: Implementation pending');
+  // Internal state for uncontrolled mode
+  const [internalChecked, setInternalChecked] = useState(defaultChecked);
+
+  // Use controlled state if provided, otherwise use internal state
+  const checked = isControlled ? controlledChecked : internalChecked;
+
+  // Generate unique ID
+  const checkboxId = useUniqueId(customId, 'checkbox');
+
+  // Handle toggle
+  const handleToggle = useCallback(() => {
+    if (disabled) return;
+
+    const newChecked = !checked;
+
+    // Clear indeterminate state when toggled
+    if (indeterminate) {
+      onIndeterminateChange?.(false);
+    }
+
+    // Update internal state in uncontrolled mode
+    if (!isControlled) {
+      setInternalChecked(newChecked);
+    }
+
+    // Call onChange callback
+    onChange?.(newChecked);
+  }, [disabled, checked, indeterminate, isControlled, onChange, onIndeterminateChange]);
+
+  // Handle click
+  const handleClick = useCallback(() => {
+    handleToggle();
+  }, [handleToggle]);
+
+  // Handle keyboard events
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (disabled) return;
+
+      // Only handle Space key, not Enter
+      if (isKeyboardKey(event, ' ')) {
+        event.preventDefault();
+        handleToggle();
+      }
+    },
+    [disabled, handleToggle]
+  );
+
+  // Programmatically set checked state
+  const setChecked = useCallback(
+    (newChecked: boolean) => {
+      if (!isControlled) {
+        setInternalChecked(newChecked);
+      }
+      onChange?.(newChecked);
+    },
+    [isControlled, onChange]
+  );
+
+  // Toggle function
+  const toggle = useCallback(() => {
+    handleToggle();
+  }, [handleToggle]);
+
+  // Calculate aria-checked value
+  const ariaChecked: boolean | 'mixed' = indeterminate ? 'mixed' : checked;
+
+  // Build checkbox props
+  const checkboxProps = {
+    id: checkboxId,
+    role: 'checkbox' as const,
+    tabIndex: 0,
+    'aria-checked': ariaChecked,
+    'aria-disabled': disabled,
+    ...(required && { 'aria-required': true }),
+    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
+    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+    onKeyDown: handleKeyDown,
+    onClick: handleClick,
+  };
+
+  return {
+    checkboxProps,
+    checked,
+    indeterminate,
+    setChecked,
+    toggle,
+  };
 }
