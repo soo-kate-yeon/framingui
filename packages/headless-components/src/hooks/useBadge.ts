@@ -109,11 +109,81 @@ export function useBadge(props: UseBadgeProps = {}): UseBadgeReturn {
     ariaLabel,
   } = props;
 
-  // TODO: Format content based on max value
-  // TODO: Determine visibility based on content, showZero, and visible prop
-  // TODO: Generate unique ID
-  // TODO: Generate ARIA label if not provided
-  // TODO: Return badge props with role="status"
+  // Generate unique ID
+  const id = useUniqueId(customId, 'badge');
 
-  throw new Error('useBadge: Implementation pending');
+  // Format content based on max value
+  const displayContent = useMemo(() => {
+    if (content === undefined || content === null) {
+      return '';
+    }
+
+    if (typeof content === 'string') {
+      return content;
+    }
+
+    // Numeric content
+    if (typeof content === 'number') {
+      if (content > max) {
+        return `${max}+`;
+      }
+      return String(content);
+    }
+
+    return String(content);
+  }, [content, max]);
+
+  // Determine visibility based on content, showZero, and visible prop
+  const isVisible = useMemo(() => {
+    if (!visible) {
+      return false;
+    }
+
+    // If content is undefined or null, respect visible prop
+    if (content === undefined || content === null) {
+      return visible;
+    }
+
+    // For numeric content
+    if (typeof content === 'number') {
+      if (content === 0) {
+        return showZero;
+      }
+      return true;
+    }
+
+    // For string content, always visible if visible=true
+    return true;
+  }, [content, showZero, visible]);
+
+  // Generate ARIA label if not provided
+  const generatedAriaLabel = useMemo(() => {
+    if (ariaLabel) {
+      return ariaLabel;
+    }
+
+    if (typeof content === 'number') {
+      return `${content} items`;
+    }
+
+    if (content) {
+      return String(content);
+    }
+
+    return undefined;
+  }, [ariaLabel, content]);
+
+  // Badge props
+  const badgeProps = {
+    id,
+    role: 'status' as const,
+    ...(generatedAriaLabel && { 'aria-label': generatedAriaLabel }),
+  };
+
+  return {
+    badgeProps,
+    displayContent,
+    isVisible,
+    content,
+  };
 }

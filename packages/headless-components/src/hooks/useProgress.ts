@@ -124,12 +124,50 @@ export function useProgress(props: UseProgressProps = {}): UseProgressReturn {
     ariaLabelledBy,
   } = props;
 
-  // TODO: Calculate percentage from value, min, and max
-  // TODO: Determine if progress is complete
-  // TODO: Generate unique ID
-  // TODO: Generate ARIA props with role=progressbar
-  // TODO: Conditionally include aria-valuenow, aria-valuemin, aria-valuemax (not for indeterminate)
-  // TODO: Return progress props and calculated values
+  // Generate unique ID
+  const id = useUniqueId(customId, 'progress');
 
-  throw new Error('useProgress: Implementation pending');
+  // Clamp value within min/max range
+  const clampedValue = useMemo(() => {
+    return Math.min(Math.max(value, min), max);
+  }, [value, min, max]);
+
+  // Calculate percentage from value, min, and max
+  const percentage = useMemo(() => {
+    if (indeterminate) {
+      return 0;
+    }
+    const range = max - min;
+    if (range === 0) {
+      return 0;
+    }
+    return ((clampedValue - min) / range) * 100;
+  }, [clampedValue, min, max, indeterminate]);
+
+  // Determine if progress is complete
+  const isComplete = useMemo(() => {
+    return clampedValue >= max;
+  }, [clampedValue, max]);
+
+  // Build progress props
+  const progressProps = {
+    id,
+    role: 'progressbar' as const,
+    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(ariaLabelledBy && { 'aria-labelledby': ariaLabelledBy }),
+    // Only include value attributes for determinate progress
+    ...(!indeterminate && {
+      'aria-valuemin': min,
+      'aria-valuemax': max,
+      'aria-valuenow': clampedValue,
+    }),
+  };
+
+  return {
+    progressProps,
+    value: clampedValue,
+    percentage,
+    isIndeterminate: indeterminate,
+    isComplete,
+  };
 }

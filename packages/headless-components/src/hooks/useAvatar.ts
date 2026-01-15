@@ -124,14 +124,61 @@ export function useAvatar(props: UseAvatarProps): UseAvatarReturn {
     id: customId,
   } = props;
 
-  // TODO: Implement loading state
-  // TODO: Implement error state
-  // TODO: Implement image load handler
-  // TODO: Implement image error handler
-  // TODO: Implement retry functionality
-  // TODO: Determine whether to show image or fallback
-  // TODO: Generate unique ID
-  // TODO: Return image and fallback props
+  // Generate unique ID
+  const id = useUniqueId(customId, 'avatar');
 
-  throw new Error('useAvatar: Implementation pending');
+  // State management
+  const [isLoading, setIsLoading] = useState(!!src);
+  const [hasError, setHasError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  // Image load handler
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+    setImageLoaded(true);
+    setHasError(false);
+    onLoad?.();
+  }, [onLoad]);
+
+  // Image error handler
+  const handleError = useCallback(() => {
+    setIsLoading(false);
+    setHasError(true);
+    setImageLoaded(false);
+    onError?.();
+  }, [onError]);
+
+  // Retry functionality
+  const retry = useCallback(() => {
+    setHasError(false);
+    setIsLoading(true);
+    setImageLoaded(false);
+  }, []);
+
+  // Determine whether to show image or fallback
+  const showImage = !!src && imageLoaded && !hasError;
+
+  // Image props
+  const imageProps = {
+    id,
+    src,
+    alt,
+    onLoad: handleLoad,
+    onError: handleError,
+  };
+
+  // Fallback props
+  const fallbackProps = {
+    role: 'img' as const,
+    'aria-label': alt,
+  };
+
+  return {
+    imageProps,
+    fallbackProps,
+    showImage,
+    isLoading,
+    hasError,
+    retry,
+  };
 }

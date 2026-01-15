@@ -89,11 +89,25 @@ export function useDivider(props: UseDividerProps = {}): UseDividerReturn {
     id: customId,
   } = props;
 
-  // TODO: Generate unique ID
-  // TODO: Set role based on decorative flag
-  // TODO: Set aria-orientation for semantic dividers
-  // TODO: Set aria-label when label provided
-  // TODO: Return divider props
+  // Generate unique ID
+  const id = useUniqueId(customId, 'divider');
 
-  throw new Error('useDivider: Implementation pending');
+  // Determine role based on decorative flag
+  const role = decorative ? ('presentation' as const) : ('separator' as const);
+
+  // Build divider props
+  const dividerProps = {
+    id,
+    role,
+    // Only include aria-orientation for semantic (non-decorative) dividers
+    ...(!decorative && { 'aria-orientation': orientation }),
+    // Include aria-label when label provided (makes it semantic)
+    ...(label && { 'aria-label': label }),
+  };
+
+  return {
+    dividerProps,
+    isDecorative: decorative,
+    orientation,
+  };
 }

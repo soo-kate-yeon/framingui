@@ -130,13 +130,59 @@ export function useCard(props: UseCardProps = {}): UseCardReturn {
     ariaAttributes = {},
   } = props;
 
-  // TODO: Implement controlled/uncontrolled selection state
-  // TODO: Implement click handler
-  // TODO: Implement keyboard handler (Enter/Space) if interactive
-  // TODO: Generate unique ID
-  // TODO: Set role=button if interactive
-  // TODO: Set aria-pressed for selection state if interactive
-  // TODO: Return card props conditionally based on interactive mode
+  // Generate unique ID
+  const id = useUniqueId(customId, 'card');
 
-  throw new Error('useCard: Implementation pending');
+  // Manage selection state (controlled or uncontrolled)
+  const [internalSelected, setInternalSelected] = useState(defaultSelected);
+  const selected = controlledSelected !== undefined ? controlledSelected : internalSelected;
+
+  // Toggle selection handler
+  const toggleSelection = useCallback(() => {
+    const newSelected = !selected;
+    setInternalSelected(newSelected);
+    onSelectionChange?.(newSelected);
+  }, [selected, onSelectionChange]);
+
+  // Set selection handler
+  const setSelected = useCallback((newSelected: boolean) => {
+    setInternalSelected(newSelected);
+    onSelectionChange?.(newSelected);
+  }, [onSelectionChange]);
+
+  // Click handler (only if interactive and not disabled)
+  const handleClick = useCallback(() => {
+    if (!disabled && onClick) {
+      onClick();
+    }
+  }, [disabled, onClick]);
+
+  // Keyboard handler (Enter/Space)
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (!disabled) {
+      handleKeyboardEvent(event, ['Enter', ' '], handleClick);
+    }
+  }, [disabled, handleClick]);
+
+  // Build card props based on interactive mode
+  const cardProps = {
+    id,
+    ...ariaAttributes,
+    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(interactive && {
+      role: 'button' as const,
+      tabIndex: 0,
+      'aria-pressed': selected,
+      ...(disabled && { 'aria-disabled': true }),
+      onClick: handleClick,
+      onKeyDown: handleKeyDown,
+    }),
+  };
+
+  return {
+    cardProps,
+    selected,
+    toggleSelection,
+    setSelected,
+  };
 }
