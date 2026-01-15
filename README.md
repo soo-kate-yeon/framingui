@@ -475,7 +475,7 @@ For complete API documentation with usage examples, see [API Reference](./docs/a
 
 **Current Version**: 0.3.0
 **Current Branch**: `master`
-**SPEC Phase**: Phase D Complete - Brand DNA MCP Integration Implemented (100%)
+**SPEC Phase**: Phase E Complete - Curated Presets System Implemented (100%) | Phase D Deprecated
 
 ### Implementation Status
 
@@ -526,7 +526,7 @@ For complete API documentation with usage examples, see [API Reference](./docs/a
 - ✅ M9: Agent context export (agent-context.json)
 - ✅ M10: VS Code extension integration
 
-**Phase D - Brand DNA MCP Integration:** ✨ NEW
+**Phase D - Brand DNA MCP Integration:** ~~DEPRECATED~~ (2026-01-15)
 - ✅ M1: Brand DNA schema validation with Zod
 - ✅ M2: Axis Interpreter with 15 conversion mappings (5 axes × 3 ranges)
 - ✅ M3: File-based storage with Git-trackable structure
@@ -571,9 +571,9 @@ For complete API documentation with usage examples, see [API Reference](./docs/a
   - ✅ Design token type system
   - ✅ Preset library
   - ✅ Complete API documentation
-- ✅ Phase E (SPEC-STUDIO-002): 85.23% complete (2026-01-15)
-  - ✅ Phase 1: Brand DNA cleanup (deprecation, archive, read-only mode)
-  - ✅ Phase 2: Curated Presets core build (database, API, frontend, MCP)
+- ✅ Phase E (SPEC-STUDIO-002): 100% complete (2026-01-15)
+  - ⏭️ Phase 1: Brand DNA cleanup (skipped - never deployed to production)
+  - ✅ Phase 2: Curated Presets core build (database, API, MCP integration)
   - ✅ 54 passing tests, 85.23% coverage
   - ✅ FastAPI backend with PostgreSQL and Alembic migrations
   - ⏳ Phase 3: Custom Image Flow (deferred to 1 month post-Phase 2)

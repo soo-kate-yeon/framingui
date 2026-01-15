@@ -1,21 +1,25 @@
 ---
 id: SPEC-STUDIO-001
-version: "1.0.0"
-status: "completed"
+version: "1.1.0"
+status: "deprecated"
 created: "2026-01-13"
-updated: "2026-01-13"
+updated: "2026-01-15"
 completed: "2026-01-13"
+deprecated: "2026-01-15"
 author: "asleep"
-priority: "HIGH"
+priority: "LOW"
 ---
 
 ## HISTORY
 
 | Date | Version | Author | Changes |
 |------|---------|--------|---------|
+| 2026-01-15 | 1.1.0 | asleep | ⚠️ DEPRECATED - Superseded by SPEC-STUDIO-002 Curated Presets system |
 | 2026-01-13 | 1.0.0 | asleep | SPEC-STUDIO-001 초기 생성 - Brand DNA MCP Integration |
 
 # SPEC-STUDIO-001: Brand DNA MCP 통합 및 Axis Interpreter
+
+> **⚠️ DEPRECATED (2026-01-15)**: This specification has been superseded by [SPEC-STUDIO-002](../SPEC-STUDIO-002/spec.md) Curated Presets system. Brand DNA axis-based generation is no longer actively maintained. The `@tekton/studio-mcp` package is deprecated in favor of the Curated Presets REST API.
 
 ## 개요
 

@@ -1,5 +1,13 @@
 # @tekton/studio-mcp
 
+> **⚠️ DEPRECATED**: This package has been superseded by the **Curated Presets** system in `@tekton/studio-api`. Brand DNA axis-based generation is no longer actively maintained. Please migrate to the Curated Presets REST API for production use.
+>
+> **Migration Path**: See [SPEC-STUDIO-002](../../.moai/specs/SPEC-STUDIO-002/spec.md) for the new Curated Presets architecture.
+>
+> **Deprecation Date**: 2026-01-15
+
+---
+
 Brand DNA MCP Integration for Tekton Studio - Model Context Protocol integration enabling AI assistants to read and write Brand DNA configurations for design token generation.
 
 ## Overview
