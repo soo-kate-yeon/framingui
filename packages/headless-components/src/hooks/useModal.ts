@@ -1,8 +1,7 @@
-import { useState, useCallback, KeyboardEvent, useEffect, useRef } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent, useEffect, useRef } from "react";
+import type { AriaAttributes } from "../types";
+import { useUniqueId } from "../utils/id";
+import { isKeyboardKey } from "../utils/keyboard";
 
 /**
  * Props for the useModal hook
@@ -83,11 +82,11 @@ export interface UseModalReturn {
    */
   modalProps: {
     id: string;
-    role: 'dialog';
-    'aria-modal': true;
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
-    'aria-describedby'?: string;
+    role: "dialog";
+    "aria-modal": true;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+    "aria-describedby"?: string;
     tabIndex: number;
     onKeyDown: (event: KeyboardEvent) => void;
   } & Record<string, unknown>;
@@ -97,14 +96,14 @@ export interface UseModalReturn {
    */
   overlayProps: {
     onClick: () => void;
-    'aria-hidden': true;
+    "aria-hidden": true;
   };
 
   /**
    * Props for the close button
    */
   closeButtonProps: {
-    'aria-label': string;
+    "aria-label": string;
     onClick: () => void;
   };
 
@@ -199,7 +198,7 @@ export function useModal(props: UseModalProps = {}): UseModalReturn {
   const isOpen = isControlled ? controlledOpen : internalOpen;
 
   // Generate unique ID for modal
-  const modalId = useUniqueId(customId, 'modal');
+  const modalId = useUniqueId(customId, "modal");
 
   // Store reference to trigger element for focus restoration
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -246,59 +245,75 @@ export function useModal(props: UseModalProps = {}): UseModalReturn {
   }, [isOpen, open, close]);
 
   // Get all focusable elements within the modal
-  const getFocusableElements = useCallback((container: HTMLElement | null): HTMLElement[] => {
-    if (!container) return [];
+  const getFocusableElements = useCallback(
+    (container: HTMLElement | null): HTMLElement[] => {
+      if (!container) {
+        return [];
+      }
 
-    const focusableSelectors = [
-      'a[href]',
-      'button:not([disabled])',
-      'textarea:not([disabled])',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      '[tabindex]:not([tabindex="-1"])',
-    ].join(',');
+      const focusableSelectors = [
+        "a[href]",
+        "button:not([disabled])",
+        "textarea:not([disabled])",
+        "input:not([disabled])",
+        "select:not([disabled])",
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(",");
 
-    return Array.from(container.querySelectorAll<HTMLElement>(focusableSelectors));
-  }, []);
+      return Array.from(
+        container.querySelectorAll<HTMLElement>(focusableSelectors),
+      );
+    },
+    [],
+  );
 
   // Keyboard event handler
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    // Handle Escape key
-    if (closeOnEscape && isKeyboardKey(event as any, 'Escape')) {
-      event.preventDefault();
-      close();
-      return;
-    }
-
-    // Handle focus trap with Tab key
-    if (trapFocus && isKeyboardKey(event as any, 'Tab')) {
-      const modalElement = event.currentTarget as HTMLElement;
-      const focusableElements = getFocusableElements(modalElement);
-
-      if (focusableElements.length === 0) {
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      // Handle Escape key
+      if (closeOnEscape && isKeyboardKey(event as any, "Escape")) {
         event.preventDefault();
+        close();
         return;
       }
 
-      const firstElement = focusableElements[0];
-      const lastElement = focusableElements[focusableElements.length - 1];
-      const activeElement = document.activeElement as HTMLElement;
+      // Handle focus trap with Tab key
+      if (trapFocus && isKeyboardKey(event as any, "Tab")) {
+        const modalElement = event.currentTarget as HTMLElement;
+        const focusableElements = getFocusableElements(modalElement);
 
-      // Shift+Tab: Move backward
-      if (event.shiftKey) {
-        if (activeElement === firstElement || !modalElement.contains(activeElement)) {
+        if (focusableElements.length === 0) {
           event.preventDefault();
-          lastElement.focus();
+          return;
         }
-      } else {
-        // Tab: Move forward
-        if (activeElement === lastElement || !modalElement.contains(activeElement)) {
-          event.preventDefault();
-          firstElement.focus();
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        const activeElement = document.activeElement as HTMLElement;
+
+        // Shift+Tab: Move backward
+        if (event.shiftKey) {
+          if (
+            activeElement === firstElement ||
+            !modalElement.contains(activeElement)
+          ) {
+            event.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          // Tab: Move forward
+          if (
+            activeElement === lastElement ||
+            !modalElement.contains(activeElement)
+          ) {
+            event.preventDefault();
+            firstElement.focus();
+          }
         }
       }
-    }
-  }, [closeOnEscape, trapFocus, close, getFocusableElements]);
+    },
+    [closeOnEscape, trapFocus, close, getFocusableElements],
+  );
 
   // Overlay click handler
   const handleOverlayClick = useCallback(() => {
@@ -315,10 +330,11 @@ export function useModal(props: UseModalProps = {}): UseModalReturn {
       const originalPaddingRight = document.body.style.paddingRight;
 
       // Calculate scrollbar width
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
 
       // Lock body scroll
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
       if (scrollbarWidth > 0) {
         document.body.style.paddingRight = `${scrollbarWidth}px`;
       }
@@ -329,6 +345,7 @@ export function useModal(props: UseModalProps = {}): UseModalReturn {
         document.body.style.paddingRight = originalPaddingRight;
       };
     }
+    return undefined;
   }, [isOpen]);
 
   // Effect: Focus modal when opened
@@ -346,11 +363,11 @@ export function useModal(props: UseModalProps = {}): UseModalReturn {
   // Generate modal props
   const modalProps = {
     id: modalId,
-    role: 'dialog' as const,
-    'aria-modal': true as const,
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
-    ...(ariaLabelledBy && { 'aria-labelledby': ariaLabelledBy }),
-    ...(ariaDescribedBy && { 'aria-describedby': ariaDescribedBy }),
+    role: "dialog" as const,
+    "aria-modal": true as const,
+    ...(ariaLabel && { "aria-label": ariaLabel }),
+    ...(ariaLabelledBy && { "aria-labelledby": ariaLabelledBy }),
+    ...(ariaDescribedBy && { "aria-describedby": ariaDescribedBy }),
     ...ariaAttributes,
     tabIndex: -1,
     onKeyDown: handleKeyDown,
@@ -360,17 +377,17 @@ export function useModal(props: UseModalProps = {}): UseModalReturn {
   // Generate overlay props
   const overlayProps = {
     onClick: handleOverlayClick,
-    'aria-hidden': true as const,
+    "aria-hidden": true as const,
   };
 
   // Generate close button props
   const closeButtonProps = {
-    'aria-label': 'Close modal',
+    "aria-label": "Close modal",
     onClick: close,
   };
 
   return {
-    modalProps,
+    modalProps: modalProps as UseModalReturn['modalProps'],
     overlayProps,
     closeButtonProps,
     isOpen,

@@ -1,7 +1,6 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import { useUniqueId } from "../utils/id";
+import { isKeyboardKey } from "../utils/keyboard";
 
 /**
  * Menu item
@@ -61,9 +60,9 @@ export interface UseDropdownMenuReturn {
    * Props for trigger button
    */
   triggerProps: {
-    'aria-expanded': boolean;
-    'aria-haspopup': 'menu';
-    'aria-controls': string;
+    "aria-expanded": boolean;
+    "aria-haspopup": "menu";
+    "aria-controls": string;
     onClick: () => void;
     onKeyDown: (event: KeyboardEvent) => void;
   };
@@ -73,19 +72,22 @@ export interface UseDropdownMenuReturn {
    */
   menuProps: {
     id: string;
-    role: 'menu';
-    'aria-label'?: string;
-    'aria-activedescendant'?: string;
+    role: "menu";
+    "aria-label"?: string;
+    "aria-activedescendant"?: string;
     onKeyDown: (event: KeyboardEvent) => void;
   };
 
   /**
    * Get props for menu item
    */
-  getItemProps: (item: MenuItem, index: number) => {
+  getItemProps: (
+    item: MenuItem,
+    index: number,
+  ) => {
     id: string;
-    role: 'menuitem';
-    'aria-disabled'?: boolean;
+    role: "menuitem";
+    "aria-disabled"?: boolean;
     tabIndex: number;
     onClick: () => void;
   };
@@ -157,7 +159,9 @@ export interface UseDropdownMenuReturn {
  * );
  * ```
  */
-export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuReturn {
+export function useDropdownMenu(
+  props: UseDropdownMenuProps,
+): UseDropdownMenuReturn {
   const {
     items,
     isOpen: controlledIsOpen,
@@ -181,7 +185,7 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
 
   // Generate unique ID for menu
-  const menuId = useUniqueId(customId, 'menu');
+  const menuId = useUniqueId(customId, "menu");
 
   // Update state and call onChange
   const updateIsOpen = useCallback(
@@ -196,7 +200,7 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
         setHighlightedIndex(-1);
       }
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   // Open menu
@@ -229,19 +233,19 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
 
       return startIndex; // No enabled items found
     },
-    [items]
+    [items],
   );
 
   // Handle menu keyboard navigation
   const handleMenuKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (isKeyboardKey(event, 'Escape')) {
+      if (isKeyboardKey(event, "Escape")) {
         event.preventDefault();
         close();
         return;
       }
 
-      if (isKeyboardKey(event, 'ArrowDown')) {
+      if (isKeyboardKey(event, "ArrowDown")) {
         event.preventDefault();
         setHighlightedIndex((current) => {
           if (current === -1) {
@@ -252,7 +256,7 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
         return;
       }
 
-      if (isKeyboardKey(event, 'ArrowUp')) {
+      if (isKeyboardKey(event, "ArrowUp")) {
         event.preventDefault();
         setHighlightedIndex((current) => {
           if (current === -1) {
@@ -263,21 +267,21 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
         return;
       }
 
-      if (isKeyboardKey(event, 'Home')) {
+      if (isKeyboardKey(event, "Home")) {
         event.preventDefault();
         const firstEnabled = findNextEnabledIndex(-1, 1);
         setHighlightedIndex(firstEnabled);
         return;
       }
 
-      if (isKeyboardKey(event, 'End')) {
+      if (isKeyboardKey(event, "End")) {
         event.preventDefault();
         const lastEnabled = findNextEnabledIndex(items.length, -1);
         setHighlightedIndex(lastEnabled);
         return;
       }
 
-      if (isKeyboardKey(event, ['Enter', ' '])) {
+      if (isKeyboardKey(event, ["Enter", " "])) {
         event.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < items.length) {
           const item = items[highlightedIndex];
@@ -291,26 +295,28 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
         return;
       }
     },
-    [highlightedIndex, items, close, closeOnSelect, findNextEnabledIndex]
+    [highlightedIndex, items, close, closeOnSelect, findNextEnabledIndex],
   );
 
   // Handle trigger keyboard events
   const handleTriggerKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (isKeyboardKey(event, 'Escape')) {
+      if (isKeyboardKey(event, "Escape")) {
         event.preventDefault();
         close();
         return;
       }
     },
-    [close]
+    [close],
   );
 
   // Get item props
   const getItemProps = useCallback(
-    (item: MenuItem, index: number) => {
+    (item: MenuItem, _index: number) => {
       const handleItemClick = () => {
-        if (item.disabled) return;
+        if (item.disabled) {
+          return;
+        }
         item.onClick?.();
         if (closeOnSelect) {
           close();
@@ -319,28 +325,29 @@ export function useDropdownMenu(props: UseDropdownMenuProps): UseDropdownMenuRet
 
       return {
         id: item.id,
-        role: 'menuitem' as const,
-        'aria-disabled': item.disabled ? true : undefined,
+        role: "menuitem" as const,
+        "aria-disabled": item.disabled ? true : undefined,
         tabIndex: -1,
         onClick: handleItemClick,
       };
     },
-    [close, closeOnSelect]
+    [close, closeOnSelect],
   );
 
   return {
     triggerProps: {
-      'aria-expanded': isOpen,
-      'aria-haspopup': 'menu' as const,
-      'aria-controls': menuId,
+      "aria-expanded": isOpen,
+      "aria-haspopup": "menu" as const,
+      "aria-controls": menuId,
       onClick: toggle,
       onKeyDown: handleTriggerKeyDown,
     },
     menuProps: {
       id: menuId,
-      role: 'menu',
-      'aria-label': ariaLabel,
-      'aria-activedescendant': highlightedIndex >= 0 ? items[highlightedIndex]?.id : undefined,
+      role: "menu",
+      "aria-label": ariaLabel,
+      "aria-activedescendant":
+        highlightedIndex >= 0 ? items[highlightedIndex]?.id : undefined,
       onKeyDown: handleMenuKeyDown,
     },
     getItemProps,

@@ -7,11 +7,11 @@ export interface BaseHookProps {
   /** Unique identifier for the component */
   id?: string;
   /** Accessible label for screen readers */
-  'aria-label'?: string;
+  "aria-label"?: string;
   /** ID of element that labels this component */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
   /** ID of element that describes this component */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 /**
@@ -44,53 +44,61 @@ export type FocusHandler = (event: React.FocusEvent) => void;
 /**
  * Change event handler for input elements
  */
-export type ChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => void;
+export type ChangeHandler = (
+  event: React.ChangeEvent<HTMLInputElement>,
+) => void;
 
 /**
  * ARIA role types
  */
 export type AriaRole =
-  | 'button'
-  | 'checkbox'
-  | 'radio'
-  | 'switch'
-  | 'combobox'
-  | 'listbox'
-  | 'option'
-  | 'tablist'
-  | 'tab'
-  | 'tabpanel'
-  | 'dialog'
-  | 'alertdialog'
-  | 'alert'
-  | 'tooltip'
-  | 'menu'
-  | 'menuitem'
-  | 'navigation'
-  | 'progressbar'
-  | 'slider'
-  | 'separator'
-  | 'img'
-  | 'article'
-  | 'region'
-  | 'status';
+  | "button"
+  | "checkbox"
+  | "radio"
+  | "switch"
+  | "combobox"
+  | "listbox"
+  | "option"
+  | "tablist"
+  | "tab"
+  | "tabpanel"
+  | "dialog"
+  | "alertdialog"
+  | "alert"
+  | "tooltip"
+  | "menu"
+  | "menuitem"
+  | "navigation"
+  | "progressbar"
+  | "slider"
+  | "separator"
+  | "img"
+  | "article"
+  | "region"
+  | "status";
 
 /**
  * Keyboard key names
  */
 export type KeyboardKey =
-  | 'Enter'
-  | ' '
-  | 'Escape'
-  | 'ArrowUp'
-  | 'ArrowDown'
-  | 'ArrowLeft'
-  | 'ArrowRight'
-  | 'Home'
-  | 'End'
-  | 'Tab';
+  | "Enter"
+  | " "
+  | "Escape"
+  | "ArrowUp"
+  | "ArrowDown"
+  | "ArrowLeft"
+  | "ArrowRight"
+  | "Home"
+  | "End"
+  | "Tab";
 
 /**
  * Controlled/uncontrolled mode detection
  */
-export type ControlMode = 'controlled' | 'uncontrolled';
+export type ControlMode = "controlled" | "uncontrolled";
+
+/**
+ * ARIA attributes for accessibility
+ * Re-export React's built-in AriaAttributes type
+ */
+export type AriaAttributes = React.AriaAttributes;

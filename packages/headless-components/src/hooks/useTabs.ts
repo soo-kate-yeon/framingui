@@ -1,8 +1,8 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { createKeyboardHandler } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
+import { createKeyboardHandler } from "../utils/keyboard";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Tab item in a tab list
@@ -45,7 +45,7 @@ export interface UseTabsProps {
   /**
    * Orientation of tab list
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 
   /**
    * Custom ID prefix for tabs
@@ -71,21 +71,24 @@ export interface UseTabsReturn {
    * Props for the tab list container
    */
   tabListProps: {
-    role: 'tablist';
-    'aria-orientation': 'horizontal' | 'vertical';
-    'aria-label'?: string;
+    role: "tablist";
+    "aria-orientation": "horizontal" | "vertical";
+    "aria-label"?: string;
   } & Record<string, unknown>;
 
   /**
    * Get props for an individual tab
    */
-  getTabProps: (tab: TabItem, index: number) => {
+  getTabProps: (
+    tab: TabItem,
+    index: number,
+  ) => {
     id: string;
-    role: 'tab';
+    role: "tab";
     tabIndex: number;
-    'aria-selected': boolean;
-    'aria-disabled'?: boolean;
-    'aria-controls': string;
+    "aria-selected": boolean;
+    "aria-disabled"?: boolean;
+    "aria-controls": string;
     onKeyDown: (event: KeyboardEvent) => void;
     onClick: () => void;
   };
@@ -95,8 +98,8 @@ export interface UseTabsReturn {
    */
   getTabPanelProps: (tabId: string) => {
     id: string;
-    role: 'tabpanel';
-    'aria-labelledby': string;
+    role: "tabpanel";
+    "aria-labelledby": string;
     tabIndex: number;
   };
 
@@ -163,7 +166,7 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
     defaultActiveTab,
     onChange,
     disabled = false,
-    orientation = 'horizontal',
+    orientation = "horizontal",
     id: customId,
     ariaLabel,
     ariaAttributes = {},
@@ -181,7 +184,7 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
     if (defaultActiveTab && tabs.some((tab) => tab.id === defaultActiveTab)) {
       return defaultActiveTab;
     }
-    return tabs[0]?.id || '';
+    return tabs[0]?.id || "";
   });
 
   // Use controlled value if provided, otherwise use internal state
@@ -191,7 +194,9 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
   const setActiveTab = useCallback(
     (tabId: string) => {
       const tab = tabs.find((t) => t.id === tabId);
-      if (!tab || tab.disabled || disabled) return;
+      if (!tab || tab.disabled || disabled) {
+        return;
+      }
 
       // Update internal state if not controlled
       if (!isControlled) {
@@ -201,7 +206,7 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
       // Call onChange callback
       onChange?.(tabId);
     },
-    [tabs, disabled, isControlled, onChange]
+    [tabs, disabled, isControlled, onChange],
   );
 
   // Find next non-disabled tab index
@@ -229,13 +234,15 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
 
       return nextIndex;
     },
-    [tabs]
+    [tabs],
   );
 
   // Navigate to tab by index
   const navigateToTabIndex = useCallback(
     (currentIndex: number, direction: 1 | -1) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       const nextIndex = findNextEnabledIndex(currentIndex, direction);
       const nextTab = tabs[nextIndex];
@@ -243,7 +250,7 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
         setActiveTab(nextTab.id);
       }
     },
-    [disabled, tabs, findNextEnabledIndex, setActiveTab]
+    [disabled, tabs, findNextEnabledIndex, setActiveTab],
   );
 
   // Get props for individual tab
@@ -255,11 +262,13 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
 
       // Keyboard navigation handler for this tab
       const handleKeyDown = (event: KeyboardEvent) => {
-        if (disabled || tab.disabled) return;
+        if (disabled || tab.disabled) {
+          return;
+        }
 
         const handlers: Record<string, () => void> = {};
 
-        if (orientation === 'horizontal') {
+        if (orientation === "horizontal") {
           handlers.ArrowRight = () => navigateToTabIndex(index, 1);
           handlers.ArrowLeft = () => navigateToTabIndex(index, -1);
         } else {
@@ -292,11 +301,11 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
 
       return {
         id: tabId,
-        role: 'tab' as const,
+        role: "tab" as const,
         tabIndex: isActive ? 0 : -1,
-        'aria-selected': isActive,
-        ...(tab.disabled && { 'aria-disabled': true }),
-        'aria-controls': panelId,
+        "aria-selected": isActive,
+        ...(tab.disabled && { "aria-disabled": true }),
+        "aria-controls": panelId,
         onKeyDown: handleKeyDown,
         onClick: () => setActiveTab(tab.id),
       };
@@ -309,7 +318,7 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
       tabs,
       navigateToTabIndex,
       setActiveTab,
-    ]
+    ],
   );
 
   // Get props for tab panel
@@ -321,28 +330,28 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
 
       return {
         id: panelId,
-        role: 'tabpanel' as const,
-        'aria-labelledby': tabElementId,
+        role: "tabpanel" as const,
+        "aria-labelledby": tabElementId,
         tabIndex: 0,
       };
     },
-    [idPrefix, tabs]
+    [idPrefix, tabs],
   );
 
   // Generate ARIA props for tab list
   const tabListAriaProps = generateAriaProps({
-    role: 'tablist',
-    'aria-orientation': orientation,
-    'aria-label': ariaLabel,
+    role: "tablist",
+    "aria-orientation": orientation,
+    "aria-label": ariaLabel,
     ...ariaAttributes,
   });
 
   return {
     tabListProps: {
       ...tabListAriaProps,
-      role: 'tablist',
-      'aria-orientation': orientation,
-      ...(ariaLabel && { 'aria-label': ariaLabel }),
+      role: "tablist",
+      "aria-orientation": orientation,
+      ...(ariaLabel && { "aria-label": ariaLabel }),
     },
     getTabProps,
     getTabPanelProps,

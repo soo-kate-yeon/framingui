@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
-import type { KeyboardHandler, ClickHandler } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { handleKeyboardEvent } from '../utils/keyboard';
+import { useState, useCallback } from "react";
+import type { KeyboardHandler, ClickHandler } from "../types";
+import { generateAriaProps } from "../utils/aria";
+import { handleKeyboardEvent } from "../utils/keyboard";
 
 export interface UseToggleProps {
   /** Whether the toggle is on (controlled) */
@@ -13,24 +13,24 @@ export interface UseToggleProps {
   /** Callback when state changes */
   onChange?: (on: boolean) => void;
   /** ARIA label */
-  'aria-label'?: string;
+  "aria-label"?: string;
   /** ARIA labelledby */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
   /** ARIA describedby */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 export interface UseToggleReturn {
   /** Props to spread on toggle element */
   toggleProps: {
-    role: 'switch';
+    role: "switch";
     tabIndex: number;
     disabled: boolean;
-    'aria-checked': boolean;
-    'aria-disabled': boolean;
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
-    'aria-describedby'?: string;
+    "aria-checked": boolean;
+    "aria-disabled": boolean;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+    "aria-describedby"?: string;
     onClick: ClickHandler;
     onKeyDown: KeyboardHandler;
   };
@@ -51,9 +51,9 @@ export function useToggle(props: UseToggleProps = {}): UseToggleReturn {
     defaultOn = false,
     disabled = false,
     onChange,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
   } = props;
 
   // Determine if component is controlled
@@ -67,7 +67,9 @@ export function useToggle(props: UseToggleProps = {}): UseToggleReturn {
 
   // Handle toggle
   const handleToggle = useCallback(() => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     const newOn = !isOn;
     if (!isControlled) {
@@ -81,29 +83,31 @@ export function useToggle(props: UseToggleProps = {}): UseToggleReturn {
     (_event: React.MouseEvent) => {
       handleToggle();
     },
-    [handleToggle]
+    [handleToggle],
   );
 
   // Handle keyboard events
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
-      handleKeyboardEvent(event, ['Enter', ' '], () => {
+      handleKeyboardEvent(event, ["Enter", " "], () => {
         handleToggle();
       });
     },
-    [disabled, handleToggle]
+    [disabled, handleToggle],
   );
 
   // Generate ARIA props
   const ariaProps = generateAriaProps({
-    role: 'switch',
+    role: "switch",
     disabled,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
-    'aria-checked': isOn,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
+    "aria-checked": isOn,
   });
 
   // Direct control method for setting on state
@@ -114,20 +118,20 @@ export function useToggle(props: UseToggleProps = {}): UseToggleReturn {
       }
       onChange?.(on);
     },
-    [isControlled, onChange]
+    [isControlled, onChange],
   );
 
   return {
     toggleProps: {
       ...ariaProps,
-      role: 'switch',
+      role: "switch",
       tabIndex: disabled ? -1 : 0,
       disabled,
-      'aria-checked': isOn,
-      'aria-disabled': disabled,
+      "aria-checked": isOn,
+      "aria-disabled": disabled,
       onClick: handleClick,
       onKeyDown: handleKeyDown,
-    } as UseToggleReturn['toggleProps'],
+    } as UseToggleReturn["toggleProps"],
     isOn,
     setOn,
     toggle: handleToggle,

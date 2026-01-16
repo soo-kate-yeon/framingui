@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback } from "react";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useAvatar hook
@@ -55,8 +55,8 @@ export interface UseAvatarReturn {
    * Props for the fallback element
    */
   fallbackProps: {
-    role: 'img';
-    'aria-label': string;
+    role: "img";
+    "aria-label": string;
   };
 
   /**
@@ -117,7 +117,7 @@ export interface UseAvatarReturn {
 export function useAvatar(props: UseAvatarProps): UseAvatarReturn {
   const {
     src,
-    fallback = '',
+    fallback: _fallback = "",
     alt,
     onLoad,
     onError,
@@ -125,7 +125,7 @@ export function useAvatar(props: UseAvatarProps): UseAvatarReturn {
   } = props;
 
   // Generate unique ID
-  const id = useUniqueId(customId, 'avatar');
+  const id = useUniqueId(customId, "avatar");
 
   // State management
   const [isLoading, setIsLoading] = useState(!!src);
@@ -169,8 +169,8 @@ export function useAvatar(props: UseAvatarProps): UseAvatarReturn {
 
   // Fallback props
   const fallbackProps = {
-    role: 'img' as const,
-    'aria-label': alt,
+    role: "img" as const,
+    "aria-label": alt,
   };
 
   return {

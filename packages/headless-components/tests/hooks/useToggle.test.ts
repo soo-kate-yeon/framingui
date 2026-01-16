@@ -1,34 +1,34 @@
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useToggle } from '../../src/hooks/useToggle';
+import { describe, it, expect, vi } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { useToggle } from "../../src/hooks/useToggle";
 
-describe('useToggle', () => {
-  describe('initialization', () => {
-    it('should initialize with default state (off)', () => {
+describe("useToggle", () => {
+  describe("initialization", () => {
+    it("should initialize with default state (off)", () => {
       const { result } = renderHook(() => useToggle());
 
       expect(result.current.isOn).toBe(false);
-      expect(result.current.toggleProps.role).toBe('switch');
-      expect(result.current.toggleProps['aria-checked']).toBe(false);
+      expect(result.current.toggleProps.role).toBe("switch");
+      expect(result.current.toggleProps["aria-checked"]).toBe(false);
     });
 
-    it('should initialize with on state', () => {
+    it("should initialize with on state", () => {
       const { result } = renderHook(() => useToggle({ defaultOn: true }));
 
       expect(result.current.isOn).toBe(true);
-      expect(result.current.toggleProps['aria-checked']).toBe(true);
+      expect(result.current.toggleProps["aria-checked"]).toBe(true);
     });
 
-    it('should initialize with disabled state', () => {
+    it("should initialize with disabled state", () => {
       const { result } = renderHook(() => useToggle({ disabled: true }));
 
-      expect(result.current.toggleProps['aria-disabled']).toBe(true);
+      expect(result.current.toggleProps["aria-disabled"]).toBe(true);
       expect(result.current.toggleProps.disabled).toBe(true);
     });
   });
 
-  describe('toggle functionality', () => {
-    it('should toggle on click', () => {
+  describe("toggle functionality", () => {
+    it("should toggle on click", () => {
       const { result } = renderHook(() => useToggle());
 
       expect(result.current.isOn).toBe(false);
@@ -46,7 +46,7 @@ describe('useToggle', () => {
       expect(result.current.isOn).toBe(false);
     });
 
-    it('should not toggle when disabled', () => {
+    it("should not toggle when disabled", () => {
       const { result } = renderHook(() => useToggle({ disabled: true }));
 
       act(() => {
@@ -56,7 +56,7 @@ describe('useToggle', () => {
       expect(result.current.isOn).toBe(false);
     });
 
-    it('should call onChange callback', () => {
+    it("should call onChange callback", () => {
       const onChange = vi.fn();
       const { result } = renderHook(() => useToggle({ onChange }));
 
@@ -74,12 +74,12 @@ describe('useToggle', () => {
     });
   });
 
-  describe('keyboard events', () => {
-    it('should toggle on Space key', () => {
+  describe("keyboard events", () => {
+    it("should toggle on Space key", () => {
       const { result } = renderHook(() => useToggle());
 
       const event = {
-        key: ' ',
+        key: " ",
         preventDefault: vi.fn(),
       } as any;
 
@@ -91,11 +91,11 @@ describe('useToggle', () => {
       expect(result.current.isOn).toBe(true);
     });
 
-    it('should toggle on Enter key', () => {
+    it("should toggle on Enter key", () => {
       const { result } = renderHook(() => useToggle());
 
       const event = {
-        key: 'Enter',
+        key: "Enter",
         preventDefault: vi.fn(),
       } as any;
 
@@ -107,11 +107,11 @@ describe('useToggle', () => {
       expect(result.current.isOn).toBe(true);
     });
 
-    it('should not toggle on other keys', () => {
+    it("should not toggle on other keys", () => {
       const { result } = renderHook(() => useToggle());
 
       const event = {
-        key: 'a',
+        key: "a",
         preventDefault: vi.fn(),
       } as any;
 
@@ -124,14 +124,16 @@ describe('useToggle', () => {
     });
   });
 
-  describe('controlled mode', () => {
-    it('should use external on state in controlled mode', () => {
-      const { result } = renderHook(() => useToggle({ on: true, onChange: vi.fn() }));
+  describe("controlled mode", () => {
+    it("should use external on state in controlled mode", () => {
+      const { result } = renderHook(() =>
+        useToggle({ on: true, onChange: vi.fn() }),
+      );
 
       expect(result.current.isOn).toBe(true);
     });
 
-    it('should call onChange in controlled mode', () => {
+    it("should call onChange in controlled mode", () => {
       const onChange = vi.fn();
       const { result } = renderHook(() => useToggle({ on: false, onChange }));
 
@@ -142,8 +144,10 @@ describe('useToggle', () => {
       expect(onChange).toHaveBeenCalledWith(true);
     });
 
-    it('should not update internal state in controlled mode', () => {
-      const { result } = renderHook(() => useToggle({ on: false, onChange: vi.fn() }));
+    it("should not update internal state in controlled mode", () => {
+      const { result } = renderHook(() =>
+        useToggle({ on: false, onChange: vi.fn() }),
+      );
 
       act(() => {
         result.current.toggleProps.onClick({} as any);
@@ -154,28 +158,30 @@ describe('useToggle', () => {
     });
   });
 
-  describe('ARIA attributes', () => {
-    it('should include aria-label when provided', () => {
-      const { result } = renderHook(() => useToggle({ 'aria-label': 'Dark mode' }));
+  describe("ARIA attributes", () => {
+    it("should include aria-label when provided", () => {
+      const { result } = renderHook(() =>
+        useToggle({ "aria-label": "Dark mode" }),
+      );
 
-      expect(result.current.toggleProps['aria-label']).toBe('Dark mode');
+      expect(result.current.toggleProps["aria-label"]).toBe("Dark mode");
     });
 
-    it('should include tabIndex 0 when not disabled', () => {
+    it("should include tabIndex 0 when not disabled", () => {
       const { result } = renderHook(() => useToggle());
 
       expect(result.current.toggleProps.tabIndex).toBe(0);
     });
 
-    it('should include tabIndex -1 when disabled', () => {
+    it("should include tabIndex -1 when disabled", () => {
       const { result } = renderHook(() => useToggle({ disabled: true }));
 
       expect(result.current.toggleProps.tabIndex).toBe(-1);
     });
   });
 
-  describe('direct control methods', () => {
-    it('should provide setOn method', () => {
+  describe("direct control methods", () => {
+    it("should provide setOn method", () => {
       const { result } = renderHook(() => useToggle());
 
       act(() => {
@@ -185,7 +191,7 @@ describe('useToggle', () => {
       expect(result.current.isOn).toBe(true);
     });
 
-    it('should provide toggle method', () => {
+    it("should provide toggle method", () => {
       const { result } = renderHook(() => useToggle());
 
       act(() => {

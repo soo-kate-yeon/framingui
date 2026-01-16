@@ -1,8 +1,6 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import { isKeyboardKey } from "../utils/keyboard";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useCheckbox hook
@@ -51,17 +49,17 @@ export interface UseCheckboxProps {
   /**
    * ARIA label for the checkbox
    */
-  'aria-label'?: string;
+  "aria-label"?: string;
 
   /**
    * ARIA labelledby for the checkbox
    */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
 
   /**
    * ARIA describedby for the checkbox
    */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 /**
@@ -73,12 +71,12 @@ export interface UseCheckboxReturn {
    */
   checkboxProps: {
     id: string;
-    role: 'checkbox';
+    role: "checkbox";
     tabIndex: number;
-    'aria-checked': boolean | 'mixed';
-    'aria-disabled'?: boolean;
-    'aria-required'?: boolean;
-    'aria-label'?: string;
+    "aria-checked": boolean | "mixed";
+    "aria-disabled"?: boolean;
+    "aria-required"?: boolean;
+    "aria-label"?: string;
     onKeyDown: (event: KeyboardEvent) => void;
     onClick: () => void;
   } & Record<string, unknown>;
@@ -148,9 +146,9 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
     indeterminate = false,
     onIndeterminateChange,
     id: customId,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
   } = props;
 
   // Determine if component is controlled
@@ -163,11 +161,13 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
   const checked = isControlled ? controlledChecked : internalChecked;
 
   // Generate unique ID
-  const checkboxId = useUniqueId(customId, 'checkbox');
+  const checkboxId = useUniqueId(customId, "checkbox");
 
   // Handle toggle
   const handleToggle = useCallback(() => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     const newChecked = !checked;
 
@@ -183,7 +183,14 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
 
     // Call onChange callback
     onChange?.(newChecked);
-  }, [disabled, checked, indeterminate, isControlled, onChange, onIndeterminateChange]);
+  }, [
+    disabled,
+    checked,
+    indeterminate,
+    isControlled,
+    onChange,
+    onIndeterminateChange,
+  ]);
 
   // Handle click
   const handleClick = useCallback(() => {
@@ -193,15 +200,17 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
   // Handle keyboard events
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       // Only handle Space key, not Enter
-      if (isKeyboardKey(event, ' ')) {
+      if (isKeyboardKey(event, " ")) {
         event.preventDefault();
         handleToggle();
       }
     },
-    [disabled, handleToggle]
+    [disabled, handleToggle],
   );
 
   // Programmatically set checked state
@@ -212,7 +221,7 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
       }
       onChange?.(newChecked);
     },
-    [isControlled, onChange]
+    [isControlled, onChange],
   );
 
   // Toggle function
@@ -221,19 +230,19 @@ export function useCheckbox(props: UseCheckboxProps = {}): UseCheckboxReturn {
   }, [handleToggle]);
 
   // Calculate aria-checked value
-  const ariaChecked: boolean | 'mixed' = indeterminate ? 'mixed' : checked;
+  const ariaChecked: boolean | "mixed" = indeterminate ? "mixed" : checked;
 
   // Build checkbox props
   const checkboxProps = {
     id: checkboxId,
-    role: 'checkbox' as const,
+    role: "checkbox" as const,
     tabIndex: 0,
-    'aria-checked': ariaChecked,
-    'aria-disabled': disabled,
-    ...(required && { 'aria-required': true }),
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
-    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
-    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+    "aria-checked": ariaChecked,
+    "aria-disabled": disabled,
+    ...(required && { "aria-required": true }),
+    ...(ariaLabel && { "aria-label": ariaLabel }),
+    ...(ariaLabelledby && { "aria-labelledby": ariaLabelledby }),
+    ...(ariaDescribedby && { "aria-describedby": ariaDescribedby }),
     onKeyDown: handleKeyDown,
     onClick: handleClick,
   };

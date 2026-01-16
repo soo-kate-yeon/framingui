@@ -1,7 +1,5 @@
-import { useState, useCallback, KeyboardEvent, ChangeEvent, FocusEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, ChangeEvent, FocusEvent } from "react";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useInput hook
@@ -70,17 +68,17 @@ export interface UseInputProps {
   /**
    * ARIA label for the input
    */
-  'aria-label'?: string;
+  "aria-label"?: string;
 
   /**
    * ARIA labelledby for the input
    */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
 
   /**
    * ARIA describedby for the input
    */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 /**
@@ -98,12 +96,12 @@ export interface UseInputReturn {
     disabled: boolean;
     readOnly: boolean;
     required: boolean;
-    'aria-invalid': boolean;
-    'aria-errormessage'?: string;
-    'aria-label'?: string;
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    onFocus: (event: FocusEvent<HTMLInputElement>) => void;
-    onBlur: (event: FocusEvent<HTMLInputElement>) => void;
+    "aria-invalid": boolean;
+    "aria-errormessage"?: string;
+    "aria-label"?: string;
+    onChange: (_event: ChangeEvent<HTMLInputElement>) => void;
+    onFocus: (_event: FocusEvent<HTMLInputElement>) => void;
+    onBlur: (_event: FocusEvent<HTMLInputElement>) => void;
   } & Record<string, unknown>;
 
   /**
@@ -171,20 +169,20 @@ export interface UseInputReturn {
 export function useInput(props: UseInputProps = {}): UseInputReturn {
   const {
     value: controlledValue,
-    defaultValue = '',
+    defaultValue = "",
     onChange,
     disabled = false,
     required = false,
     readOnly = false,
     errorMessage,
-    type = 'text',
+    type = "text",
     placeholder,
     onFocus,
     onBlur,
     id: customId,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
   } = props;
 
   // Determine if component is controlled
@@ -197,8 +195,8 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
   const value = isControlled ? controlledValue : internalValue;
 
   // Generate unique IDs
-  const inputId = useUniqueId(customId, 'input');
-  const errorId = useUniqueId(undefined, 'input-error');
+  const inputId = useUniqueId(customId, "input");
+  const errorId = useUniqueId(undefined, "input-error");
 
   // Determine if input is invalid
   const isInvalid = Boolean(errorMessage);
@@ -206,7 +204,9 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
   // Handle change event
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      if (disabled || readOnly) return;
+      if (disabled || readOnly) {
+        return;
+      }
 
       const newValue = event.target.value;
 
@@ -218,23 +218,23 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
       // Call onChange callback
       onChange?.(newValue);
     },
-    [disabled, readOnly, isControlled, onChange]
+    [disabled, readOnly, isControlled, onChange],
   );
 
   // Handle focus event
   const handleFocus = useCallback(
-    (event: FocusEvent<HTMLInputElement>) => {
+    (_event: FocusEvent<HTMLInputElement>) => {
       onFocus?.();
     },
-    [onFocus]
+    [onFocus],
   );
 
   // Handle blur event
   const handleBlur = useCallback(
-    (event: FocusEvent<HTMLInputElement>) => {
+    (_event: FocusEvent<HTMLInputElement>) => {
       onBlur?.();
     },
-    [onBlur]
+    [onBlur],
   );
 
   // Programmatically set value
@@ -245,15 +245,15 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
       }
       onChange?.(newValue);
     },
-    [isControlled, onChange]
+    [isControlled, onChange],
   );
 
   // Clear value
   const clear = useCallback(() => {
     if (!isControlled) {
-      setInternalValue('');
+      setInternalValue("");
     }
-    onChange?.('');
+    onChange?.("");
   }, [isControlled, onChange]);
 
   // Build input props
@@ -265,13 +265,13 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
     disabled,
     readOnly,
     required,
-    'aria-disabled': disabled,
-    'aria-invalid': isInvalid,
-    'aria-required': required,
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
-    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
-    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
-    ...(isInvalid && { 'aria-errormessage': errorId }),
+    "aria-disabled": disabled,
+    "aria-invalid": isInvalid,
+    "aria-required": required,
+    ...(ariaLabel && { "aria-label": ariaLabel }),
+    ...(ariaLabelledby && { "aria-labelledby": ariaLabelledby }),
+    ...(ariaDescribedby && { "aria-describedby": ariaDescribedby }),
+    ...(isInvalid && { "aria-errormessage": errorId }),
     onChange: handleChange,
     onFocus: handleFocus,
     onBlur: handleBlur,
@@ -281,7 +281,7 @@ export function useInput(props: UseInputProps = {}): UseInputReturn {
   const errorProps = errorMessage
     ? {
         id: errorId,
-        role: 'alert' as const,
+        role: "alert" as const,
       }
     : undefined;
 

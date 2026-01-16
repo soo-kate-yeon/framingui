@@ -1,8 +1,6 @@
-import { useState, useCallback, KeyboardEvent, useRef } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import { useUniqueId } from "../utils/id";
+import { isKeyboardKey } from "../utils/keyboard";
 
 /**
  * Props for the useRadio hook
@@ -51,17 +49,17 @@ export interface UseRadioProps {
   /**
    * ARIA label for the radio
    */
-  'aria-label'?: string;
+  "aria-label"?: string;
 
   /**
    * ARIA labelledby for the radio
    */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
 
   /**
    * ARIA describedby for the radio
    */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 /**
@@ -73,12 +71,12 @@ export interface UseRadioReturn {
    */
   radioProps: {
     id: string;
-    role: 'radio';
+    role: "radio";
     tabIndex: number;
-    'aria-checked': boolean;
-    'aria-disabled'?: boolean;
-    'aria-required'?: boolean;
-    'aria-label'?: string;
+    "aria-checked": boolean;
+    "aria-disabled"?: boolean;
+    "aria-required"?: boolean;
+    "aria-label"?: string;
     onKeyDown: (event: KeyboardEvent) => void;
     onClick: () => void;
   } & Record<string, unknown>;
@@ -136,17 +134,17 @@ export interface UseRadioGroupProps {
   /**
    * ARIA label for the radio group
    */
-  'aria-label'?: string;
+  "aria-label"?: string;
 
   /**
    * ARIA labelledby for the radio group
    */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
 
   /**
    * ARIA describedby for the radio group
    */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 /**
@@ -158,10 +156,10 @@ export interface UseRadioGroupReturn {
    */
   groupProps: {
     id: string;
-    role: 'radiogroup';
-    'aria-label'?: string;
-    'aria-required'?: boolean;
-    'aria-disabled'?: boolean;
+    role: "radiogroup";
+    "aria-label"?: string;
+    "aria-required"?: boolean;
+    "aria-disabled"?: boolean;
   } & Record<string, unknown>;
 
   /**
@@ -177,7 +175,9 @@ export interface UseRadioGroupReturn {
   /**
    * Get props for an individual radio in this group
    */
-  getRadioProps: (radioProps: Pick<UseRadioProps, 'value' | 'disabled' | 'id' | 'aria-label'>) => UseRadioProps;
+  getRadioProps: (
+    radioProps: Pick<UseRadioProps, "value" | "disabled" | "id" | "aria-label">,
+  ) => UseRadioProps;
 }
 
 /**
@@ -220,20 +220,22 @@ export function useRadio(props: UseRadioProps): UseRadioReturn {
     required = false,
     name,
     id: customId,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
   } = props;
 
   // Generate unique ID
-  const radioId = useUniqueId(customId, 'radio');
+  const radioId = useUniqueId(customId, "radio");
 
   // Calculate checked state
   const checked = value === selectedValue;
 
   // Handle select
   const handleSelect = useCallback(() => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
     onChange?.(value);
   }, [disabled, onChange, value]);
 
@@ -245,29 +247,31 @@ export function useRadio(props: UseRadioProps): UseRadioReturn {
   // Handle keyboard events
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       // Only handle Space key
-      if (isKeyboardKey(event, ' ')) {
+      if (isKeyboardKey(event, " ")) {
         event.preventDefault();
         handleSelect();
       }
     },
-    [disabled, handleSelect]
+    [disabled, handleSelect],
   );
 
   // Build radio props
   const radioProps = {
     id: radioId,
-    role: 'radio' as const,
+    role: "radio" as const,
     tabIndex: checked ? 0 : -1,
-    'aria-checked': checked,
-    'aria-disabled': disabled,
-    ...(required && { 'aria-required': true }),
+    "aria-checked": checked,
+    "aria-disabled": disabled,
+    ...(required && { "aria-required": true }),
     ...(name && { name }),
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
-    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
-    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+    ...(ariaLabel && { "aria-label": ariaLabel }),
+    ...(ariaLabelledby && { "aria-labelledby": ariaLabelledby }),
+    ...(ariaDescribedby && { "aria-describedby": ariaDescribedby }),
     value,
     onKeyDown: handleKeyDown,
     onClick: handleClick,
@@ -313,18 +317,20 @@ export function useRadio(props: UseRadioProps): UseRadioReturn {
  * );
  * ```
  */
-export function useRadioGroup(props: UseRadioGroupProps = {}): UseRadioGroupReturn {
+export function useRadioGroup(
+  props: UseRadioGroupProps = {},
+): UseRadioGroupReturn {
   const {
     value: controlledValue,
-    defaultValue = '',
+    defaultValue = "",
     onChange,
     disabled = false,
     required = false,
     name,
     id: customId,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
   } = props;
 
   // Determine if component is controlled
@@ -337,7 +343,7 @@ export function useRadioGroup(props: UseRadioGroupProps = {}): UseRadioGroupRetu
   const value = isControlled ? controlledValue : internalValue;
 
   // Generate unique ID for group
-  const groupId = useUniqueId(customId, 'radiogroup');
+  const groupId = useUniqueId(customId, "radiogroup");
 
   // Handle value change
   const handleChange = useCallback(
@@ -347,7 +353,7 @@ export function useRadioGroup(props: UseRadioGroupProps = {}): UseRadioGroupRetu
       }
       onChange?.(newValue);
     },
-    [isControlled, onChange]
+    [isControlled, onChange],
   );
 
   // Set value programmatically
@@ -355,12 +361,17 @@ export function useRadioGroup(props: UseRadioGroupProps = {}): UseRadioGroupRetu
     (newValue: string) => {
       handleChange(newValue);
     },
-    [handleChange]
+    [handleChange],
   );
 
   // Factory function to create radio props
   const getRadioProps = useCallback(
-    (radioProps: Pick<UseRadioProps, 'value' | 'disabled' | 'id' | 'aria-label'>) => {
+    (
+      radioProps: Pick<
+        UseRadioProps,
+        "value" | "disabled" | "id" | "aria-label"
+      >,
+    ) => {
       return {
         ...radioProps,
         selectedValue: value,
@@ -370,18 +381,18 @@ export function useRadioGroup(props: UseRadioGroupProps = {}): UseRadioGroupRetu
         name,
       };
     },
-    [value, handleChange, disabled, required, name]
+    [value, handleChange, disabled, required, name],
   );
 
   // Build group props
   const groupProps = {
     id: groupId,
-    role: 'radiogroup' as const,
-    'aria-disabled': disabled,
-    ...(required && { 'aria-required': true }),
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
-    ...(ariaLabelledby && { 'aria-labelledby': ariaLabelledby }),
-    ...(ariaDescribedby && { 'aria-describedby': ariaDescribedby }),
+    role: "radiogroup" as const,
+    "aria-disabled": disabled,
+    ...(required && { "aria-required": true }),
+    ...(ariaLabel && { "aria-label": ariaLabel }),
+    ...(ariaLabelledby && { "aria-labelledby": ariaLabelledby }),
+    ...(ariaDescribedby && { "aria-describedby": ariaDescribedby }),
   };
 
   return {

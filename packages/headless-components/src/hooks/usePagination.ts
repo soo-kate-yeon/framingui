@@ -1,7 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, useMemo } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
 
 /**
  * Props for the usePagination hook
@@ -62,10 +61,10 @@ export interface UsePaginationProps {
  * Page item type
  */
 export type PageItem =
-  | { type: 'page'; value: number }
-  | { type: 'ellipsis'; value: string }
-  | { type: 'previous'; value: 'previous' }
-  | { type: 'next'; value: 'next' };
+  | { type: "page"; value: number }
+  | { type: "ellipsis"; value: string }
+  | { type: "previous"; value: "previous" }
+  | { type: "next"; value: "next" };
 
 /**
  * Return type for the usePagination hook
@@ -75,17 +74,17 @@ export interface UsePaginationReturn {
    * Props for the nav container
    */
   navProps: {
-    role: 'navigation';
-    'aria-label': string;
+    role: "navigation";
+    "aria-label": string;
   } & Record<string, unknown>;
 
   /**
    * Get props for a page button
    */
   getPageProps: (item: PageItem) => {
-    'aria-current'?: 'page';
-    'aria-disabled'?: boolean;
-    'aria-label': string;
+    "aria-current"?: "page";
+    "aria-disabled"?: boolean;
+    "aria-label": string;
     onClick: () => void;
     disabled: boolean;
   };
@@ -188,7 +187,7 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
     siblings = 1,
     boundaries = 1,
     disabled = false,
-    ariaLabel = 'Pagination',
+    ariaLabel = "Pagination",
     ariaAttributes = {},
   } = props;
 
@@ -200,7 +199,9 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
 
   const handlePageChange = useCallback(
     (newPage: number) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       const clampedPage = Math.max(1, Math.min(newPage, totalPages));
 
@@ -212,14 +213,14 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
         onChange(clampedPage);
       }
     },
-    [disabled, isControlled, totalPages, onChange, currentPage]
+    [disabled, isControlled, totalPages, onChange, currentPage],
   );
 
   const setPage = useCallback(
     (page: number) => {
       handlePageChange(page);
     },
-    [handlePageChange]
+    [handlePageChange],
   );
 
   const next = useCallback(() => {
@@ -244,7 +245,7 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
   const items = useMemo(() => {
     const items: PageItem[] = [];
 
-    items.push({ type: 'previous', value: 'previous' });
+    items.push({ type: "previous", value: "previous" });
 
     const range = (start: number, end: number) => {
       const result: number[] = [];
@@ -257,10 +258,13 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
     const leftBoundary = range(1, Math.min(boundaries, totalPages));
     const rightBoundary = range(
       Math.max(totalPages - boundaries + 1, boundaries + 1),
-      totalPages
+      totalPages,
     );
     const siblingsStart = Math.max(currentPage - siblings, boundaries + 1);
-    const siblingsEnd = Math.min(currentPage + siblings, totalPages - boundaries);
+    const siblingsEnd = Math.min(
+      currentPage + siblings,
+      totalPages - boundaries,
+    );
 
     const pages = new Set<number>([
       ...leftBoundary,
@@ -272,54 +276,56 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
 
     sortedPages.forEach((page, index) => {
       if (index > 0 && sortedPages[index - 1] !== page - 1) {
-        items.push({ type: 'ellipsis', value: '...' });
+        items.push({ type: "ellipsis", value: "..." });
       }
-      items.push({ type: 'page', value: page });
+      items.push({ type: "page", value: page });
     });
 
-    items.push({ type: 'next', value: 'next' });
+    items.push({ type: "next", value: "next" });
 
     return items;
   }, [currentPage, totalPages, siblings, boundaries]);
 
   const navProps = {
-    role: 'navigation' as const,
-    'aria-label': ariaLabel,
+    role: "navigation" as const,
+    "aria-label": ariaLabel,
     ...generateAriaProps(ariaAttributes),
   };
 
   const getPageProps = useCallback(
     (item: PageItem) => {
-      const isCurrentPage = item.type === 'page' && item.value === currentPage;
-      const isPreviousDisabled = item.type === 'previous' && !hasPrevious;
-      const isNextDisabled = item.type === 'next' && !hasNext;
+      const isCurrentPage = item.type === "page" && item.value === currentPage;
+      const isPreviousDisabled = item.type === "previous" && !hasPrevious;
+      const isNextDisabled = item.type === "next" && !hasNext;
       const isDisabled = disabled || isPreviousDisabled || isNextDisabled;
 
-      let ariaLabelText = '';
-      if (item.type === 'page') {
+      let ariaLabelText = "";
+      if (item.type === "page") {
         ariaLabelText = `Page ${item.value}`;
-      } else if (item.type === 'previous') {
-        ariaLabelText = 'Previous page';
-      } else if (item.type === 'next') {
-        ariaLabelText = 'Next page';
+      } else if (item.type === "previous") {
+        ariaLabelText = "Previous page";
+      } else if (item.type === "next") {
+        ariaLabelText = "Next page";
       }
 
       const props: {
-        'aria-current'?: 'page';
-        'aria-disabled'?: boolean;
-        'aria-label': string;
+        "aria-current"?: "page";
+        "aria-disabled"?: boolean;
+        "aria-label": string;
         onClick: () => void;
         disabled: boolean;
       } = {
-        'aria-label': ariaLabelText,
+        "aria-label": ariaLabelText,
         onClick: () => {
-          if (isDisabled) return;
+          if (isDisabled) {
+            return;
+          }
 
-          if (item.type === 'page') {
+          if (item.type === "page") {
             handlePageChange(item.value);
-          } else if (item.type === 'previous') {
+          } else if (item.type === "previous") {
             previous();
-          } else if (item.type === 'next') {
+          } else if (item.type === "next") {
             next();
           }
         },
@@ -327,16 +333,24 @@ export function usePagination(props: UsePaginationProps): UsePaginationReturn {
       };
 
       if (isCurrentPage) {
-        props['aria-current'] = 'page';
+        props["aria-current"] = "page";
       }
 
       if (isDisabled) {
-        props['aria-disabled'] = true;
+        props["aria-disabled"] = true;
       }
 
       return props;
     },
-    [currentPage, hasPrevious, hasNext, disabled, handlePageChange, previous, next]
+    [
+      currentPage,
+      hasPrevious,
+      hasNext,
+      disabled,
+      handlePageChange,
+      previous,
+      next,
+    ],
   );
 
   return {

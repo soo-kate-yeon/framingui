@@ -1,8 +1,8 @@
-import { useState, useCallback, KeyboardEvent, useMemo } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { createKeyboardHandler } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent, useMemo } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
+import { createKeyboardHandler } from "../utils/keyboard";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Option in a select dropdown
@@ -77,15 +77,15 @@ export interface UseSelectReturn {
    */
   triggerProps: {
     id: string;
-    role: 'combobox';
+    role: "combobox";
     tabIndex: number;
-    'aria-haspopup': 'listbox';
-    'aria-expanded': boolean;
-    'aria-controls': string;
-    'aria-activedescendant'?: string;
-    'aria-disabled'?: boolean;
-    'aria-required'?: boolean;
-    'aria-label'?: string;
+    "aria-haspopup": "listbox";
+    "aria-expanded": boolean;
+    "aria-controls": string;
+    "aria-activedescendant"?: string;
+    "aria-disabled"?: boolean;
+    "aria-required"?: boolean;
+    "aria-label"?: string;
     onKeyDown: (event: KeyboardEvent) => void;
     onClick: () => void;
   } & Record<string, unknown>;
@@ -95,18 +95,21 @@ export interface UseSelectReturn {
    */
   listboxProps: {
     id: string;
-    role: 'listbox';
-    'aria-labelledby': string;
+    role: "listbox";
+    "aria-labelledby": string;
   };
 
   /**
    * Get props for an individual option
    */
-  getOptionProps: (option: SelectOption, index: number) => {
+  getOptionProps: (
+    option: SelectOption,
+    index: number,
+  ) => {
     id: string;
-    role: 'option';
-    'aria-selected': boolean;
-    'aria-disabled'?: boolean;
+    role: "option";
+    "aria-selected": boolean;
+    "aria-disabled"?: boolean;
     onClick: () => void;
   };
 
@@ -196,11 +199,11 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
   const {
     options,
     value: controlledValue,
-    defaultValue = '',
+    defaultValue = "",
     onChange,
     disabled = false,
     required = false,
-    placeholder = 'Select...',
+    placeholder: _placeholder = "Select...",
     id: customId,
     ariaLabel,
     ariaAttributes = {},
@@ -217,7 +220,7 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
   const [internalValue, setInternalValue] = useState(() => {
     // Validate defaultValue is in options
     const validOption = options.find((opt) => opt.value === defaultValue);
-    return validOption ? defaultValue : '';
+    return validOption ? defaultValue : "";
   });
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -228,7 +231,7 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
   // Find selected option
   const selectedOption = useMemo(
     () => options.find((opt) => opt.value === value) || null,
-    [options, value]
+    [options, value],
   );
 
   // Open/close handlers
@@ -257,7 +260,9 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
   const selectOption = useCallback(
     (optionValue: string) => {
       const option = options.find((opt) => opt.value === optionValue);
-      if (!option || option.disabled) return;
+      if (!option || option.disabled) {
+        return;
+      }
 
       // Update value
       if (!isControlled) {
@@ -270,7 +275,7 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
       // Close dropdown
       close();
     },
-    [options, isControlled, onChange, close]
+    [options, isControlled, onChange, close],
   );
 
   // Find next non-disabled option index
@@ -316,13 +321,15 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
 
       return nextIndex;
     },
-    [options]
+    [options],
   );
 
   // Keyboard navigation handler
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       const handlers: Record<string, () => void> = {
         ArrowDown: () => {
@@ -347,7 +354,7 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
             }
           }
         },
-        ' ': () => {
+        " ": () => {
           if (isOpen && highlightedIndex >= 0) {
             const option = options[highlightedIndex];
             if (option && !option.disabled) {
@@ -395,7 +402,7 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
       findNextEnabledIndex,
       options,
       selectOption,
-    ]
+    ],
   );
 
   // Click handler for trigger
@@ -413,9 +420,9 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
 
       return {
         id: optionId,
-        role: 'option' as const,
-        'aria-selected': isSelected,
-        ...(option.disabled && { 'aria-disabled': true }),
+        role: "option" as const,
+        "aria-selected": isSelected,
+        ...(option.disabled && { "aria-disabled": true }),
         onClick: () => {
           if (!option.disabled) {
             selectOption(option.value);
@@ -423,7 +430,7 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
         },
       };
     },
-    [listboxId, value, selectOption]
+    [listboxId, value, selectOption],
   );
 
   // Calculate aria-activedescendant
@@ -434,14 +441,14 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
 
   // Generate ARIA props for trigger
   const triggerAriaProps = generateAriaProps({
-    role: 'combobox',
-    'aria-haspopup': 'listbox',
-    'aria-expanded': isOpen,
-    'aria-controls': listboxId,
-    'aria-activedescendant': activeDescendant,
-    'aria-disabled': disabled,
-    'aria-required': required,
-    'aria-label': ariaLabel,
+    role: "combobox",
+    "aria-haspopup": "listbox",
+    "aria-expanded": isOpen,
+    "aria-controls": listboxId,
+    "aria-activedescendant": activeDescendant,
+    "aria-disabled": disabled,
+    "aria-required": required,
+    "aria-label": ariaLabel,
     ...ariaAttributes,
   });
 
@@ -449,22 +456,22 @@ export function useSelect(props: UseSelectProps): UseSelectReturn {
     triggerProps: {
       ...triggerAriaProps,
       id: triggerId,
-      role: 'combobox',
+      role: "combobox",
       tabIndex: disabled ? -1 : 0,
-      'aria-haspopup': 'listbox' as const,
-      'aria-expanded': isOpen,
-      'aria-controls': listboxId,
-      ...(activeDescendant && { 'aria-activedescendant': activeDescendant }),
-      ...(disabled && { 'aria-disabled': true }),
-      ...(required && { 'aria-required': true }),
-      ...(ariaLabel && { 'aria-label': ariaLabel }),
+      "aria-haspopup": "listbox" as const,
+      "aria-expanded": isOpen,
+      "aria-controls": listboxId,
+      ...(activeDescendant && { "aria-activedescendant": activeDescendant }),
+      ...(disabled && { "aria-disabled": true }),
+      ...(required && { "aria-required": true }),
+      ...(ariaLabel && { "aria-label": ariaLabel }),
       onKeyDown: handleKeyDown,
       onClick: handleTriggerClick,
     },
     listboxProps: {
       id: listboxId,
-      role: 'listbox',
-      'aria-labelledby': triggerId,
+      role: "listbox",
+      "aria-labelledby": triggerId,
     },
     getOptionProps,
     isOpen,

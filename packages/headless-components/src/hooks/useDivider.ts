@@ -1,4 +1,4 @@
-import { useUniqueId } from '../utils/id';
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useDivider hook
@@ -7,7 +7,7 @@ export interface UseDividerProps {
   /**
    * Orientation of the divider
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 
   /**
    * Whether divider is decorative (no semantic meaning)
@@ -34,9 +34,9 @@ export interface UseDividerReturn {
    */
   dividerProps: {
     id: string;
-    role?: 'separator' | 'none' | 'presentation';
-    'aria-orientation'?: 'horizontal' | 'vertical';
-    'aria-label'?: string;
+    role?: "separator" | "none" | "presentation";
+    "aria-orientation"?: "horizontal" | "vertical";
+    "aria-label"?: string;
   };
 
   /**
@@ -47,7 +47,7 @@ export interface UseDividerReturn {
   /**
    * Divider orientation
    */
-  orientation: 'horizontal' | 'vertical';
+  orientation: "horizontal" | "vertical";
 }
 
 /**
@@ -83,26 +83,26 @@ export interface UseDividerReturn {
  */
 export function useDivider(props: UseDividerProps = {}): UseDividerReturn {
   const {
-    orientation = 'horizontal',
+    orientation = "horizontal",
     decorative = false,
     label,
     id: customId,
   } = props;
 
   // Generate unique ID
-  const id = useUniqueId(customId, 'divider');
+  const id = useUniqueId(customId, "divider");
 
   // Determine role based on decorative flag
-  const role = decorative ? ('presentation' as const) : ('separator' as const);
+  const role = decorative ? ("presentation" as const) : ("separator" as const);
 
   // Build divider props
   const dividerProps = {
     id,
     role,
     // Only include aria-orientation for semantic (non-decorative) dividers
-    ...(!decorative && { 'aria-orientation': orientation }),
+    ...(!decorative && { "aria-orientation": orientation }),
     // Include aria-label when label provided (makes it semantic)
-    ...(label && { 'aria-label': label }),
+    ...(label && { "aria-label": label }),
   };
 
   return {

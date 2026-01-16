@@ -1,7 +1,6 @@
-import { useCallback } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { useUniqueId } from '../utils/id';
+import { useCallback } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
 
 /**
  * Breadcrumb item
@@ -55,21 +54,24 @@ export interface UseBreadcrumbReturn {
    * Props for the nav container
    */
   navProps: {
-    'aria-label': string;
+    "aria-label": string;
   } & Record<string, unknown>;
 
   /**
    * Props for the ordered list
    */
   listProps: {
-    role: 'list';
+    role: "list";
   };
 
   /**
    * Get props for an individual breadcrumb item
    */
-  getItemProps: (item: BreadcrumbItem, index: number) => {
-    'aria-current'?: 'page';
+  getItemProps: (
+    item: BreadcrumbItem,
+    index: number,
+  ) => {
+    "aria-current"?: "page";
     onClick?: () => void;
   };
 
@@ -122,14 +124,12 @@ export interface UseBreadcrumbReturn {
 export function useBreadcrumb(props: UseBreadcrumbProps): UseBreadcrumbReturn {
   const {
     items,
-    separator = '/',
+    separator: _separator = "/",
     onNavigate,
-    id: customId,
-    ariaLabel = 'Breadcrumb',
+    id: _customId,
+    ariaLabel = "Breadcrumb",
     ariaAttributes = {},
   } = props;
-
-  const id = useUniqueId(customId);
 
   const handleNavigate = useCallback(
     (item: BreadcrumbItem, index: number) => {
@@ -137,27 +137,27 @@ export function useBreadcrumb(props: UseBreadcrumbProps): UseBreadcrumbReturn {
         onNavigate(item, index);
       }
     },
-    [onNavigate]
+    [onNavigate],
   );
 
   const navProps = {
-    'aria-label': ariaLabel,
+    "aria-label": ariaLabel,
     ...generateAriaProps(ariaAttributes),
   };
 
   const listProps = {
-    role: 'list' as const,
+    role: "list" as const,
   };
 
   const getItemProps = useCallback(
     (item: BreadcrumbItem, index: number) => {
       const props: {
-        'aria-current'?: 'page';
+        "aria-current"?: "page";
         onClick?: () => void;
       } = {};
 
       if (item.isCurrent) {
-        props['aria-current'] = 'page';
+        props["aria-current"] = "page";
       }
 
       if (onNavigate) {
@@ -166,7 +166,7 @@ export function useBreadcrumb(props: UseBreadcrumbProps): UseBreadcrumbReturn {
 
       return props;
     },
-    [onNavigate, handleNavigate]
+    [onNavigate, handleNavigate],
   );
 
   return {

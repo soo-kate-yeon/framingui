@@ -1,8 +1,7 @@
-import { useState, useCallback, KeyboardEvent, useRef } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useSlider hook
@@ -46,7 +45,7 @@ export interface UseSliderProps {
   /**
    * Orientation of the slider
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 
   /**
    * Custom ID for the slider
@@ -73,14 +72,14 @@ export interface UseSliderReturn {
    */
   thumbProps: {
     id: string;
-    role: 'slider';
+    role: "slider";
     tabIndex: number;
-    'aria-valuemin': number;
-    'aria-valuemax': number;
-    'aria-valuenow': number;
-    'aria-orientation': 'horizontal' | 'vertical';
-    'aria-disabled'?: boolean;
-    'aria-label'?: string;
+    "aria-valuemin": number;
+    "aria-valuemax": number;
+    "aria-valuenow": number;
+    "aria-orientation": "horizontal" | "vertical";
+    "aria-disabled"?: boolean;
+    "aria-label"?: string;
     onKeyDown: (event: KeyboardEvent) => void;
   } & Record<string, unknown>;
 
@@ -88,7 +87,7 @@ export interface UseSliderReturn {
    * Props for the slider track
    */
   trackProps: {
-    'aria-hidden': true;
+    "aria-hidden": true;
   };
 
   /**
@@ -164,7 +163,7 @@ export function useSlider(props: UseSliderProps = {}): UseSliderReturn {
     max = 100,
     step = 1,
     disabled = false,
-    orientation = 'horizontal',
+    orientation = "horizontal",
     id: customId,
     ariaLabel,
     ariaAttributes = {},
@@ -172,7 +171,7 @@ export function useSlider(props: UseSliderProps = {}): UseSliderReturn {
 
   const clamp = useCallback(
     (value: number) => Math.max(min, Math.min(max, value)),
-    [min, max]
+    [min, max],
   );
 
   const initialValue = clamp(defaultValue !== undefined ? defaultValue : min);
@@ -184,7 +183,9 @@ export function useSlider(props: UseSliderProps = {}): UseSliderReturn {
 
   const handleValueChange = useCallback(
     (newValue: number) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       const clampedValue = clamp(newValue);
 
@@ -196,14 +197,14 @@ export function useSlider(props: UseSliderProps = {}): UseSliderReturn {
         onChange(clampedValue);
       }
     },
-    [disabled, isControlled, clamp, onChange, value]
+    [disabled, isControlled, clamp, onChange, value],
   );
 
   const setValue = useCallback(
     (newValue: number) => {
       handleValueChange(newValue);
     },
-    [handleValueChange]
+    [handleValueChange],
   );
 
   const increment = useCallback(() => {
@@ -218,58 +219,60 @@ export function useSlider(props: UseSliderProps = {}): UseSliderReturn {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       const largeStep = step * 10;
 
       switch (event.key) {
-        case 'ArrowUp':
-        case 'ArrowRight':
+        case "ArrowUp":
+        case "ArrowRight":
           event.preventDefault();
           increment();
           break;
-        case 'ArrowDown':
-        case 'ArrowLeft':
+        case "ArrowDown":
+        case "ArrowLeft":
           event.preventDefault();
           decrement();
           break;
-        case 'Home':
+        case "Home":
           event.preventDefault();
           handleValueChange(min);
           break;
-        case 'End':
+        case "End":
           event.preventDefault();
           handleValueChange(max);
           break;
-        case 'PageUp':
+        case "PageUp":
           event.preventDefault();
           handleValueChange(value + largeStep);
           break;
-        case 'PageDown':
+        case "PageDown":
           event.preventDefault();
           handleValueChange(value - largeStep);
           break;
       }
     },
-    [disabled, increment, decrement, handleValueChange, min, max, value, step]
+    [disabled, increment, decrement, handleValueChange, min, max, value, step],
   );
 
   const thumbProps = {
     id,
-    role: 'slider' as const,
+    role: "slider" as const,
     tabIndex: 0,
-    'aria-valuemin': min,
-    'aria-valuemax': max,
-    'aria-valuenow': value,
-    'aria-orientation': orientation,
-    ...(disabled && { 'aria-disabled': true }),
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    "aria-valuemin": min,
+    "aria-valuemax": max,
+    "aria-valuenow": value,
+    "aria-orientation": orientation,
+    ...(disabled && { "aria-disabled": true }),
+    ...(ariaLabel && { "aria-label": ariaLabel }),
     ...generateAriaProps(ariaAttributes),
     onKeyDown: handleKeyDown,
   };
 
   const trackProps = {
-    'aria-hidden': true as const,
+    "aria-hidden": true as const,
   };
 
   return {

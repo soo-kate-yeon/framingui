@@ -1,6 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import type { AriaAttributes } from '../types';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, useRef, useEffect } from "react";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useTooltip hook
@@ -19,7 +18,7 @@ export interface UseTooltipProps {
   /**
    * Placement of tooltip relative to trigger
    */
-  placement?: 'top' | 'bottom' | 'left' | 'right';
+  placement?: "top" | "bottom" | "left" | "right";
 
   /**
    * Whether tooltip is disabled
@@ -40,7 +39,7 @@ export interface UseTooltipReturn {
    * Props for the trigger element
    */
   triggerProps: {
-    'aria-describedby': string;
+    "aria-describedby": string;
     onMouseEnter: () => void;
     onMouseLeave: () => void;
     onFocus: () => void;
@@ -52,7 +51,7 @@ export interface UseTooltipReturn {
    */
   tooltipProps: {
     id: string;
-    role: 'tooltip';
+    role: "tooltip";
   };
 
   /**
@@ -109,7 +108,7 @@ export function useTooltip(props: UseTooltipProps = {}): UseTooltipReturn {
   const {
     showDelay = 0,
     hideDelay = 0,
-    placement = 'top',
+    placement: _placement = "top",
     disabled = false,
     id: customId,
   } = props;
@@ -122,19 +121,25 @@ export function useTooltip(props: UseTooltipProps = {}): UseTooltipReturn {
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Generate unique ID for tooltip
-  const tooltipId = useUniqueId(customId, 'tooltip');
+  const tooltipId = useUniqueId(customId, "tooltip");
 
   // Clear timers on unmount
   useEffect(() => {
     return () => {
-      if (showTimerRef.current) clearTimeout(showTimerRef.current);
-      if (hideTimerRef.current) clearTimeout(hideTimerRef.current);
+      if (showTimerRef.current) {
+        clearTimeout(showTimerRef.current);
+      }
+      if (hideTimerRef.current) {
+        clearTimeout(hideTimerRef.current);
+      }
     };
   }, []);
 
   // Show tooltip
   const show = useCallback(() => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     // Clear any pending hide timer
     if (hideTimerRef.current) {
@@ -158,7 +163,9 @@ export function useTooltip(props: UseTooltipProps = {}): UseTooltipReturn {
 
   // Handle mouse enter with delay
   const handleMouseEnter = useCallback(() => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     // Clear any pending hide timer
     if (hideTimerRef.current) {
@@ -194,7 +201,9 @@ export function useTooltip(props: UseTooltipProps = {}): UseTooltipReturn {
 
   // Handle focus (show immediately)
   const handleFocus = useCallback(() => {
-    if (disabled) return;
+    if (disabled) {
+      return;
+    }
 
     // Clear any pending hide timer
     if (hideTimerRef.current) {
@@ -218,7 +227,7 @@ export function useTooltip(props: UseTooltipProps = {}): UseTooltipReturn {
 
   return {
     triggerProps: {
-      'aria-describedby': tooltipId,
+      "aria-describedby": tooltipId,
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
       onFocus: handleFocus,
@@ -226,7 +235,7 @@ export function useTooltip(props: UseTooltipProps = {}): UseTooltipReturn {
     },
     tooltipProps: {
       id: tooltipId,
-      role: 'tooltip',
+      role: "tooltip",
     },
     isVisible,
     show,

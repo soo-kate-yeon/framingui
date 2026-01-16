@@ -1,15 +1,17 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useAvatar } from '../../src/hooks/useAvatar';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { useAvatar } from "../../src/hooks/useAvatar";
 
-describe('useAvatar', () => {
+describe("useAvatar", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('Image Loading', () => {
-    it('should show image when src provided and loaded', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+  describe("Image Loading", () => {
+    it("should show image when src provided and loaded", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
 
       // Initially loading
       expect(result.current.showImage).toBe(false);
@@ -24,14 +26,18 @@ describe('useAvatar', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    it('should set isLoading while image loading', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+    it("should set isLoading while image loading", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
       expect(result.current.isLoading).toBe(true);
     });
 
-    it('should call onLoad when image loads', () => {
+    it("should call onLoad when image loads", () => {
       const onLoad = vi.fn();
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User', onLoad }));
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User", onLoad }),
+      );
 
       act(() => {
         result.current.imageProps.onLoad();
@@ -40,8 +46,10 @@ describe('useAvatar', () => {
       expect(onLoad).toHaveBeenCalledTimes(1);
     });
 
-    it('should set isLoading=false after load', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+    it("should set isLoading=false after load", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
 
       act(() => {
         result.current.imageProps.onLoad();
@@ -51,9 +59,11 @@ describe('useAvatar', () => {
     });
   });
 
-  describe('Image Error Handling', () => {
-    it('should show fallback when image fails to load', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+  describe("Image Error Handling", () => {
+    it("should show fallback when image fails to load", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
 
       act(() => {
         result.current.imageProps.onError();
@@ -63,9 +73,11 @@ describe('useAvatar', () => {
       expect(result.current.hasError).toBe(true);
     });
 
-    it('should call onError when image fails', () => {
+    it("should call onError when image fails", () => {
       const onError = vi.fn();
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User', onError }));
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User", onError }),
+      );
 
       act(() => {
         result.current.imageProps.onError();
@@ -74,8 +86,10 @@ describe('useAvatar', () => {
       expect(onError).toHaveBeenCalledTimes(1);
     });
 
-    it('should set hasError=true on error', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+    it("should set hasError=true on error", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
 
       act(() => {
         result.current.imageProps.onError();
@@ -86,26 +100,28 @@ describe('useAvatar', () => {
     });
   });
 
-  describe('Fallback', () => {
-    it('should show fallback when no src provided', () => {
-      const { result } = renderHook(() => useAvatar({ alt: 'User' }));
+  describe("Fallback", () => {
+    it("should show fallback when no src provided", () => {
+      const { result } = renderHook(() => useAvatar({ alt: "User" }));
       expect(result.current.showImage).toBe(false);
     });
 
     it('should set role="img" on fallback', () => {
-      const { result } = renderHook(() => useAvatar({ alt: 'User' }));
-      expect(result.current.fallbackProps.role).toBe('img');
+      const { result } = renderHook(() => useAvatar({ alt: "User" }));
+      expect(result.current.fallbackProps.role).toBe("img");
     });
 
-    it('should set aria-label on fallback', () => {
-      const { result } = renderHook(() => useAvatar({ alt: 'User Avatar' }));
-      expect(result.current.fallbackProps['aria-label']).toBe('User Avatar');
+    it("should set aria-label on fallback", () => {
+      const { result } = renderHook(() => useAvatar({ alt: "User Avatar" }));
+      expect(result.current.fallbackProps["aria-label"]).toBe("User Avatar");
     });
   });
 
-  describe('Retry', () => {
-    it('should retry loading image with retry()', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+  describe("Retry", () => {
+    it("should retry loading image with retry()", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
 
       // Trigger error
       act(() => {
@@ -124,8 +140,10 @@ describe('useAvatar', () => {
       expect(result.current.isLoading).toBe(true);
     });
 
-    it('should reset error state on retry', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
+    it("should reset error state on retry", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
 
       act(() => {
         result.current.imageProps.onError();
@@ -141,21 +159,27 @@ describe('useAvatar', () => {
     });
   });
 
-  describe('Image Props', () => {
-    it('should include src in imageProps', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
-      expect(result.current.imageProps.src).toBe('/avatar.jpg');
+  describe("Image Props", () => {
+    it("should include src in imageProps", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
+      expect(result.current.imageProps.src).toBe("/avatar.jpg");
     });
 
-    it('should include alt in imageProps', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User Avatar' }));
-      expect(result.current.imageProps.alt).toBe('User Avatar');
+    it("should include alt in imageProps", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User Avatar" }),
+      );
+      expect(result.current.imageProps.alt).toBe("User Avatar");
     });
 
-    it('should include load/error handlers in imageProps', () => {
-      const { result } = renderHook(() => useAvatar({ src: '/avatar.jpg', alt: 'User' }));
-      expect(typeof result.current.imageProps.onLoad).toBe('function');
-      expect(typeof result.current.imageProps.onError).toBe('function');
+    it("should include load/error handlers in imageProps", () => {
+      const { result } = renderHook(() =>
+        useAvatar({ src: "/avatar.jpg", alt: "User" }),
+      );
+      expect(typeof result.current.imageProps.onLoad).toBe("function");
+      expect(typeof result.current.imageProps.onError).toBe("function");
     });
   });
 });

@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
-import { useTooltip } from '../../src/hooks/useTooltip';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { renderHook, act } from "@testing-library/react";
+import { useTooltip } from "../../src/hooks/useTooltip";
 
-describe('useTooltip', () => {
+describe("useTooltip", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
@@ -12,29 +12,31 @@ describe('useTooltip', () => {
     vi.useRealTimers();
   });
 
-  describe('Initialization', () => {
-    it('should initialize as hidden', () => {
+  describe("Initialization", () => {
+    it("should initialize as hidden", () => {
       const { result } = renderHook(() => useTooltip());
       expect(result.current.isVisible).toBe(false);
     });
 
-    it('should generate unique ID', () => {
+    it("should generate unique ID", () => {
       const { result: result1 } = renderHook(() => useTooltip());
       const { result: result2 } = renderHook(() => useTooltip());
 
       expect(result1.current.tooltipProps.id).toBeTruthy();
       expect(result2.current.tooltipProps.id).toBeTruthy();
-      expect(result1.current.tooltipProps.id).not.toBe(result2.current.tooltipProps.id);
+      expect(result1.current.tooltipProps.id).not.toBe(
+        result2.current.tooltipProps.id,
+      );
     });
 
-    it('should use custom ID when provided', () => {
-      const { result } = renderHook(() => useTooltip({ id: 'custom-tooltip' }));
-      expect(result.current.tooltipProps.id).toBe('custom-tooltip');
+    it("should use custom ID when provided", () => {
+      const { result } = renderHook(() => useTooltip({ id: "custom-tooltip" }));
+      expect(result.current.tooltipProps.id).toBe("custom-tooltip");
     });
   });
 
-  describe('Show/Hide', () => {
-    it('should show on mouse enter after delay', () => {
+  describe("Show/Hide", () => {
+    it("should show on mouse enter after delay", () => {
       const { result } = renderHook(() => useTooltip({ showDelay: 500 }));
 
       expect(result.current.isVisible).toBe(false);
@@ -52,7 +54,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(true);
     });
 
-    it('should hide on mouse leave after delay', () => {
+    it("should hide on mouse leave after delay", () => {
       const { result } = renderHook(() => useTooltip({ hideDelay: 200 }));
 
       act(() => {
@@ -74,7 +76,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(false);
     });
 
-    it('should show on focus', () => {
+    it("should show on focus", () => {
       const { result } = renderHook(() => useTooltip({ showDelay: 0 }));
 
       act(() => {
@@ -84,7 +86,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(true);
     });
 
-    it('should hide on blur', () => {
+    it("should hide on blur", () => {
       const { result } = renderHook(() => useTooltip({ hideDelay: 0 }));
 
       act(() => {
@@ -101,8 +103,8 @@ describe('useTooltip', () => {
     });
   });
 
-  describe('Delays', () => {
-    it('should respect showDelay', () => {
+  describe("Delays", () => {
+    it("should respect showDelay", () => {
       const { result } = renderHook(() => useTooltip({ showDelay: 1000 }));
 
       act(() => {
@@ -119,7 +121,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(true);
     });
 
-    it('should respect hideDelay', () => {
+    it("should respect hideDelay", () => {
       const { result } = renderHook(() => useTooltip({ hideDelay: 300 }));
 
       act(() => {
@@ -140,7 +142,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(false);
     });
 
-    it('should cancel show timer if mouse leaves before delay', () => {
+    it("should cancel show timer if mouse leaves before delay", () => {
       const { result } = renderHook(() => useTooltip({ showDelay: 500 }));
 
       act(() => {
@@ -158,8 +160,10 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(false);
     });
 
-    it('should cancel hide timer if mouse enters before delay', () => {
-      const { result } = renderHook(() => useTooltip({ showDelay: 0, hideDelay: 500 }));
+    it("should cancel hide timer if mouse enters before delay", () => {
+      const { result } = renderHook(() =>
+        useTooltip({ showDelay: 0, hideDelay: 500 }),
+      );
 
       act(() => {
         result.current.show();
@@ -181,22 +185,24 @@ describe('useTooltip', () => {
     });
   });
 
-  describe('ARIA Attributes', () => {
+  describe("ARIA Attributes", () => {
     it('should set role="tooltip"', () => {
       const { result } = renderHook(() => useTooltip());
-      expect(result.current.tooltipProps.role).toBe('tooltip');
+      expect(result.current.tooltipProps.role).toBe("tooltip");
     });
 
-    it('should link trigger with aria-describedby', () => {
+    it("should link trigger with aria-describedby", () => {
       const { result } = renderHook(() => useTooltip());
       const tooltipId = result.current.tooltipProps.id;
-      expect(result.current.triggerProps['aria-describedby']).toBe(tooltipId);
+      expect(result.current.triggerProps["aria-describedby"]).toBe(tooltipId);
     });
   });
 
-  describe('Disabled State', () => {
-    it('should not show when disabled', () => {
-      const { result } = renderHook(() => useTooltip({ disabled: true, showDelay: 0 }));
+  describe("Disabled State", () => {
+    it("should not show when disabled", () => {
+      const { result } = renderHook(() =>
+        useTooltip({ disabled: true, showDelay: 0 }),
+      );
 
       act(() => {
         result.current.triggerProps.onMouseEnter();
@@ -211,7 +217,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(false);
     });
 
-    it('should not allow programmatic show when disabled', () => {
+    it("should not allow programmatic show when disabled", () => {
       const { result } = renderHook(() => useTooltip({ disabled: true }));
 
       act(() => {
@@ -222,8 +228,8 @@ describe('useTooltip', () => {
     });
   });
 
-  describe('Programmatic Control', () => {
-    it('should show immediately with show method', () => {
+  describe("Programmatic Control", () => {
+    it("should show immediately with show method", () => {
       const { result } = renderHook(() => useTooltip());
 
       act(() => {
@@ -233,7 +239,7 @@ describe('useTooltip', () => {
       expect(result.current.isVisible).toBe(true);
     });
 
-    it('should hide immediately with hide method', () => {
+    it("should hide immediately with hide method", () => {
       const { result } = renderHook(() => useTooltip());
 
       act(() => {
@@ -250,9 +256,9 @@ describe('useTooltip', () => {
     });
   });
 
-  describe('Placement', () => {
-    it('should accept placement prop', () => {
-      const placements = ['top', 'bottom', 'left', 'right'] as const;
+  describe("Placement", () => {
+    it("should accept placement prop", () => {
+      const placements = ["top", "bottom", "left", "right"] as const;
 
       placements.forEach((placement) => {
         const { result } = renderHook(() => useTooltip({ placement }));

@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useUniqueId } from '../utils/id';
+import { useMemo } from "react";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useProgress hook
@@ -50,12 +50,12 @@ export interface UseProgressReturn {
    */
   progressProps: {
     id: string;
-    role: 'progressbar';
-    'aria-valuemin'?: number;
-    'aria-valuemax'?: number;
-    'aria-valuenow'?: number;
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
+    role: "progressbar";
+    "aria-valuemin"?: number;
+    "aria-valuemax"?: number;
+    "aria-valuenow"?: number;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
   };
 
   /**
@@ -125,7 +125,7 @@ export function useProgress(props: UseProgressProps = {}): UseProgressReturn {
   } = props;
 
   // Generate unique ID
-  const id = useUniqueId(customId, 'progress');
+  const id = useUniqueId(customId, "progress");
 
   // Clamp value within min/max range
   const clampedValue = useMemo(() => {
@@ -152,14 +152,14 @@ export function useProgress(props: UseProgressProps = {}): UseProgressReturn {
   // Build progress props
   const progressProps = {
     id,
-    role: 'progressbar' as const,
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
-    ...(ariaLabelledBy && { 'aria-labelledby': ariaLabelledBy }),
+    role: "progressbar" as const,
+    ...(ariaLabel && { "aria-label": ariaLabel }),
+    ...(ariaLabelledBy && { "aria-labelledby": ariaLabelledBy }),
     // Only include value attributes for determinate progress
     ...(!indeterminate && {
-      'aria-valuemin': min,
-      'aria-valuemax': max,
-      'aria-valuenow': clampedValue,
+      "aria-valuemin": min,
+      "aria-valuemax": max,
+      "aria-valuenow": clampedValue,
     }),
   };
 

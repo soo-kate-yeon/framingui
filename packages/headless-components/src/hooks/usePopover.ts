@@ -1,7 +1,6 @@
-import { useState, useCallback, useRef, useEffect, KeyboardEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { isKeyboardKey } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import { isKeyboardKey } from "../utils/keyboard";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the usePopover hook
@@ -25,7 +24,7 @@ export interface UsePopoverProps {
   /**
    * Trigger mode
    */
-  trigger?: 'click' | 'hover' | 'focus';
+  trigger?: "click" | "hover" | "focus";
 
   /**
    * Whether to close on click outside
@@ -40,7 +39,7 @@ export interface UsePopoverProps {
   /**
    * Placement relative to trigger
    */
-  placement?: 'top' | 'bottom' | 'left' | 'right';
+  placement?: "top" | "bottom" | "left" | "right";
 
   /**
    * Custom ID
@@ -56,9 +55,9 @@ export interface UsePopoverReturn {
    * Props for trigger element
    */
   triggerProps: {
-    'aria-expanded': boolean;
-    'aria-controls': string;
-    'aria-haspopup': true;
+    "aria-expanded": boolean;
+    "aria-controls": string;
+    "aria-haspopup": true;
     onClick?: () => void;
     onMouseEnter?: () => void;
     onMouseLeave?: () => void;
@@ -71,7 +70,7 @@ export interface UsePopoverReturn {
    */
   popoverProps: {
     id: string;
-    role: 'dialog';
+    role: "dialog";
     onKeyDown: (event: KeyboardEvent) => void;
   };
 
@@ -135,10 +134,10 @@ export function usePopover(props: UsePopoverProps = {}): UsePopoverReturn {
     isOpen: controlledIsOpen,
     defaultOpen = false,
     onOpenChange,
-    trigger = 'click',
-    closeOnClickOutside = true,
+    trigger = "click",
+    closeOnClickOutside: _closeOnClickOutside = true,
     closeOnEscape = true,
-    placement = 'bottom',
+    placement: _placement = "bottom",
     id: customId,
   } = props;
 
@@ -152,7 +151,7 @@ export function usePopover(props: UsePopoverProps = {}): UsePopoverReturn {
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
 
   // Generate unique ID for popover
-  const popoverId = useUniqueId(customId, 'popover');
+  const popoverId = useUniqueId(customId, "popover");
 
   // Update state and call onChange
   const updateIsOpen = useCallback(
@@ -162,7 +161,7 @@ export function usePopover(props: UsePopoverProps = {}): UsePopoverReturn {
       }
       onOpenChange?.(newIsOpen);
     },
-    [isControlled, onOpenChange]
+    [isControlled, onOpenChange],
   );
 
   // Open popover
@@ -182,35 +181,35 @@ export function usePopover(props: UsePopoverProps = {}): UsePopoverReturn {
 
   // Handle click trigger
   const handleClick = useCallback(() => {
-    if (trigger === 'click') {
+    if (trigger === "click") {
       toggle();
     }
   }, [trigger, toggle]);
 
   // Handle mouse enter
   const handleMouseEnter = useCallback(() => {
-    if (trigger === 'hover') {
+    if (trigger === "hover") {
       open();
     }
   }, [trigger, open]);
 
   // Handle mouse leave
   const handleMouseLeave = useCallback(() => {
-    if (trigger === 'hover') {
+    if (trigger === "hover") {
       close();
     }
   }, [trigger, close]);
 
   // Handle focus
   const handleFocus = useCallback(() => {
-    if (trigger === 'focus') {
+    if (trigger === "focus") {
       open();
     }
   }, [trigger, open]);
 
   // Handle blur
   const handleBlur = useCallback(() => {
-    if (trigger === 'focus') {
+    if (trigger === "focus") {
       close();
     }
   }, [trigger, close]);
@@ -218,27 +217,27 @@ export function usePopover(props: UsePopoverProps = {}): UsePopoverReturn {
   // Handle keyboard events
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (closeOnEscape && isKeyboardKey(event, 'Escape')) {
+      if (closeOnEscape && isKeyboardKey(event, "Escape")) {
         event.preventDefault();
         close();
       }
     },
-    [closeOnEscape, close]
+    [closeOnEscape, close],
   );
 
   // Build trigger props based on trigger mode
-  const triggerProps: UsePopoverReturn['triggerProps'] = {
-    'aria-expanded': isOpen,
-    'aria-controls': popoverId,
-    'aria-haspopup': true,
+  const triggerProps: UsePopoverReturn["triggerProps"] = {
+    "aria-expanded": isOpen,
+    "aria-controls": popoverId,
+    "aria-haspopup": true,
   };
 
-  if (trigger === 'click') {
+  if (trigger === "click") {
     triggerProps.onClick = handleClick;
-  } else if (trigger === 'hover') {
+  } else if (trigger === "hover") {
     triggerProps.onMouseEnter = handleMouseEnter;
     triggerProps.onMouseLeave = handleMouseLeave;
-  } else if (trigger === 'focus') {
+  } else if (trigger === "focus") {
     triggerProps.onFocus = handleFocus;
     triggerProps.onBlur = handleBlur;
   }
@@ -247,7 +246,7 @@ export function usePopover(props: UsePopoverProps = {}): UsePopoverReturn {
     triggerProps,
     popoverProps: {
       id: popoverId,
-      role: 'dialog',
+      role: "dialog",
       onKeyDown: handleKeyDown,
     },
     isOpen,

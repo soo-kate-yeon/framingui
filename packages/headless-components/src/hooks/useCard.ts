@@ -1,7 +1,7 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import type { AriaAttributes } from "../types";
+import { handleKeyboardEvent } from "../utils/keyboard";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useCard hook
@@ -62,11 +62,11 @@ export interface UseCardReturn {
    */
   cardProps: {
     id: string;
-    role?: 'button';
+    role?: "button";
     tabIndex?: number;
-    'aria-pressed'?: boolean;
-    'aria-disabled'?: boolean;
-    'aria-label'?: string;
+    "aria-pressed"?: boolean;
+    "aria-disabled"?: boolean;
+    "aria-label"?: string;
     onClick?: () => void;
     onKeyDown?: (event: KeyboardEvent) => void;
   } & Record<string, unknown>;
@@ -131,11 +131,12 @@ export function useCard(props: UseCardProps = {}): UseCardReturn {
   } = props;
 
   // Generate unique ID
-  const id = useUniqueId(customId, 'card');
+  const id = useUniqueId(customId, "card");
 
   // Manage selection state (controlled or uncontrolled)
   const [internalSelected, setInternalSelected] = useState(defaultSelected);
-  const selected = controlledSelected !== undefined ? controlledSelected : internalSelected;
+  const selected =
+    controlledSelected !== undefined ? controlledSelected : internalSelected;
 
   // Toggle selection handler
   const toggleSelection = useCallback(() => {
@@ -145,10 +146,13 @@ export function useCard(props: UseCardProps = {}): UseCardReturn {
   }, [selected, onSelectionChange]);
 
   // Set selection handler
-  const setSelected = useCallback((newSelected: boolean) => {
-    setInternalSelected(newSelected);
-    onSelectionChange?.(newSelected);
-  }, [onSelectionChange]);
+  const setSelected = useCallback(
+    (newSelected: boolean) => {
+      setInternalSelected(newSelected);
+      onSelectionChange?.(newSelected);
+    },
+    [onSelectionChange],
+  );
 
   // Click handler (only if interactive and not disabled)
   const handleClick = useCallback(() => {
@@ -158,29 +162,32 @@ export function useCard(props: UseCardProps = {}): UseCardReturn {
   }, [disabled, onClick]);
 
   // Keyboard handler (Enter/Space)
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!disabled) {
-      handleKeyboardEvent(event, ['Enter', ' '], handleClick);
-    }
-  }, [disabled, handleClick]);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (!disabled) {
+        handleKeyboardEvent(event, ["Enter", " "], handleClick);
+      }
+    },
+    [disabled, handleClick],
+  );
 
   // Build card props based on interactive mode
   const cardProps = {
     id,
     ...ariaAttributes,
-    ...(ariaLabel && { 'aria-label': ariaLabel }),
+    ...(ariaLabel && { "aria-label": ariaLabel }),
     ...(interactive && {
-      role: 'button' as const,
+      role: "button" as const,
       tabIndex: 0,
-      'aria-pressed': selected,
-      ...(disabled && { 'aria-disabled': true }),
+      "aria-pressed": selected,
+      ...(disabled && { "aria-disabled": true }),
       onClick: handleClick,
       onKeyDown: handleKeyDown,
     }),
   };
 
   return {
-    cardProps,
+    cardProps: cardProps as UseCardReturn['cardProps'],
     selected,
     toggleSelection,
     setSelected,

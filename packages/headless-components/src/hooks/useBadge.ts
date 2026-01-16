@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { useUniqueId } from '../utils/id';
+import { useMemo } from "react";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useBadge hook
@@ -45,8 +45,8 @@ export interface UseBadgeReturn {
    */
   badgeProps: {
     id: string;
-    role: 'status';
-    'aria-label'?: string;
+    role: "status";
+    "aria-label"?: string;
   };
 
   /**
@@ -110,20 +110,20 @@ export function useBadge(props: UseBadgeProps = {}): UseBadgeReturn {
   } = props;
 
   // Generate unique ID
-  const id = useUniqueId(customId, 'badge');
+  const id = useUniqueId(customId, "badge");
 
   // Format content based on max value
   const displayContent = useMemo(() => {
     if (content === undefined || content === null) {
-      return '';
+      return "";
     }
 
-    if (typeof content === 'string') {
+    if (typeof content === "string") {
       return content;
     }
 
     // Numeric content
-    if (typeof content === 'number') {
+    if (typeof content === "number") {
       if (content > max) {
         return `${max}+`;
       }
@@ -145,7 +145,7 @@ export function useBadge(props: UseBadgeProps = {}): UseBadgeReturn {
     }
 
     // For numeric content
-    if (typeof content === 'number') {
+    if (typeof content === "number") {
       if (content === 0) {
         return showZero;
       }
@@ -162,7 +162,7 @@ export function useBadge(props: UseBadgeProps = {}): UseBadgeReturn {
       return ariaLabel;
     }
 
-    if (typeof content === 'number') {
+    if (typeof content === "number") {
       return `${content} items`;
     }
 
@@ -176,8 +176,8 @@ export function useBadge(props: UseBadgeProps = {}): UseBadgeReturn {
   // Badge props
   const badgeProps = {
     id,
-    role: 'status' as const,
-    ...(generatedAriaLabel && { 'aria-label': generatedAriaLabel }),
+    role: "status" as const,
+    ...(generatedAriaLabel && { "aria-label": generatedAriaLabel }),
   };
 
   return {

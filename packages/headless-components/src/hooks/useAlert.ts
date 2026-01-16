@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
-import type { AriaAttributes } from '../types';
-import { useUniqueId } from '../utils/id';
+import { useCallback } from "react";
+import type { AriaAttributes } from "../types";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Alert variant
  */
-export type AlertVariant = 'info' | 'success' | 'warning' | 'error';
+export type AlertVariant = "info" | "success" | "warning" | "error";
 
 /**
  * Props for the useAlert hook
@@ -51,17 +51,17 @@ export interface UseAlertReturn {
    */
   alertProps: {
     id: string;
-    role: 'alert' | 'status';
-    'aria-live': 'polite' | 'assertive';
-    'aria-atomic': true;
-    'aria-label'?: string;
+    role: "alert" | "status";
+    "aria-live": "polite" | "assertive";
+    "aria-atomic": true;
+    "aria-label"?: string;
   } & Record<string, unknown>;
 
   /**
    * Props for the dismiss button
    */
   dismissButtonProps: {
-    'aria-label': string;
+    "aria-label": string;
     onClick: () => void;
   };
 
@@ -109,8 +109,8 @@ export interface UseAlertReturn {
  */
 export function useAlert(props: UseAlertProps = {}): UseAlertReturn {
   const {
-    variant = 'info',
-    dismissible = false,
+    variant = "info",
+    dismissible: _dismissible = false,
     onDismiss,
     id: customId,
     ariaLabel,
@@ -118,17 +118,19 @@ export function useAlert(props: UseAlertProps = {}): UseAlertReturn {
   } = props;
 
   // Generate unique ID for alert
-  const alertId = useUniqueId(customId, 'alert');
+  const alertId = useUniqueId(customId, "alert");
 
   // Determine role based on variant
   // error/warning use "alert" for immediate attention
   // info/success use "status" for less urgent updates
-  const role: 'alert' | 'status' = variant === 'error' || variant === 'warning' ? 'alert' : 'status';
+  const role: "alert" | "status" =
+    variant === "error" || variant === "warning" ? "alert" : "status";
 
   // Determine aria-live based on variant
   // error/warning use "assertive" for immediate announcement
   // info/success use "polite" for non-interrupting announcement
-  const ariaLive: 'polite' | 'assertive' = variant === 'error' || variant === 'warning' ? 'assertive' : 'polite';
+  const ariaLive: "polite" | "assertive" =
+    variant === "error" || variant === "warning" ? "assertive" : "polite";
 
   // Dismiss handler
   const dismiss = useCallback(() => {
@@ -139,20 +141,20 @@ export function useAlert(props: UseAlertProps = {}): UseAlertReturn {
   const alertProps = {
     id: alertId,
     role,
-    'aria-live': ariaLive,
-    'aria-atomic': true as const,
-    'aria-label': ariaLabel,
+    "aria-live": ariaLive,
+    "aria-atomic": true as const,
+    "aria-label": ariaLabel,
     ...ariaAttributes,
   };
 
   // Dismiss button props
   const dismissButtonProps = {
-    'aria-label': 'Dismiss alert',
+    "aria-label": "Dismiss alert",
     onClick: dismiss,
   };
 
   return {
-    alertProps,
+    alertProps: alertProps as UseAlertReturn['alertProps'],
     dismissButtonProps,
     variant,
     dismiss,
