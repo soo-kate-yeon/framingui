@@ -111,6 +111,21 @@ Maximum accessibility with WCAG AAA compliance.
 - Primary: High saturation blue (220°)
 - Best for: Accessibility-first applications
 
+## Architecture Overview
+
+The Token Contract system provides a comprehensive token management layer with:
+
+- **Token Transformation Pipeline**: Validates tokens through Zod schemas, ensures WCAG compliance, and generates CSS variables
+- **7 Curated Presets**: Professional, Creative, Minimal, Bold, Warm, Cool, High-Contrast design systems
+- **CSS Variable Generation**: Automatic conversion to CSS custom properties with dark mode support
+- **React Integration**: ThemeProvider context with optimized re-rendering
+
+```
+OKLCH Tokens → Zod Validation → WCAG Check → CSS Variables → ThemeProvider → Components
+```
+
+For detailed architecture documentation including system diagrams, see [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md).
+
 ## API Reference
 
 ### Presets
@@ -321,6 +336,73 @@ This package includes comprehensive tests:
 - Unit tests for all modules
 - Integration tests with OKLCH system
 - React component testing with @testing-library/react
+
+## Troubleshooting
+
+### CSS Variables Not Updating
+
+**Issue**: CSS variables not updating when theme changes.
+
+**Solution**: Ensure ThemeProvider is at the root of your component tree:
+
+```tsx
+// ✅ Correct
+function App() {
+  return (
+    <ThemeProvider defaultPreset="professional">
+      <div>
+        <YourApp />
+      </div>
+    </ThemeProvider>
+  );
+}
+```
+
+### OKLCH Colors Not Rendering
+
+**Issue**: OKLCH colors displaying as black or not rendering.
+
+**Solution**: Check browser compatibility. OKLCH requires Chrome 111+, Firefox 113+, or Safari 15.4+. Add fallback for older browsers:
+
+```css
+.button {
+  background-color: #3b82f6; /* RGB fallback */
+  background-color: var(--tekton-primary-500); /* OKLCH preferred */
+}
+```
+
+### Dark Mode Not Applying
+
+**Issue**: Dark mode toggle not applying dark theme.
+
+**Solution**: Verify `data-theme` attribute is set on root element:
+
+```tsx
+import { useEffect } from 'react';
+import { useTheme } from '@tekton/token-contract';
+
+function App() {
+  const { darkMode } = useTheme();
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
+
+  return <YourApp />;
+}
+```
+
+For more troubleshooting tips, see [docs/INTEGRATION.md](./docs/INTEGRATION.md#troubleshooting).
+
+## Documentation
+
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - System architecture with Mermaid diagrams
+- **[INTEGRATION.md](./docs/INTEGRATION.md)** - Integration patterns with CSS-in-JS libraries
+- **[MIGRATION.md](./docs/MIGRATION.md)** - Migration guides from Tailwind, Chakra UI, Material-UI
+- **[API.md](./docs/API.md)** - Complete API reference
+- **[BEST-PRACTICES.md](./docs/BEST-PRACTICES.md)** - Recommended patterns and decision trees
+- **[CHANGELOG.md](./CHANGELOG.md)** - Version history
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - Contribution guidelines
 
 ## License
 
