@@ -34,8 +34,8 @@
 │   ┌─────────────────┐    ┌─────────────────┐    ┌──────────────┐ │
 │   │  Studio Web     │    │  Studio API     │    │  Studio MCP  │ │
 │   │  (Next.js 16)   │◄──►│  (FastAPI)      │◄──►│  (MCP Server)│ │
-│   │  - UI Preview   │    │  - Presets CRUD │    │  - Brand DNA │ │
-│   │  - Editor       │    │  - PostgreSQL   │    │  - 5-Axis    │ │
+│   │  - UI Preview   │    │  - Presets CRUD │    │  - Archetype │ │
+│   │  - Editor       │    │  - PostgreSQL   │    │  - MCP Tools │ │
 │   └────────┬────────┘    └────────┬────────┘    └──────┬───────┘ │
 │            │                      │                     │         │
 │   ┌────────▼──────────────────────▼─────────────────────▼──────┐ │
@@ -71,7 +71,7 @@
 |---------|---------|----------|
 | `@tekton/studio-web` | Web-based design studio UI | `packages/studio-web/` |
 | `@tekton/studio-api` | REST API for presets management | `packages/studio-api/` |
-| `@tekton/studio-mcp` | MCP server for Brand DNA | `packages/studio-mcp/` |
+| `@tekton/studio-mcp` | MCP server for Archetypes | `packages/studio-mcp/` |
 | `@tekton/token-contract` | Design token → CSS mapping | `packages/token-contract/` |
 | `@tekton/headless-components` | Unstyled React hooks | `packages/headless-components/` |
 | `@tekton/archetype-system` | Component archetype rules | `packages/archetype-system/` |
@@ -117,7 +117,6 @@ API_PORT=8000
 
 **Studio MCP** (`packages/studio-mcp/.env`):
 ```env
-STORAGE_PATH=.tekton/brand-dna
 MCP_PORT=3000
 ```
 
@@ -209,29 +208,32 @@ curl http://localhost:8000/api/v2/health
 ### Overview
 
 The MCP (Model Context Protocol) server enables AI assistants to:
-- Read and write Brand DNA configurations
-- Interpret 5-axis personality values into design tokens
-- Generate CSS variables from Brand DNA
+- Query hook archetypes for component generation
+- Access 4-layer archetype data (prop rules, state mappings, variants, structures)
+- Search archetypes by WCAG level, state names, and other criteria
 
-### Brand DNA 5-Axis System
+### Archetype System Architecture
 
-| Axis | Range | Low (0) | Mid (0.5) | High (1) |
-|------|-------|---------|-----------|----------|
-| **Density** | 0-1 | Generous spacing | Comfortable | Compact |
-| **Warmth** | 0-1 | Cool colors | Neutral | Warm colors |
-| **Playfulness** | 0-1 | Sharp corners | Moderate | Round corners |
-| **Sophistication** | 0-1 | Casual | Balanced | Elegant |
-| **Energy** | 0-1 | Low intensity | Medium | High intensity |
+The archetype system provides structured data for AI-driven component generation:
+
+| Layer | Description | Content |
+|-------|-------------|---------|
+| **Layer 1** | Hook Prop Rules | Maps hooks to prop objects and base CSS styles |
+| **Layer 2** | State-Style Mappings | Visual feedback rules for component states |
+| **Layer 3** | Variant Branching | Conditional styling based on configuration |
+| **Layer 4** | Structure Templates | HTML/JSX patterns and accessibility rules |
 
 ### MCP Tools Available
 
 | Tool | Description |
 |------|-------------|
-| `brand-dna.create` | Create new Brand DNA configuration |
-| `brand-dna.read` | Read existing Brand DNA |
-| `brand-dna.update` | Update Brand DNA axes |
-| `brand-dna.interpret` | Convert axes to design tokens |
-| `brand-dna.export-css` | Export as CSS variables |
+| `archetype.list` | List all available hooks |
+| `archetype.get` | Get complete archetype for a hook |
+| `archetype.getPropRules` | Get Layer 1 (hook prop rules) |
+| `archetype.getStateMappings` | Get Layer 2 (state-style mappings) |
+| `archetype.getVariants` | Get Layer 3 (variant branching) |
+| `archetype.getStructure` | Get Layer 4 (structure templates) |
+| `archetype.query` | Search by criteria (WCAG level, state name) |
 
 ### Workflow Verification
 
@@ -242,49 +244,38 @@ The MCP (Model Context Protocol) server enables AI assistants to:
 curl http://localhost:3000/health
 
 # Expected response:
-# {"status": "ok", "tools": ["brand-dna.create", "brand-dna.read", ...]}
+# {"status": "ok", "service": "studio-mcp", "tools": ["archetype.list", ...]}
 ```
 
-#### Step 2: Create Brand DNA
+#### Step 2: List Available Hooks
 
 ```bash
-# Create a new Brand DNA configuration
-curl -X POST http://localhost:3000/tools/brand-dna.create \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "my-brand",
-    "axes": {
-      "density": 0.5,
-      "warmth": 0.6,
-      "playfulness": 0.4,
-      "sophistication": 0.7,
-      "energy": 0.5
-    }
-  }'
+# List all hooks with archetypes
+curl -X POST http://localhost:3000/tools/archetype.list
 
-# Expected: Brand DNA created with ID
+# Expected: { "success": true, "data": ["useButton", "useTextField", ...] }
 ```
 
-#### Step 3: Interpret Axes
+#### Step 3: Get Hook Archetype
 
 ```bash
-# Interpret axes into design characteristics
-curl -X POST http://localhost:3000/tools/brand-dna.interpret \
+# Get complete archetype for useButton
+curl -X POST http://localhost:3000/tools/archetype.get \
   -H "Content-Type: application/json" \
-  -d '{"name": "my-brand"}'
+  -d '{"hookName": "useButton"}'
 
-# Expected: Design token characteristics
+# Expected: Complete archetype with all 4 layers
 ```
 
-#### Step 4: Export CSS
+#### Step 4: Query by Criteria
 
 ```bash
-# Export as CSS variables
-curl -X POST http://localhost:3000/tools/brand-dna.export-css \
+# Find all AA-compliant archetypes
+curl -X POST http://localhost:3000/tools/archetype.query \
   -H "Content-Type: application/json" \
-  -d '{"name": "my-brand"}'
+  -d '{"wcagLevel": "AA"}'
 
-# Expected: CSS with --tekton-* variables
+# Expected: Array of matching archetypes
 ```
 
 #### Step 5: Verify Claude Integration
@@ -295,11 +286,11 @@ Configure Claude Code to use the MCP server:
 // .claude/settings.json
 {
   "mcpServers": {
-    "tekton-brand-dna": {
+    "tekton-archetypes": {
       "command": "node",
-      "args": ["packages/studio-mcp/dist/index.js"],
+      "args": ["packages/studio-mcp/dist/server/index.js"],
       "env": {
-        "STORAGE_PATH": ".tekton/brand-dna"
+        "MCP_PORT": "3000"
       }
     }
   }
@@ -308,19 +299,19 @@ Configure Claude Code to use the MCP server:
 
 In Claude, verify access:
 ```
-> What Brand DNA configurations are available?
-> Create a Brand DNA with high energy and playfulness
+> What hooks are available?
+> Show me the useButton archetype
+> Find all AA-compliant components
 ```
 
 ### Verification Checklist
 
 - [ ] MCP server starts without errors
 - [ ] Health endpoint returns tool list
-- [ ] Brand DNA creation works
-- [ ] Axis interpretation returns tokens
-- [ ] CSS export generates valid variables
+- [ ] Hook listing returns all 20 hooks
+- [ ] Archetype retrieval returns 4-layer data
+- [ ] Query filtering works correctly
 - [ ] Claude can access MCP tools
-- [ ] Storage persists in `.tekton/brand-dna/`
 
 ---
 
@@ -1057,9 +1048,9 @@ Use this checklist to verify the complete Tekton system is working:
 ### MCP Integration
 
 - [ ] MCP health check passes
-- [ ] Brand DNA creation works
-- [ ] Axis interpretation returns tokens
-- [ ] CSS export generates valid variables
+- [ ] Hook listing returns all hooks
+- [ ] Archetype retrieval works
+- [ ] Query filtering works correctly
 - [ ] Claude Code can access MCP tools
 
 ### Environment Detection
@@ -1097,7 +1088,7 @@ Use this checklist to verify the complete Tekton system is working:
 
 ### Integration Flow
 
-- [ ] Brand DNA → Token Generation → CSS Variables → Component Styling
+- [ ] Archetype → Component Generation → CSS Variables → Component Styling
 - [ ] Environment Detection → Platform-Specific Generation
 - [ ] Intent → Component Suggestions → Screen Generation
 
@@ -1219,11 +1210,13 @@ DELETE /api/v2/presets/{id}
 ### MCP Tools
 
 ```bash
-brand-dna.create    # Create Brand DNA
-brand-dna.read      # Read Brand DNA
-brand-dna.update    # Update Brand DNA
-brand-dna.interpret # Interpret axes
-brand-dna.export-css # Export CSS
+archetype.list          # List all hooks
+archetype.get           # Get complete archetype
+archetype.getPropRules  # Get Layer 1 (prop rules)
+archetype.getStateMappings  # Get Layer 2 (state mappings)
+archetype.getVariants   # Get Layer 3 (variants)
+archetype.getStructure  # Get Layer 4 (structure)
+archetype.query         # Search by criteria
 ```
 
 ---

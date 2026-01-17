@@ -83,7 +83,7 @@ export function validateHookPropRule(rule: HookPropRule): ValidationResult {
 
   // Validate no hardcoded color values
   for (const baseStyle of rule.baseStyles) {
-    for (const [property, value] of Object.entries(baseStyle.cssProperties)) {
+    for (const [, value] of Object.entries(baseStyle.cssProperties)) {
       // Check for hardcoded hex colors
       if (value.match(/#[0-9a-fA-F]{3,8}/)) {
         errors.push('Hardcoded color values not allowed');
@@ -142,7 +142,9 @@ export function validateHookName(hookName: string): boolean {
  */
 export function extractCSSVariables(value: string): string[] {
   const matches = value.match(/var\((--tekton-[^)]+)\)/g);
-  if (!matches) return [];
+  if (!matches) {
+    return [];
+  }
 
   return matches.map((match) => {
     const varName = match.match(/var\((--tekton-[^)]+)\)/)?.[1];

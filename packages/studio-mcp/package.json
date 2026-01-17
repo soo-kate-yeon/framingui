@@ -1,7 +1,7 @@
 {
   "name": "@tekton/studio-mcp",
   "version": "0.1.0",
-  "description": "Brand DNA MCP Integration for Tekton Studio",
+  "description": "Archetype MCP Integration for Tekton Studio - exposes hook archetype data via Model Context Protocol",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,7 +9,14 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./server": {
+      "import": "./dist/server/index.js",
+      "types": "./dist/server/index.d.ts"
     }
+  },
+  "bin": {
+    "studio-mcp": "./dist/server/index.js"
   },
   "scripts": {
     "test": "vitest run",
@@ -17,11 +24,13 @@
     "test:coverage": "vitest run --coverage --coverage.reporter=html --coverage.reporter=text --coverage.reporter=json",
     "build": "tsc",
     "dev": "tsc --watch",
+    "start": "node ./dist/server/index.js",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
+    "@tekton/archetype-system": "workspace:*",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -35,5 +44,14 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "archetype",
+    "hooks",
+    "component-generation",
+    "design-system",
+    "tekton"
+  ]
 }

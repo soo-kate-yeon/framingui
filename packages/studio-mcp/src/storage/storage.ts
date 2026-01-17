@@ -1,57 +1,49 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { BrandDNASchema, type BrandDNA } from "../brand-dna/schema.js";
+import { z, type ZodSchema } from "zod";
 
 /**
- * Default storage base path
+ * Default storage base path for archetypes
  */
-const DEFAULT_STORAGE_PATH = ".tekton/brand-dna";
+const DEFAULT_STORAGE_PATH = ".tekton/archetypes";
 
 /**
- * Get the full file path for a brand DNA file
+ * Get the full file path for an archetype file
  */
-function getBrandFilePath(
-  projectId: string,
-  brandId: string,
-  basePath?: string,
-): string {
+function getArchetypeFilePath(hookName: string, basePath?: string): string {
   const storagePath = basePath || DEFAULT_STORAGE_PATH;
-  return path.join(storagePath, projectId, `${brandId}.json`);
+  return path.join(storagePath, `${hookName}.json`);
 }
 
 /**
- * Get the project directory path
- */
-function getProjectDir(projectId: string, basePath?: string): string {
-  const storagePath = basePath || DEFAULT_STORAGE_PATH;
-  return path.join(storagePath, projectId);
-}
-
-/**
- * Save Brand DNA to JSON file
+ * Save archetype data to JSON file
  *
- * @param projectId - Project identifier
- * @param brandId - Brand identifier
- * @param brandDNA - Brand DNA object to save
- * @param basePath - Optional base path for storage (default: .tekton/brand-dna)
- * @throws Error if save operation fails
+ * @param hookName - Hook name identifier
+ * @param data - Archetype data object to save
+ * @param schema - Zod schema for validation
+ * @param basePath - Optional base path for storage
+ * @throws Error if validation or save operation fails
  */
-export async function saveBrandDNA(
-  projectId: string,
-  brandId: string,
-  brandDNA: BrandDNA,
+export async function saveArchetype<T>(
+  hookName: string,
+  data: T,
+  schema: ZodSchema<T>,
   basePath?: string,
 ): Promise<void> {
-  const filePath = getBrandFilePath(projectId, brandId, basePath);
-  const projectDir = getProjectDir(projectId, basePath);
+  // Validate data against schema
+  schema.parse(data);
+
+  const filePath = getArchetypeFilePath(hookName, basePath);
+  const storagePath = basePath || DEFAULT_STORAGE_PATH;
 
   // Create directory structure if it doesn't exist
-  await fs.mkdir(projectDir, { recursive: true });
+  await fs.mkdir(storagePath, { recursive: true });
 
-  // Update updatedAt timestamp
-  const dataToSave: BrandDNA = {
-    ...brandDNA,
-    updatedAt: new Date(),
+  // Add metadata
+  const dataToSave = {
+    hookName,
+    data,
+    updatedAt: new Date().toISOString(),
   };
 
   // Write to file with pretty formatting
@@ -60,20 +52,20 @@ export async function saveBrandDNA(
 }
 
 /**
- * Load Brand DNA from JSON file
+ * Load archetype data from JSON file
  *
- * @param projectId - Project identifier
- * @param brandId - Brand identifier
- * @param basePath - Optional base path for storage (default: .tekton/brand-dna)
- * @returns Validated Brand DNA object
+ * @param hookName - Hook name identifier
+ * @param schema - Zod schema for validation
+ * @param basePath - Optional base path for storage
+ * @returns Validated archetype data
  * @throws Error if file does not exist or validation fails
  */
-export async function loadBrandDNA(
-  projectId: string,
-  brandId: string,
+export async function loadArchetype<T>(
+  hookName: string,
+  schema: ZodSchema<T>,
   basePath?: string,
-): Promise<BrandDNA> {
-  const filePath = getBrandFilePath(projectId, brandId, basePath);
+): Promise<T> {
+  const filePath = getArchetypeFilePath(hookName, basePath);
 
   try {
     // Read file content
@@ -81,70 +73,87 @@ export async function loadBrandDNA(
     const rawData = JSON.parse(fileContent);
 
     // Validate and parse with Zod schema
-    const brandDNA = BrandDNASchema.parse(rawData);
+    const data = schema.parse(rawData.data);
 
-    return brandDNA;
+    return data;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      throw new Error(
-        `Brand DNA not found: ${brandId} in project ${projectId}`,
-      );
+      throw new Error(`Archetype not found: ${hookName}`);
     }
     throw error;
   }
 }
 
 /**
- * List all Brand DNA files for a project
+ * List all archetype files in storage
  *
- * @param projectId - Project identifier
- * @param basePath - Optional base path for storage (default: .tekton/brand-dna)
- * @returns Array of Brand DNA objects
+ * @param basePath - Optional base path for storage
+ * @returns Array of hook names with stored archetypes
  */
-export async function listBrandDNA(
-  projectId: string,
-  basePath?: string,
-): Promise<BrandDNA[]> {
-  const projectDir = getProjectDir(projectId, basePath);
+export async function listArchetypes(basePath?: string): Promise<string[]> {
+  const storagePath = basePath || DEFAULT_STORAGE_PATH;
 
   try {
-    // Check if project directory exists
-    await fs.access(projectDir);
+    // Check if directory exists
+    await fs.access(storagePath);
   } catch {
     // Directory doesn't exist, return empty array
     return [];
   }
 
   try {
-    // Read all files in project directory
-    const files = await fs.readdir(projectDir);
+    // Read all files in directory
+    const files = await fs.readdir(storagePath);
 
-    // Filter for JSON files
-    const jsonFiles = files.filter((file) => file.endsWith(".json"));
+    // Filter for JSON files and extract hook names
+    return files
+      .filter((file) => file.endsWith(".json"))
+      .map((file) => path.basename(file, ".json"));
+  } catch {
+    return [];
+  }
+}
 
-    // Load and validate each brand DNA file
-    const brandDNAs: BrandDNA[] = [];
+/**
+ * Delete archetype data from storage
+ *
+ * @param hookName - Hook name identifier
+ * @param basePath - Optional base path for storage
+ * @throws Error if file does not exist
+ */
+export async function deleteArchetype(
+  hookName: string,
+  basePath?: string,
+): Promise<void> {
+  const filePath = getArchetypeFilePath(hookName, basePath);
 
-    for (const file of jsonFiles) {
-      try {
-        const brandId = path.basename(file, ".json");
-        const brandDNA = await loadBrandDNA(projectId, brandId, basePath);
-        brandDNAs.push(brandDNA);
-      } catch (error) {
-        // Skip invalid files
-        console.warn(`Skipping invalid brand DNA file: ${file}`, error);
-      }
-    }
-
-    return brandDNAs;
+  try {
+    await fs.unlink(filePath);
   } catch (error) {
-    // Coverage Note: Lines 141-144 uncovered (2% gap)
-    // This error handler catches extreme directory access failures that don't
-    // occur in normal operations (e.g., directory deleted mid-execution, permission
-    // denied at OS level after initial check passes). These scenarios are not
-    // reproducible in unit tests without complex mocking and are acceptable edge cases.
-    throw new Error(
-      `Failed to list brand DNAs for project ${projectId}: ${error}`,
-    );
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      throw new Error(`Archetype not found: ${hookName}`);
+    }
+    throw error;
+  }
+}
+
+/**
+ * Check if archetype exists in storage
+ *
+ * @param hookName - Hook name identifier
+ * @param basePath - Optional base path for storage
+ * @returns True if archetype exists
+ */
+export async function archetypeExists(
+  hookName: string,
+  basePath?: string,
+): Promise<boolean> {
+  const filePath = getArchetypeFilePath(hookName, basePath);
+
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
   }
 }
