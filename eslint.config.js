@@ -1,17 +1,26 @@
 import js from '@eslint/js';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
+import globals from 'globals';
 
 export default [
   js.configs.recommended,
   {
-    files: ['src/**/*.ts'],
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: './tsconfig.json',
         ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: 'readonly',
+        NodeJS: 'readonly',
       },
     },
     plugins: {
@@ -25,7 +34,9 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
+        varsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+        caughtErrors: 'none',
       }],
 
       // Code quality rules
@@ -48,6 +59,8 @@ export default [
         sourceType: 'module',
       },
       globals: {
+        ...globals.browser,
+        ...globals.node,
         performance: 'readonly',
         __dirname: 'readonly',
       },

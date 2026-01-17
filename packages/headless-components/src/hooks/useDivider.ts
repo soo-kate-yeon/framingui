@@ -1,4 +1,4 @@
-import { useUniqueId } from '../utils/id';
+import { useUniqueId } from "../utils/id";
 
 /**
  * Props for the useDivider hook
@@ -7,7 +7,7 @@ export interface UseDividerProps {
   /**
    * Orientation of the divider
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 
   /**
    * Whether divider is decorative (no semantic meaning)
@@ -34,9 +34,9 @@ export interface UseDividerReturn {
    */
   dividerProps: {
     id: string;
-    role?: 'separator' | 'none' | 'presentation';
-    'aria-orientation'?: 'horizontal' | 'vertical';
-    'aria-label'?: string;
+    role?: "separator" | "none" | "presentation";
+    "aria-orientation"?: "horizontal" | "vertical";
+    "aria-label"?: string;
   };
 
   /**
@@ -47,7 +47,7 @@ export interface UseDividerReturn {
   /**
    * Divider orientation
    */
-  orientation: 'horizontal' | 'vertical';
+  orientation: "horizontal" | "vertical";
 }
 
 /**
@@ -83,17 +83,31 @@ export interface UseDividerReturn {
  */
 export function useDivider(props: UseDividerProps = {}): UseDividerReturn {
   const {
-    orientation = 'horizontal',
+    orientation = "horizontal",
     decorative = false,
     label,
     id: customId,
   } = props;
 
-  // TODO: Generate unique ID
-  // TODO: Set role based on decorative flag
-  // TODO: Set aria-orientation for semantic dividers
-  // TODO: Set aria-label when label provided
-  // TODO: Return divider props
+  // Generate unique ID
+  const id = useUniqueId(customId, "divider");
 
-  throw new Error('useDivider: Implementation pending');
+  // Determine role based on decorative flag
+  const role = decorative ? ("presentation" as const) : ("separator" as const);
+
+  // Build divider props
+  const dividerProps = {
+    id,
+    role,
+    // Only include aria-orientation for semantic (non-decorative) dividers
+    ...(!decorative && { "aria-orientation": orientation }),
+    // Include aria-label when label provided (makes it semantic)
+    ...(label && { "aria-label": label }),
+  };
+
+  return {
+    dividerProps,
+    isDecorative: decorative,
+    orientation,
+  };
 }

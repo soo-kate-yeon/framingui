@@ -1,7 +1,6 @@
-import { useCallback } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { useUniqueId } from '../utils/id';
+import { useCallback } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
 
 /**
  * Breadcrumb item
@@ -55,21 +54,24 @@ export interface UseBreadcrumbReturn {
    * Props for the nav container
    */
   navProps: {
-    'aria-label': string;
+    "aria-label": string;
   } & Record<string, unknown>;
 
   /**
    * Props for the ordered list
    */
   listProps: {
-    role: 'list';
+    role: "list";
   };
 
   /**
    * Get props for an individual breadcrumb item
    */
-  getItemProps: (item: BreadcrumbItem, index: number) => {
-    'aria-current'?: 'page';
+  getItemProps: (
+    item: BreadcrumbItem,
+    index: number,
+  ) => {
+    "aria-current"?: "page";
     onClick?: () => void;
   };
 
@@ -122,18 +124,55 @@ export interface UseBreadcrumbReturn {
 export function useBreadcrumb(props: UseBreadcrumbProps): UseBreadcrumbReturn {
   const {
     items,
-    separator = '/',
+    separator: _separator = "/",
     onNavigate,
-    id: customId,
-    ariaLabel = 'Breadcrumb',
+    id: _customId,
+    ariaLabel = "Breadcrumb",
     ariaAttributes = {},
   } = props;
 
-  // TODO: Implement navigation handler
-  // TODO: Generate nav props with aria-label="Breadcrumb"
-  // TODO: Generate list props with role="list"
-  // TODO: Generate item props with aria-current="page" for current item
-  // TODO: Return prop generators and item count
+  const handleNavigate = useCallback(
+    (item: BreadcrumbItem, index: number) => {
+      if (onNavigate) {
+        onNavigate(item, index);
+      }
+    },
+    [onNavigate],
+  );
 
-  throw new Error('useBreadcrumb: Implementation pending');
+  const navProps = {
+    "aria-label": ariaLabel,
+    ...generateAriaProps(ariaAttributes),
+  };
+
+  const listProps = {
+    role: "list" as const,
+  };
+
+  const getItemProps = useCallback(
+    (item: BreadcrumbItem, index: number) => {
+      const props: {
+        "aria-current"?: "page";
+        onClick?: () => void;
+      } = {};
+
+      if (item.isCurrent) {
+        props["aria-current"] = "page";
+      }
+
+      if (onNavigate) {
+        props.onClick = () => handleNavigate(item, index);
+      }
+
+      return props;
+    },
+    [onNavigate, handleNavigate],
+  );
+
+  return {
+    navProps,
+    listProps,
+    getItemProps,
+    itemCount: items.length,
+  };
 }

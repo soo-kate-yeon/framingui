@@ -1,8 +1,8 @@
-import { useState, useCallback, KeyboardEvent } from 'react';
-import type { AriaAttributes } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { isKeyboardKey, handleKeyboardEvent } from '../utils/keyboard';
-import { useUniqueId } from '../utils/id';
+import { useState, useCallback, KeyboardEvent } from "react";
+import type { AriaAttributes } from "../types";
+import { generateAriaProps } from "../utils/aria";
+import { createKeyboardHandler } from "../utils/keyboard";
+import { useUniqueId } from "../utils/id";
 
 /**
  * Tab item in a tab list
@@ -45,7 +45,7 @@ export interface UseTabsProps {
   /**
    * Orientation of tab list
    */
-  orientation?: 'horizontal' | 'vertical';
+  orientation?: "horizontal" | "vertical";
 
   /**
    * Custom ID prefix for tabs
@@ -71,21 +71,24 @@ export interface UseTabsReturn {
    * Props for the tab list container
    */
   tabListProps: {
-    role: 'tablist';
-    'aria-orientation': 'horizontal' | 'vertical';
-    'aria-label'?: string;
+    role: "tablist";
+    "aria-orientation": "horizontal" | "vertical";
+    "aria-label"?: string;
   } & Record<string, unknown>;
 
   /**
    * Get props for an individual tab
    */
-  getTabProps: (tab: TabItem, index: number) => {
+  getTabProps: (
+    tab: TabItem,
+    index: number,
+  ) => {
     id: string;
-    role: 'tab';
+    role: "tab";
     tabIndex: number;
-    'aria-selected': boolean;
-    'aria-disabled'?: boolean;
-    'aria-controls': string;
+    "aria-selected": boolean;
+    "aria-disabled"?: boolean;
+    "aria-controls": string;
     onKeyDown: (event: KeyboardEvent) => void;
     onClick: () => void;
   };
@@ -95,8 +98,8 @@ export interface UseTabsReturn {
    */
   getTabPanelProps: (tabId: string) => {
     id: string;
-    role: 'tabpanel';
-    'aria-labelledby': string;
+    role: "tabpanel";
+    "aria-labelledby": string;
     tabIndex: number;
   };
 
@@ -163,21 +166,196 @@ export function useTabs(props: UseTabsProps): UseTabsReturn {
     defaultActiveTab,
     onChange,
     disabled = false,
-    orientation = 'horizontal',
+    orientation = "horizontal",
     id: customId,
     ariaLabel,
     ariaAttributes = {},
   } = props;
 
-  // TODO: Implement controlled/uncontrolled state management
-  // TODO: Implement tab selection handler
-  // TODO: Implement keyboard navigation based on orientation
-  // TODO: Arrow Left/Right for horizontal, Up/Down for vertical
-  // TODO: Implement Home/End key support
-  // TODO: Generate unique IDs for tabs and panels
-  // TODO: Generate ARIA props for tab list, tabs, and panels
-  // TODO: Handle focus management between tabs
-  // TODO: Return tab list, tab, and panel prop generators
+  // Generate unique ID prefix
+  const idPrefix = useUniqueId(customId);
 
-  throw new Error('useTabs: Implementation pending');
+  // Determine if component is controlled
+  const isControlled = controlledActiveTab !== undefined;
+
+  // State management
+  const [internalActiveTab, setInternalActiveTab] = useState(() => {
+    // Use defaultActiveTab if provided and valid, otherwise use first tab
+    if (defaultActiveTab && tabs.some((tab) => tab.id === defaultActiveTab)) {
+      return defaultActiveTab;
+    }
+    return tabs[0]?.id || "";
+  });
+
+  // Use controlled value if provided, otherwise use internal state
+  const activeTab = isControlled ? controlledActiveTab : internalActiveTab;
+
+  // Set active tab handler
+  const setActiveTab = useCallback(
+    (tabId: string) => {
+      const tab = tabs.find((t) => t.id === tabId);
+      if (!tab || tab.disabled || disabled) {
+        return;
+      }
+
+      // Update internal state if not controlled
+      if (!isControlled) {
+        setInternalActiveTab(tabId);
+      }
+
+      // Call onChange callback
+      onChange?.(tabId);
+    },
+    [tabs, disabled, isControlled, onChange],
+  );
+
+  // Find next non-disabled tab index
+  const findNextEnabledIndex = useCallback(
+    (currentIndex: number, direction: 1 | -1): number => {
+      let nextIndex = currentIndex;
+      let attempts = 0;
+
+      do {
+        nextIndex = nextIndex + direction;
+
+        // Wrap around
+        if (nextIndex >= tabs.length) {
+          nextIndex = 0;
+        } else if (nextIndex < 0) {
+          nextIndex = tabs.length - 1;
+        }
+
+        // Prevent infinite loop
+        attempts++;
+        if (attempts > tabs.length) {
+          return currentIndex;
+        }
+      } while (tabs[nextIndex]?.disabled);
+
+      return nextIndex;
+    },
+    [tabs],
+  );
+
+  // Navigate to tab by index
+  const navigateToTabIndex = useCallback(
+    (currentIndex: number, direction: 1 | -1) => {
+      if (disabled) {
+        return;
+      }
+
+      const nextIndex = findNextEnabledIndex(currentIndex, direction);
+      const nextTab = tabs[nextIndex];
+      if (nextTab) {
+        setActiveTab(nextTab.id);
+      }
+    },
+    [disabled, tabs, findNextEnabledIndex, setActiveTab],
+  );
+
+  // Get props for individual tab
+  const getTabProps = useCallback(
+    (tab: TabItem, index: number) => {
+      const tabId = `${idPrefix}-tab-${index}`;
+      const panelId = `${idPrefix}-panel-${index}`;
+      const isActive = tab.id === activeTab;
+
+      // Keyboard navigation handler for this tab
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (disabled || tab.disabled) {
+          return;
+        }
+
+        const handlers: Record<string, () => void> = {};
+
+        if (orientation === "horizontal") {
+          handlers.ArrowRight = () => navigateToTabIndex(index, 1);
+          handlers.ArrowLeft = () => navigateToTabIndex(index, -1);
+        } else {
+          handlers.ArrowDown = () => navigateToTabIndex(index, 1);
+          handlers.ArrowUp = () => navigateToTabIndex(index, -1);
+        }
+
+        handlers.Home = () => {
+          // Find first non-disabled tab
+          const firstEnabledIndex = tabs.findIndex((t) => !t.disabled);
+          if (firstEnabledIndex >= 0) {
+            setActiveTab(tabs[firstEnabledIndex].id);
+          }
+        };
+
+        handlers.End = () => {
+          // Find last non-disabled tab
+          const lastEnabledIndex = tabs
+            .slice()
+            .reverse()
+            .findIndex((t) => !t.disabled);
+          if (lastEnabledIndex >= 0) {
+            setActiveTab(tabs[tabs.length - 1 - lastEnabledIndex].id);
+          }
+        };
+
+        const keyboardHandler = createKeyboardHandler(handlers);
+        keyboardHandler(event);
+      };
+
+      return {
+        id: tabId,
+        role: "tab" as const,
+        tabIndex: isActive ? 0 : -1,
+        "aria-selected": isActive,
+        ...(tab.disabled && { "aria-disabled": true }),
+        "aria-controls": panelId,
+        onKeyDown: handleKeyDown,
+        onClick: () => setActiveTab(tab.id),
+      };
+    },
+    [
+      idPrefix,
+      activeTab,
+      disabled,
+      orientation,
+      tabs,
+      navigateToTabIndex,
+      setActiveTab,
+    ],
+  );
+
+  // Get props for tab panel
+  const getTabPanelProps = useCallback(
+    (tabId: string) => {
+      const tabIndex = tabs.findIndex((t) => t.id === tabId);
+      const tabElementId = `${idPrefix}-tab-${tabIndex}`;
+      const panelId = `${idPrefix}-panel-${tabIndex}`;
+
+      return {
+        id: panelId,
+        role: "tabpanel" as const,
+        "aria-labelledby": tabElementId,
+        tabIndex: 0,
+      };
+    },
+    [idPrefix, tabs],
+  );
+
+  // Generate ARIA props for tab list
+  const tabListAriaProps = generateAriaProps({
+    role: "tablist",
+    "aria-orientation": orientation,
+    "aria-label": ariaLabel,
+    ...ariaAttributes,
+  });
+
+  return {
+    tabListProps: {
+      ...tabListAriaProps,
+      role: "tablist",
+      "aria-orientation": orientation,
+      ...(ariaLabel && { "aria-label": ariaLabel }),
+    },
+    getTabProps,
+    getTabPanelProps,
+    activeTab,
+    setActiveTab,
+  };
 }

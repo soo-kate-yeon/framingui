@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
-import type { KeyboardHandler, ClickHandler } from '../types';
-import { generateAriaProps } from '../utils/aria';
-import { handleKeyboardEvent } from '../utils/keyboard';
+import { useState, useCallback } from "react";
+import type { KeyboardHandler, ClickHandler } from "../types";
+import { generateAriaProps } from "../utils/aria";
+import { handleKeyboardEvent } from "../utils/keyboard";
 
 export interface UseButtonProps {
   /** Whether the button is disabled */
@@ -17,24 +17,24 @@ export interface UseButtonProps {
   /** Click handler */
   onClick?: () => void;
   /** ARIA label */
-  'aria-label'?: string;
+  "aria-label"?: string;
   /** ARIA labelledby */
-  'aria-labelledby'?: string;
+  "aria-labelledby"?: string;
   /** ARIA describedby */
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 export interface UseButtonReturn {
   /** Props to spread on button element */
   buttonProps: {
-    role: 'button';
+    role: "button";
     tabIndex: number;
     disabled: boolean;
-    'aria-disabled': boolean;
-    'aria-pressed'?: boolean;
-    'aria-label'?: string;
-    'aria-labelledby'?: string;
-    'aria-describedby'?: string;
+    "aria-disabled": boolean;
+    "aria-pressed"?: boolean;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+    "aria-describedby"?: string;
     onClick: ClickHandler;
     onKeyDown: KeyboardHandler;
   };
@@ -55,9 +55,9 @@ export function useButton(props: UseButtonProps = {}): UseButtonReturn {
     defaultPressed = false,
     onPressedChange,
     onClick,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
   } = props;
 
   // Determine if component is controlled
@@ -72,7 +72,9 @@ export function useButton(props: UseButtonProps = {}): UseButtonReturn {
   // Handle click
   const handleClick = useCallback(
     (_event: React.MouseEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
       if (toggle) {
         const newPressed = !isPressed;
@@ -84,15 +86,17 @@ export function useButton(props: UseButtonProps = {}): UseButtonReturn {
 
       onClick?.();
     },
-    [disabled, toggle, isPressed, isControlled, onPressedChange, onClick]
+    [disabled, toggle, isPressed, isControlled, onPressedChange, onClick],
   );
 
   // Handle keyboard events
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (disabled) return;
+      if (disabled) {
+        return;
+      }
 
-      handleKeyboardEvent(event, ['Enter', ' '], () => {
+      handleKeyboardEvent(event, ["Enter", " "], () => {
         if (toggle) {
           const newPressed = !isPressed;
           if (!isControlled) {
@@ -103,30 +107,30 @@ export function useButton(props: UseButtonProps = {}): UseButtonReturn {
         onClick?.();
       });
     },
-    [disabled, toggle, isPressed, isControlled, onPressedChange, onClick]
+    [disabled, toggle, isPressed, isControlled, onPressedChange, onClick],
   );
 
   // Generate ARIA props
   const ariaProps = generateAriaProps({
-    role: 'button',
+    role: "button",
     disabled,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedby,
-    ...(toggle && { 'aria-pressed': isPressed }),
+    "aria-label": ariaLabel,
+    "aria-labelledby": ariaLabelledby,
+    "aria-describedby": ariaDescribedby,
+    ...(toggle && { "aria-pressed": isPressed }),
   });
 
   return {
     buttonProps: {
       ...ariaProps,
-      role: 'button',
+      role: "button",
       tabIndex: disabled ? -1 : 0,
       disabled,
-      'aria-disabled': disabled,
-      ...(toggle && { 'aria-pressed': isPressed }),
+      "aria-disabled": disabled,
+      ...(toggle && { "aria-pressed": isPressed }),
       onClick: handleClick,
       onKeyDown: handleKeyDown,
-    } as UseButtonReturn['buttonProps'],
+    } as UseButtonReturn["buttonProps"],
     isPressed,
     isDisabled: disabled,
   };
