@@ -1,15 +1,15 @@
 # @tekton/studio-mcp
 
-Brand DNA MCP Integration for Tekton Studio - Model Context Protocol integration enabling AI assistants to read and write Brand DNA configurations for design token generation.
+Archetype MCP Integration for Tekton Studio - Model Context Protocol integration enabling AI assistants to query and use hook archetypes for component generation.
 
 ## Overview
 
-This package provides the core functionality for SPEC-STUDIO-001 (Brand DNA MCP Integration), implementing:
+This package provides MCP (Model Context Protocol) integration for the Tekton Archetype System, implementing:
 
-- **Brand DNA Schema Validation** - Zod-based schema validation for Brand DNA objects with 5 personality axes
-- **Axis Interpreter Engine** - Converts numerical axis values (0-1) to design token characteristics
-- **File-Based Storage** - JSON file storage with Git-trackable `.tekton/brand-dna/` structure
-- **Design Token Types** - TypeScript type definitions for 9 design token categories
+- **Archetype MCP Tools** - Query hook archetypes via HTTP-based MCP protocol
+- **4-Layer Archetype Access** - Prop rules, state mappings, variants, and structure templates
+- **Query Interface** - Search archetypes by WCAG level, state name, variants, etc.
+- **Storage Utilities** - Generalized archetype data persistence
 
 ## Installation
 
@@ -19,349 +19,242 @@ pnpm add @tekton/studio-mcp
 
 ## Quick Start
 
-```typescript
-import {
-  BrandDNASchema,
-  interpretBrandDNA,
-  saveBrandDNA,
-  loadBrandDNA,
-  listBrandDNA
-} from '@tekton/studio-mcp';
-
-// Create and validate Brand DNA
-const brandDNA = BrandDNASchema.parse({
-  id: 'tech-startup',
-  name: 'Modern Tech Startup',
-  description: 'Clean, minimal, high-energy brand',
-  axes: {
-    density: 0.7,      // Compact spacing
-    warmth: 0.4,       // Neutral temperature
-    playfulness: 0.3,  // Subtle animations
-    sophistication: 0.6, // Balanced style
-    energy: 0.8        // High contrast
-  },
-  version: '1.0.0',
-  createdAt: new Date(),
-  updatedAt: new Date()
-});
-
-// Interpret axes to design token characteristics
-const interpretation = interpretBrandDNA(brandDNA);
-console.log(interpretation.density);
-// { spacing: 'compact', size: 'small' }
-
-// Save to file system
-await saveBrandDNA('my-project', 'tech-startup', brandDNA);
-
-// Load from file system
-const loaded = await loadBrandDNA('my-project', 'tech-startup');
-
-// List all brand DNAs for a project
-const allBrands = await listBrandDNA('my-project');
-```
-
-## API Reference
-
-### Schema Validation
-
-#### `BrandDNASchema`
-
-Zod schema for validating complete Brand DNA objects.
+### Using MCP Tools Programmatically
 
 ```typescript
-const brandDNA = BrandDNASchema.parse({
-  id: string,              // Unique identifier (min 1 char)
-  name: string,            // Display name (min 1 char)
-  description?: string,    // Optional description
-  axes: {
-    density: number,       // 0-1 range
-    warmth: number,        // 0-1 range
-    playfulness: number,   // 0-1 range
-    sophistication: number,// 0-1 range
-    energy: number         // 0-1 range
-  },
-  version: string,         // Semantic version (e.g., "1.0.0")
-  createdAt: Date,         // ISO date string or Date object
-  updatedAt: Date          // ISO date string or Date object
-});
-```
+import { archetypeTools } from '@tekton/studio-mcp';
 
-**Validation Rules:**
-- All axis values must be between 0 and 1 (inclusive)
-- ID and name are required and trimmed
-- Version must follow semantic versioning (MAJOR.MINOR.PATCH)
-- Dates are coerced from ISO strings to Date objects
+// List all available hooks
+const hooks = await archetypeTools.list();
+console.log(hooks.data); // ['useButton', 'useTextField', ...]
 
-#### `BrandAxisSchema`
-
-Validates individual axis values.
-
-```typescript
-const axisValue = BrandAxisSchema.parse(0.5); // Valid: 0-1 range
-```
-
-### Axis Interpreter
-
-#### `interpretAxis(axisName, value)`
-
-Interprets a single axis value to design token characteristics.
-
-**Parameters:**
-- `axisName`: `'density' | 'warmth' | 'playfulness' | 'sophistication' | 'energy'`
-- `value`: `number` (0-1 range)
-
-**Returns:** Axis-specific interpretation object
-
-**Axis Conversion Rules:**
-
-**Density** (spacing and size):
-- `0 - 0.29`: `{ spacing: 'generous', size: 'large' }`
-- `0.3 - 0.69`: `{ spacing: 'comfortable', size: 'medium' }`
-- `0.7 - 1`: `{ spacing: 'compact', size: 'small' }`
-
-**Warmth** (color temperature):
-- `0 - 0.29`: `{ temperature: 'cool' }`
-- `0.3 - 0.69`: `{ temperature: 'neutral' }`
-- `0.7 - 1`: `{ temperature: 'warm' }`
-
-**Playfulness** (corners and animation):
-- `0 - 0.29`: `{ corners: 'sharp', animation: 'subtle' }`
-- `0.3 - 0.69`: `{ corners: 'moderate', animation: 'standard' }`
-- `0.7 - 1`: `{ corners: 'round', animation: 'playful' }`
-
-**Sophistication** (style and detail):
-- `0 - 0.29`: `{ style: 'casual', detail: 'minimal' }`
-- `0.3 - 0.69`: `{ style: 'balanced', detail: 'moderate' }`
-- `0.7 - 1`: `{ style: 'elegant', detail: 'refined' }`
-
-**Energy** (intensity and contrast):
-- `0 - 0.29`: `{ intensity: 'low', contrast: 'muted' }`
-- `0.3 - 0.69`: `{ intensity: 'medium', contrast: 'balanced' }`
-- `0.7 - 1`: `{ intensity: 'high', contrast: 'vibrant' }`
-
-**Example:**
-
-```typescript
-import { interpretAxis } from '@tekton/studio-mcp';
-
-const density = interpretAxis('density', 0.8);
-// Returns: { spacing: 'compact', size: 'small' }
-
-const warmth = interpretAxis('warmth', 0.5);
-// Returns: { temperature: 'neutral' }
-```
-
-#### `interpretBrandDNA(brandDNA)`
-
-Interprets all five axes in a Brand DNA object.
-
-**Parameters:**
-- `brandDNA`: Complete `BrandDNA` object
-
-**Returns:** Object with all five axis interpretations
-
-```typescript
-import { interpretBrandDNA } from '@tekton/studio-mcp';
-
-const interpretation = interpretBrandDNA(myBrandDNA);
-// Returns:
+// Get complete archetype for a hook
+const buttonArchetype = await archetypeTools.get('useButton');
+console.log(buttonArchetype.data);
 // {
-//   density: { spacing: 'comfortable', size: 'medium' },
-//   warmth: { temperature: 'neutral' },
-//   playfulness: { corners: 'sharp', animation: 'subtle' },
-//   sophistication: { style: 'elegant', detail: 'refined' },
-//   energy: { intensity: 'medium', contrast: 'balanced' }
+//   hookName: 'useButton',
+//   propRules: { ... },
+//   stateMappings: { ... },
+//   variants: { ... },
+//   structure: { ... }
+// }
+
+// Query archetypes by criteria
+const aaCompliant = await archetypeTools.query({ wcagLevel: 'AA' });
+console.log(aaCompliant.data); // All hooks with WCAG AA compliance
+```
+
+### Starting the MCP Server
+
+```bash
+# Using npm script
+pnpm start
+
+# Or with custom port
+MCP_PORT=4000 pnpm start
+
+# Or programmatically
+```
+
+```typescript
+import { createMCPServer } from '@tekton/studio-mcp';
+
+const server = createMCPServer(3000);
+// Server running at http://localhost:3000
+```
+
+## MCP Tools
+
+The server exposes the following tools via HTTP:
+
+| Tool | Description |
+|------|-------------|
+| `archetype.list` | List all 20+ available hooks |
+| `archetype.get` | Get complete archetype for a hook |
+| `archetype.getPropRules` | Get Layer 1 (hook prop rules) |
+| `archetype.getStateMappings` | Get Layer 2 (state-style mappings) |
+| `archetype.getVariants` | Get Layer 3 (variant branching) |
+| `archetype.getStructure` | Get Layer 4 (structure templates) |
+| `archetype.query` | Search by criteria (WCAG level, state name) |
+
+### API Endpoints
+
+```bash
+# Health check
+GET /health
+# Response: { status: 'ok', tools: [...] }
+
+# List available tools
+GET /tools
+# Response: { tools: [...tool definitions...] }
+
+# Execute a tool
+POST /tools/{toolName}
+Content-Type: application/json
+# Body: { ...parameters... }
+```
+
+### Example Usage with curl
+
+```bash
+# Health check
+curl http://localhost:3000/health
+
+# List all hooks
+curl -X POST http://localhost:3000/tools/archetype.list
+
+# Get useButton archetype
+curl -X POST http://localhost:3000/tools/archetype.get \
+  -H "Content-Type: application/json" \
+  -d '{"hookName": "useButton"}'
+
+# Query by WCAG level
+curl -X POST http://localhost:3000/tools/archetype.query \
+  -H "Content-Type: application/json" \
+  -d '{"wcagLevel": "AA"}'
+```
+
+## 4-Layer Archetype System
+
+### Layer 1: Hook Prop Rules
+
+Maps hooks to prop objects and base CSS styles.
+
+```typescript
+const rules = await archetypeTools.getPropRules('useButton');
+// {
+//   hookName: 'useButton',
+//   propObjects: ['buttonProps', 'isPressed'],
+//   baseStyles: [{
+//     propObject: 'buttonProps',
+//     cssProperties: {
+//       'background': 'var(--tekton-primary-500)',
+//       'color': 'var(--tekton-neutral-50)',
+//       ...
+//     }
+//   }],
+//   requiredCSSVariables: ['--tekton-primary-500', ...]
 // }
 ```
 
-### Storage
+### Layer 2: State-Style Mappings
 
-#### `saveBrandDNA(projectId, brandId, brandDNA, basePath?)`
-
-Saves Brand DNA to JSON file with automatic timestamp update.
-
-**Parameters:**
-- `projectId`: Project identifier (used as subdirectory)
-- `brandId`: Brand identifier (used as filename)
-- `brandDNA`: Brand DNA object to save
-- `basePath?`: Optional base storage path (default: `.tekton/brand-dna`)
-
-**Storage Structure:**
-```
-.tekton/brand-dna/
-  my-project/
-    brand-001.json
-    brand-002.json
-  another-project/
-    brand-003.json
-```
-
-**Features:**
-- Automatically creates directory structure if missing
-- Updates `updatedAt` timestamp on every save
-- Preserves `createdAt` timestamp when overwriting
-- Pretty-prints JSON with 2-space indentation
-- Git-trackable file format
-
-**Example:**
+Defines visual feedback for component states.
 
 ```typescript
-await saveBrandDNA('my-app', 'primary-brand', brandDNA);
-// Creates: .tekton/brand-dna/my-app/primary-brand.json
+const mappings = await archetypeTools.getStateMappings('useButton');
+// {
+//   hookName: 'useButton',
+//   states: [{
+//     stateName: 'isPressed',
+//     stateType: 'boolean',
+//     visualFeedback: {
+//       cssProperties: { 'background': 'var(--tekton-primary-700)' }
+//     }
+//   }],
+//   transitions: { duration: '150ms', easing: 'ease-out', reducedMotion: true }
+// }
 ```
 
-#### `loadBrandDNA(projectId, brandId, basePath?)`
+### Layer 3: Variant Branching
 
-Loads and validates Brand DNA from JSON file.
-
-**Parameters:**
-- `projectId`: Project identifier
-- `brandId`: Brand identifier
-- `basePath?`: Optional base storage path (default: `.tekton/brand-dna`)
-
-**Returns:** Validated `BrandDNA` object
-
-**Throws:**
-- Error if file does not exist
-- ZodError if validation fails
-
-**Example:**
+Conditional styling based on configuration options.
 
 ```typescript
-try {
-  const brandDNA = await loadBrandDNA('my-app', 'primary-brand');
-  console.log(brandDNA.name);
-} catch (error) {
-  console.error('Failed to load brand DNA:', error);
+const variants = await archetypeTools.getVariants('useButton');
+// {
+//   hookName: 'useButton',
+//   configurationOptions: [{
+//     optionName: 'variant',
+//     optionType: 'enum',
+//     possibleValues: ['primary', 'secondary', 'outline'],
+//     styleRules: [{
+//       condition: "variant === 'secondary'",
+//       cssProperties: { 'background': 'var(--tekton-neutral-200)' }
+//     }]
+//   }]
+// }
+```
+
+### Layer 4: Structure Templates
+
+HTML/JSX patterns and accessibility requirements.
+
+```typescript
+const structure = await archetypeTools.getStructure('useButton');
+// {
+//   hookName: 'useButton',
+//   htmlElement: 'button',
+//   jsxPattern: '<button {...buttonProps}>{children}</button>',
+//   accessibility: {
+//     role: 'button',
+//     wcagLevel: 'AA',
+//     ariaAttributes: [...],
+//     keyboardNavigation: [...]
+//   }
+// }
+```
+
+## Storage Utilities
+
+Generalized storage functions for archetype data persistence:
+
+```typescript
+import { saveArchetype, loadArchetype, listArchetypes } from '@tekton/studio-mcp';
+import { z } from 'zod';
+
+// Define a schema
+const MySchema = z.object({ name: z.string() });
+
+// Save data
+await saveArchetype('myHook', { name: 'test' }, MySchema);
+
+// Load data
+const data = await loadArchetype('myHook', MySchema);
+
+// List stored archetypes
+const stored = await listArchetypes();
+```
+
+## Claude Code Integration
+
+Configure Claude Code to use the MCP server:
+
+```json
+// .claude/settings.json
+{
+  "mcpServers": {
+    "tekton-archetypes": {
+      "command": "node",
+      "args": ["packages/studio-mcp/dist/server/index.js"],
+      "env": {
+        "MCP_PORT": "3000"
+      }
+    }
+  }
 }
 ```
 
-#### `listBrandDNA(projectId, basePath?)`
-
-Lists all Brand DNA files for a project.
-
-**Parameters:**
-- `projectId`: Project identifier
-- `basePath?`: Optional base storage path (default: `.tekton/brand-dna`)
-
-**Returns:** Array of validated `BrandDNA` objects
-
-**Features:**
-- Returns empty array if project directory doesn't exist
-- Skips invalid JSON files with warning
-- Only processes `.json` files
-- Validates each file against schema
-
-**Example:**
-
-```typescript
-const allBrands = await listBrandDNA('my-app');
-console.log(`Found ${allBrands.length} brand DNAs`);
-allBrands.forEach(brand => {
-  console.log(`- ${brand.name} (${brand.id})`);
-});
+In Claude, query archetypes:
 ```
-
-## Design Token Types
-
-The package provides TypeScript type definitions for design tokens:
-
-```typescript
-import type { DesignToken } from '@tekton/studio-mcp';
-
-const tokens: DesignToken = {
-  spacing: { xs: '4px', sm: '8px', md: '16px', lg: '24px', xl: '32px' },
-  typography: {
-    fontFamily: { sans: 'Inter, sans-serif', mono: 'Menlo, monospace' },
-    fontSize: { xs: '12px', sm: '14px', md: '16px', lg: '18px', xl: '24px' },
-    fontWeight: { normal: '400', medium: '500', bold: '700' },
-    lineHeight: { tight: '1.2', normal: '1.5', relaxed: '1.75' }
-  },
-  colors: { primary: '#0066CC', secondary: '#6B46C1', neutral: '#718096' },
-  borderRadius: { none: '0px', sm: '4px', md: '8px', lg: '16px', full: '9999px' },
-  shadows: { sm: '0 1px 2px rgba(0,0,0,0.05)', md: '0 4px 6px rgba(0,0,0,0.1)' },
-  opacity: { low: '0.3', medium: '0.6', high: '0.9' },
-  transitions: { fast: '150ms', normal: '300ms', slow: '500ms' },
-  breakpoints: { sm: '640px', md: '768px', lg: '1024px', xl: '1280px' },
-  zIndex: { dropdown: '1000', modal: '2000', tooltip: '3000' }
-};
+> What hooks are available?
+> Show me the useButton archetype
+> Find all AA-compliant components
 ```
 
 ## TypeScript Support
 
-The package is written in TypeScript and provides full type definitions.
+Full TypeScript definitions are provided:
 
 ```typescript
 import type {
-  BrandDNA,
-  BrandAxes,
-  BrandAxis,
-  AxisName,
-  BrandDNAInterpretation,
-  DensityInterpretation,
-  WarmthInterpretation,
-  PlayfulnessInterpretation,
-  SophisticationInterpretation,
-  EnergyInterpretation,
+  CompleteArchetype,
+  ArchetypeQueryCriteria,
+  ToolResult,
   DesignToken,
   TypographyValue
 } from '@tekton/studio-mcp';
 ```
-
-## Error Handling
-
-All functions throw descriptive errors for common failure cases:
-
-```typescript
-// Invalid axis value
-try {
-  interpretAxis('density', 1.5);
-} catch (error) {
-  // Error: Axis value must be between 0 and 1
-}
-
-// Invalid axis name
-try {
-  interpretAxis('invalid' as any, 0.5);
-} catch (error) {
-  // Error: Unknown axis: invalid
-}
-
-// File not found
-try {
-  await loadBrandDNA('project', 'non-existent');
-} catch (error) {
-  // Error: Brand DNA not found: non-existent in project project
-}
-
-// Schema validation failure
-try {
-  BrandDNASchema.parse({ id: '', name: 'Test' });
-} catch (error) {
-  // ZodError with validation details
-}
-```
-
-## Testing
-
-The package includes comprehensive test coverage (98.88%):
-
-```bash
-# Run tests
-pnpm test
-
-# Run tests with coverage
-pnpm test:coverage
-
-# Watch mode
-pnpm test:watch
-```
-
-**Test Statistics:**
-- 74 test cases
-- 98.88% statement coverage
-- 94.11% branch coverage
-- 100% function coverage
 
 ## Development
 
@@ -372,14 +265,23 @@ pnpm install
 # Build TypeScript
 pnpm build
 
-# Run linter
+# Run tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Start dev server (watch mode)
+pnpm dev
+
+# Start production server
+pnpm start
+
+# Lint code
 pnpm lint
 
 # Format code
 pnpm format
-
-# Development mode (watch)
-pnpm dev
 ```
 
 ## Architecture
@@ -389,36 +291,26 @@ pnpm dev
 - Zod 3.23.8 (schema validation)
 - Node.js 20+ (ES2022 modules)
 - Vitest 2.1.8 (testing)
+- @tekton/archetype-system (data source)
 
 **Design Decisions:**
-1. **File-based storage** - Simple, Git-trackable, no database required
-2. **Hardcoded axis ranges** - Predictable, testable, MVP-appropriate
-3. **Zod validation** - Runtime type safety and clear error messages
-4. **Monorepo structure** - Part of larger Tekton ecosystem
+1. **HTTP-based MCP** - Simple, universal protocol support
+2. **Lazy data loading** - Archetype data loaded on first request
+3. **4-layer architecture** - Clear separation of archetype concerns
+4. **Query interface** - Flexible filtering for AI assistants
 
-## SPEC Compliance
+## Dependencies
 
-This package implements the requirements from SPEC-STUDIO-001:
-
-- ✅ REQ-001: Brand DNA JSON schema validation (Zod)
-- ✅ REQ-002: MCP Brand DNA Save (file storage with timestamps)
-- ✅ REQ-003: MCP Brand DNA Read (file loading with validation)
-- ✅ REQ-004: Axis Interpreter (5 axes × 3 ranges = 15 mappings)
-- ✅ REQ-005: Invalid axis value rejection (0-1 range validation)
-- ✅ AC-001: Schema validation 100% (all tests pass)
-- ✅ AC-002: Axis Interpreter accuracy (boundary value testing)
-- ✅ AC-004: Test coverage ≥85% (98.88% achieved)
+- **@tekton/archetype-system** - Source of hook archetype data
+- **@anthropic-ai/sdk** - MCP protocol support
+- **zod** - Runtime type validation
 
 ## License
 
 MIT
 
-## Contributing
-
-This package is part of the Tekton monorepo. See the main repository for contribution guidelines.
-
 ## Version
 
 Current version: 0.1.0
 
-Last updated: 2026-01-13
+Last updated: 2026-01-17

@@ -55,3 +55,17 @@ export interface HookPropRuleCollection {
   version: string;
   hooks: HookPropRule[];
 }
+
+/**
+ * Type guard to check if a value is a valid HookPropRule object
+ */
+export function isHookPropRule(value: any): value is HookPropRule {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.hookName === 'string' &&
+    Array.isArray(value.propObjects) &&
+    Array.isArray(value.baseStyles) &&
+    Array.isArray(value.requiredCSSVariables)
+  );
+}

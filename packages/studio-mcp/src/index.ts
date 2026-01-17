@@ -1,21 +1,32 @@
 /**
- * @tekton/studio-mcp - Brand DNA MCP Integration
+ * @tekton/studio-mcp - Archetype MCP Integration
  *
- * This package provides Model Context Protocol (MCP) integration for Brand DNA management.
- * It enables AI assistants to read and write Brand DNA configurations for design token generation.
+ * This package provides Model Context Protocol (MCP) integration for Archetype management.
+ * It enables AI assistants to query and use hook archetypes for component generation.
  */
 
-// Schema exports
+// Archetype tools exports
 export {
-  BrandAxisSchema,
-  BrandAxesSchema,
-  BrandDNASchema,
-  type BrandAxis,
-  type BrandAxes,
-  type BrandDNA,
-} from "./brand-dna/schema.js";
+  ArchetypeTools,
+  archetypeTools,
+  type CompleteArchetype,
+  type ArchetypeQueryCriteria,
+  type ToolResult,
+} from "./archetype/tools.js";
 
-// Design token exports
+// MCP Server exports
+export { createMCPServer, TOOLS } from "./server/mcp-server.js";
+
+// Storage exports
+export {
+  saveArchetype,
+  loadArchetype,
+  listArchetypes,
+  deleteArchetype,
+  archetypeExists,
+} from "./storage/storage.js";
+
+// Design token type exports (generic, kept for compatibility)
 export {
   DesignTokenSchema,
   FontFamilySchema,
@@ -33,21 +44,4 @@ export {
   type BreakpointValue,
   type ZIndexValue,
   type TypographyValue,
-} from "./brand-dna/design-tokens.js";
-
-// Interpreter exports
-export {
-  interpretAxis,
-  interpretBrandDNA,
-  type AxisName,
-  type AxisInterpretation,
-  type DensityInterpretation,
-  type WarmthInterpretation,
-  type PlayfulnessInterpretation,
-  type SophisticationInterpretation,
-  type EnergyInterpretation,
-  type BrandDNAInterpretation,
-} from "./interpreter/axis-interpreter.js";
-
-// Storage exports
-export { saveBrandDNA, loadBrandDNA, listBrandDNA } from "./storage/storage.js";
+} from "./types/design-tokens.js";
