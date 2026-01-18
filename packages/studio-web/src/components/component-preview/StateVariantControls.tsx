@@ -20,10 +20,27 @@ const StateVariantControls = forwardRef<HTMLDivElement, StateVariantControlsProp
       return (
         <div
           ref={ref}
-          className={cn('text-sm text-muted-foreground py-4', className)}
+          className={cn('py-6 text-center', className)}
           {...props}
         >
-          No configuration options available for this hook.
+          <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center mx-auto mb-3">
+            <svg
+              className="w-5 h-5 text-muted-foreground"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+              />
+            </svg>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            No configuration options available
+          </p>
         </div>
       );
     }
@@ -40,10 +57,10 @@ const StateVariantControls = forwardRef<HTMLDivElement, StateVariantControlsProp
     };
 
     return (
-      <div ref={ref} className={cn('space-y-4', className)} {...props}>
+      <div ref={ref} className={cn('space-y-5', className)} {...props}>
         {options.map((option) => (
-          <div key={option.optionName} className="space-y-2">
-            <label className="text-sm font-medium capitalize">
+          <div key={option.optionName} className="space-y-2.5">
+            <label className="text-[11px] font-semibold uppercase tracking-[0.05em] text-muted-foreground">
               {option.optionName}
             </label>
 
@@ -89,13 +106,13 @@ function BooleanControl({ value, onChange }: BooleanControlProps) {
       aria-checked={value}
       onClick={() => onChange(!value)}
       className={cn(
-        'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-        value ? 'bg-primary' : 'bg-muted'
+        'relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200',
+        value ? 'bg-primary' : 'bg-muted/80'
       )}
     >
       <span
         className={cn(
-          'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+          'inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200',
           value ? 'translate-x-6' : 'translate-x-1'
         )}
       />
@@ -111,16 +128,16 @@ interface EnumControlProps {
 
 function EnumControl({ value, options, onChange }: EnumControlProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5">
       {options.map((opt) => (
         <button
           key={String(opt)}
           onClick={() => onChange(String(opt))}
           className={cn(
-            'px-3 py-1 rounded-md text-sm transition-colors',
+            'px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150',
             value === String(opt)
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-muted hover:bg-muted/80'
+              ? 'bg-primary text-primary-foreground shadow-sm'
+              : 'bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground'
           )}
         >
           {String(opt)}
@@ -141,7 +158,8 @@ function StringControl({ value, onChange }: StringControlProps) {
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full px-3 py-2 rounded-md border bg-background text-sm"
+      className="w-full px-3 py-2 rounded-lg border border-border/50 bg-muted/30 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
+      placeholder="Enter value..."
     />
   );
 }

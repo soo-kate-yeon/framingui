@@ -48,42 +48,127 @@
   --color-ring: oklch(65% 0.2 260);
 }
 
-/* Premium Editorial Theme (NYTimes-inspired)
+/* Premium Editorial Theme (Magazine-style)
  * Applied via MCP: project.setActivePreset(presetId: 10)
- * Reference: New York Times design language
+ * Reference: NYTimes/New Yorker magazine design language
  */
 [data-theme='premium-editorial'] {
-  /* Colors - Elegant monochrome with subtle accent */
-  --color-background: #FAFAFA;
-  --color-foreground: #121212;
-  --color-card-background: #FFFFFF;
-  --color-card-foreground: #121212;
-  --color-primary: #567B95;
-  --color-primary-foreground: #FFFFFF;
-  --color-secondary: #F5F5F5;
-  --color-secondary-foreground: #121212;
-  --color-muted: #F0F0F0;
-  --color-muted-foreground: #666666;
-  --color-accent: #567B95;
-  --color-accent-foreground: #FFFFFF;
-  --color-destructive: #D32F2F;
-  --color-destructive-foreground: #FFFFFF;
-  --color-border: #E0E0E0;
-  --color-input: #F5F5F5;
-  --color-ring: #567B95;
+  /* ===== Layout System ===== */
+  --sidebar-width: 240px;
+  --sidebar-bg: #F8F6F3;
+  --content-max-width: 720px;
+  --section-spacing: 3rem;
+  --card-spacing: 1.5rem;
 
-  /* Radius - Sharp corners (editorial aesthetic) */
+  /* ===== Typography ===== */
+  --heading-font-family: 'Georgia', 'Times New Roman', 'Noto Serif', serif;
+  --body-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Heading sizes with tighter line-height */
+  --font-size-h1: 2.75rem;
+  --font-size-h2: 2rem;
+  --font-size-h3: 1.5rem;
+  --font-size-h4: 1.25rem;
+  --line-height-heading: 1.2;
+  --letter-spacing-heading: -0.025em;
+
+  /* Body typography */
+  --font-size-body: 1.0625rem;
+  --font-size-body-sm: 0.9375rem;
+  --line-height-body: 1.7;
+  --letter-spacing-body: 0.01em;
+
+  /* Legacy aliases for compatibility */
+  --font-family-heading: var(--heading-font-family);
+  --font-family-body: var(--body-font-family);
+
+  /* ===== Color Palette - Warm Neutrals ===== */
+  --color-background: #FAF9F7;
+  --color-foreground: #1A1A1A;
+  --color-card-background: #FFFFFF;
+  --color-card-foreground: #1A1A1A;
+
+  /* Primary - Sophisticated slate blue */
+  --color-primary: #4A6B8A;
+  --color-primary-foreground: #FFFFFF;
+
+  /* Secondary - Warm off-white */
+  --color-secondary: #F5F3F0;
+  --color-secondary-foreground: #1A1A1A;
+
+  /* Muted - Subtle warm gray */
+  --color-muted: #EDEAE6;
+  --color-muted-foreground: #5C5C5C;
+
+  /* Accent - Refined terracotta */
+  --color-accent: #C4785A;
+  --color-accent-foreground: #FFFFFF;
+
+  /* Destructive - Muted red */
+  --color-destructive: #B54343;
+  --color-destructive-foreground: #FFFFFF;
+
+  /* Borders and inputs */
+  --color-border: #DDD9D4;
+  --color-input: #F5F3F0;
+  --color-ring: #4A6B8A;
+
+  /* ===== Radius - Sharp editorial aesthetic ===== */
   --radius-lg: 0;
   --radius-md: 0;
   --radius-sm: 0;
 
-  /* Typography - Serif focus for reading */
-  --font-family-heading: 'Georgia', 'Times New Roman', serif;
-  --font-family-body: 'Georgia', 'Times New Roman', serif;
-  --font-size-heading: 40px;
-  --font-size-body: 18px;
-  --line-height-body: 1.8;
-  --content-max-width: 680px;
+  /* ===== Shadows - Subtle and elegant ===== */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+  /* ===== Transitions ===== */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* Premium Editorial Dark Mode */
+[data-theme='premium-editorial'][data-mode='dark'],
+[data-theme='premium-editorial'].dark {
+  /* Layout */
+  --sidebar-bg: #1E1E1C;
+
+  /* Colors - Dark warm neutrals */
+  --color-background: #141413;
+  --color-foreground: #E8E6E3;
+  --color-card-background: #1E1E1C;
+  --color-card-foreground: #E8E6E3;
+
+  /* Primary - Lighter slate blue for dark mode */
+  --color-primary: #7BA3C4;
+  --color-primary-foreground: #141413;
+
+  /* Secondary */
+  --color-secondary: #252523;
+  --color-secondary-foreground: #E8E6E3;
+
+  /* Muted */
+  --color-muted: #2A2A28;
+  --color-muted-foreground: #9A9894;
+
+  /* Accent - Lighter terracotta */
+  --color-accent: #D4927A;
+  --color-accent-foreground: #141413;
+
+  /* Destructive */
+  --color-destructive: #E07070;
+  --color-destructive-foreground: #141413;
+
+  /* Borders and inputs */
+  --color-border: #3A3A38;
+  --color-input: #252523;
+  --color-ring: #7BA3C4;
+
+  /* Shadows - Adjusted for dark mode */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.15);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-dropdown: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
@@ -96,34 +181,274 @@
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
-  /* Premium Editorial typography overrides */
+  /* ===== Premium Editorial Base Styles ===== */
+
+  /* Body typography */
   [data-theme='premium-editorial'] body {
-    font-family: var(--font-family-body);
+    font-family: var(--body-font-family);
     font-size: var(--font-size-body);
     line-height: var(--line-height-body);
+    letter-spacing: var(--letter-spacing-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Heading typography - Serif with elegant sizing */
   [data-theme='premium-editorial'] h1,
   [data-theme='premium-editorial'] h2,
   [data-theme='premium-editorial'] h3,
-  [data-theme='premium-editorial'] h4 {
-    font-family: var(--font-family-heading);
+  [data-theme='premium-editorial'] h4,
+  [data-theme='premium-editorial'] h5,
+  [data-theme='premium-editorial'] h6 {
+    font-family: var(--heading-font-family);
+    line-height: var(--line-height-heading);
+    letter-spacing: var(--letter-spacing-heading);
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
   }
 
   [data-theme='premium-editorial'] h1 {
-    font-size: var(--font-size-heading);
+    font-size: var(--font-size-h1);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    margin-top: 0;
+  }
+
+  [data-theme='premium-editorial'] h2 {
+    font-size: var(--font-size-h2);
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.5rem;
+  }
+
+  [data-theme='premium-editorial'] h3 {
+    font-size: var(--font-size-h3);
+    font-weight: 600;
+  }
+
+  [data-theme='premium-editorial'] h4 {
+    font-size: var(--font-size-h4);
+    font-weight: 600;
+  }
+
+  /* Paragraphs with generous spacing */
+  [data-theme='premium-editorial'] p {
+    margin-bottom: 1.5em;
+  }
+
+  /* Links with elegant underline */
+  [data-theme='premium-editorial'] a:not([class]) {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color var(--transition-fast);
+  }
+
+  [data-theme='premium-editorial'] a:not([class]):hover {
+    color: var(--color-accent);
   }
 
   /* Editorial content container */
   [data-theme='premium-editorial'] .container {
-    max-width: var(--content-max-width, 680px);
+    max-width: var(--content-max-width);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
-  /* Editorial card style - no shadows, subtle borders */
+  /* Section spacing */
+  [data-theme='premium-editorial'] section {
+    padding-top: var(--section-spacing);
+    padding-bottom: var(--section-spacing);
+  }
+
+  /* ===== Premium Editorial Components ===== */
+
+  /* Card - Subtle shadow with elegant border */
   [data-theme='premium-editorial'] .card {
-    box-shadow: none;
+    background: var(--color-card-background);
     border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-card);
+    padding: var(--card-spacing);
+    transition: box-shadow var(--transition-normal), border-color var(--transition-normal);
+  }
+
+  [data-theme='premium-editorial'] .card:hover {
+    box-shadow: var(--shadow-card-hover);
+    border-color: color-mix(in srgb, var(--color-border) 80%, var(--color-foreground) 20%);
+  }
+
+  /* Button - Refined editorial style */
+  [data-theme='premium-editorial'] .btn,
+  [data-theme='premium-editorial'] button:not([class*='bg-']) {
+    font-family: var(--body-font-family);
+    font-size: var(--font-size-body-sm);
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    padding: 0.75rem 1.5rem;
+    transition: all var(--transition-fast);
+  }
+
+  [data-theme='premium-editorial'] .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-primary-foreground);
+    border: 1px solid var(--color-primary);
+  }
+
+  [data-theme='premium-editorial'] .btn-primary:hover {
+    background: color-mix(in srgb, var(--color-primary) 90%, black 10%);
+  }
+
+  [data-theme='premium-editorial'] .btn-outline {
+    background: transparent;
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+  }
+
+  [data-theme='premium-editorial'] .btn-outline:hover {
+    background: var(--color-secondary);
+    border-color: var(--color-foreground);
+  }
+
+  /* Form inputs - Clean and elegant */
+  [data-theme='premium-editorial'] input:not([type='checkbox']):not([type='radio']),
+  [data-theme='premium-editorial'] textarea,
+  [data-theme='premium-editorial'] select {
+    font-family: var(--body-font-family);
+    font-size: var(--font-size-body-sm);
+    background: var(--color-input);
+    border: 1px solid var(--color-border);
+    padding: 0.75rem 1rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  [data-theme='premium-editorial'] input:not([type='checkbox']):not([type='radio']):focus,
+  [data-theme='premium-editorial'] textarea:focus,
+  [data-theme='premium-editorial'] select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent 85%);
+  }
+
+  /* Labels with editorial weight */
+  [data-theme='premium-editorial'] label {
+    font-family: var(--body-font-family);
+    font-size: var(--font-size-body-sm);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  /* Sidebar styling */
+  [data-theme='premium-editorial'] aside,
+  [data-theme='premium-editorial'] .sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--color-border);
+  }
+
+  /* Dividers */
+  [data-theme='premium-editorial'] hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: var(--section-spacing) 0;
+  }
+
+  /* Blockquotes - Editorial pull quote style */
+  [data-theme='premium-editorial'] blockquote {
+    font-family: var(--heading-font-family);
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--color-muted-foreground);
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  /* Code blocks */
+  [data-theme='premium-editorial'] code {
+    font-size: 0.875em;
+    background: var(--color-muted);
+    padding: 0.2em 0.4em;
+    border-radius: 2px;
+  }
+
+  [data-theme='premium-editorial'] pre {
+    background: var(--color-muted);
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  [data-theme='premium-editorial'] pre code {
+    background: none;
+    padding: 0;
+  }
+
+  /* Tables - Clean editorial style */
+  [data-theme='premium-editorial'] table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  [data-theme='premium-editorial'] th,
+  [data-theme='premium-editorial'] td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  [data-theme='premium-editorial'] th {
+    font-family: var(--body-font-family);
+    font-weight: 600;
+    font-size: var(--font-size-body-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted-foreground);
+  }
+
+  /* Lists */
+  [data-theme='premium-editorial'] ul,
+  [data-theme='premium-editorial'] ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.5em;
+  }
+
+  [data-theme='premium-editorial'] li {
+    margin-bottom: 0.5em;
+  }
+
+  /* Figure and captions */
+  [data-theme='premium-editorial'] figure {
+    margin: 2rem 0;
+  }
+
+  [data-theme='premium-editorial'] figcaption {
+    font-size: var(--font-size-body-sm);
+    color: var(--color-muted-foreground);
+    margin-top: 0.75rem;
+    font-style: italic;
+  }
+
+  /* Badge / Tag style */
+  [data-theme='premium-editorial'] .badge,
+  [data-theme='premium-editorial'] .tag {
+    font-family: var(--body-font-family);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0.75rem;
+    background: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+
+  /* Dropdown / Menu */
+  [data-theme='premium-editorial'] .dropdown-content,
+  [data-theme='premium-editorial'] [role='menu'] {
+    background: var(--color-card-background);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-dropdown);
   }
 }

@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { QueryProvider } from '@/providers/QueryProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
-import { Header } from '@/components/layout/Header';
 import { Toaster } from '@/components/ui/Toaster';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,10 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider detectSystemTheme>
           <QueryProvider>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-            </div>
+            {children}
             <Toaster />
           </QueryProvider>
         </ThemeProvider>

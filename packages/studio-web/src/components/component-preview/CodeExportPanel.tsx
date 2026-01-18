@@ -33,16 +33,16 @@ const CodeExportPanel = forwardRef<HTMLDivElement, CodeExportPanelProps>(
         {...props}
       >
         {/* Tabs */}
-        <div className="flex items-center justify-between border-b bg-muted/50">
+        <div className="flex items-center justify-between border-b bg-muted/20">
           <div className="flex">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
                 className={cn(
-                  'px-4 py-2 text-sm font-medium transition-colors',
+                  'px-5 py-3 text-xs font-medium uppercase tracking-wide transition-colors relative',
                   activeTab === tab.key
-                    ? 'bg-background text-foreground border-b-2 border-primary'
+                    ? 'text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
@@ -52,15 +52,20 @@ const CodeExportPanel = forwardRef<HTMLDivElement, CodeExportPanelProps>(
           </div>
           <button
             onClick={handleCopy}
-            className="px-3 py-1 mr-2 text-xs rounded-md bg-muted hover:bg-muted/80 transition-colors"
+            className={cn(
+              'px-4 py-1.5 mr-3 text-xs font-medium rounded-md transition-all',
+              isCopied
+                ? 'bg-emerald-500/10 text-emerald-600'
+                : 'bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground'
+            )}
           >
-            {isCopied ? 'Copied!' : 'Copy'}
+            {isCopied ? 'Copied!' : 'Copy Code'}
           </button>
         </div>
 
         {/* Code Display */}
-        <pre className="p-4 overflow-auto text-sm bg-muted/30 max-h-[300px]">
-          <code className="font-mono text-foreground whitespace-pre">
+        <pre className="p-5 overflow-auto text-sm bg-muted/10 max-h-[280px]">
+          <code className="font-mono text-[13px] leading-relaxed text-foreground/90 whitespace-pre">
             {currentCode}
           </code>
         </pre>

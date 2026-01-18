@@ -1,9 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
 import type { Preset } from '@/lib/api/types';
 
 interface PresetCardProps {
@@ -33,71 +30,118 @@ function extractColors(config: Record<string, unknown>): string[] {
   return colors.slice(0, 5);
 }
 
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
 export function PresetCard({ preset, onDelete }: PresetCardProps) {
   const colors = extractColors(preset.config);
 
   return (
-    <Card className="flex flex-col h-full hover:shadow-md transition-shadow">
-      <CardHeader>
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <CardTitle className="text-lg">{preset.name}</CardTitle>
-            <CardDescription className="mt-1">{preset.category}</CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="flex-1">
-        {colors.length > 0 && (
-          <div className="flex gap-1 mb-4">
+    <article className="group relative flex flex-col h-full bg-[color:var(--color-card-background)] border border-[color:var(--color-border)] transition-all duration-300 hover:border-[color:var(--color-foreground,#1a1a1a)]/20 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+      {/* Color Preview Thumbnail */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-[color:var(--color-muted)]">
+        {colors.length > 0 ? (
+          <div className="absolute inset-0 flex">
             {colors.map((color, index) => (
               <div
                 key={index}
-                className="w-8 h-8 rounded-md border"
+                className="flex-1 transition-transform duration-500 group-hover:scale-105"
                 style={{ backgroundColor: color }}
-                title={color}
               />
             ))}
           </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 border-2 border-dashed border-[color:var(--color-border)] flex items-center justify-center">
+              <svg
+                className="w-6 h-6 text-[color:var(--color-muted-foreground)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                />
+              </svg>
+            </div>
+          </div>
         )}
 
+        {/* Category Badge */}
+        <div className="absolute top-4 left-4">
+          <span className="inline-block px-3 py-1 text-[10px] font-medium tracking-[0.1em] uppercase bg-[color:var(--color-card-background)]/90 backdrop-blur-sm text-[color:var(--color-foreground)]">
+            {preset.category}
+          </span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col p-6">
+        {/* Title */}
+        <h3 className="font-[family-name:var(--heading-font-family,Georgia,serif)] text-xl font-semibold leading-tight tracking-tight mb-2 group-hover:text-[color:var(--color-primary)] transition-colors">
+          <Link href={`/presets/${preset.id}`} className="after:absolute after:inset-0">
+            {preset.name}
+          </Link>
+        </h3>
+
+        {/* Description */}
         {preset.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+          <p className="text-sm text-[color:var(--color-muted-foreground)] leading-relaxed line-clamp-2 mb-4">
             {preset.description}
           </p>
         )}
 
+        {/* Tags */}
         {preset.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-2 mb-4">
             {preset.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-xs">
+              <span
+                key={tag}
+                className="text-[11px] font-medium tracking-wide text-[color:var(--color-muted-foreground)] before:content-['#']"
+              >
                 {tag}
-              </Badge>
+              </span>
             ))}
             {preset.tags.length > 3 && (
-              <Badge variant="outline" className="text-xs">
-                +{preset.tags.length - 3}
-              </Badge>
+              <span className="text-[11px] text-[color:var(--color-muted-foreground)]">
+                +{preset.tags.length - 3} more
+              </span>
             )}
           </div>
         )}
-      </CardContent>
 
-      <CardFooter className="gap-2">
-        <Button asChild variant="outline" size="sm" className="flex-1">
-          <Link href={`/presets/${preset.id}`}>View</Link>
-        </Button>
-        {onDelete && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onDelete(preset.id)}
-            className="text-destructive hover:text-destructive"
-          >
-            Delete
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-4 border-t border-[color:var(--color-border)]">
+          <time className="text-xs text-[color:var(--color-muted-foreground)] tracking-wide">
+            {formatDate(preset.created_at)}
+          </time>
+
+          {onDelete && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete(preset.id);
+              }}
+              className="relative z-10 text-xs font-medium text-[color:var(--color-muted-foreground)] hover:text-[color:var(--color-destructive)] transition-colors"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }

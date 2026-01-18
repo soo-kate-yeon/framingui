@@ -37,18 +37,10 @@ const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(
         )}
         {...props}
       >
-        {/* Header */}
-        <div className="border-b bg-muted/50 px-4 py-2 flex items-center justify-between">
-          <span className="text-sm font-medium">Preview</span>
-          <span className="text-xs text-muted-foreground">
-            {hookName ? hookName : 'No hook selected'}
-          </span>
-        </div>
-
         {/* Canvas */}
         <div
           ref={canvasRef}
-          className="p-8 flex items-center justify-center min-h-[200px]"
+          className="p-10 flex items-center justify-center min-h-[240px] bg-gradient-to-br from-muted/20 via-background to-muted/30"
         >
           {hookName ? (
             <PreviewComponent
@@ -57,8 +49,25 @@ const PreviewCanvas = forwardRef<HTMLDivElement, PreviewCanvasProps>(
               state={componentState}
             />
           ) : (
-            <div className="text-muted-foreground text-sm">
-              Select a hook to see the preview
+            <div className="text-center space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center mx-auto">
+                <svg
+                  className="w-6 h-6 text-muted-foreground"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                  />
+                </svg>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Select a component to preview
+              </p>
             </div>
           )}
         </div>
