@@ -4,7 +4,7 @@
  */
 
 import type { HookPropRule } from '../schemas/hook-prop-rule';
-import hookPropRulesRaw from './hook-prop-rules.json';
+import hookPropRulesRaw from './hook-prop-rules.json' assert { type: 'json' };
 
 /**
  * Hook prop rules data for all 20 hooks

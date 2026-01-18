@@ -93,18 +93,18 @@ async function fetchProjects(params: {
     include_archived?: boolean;
 }): Promise<ProjectListResponse> {
     const searchParams = new URLSearchParams();
-    if (params.skip !== undefined) searchParams.set('skip', String(params.skip));
-    if (params.limit !== undefined) searchParams.set('limit', String(params.limit));
-    if (params.include_archived) searchParams.set('include_archived', 'true');
+    if (params.skip !== undefined) { searchParams.set('skip', String(params.skip)); }
+    if (params.limit !== undefined) { searchParams.set('limit', String(params.limit)); }
+    if (params.include_archived) { searchParams.set('include_archived', 'true'); }
 
     const response = await fetch(`${API_BASE_URL}/api/v2/projects?${searchParams}`);
-    if (!response.ok) throw new Error('Failed to fetch projects');
+    if (!response.ok) { throw new Error('Failed to fetch projects'); }
     return response.json();
 }
 
 async function fetchProject(projectId: number): Promise<Project> {
     const response = await fetch(`${API_BASE_URL}/api/v2/projects/${projectId}`);
-    if (!response.ok) throw new Error('Failed to fetch project');
+    if (!response.ok) { throw new Error('Failed to fetch project'); }
     return response.json();
 }
 
@@ -114,7 +114,7 @@ async function createProject(data: ProjectCreateData): Promise<Project> {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to create project');
+    if (!response.ok) { throw new Error('Failed to create project'); }
     return response.json();
 }
 
@@ -127,7 +127,7 @@ async function updateProject(
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to update project');
+    if (!response.ok) { throw new Error('Failed to update project'); }
     return response.json();
 }
 
@@ -139,7 +139,7 @@ async function deleteProject(
     const response = await fetch(`${API_BASE_URL}/api/v2/projects/${projectId}${params}`, {
         method: 'DELETE',
     });
-    if (!response.ok) throw new Error('Failed to delete project');
+    if (!response.ok) { throw new Error('Failed to delete project'); }
 }
 
 async function updateBreakpoint(
@@ -155,7 +155,7 @@ async function updateBreakpoint(
             body: JSON.stringify(data),
         }
     );
-    if (!response.ok) throw new Error('Failed to update breakpoint');
+    if (!response.ok) { throw new Error('Failed to update breakpoint'); }
     return response.json();
 }
 

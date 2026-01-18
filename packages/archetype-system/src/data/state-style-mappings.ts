@@ -4,7 +4,7 @@
  */
 
 import type { StateStyleMapping } from '../schemas/state-style-mapping';
-import stateStyleMappingsRaw from './state-style-mapping.json';
+import stateStyleMappingsRaw from './state-style-mapping.json' assert { type: 'json' };
 
 /**
  * State-style mappings data for all 20 hooks
