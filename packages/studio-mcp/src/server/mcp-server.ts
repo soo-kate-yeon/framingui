@@ -7,6 +7,9 @@
 
 import { createServer, type IncomingMessage, type ServerResponse } from "http";
 import { archetypeTools, type ArchetypeQueryCriteria } from "../archetype/tools.js";
+import { projectTools } from "../project/tools.js";
+import { screenTools } from "../screen/tools.js";
+import type { ArchetypeName } from "../screen/schemas.js";
 
 /**
  * MCP Tool definition
@@ -134,6 +137,180 @@ const TOOLS: MCPTool[] = [
       },
     },
   },
+  // Project Tools
+  {
+    name: "project.detectStructure",
+    description: "Detect project structure and framework type.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectPath: {
+          type: "string",
+          description: "Path to project root directory",
+        },
+      },
+      required: ["projectPath"],
+    },
+  },
+  {
+    name: "project.getActivePreset",
+    description: "Get the currently active preset for the project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectPath: {
+          type: "string",
+          description: "Optional project path to filter by",
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: "project.setActivePreset",
+    description: "Set the active preset for the project.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        presetId: {
+          type: "integer",
+          description: "ID of the preset to set as active",
+        },
+        projectPath: {
+          type: "string",
+          description: "Optional project path",
+        },
+      },
+      required: ["presetId"],
+    },
+  },
+  // Screen Tools
+  {
+    name: "screen.create",
+    description: "Create a new screen with routing setup. Generates complete page file in framework-appropriate directory.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+          description: "Screen name (e.g., 'user-profile', 'dashboard'). Used for file name and route.",
+        },
+        intent: {
+          type: "string",
+          description: "Natural language description of screen purpose (e.g., 'User profile page with avatar, bio, and settings link')",
+        },
+        targetPath: {
+          type: "string",
+          description: "Target route path (e.g., '/users/profile', '/dashboard')",
+        },
+        linkFrom: {
+          type: "object",
+          description: "Optional. Configuration for adding navigation link to parent page.",
+          properties: {
+            page: {
+              type: "string",
+              description: "Parent page path to add navigation link (e.g., '/users')",
+            },
+            label: {
+              type: "string",
+              description: "Link text label (e.g., 'View Profile')",
+            },
+            description: {
+              type: "string",
+              description: "Optional description for the link",
+            },
+          },
+          required: ["page", "label"],
+        },
+        projectPath: {
+          type: "string",
+          description: "Optional project path",
+        },
+      },
+      required: ["name", "intent", "targetPath"],
+    },
+  },
+  {
+    name: "screen.addComponent",
+    description: "Add a component to an existing screen. Handles imports and placement.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        screenName: {
+          type: "string",
+          description: "Target screen name",
+        },
+        componentType: {
+          type: "string",
+          description: "Component type from archetype system (e.g., 'useButton', 'useTextField', 'useDialog')",
+        },
+        props: {
+          type: "object",
+          description: "Optional component props configuration",
+        },
+        projectPath: {
+          type: "string",
+          description: "Optional project path",
+        },
+      },
+      required: ["screenName", "componentType"],
+    },
+  },
+  {
+    name: "screen.applyArchetype",
+    description: "Apply a style archetype to a screen. Updates CSS variables and component styling.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        screenName: {
+          type: "string",
+          description: "Target screen name",
+        },
+        archetypeName: {
+          type: "string",
+          enum: ["Professional", "Creative", "Minimal", "Bold", "Warm", "Cool", "High-Contrast"],
+          description: "Style archetype to apply",
+        },
+        projectPath: {
+          type: "string",
+          description: "Optional project path",
+        },
+      },
+      required: ["screenName", "archetypeName"],
+    },
+  },
+  {
+    name: "screen.list",
+    description: "List all screens in the current project with metadata.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        projectPath: {
+          type: "string",
+          description: "Optional project path",
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: "screen.preview",
+    description: "Get preview URL for a screen.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        screenName: {
+          type: "string",
+          description: "Screen name to preview",
+        },
+        projectPath: {
+          type: "string",
+          description: "Optional project path",
+        },
+      },
+      required: ["screenName"],
+    },
+  },
 ];
 
 /**
@@ -197,6 +374,59 @@ async function executeTool(
 
     case "archetype.query":
       return archetypeTools.query(params as ArchetypeQueryCriteria);
+
+    // Project Tools
+    case "project.detectStructure":
+      return projectTools.detectStructure({
+        projectPath: params.projectPath as string,
+      });
+
+    case "project.getActivePreset":
+      return projectTools.getActivePreset({
+        projectPath: params.projectPath as string | undefined,
+      });
+
+    case "project.setActivePreset":
+      return projectTools.setActivePreset({
+        presetId: params.presetId as number,
+        projectPath: params.projectPath as string | undefined,
+      });
+
+    // Screen Tools
+    case "screen.create":
+      return screenTools.create({
+        name: params.name as string,
+        intent: params.intent as string,
+        targetPath: params.targetPath as string,
+        linkFrom: params.linkFrom as { page: string; label: string; description?: string } | undefined,
+        projectPath: params.projectPath as string | undefined,
+      });
+
+    case "screen.addComponent":
+      return screenTools.addComponent({
+        screenName: params.screenName as string,
+        componentType: params.componentType as string,
+        props: params.props as Record<string, unknown> | undefined,
+        projectPath: params.projectPath as string | undefined,
+      });
+
+    case "screen.applyArchetype":
+      return screenTools.applyArchetype({
+        screenName: params.screenName as string,
+        archetypeName: params.archetypeName as ArchetypeName,
+        projectPath: params.projectPath as string | undefined,
+      });
+
+    case "screen.list":
+      return screenTools.list({
+        projectPath: params.projectPath as string | undefined,
+      });
+
+    case "screen.preview":
+      return screenTools.preview({
+        screenName: params.screenName as string,
+        projectPath: params.projectPath as string | undefined,
+      });
 
     default:
       return { success: false, error: `Unknown tool: ${toolName}` };

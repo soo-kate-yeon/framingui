@@ -7,6 +7,12 @@ from studio_api.schemas.curated_preset import (
     CuratedPresetResponse,
     CuratedPresetUpdate,
 )
+from studio_api.schemas.project_settings import (
+    ActivePresetResponse,
+    ProjectSettingsResponse,
+    ProjectSettingsSuccessResponse,
+    SetActivePresetRequest,
+)
 
 __all__ = [
     "CuratedPresetBase",
@@ -14,4 +20,8 @@ __all__ = [
     "CuratedPresetUpdate",
     "CuratedPresetResponse",
     "CuratedPresetList",
+    "SetActivePresetRequest",
+    "ActivePresetResponse",
+    "ProjectSettingsResponse",
+    "ProjectSettingsSuccessResponse",
 ]
