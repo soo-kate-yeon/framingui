@@ -133,6 +133,8 @@ pnpm dev      # 이제 TypeScript 컴파일 + 서버 실행
 cd packages/studio-api
 uv sync                                                    # 의존성 설치
 uv run uvicorn studio_api.main:app --reload --host 0.0.0.0 --port 8000
+#포트 점유 종료
+lsof -ti:8000 | xargs kill -9
 
 # 터미널 3: Studio Web (현재 미구현)
 # Studio Web UI는 계획되어 있지만 아직 구현되지 않았습니다
