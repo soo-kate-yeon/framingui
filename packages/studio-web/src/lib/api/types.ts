@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const PresetConfigSchema = z.record(z.string(), z.unknown());
 
-export const PresetSchema = z.object({
+export const ThemeSchema = z.object({
   id: z.number(),
   name: z.string(),
   category: z.string(),
@@ -17,7 +17,7 @@ export const PresetSchema = z.object({
 });
 
 export const PresetListSchema = z.object({
-  items: z.array(PresetSchema),
+  items: z.array(ThemeSchema),
   total: z.number(),
   skip: z.number(),
   limit: z.number(),
@@ -40,11 +40,11 @@ export const PresetUpdateSchema = z.object({
   is_active: z.boolean().optional(),
 });
 
-export type Preset = z.infer<typeof PresetSchema>;
+export type Preset = z.infer<typeof ThemeSchema>;
 export type PresetList = z.infer<typeof PresetListSchema>;
 export type PresetCreate = z.infer<typeof PresetCreateSchema>;
 export type PresetUpdate = z.infer<typeof PresetUpdateSchema>;
-export type PresetConfig = z.infer<typeof PresetConfigSchema>;
+export type ThemeConfig = z.infer<typeof PresetConfigSchema>;
 
 export interface PresetListParams {
   skip?: number;
