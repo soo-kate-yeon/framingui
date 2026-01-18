@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from studio_api.core.config import settings
-from studio_api.api.v2 import presets
+from studio_api.api.v2 import presets, settings as settings_router
 
 
 @asynccontextmanager
@@ -36,6 +36,7 @@ app.add_middleware(
 
 # Include API routers
 app.include_router(presets.router)
+app.include_router(settings_router.router)
 
 
 @app.get("/health")
