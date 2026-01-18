@@ -4,7 +4,7 @@
  */
 
 import type { VariantBranching } from '../schemas/variant-branching';
-import variantBranchingRaw from './variant-branching.json';
+import variantBranchingRaw from './variant-branching.json' assert { type: 'json' };
 
 /**
  * Variant branching data for all 20 hooks

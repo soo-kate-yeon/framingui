@@ -452,3 +452,227 @@
     box-shadow: var(--shadow-dropdown);
   }
 }
+
+/* SaaS Dashboard Theme
+ * Applied via MCP: project.setActivePreset(presetId: saas-dashboard)
+ * Reference: Linear/Vercel dashboard design language
+ */
+[data-theme='saas-dashboard'] {
+  /* ===== Layout System ===== */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+  --header-height: 56px;
+  
+  /* ===== Typography - Inter (Clean & Compact) ===== */
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  
+  /* ===== Color Palette - Professional Indigo & Data-viz Green ===== */
+  --color-background: oklch(99% 0.005 240);
+  --color-foreground: oklch(20% 0.03 250);
+  
+  /* Card - Slightly distinct from bg */
+  --color-card-background: oklch(100% 0 0);
+  --color-card-foreground: oklch(20% 0.03 250);
+  
+  /* Primary - Deep Indigo/Purple */
+  --color-primary: oklch(45% 0.18 270);
+  --color-primary-foreground: oklch(98% 0 0);
+  
+  /* Secondary - Cool Grey */
+  --color-secondary: oklch(96% 0.01 240);
+  --color-secondary-foreground: oklch(25% 0.04 250);
+  
+  /* Accent - Success/Growth Green */
+  --color-accent: oklch(65% 0.18 150);
+  --color-accent-foreground: oklch(20% 0.05 150);
+  
+  /* Muted - Subdued text */
+  --color-muted: oklch(96% 0.01 240);
+  --color-muted-foreground: oklch(55% 0.04 250);
+  
+  /* Destructive */
+  --color-destructive: oklch(60% 0.18 25);
+  --color-destructive-foreground: oklch(98% 0 0);
+  
+  /* Borders and Inputs - Subtle */
+  --color-border: oklch(92% 0.01 240);
+  --color-input: oklch(92% 0.01 240);
+  --color-ring: oklch(45% 0.18 270);
+  
+  /* Radius - Compact */
+  --radius-lg: 0.5rem;
+  --radius-md: 0.375rem;
+  --radius-sm: 0.25rem;
+  
+  /* Shadows - Layered */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+/* SaaS Dashboard Dark Mode */
+[data-theme='saas-dashboard'][data-mode='dark'],
+[data-theme='saas-dashboard'].dark {
+  --color-background: oklch(12% 0.02 260);
+  --color-foreground: oklch(98% 0.01 240);
+  
+  --color-card-background: oklch(15% 0.02 260);
+  --color-card-foreground: oklch(98% 0.01 240);
+  
+  /* Primary - Lighter Indigo */
+  --color-primary: oklch(65% 0.18 270);
+  --color-primary-foreground: oklch(12% 0.02 260);
+  
+  /* Secondary */
+  --color-secondary: oklch(20% 0.02 260);
+  --color-secondary-foreground: oklch(98% 0.01 240);
+  
+  /* Accent - Lighter Green */
+  --color-accent: oklch(75% 0.16 150);
+  --color-accent-foreground: oklch(15% 0.05 150);
+  
+  /* Muted */
+  --color-muted: oklch(20% 0.02 260);
+  --color-muted-foreground: oklch(70% 0.02 260);
+  
+  /* Borders */
+  --color-border: oklch(25% 0.02 260);
+  --color-input: oklch(25% 0.02 260);
+  --color-ring: oklch(65% 0.18 270);
+}
+
+/* ===== SaaS Dashboard Specific Styles ===== */
+
+[data-theme='saas-dashboard'] body {
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-sm); /* Density: start small */
+  line-height: 1.5;
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+}
+
+/* Headings - Tight & Clean */
+[data-theme='saas-dashboard'] h1,
+[data-theme='saas-dashboard'] h2,
+[data-theme='saas-dashboard'] h3 {
+  letter-spacing: -0.025em;
+  font-weight: 600;
+  color: var(--color-foreground);
+}
+
+[data-theme='saas-dashboard'] h1 { font-size: var(--font-size-2xl); }
+[data-theme='saas-dashboard'] h2 { font-size: var(--font-size-xl); }
+[data-theme='saas-dashboard'] h3 { font-size: var(--font-size-lg); }
+
+/* Buttons - Compact & Punchy */
+[data-theme='saas-dashboard'] .btn,
+[data-theme='saas-dashboard'] button:not([class*='bg-']) {
+  font-weight: 500;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-md);
+  transition: all 0.15s ease;
+}
+
+[data-theme='saas-dashboard'] .btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme='saas-dashboard'] .btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+/* Cards - Data Containers */
+[data-theme='saas-dashboard'] .card {
+  background: var(--color-card-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+[data-theme='saas-dashboard'] .card:hover {
+  border-color: var(--color-primary); /* Interactive hint */
+}
+
+/* Tables - High Density */
+[data-theme='saas-dashboard'] table {
+  width: 100%;
+  font-size: var(--font-size-xs);
+  border-collapse: collapse;
+}
+
+[data-theme='saas-dashboard'] th {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--color-muted-foreground);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-muted);
+  font-weight: 600;
+  text-align: left;
+}
+
+[data-theme='saas-dashboard'] td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-foreground);
+}
+
+[data-theme='saas-dashboard'] tr:last-child td {
+  border-bottom: none;
+}
+
+/* Badges - Status Indicators */
+[data-theme='saas-dashboard'] .badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+[data-theme='saas-dashboard'] .badge-success {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+  color: color-mix(in srgb, var(--color-accent) 80%, black);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+[data-theme='saas-dashboard'] .badge-neutral {
+  background: var(--color-secondary);
+  color: var(--color-secondary-foreground);
+  border: 1px solid var(--color-border);
+}
+
+/* Inputs - Professional */
+[data-theme='saas-dashboard'] input,
+[data-theme='saas-dashboard'] select,
+[data-theme='saas-dashboard'] textarea {
+  font-size: var(--font-size-sm);
+  background: var(--color-component-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  transition: all 0.15s ease;
+}
+
+[data-theme='saas-dashboard'] input:focus,
+[data-theme='saas-dashboard'] select:focus,
+[data-theme='saas-dashboard'] textarea:focus {
+  outline: none;
+  border-color: var(--color-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring) 15%, transparent);
+}
