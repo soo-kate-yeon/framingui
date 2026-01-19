@@ -240,7 +240,7 @@ describe('Theme Switching', () => {
         screen.getByTestId('switch-creative').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
 
       // Toggle dark mode
       act(() => {

@@ -327,7 +327,7 @@ sequenceDiagram
     participant CSS Engine
     participant Component
 
-    App->>ThemeProvider: Initialize with defaultPreset='professional'
+    App->>ThemeProvider: Initialize with defaultTheme='professional'
     ThemeProvider->>ThemeProvider: Load theme tokens
     ThemeProvider->>CSS Engine: Generate CSS variables
     CSS Engine->>ThemeProvider: CSS string
@@ -338,7 +338,7 @@ sequenceDiagram
     ThemeProvider-->>useTheme Hook: { theme, tokens, darkMode, ... }
     useTheme Hook-->>Component: Theme state
 
-    Component->>useTheme Hook: setPreset('creative')
+    Component->>useTheme Hook: setTheme('creative')
     useTheme Hook->>ThemeProvider: Update theme state
     ThemeProvider->>ThemeProvider: Re-derive tokens (memoized)
     ThemeProvider->>CSS Engine: Regenerate CSS variables
@@ -352,8 +352,8 @@ sequenceDiagram
 
 ```typescript
 interface ThemeContextValue {
-  theme: PresetName;                      // Current theme name
-  setPreset: (theme: PresetName) => void; // Theme setter
+  theme: ThemeName;                      // Current theme name
+  setTheme: (theme: ThemeName) => void; // Theme setter
   tokens: SemanticToken;                   // Current semantic tokens
   composition: CompositionToken;           // Current composition tokens
   darkMode: boolean;                       // Dark mode state
@@ -367,16 +367,16 @@ interface ThemeContextValue {
 
 ```typescript
 const tokens = useMemo(() => {
-  const theme = loadPreset(presetName);
+  const theme = loadTheme(themeName);
   return darkMode ? invertTokensForDarkMode(theme.tokens) : theme.tokens;
-}, [presetName, darkMode]);
+}, [themeName, darkMode]);
 ```
 
 **Stable Callback References**: Uses `useCallback` for setter functions to prevent unnecessary re-renders:
 
 ```typescript
-const setPreset = useCallback((newPreset: PresetName) => {
-  setPresetName(newPreset);
+const setTheme = useCallback((newTheme: ThemeName) => {
+  setThemeName(newTheme);
 }, []);
 
 const toggleDarkMode = useCallback(() => {
@@ -534,7 +534,7 @@ const StyledButton = styled.button`
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <StyledButton>Click me</StyledButton>
     </ThemeProvider>
   );

@@ -128,7 +128,7 @@ describe('ThemeProvider', () => {
       document.documentElement.setAttribute('data-theme', 'dark');
 
       render(
-        <ThemeProvider defaultDarkMode={false}>
+        <ThemeProvider defaultDarkMode={false} enableSystemTheme={false}>
           <TestComponent />
         </ThemeProvider>
       );

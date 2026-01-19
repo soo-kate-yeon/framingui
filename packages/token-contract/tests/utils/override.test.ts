@@ -1,5 +1,5 @@
 /**
- * Preset Override Tests
+ * Theme Override Tests
  * Tests for custom token overrides with validation
  */
 

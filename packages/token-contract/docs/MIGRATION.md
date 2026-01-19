@@ -34,9 +34,9 @@ pnpm add @tekton/token-contract
 **Update Tailwind Config**:
 ```javascript
 // tailwind.config.js
-const { loadPreset } = require('@tekton/token-contract');
+const { loadTheme } = require('@tekton/token-contract');
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 module.exports = {
   theme: {
@@ -100,7 +100,7 @@ import { ThemeProvider } from '@tekton/token-contract';
 
 export default function App() {
   return (
-    <ThemeProvider defaultPreset="professional" detectSystemTheme>
+    <ThemeProvider defaultTheme="professional" detectSystemTheme>
       <YourApp />
     </ThemeProvider>
   );
@@ -204,9 +204,9 @@ npm install @tekton/token-contract
 **Create Hybrid Theme**:
 ```tsx
 import { extendTheme } from '@chakra-ui/react';
-import { ThemeProvider as TektonThemeProvider, loadPreset } from '@tekton/token-contract';
+import { ThemeProvider as TektonThemeProvider, loadTheme } from '@tekton/token-contract';
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 const chakraTheme = extendTheme({
   colors: {
@@ -232,7 +232,7 @@ const chakraTheme = extendTheme({
 
 function App() {
   return (
-    <TektonThemeProvider defaultPreset="professional">
+    <TektonThemeProvider defaultTheme="professional">
       <ChakraProvider theme={chakraTheme}>
         <YourApp />
       </ChakraProvider>
@@ -334,9 +334,9 @@ npm install @tekton/token-contract
 **Create Hybrid Theme**:
 ```tsx
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { ThemeProvider as TektonThemeProvider, loadPreset } from '@tekton/token-contract';
+import { ThemeProvider as TektonThemeProvider, loadTheme } from '@tekton/token-contract';
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 const muiTheme = createTheme({
   palette: {
@@ -355,7 +355,7 @@ const muiTheme = createTheme({
 
 function App() {
   return (
-    <TektonThemeProvider defaultPreset="professional">
+    <TektonThemeProvider defaultTheme="professional">
       <MuiThemeProvider theme={muiTheme}>
         <YourApp />
       </MuiThemeProvider>
@@ -466,7 +466,7 @@ import { ThemeProvider } from '@tekton/token-contract';
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <YourApp />
     </ThemeProvider>
   );
@@ -581,10 +581,10 @@ const theme = {
 
 **After**:
 ```tsx
-import { loadPreset, overridePresetTokens } from '@tekton/token-contract';
+import { loadTheme, overrideThemeTokens } from '@tekton/token-contract';
 
-const basePreset = loadPreset('professional');
-const customTokens = overridePresetTokens(basePreset.tokens, {
+const baseTheme = loadTheme('professional');
+const customTokens = overrideThemeTokens(baseTheme.tokens, {
   primary: {
     '500': `oklch(0.60 0.15 ${baseHue})`,
   },
@@ -621,7 +621,7 @@ If issues arise, rollback incrementally:
 
 **Step 1**: Keep both systems running in parallel
 ```tsx
-<ThemeProvider defaultPreset="professional">
+<ThemeProvider defaultTheme="professional">
   <ChakraProvider theme={chakraTheme}>
     <YourApp />
   </ChakraProvider>

@@ -1,54 +1,53 @@
-/**
- * ThemeProvider Component
- * Provides theme context to child components
- */
-
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  type ReactNode,
+} from 'react';
 import { ThemeContext } from './ThemeContext.js';
 import { loadTheme } from '../themes/theme-loader.js';
 import { applyCSSVariables } from './apply-css-variables.js';
-import type { PresetName } from '../themes/types.js';
+import type { ThemeName } from '../themes/types.js';
+import type { SemanticToken, CompositionToken } from '../schemas/index.js';
 
 /**
- * ThemeProvider Props
+ * Theme Provider Props
  */
 export interface ThemeProviderProps {
   /** Child components */
-  children: React.ReactNode;
-  /** Default preset to load */
-  defaultTheme?: PresetName;
+  children: ReactNode;
+  /** Default theme to load */
+  defaultTheme?: ThemeName;
   /** Default dark mode state */
   defaultDarkMode?: boolean;
   /** Detect system theme preference */
-  detectSystemTheme?: boolean;
+  enableSystemTheme?: boolean;
 }
 
 /**
- * Detect system dark mode preference
+ * Theme Provider Component
+ * Manages dynamic theme state and provides tokens via context
  */
-function detectSystemDarkMode(): boolean {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
-}
-
-/**
- * ThemeProvider Component
- * Manages theme state and provides context to children
- */
-export function ThemeProvider({
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
   defaultTheme = 'professional',
   defaultDarkMode = false,
-  detectSystemTheme = false,
-}: ThemeProviderProps) {
-  // Determine initial dark mode state
-  const initialDarkMode = detectSystemTheme
-    ? detectSystemDarkMode()
-    : defaultDarkMode;
+  enableSystemTheme = true,
+}) => {
 
-  // State
-  const [preset, setPresetState] = useState<PresetName>(() => {
-    // Validate preset or fall back to professional
+  // If defaultDarkMode is explicitly true, use it. Otherwise check system preference.
+  const initialDarkMode =
+    defaultDarkMode ||
+    (enableSystemTheme &&
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function'
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+      : false);
+
+  // State for theme name
+  const [themeName, setThemeNameState] = useState<ThemeName>(() => {
     try {
       loadTheme(defaultTheme);
       return defaultTheme;
@@ -59,27 +58,46 @@ export function ThemeProvider({
 
   const [darkMode, setDarkMode] = useState<boolean>(initialDarkMode);
 
-  // Load tokens from preset
-  const { tokens, composition } = useMemo(() => {
+  // State for theme tokens and composition
+  const [themeState, setThemeState] = useState<{
+    tokens: SemanticToken | null;
+    composition: CompositionToken | null;
+  }>(() => {
     try {
-      const loadedPreset = loadTheme(preset);
+      const loadedTheme = loadTheme(themeName);
       return {
-        tokens: loadedPreset.tokens,
-        composition: loadedPreset.composition,
+        tokens: loadedTheme.tokens,
+        composition: loadedTheme.composition,
       };
     } catch {
-      // Fallback to professional if preset fails to load
-      const fallbackPreset = loadTheme('professional');
+      const fallbackTheme = loadTheme('professional');
       return {
-        tokens: fallbackPreset.tokens,
-        composition: fallbackPreset.composition,
+        tokens: fallbackTheme.tokens,
+        composition: fallbackTheme.composition,
       };
     }
-  }, [preset]);
+  });
 
-  // Stable callback for setting preset
-  const setTheme = useCallback((newPreset: PresetName) => {
-    setPresetState(newPreset);
+  // Load tokens when themeName changes
+  useEffect(() => {
+    try {
+      const loadedTheme = loadTheme(themeName);
+      setThemeState({
+        tokens: loadedTheme.tokens,
+        composition: loadedTheme.composition,
+      });
+    } catch {
+      const fallbackTheme = loadTheme('professional');
+      setThemeState({
+        tokens: fallbackTheme.tokens,
+        composition: fallbackTheme.composition,
+      });
+    }
+  }, [themeName]);
+
+  // Stable callback for setting theme
+  const setTheme = useCallback((newTheme: ThemeName) => {
+    setThemeNameState(newTheme);
   }, []);
 
   // Stable callback for toggling dark mode
@@ -89,33 +107,35 @@ export function ThemeProvider({
 
   // Apply CSS variables when tokens or dark mode changes
   useEffect(() => {
-    if (tokens && composition) {
-      applyCSSVariables(tokens, composition);
+    if (themeState.tokens && themeState.composition) {
+      applyCSSVariables(themeState.tokens, themeState.composition);
     }
-  }, [tokens, composition]);
+  }, [themeState.tokens, themeState.composition]);
 
-  // Apply data-theme attribute for dark mode
-  useEffect(() => {
+  // Apply dark mode class to document element
+  useLayoutEffect(() => {
     if (typeof document !== 'undefined') {
       if (darkMode) {
+        document.documentElement.classList.add('dark');
         document.documentElement.setAttribute('data-theme', 'dark');
       } else {
+        document.documentElement.classList.remove('dark');
         document.documentElement.removeAttribute('data-theme');
       }
     }
   }, [darkMode]);
 
-  // Context value (memoized to prevent unnecessary re-renders)
+  // Context value
   const contextValue = useMemo(
     () => ({
-      preset,
+      theme: themeName,
       setTheme,
-      tokens,
-      composition,
+      tokens: themeState.tokens,
+      composition: themeState.composition,
       darkMode,
       toggleDarkMode,
     }),
-    [preset, setTheme, tokens, composition, darkMode, toggleDarkMode]
+    [themeName, setTheme, themeState, darkMode, toggleDarkMode]
   );
 
   return (
@@ -123,4 +143,4 @@ export function ThemeProvider({
       {children}
     </ThemeContext.Provider>
   );
-}
+};
