@@ -1,33 +1,42 @@
 /**
- * Token Contract Presets
- * Curated design system presets with WCAG compliance
+ * Token Contract Themes
+ * Curated design system themes with WCAG compliance
  */
 
 export {
   loadTheme,
-  getAvailablePresets,
-  validatePreset,
+  getAvailableThemes,
+  validateTheme,
+} from './theme-loader.js';
+
+export { validateWCAGCompliance } from './wcag-compliance.js';
+
+export {
+  ThemeSchema,
+  ThemeNameSchema,
+  type Theme,
+  type ThemeName,
+  type ThemeInfo,
+} from './types.js';
+
+// Backward compatibility aliases
+export {
+  getAvailableThemes as getAvailablePresets,
+  validateTheme as validatePreset,
 } from './theme-loader.js';
 
 export {
-  validateWCAGCompliance,
-  type WCAGCheck,
-  type WCAGComplianceResult,
-} from './wcag-compliance.js';
-
-export {
-  type Preset,
-  type PresetName,
-  type PresetInfo,
-  PresetNameSchema,
-  ThemeSchema,
+  type Theme as Preset,
+  type ThemeName as PresetName,
+  type ThemeInfo as PresetInfo,
+  ThemeNameSchema as PresetNameSchema,
 } from './types.js';
 
-// Re-export preset definitions for direct access if needed
-export { professionalPreset } from './definitions/professional.js';
-export { creativePreset } from './definitions/creative.js';
-export { minimalPreset } from './definitions/minimal.js';
-export { boldPreset } from './definitions/bold.js';
-export { warmPreset } from './definitions/warm.js';
-export { coolPreset } from './definitions/cool.js';
-export { highContrastPreset } from './definitions/high-contrast.js';
+// Re-export theme definitions for direct access if needed
+export { professionalTheme } from './definitions/professional.js';
+export { creativeTheme } from './definitions/creative.js';
+export { minimalTheme } from './definitions/minimal.js';
+export { boldTheme } from './definitions/bold.js';
+export { warmTheme } from './definitions/warm.js';
+export { coolTheme } from './definitions/cool.js';
+export { highContrastTheme } from './definitions/high-contrast.js';

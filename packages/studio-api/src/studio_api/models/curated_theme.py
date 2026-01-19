@@ -1,4 +1,4 @@
-"""Curated preset database model."""
+"""Curated theme database model."""
 
 from datetime import datetime, timezone
 from typing import Any
@@ -10,7 +10,7 @@ from studio_api.core.database import Base
 
 
 class CuratedTheme(Base):
-    """Curated preset model for storing design system presets."""
+    """Curated theme model for storing design system themes."""
 
     __tablename__ = "curated_themes"
 

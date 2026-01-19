@@ -1,14 +1,14 @@
 /**
- * Preset system for design token generation
+ * Theme system for design token generation
  * Provides pre-configured design system settings for common technology stacks
  *
- * @module presets
+ * @module themes
  */
 
 export * from './types';
 export * from './loader';
 
-import type { Preset } from './types';
+import type { Theme } from './types';
 import { generateNeutralPalette } from '../generator/neutral-palette';
 import { mapSemanticTokens } from '../generator/semantic-mapper';
 import { exportToCSS, exportToDTCG, exportToTailwind } from '../generator/output';
@@ -21,7 +21,7 @@ import type { OKLCHColor } from '../schemas';
 export type TokenFormat = 'css' | 'dtcg' | 'tailwind';
 
 /**
- * Options for token generation from preset
+ * Options for token generation from theme
  */
 export interface GenerateTokensOptions {
   /**
@@ -32,36 +32,36 @@ export interface GenerateTokensOptions {
 }
 
 /**
- * Generate design tokens from a preset configuration
- * Convenience function that integrates preset with token generation workflow
+ * Generate design tokens from a theme configuration
+ * Convenience function that integrates theme with token generation workflow
  *
- * @param preset - Validated preset configuration
+ * @param theme - Validated theme configuration
  * @param options - Token generation options
  * @returns Generated tokens in the specified format
  * @throws {Error} When an unsupported format is specified
  *
  * @example
  * ```typescript
- * import { loadDefaultPreset, generateTokensFromPreset } from 'tekton/presets';
+ * import { loadDefaultTheme, generateTokensFromTheme } from 'tekton/themes';
  *
- * const preset = loadDefaultPreset('next-tailwind-shadcn');
+ * const theme = loadDefaultTheme('next-tailwind-shadcn');
  *
  * // Generate CSS variables
- * const css = generateTokensFromPreset(preset, { format: 'css' });
+ * const css = generateTokensFromTheme(theme, { format: 'css' });
  *
  * // Generate DTCG JSON
- * const dtcg = generateTokensFromPreset(preset, { format: 'dtcg' });
+ * const dtcg = generateTokensFromTheme(theme, { format: 'dtcg' });
  *
  * // Generate Tailwind config
- * const tailwind = generateTokensFromPreset(preset, { format: 'tailwind' });
+ * const tailwind = generateTokensFromTheme(theme, { format: 'tailwind' });
  * ```
  */
-export function generateTokensFromPreset(
-  preset: Preset,
+export function generateTokensFromTheme(
+  theme: Theme,
   options: GenerateTokensOptions = {}
 ): string {
   const { format = 'css' } = options;
-  const { questionnaire } = preset;
+  const { questionnaire } = theme;
 
   // Extract and validate primaryColor (required by Zod schema)
   const primaryColor: OKLCHColor = questionnaire.primaryColor || {

@@ -11,8 +11,8 @@ import { archetypeTools, type ArchetypeQueryCriteria } from '../component/tools.
 import { projectTools } from "../project/tools.js";
 import { screenTools } from "../screen/tools.js";
 import type { ArchetypeName } from "../screen/schemas.js";
-import { presetList, presetGet } from '../theme/tools.js';
-import { projectStatus, useBuiltinPreset } from "../project/standalone.js";
+import { getBuiltinThemes, getBuiltinTheme } from "../theme/builtin.js";
+import { projectStatus, useBuiltinTheme } from "../project/standalone.js";
 import { detectMode, type ModeOptions } from "./mode.js";
 import { STANDALONE_TOOLS, getHealthResponse } from "./standalone-tools.js";
 import type { ConnectionMode } from "../project/config-types.js";
@@ -159,8 +159,8 @@ const TOOLS: MCPTool[] = [
     },
   },
   {
-    name: "project.getActivePreset",
-    description: "Get the currently active preset for the project.",
+    name: "project.getActiveTheme",
+    description: "Get the currently active theme for the project.",
     inputSchema: {
       type: "object",
       properties: {
@@ -173,14 +173,14 @@ const TOOLS: MCPTool[] = [
     },
   },
   {
-    name: "project.setActivePreset",
-    description: "Set the active preset for the project.",
+    name: "project.setActiveTheme",
+    description: "Set the active theme for the project.",
     inputSchema: {
       type: "object",
       properties: {
         themeId: {
           type: "integer",
-          description: "ID of the preset to set as active",
+          description: "ID of the theme to set as active",
         },
         projectPath: {
           type: "string",
@@ -394,13 +394,13 @@ async function executeTool(
         projectPath: params.projectPath as string,
       });
 
-    case "project.getActivePreset":
-      return projectTools.getActivePreset({
+    case "project.getActiveTheme":
+      return projectTools.getActiveTheme({
         projectPath: params.projectPath as string | undefined,
       });
 
-    case "project.setActivePreset":
-      return projectTools.setActivePreset({
+    case "project.setActiveTheme":
+      return projectTools.setActiveTheme({
         themeId: params.themeId as number,
         projectPath: params.projectPath as string | undefined,
       });
@@ -441,22 +441,20 @@ async function executeTool(
         projectPath: params.projectPath as string | undefined,
       });
 
-    // Standalone Preset Tools
-    case "preset.list":
-      return presetList();
+    // Standalone Theme Tools
+    case "theme.list":
+      return getBuiltinThemes(); // Using direct export since logic was inline/simple wrapper
 
-    case "preset.get":
-      return presetGet({
-        themeId: params.themeId as string,
-      });
+    case "theme.get":
+      return getBuiltinTheme(params.themeId as string);
 
     case "project.status":
       return projectStatus({
         projectPath: params.projectPath as string | undefined,
       });
 
-    case "project.useBuiltinPreset":
-      return useBuiltinPreset({
+    case "project.useBuiltinTheme":
+      return useBuiltinTheme({
         themeId: params.themeId as string,
         projectPath: params.projectPath as string | undefined,
       });

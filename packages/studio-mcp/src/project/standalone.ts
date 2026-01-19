@@ -1,14 +1,14 @@
 /**
  * Standalone Project Tools
- * Tool handlers for project.status and project.useBuiltinPreset MCP tools
+ * Tool handlers for project.status and project.useBuiltinTheme MCP tools
  *
  * @module project/standalone
  */
 
 import { readConfig, updateConfig, getDefaultConfig } from "./config.js";
 import type { TektonConfig, ConnectionMode } from "./config-types.js";
-import { getBuiltinPreset, isValidPresetId } from '../theme/builtin.js';
-import type { PresetMeta } from '../theme/types.js';
+import { getBuiltinTheme, isValidThemeId } from "../theme/builtin.js";
+import type { ThemeMeta } from "../theme/types.js";
 import { ProjectTools } from "./tools.js";
 
 /**
@@ -28,9 +28,9 @@ export interface ProjectStatusInput {
 }
 
 /**
- * Input schema for project.useBuiltinPreset tool
+ * Input schema for project.useBuiltinTheme tool
  */
-export interface UseBuiltinPresetInput {
+export interface UseBuiltinThemeInput {
   themeId: string;
   projectPath?: string;
 }
@@ -54,10 +54,10 @@ export interface ProjectStatusResponse {
 }
 
 /**
- * Use builtin preset response
+ * Use builtin theme response
  */
-export interface UseBuiltinPresetResponse {
-  preset: PresetMeta;
+export interface UseBuiltinThemeResponse {
+  theme: ThemeMeta;
   config: TektonConfig;
 }
 
@@ -103,15 +103,15 @@ export async function projectStatus(
       activeTheme: null,
     };
 
-    // If there's an active preset, include its info
-    if (config.preset.activePresetId) {
-      const preset = getBuiltinPreset(config.preset.activePresetId);
-      if (preset) {
+    // If there's an active theme, include its info
+    if (config.theme.activeThemeId) {
+      const theme = getBuiltinTheme(config.theme.activeThemeId);
+      if (theme) {
         response.activeTheme = {
-          id: preset.id,
-          name: preset.name,
-          brandTone: preset.brandTone,
-          selectedAt: config.preset.selectedAt || new Date().toISOString(),
+          id: theme.id,
+          name: theme.name,
+          brandTone: theme.brandTone,
+          selectedAt: config.theme.selectedAt || new Date().toISOString(),
         };
       }
     }
@@ -129,71 +129,71 @@ export async function projectStatus(
 }
 
 /**
- * Select a built-in preset as active for the project
- * MCP Tool: project.useBuiltinPreset
+ * Select a built-in theme as active for the project
+ * MCP Tool: project.useBuiltinTheme
  *
  * @param input - Contains themeId and optional projectPath
- * @returns Confirmation with preset info
+ * @returns Confirmation with theme info
  */
-export async function useBuiltinPreset(
-  input: UseBuiltinPresetInput
-): Promise<ToolResult<UseBuiltinPresetResponse>> {
+export async function useBuiltinTheme(
+  input: UseBuiltinThemeInput
+): Promise<ToolResult<UseBuiltinThemeResponse>> {
   try {
     const { themeId, projectPath = process.cwd() } = input;
 
-    // Validate preset ID
+    // Validate theme ID
     if (!themeId || themeId.trim() === "") {
       return {
         success: false,
-        error: "Preset ID is required",
+        error: "Theme ID is required",
       };
     }
 
-    if (!isValidPresetId(themeId)) {
+    if (!isValidThemeId(themeId)) {
       return {
         success: false,
-        error: `Invalid preset ID: ${themeId}. Use preset.list to see available presets.`,
+        error: `Invalid theme ID: ${themeId}. Use theme.list to see available themes.`,
       };
     }
 
-    // Get preset data
-    const preset = getBuiltinPreset(themeId);
-    if (!preset) {
+    // Get theme data
+    const theme = getBuiltinTheme(themeId);
+    if (!theme) {
       return {
         success: false,
-        error: `Preset not found: ${themeId}`,
+        error: `Theme not found: ${themeId}`,
       };
     }
 
-    // Update config with new preset selection
+    // Update config with new theme selection
     const now = new Date().toISOString();
     const updatedConfig = updateConfig(projectPath, {
-      preset: {
-        activePresetId: themeId,
+      theme: {
+        activeThemeId: themeId,
         selectedAt: now,
       },
     });
 
-    // Build preset metadata for response
-    const presetMeta: PresetMeta = {
-      id: preset.id,
-      name: preset.name,
-      description: preset.description,
-      stackInfo: preset.stackInfo,
-      brandTone: preset.brandTone,
+    // Build theme metadata for response
+    const themeMeta: ThemeMeta = {
+      id: theme.id,
+      name: theme.name,
+      description: theme.description,
+      stackInfo: theme.stackInfo,
+      brandTone: theme.brandTone,
     };
 
     return {
       success: true,
       data: {
-        preset: presetMeta,
+        theme: themeMeta,
         config: updatedConfig,
       },
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to set preset",
+      error: error instanceof Error ? error.message : "Failed to set theme",
     };
   }
 }

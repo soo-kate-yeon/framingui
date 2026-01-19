@@ -10,7 +10,7 @@ export {
 } from './fallback.js';
 
 export {
-  overridePresetTokens,
+  overrideThemeTokens,
   validateOverride,
   mergeTokens,
 } from './override.js';

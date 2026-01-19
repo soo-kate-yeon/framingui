@@ -11,11 +11,11 @@ import { useTheme } from '../../src/theme-provider/useTheme.js';
 
 // Test component with theme switching capabilities
 function ThemeSwitcher() {
-  const { preset, setTheme, darkMode, toggleDarkMode } = useTheme();
+  const { theme, setTheme, darkMode, toggleDarkMode } = useTheme();
 
   return (
     <div>
-      <div data-testid="current-preset">{preset}</div>
+      <div data-testid="current-theme">{theme}</div>
       <div data-testid="current-mode">{darkMode ? 'dark' : 'light'}</div>
       <button
         data-testid="switch-creative"
@@ -45,37 +45,37 @@ describe('Theme Switching', () => {
     cleanup();
   });
 
-  describe('Preset Switching', () => {
-    it('should switch between presets', () => {
+  describe('Theme Switching', () => {
+    it('should switch between themes', () => {
       render(
         <ThemeProvider defaultTheme="professional">
           <ThemeSwitcher />
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('professional');
+      expect(screen.getByTestId('current-theme').textContent).toBe('professional');
 
       // Switch to creative
       act(() => {
         screen.getByTestId('switch-creative').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
 
       // Switch to minimal
       act(() => {
         screen.getByTestId('switch-minimal').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('minimal');
+      expect(screen.getByTestId('current-theme').textContent).toBe('minimal');
     });
 
-    it('should update tokens when preset changes', () => {
+    it('should update tokens when theme changes', () => {
       function TokenWatcher() {
-        const { preset, tokens, setTheme } = useTheme();
+        const { theme, tokens, setTheme } = useTheme();
         return (
           <div>
-            <div data-testid="preset">{preset}</div>
+            <div data-testid="theme">{theme}</div>
             <div data-testid="has-tokens">{tokens ? 'yes' : 'no'}</div>
             <button onClick={() => setTheme('bold')}>Switch</button>
           </div>
@@ -94,11 +94,11 @@ describe('Theme Switching', () => {
         screen.getByText('Switch').click();
       });
 
-      expect(screen.getByTestId('preset').textContent).toBe('bold');
+      expect(screen.getByTestId('theme').textContent).toBe('bold');
       expect(screen.getByTestId('has-tokens').textContent).toBe('yes');
     });
 
-    it('should apply new CSS variables when preset changes', () => {
+    it('should apply new CSS variables when theme changes', () => {
       render(
         <ThemeProvider defaultTheme="professional">
           <ThemeSwitcher />
@@ -110,10 +110,10 @@ describe('Theme Switching', () => {
       });
 
       // CSS variables should be updated (verified by the provider's effect)
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
     });
 
-    it('should handle rapid preset switches', () => {
+    it('should handle rapid theme switches', () => {
       render(
         <ThemeProvider defaultTheme="professional">
           <ThemeSwitcher />
@@ -126,7 +126,7 @@ describe('Theme Switching', () => {
         screen.getByTestId('switch-creative').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
     });
   });
 
@@ -178,53 +178,53 @@ describe('Theme Switching', () => {
       expect(document.documentElement.hasAttribute('data-theme')).toBe(false);
     });
 
-    it('should maintain preset when toggling dark mode', () => {
+    it('should maintain theme when toggling dark mode', () => {
       render(
         <ThemeProvider defaultTheme="creative">
           <ThemeSwitcher />
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
 
       act(() => {
         screen.getByTestId('toggle-dark').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
       expect(screen.getByTestId('current-mode').textContent).toBe('dark');
     });
   });
 
   describe('Combined Switching', () => {
-    it('should handle preset and dark mode changes together', () => {
+    it('should handle theme and dark mode changes together', () => {
       render(
         <ThemeProvider defaultTheme="professional" defaultDarkMode={false}>
           <ThemeSwitcher />
         </ThemeProvider>
       );
 
-      // Switch preset
+      // Switch theme
       act(() => {
         screen.getByTestId('switch-creative').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
 
       // Toggle dark mode
       act(() => {
         screen.getByTestId('toggle-dark').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('current-theme').textContent).toBe('creative');
       expect(screen.getByTestId('current-mode').textContent).toBe('dark');
 
-      // Switch preset again
+      // Switch theme again
       act(() => {
         screen.getByTestId('switch-minimal').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('minimal');
+      expect(screen.getByTestId('current-theme').textContent).toBe('minimal');
       expect(screen.getByTestId('current-mode').textContent).toBe('dark');
     });
 
@@ -254,18 +254,18 @@ describe('Theme Switching', () => {
         screen.getByTestId('switch-minimal').click();
       });
 
-      expect(screen.getByTestId('current-preset').textContent).toBe('minimal');
+      expect(screen.getByTestId('current-theme').textContent).toBe('minimal');
       expect(screen.getByTestId('current-mode').textContent).toBe('dark');
     });
   });
 
   describe('Performance', () => {
-    it('should not cause excessive re-renders on preset change', () => {
+    it('should not cause excessive re-renders on theme change', () => {
       let renderCount = 0;
 
       function RenderCounter() {
         renderCount++;
-        const { preset, setTheme } = useTheme();
+        const { theme, setTheme } = useTheme();
         return (
           <div>
             <div data-testid="render-count">{renderCount}</div>

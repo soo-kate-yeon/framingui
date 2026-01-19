@@ -86,23 +86,23 @@ export const NeutralTokenSchema = z.object({
 export type NeutralToken = z.infer<typeof NeutralTokenSchema>;
 
 /**
- * Extended Token Preset Schema
- * Complete token preset with brand, semantic, dataViz, and neutral categories
+ * Extended Token Theme Schema
+ * Complete token theme with brand, semantic, dataViz, and neutral categories
  */
-export const ExtendedTokenPresetSchema = z.object({
+export const ExtendedTokenThemeSchema = z.object({
   brand: BrandTokenSchema,
   semantic: SemanticTokenSchema,
   dataViz: DataVizTokenSchema,
   neutral: NeutralTokenSchema,
 });
 
-export type ExtendedTokenPreset = z.infer<typeof ExtendedTokenPresetSchema>;
+export type ExtendedTokenTheme = z.infer<typeof ExtendedTokenThemeSchema>;
 
 /**
  * Token Generation Options
  */
 export interface TokenGenerationOptions {
-  preset: ExtendedTokenPreset;
+  theme: ExtendedTokenTheme;
   wcagLevel?: 'AA' | 'AAA';
   validateContrast?: boolean;
 }
@@ -112,7 +112,7 @@ export interface TokenGenerationOptions {
  */
 export interface TokenGenerationResult {
   success: boolean;
-  tokens?: ExtendedTokenPreset;
+  tokens?: ExtendedTokenTheme;
   wcagValidation?: {
     passed: boolean;
     issues: string[];

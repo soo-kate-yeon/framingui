@@ -1,7 +1,7 @@
 """Repository for ProjectSettings database operations.
 
 Design-TAG: SPEC-MCP-001 natural language screen generation database infrastructure
-Function-TAG: ProjectSettings repository with async CRUD operations for active preset management
+Function-TAG: ProjectSettings repository with async CRUD operations for active theme management
 """
 
 from sqlalchemy import select
@@ -52,20 +52,20 @@ class ProjectSettingsRepository:
             await self.session.refresh(settings)
         return settings
 
-    async def set_active_preset(
+    async def set_active_theme(
         self, project_path: str, theme_id: int
     ) -> ProjectSettings:
-        """Set the active preset for a project.
+        """Set the active theme for a project.
 
         Args:
             project_path: The path to the project directory.
-            theme_id: The ID of the preset to set as active.
+            theme_id: The ID of the theme to set as active.
 
         Returns:
             The updated project settings.
         """
         settings = await self.get_or_create(project_path)
-        settings.active_preset_id = theme_id
+        settings.active_theme_id = theme_id
         await self.session.commit()
         await self.session.refresh(settings)
         # Load the relationship
@@ -76,17 +76,17 @@ class ProjectSettingsRepository:
         )
         return result.scalar_one()
 
-    async def get_active_preset(self, project_path: str) -> CuratedTheme | None:
-        """Get the active preset for a project.
+    async def get_active_theme(self, project_path: str) -> CuratedTheme | None:
+        """Get the active theme for a project.
 
         Args:
             project_path: The path to the project directory.
 
         Returns:
-            The active preset if set and exists, None otherwise.
+            The active theme if set and exists, None otherwise.
         """
         settings = await self.get_by_project_path(project_path)
-        if settings is None or settings.active_preset_id is None:
+        if settings is None or settings.active_theme_id is None:
             return None
         return settings.active_theme
 

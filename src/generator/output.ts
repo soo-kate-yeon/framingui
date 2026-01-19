@@ -67,13 +67,28 @@ export function exportToCSS(config: ExportConfig): string {
 }
 
 /**
+ * DTCG token type definition
+ */
+interface DTCGToken {
+  $type: 'color';
+  $value: string;
+}
+
+/**
+ * DTCG output structure
+ */
+interface DTCGOutput {
+  [key: string]: DTCGToken | Record<string, DTCGToken>;
+}
+
+/**
  * Export to Design Token Community Group (DTCG) format
  * TASK-006: DTCG JSON Output (EDR-002)
  */
 export function exportToDTCG(config: ExportConfig): string {
   const { semanticTokens, darkTokens, colorScales = {} } = config;
 
-  const output: Record<string, any> = {};
+  const output: DTCGOutput = {};
 
   // Semantic tokens
   Object.entries(semanticTokens).forEach(([name, color]) => {

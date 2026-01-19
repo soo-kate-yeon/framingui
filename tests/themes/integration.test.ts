@@ -1,13 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { generateTokensFromPreset } from '../../src/presets';
-import { loadDefaultPreset } from '../../src/presets/loader';
-import type { Preset } from '../../src/presets/types';
+import { generateTokensFromTheme } from '../../src/themes';
+import { loadDefaultTheme } from '../../src/themes/loader';
+import type { Theme } from '../../src/themes/types';
 
-describe('Preset Integration', () => {
-  const validPreset: Preset = {
-    id: 'test-preset',
+describe('Theme Integration', () => {
+  const validTheme: Theme = {
+    id: 'test-theme',
     version: '1.0.0',
-    name: 'Test Preset',
+    name: 'Test Theme',
     description: 'Test',
     stack: {
       framework: 'nextjs',
@@ -25,18 +25,18 @@ describe('Preset Integration', () => {
     },
   };
 
-  describe('generateTokensFromPreset', () => {
+  describe('generateTokensFromTheme', () => {
 
-    it('generates CSS from preset', () => {
-      const css = generateTokensFromPreset(validPreset, { format: 'css' });
+    it('generates CSS from theme', () => {
+      const css = generateTokensFromTheme(validTheme, { format: 'css' });
 
       expect(css).toContain(':root');
       expect(css).toContain('--');
       expect(css).toContain('oklch');
     });
 
-    it('generates DTCG from preset', () => {
-      const dtcg = generateTokensFromPreset(validPreset, { format: 'dtcg' });
+    it('generates DTCG from theme', () => {
+      const dtcg = generateTokensFromTheme(validTheme, { format: 'dtcg' });
 
       expect(dtcg).toContain('{');
       expect(dtcg).toContain('}');
@@ -44,8 +44,8 @@ describe('Preset Integration', () => {
       expect(dtcg).toContain('color');
     });
 
-    it('generates Tailwind from preset', () => {
-      const tailwind = generateTokensFromPreset(validPreset, { format: 'tailwind' });
+    it('generates Tailwind from theme', () => {
+      const tailwind = generateTokensFromTheme(validTheme, { format: 'tailwind' });
 
       expect(tailwind).toContain('module.exports');
       expect(tailwind).toContain('theme');
@@ -53,38 +53,38 @@ describe('Preset Integration', () => {
     });
 
     it('defaults to CSS format when format not specified', () => {
-      const output = generateTokensFromPreset(validPreset);
+      const output = generateTokensFromTheme(validTheme);
 
       expect(output).toContain(':root');
       expect(output).toContain('--');
     });
 
     it('maintains deterministic output', () => {
-      const output1 = generateTokensFromPreset(validPreset, { format: 'css' });
-      const output2 = generateTokensFromPreset(validPreset, { format: 'css' });
+      const output1 = generateTokensFromTheme(validTheme, { format: 'css' });
+      const output2 = generateTokensFromTheme(validTheme, { format: 'css' });
 
       expect(output1).toBe(output2);
     });
 
     it('throws for unsupported format', () => {
       expect(() =>
-        generateTokensFromPreset(validPreset, { format: 'invalid' as any })
+        generateTokensFromTheme(validTheme, { format: 'invalid' as any })
       ).toThrow('Unsupported format');
     });
   });
 
   describe('full workflow', () => {
-    it('loads preset → generates tokens → exports CSS', () => {
-      const preset = loadDefaultPreset('next-tailwind-shadcn');
-      const css = generateTokensFromPreset(preset, { format: 'css' });
+    it('loads theme → generates tokens → exports CSS', () => {
+      const theme = loadDefaultTheme('next-tailwind-shadcn');
+      const css = generateTokensFromTheme(theme, { format: 'css' });
 
       expect(css).toContain(':root');
-      expect(preset.id).toBe('next-tailwind-shadcn');
+      expect(theme.id).toBe('next-tailwind-shadcn');
     });
 
     it('produces valid shadcn/ui compatible tokens', () => {
-      const preset = loadDefaultPreset('next-tailwind-shadcn');
-      const css = generateTokensFromPreset(preset, { format: 'css' });
+      const theme = loadDefaultTheme('next-tailwind-shadcn');
+      const css = generateTokensFromTheme(theme, { format: 'css' });
 
       // Check for common shadcn/ui token names
       expect(css).toMatch(/--background|--foreground|--primary/);
@@ -93,21 +93,21 @@ describe('Preset Integration', () => {
 
   describe('edge cases', () => {
     it('handles extreme color values', () => {
-      const extremePreset: Preset = {
-        ...validPreset,
+      const extremeTheme: Theme = {
+        ...validTheme,
         questionnaire: {
-          ...validPreset.questionnaire,
+          ...validTheme.questionnaire,
           primaryColor: { l: 0.99, c: 0.37, h: 360 },
         },
       };
 
-      const css = generateTokensFromPreset(extremePreset, { format: 'css' });
+      const css = generateTokensFromTheme(extremeTheme, { format: 'css' });
       expect(css).toContain('oklch');
     });
 
     it('handles all questionnaire variations', () => {
-      const variations: Preset = {
-        ...validPreset,
+      const variations: Theme = {
+        ...validTheme,
         questionnaire: {
           brandTone: 'playful',
           contrast: 'low',
@@ -119,7 +119,7 @@ describe('Preset Integration', () => {
         },
       };
 
-      const css = generateTokensFromPreset(variations, { format: 'css' });
+      const css = generateTokensFromTheme(variations, { format: 'css' });
       expect(css).toContain(':root');
     });
   });

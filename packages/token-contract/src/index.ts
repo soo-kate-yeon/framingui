@@ -2,7 +2,7 @@
  * @tekton/token-contract
  * Token Contract & CSS Variable System
  *
- * A comprehensive design token system with Zod validation, curated presets,
+ * A comprehensive design token system with Zod validation, curated themes,
  * CSS variable generation, and React theme provider.
  */
 
@@ -34,8 +34,12 @@ export type {
 // ========================================
 export {
   loadTheme,
-  getAvailablePresets,
-  validatePreset,
+  getAvailableThemes,
+  validateTheme,
+  // Deprecated: use getAvailableThemes instead
+  getAvailableThemes as getAvailablePresets,
+  // Deprecated: use validateTheme instead
+  validateTheme as validatePreset,
 } from './themes/theme-loader.js';
 
 export {
@@ -105,9 +109,11 @@ export {
   getTokenWithFallback,
   getFallbackColor,
   logMissingTokenWarning,
-  overridePresetTokens,
+  overrideThemeTokens,
   validateOverride,
   mergeTokens,
+  // Deprecated: use overrideThemeTokens instead
+  overrideThemeTokens as overridePresetTokens,
 } from './utils/index.js';
 
 export type {

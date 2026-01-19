@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * Warm Preset
+ * Warm Theme
  * Target: Lifestyle brands, food/hospitality, wellness
  * Characteristics: Warm hues, rounded borders, comfortable spacing
  */
-export const warmPreset: Preset = {
+export const warmTheme: Theme = {
   name: 'warm',
   description: 'Warm and inviting design with earth tones',
   tokens: {

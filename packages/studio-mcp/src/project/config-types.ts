@@ -26,14 +26,14 @@ export const ProjectInfoSchema = z.object({
 export type ProjectInfo = z.infer<typeof ProjectInfoSchema>;
 
 /**
- * Preset selection schema
+ * Theme selection schema
  */
-export const PresetSelectionSchema = z.object({
-  activePresetId: z.string().nullable(),
+export const ThemeSelectionSchema = z.object({
+  activeThemeId: z.string().nullable(),
   selectedAt: z.string().nullable(),
 });
 
-export type PresetSelection = z.infer<typeof PresetSelectionSchema>;
+export type ThemeSelection = z.infer<typeof ThemeSelectionSchema>;
 
 /**
  * Complete Tekton configuration schema
@@ -44,7 +44,7 @@ export const TektonConfigSchema = z.object({
   version: z.string(),
   mode: ConnectionModeSchema,
   project: ProjectInfoSchema,
-  preset: PresetSelectionSchema,
+  theme: ThemeSelectionSchema,
 });
 
 export type TektonConfig = z.infer<typeof TektonConfigSchema>;
@@ -55,5 +55,5 @@ export type TektonConfig = z.infer<typeof TektonConfigSchema>;
 export type TektonConfigUpdate = {
   mode?: ConnectionMode;
   project?: Partial<ProjectInfo>;
-  preset?: Partial<PresetSelection>;
+  theme?: Partial<ThemeSelection>;
 };

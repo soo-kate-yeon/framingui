@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * Cool Preset
+ * Cool Theme
  * Target: Tech startups, fintech, healthcare
  * Characteristics: Cool hues, sharp borders, precise spacing
  */
-export const coolPreset: Preset = {
+export const coolTheme: Theme = {
   name: 'cool',
   description: 'Cool and professional design with blue/cyan tones',
   tokens: {

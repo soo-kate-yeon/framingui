@@ -1,11 +1,11 @@
 """API schemas package."""
 
 from studio_api.schemas.curated_theme import (
-    CuratedPresetBase,
-    CuratedPresetCreate,
-    CuratedPresetList,
-    CuratedPresetResponse,
-    CuratedPresetUpdate,
+    CuratedThemeBase,
+    CuratedThemeCreate,
+    CuratedThemeList,
+    CuratedThemeResponse,
+    CuratedThemeUpdate,
 )
 from studio_api.schemas.project import (
     LayoutBreakpointCreate,
@@ -18,18 +18,18 @@ from studio_api.schemas.project import (
     ProjectUpdate,
 )
 from studio_api.schemas.project_settings import (
-    ActivePresetResponse,
+    ActiveThemeResponse,
     ProjectSettingsResponse,
     ProjectSettingsSuccessResponse,
-    SetActivePresetRequest,
+    SetActiveThemeRequest,
 )
 
 __all__ = [
-    "CuratedPresetBase",
-    "CuratedPresetCreate",
-    "CuratedPresetUpdate",
-    "CuratedPresetResponse",
-    "CuratedPresetList",
+    "CuratedThemeBase",
+    "CuratedThemeCreate",
+    "CuratedThemeUpdate",
+    "CuratedThemeResponse",
+    "CuratedThemeList",
     "LayoutBreakpointCreate",
     "LayoutBreakpointResponse",
     "LayoutBreakpointUpdate",
@@ -38,8 +38,8 @@ __all__ = [
     "ProjectResponse",
     "ProjectSummary",
     "ProjectUpdate",
-    "SetActivePresetRequest",
-    "ActivePresetResponse",
+    "SetActiveThemeRequest",
+    "ActiveThemeResponse",
     "ProjectSettingsResponse",
     "ProjectSettingsSuccessResponse",
 ]

@@ -4,7 +4,7 @@ import {
   SemanticTokenSchema,
   DataVizTokenSchema,
   NeutralTokenSchema,
-  ExtendedTokenPresetSchema,
+  ExtendedTokenThemeSchema,
   type BrandToken,
   type SemanticToken,
   type DataVizToken,
@@ -219,9 +219,9 @@ describe('Extended Token Schema', () => {
     });
   });
 
-  describe('ExtendedTokenPresetSchema', () => {
-    it('should validate complete extended token preset', () => {
-      const preset = {
+  describe('ExtendedTokenThemeSchema', () => {
+    it('should validate complete extended token theme', () => {
+      const theme = {
         brand: {
           primary: {
             base: { l: 0.5, c: 0.15, h: 220 },
@@ -257,12 +257,12 @@ describe('Extended Token Schema', () => {
         },
       };
 
-      const result = ExtendedTokenPresetSchema.safeParse(preset);
+      const result = ExtendedTokenThemeSchema.safeParse(theme);
       expect(result.success).toBe(true);
     });
 
-    it('should reject preset missing required categories', () => {
-      const invalidPreset = {
+    it('should reject theme missing required categories', () => {
+      const invalidTheme = {
         brand: {
           primary: {
             base: { l: 0.5, c: 0.15, h: 220 },
@@ -274,14 +274,14 @@ describe('Extended Token Schema', () => {
         // Missing semantic, dataViz, neutral
       };
 
-      const result = ExtendedTokenPresetSchema.safeParse(invalidPreset);
+      const result = ExtendedTokenThemeSchema.safeParse(invalidTheme);
       expect(result.success).toBe(false);
     });
 
-    it('should complete validation in < 500ms for large preset', () => {
+    it('should complete validation in < 500ms for large theme', () => {
       const startTime = Date.now();
 
-      const largePreset = {
+      const largeTheme = {
         brand: {
           primary: {
             base: { l: 0.5, c: 0.15, h: 220 },
@@ -328,7 +328,7 @@ describe('Extended Token Schema', () => {
         },
       };
 
-      ExtendedTokenPresetSchema.safeParse(largePreset);
+      ExtendedTokenThemeSchema.safeParse(largeTheme);
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500);

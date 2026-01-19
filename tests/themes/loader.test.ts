@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { loadPreset, loadDefaultPreset, PresetValidationError } from '../../src/presets/loader';
-import type { Preset } from '../../src/presets/types';
+import { loadTheme, loadDefaultTheme, ThemeValidationError } from '../../src/themes/loader';
+import type { Theme } from '../../src/themes/types';
 
-describe('loadPreset', () => {
-  describe('valid presets', () => {
-    it('loads minimal valid preset', () => {
-      const validPreset = {
-        id: 'test-preset',
+describe('loadTheme', () => {
+  describe('valid themes', () => {
+    it('loads minimal valid theme', () => {
+      const validTheme = {
+        id: 'test-theme',
         version: '1.0.0',
-        name: 'Test Preset',
+        name: 'Test Theme',
         description: 'Test description',
         stack: {
           framework: 'nextjs',
@@ -26,16 +26,16 @@ describe('loadPreset', () => {
         },
       };
 
-      const result = loadPreset(validPreset);
-      expect(result).toEqual(validPreset);
+      const result = loadTheme(validTheme);
+      expect(result).toEqual(validTheme);
     });
 
-    it('loads preset with all fields', () => {
-      const completePreset = {
-        id: 'complete-preset',
+    it('loads theme with all fields', () => {
+      const completeTheme = {
+        id: 'complete-theme',
         version: '2.0.0',
-        name: 'Complete Preset',
-        description: 'Complete test preset',
+        name: 'Complete Theme',
+        description: 'Complete test theme',
         stack: {
           framework: 'vite',
           styling: 'tailwindcss',
@@ -57,16 +57,16 @@ describe('loadPreset', () => {
         },
       };
 
-      const result = loadPreset(completePreset);
-      expect(result).toEqual(completePreset);
+      const result = loadTheme(completeTheme);
+      expect(result).toEqual(completeTheme);
     });
 
-    it('loads preset with metadata', () => {
-      const presetWithMetadata = {
-        id: 'meta-preset',
+    it('loads theme with metadata', () => {
+      const themeWithMetadata = {
+        id: 'meta-theme',
         version: '1.5.0',
-        name: 'Metadata Preset',
-        description: 'Preset with metadata',
+        name: 'Metadata Theme',
+        description: 'Theme with metadata',
         stack: {
           framework: 'remix',
           styling: 'tailwindcss',
@@ -86,15 +86,15 @@ describe('loadPreset', () => {
         },
       };
 
-      const result = loadPreset(presetWithMetadata);
+      const result = loadTheme(themeWithMetadata);
       expect(result.metadata).toBeDefined();
       expect(result.metadata?.tags).toEqual(['remix', 'elegant']);
     });
   });
 
-  describe('invalid presets', () => {
-    it('throws PresetValidationError for missing id', () => {
-      const invalidPreset = {
+  describe('invalid themes', () => {
+    it('throws ThemeValidationError for missing id', () => {
+      const invalidTheme = {
         version: '1.0.0',
         name: 'Test',
         description: 'Test',
@@ -110,11 +110,11 @@ describe('loadPreset', () => {
         },
       };
 
-      expect(() => loadPreset(invalidPreset)).toThrow(PresetValidationError);
+      expect(() => loadTheme(invalidTheme)).toThrow(ThemeValidationError);
     });
 
     it('throws with field-level error details', () => {
-      const invalidPreset = {
+      const invalidTheme = {
         id: 'test',
         version: '1.0.0',
         name: 'Test',
@@ -132,11 +132,11 @@ describe('loadPreset', () => {
       };
 
       try {
-        loadPreset(invalidPreset);
-        expect.fail('Should have thrown PresetValidationError');
+        loadTheme(invalidTheme);
+        expect.fail('Should have thrown ThemeValidationError');
       } catch (error) {
-        expect(error).toBeInstanceOf(PresetValidationError);
-        if (error instanceof PresetValidationError) {
+        expect(error).toBeInstanceOf(ThemeValidationError);
+        if (error instanceof ThemeValidationError) {
           expect(error.message).toContain('framework');
           expect(error.issues).toBeDefined();
           expect(error.issues.length).toBeGreaterThan(0);
@@ -163,10 +163,10 @@ describe('loadPreset', () => {
       };
 
       try {
-        loadPreset(multipleErrors);
+        loadTheme(multipleErrors);
         expect.fail('Should have thrown');
       } catch (error) {
-        if (error instanceof PresetValidationError) {
+        if (error instanceof ThemeValidationError) {
           expect(error.issues.length).toBeGreaterThan(1);
         }
       }
@@ -190,13 +190,13 @@ describe('loadPreset', () => {
         },
       };
 
-      expect(() => loadPreset(invalidQuestionnaire)).toThrow(PresetValidationError);
+      expect(() => loadTheme(invalidQuestionnaire)).toThrow(ThemeValidationError);
     });
   });
 
   describe('error messages', () => {
     it('includes field path in error message', () => {
-      const invalidPreset = {
+      const invalidTheme = {
         id: 'test',
         version: '1.0.0',
         name: 'Test',
@@ -214,10 +214,10 @@ describe('loadPreset', () => {
       };
 
       try {
-        loadPreset(invalidPreset);
+        loadTheme(invalidTheme);
         expect.fail('Should have thrown');
       } catch (error) {
-        if (error instanceof PresetValidationError) {
+        if (error instanceof ThemeValidationError) {
           const hasPathInfo = error.issues.some((issue) =>
             issue.path.includes('questionnaire') || issue.path.includes('brandTone')
           );
@@ -227,7 +227,7 @@ describe('loadPreset', () => {
     });
 
     it('includes expected vs actual values', () => {
-      const invalidPreset = {
+      const invalidTheme = {
         id: 'test',
         version: '1.0.0',
         name: 'Test',
@@ -245,10 +245,10 @@ describe('loadPreset', () => {
       };
 
       try {
-        loadPreset(invalidPreset);
+        loadTheme(invalidTheme);
         expect.fail('Should have thrown');
       } catch (error) {
-        if (error instanceof PresetValidationError) {
+        if (error instanceof ThemeValidationError) {
           expect(error.message.length).toBeGreaterThan(0);
         }
       }
@@ -273,10 +273,10 @@ describe('loadPreset', () => {
       };
 
       try {
-        loadPreset(multipleErrors);
+        loadTheme(multipleErrors);
         expect.fail('Should have thrown');
       } catch (error) {
-        if (error instanceof PresetValidationError) {
+        if (error instanceof ThemeValidationError) {
           expect(error.issues.length).toBeGreaterThanOrEqual(2);
         }
       }
@@ -284,41 +284,41 @@ describe('loadPreset', () => {
   });
 });
 
-describe('loadDefaultPreset', () => {
-  it('loads next-tailwind-shadcn preset', () => {
-    const preset = loadDefaultPreset('next-tailwind-shadcn');
-    expect(preset).toBeDefined();
-    expect(preset.id).toBe('next-tailwind-shadcn');
+describe('loadDefaultTheme', () => {
+  it('loads next-tailwind-shadcn theme', () => {
+    const theme = loadDefaultTheme('next-tailwind-shadcn');
+    expect(theme).toBeDefined();
+    expect(theme.id).toBe('next-tailwind-shadcn');
   });
 
-  it('returns valid Preset object', () => {
-    const preset = loadDefaultPreset('next-tailwind-shadcn');
-    expect(preset.version).toBeDefined();
-    expect(preset.name).toBeDefined();
-    expect(preset.description).toBeDefined();
-    expect(preset.stack).toBeDefined();
-    expect(preset.questionnaire).toBeDefined();
+  it('returns valid Theme object', () => {
+    const theme = loadDefaultTheme('next-tailwind-shadcn');
+    expect(theme.version).toBeDefined();
+    expect(theme.name).toBeDefined();
+    expect(theme.description).toBeDefined();
+    expect(theme.stack).toBeDefined();
+    expect(theme.questionnaire).toBeDefined();
   });
 
   it('has complete questionnaire config', () => {
-    const preset = loadDefaultPreset('next-tailwind-shadcn');
-    expect(preset.questionnaire.brandTone).toBe('professional');
-    expect(preset.questionnaire.contrast).toBe('high');
-    expect(preset.questionnaire.density).toBe('comfortable');
-    expect(preset.questionnaire.borderRadius).toBe('medium');
-    expect(preset.questionnaire.primaryColor).toBeDefined();
-    expect(preset.questionnaire.neutralTone).toBe('pure');
-    expect(preset.questionnaire.fontScale).toBe('medium');
+    const theme = loadDefaultTheme('next-tailwind-shadcn');
+    expect(theme.questionnaire.brandTone).toBe('professional');
+    expect(theme.questionnaire.contrast).toBe('high');
+    expect(theme.questionnaire.density).toBe('comfortable');
+    expect(theme.questionnaire.borderRadius).toBe('medium');
+    expect(theme.questionnaire.primaryColor).toBeDefined();
+    expect(theme.questionnaire.neutralTone).toBe('pure');
+    expect(theme.questionnaire.fontScale).toBe('medium');
   });
 
   it('has valid metadata', () => {
-    const preset = loadDefaultPreset('next-tailwind-shadcn');
-    expect(preset.metadata).toBeDefined();
-    expect(preset.metadata?.tags).toBeDefined();
-    expect(preset.metadata?.tags?.length).toBeGreaterThan(0);
+    const theme = loadDefaultTheme('next-tailwind-shadcn');
+    expect(theme.metadata).toBeDefined();
+    expect(theme.metadata?.tags).toBeDefined();
+    expect(theme.metadata?.tags?.length).toBeGreaterThan(0);
   });
 
-  it('throws for unknown preset id', () => {
-    expect(() => loadDefaultPreset('unknown-preset' as any)).toThrow();
+  it('throws for unknown theme id', () => {
+    expect(() => loadDefaultTheme('unknown-theme' as any)).toThrow();
   });
 });

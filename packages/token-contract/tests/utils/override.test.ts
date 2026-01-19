@@ -5,14 +5,14 @@
 
 import { describe, it, expect } from 'vitest';
 import {
-  overridePresetTokens,
+  overrideThemeTokens,
   validateOverride,
   mergeTokens,
 } from '../../src/utils/override.js';
 import type { SemanticToken } from '../../src/schemas/index.js';
 
-describe('Preset Override', () => {
-  const baseTokens: SemanticToken = {
+describe('Theme Override', () => {
+  const baseTokens: any = {
     primary: {
       '50': 'oklch(0.95 0.05 220)',
       '100': 'oklch(0.90 0.08 220)',
@@ -75,22 +75,22 @@ describe('Preset Override', () => {
     },
   };
 
-  describe('overridePresetTokens', () => {
+  describe('overrideThemeTokens', () => {
     it('should override specific token values', () => {
-      const overrides: Partial<SemanticToken> = {
+      const overrides: any = {
         primary: {
           '500': 'oklch(0.65 0.15 200)',
-        } as any,
+        },
       };
 
-      const result = overridePresetTokens(baseTokens, overrides);
+      const result = overrideThemeTokens(baseTokens, overrides);
 
       expect(result.primary['500']).toBe('oklch(0.65 0.15 200)');
       expect(result.primary['600']).toBe('oklch(0.50 0.15 220)'); // Unchanged
     });
 
     it('should add new semantic tokens', () => {
-      const overrides: Partial<SemanticToken> = {
+      const overrides: any = {
         secondary: {
           '50': 'oklch(0.95 0.05 300)',
           '100': 'oklch(0.90 0.08 300)',
@@ -105,20 +105,20 @@ describe('Preset Override', () => {
         },
       };
 
-      const result = overridePresetTokens(baseTokens, overrides);
+      const result = overrideThemeTokens(baseTokens, overrides);
 
       expect(result.secondary).toBeDefined();
       expect(result.secondary?.['500']).toBe('oklch(0.60 0.15 300)');
     });
 
     it('should preserve unmodified tokens', () => {
-      const overrides: Partial<SemanticToken> = {
+      const overrides: any = {
         primary: {
           '500': 'oklch(0.65 0.15 200)',
-        } as any,
+        },
       };
 
-      const result = overridePresetTokens(baseTokens, overrides);
+      const result = overrideThemeTokens(baseTokens, overrides);
 
       expect(result.neutral).toEqual(baseTokens.neutral);
       expect(result.success).toEqual(baseTokens.success);
@@ -127,22 +127,22 @@ describe('Preset Override', () => {
     });
 
     it('should handle empty overrides', () => {
-      const result = overridePresetTokens(baseTokens, {});
+      const result = overrideThemeTokens(baseTokens, {});
       expect(result).toEqual(baseTokens);
     });
 
     it('should handle multiple token overrides', () => {
-      const overrides: Partial<SemanticToken> = {
+      const overrides: any = {
         primary: {
           '500': 'oklch(0.65 0.15 200)',
           '600': 'oklch(0.55 0.15 200)',
-        } as any,
+        },
         success: {
           '500': 'oklch(0.65 0.15 150)',
-        } as any,
+        },
       };
 
-      const result = overridePresetTokens(baseTokens, overrides);
+      const result = overrideThemeTokens(baseTokens, overrides);
 
       expect(result.primary['500']).toBe('oklch(0.65 0.15 200)');
       expect(result.primary['600']).toBe('oklch(0.55 0.15 200)');
@@ -152,10 +152,10 @@ describe('Preset Override', () => {
 
   describe('validateOverride', () => {
     it('should validate correct override structure', () => {
-      const override: Partial<SemanticToken> = {
+      const override: any = {
         primary: {
           '500': 'oklch(0.65 0.15 200)',
-        } as any,
+        },
       };
 
       const result = validateOverride(override);
@@ -164,10 +164,10 @@ describe('Preset Override', () => {
     });
 
     it('should detect invalid color values', () => {
-      const override: Partial<SemanticToken> = {
+      const override: any = {
         primary: {
           '500': 'invalid-color',
-        } as any,
+        },
       };
 
       const result = validateOverride(override);
@@ -176,7 +176,7 @@ describe('Preset Override', () => {
     });
 
     it('should validate complete color scales', () => {
-      const override: Partial<SemanticToken> = {
+      const override: any = {
         accent: {
           '50': 'oklch(0.95 0.05 300)',
           '100': 'oklch(0.90 0.08 300)',
@@ -227,10 +227,10 @@ describe('Preset Override', () => {
 
   describe('mergeTokens', () => {
     it('should merge partial scales into complete scales', () => {
-      const partial = {
+      const partial: any = {
         primary: {
           '500': 'oklch(0.65 0.15 200)',
-        } as any,
+        },
       };
 
       const result = mergeTokens(baseTokens.primary, partial.primary);
@@ -259,7 +259,7 @@ describe('Preset Override', () => {
         '900': 'oklch(0.25 0.04 300)',
       };
 
-      const result = mergeTokens(baseTokens.primary, newScale);
+      const result = mergeTokens(baseTokens.primary, newScale as any);
 
       Object.keys(newScale).forEach((step) => {
         expect(result[step as keyof typeof newScale]).toBe(newScale[step as keyof typeof newScale]);
@@ -271,19 +271,19 @@ describe('Preset Override', () => {
         '500': 'oklch(0.65 0.15 200)',
       };
 
-      const result = mergeTokens(undefined as any, partial);
+      const result = mergeTokens(undefined as any, partial as any);
       expect(result['500']).toBe('oklch(0.65 0.15 200)');
     });
   });
 
   describe('Edge Cases', () => {
     it('should handle null overrides gracefully', () => {
-      const result = overridePresetTokens(baseTokens, null as any);
+      const result = overrideThemeTokens(baseTokens, null as any);
       expect(result).toEqual(baseTokens);
     });
 
     it('should handle undefined overrides gracefully', () => {
-      const result = overridePresetTokens(baseTokens, undefined as any);
+      const result = overrideThemeTokens(baseTokens, undefined as any);
       expect(result).toEqual(baseTokens);
     });
 
@@ -301,7 +301,7 @@ describe('Preset Override', () => {
       override.primary.circular = override;
 
       // Should not throw
-      const result = overridePresetTokens(baseTokens, override);
+      const result = overrideThemeTokens(baseTokens, override);
       expect(result.primary['500']).toBe('oklch(0.5 0.1 220)');
     });
   });

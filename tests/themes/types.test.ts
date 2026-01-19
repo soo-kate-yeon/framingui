@@ -1,15 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { PresetSchema } from '../../src/presets/types';
-import type { Preset } from '../../src/presets/types';
+import { ThemeSchema } from '../../src/themes/types';
+import type { Theme } from '../../src/themes/types';
 
-describe('PresetSchema', () => {
-  describe('valid presets', () => {
-    it('validates complete preset with all fields', () => {
-      const validPreset: Preset = {
+describe('ThemeSchema', () => {
+  describe('valid themes', () => {
+    it('validates complete theme with all fields', () => {
+      const validTheme: Theme = {
         id: 'next-tailwind-shadcn',
         version: '0.1.0',
         name: 'Next.js + Tailwind CSS + shadcn/ui',
-        description: 'Default preset for Next.js applications',
+        description: 'Default theme for Next.js applications',
         stack: {
           framework: 'nextjs',
           styling: 'tailwindcss',
@@ -26,15 +26,15 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(validPreset);
+      const result = ThemeSchema.safeParse(validTheme);
       expect(result.success).toBe(true);
     });
 
-    it('validates preset with metadata', () => {
-      const presetWithMetadata = {
-        id: 'test-preset',
+    it('validates theme with metadata', () => {
+      const themeWithMetadata = {
+        id: 'test-theme',
         version: '1.0.0',
-        name: 'Test Preset',
+        name: 'Test Theme',
         description: 'Test description',
         stack: {
           framework: 'nextjs',
@@ -57,7 +57,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(presetWithMetadata);
+      const result = ThemeSchema.safeParse(themeWithMetadata);
       expect(result.success).toBe(true);
     });
 
@@ -65,7 +65,7 @@ describe('PresetSchema', () => {
       const frameworks = ['nextjs', 'vite', 'remix'] as const;
 
       frameworks.forEach((framework) => {
-        const preset = {
+        const theme = {
           id: `test-${framework}`,
           version: '1.0.0',
           name: `Test ${framework}`,
@@ -82,15 +82,15 @@ describe('PresetSchema', () => {
           },
         };
 
-        const result = PresetSchema.safeParse(preset);
+        const result = ThemeSchema.safeParse(theme);
         expect(result.success).toBe(true);
       });
     });
   });
 
-  describe('invalid presets', () => {
+  describe('invalid themes', () => {
     it('rejects missing id', () => {
-      const preset = {
+      const theme = {
         version: '1.0.0',
         name: 'Test',
         description: 'Test',
@@ -106,7 +106,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(preset);
+      const result = ThemeSchema.safeParse(theme);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues.some((i) => i.path.includes('id'))).toBe(true);
@@ -114,7 +114,7 @@ describe('PresetSchema', () => {
     });
 
     it('rejects missing version', () => {
-      const preset = {
+      const theme = {
         id: 'test',
         name: 'Test',
         description: 'Test',
@@ -130,7 +130,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(preset);
+      const result = ThemeSchema.safeParse(theme);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues.some((i) => i.path.includes('version'))).toBe(true);
@@ -138,7 +138,7 @@ describe('PresetSchema', () => {
     });
 
     it('rejects invalid framework', () => {
-      const preset = {
+      const theme = {
         id: 'test',
         version: '1.0.0',
         name: 'Test',
@@ -155,7 +155,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(preset);
+      const result = ThemeSchema.safeParse(theme);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues.some((i) => i.path.includes('framework'))).toBe(true);
@@ -163,7 +163,7 @@ describe('PresetSchema', () => {
     });
 
     it('rejects invalid questionnaire', () => {
-      const preset = {
+      const theme = {
         id: 'test',
         version: '1.0.0',
         name: 'Test',
@@ -180,7 +180,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(preset);
+      const result = ThemeSchema.safeParse(theme);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues.some((i) => i.path.includes('brandTone'))).toBe(true);
@@ -188,7 +188,7 @@ describe('PresetSchema', () => {
     });
 
     it('rejects empty id', () => {
-      const preset = {
+      const theme = {
         id: '',
         version: '1.0.0',
         name: 'Test',
@@ -205,7 +205,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(preset);
+      const result = ThemeSchema.safeParse(theme);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues.some((i) => i.path.includes('id'))).toBe(true);
@@ -213,7 +213,7 @@ describe('PresetSchema', () => {
     });
 
     it('rejects empty name', () => {
-      const preset = {
+      const theme = {
         id: 'test',
         version: '1.0.0',
         name: '',
@@ -230,7 +230,7 @@ describe('PresetSchema', () => {
         },
       };
 
-      const result = PresetSchema.safeParse(preset);
+      const result = ThemeSchema.safeParse(theme);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error.issues.some((i) => i.path.includes('name'))).toBe(true);

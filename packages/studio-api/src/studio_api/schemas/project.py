@@ -9,7 +9,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from studio_api.schemas.curated_theme import CuratedPresetResponse
+from studio_api.schemas.curated_theme import CuratedThemeResponse
 
 
 # --- LayoutBreakpoint Schemas ---
@@ -94,7 +94,7 @@ class ProjectResponse(ProjectBase):
     updated_at: datetime
 
     # Nested relationships
-    active_template: CuratedPresetResponse | None = None
+    active_template: CuratedThemeResponse | None = None
     breakpoints: list[LayoutBreakpointResponse] = Field(default_factory=list)
 
 

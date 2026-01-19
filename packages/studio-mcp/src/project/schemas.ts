@@ -17,24 +17,24 @@ export const DetectStructureInputSchema = z.object({
 export type DetectStructureInput = z.infer<typeof DetectStructureInputSchema>;
 
 /**
- * Schema for project.getActivePreset tool input
+ * Schema for project.getActiveTheme tool input
  * No required parameters - uses implicit project context
  */
-export const GetActivePresetInputSchema = z.object({
+export const GetActiveThemeInputSchema = z.object({
   projectPath: z.string().optional(),
 });
 
-export type GetActivePresetInput = z.infer<typeof GetActivePresetInputSchema>;
+export type GetActiveThemeInput = z.infer<typeof GetActiveThemeInputSchema>;
 
 /**
- * Schema for project.setActivePreset tool input
+ * Schema for project.setActiveTheme tool input
  */
-export const SetActivePresetInputSchema = z.object({
-  themeId: z.number().int().positive("Preset ID must be a positive integer"),
+export const SetActiveThemeInputSchema = z.object({
+  themeId: z.number().int().positive("Theme ID must be a positive integer"),
   projectPath: z.string().optional(),
 });
 
-export type SetActivePresetInput = z.infer<typeof SetActivePresetInputSchema>;
+export type SetActiveThemeInput = z.infer<typeof SetActiveThemeInputSchema>;
 
 /**
  * Framework types supported by the project detector
@@ -63,13 +63,13 @@ export const ProjectStructureSchema = z.object({
 export type ProjectStructure = z.infer<typeof ProjectStructureSchema>;
 
 /**
- * Active preset response schema
+ * Active theme response schema
  */
-export const ActivePresetSchema = z.object({
+export const ActiveThemeSchema = z.object({
   id: z.number(),
   name: z.string(),
   category: z.string().optional(),
   style_archetype: z.string().optional(),
 }).nullable();
 
-export type ActivePreset = z.infer<typeof ActivePresetSchema>;
+export type ActiveTheme = z.infer<typeof ActiveThemeSchema>;

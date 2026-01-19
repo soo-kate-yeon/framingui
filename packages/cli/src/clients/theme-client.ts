@@ -1,20 +1,20 @@
 /**
- * Preset API Client for Tekton CLI
- * Communicates with the studio-api server to fetch preset data
+ * Theme API Client for Tekton CLI
+ * Communicates with the studio-api server to fetch theme data
  */
 
 // RequestInit type for fetch options (Node.js 18+ native fetch)
 type FetchRequestInit = globalThis.RequestInit;
 
 /**
- * Preset configuration containing design tokens
+ * Theme configuration containing design tokens
  */
 export interface ThemeConfig {
   [key: string]: unknown;
 }
 
 /**
- * Curated Preset response (matches Studio API schema)
+ * Curated Theme response (matches Studio API schema)
  */
 export interface CuratedTheme {
   id: number;
@@ -31,7 +31,7 @@ export interface CuratedTheme {
 }
 
 /**
- * Paginated preset list response
+ * Paginated theme list response
  */
 export interface ThemeListResponse {
   items: CuratedTheme[];
@@ -41,9 +41,9 @@ export interface ThemeListResponse {
 }
 
 /**
- * Preset list parameters
+ * Theme list parameters
  */
-export interface PresetListParams {
+export interface ThemeListParams {
   skip?: number;
   limit?: number;
   category?: string;
@@ -51,7 +51,7 @@ export interface PresetListParams {
 }
 
 /**
- * Preset API Client configuration
+ * Theme API Client configuration
  */
 export interface ThemeClientConfig {
   baseUrl: string;
@@ -61,19 +61,19 @@ export interface ThemeClientConfig {
 /**
  * API Error class
  */
-export class PresetApiError extends Error {
+export class ThemeApiError extends Error {
   constructor(
     public status: number,
     public statusText: string,
     message?: string
   ) {
     super(message || `${status} ${statusText}`);
-    this.name = 'PresetApiError';
+    this.name = 'ThemeApiError';
   }
 }
 
 /**
- * Preset API Client for fetching preset data
+ * Theme API Client for fetching theme data
  */
 export class ThemeClient {
   private config: ThemeClientConfig;
@@ -86,7 +86,7 @@ export class ThemeClient {
   }
 
   /**
-   * Make HTTP request to Preset API
+   * Make HTTP request to Theme API
    */
   private async request<T>(
     endpoint: string,
@@ -115,25 +115,25 @@ export class ThemeClient {
         } catch {
           // Ignore JSON parse errors
         }
-        throw new PresetApiError(response.status, response.statusText, errorMessage);
+        throw new ThemeApiError(response.status, response.statusText, errorMessage);
       }
 
       return (await response.json()) as T;
     } catch (error) {
       clearTimeout(timeoutId);
 
-      if (error instanceof PresetApiError) {
+      if (error instanceof ThemeApiError) {
         throw error;
       }
 
       if (error instanceof Error) {
         if (error.name === 'AbortError') {
-          throw new PresetApiError(408, 'Request Timeout', 'Request timeout');
+          throw new ThemeApiError(408, 'Request Timeout', 'Request timeout');
         }
-        throw new PresetApiError(0, 'Network Error', error.message);
+        throw new ThemeApiError(0, 'Network Error', error.message);
       }
 
-      throw new PresetApiError(0, 'Unknown Error', 'Unknown error occurred');
+      throw new ThemeApiError(0, 'Unknown Error', 'Unknown error occurred');
     }
   }
 
@@ -158,9 +158,9 @@ export class ThemeClient {
   }
 
   /**
-   * List all available presets with optional filtering
+   * List all available themes with optional filtering
    */
-  async listPresets(params: PresetListParams = {}): Promise<ThemeListResponse> {
+  async listThemes(params: ThemeListParams = {}): Promise<ThemeListResponse> {
     const queryParams = new URLSearchParams();
 
     if (params.skip !== undefined) {
@@ -177,36 +177,36 @@ export class ThemeClient {
     }
 
     const queryString = queryParams.toString();
-    const endpoint = `/api/v2/presets${queryString ? `?${queryString}` : ''}`;
+    const endpoint = `/api/v2/themes${queryString ? `?${queryString}` : ''}`;
 
     return this.request<ThemeListResponse>(endpoint, { method: 'GET' });
   }
 
   /**
-   * Get a preset by ID
+   * Get a theme by ID
    */
   async getTheme(id: number): Promise<CuratedTheme> {
-    return this.request<CuratedTheme>(`/api/v2/presets/${id}`, { method: 'GET' });
+    return this.request<CuratedTheme>(`/api/v2/themes/${id}`, { method: 'GET' });
   }
 
   /**
-   * Get a preset by name (searches through list)
+   * Get a theme by name (searches through list)
    * Returns null if not found
    */
-  async getPresetByName(name: string): Promise<CuratedTheme | null> {
+  async getThemeByName(name: string): Promise<CuratedTheme | null> {
     try {
-      // Fetch all presets (with reasonable limit)
-      const response = await this.listPresets({ limit: 100 });
+      // Fetch all themes (with reasonable limit)
+      const response = await this.listThemes({ limit: 100 });
 
       // Find by exact name match (case-insensitive)
-      const preset = response.items.find(
-        (p) => p.name.toLowerCase() === name.toLowerCase()
+      const theme = response.items.find(
+        (t) => t.name.toLowerCase() === name.toLowerCase()
       );
 
-      return preset || null;
+      return theme || null;
     } catch (error) {
       // If API error, propagate it
-      if (error instanceof PresetApiError) {
+      if (error instanceof ThemeApiError) {
         throw error;
       }
       return null;
@@ -214,20 +214,20 @@ export class ThemeClient {
   }
 
   /**
-   * Get presets by category
+   * Get themes by category
    */
-  async getPresetsByCategory(category: string): Promise<CuratedTheme[]> {
-    const response = await this.listPresets({ category, limit: 100 });
+  async getThemesByCategory(category: string): Promise<CuratedTheme[]> {
+    const response = await this.listThemes({ category, limit: 100 });
     return response.items;
   }
 
   /**
-   * Get preset suggestions (if AI-powered endpoint is available)
+   * Get theme suggestions (if AI-powered endpoint is available)
    */
-  async getPresetSuggestions(context?: string): Promise<CuratedTheme[]> {
+  async getThemeSuggestions(context?: string): Promise<CuratedTheme[]> {
     try {
       const endpoint = context
-        ? `/api/v2/presets/suggestions?context=${encodeURIComponent(context)}`
+        ? `/api/v2/themes/suggestions?context=${encodeURIComponent(context)}`
         : '/api/v2/themes/suggestions';
 
       return this.request<CuratedTheme[]>(endpoint, { method: 'GET' });
@@ -239,6 +239,6 @@ export class ThemeClient {
 }
 
 /**
- * Default Preset client instance
+ * Default Theme client instance
  */
-export const presetClient = new ThemeClient();
+export const themeClient = new ThemeClient();

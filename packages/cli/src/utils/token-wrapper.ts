@@ -6,7 +6,7 @@
 
 export interface TokenGenerationOptions {
   primaryColor: string;
-  preset: string;
+  theme: string;
 }
 
 export interface TokenGenerationResult {
@@ -23,13 +23,13 @@ export interface TokenGenerationResult {
 export async function generateTokensWrapper(
   options: TokenGenerationOptions
 ): Promise<TokenGenerationResult> {
-  const { primaryColor, preset } = options;
+  const { primaryColor, theme } = options;
 
   // Generate CSS variables
-  const cssVariables = generateCSSVariables(primaryColor, preset);
+  const cssVariables = generateCSSVariables(primaryColor, theme);
 
   // Generate Tailwind config
-  const tailwindConfig = generateTailwindConfig(primaryColor, preset);
+  const tailwindConfig = generateTailwindConfig(primaryColor, theme);
 
   return {
     cssVariables,
@@ -41,7 +41,7 @@ export async function generateTokensWrapper(
 /**
  * Generate CSS variables
  */
-function generateCSSVariables(primaryColor: string, preset: string): string {
+function generateCSSVariables(primaryColor: string, theme: string): string {
   return `:root {
   /* Primary Colors */
   --primary: ${primaryColor};
@@ -84,14 +84,14 @@ function generateCSSVariables(primaryColor: string, preset: string): string {
   --radius: 0.5rem;
 }
 
-/* Preset: ${preset} */
+/* Theme: ${theme} */
 `;
 }
 
 /**
  * Generate Tailwind config
  */
-function generateTailwindConfig(primaryColor: string, preset: string): string {
+function generateTailwindConfig(primaryColor: string, theme: string): string {
   return `/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -156,6 +156,6 @@ module.exports = {
   plugins: [require("tailwindcss-animate")],
 }
 
-// Generated with preset: ${preset}
+// Generated with theme: ${theme}
 `;
 }

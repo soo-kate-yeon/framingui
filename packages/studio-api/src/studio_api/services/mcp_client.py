@@ -3,8 +3,8 @@ MCP Client for studio-mcp integration.
 
 TAG: [SPEC-STUDIO-002][Task-2.4][MCP-Client]
 
-Provides intelligent preset suggestions from studio-mcp server
-with automatic fallback to default presets on connection failure.
+Provides intelligent theme suggestions from studio-mcp server
+with automatic fallback to default themes on connection failure.
 
 Example:
     async with MCPClient() as client:
@@ -24,8 +24,8 @@ class MCPClient:
     """
     Client for studio-mcp server integration.
 
-    Fetches curated preset suggestions from MCP server with
-    automatic fallback to default presets on connection failure.
+    Fetches curated theme suggestions from MCP server with
+    automatic fallback to default themes on connection failure.
 
     Args:
         mcp_url: MCP server URL (default: http://localhost:3000)
@@ -43,7 +43,7 @@ class MCPClient:
 
     async def get_suggestions(self, context: str | None = None) -> list[dict[str, Any]]:
         """
-        Get preset suggestions from MCP server.
+        Get theme suggestions from MCP server.
 
         Args:
             context: Optional context string to guide suggestions
@@ -59,12 +59,12 @@ class MCPClient:
             return self._extract_presets(response)
 
         except (httpx.HTTPError, httpx.ConnectError, asyncio.TimeoutError) as e:
-            logger.warning(f"MCP connection failed: {e}, using fallback presets")
-            return await self.get_default_presets()
+            logger.warning(f"MCP connection failed: {e}, using fallback themes")
+            return await self.get_default_themes()
 
         except Exception as e:
             logger.error(f"Unexpected error in MCP client: {e}")
-            return await self.get_default_presets()
+            return await self.get_default_themes()
 
     async def _fetch_from_mcp(self, context: str | None) -> dict[str, Any]:
         """
@@ -89,32 +89,32 @@ class MCPClient:
 
     def _extract_presets(self, data: Any) -> list[dict[str, Any]]:
         """
-        Extract preset list from MCP response.
+        Extract theme list from MCP response.
 
         Args:
             data: Raw MCP response data
 
         Returns:
-            List of preset dictionaries
+            List of theme dictionaries
 
         Note:
-            Falls back to default presets on unexpected format
+            Falls back to default themes on unexpected format
         """
         if isinstance(data, list):
             return data
-        elif isinstance(data, dict) and "presets" in data:
-            return data["presets"]
+        elif isinstance(data, dict) and "themes" in data:
+            return data["themes"]
         else:
             logger.warning("Unexpected MCP response format, using fallback")
             # Return empty list and let caller handle fallback
             return []
 
-    async def get_default_presets(self) -> list[dict[str, Any]]:
+    async def get_default_themes(self) -> list[dict[str, Any]]:
         """
-        Get default fallback presets when MCP unavailable.
+        Get default fallback themes when MCP unavailable.
 
         Returns:
-            List of default preset dictionaries with full response fields
+            List of default theme dictionaries with full response fields
         """
         from datetime import datetime, timezone
 

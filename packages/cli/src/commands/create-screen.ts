@@ -25,7 +25,7 @@ export interface CreateScreenOptions {
   intent?: string;
   components?: string[];
   path?: string;
-  preset?: string;
+  theme?: string;
   skipMcp?: boolean;
   skipApi?: boolean;
 }
@@ -63,7 +63,7 @@ export interface CreateScreenResult {
   };
   error?: string;
   archetypes?: Map<string, CompleteArchetype>;
-  presetTokens?: ThemeConfig;
+  themeTokens?: ThemeConfig;
   warnings?: string[];
 }
 
@@ -142,7 +142,7 @@ function getSuggestedComponents(intent: string): string[] {
 export async function createScreen(options: CreateScreenOptions): Promise<CreateScreenResult> {
   const warnings: string[] = [];
   let archetypes: Map<string, CompleteArchetype> | undefined;
-  let presetTokens: ThemeConfig | undefined;
+  let themeTokens: ThemeConfig | undefined;
 
   try {
     // Validate screen name
@@ -235,19 +235,19 @@ export async function createScreen(options: CreateScreenOptions): Promise<Create
       components = suggestedComponents;
     }
 
-    // Fetch preset tokens if --preset provided
-    if (options.preset && !options.skipApi) {
+    // Fetch theme tokens if --theme provided
+    if (options.theme && !options.skipApi) {
       try {
-        const presetClient = new ThemeClient();
-        const preset = await presetClient.getPresetByName(options.preset);
-        if (preset) {
-          presetTokens = preset.config;
+        const themeClient = new ThemeClient();
+        const theme = await themeClient.getThemeByName(options.theme);
+        if (theme) {
+          themeTokens = theme.config;
         } else {
-          warnings.push(`Preset "${options.preset}" not found, using defaults`);
+          warnings.push(`Theme "${options.theme}" not found, using defaults`);
         }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
-        warnings.push(`Could not fetch preset: ${message}`);
+        warnings.push(`Could not fetch theme: ${message}`);
       }
     }
 
@@ -349,13 +349,13 @@ export async function createScreen(options: CreateScreenOptions): Promise<Create
           screenContract,
           suggestedComponents,
           archetypes,
-          presetTokens,
+          themeTokens,
           warnings: warnings.length > 0 ? warnings : undefined,
         };
       }
 
-      // Extract tokens from preset config if available
-      const tokens = presetTokens?.tokens as import('@tekton/theme').ExtendedTokenPreset | undefined;
+      // Extract tokens from theme config if available
+      const tokens = themeTokens?.tokens as import('@tekton/theme').ExtendedTokenPreset | undefined;
 
       const generationResult = await generateScreenFiles({
         name: options.name,
@@ -383,7 +383,7 @@ export async function createScreen(options: CreateScreenOptions): Promise<Create
       files,
       stats,
       archetypes,
-      presetTokens,
+      themeTokens,
       warnings: warnings.length > 0 ? warnings : undefined,
     };
   } catch (error) {
@@ -407,8 +407,8 @@ export async function createScreenCommand(
   console.log(chalk.bold(`\nCreating screen: ${name}...\n`));
 
   // Show progress for external service calls
-  if (options.preset && !options.skipApi) {
-    console.log(chalk.gray(`  Fetching preset "${options.preset}"...`));
+  if (options.theme && !options.skipApi) {
+    console.log(chalk.gray(`  Fetching theme "${options.theme}"...`));
   }
 
   const result = await createScreen({ name, ...options, interactive: !options.environment });
@@ -426,8 +426,8 @@ export async function createScreenCommand(
   }
 
   // Display service integration results
-  if (result.presetTokens) {
-    console.log(chalk.green(`  ✓ Preset loaded: ${options.preset}`));
+  if (result.themeTokens) {
+    console.log(chalk.green(`  ✓ Theme loaded: ${options.theme}`));
   }
   if (result.archetypes && result.archetypes.size > 0) {
     console.log(chalk.green(`  ✓ Loaded ${result.archetypes.size} archetypes`));

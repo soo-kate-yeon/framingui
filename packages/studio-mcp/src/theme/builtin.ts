@@ -1,15 +1,15 @@
 /**
- * Builtin Preset Loader
- * Loads bundled preset JSON files for standalone MCP operation
+ * Builtin Theme Loader
+ * Loads bundled theme JSON files for standalone MCP operation
  *
- * @module preset/builtin
+ * @module theme/builtin
  */
 
 import {
-  type Preset,
-  type PresetMeta,
-  BUILTIN_PRESET_IDS,
-  type BuiltinPresetId,
+  type Theme,
+  type ThemeMeta,
+  BUILTIN_THEME_IDS,
+  type BuiltinThemeId,
 } from "./types.js";
 
 // Import all theme JSON files
@@ -22,56 +22,56 @@ import koreanFintech from "./themes/korean-fintech.json" with { type: "json" };
 import warmHumanist from "./themes/warm-humanist.json" with { type: "json" };
 
 /**
- * Map of preset ID to preset data
+ * Map of theme ID to theme data
  */
-const PRESETS: Record<BuiltinPresetId, Preset> = {
-  "saas-modern": saasModern as Preset,
-  "dynamic-fitness": dynamicFitness as Preset,
-  "premium-editorial": premiumEditorial as Preset,
-  "media-streaming": mediaStreaming as Preset,
-  "calm-wellness": calmWellness as Preset,
-  "korean-fintech": koreanFintech as Preset,
-  "warm-humanist": warmHumanist as Preset,
+const THEMES: Record<BuiltinThemeId, Theme> = {
+  "saas-modern": saasModern as Theme,
+  "dynamic-fitness": dynamicFitness as Theme,
+  "premium-editorial": premiumEditorial as Theme,
+  "media-streaming": mediaStreaming as Theme,
+  "calm-wellness": calmWellness as Theme,
+  "korean-fintech": koreanFintech as Theme,
+  "warm-humanist": warmHumanist as Theme,
 };
 
 /**
- * Get metadata for all built-in presets
- * Returns lightweight preset metadata without full AI context
+ * Get metadata for all built-in themes
+ * Returns lightweight theme metadata without full AI context
  *
- * @returns Array of preset metadata
+ * @returns Array of theme metadata
  */
-export function getBuiltinPresets(): PresetMeta[] {
-  return BUILTIN_PRESET_IDS.map((id) => {
-    const preset = PRESETS[id];
+export function getBuiltinThemes(): ThemeMeta[] {
+  return BUILTIN_THEME_IDS.map((id) => {
+    const theme = THEMES[id];
     return {
-      id: preset.id,
-      name: preset.name,
-      description: preset.description,
-      stackInfo: preset.stackInfo,
-      brandTone: preset.brandTone,
+      id: theme.id,
+      name: theme.name,
+      description: theme.description,
+      stackInfo: theme.stackInfo,
+      brandTone: theme.brandTone,
     };
   });
 }
 
 /**
- * Get complete preset data by ID
+ * Get complete theme data by ID
  *
- * @param themeId - The preset ID to retrieve
- * @returns Full preset data or null if not found
+ * @param themeId - The theme ID to retrieve
+ * @returns Full theme data or null if not found
  */
-export function getBuiltinPreset(themeId: string): Preset | null {
-  if (!isValidPresetId(themeId)) {
+export function getBuiltinTheme(themeId: string): Theme | null {
+  if (!isValidThemeId(themeId)) {
     return null;
   }
-  return PRESETS[themeId as BuiltinPresetId] || null;
+  return THEMES[themeId as BuiltinThemeId] || null;
 }
 
 /**
- * Check if a preset ID is a valid built-in preset
+ * Check if a theme ID is a valid built-in theme
  *
- * @param themeId - The preset ID to validate
- * @returns True if the ID is a valid built-in preset
+ * @param themeId - The theme ID to validate
+ * @returns True if the ID is a valid built-in theme
  */
-export function isValidPresetId(themeId: string): boolean {
-  return BUILTIN_PRESET_IDS.includes(themeId as BuiltinPresetId);
+export function isValidThemeId(themeId: string): boolean {
+  return BUILTIN_THEME_IDS.includes(themeId as BuiltinThemeId);
 }

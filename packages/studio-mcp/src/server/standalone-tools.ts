@@ -30,7 +30,7 @@ export interface HealthResponse {
   version: string;
   tools: string[];
   features: {
-    customPresets: boolean;
+    customThemes: boolean;
     cloudSync: boolean;
     analytics: boolean;
   };
@@ -47,9 +47,9 @@ const VERSION = "1.0.0";
  */
 export const STANDALONE_TOOLS: MCPTool[] = [
   {
-    name: "preset.list",
+    name: "theme.list",
     description:
-      "List all built-in presets available in standalone mode. Returns preset ID, name, description, and stack info.",
+      "List all built-in themes available in standalone mode. Returns theme ID, name, description, and stack info.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -57,16 +57,16 @@ export const STANDALONE_TOOLS: MCPTool[] = [
     },
   },
   {
-    name: "preset.get",
+    name: "theme.get",
     description:
-      "Get complete preset details including AI context for styling decisions. Provides questionnaire defaults and design tokens.",
+      "Get complete theme details including AI context for styling decisions. Provides questionnaire defaults and design tokens.",
     inputSchema: {
       type: "object",
       properties: {
         themeId: {
           type: "string",
           description:
-            "Preset ID (e.g., 'next-tailwind-shadcn', 'saas-dashboard')",
+            "Theme ID (e.g., 'next-tailwind-shadcn', 'saas-dashboard')",
         },
       },
       required: ["themeId"],
@@ -75,7 +75,7 @@ export const STANDALONE_TOOLS: MCPTool[] = [
   {
     name: "project.status",
     description:
-      "Get project status including connection mode (standalone/connected), active preset, and detected framework.",
+      "Get project status including connection mode (standalone/connected), active theme, and detected framework.",
     inputSchema: {
       type: "object",
       properties: {
@@ -89,15 +89,15 @@ export const STANDALONE_TOOLS: MCPTool[] = [
     },
   },
   {
-    name: "project.useBuiltinPreset",
+    name: "project.useBuiltinTheme",
     description:
-      "Select a built-in preset as the active preset for the project. Persists to local .tekton/config.json.",
+      "Select a built-in theme as the active theme for the project. Persists to local .tekton/config.json.",
     inputSchema: {
       type: "object",
       properties: {
         themeId: {
           type: "string",
-          description: "Built-in preset ID to activate",
+          description: "Built-in theme ID to activate",
         },
         projectPath: {
           type: "string",
@@ -130,7 +130,7 @@ export function getHealthResponse(
     version: VERSION,
     tools,
     features: {
-      customPresets: isConnected,
+      customThemes: isConnected,
       cloudSync: isConnected,
       analytics: isConnected,
     },
