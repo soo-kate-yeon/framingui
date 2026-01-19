@@ -30,13 +30,13 @@ flowchart TD
     Cool --> ValidateCool{WCAG AA?}
     HighContrast --> ValidateHC{WCAG AAA?}
 
-    ValidateProf -->|Pass| UsePreset[Use Theme]
-    ValidateCreative -->|Pass| UsePreset
-    ValidateMin -->|Pass| UsePreset
-    ValidateBold -->|Pass| UsePreset
-    ValidateWarm -->|Pass| UsePreset
-    ValidateCool -->|Pass| UsePreset
-    ValidateHC -->|Pass| UsePreset
+    ValidateProf -->|Pass| UseTheme[Use Theme]
+    ValidateCreative -->|Pass| UseTheme
+    ValidateMin -->|Pass| UseTheme
+    ValidateBold -->|Pass| UseTheme
+    ValidateWarm -->|Pass| UseTheme
+    ValidateCool -->|Pass| UseTheme
+    ValidateHC -->|Pass| UseTheme
 
     ValidateProf -->|Fail| CustomizeProf[Customize Colors]
     ValidateCreative -->|Fail| CustomizeCreative[Customize Colors]
@@ -45,20 +45,20 @@ flowchart TD
     ValidateWarm -->|Fail| CustomizeWarm[Customize Colors]
     ValidateCool -->|Fail| CustomizeCool[Customize Colors]
 
-    CustomizeProf --> UsePreset
-    CustomizeCreative --> UsePreset
-    CustomizeMin --> UsePreset
-    CustomizeBold --> UsePreset
-    CustomizeWarm --> UsePreset
-    CustomizeCool --> UsePreset
+    CustomizeProf --> UseTheme
+    CustomizeCreative --> UseTheme
+    CustomizeMin --> UseTheme
+    CustomizeBold --> UseTheme
+    CustomizeWarm --> UseTheme
+    CustomizeCool --> UseTheme
 
     classDef decisionNode fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef presetNode fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef themeNode fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     classDef actionNode fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
 
     class Purpose,ValidateProf,ValidateCreative,ValidateMin,ValidateBold,ValidateWarm,ValidateCool,ValidateHC decisionNode
-    class Professional,Creative,Minimal,Bold,Warm,Cool,HighContrast presetNode
-    class UsePreset,CustomizeProf,CustomizeCreative,CustomizeMin,CustomizeBold,CustomizeWarm,CustomizeCool actionNode
+    class Professional,Creative,Minimal,Bold,Warm,Cool,HighContrast themeNode
+    class UseTheme,CustomizeProf,CustomizeCreative,CustomizeMin,CustomizeBold,CustomizeWarm,CustomizeCool actionNode
 ```
 
 ### Theme Characteristics Matrix
@@ -202,23 +202,23 @@ function Button({ children, disabled, ...props }) {
 
 **Cache Generated CSS**:
 ```typescript
-import { loadPreset, generateCSSFromTokens } from '@tekton/token-contract';
+import { loadTheme, generateCSSFromTokens } from '@tekton/token-contract';
 
 // ✅ Good: Cache CSS generation
 const cssCache = new Map<string, string>();
 
-function getCachedCSS(presetName: string): string {
-  if (cssCache.has(presetName)) {
-    return cssCache.get(presetName)!;
+function getCachedCSS(themeName: string): string {
+  if (cssCache.has(themeName)) {
+    return cssCache.get(themeName)!;
   }
 
-  const theme = loadPreset(presetName);
+  const theme = loadTheme(themeName);
   const css = generateCSSFromTokens({
     semantic: theme.tokens,
     composition: theme.composition,
   });
 
-  cssCache.set(presetName, css);
+  cssCache.set(themeName, css);
   return css;
 }
 ```
@@ -227,7 +227,7 @@ function getCachedCSS(presetName: string): string {
 ```typescript
 // ❌ Avoid: Generating CSS on every render
 function MyComponent() {
-  const theme = loadPreset('professional');
+  const theme = loadTheme('professional');
   const css = generateCSSFromTokens({ semantic: theme.tokens, composition: theme.composition });
   // This regenerates CSS on every render!
 }
@@ -326,10 +326,10 @@ function DynamicButton({ children }) {
 
 **Always Validate Contrast**:
 ```typescript
-import { validateWCAGCompliance, loadPreset } from '@tekton/token-contract';
+import { validateWCAGCompliance, loadTheme } from '@tekton/token-contract';
 
 // ✅ Good: Validate compliance before deployment
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 const compliance = validateWCAGCompliance(theme.tokens);
 
 if (!compliance.passed) {
@@ -340,10 +340,10 @@ if (!compliance.passed) {
 
 **Monitor Custom Overrides**:
 ```typescript
-import { overridePresetTokens, validateWCAGCompliance } from '@tekton/token-contract';
+import { overrideThemeTokens, validateWCAGCompliance } from '@tekton/token-contract';
 
 // ✅ Good: Validate custom overrides
-const customTokens = overridePresetTokens(baseTokens, {
+const customTokens = overrideThemeTokens(baseTokens, {
   primary: { '500': { l: 0.65, c: 0.15, h: 200 } },
 });
 
@@ -362,16 +362,16 @@ if (!compliance.passed) {
 import { useTheme } from '@tekton/token-contract';
 
 function App() {
-  const { theme, setPreset } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [highContrastMode, setHighContrastMode] = useState(false);
 
   useEffect(() => {
     if (highContrastMode) {
-      setPreset('high-contrast');
+      setTheme('high-contrast');
     } else {
-      setPreset('professional'); // Restore default theme
+      setTheme('professional'); // Restore default theme
     }
-  }, [highContrastMode, setPreset]);
+  }, [highContrastMode, setTheme]);
 
   return (
     <div>
@@ -418,7 +418,7 @@ import { ThemeProvider } from '@tekton/token-contract';
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional" detectSystemTheme={true}>
+    <ThemeProvider defaultTheme="professional" detectSystemTheme={true}>
       <YourApp />
     </ThemeProvider>
   );
@@ -450,7 +450,7 @@ import { useEffect } from 'react';
 import { useTheme } from '@tekton/token-contract';
 
 function App() {
-  const { darkMode, theme, setPreset } = useTheme();
+  const { darkMode, theme, setTheme } = useTheme();
 
   // Save to localStorage
   useEffect(() => {
@@ -461,13 +461,13 @@ function App() {
   // Restore on mount
   useEffect(() => {
     const savedDarkMode = localStorage.getItem('theme-dark-mode');
-    const savedPreset = localStorage.getItem('theme-theme');
+    const savedTheme = localStorage.getItem('theme-theme');
 
     if (savedDarkMode !== null) {
       // Toggle if saved preference differs from default
     }
-    if (savedPreset) {
-      setPreset(savedPreset as PresetName);
+    if (savedTheme) {
+      setTheme(savedTheme as ThemeName);
     }
   }, []);
 
@@ -483,12 +483,12 @@ function App() {
 
 **Create Brand-Specific Theme**:
 ```typescript
-import { loadPreset, overridePresetTokens } from '@tekton/token-contract';
+import { loadTheme, overrideThemeTokens } from '@tekton/token-contract';
 
 // ✅ Good: Extend existing theme with brand colors
-const basePreset = loadPreset('professional');
+const baseTheme = loadTheme('professional');
 
-const brandPreset = overridePresetTokens(basePreset.tokens, {
+const brandTheme = overrideThemeTokens(baseTheme.tokens, {
   primary: {
     '500': { l: 0.65, c: 0.15, h: 200 }, // Brand blue
   },
@@ -512,7 +512,7 @@ if (!schemaResult.valid) {
   console.error('Invalid override:', schemaResult.errors);
 }
 
-const wcagResult = validateWCAGCompliance(brandPreset);
+const wcagResult = validateWCAGCompliance(brandTheme);
 if (!wcagResult.passed) {
   console.warn('WCAG violations:', wcagResult.violations);
 }
@@ -533,7 +533,7 @@ import { MyComponent } from './MyComponent';
 describe('MyComponent', () => {
   it('renders with default theme', () => {
     render(
-      <ThemeProvider defaultPreset="professional">
+      <ThemeProvider defaultTheme="professional">
         <MyComponent />
       </ThemeProvider>
     );
@@ -542,7 +542,7 @@ describe('MyComponent', () => {
 
   it('renders with dark mode', () => {
     render(
-      <ThemeProvider defaultPreset="professional" defaultDarkMode={true}>
+      <ThemeProvider defaultTheme="professional" defaultDarkMode={true}>
         <MyComponent />
       </ThemeProvider>
     );
@@ -557,9 +557,9 @@ describe('MyComponent', () => {
 
 **Test All Themes**:
 ```typescript
-import { getAvailablePresets } from '@tekton/token-contract';
+import { getAvailableThemes } from '@tekton/token-contract';
 
-const themes = getAvailablePresets();
+const themes = getAvailableThemes();
 
 describe('Visual Regression Tests', () => {
   themes.forEach(theme => {
@@ -619,10 +619,10 @@ Custom theme based on Professional with brand colors.
 
 ## Usage
 
-import { loadPreset, overridePresetTokens } from '@tekton/token-contract';
+import { loadTheme, overrideThemeTokens } from '@tekton/token-contract';
 
-const brandPreset = overridePresetTokens(
-  loadPreset('professional').tokens,
+const brandTheme = overrideThemeTokens(
+  loadTheme('professional').tokens,
   {
     primary: { '500': { l: 0.65, c: 0.15, h: 200 } },
   }
@@ -672,7 +672,7 @@ export function PrimaryButton({ children, ...props }) {
 **2. Bypassing WCAG Validation**:
 ```typescript
 // ❌ Avoid: Ignoring WCAG validation
-const customTokens = overridePresetTokens(base, overrides);
+const customTokens = overrideThemeTokens(base, overrides);
 // Use without validation
 
 // ✅ Always validate

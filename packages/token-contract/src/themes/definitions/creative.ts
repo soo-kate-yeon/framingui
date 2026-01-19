@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * Creative Preset
+ * Creative Theme
  * Target: Design agencies, portfolios, marketing sites
  * Characteristics: Bold colors, larger radius, generous spacing
  */
-export const creativePreset: Preset = {
+export const creativeTheme: Theme = {
   name: 'creative',
   description: 'Vibrant and expressive design for creative professionals',
   tokens: {

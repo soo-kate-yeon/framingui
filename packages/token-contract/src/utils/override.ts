@@ -1,6 +1,6 @@
 /**
- * Preset Override Utilities
- * Override preset tokens with custom values and validation
+ * Theme Override Utilities
+ * Override theme tokens with custom values and validation
  */
 
 import type { SemanticToken, ColorScale } from '../schemas/index.js';
@@ -14,12 +14,12 @@ export interface ValidationResult {
 }
 
 /**
- * Override preset tokens with custom values
+ * Override theme tokens with custom values
  * @param baseTokens - Base semantic tokens
  * @param overrides - Partial override tokens
  * @returns Merged semantic tokens
  */
-export function overridePresetTokens(
+export function overrideThemeTokens(
   baseTokens: SemanticToken,
   overrides: Partial<SemanticToken> | null | undefined
 ): SemanticToken {

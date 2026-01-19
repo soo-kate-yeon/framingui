@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * Bold Preset
+ * Bold Theme
  * Target: E-commerce, conversion-focused apps, call-to-action heavy
  * Characteristics: Maximum chroma, vibrant colors, bold typography
  */
-export const boldPreset: Preset = {
+export const boldTheme: Theme = {
   name: 'bold',
   description: 'High-impact design with vibrant colors for maximum attention',
   tokens: {

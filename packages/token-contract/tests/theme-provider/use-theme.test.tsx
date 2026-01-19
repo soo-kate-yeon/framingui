@@ -13,7 +13,7 @@ describe('useTheme Hook', () => {
     it('should throw error when used outside ThemeProvider', () => {
       // Suppress console.error for this test
       const originalError = console.error;
-      console.error = () => {};
+      console.error = () => { };
 
       expect(() => {
         renderHook(() => useTheme());
@@ -31,7 +31,7 @@ describe('useTheme Hook', () => {
 
       const { result } = renderHook(() => useTheme(), { wrapper });
 
-      expect(result.current.preset).toBeDefined();
+      expect(result.current.theme).toBeDefined();
       expect(result.current.tokens).toBeDefined();
       expect(result.current.composition).toBeDefined();
       expect(result.current.darkMode).toBeDefined();
@@ -39,14 +39,14 @@ describe('useTheme Hook', () => {
       expect(typeof result.current.toggleDarkMode).toBe('function');
     });
 
-    it('should return professional preset by default', () => {
+    it('should return professional theme by default', () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <ThemeProvider>{children}</ThemeProvider>
       );
 
       const { result } = renderHook(() => useTheme(), { wrapper });
 
-      expect(result.current.preset).toBe('professional');
+      expect(result.current.theme).toBe('professional');
     });
 
     it('should return light mode by default', () => {
@@ -90,14 +90,14 @@ describe('useTheme Hook', () => {
   });
 
   describe('Hook Updates', () => {
-    it('should update when preset changes', () => {
+    it('should update when theme changes', () => {
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <ThemeProvider defaultTheme="professional">{children}</ThemeProvider>
       );
 
       const { result } = renderHook(() => useTheme(), { wrapper });
 
-      expect(result.current.preset).toBe('professional');
+      expect(result.current.theme).toBe('professional');
 
       // Note: Testing updates requires act() and would be covered in theme-switch.test.tsx
     });
@@ -124,12 +124,12 @@ describe('useTheme Hook', () => {
       const { result } = renderHook(() => useTheme(), { wrapper });
 
       // TypeScript should enforce these types at compile time
-      const preset: string = result.current.preset;
+      const theme: string = result.current.theme;
       const darkMode: boolean = result.current.darkMode;
-      const setTheme: (preset: any) => void = result.current.setTheme;
+      const setTheme: (theme: any) => void = result.current.setTheme;
       const toggleDarkMode: () => void = result.current.toggleDarkMode;
 
-      expect(typeof preset).toBe('string');
+      expect(typeof theme).toBe('string');
       expect(typeof darkMode).toBe('boolean');
       expect(typeof setTheme).toBe('function');
       expect(typeof toggleDarkMode).toBe('function');

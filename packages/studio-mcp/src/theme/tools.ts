@@ -1,12 +1,12 @@
 /**
- * Preset MCP Tools
- * Tool handlers for preset.list and preset.get MCP tools
+ * Theme MCP Tools
+ * Tool handlers for theme.list and theme.get MCP tools
  *
- * @module preset/tools
+ * @module theme/tools
  */
 
-import { getBuiltinPresets, getBuiltinPreset, isValidPresetId } from "./builtin.js";
-import type { Preset, PresetMeta } from "./types.js";
+import { getBuiltinThemes, getBuiltinTheme, isValidThemeId } from "./builtin.js";
+import type { Theme, ThemeMeta } from "./types.js";
 
 /**
  * Tool result wrapper (consistent with other tools)
@@ -18,45 +18,45 @@ export interface ToolResult<T> {
 }
 
 /**
- * Input schema for preset.get tool
+ * Input schema for theme.get tool
  */
-export interface PresetGetInput {
+export interface ThemeGetInput {
   themeId: string;
 }
 
 /**
- * List all built-in presets
- * MCP Tool: preset.list
+ * List all built-in themes
+ * MCP Tool: theme.list
  *
- * @returns List of preset metadata sorted by ID
+ * @returns List of theme metadata sorted by ID
  */
-export async function presetList(): Promise<ToolResult<PresetMeta[]>> {
+export async function themeList(): Promise<ToolResult<ThemeMeta[]>> {
   try {
-    const presets = getBuiltinPresets();
+    const themes = getBuiltinThemes();
 
     // Sort by ID for consistent ordering
-    const sortedPresets = [...presets].sort((a, b) => a.id.localeCompare(b.id));
+    const sortedThemes = [...themes].sort((a, b) => a.id.localeCompare(b.id));
 
     return {
       success: true,
-      data: sortedPresets,
+      data: sortedThemes,
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to list presets",
+      error: error instanceof Error ? error.message : "Failed to list themes",
     };
   }
 }
 
 /**
- * Get complete preset data by ID
- * MCP Tool: preset.get
+ * Get complete theme data by ID
+ * MCP Tool: theme.get
  *
  * @param input - Contains themeId to retrieve
- * @returns Full preset data or error
+ * @returns Full theme data or error
  */
-export async function presetGet(input: PresetGetInput): Promise<ToolResult<Preset>> {
+export async function themeGet(input: ThemeGetInput): Promise<ToolResult<Theme>> {
   try {
     const { themeId } = input;
 
@@ -67,30 +67,30 @@ export async function presetGet(input: PresetGetInput): Promise<ToolResult<Prese
       };
     }
 
-    if (!isValidPresetId(themeId)) {
+    if (!isValidThemeId(themeId)) {
       return {
         success: false,
-        error: `Preset not found: ${themeId}`,
+        error: `Theme not found: ${themeId}`,
       };
     }
 
-    const preset = getBuiltinPreset(themeId);
+    const theme = getBuiltinTheme(themeId);
 
-    if (!preset) {
+    if (!theme) {
       return {
         success: false,
-        error: `Preset not found: ${themeId}`,
+        error: `Theme not found: ${themeId}`,
       };
     }
 
     return {
       success: true,
-      data: preset,
+      data: theme,
     };
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to get preset",
+      error: error instanceof Error ? error.message : "Failed to get theme",
     };
   }
 }

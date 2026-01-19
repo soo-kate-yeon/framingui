@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * Minimal Preset
+ * Minimal Theme
  * Target: Blogs, documentation, content-focused sites
  * Characteristics: Low chroma, small radius, minimal spacing
  */
-export const minimalPreset: Preset = {
+export const minimalTheme: Theme = {
   name: 'minimal',
   description: 'Clean and minimal design for content-focused applications',
   tokens: {

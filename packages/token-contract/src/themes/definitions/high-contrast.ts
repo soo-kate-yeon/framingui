@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * High-Contrast Preset
+ * High-Contrast Theme
  * Target: Accessibility-focused apps, government sites, educational platforms
  * Characteristics: Maximum contrast (WCAG AAA), clear borders, generous spacing
  */
-export const highContrastPreset: Preset = {
+export const highContrastTheme: Theme = {
   name: 'high-contrast',
   description: 'Maximum accessibility with WCAG AAA contrast ratios',
   tokens: {

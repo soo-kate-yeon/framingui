@@ -1,44 +1,44 @@
-import { ThemeSchema, type Preset, type PresetName, type PresetInfo } from './types.js';
-import { professionalPreset } from './definitions/professional.js';
-import { creativePreset } from './definitions/creative.js';
-import { minimalPreset } from './definitions/minimal.js';
-import { boldPreset } from './definitions/bold.js';
-import { warmPreset } from './definitions/warm.js';
-import { coolPreset } from './definitions/cool.js';
-import { highContrastPreset } from './definitions/high-contrast.js';
+import { ThemeSchema, type Theme, type ThemeName, type ThemeInfo } from './types.js';
+import { professionalTheme } from './definitions/professional.js';
+import { creativeTheme } from './definitions/creative.js';
+import { minimalTheme } from './definitions/minimal.js';
+import { boldTheme } from './definitions/bold.js';
+import { warmTheme } from './definitions/warm.js';
+import { coolTheme } from './definitions/cool.js';
+import { highContrastTheme } from './definitions/high-contrast.js';
 
 /**
- * Preset Registry
- * Maps preset names to their definitions
+ * Theme Registry
+ * Maps theme names to their definitions
  */
-const presetRegistry: Record<PresetName, Preset> = {
-  professional: professionalPreset,
-  creative: creativePreset,
-  minimal: minimalPreset,
-  bold: boldPreset,
-  warm: warmPreset,
-  cool: coolPreset,
-  'high-contrast': highContrastPreset,
+const themeRegistry: Record<ThemeName, Theme> = {
+  professional: professionalTheme,
+  creative: creativeTheme,
+  minimal: minimalTheme,
+  bold: boldTheme,
+  warm: warmTheme,
+  cool: coolTheme,
+  'high-contrast': highContrastTheme,
 };
 
 /**
- * Load a preset by name
- * @param name - Preset identifier
- * @returns Validated preset configuration
- * @throws Error if preset not found or invalid
+ * Load a theme by name
+ * @param name - Theme identifier
+ * @returns Validated theme configuration
+ * @throws Error if theme not found or invalid
  */
-export function loadTheme(name: PresetName): Preset {
-  const preset = presetRegistry[name];
+export function loadTheme(name: ThemeName): Theme {
+  const theme = themeRegistry[name];
 
-  if (!preset) {
-    throw new Error(`Preset '${name}' not found`);
+  if (!theme) {
+    throw new Error(`Theme '${name}' not found`);
   }
 
-  // Validate preset structure
-  const result = ThemeSchema.safeParse(preset);
+  // Validate theme structure
+  const result = ThemeSchema.safeParse(theme);
   if (!result.success) {
     throw new Error(
-      `Preset '${name}' validation failed: ${result.error.message}`
+      `Theme '${name}' validation failed: ${result.error.message}`
     );
   }
 
@@ -46,28 +46,28 @@ export function loadTheme(name: PresetName): Preset {
 }
 
 /**
- * Get list of available presets with metadata
- * @returns Array of preset information
+ * Get list of available themes with metadata
+ * @returns Array of theme information
  */
-export function getAvailablePresets(): PresetInfo[] {
-  return Object.values(presetRegistry).map(preset => ({
-    name: preset.name,
-    description: preset.description,
-    targetUseCase: preset.metadata?.targetUseCase ?? '',
-    characteristics: preset.metadata?.characteristics ?? [],
+export function getAvailableThemes(): ThemeInfo[] {
+  return Object.values(themeRegistry).map(theme => ({
+    name: theme.name,
+    description: theme.description,
+    targetUseCase: theme.metadata?.targetUseCase ?? '',
+    characteristics: theme.metadata?.characteristics ?? [],
   }));
 }
 
 /**
- * Validate a preset configuration
- * @param preset - Preset to validate
+ * Validate a theme configuration
+ * @param theme - Theme to validate
  * @returns Validation result with success flag
  */
-export function validatePreset(preset: unknown): {
+export function validateTheme(theme: unknown): {
   success: boolean;
   error?: string;
 } {
-  const result = ThemeSchema.safeParse(preset);
+  const result = ThemeSchema.safeParse(theme);
 
   if (!result.success) {
     return {

@@ -4,10 +4,10 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from studio_api.models.curated_theme import CuratedTheme
-from studio_api.schemas.curated_theme import CuratedPresetCreate, CuratedPresetUpdate
+from studio_api.schemas.curated_theme import CuratedThemeCreate, CuratedThemeUpdate
 
 
-class CuratedPresetRepository:
+class CuratedThemeRepository:
     """Repository for managing CuratedTheme database operations."""
 
     def __init__(self, session: AsyncSession):
@@ -16,13 +16,13 @@ class CuratedPresetRepository:
 
     async def get_by_id(self, theme_id: int) -> CuratedTheme | None:
         """
-        Get a preset by ID (only active presets).
+        Get a theme by ID (only active themes).
 
         Args:
-            theme_id: The ID of the preset to retrieve.
+            theme_id: The ID of the theme to retrieve.
 
         Returns:
-            The preset if found and active, None otherwise.
+            The theme if found and active, None otherwise.
         """
         result = await self.session.execute(
             select(CuratedTheme)
@@ -39,7 +39,7 @@ class CuratedPresetRepository:
         tags: str | None = None,
     ) -> tuple[list[CuratedTheme], int]:
         """
-        List presets with optional filtering and pagination.
+        List themes with optional filtering and pagination.
 
         Args:
             skip: Number of items to skip for pagination.
@@ -48,16 +48,16 @@ class CuratedPresetRepository:
             tags: Optional tag filter (single tag string).
 
         Returns:
-            Tuple of (list of presets, total count matching filters).
+            Tuple of (list of themes, total count matching filters).
         """
-        # Build base query for active presets only
+        # Build base query for active themes only
         query = select(CuratedTheme).where(CuratedTheme.is_active == True)  # noqa: E712
 
         # Apply category filter
         if category:
             query = query.where(CuratedTheme.category == category)
 
-        # Execute query to get all matching presets
+        # Execute query to get all matching themes
         result = await self.session.execute(query)
         all_items = list(result.scalars().all())
 
@@ -73,58 +73,57 @@ class CuratedPresetRepository:
 
         return items, total
 
-    async def create(self, theme_data: CuratedPresetCreate) -> CuratedTheme:
+    async def create(self, theme_data: CuratedThemeCreate) -> CuratedTheme:
         """
-        Create a new preset.
+        Create a new theme.
 
         Args:
-            theme_data: The preset data to create.
+            theme_data: The theme data to create.
 
         Returns:
-            The created preset with generated ID and timestamps.
+            The created theme with generated ID and timestamps.
         """
-        preset = CuratedTheme(**theme_data.model_dump())
-        self.session.add(preset)
-        await self.session.commit()
-        await self.session.refresh(preset)
-        return preset
+        theme = CuratedTheme(**theme_data.model_dump())
+        self.session.add(theme)
+        await self.session.refresh(theme)
+        return theme
 
     async def update(
-        self, theme_id: int, theme_data: CuratedPresetUpdate
+        self, theme_id: int, theme_data: CuratedThemeUpdate
     ) -> CuratedTheme | None:
         """
-        Update an existing preset.
+        Update an existing theme.
 
         Args:
-            theme_id: The ID of the preset to update.
+            theme_id: The ID of the theme to update.
             theme_data: The update data (only provided fields will be updated).
 
         Returns:
-            The updated preset if found, None otherwise.
+            The updated theme if found, None otherwise.
         """
-        preset = await self.get_by_id(theme_id)
-        if not preset:
+        theme = await self.get_by_id(theme_id)
+        if not theme:
             return None
 
         # Update only provided fields
         update_dict = theme_data.model_dump(exclude_unset=True)
         for field, value in update_dict.items():
-            setattr(preset, field, value)
+            setattr(theme, field, value)
 
         await self.session.commit()
-        await self.session.refresh(preset)
-        return preset
+        await self.session.refresh(theme)
+        return theme
 
     async def delete(self, theme_id: int) -> bool:
         """
-        Soft delete a preset by setting is_active=False.
+        Soft delete a theme by setting is_active=False.
 
-        Returns True if preset was found and deleted, False otherwise.
+        Returns True if theme was found and deleted, False otherwise.
         """
-        preset = await self.get_by_id(theme_id)
-        if not preset:
+        theme = await self.get_by_id(theme_id)
+        if not theme:
             return False
 
-        preset.is_active = False
+        theme.is_active = False
         await self.session.commit()
         return True

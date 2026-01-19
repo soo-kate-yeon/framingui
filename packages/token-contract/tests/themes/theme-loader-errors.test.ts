@@ -1,69 +1,68 @@
 import { describe, it, expect } from 'vitest';
-import { loadTheme, validatePreset } from '../../src/presets/theme-loader.js';
+import { loadTheme, validateTheme } from '../../src/themes/theme-loader.js';
 
-describe('Preset Loader Error Handling', () => {
-  describe('loadTheme error cases', () => {
-    it('should throw error for invalid preset name', () => {
+describe('Theme Loader Error Handling', () => {
+  describe('loadTheme', () => {
+    it('should throw error for invalid theme name', () => {
       expect(() => loadTheme('nonexistent' as any)).toThrow(
-        "Preset 'nonexistent' not found"
+        "Theme 'nonexistent' not found"
       );
     });
 
-    it('should throw error for undefined preset name', () => {
+    it('should throw error for undefined theme name', () => {
       expect(() => loadTheme(undefined as any)).toThrow();
     });
 
-    it('should throw error for null preset name', () => {
+    it('should throw error for null theme name', () => {
       expect(() => loadTheme(null as any)).toThrow();
     });
   });
 
-  describe('validatePreset error cases', () => {
-    it('should return validation error for invalid preset structure', () => {
-      const invalidPreset = {
+  describe('validateTheme error cases', () => {
+    it('should return validation error for invalid theme structure', () => {
+      const invalidTheme = {
         name: 'invalid',
-        description: 'Invalid preset',
-        // Missing tokens and composition
+        description: 'Invalid theme',
+        // Missing tokens
       };
 
-      const result = validatePreset(invalidPreset);
+      const result = validateTheme(invalidTheme as any);
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
     });
 
-    it('should return validation error for preset with invalid tokens', () => {
-      const invalidPreset = {
-        name: 'test',
-        description: 'Test',
+    it('should return validation error for theme with invalid tokens', () => {
+      const invalidTheme = {
+        name: 'invalid',
+        description: 'Invalid theme',
         tokens: {
-          // Missing required semantic tokens
-          primary: {},
+          primary: {
+            '500': 'invalid-color',
+          },
         },
-        composition: {},
       };
 
-      const result = validatePreset(invalidPreset);
+      const result = validateTheme(invalidTheme as any);
       expect(result.success).toBe(false);
     });
 
-    it('should return validation error for non-object input', () => {
-      const result = validatePreset('not an object');
-      expect(result.success).toBe(false);
-      expect(result.error).toBeDefined();
-    });
-
-    it('should return validation error for null input', () => {
-      const result = validatePreset(null);
+    it('should handle non-object inputs', () => {
+      const result = validateTheme('not an object' as any);
       expect(result.success).toBe(false);
     });
 
-    it('should return validation error for undefined input', () => {
-      const result = validatePreset(undefined);
+    it('should handle null inputs', () => {
+      const result = validateTheme(null as any);
       expect(result.success).toBe(false);
     });
 
-    it('should return validation error for array input', () => {
-      const result = validatePreset([]);
+    it('should handle undefined inputs', () => {
+      const result = validateTheme(undefined as any);
+      expect(result.success).toBe(false);
+    });
+
+    it('should handle array inputs', () => {
+      const result = validateTheme([] as any);
       expect(result.success).toBe(false);
     });
   });

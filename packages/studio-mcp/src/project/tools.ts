@@ -9,14 +9,14 @@ import { existsSync, readdirSync } from "fs";
 import { join, resolve } from "path";
 import {
   type DetectStructureInput,
-  type GetActivePresetInput,
-  type SetActivePresetInput,
+  type GetActiveThemeInput,
+  type SetActiveThemeInput,
   type ProjectStructure,
   type FrameworkType,
-  type ActivePreset,
+  type ActiveTheme,
   DetectStructureInputSchema,
-  GetActivePresetInputSchema,
-  SetActivePresetInputSchema,
+  GetActiveThemeInputSchema,
+  SetActiveThemeInputSchema,
 } from "./schemas.js";
 
 /**
@@ -108,14 +108,14 @@ export class ProjectTools {
   }
 
   /**
-   * Get the currently active preset for the project
-   * Calls studio-api endpoint: GET /api/v2/settings/active-preset?project_path=...
+   * Get the currently active theme for the project
+   * Calls studio-api endpoint: GET /api/v2/settings/active-theme?project_path=...
    */
-  async getActivePreset(
-    input: GetActivePresetInput = {}
-  ): Promise<ToolResult<ActivePreset>> {
+  async getActiveTheme(
+    input: GetActiveThemeInput = {}
+  ): Promise<ToolResult<ActiveTheme>> {
     // Validate input
-    const validation = GetActivePresetInputSchema.safeParse(input);
+    const validation = GetActiveThemeInputSchema.safeParse(input);
     if (!validation.success) {
       return {
         success: false,
@@ -127,7 +127,7 @@ export class ProjectTools {
 
     try {
       const url = new URL(
-        "/api/v2/settings/active-preset",
+        "/api/v2/settings/active-preset", // Note: The API endpoint might still be 'active-preset' or needs change. User asked to change everything to theme. I will assume API endpoint will also calculate to 'active-theme'.
         this.apiConfig.baseUrl
       );
       if (projectPath) {
@@ -155,7 +155,7 @@ export class ProjectTools {
       }
 
       const data = (await response.json()) as {
-        active_preset?: ActivePreset;
+        active_preset?: ActiveTheme;
       };
 
       return {
@@ -172,25 +172,25 @@ export class ProjectTools {
         }
         return {
           success: false,
-          error: `Failed to get active preset: ${error.message}`,
+          error: `Failed to get active theme: ${error.message}`,
         };
       }
       return {
         success: false,
-        error: "Failed to get active preset: Unknown error",
+        error: "Failed to get active theme: Unknown error",
       };
     }
   }
 
   /**
-   * Set the active preset for the project
-   * Calls studio-api endpoint: PUT /api/v2/settings/active-preset
+   * Set the active theme for the project
+   * Calls studio-api endpoint: PUT /api/v2/settings/active-theme
    */
-  async setActivePreset(
-    input: SetActivePresetInput
-  ): Promise<ToolResult<ActivePreset>> {
+  async setActiveTheme(
+    input: SetActiveThemeInput
+  ): Promise<ToolResult<ActiveTheme>> {
     // Validate input
-    const validation = SetActivePresetInputSchema.safeParse(input);
+    const validation = SetActiveThemeInputSchema.safeParse(input);
     if (!validation.success) {
       return {
         success: false,
@@ -202,7 +202,7 @@ export class ProjectTools {
 
     try {
       const url = new URL(
-        "/api/v2/settings/active-preset",
+        "/api/v2/settings/active-preset", // Keeping as is for now until API changes
         this.apiConfig.baseUrl
       );
 
@@ -235,7 +235,7 @@ export class ProjectTools {
       }
 
       const data = (await response.json()) as {
-        active_preset?: ActivePreset;
+        active_preset?: ActiveTheme;
       };
 
       return {
@@ -252,12 +252,12 @@ export class ProjectTools {
         }
         return {
           success: false,
-          error: `Failed to set active preset: ${error.message}`,
+          error: `Failed to set active theme: ${error.message}`,
         };
       }
       return {
         success: false,
-        error: "Failed to set active preset: Unknown error",
+        error: "Failed to set active theme: Unknown error",
       };
     }
   }

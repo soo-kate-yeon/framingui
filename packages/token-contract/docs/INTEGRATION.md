@@ -141,7 +141,7 @@ const StyledButton = styled.button`
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <StyledButton>Click me</StyledButton>
     </ThemeProvider>
   );
@@ -166,15 +166,15 @@ const ThemedCard = styled.div`
 `;
 
 function ThemeSwitcher() {
-  const { theme, setPreset, darkMode, toggleDarkMode } = useTheme();
+  const { theme, setTheme, darkMode, toggleDarkMode } = useTheme();
 
   return (
     <div>
       <ThemedCard>
         <h3>Theme Controls</h3>
         <p>Current theme: {theme}</p>
-        <button onClick={() => setPreset('creative')}>Creative</button>
-        <button onClick={() => setPreset('minimal')}>Minimal</button>
+        <button onClick={() => setTheme('creative')}>Creative</button>
+        <button onClick={() => setTheme('minimal')}>Minimal</button>
         <button onClick={toggleDarkMode}>
           {darkMode ? 'Light Mode' : 'Dark Mode'}
         </button>
@@ -185,7 +185,7 @@ function ThemeSwitcher() {
 
 export default function App() {
   return (
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <ThemeSwitcher />
     </ThemeProvider>
   );
@@ -334,7 +334,7 @@ import type { AppProps } from 'next/app';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider defaultPreset="professional" detectSystemTheme>
+    <ThemeProvider defaultTheme="professional" detectSystemTheme>
       <Component {...pageProps} />
     </ThemeProvider>
   );
@@ -355,7 +355,7 @@ import App from './App';
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
   <React.StrictMode>
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <App />
     </ThemeProvider>
   </React.StrictMode>
@@ -378,7 +378,7 @@ import { Button } from './Button';
 describe('Button', () => {
   it('renders with theme context', () => {
     render(
-      <ThemeProvider defaultPreset="professional">
+      <ThemeProvider defaultTheme="professional">
         <Button>Click me</Button>
       </ThemeProvider>
     );
@@ -402,11 +402,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider, useTheme } from '@tekton/token-contract';
 
 function ThemeSwitcher() {
-  const { theme, setPreset } = useTheme();
+  const { theme, setTheme } = useTheme();
   return (
     <div>
       <p data-testid="current-theme">{theme}</p>
-      <button onClick={() => setPreset('creative')}>Switch to Creative</button>
+      <button onClick={() => setTheme('creative')}>Switch to Creative</button>
     </div>
   );
 }
@@ -414,7 +414,7 @@ function ThemeSwitcher() {
 describe('Theme Switching', () => {
   it('switches theme when button clicked', () => {
     render(
-      <ThemeProvider defaultPreset="professional">
+      <ThemeProvider defaultTheme="professional">
         <ThemeSwitcher />
       </ThemeProvider>
     );
@@ -439,11 +439,11 @@ ThemeProvider supports SSR with initial CSS injection:
 ```tsx
 // pages/_document.tsx
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { loadPreset, generateCSSFromTokens } from '@tekton/token-contract';
+import { loadTheme, generateCSSFromTokens } from '@tekton/token-contract';
 
 export default class MyDocument extends Document {
   render() {
-    const theme = loadPreset('professional');
+    const theme = loadTheme('professional');
     const css = generateCSSFromTokens({
       semantic: theme.tokens,
       composition: theme.composition,
@@ -474,10 +474,10 @@ Use Gatsby's SSR API to inject initial CSS:
 
 ```javascript
 // gatsby-ssr.js
-import { loadPreset, generateCSSFromTokens } from '@tekton/token-contract';
+import { loadTheme, generateCSSFromTokens } from '@tekton/token-contract';
 
 export const onRenderBody = ({ setHeadComponents }) => {
-  const theme = loadPreset('professional');
+  const theme = loadTheme('professional');
   const css = generateCSSFromTokens({
     semantic: theme.tokens,
     composition: theme.composition,
@@ -505,18 +505,18 @@ Generate CSS files at build time:
 ```typescript
 // scripts/generate-css.ts
 import { writeFileSync } from 'fs';
-import { loadPreset, generateCSSFromTokens } from '@tekton/token-contract';
+import { loadTheme, generateCSSFromTokens } from '@tekton/token-contract';
 
 const themes = ['professional', 'creative', 'minimal', 'bold', 'warm', 'cool', 'high-contrast'];
 
-themes.forEach((presetName) => {
-  const theme = loadPreset(presetName);
+themes.forEach((themeName) => {
+  const theme = loadTheme(themeName);
   const css = generateCSSFromTokens({
     semantic: theme.tokens,
     composition: theme.composition,
   });
 
-  writeFileSync(`public/themes/${presetName}.css`, css);
+  writeFileSync(`public/themes/${themeName}.css`, css);
 });
 
 console.log('CSS files generated successfully!');
@@ -542,11 +542,11 @@ Usage in HTML:
 Create custom themes by extending base theme structure:
 
 ```typescript
-import { loadPreset, overridePresetTokens } from '@tekton/token-contract';
+import { loadTheme, overrideThemeTokens } from '@tekton/token-contract';
 
-const basePreset = loadPreset('professional');
+const baseTheme = loadTheme('professional');
 
-const customPreset = overridePresetTokens(basePreset.tokens, {
+const customTheme = overrideThemeTokens(baseTheme.tokens, {
   primary: {
     '500': 'oklch(0.65 0.15 200)', // Custom primary color
   },
@@ -576,7 +576,7 @@ if (!schemaValidation.valid) {
 }
 
 // Validate WCAG compliance
-const customTokens = overridePresetTokens(basePreset.tokens, overrideTokens);
+const customTokens = overrideThemeTokens(baseTheme.tokens, overrideTokens);
 const wcagValidation = validateWCAGCompliance(customTokens);
 if (!wcagValidation.passed) {
   console.warn('WCAG violations:', wcagValidation.violations);
@@ -592,22 +592,22 @@ if (!wcagValidation.passed) {
 Cache generated CSS to avoid redundant generation:
 
 ```typescript
-import { loadPreset, generateCSSFromTokens } from '@tekton/token-contract';
+import { loadTheme, generateCSSFromTokens } from '@tekton/token-contract';
 
 const cssCache = new Map<string, string>();
 
-function getCachedCSS(presetName: string): string {
-  if (cssCache.has(presetName)) {
-    return cssCache.get(presetName)!;
+function getCachedCSS(themeName: string): string {
+  if (cssCache.has(themeName)) {
+    return cssCache.get(themeName)!;
   }
 
-  const theme = loadPreset(presetName);
+  const theme = loadTheme(themeName);
   const css = generateCSSFromTokens({
     semantic: theme.tokens,
     composition: theme.composition,
   });
 
-  cssCache.set(presetName, css);
+  cssCache.set(themeName, css);
   return css;
 }
 ```
@@ -619,18 +619,18 @@ Load themes on-demand to reduce initial bundle size:
 ```typescript
 import { lazy, Suspense } from 'react';
 
-const presetLoaders = {
+const themeLoaders = {
   professional: () => import('./themes/professional'),
   creative: () => import('./themes/creative'),
   minimal: () => import('./themes/minimal'),
 };
 
 function LazyThemeProvider({ theme, children }) {
-  const PresetProvider = lazy(presetLoaders[theme]);
+  const ThemeProvider = lazy(themeLoaders[theme]);
 
   return (
     <Suspense fallback={<div>Loading theme...</div>}>
-      <PresetProvider>{children}</PresetProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     </Suspense>
   );
 }
@@ -646,9 +646,9 @@ Map Tailwind color scales to Token Contract themes:
 
 ```typescript
 // tailwind.config.js
-const { loadPreset, generateCSSFromTokens } = require('@tekton/token-contract');
+const { loadTheme, generateCSSFromTokens } = require('@tekton/token-contract');
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 module.exports = {
   theme: {
@@ -678,9 +678,9 @@ Replace Chakra's theme with Token Contract:
 
 ```tsx
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { ThemeProvider, loadPreset } from '@tekton/token-contract';
+import { ThemeProvider, loadTheme } from '@tekton/token-contract';
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 const chakraTheme = extendTheme({
   colors: {
@@ -694,7 +694,7 @@ const chakraTheme = extendTheme({
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <ChakraProvider theme={chakraTheme}>
         <YourApp />
       </ChakraProvider>
@@ -709,9 +709,9 @@ Map Material-UI theme to Token Contract:
 
 ```tsx
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { ThemeProvider, loadPreset } from '@tekton/token-contract';
+import { ThemeProvider, loadTheme } from '@tekton/token-contract';
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 const muiTheme = createTheme({
   palette: {
@@ -725,7 +725,7 @@ const muiTheme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional">
+    <ThemeProvider defaultTheme="professional">
       <MuiThemeProvider theme={muiTheme}>
         <YourApp />
       </MuiThemeProvider>

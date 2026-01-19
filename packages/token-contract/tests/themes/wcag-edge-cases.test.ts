@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { validateWCAGCompliance } from '../../src/presets/wcag-compliance.js';
-import type { Preset } from '../../src/presets/types.js';
+import { validateWCAGCompliance } from '../../src/themes/wcag-compliance.js';
+import type { Theme } from '../../src/themes/types.js';
 
 describe('WCAG Compliance Edge Cases', () => {
   describe('missing color scales', () => {
-    it('should throw error for preset missing neutral background', () => {
-      const invalidPreset = {
+    it('should throw error for theme missing neutral background', () => {
+      const invalidTheme = {
         name: 'test' as const,
         description: 'Test',
         tokens: {
@@ -48,19 +48,19 @@ describe('WCAG Compliance Edge Cases', () => {
             letterSpacing: '0em',
           },
         },
-      } as Preset;
+      } as any as Theme;
 
-      expect(() => validateWCAGCompliance(invalidPreset, 'AA')).toThrow(
-        'Preset missing required neutral background colors'
+      expect(() => validateWCAGCompliance(invalidTheme, 'AA')).toThrow(
+        'Theme missing required neutral background colors'
       );
     });
   });
 
   describe('contrast calculation edge cases', () => {
-    it('should handle preset with minimal color scale steps', () => {
-      const minimalPreset = {
+    it('should handle theme with minimal color scale steps', () => {
+      const minimalTheme = {
         name: 'minimal-test' as const,
-        description: 'Minimal test preset',
+        description: 'Minimal test theme',
         tokens: {
           primary: {
             '50': { l: 0.95, c: 0.05, h: 220 },
@@ -106,16 +106,16 @@ describe('WCAG Compliance Edge Cases', () => {
             letterSpacing: '0em',
           },
         },
-      } as Preset;
+      } as any as Theme;
 
-      const result = validateWCAGCompliance(minimalPreset, 'AA');
+      const result = validateWCAGCompliance(minimalTheme, 'AA');
       expect(result.checks.length).toBeGreaterThan(0);
     });
 
     it('should handle AAA level validation', () => {
-      const preset = {
+      const theme = {
         name: 'aaa-test' as const,
-        description: 'AAA test preset',
+        description: 'AAA test theme',
         tokens: {
           primary: {
             '500': { l: 0.3, c: 0.15, h: 220 },
@@ -167,9 +167,9 @@ describe('WCAG Compliance Edge Cases', () => {
             letterSpacing: '0em',
           },
         },
-      } as Preset;
+      } as any as Theme;
 
-      const result = validateWCAGCompliance(preset, 'AAA');
+      const result = validateWCAGCompliance(theme, 'AAA');
       expect(result.level).toBe('AAA');
       expect(result.checks.length).toBeGreaterThan(0);
     });

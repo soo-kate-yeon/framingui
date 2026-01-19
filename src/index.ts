@@ -32,19 +32,19 @@ export {
   type TokenGeneratorConfig,
 } from './token-generator';
 
-// Component presets
+// Component themes
 export {
-  buttonPreset,
-  inputPreset,
-  cardPreset,
-  badgePreset,
-  alertPreset,
-  linkPreset,
-  checkboxPreset,
-  radioPreset,
-  generateComponentPresets,
-  COMPONENT_PRESETS,
-} from './component-presets';
+  buttonTheme,
+  inputTheme,
+  cardTheme,
+  badgeTheme,
+  alertTheme,
+  linkTheme,
+  checkboxTheme,
+  radioTheme,
+  generateComponentThemes,
+  COMPONENT_THEMES,
+} from './component-themes';
 
 // Neutral palette generation
 export {

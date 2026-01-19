@@ -251,11 +251,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ThemeProvider, useTheme } from '../src/theme-provider';
 
 function TestComponent() {
-  const { theme, setPreset } = useTheme();
+  const { theme, setTheme } = useTheme();
   return (
     <div>
       <p data-testid="theme">{theme}</p>
-      <button onClick={() => setPreset('creative')}>Switch</button>
+      <button onClick={() => setTheme('creative')}>Switch</button>
     </div>
   );
 }
@@ -263,7 +263,7 @@ function TestComponent() {
 describe('ThemeProvider', () => {
   it('allows theme switching', () => {
     render(
-      <ThemeProvider defaultPreset="professional">
+      <ThemeProvider defaultTheme="professional">
         <TestComponent />
       </ThemeProvider>
     );
@@ -303,9 +303,9 @@ All contributions should include appropriate documentation:
 **Code Examples**:
 ```typescript
 // ✅ Good: Clear, self-contained example
-import { loadPreset, generateCSSVariables } from '@tekton/token-contract';
+import { loadTheme, generateCSSVariables } from '@tekton/token-contract';
 
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 const css = generateCSSVariables(theme.tokens);
 console.log(css);
 ```
@@ -443,9 +443,9 @@ pnpm lint:fix
 ```
 
 **Naming Conventions**:
-- **Functions**: camelCase (`loadPreset`, `generateCSSVariables`)
+- **Functions**: camelCase (`loadTheme`, `generateCSSVariables`)
 - **Types/Interfaces**: PascalCase (`ColorToken`, `SemanticToken`)
-- **Constants**: UPPER_SNAKE_CASE (`DEFAULT_PRESET`, `MAX_CHROMA`)
+- **Constants**: UPPER_SNAKE_CASE (`DEFAULT_THEME`, `MAX_CHROMA`)
 - **Files**: kebab-case (`color-token.ts`, `theme-provider.tsx`)
 
 ---

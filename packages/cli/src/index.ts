@@ -37,13 +37,13 @@ program
   .description('Generate design tokens')
   .option('-p, --path <path>', 'Project directory path', process.cwd())
   .option('-c, --primary-color <color>', 'Primary color (hex code)')
-  .option('--preset <preset>', 'Preset name (default, accessible, vibrant)', 'default')
+  .option('--theme <theme>', 'Theme name (default, accessible, vibrant)', 'default')
   .option('-f, --force', 'Force generation even with WCAG warnings')
   .action(async (options) => {
     await generateCommand({
       path: options.path,
       primaryColor: options.primaryColor,
-      preset: options.preset,
+      theme: options.theme,
       force: options.force,
     });
   });
@@ -57,9 +57,9 @@ program
   .option('-i, --intent <intent>', 'Screen intent (data-list, data-detail, dashboard, form, etc.)')
   .option('-c, --components <components...>', 'Components to include')
   .option('-p, --path <path>', 'Output directory path', process.cwd())
-  .option('--preset <preset>', 'Preset name to fetch design tokens from API')
+  .option('--theme <theme>', 'Theme name to fetch design tokens from API')
   .option('--skip-mcp', 'Skip MCP server integration (offline mode)')
-  .option('--skip-api', 'Skip Preset API integration (offline mode)')
+  .option('--skip-api', 'Skip Theme API integration (offline mode)')
   .action(async (name, options) => {
     await createScreenCommand(name, {
       environment: options.environment,
@@ -67,7 +67,7 @@ program
       intent: options.intent,
       components: options.components,
       path: options.path,
-      preset: options.preset,
+      theme: options.theme,
       skipMcp: options.skipMcp,
       skipApi: options.skipApi,
     });

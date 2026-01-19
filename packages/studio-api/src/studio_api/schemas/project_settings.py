@@ -8,27 +8,27 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from studio_api.schemas.curated_theme import CuratedPresetResponse
+from studio_api.schemas.curated_theme import CuratedThemeResponse
 
 
-class SetActivePresetRequest(BaseModel):
-    """Request body for setting active preset.
+class SetActiveThemeRequest(BaseModel):
+    """Request body for setting active theme.
 
-    PUT /api/v2/settings/active-preset
+    PUT /api/v2/settings/active-theme
     """
 
-    theme_id: int = Field(..., description="ID of the preset to set as active")
+    theme_id: int = Field(..., description="ID of the theme to set as active")
     project_path: str = Field(
         ..., min_length=1, max_length=1024, description="Path to the project directory"
     )
 
 
-class ActivePresetResponse(BaseModel):
-    """Response for active preset endpoints."""
+class ActiveThemeResponse(BaseModel):
+    """Response for active theme endpoints."""
 
     success: bool = Field(..., description="Whether the operation succeeded")
-    active_theme: CuratedPresetResponse | None = Field(
-        None, description="The active preset, or null if none set"
+    active_theme: CuratedThemeResponse | None = Field(
+        None, description="The active theme, or null if none set"
     )
 
 
@@ -42,12 +42,12 @@ class ProjectSettingsResponse(BaseModel):
 
     id: int
     project_path: str
-    active_preset_id: int | None = None
+    active_theme_id: int | None = None
     framework_type: str | None = None
     detected_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
-    active_theme: CuratedPresetResponse | None = None
+    active_theme: CuratedThemeResponse | None = None
 
 
 class ProjectSettingsSuccessResponse(BaseModel):

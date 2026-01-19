@@ -28,10 +28,10 @@ pnpm add @tekton/token-contract
 ### Basic Usage
 
 ```typescript
-import { loadPreset, generateCSSFromTokens } from '@tekton/token-contract';
+import { loadTheme, generateCSSFromTokens } from '@tekton/token-contract';
 
 // Load a theme
-const theme = loadPreset('professional');
+const theme = loadTheme('professional');
 
 // Generate CSS variables
 const css = generateCSSFromTokens({
@@ -55,19 +55,19 @@ import { ThemeProvider, useTheme } from '@tekton/token-contract';
 
 function App() {
   return (
-    <ThemeProvider defaultPreset="professional" defaultDarkMode={false}>
+    <ThemeProvider defaultTheme="professional" defaultDarkMode={false}>
       <YourApp />
     </ThemeProvider>
   );
 }
 
 function YourComponent() {
-  const { theme, tokens, darkMode, setPreset, toggleDarkMode } = useTheme();
+  const { theme, tokens, darkMode, setTheme, toggleDarkMode } = useTheme();
 
   return (
     <div>
       <p>Current theme: {theme}</p>
-      <button onClick={() => setPreset('creative')}>Switch to Creative</button>
+      <button onClick={() => setTheme('creative')}>Switch to Creative</button>
       <button onClick={toggleDarkMode}>Toggle Dark Mode</button>
     </div>
   );

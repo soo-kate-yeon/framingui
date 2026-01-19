@@ -1,8 +1,8 @@
 /**
- * Preset Type Definitions
- * Type definitions and Zod schemas for standalone preset system
+ * Theme Type Definitions
+ * Type definitions and Zod schemas for standalone theme system
  *
- * @module preset/types
+ * @module theme/types
  */
 
 import { z } from "zod";
@@ -81,7 +81,7 @@ export const FontScaleSchema = z.enum(["small", "medium", "large"]);
 export type FontScale = z.infer<typeof FontScaleSchema>;
 
 /**
- * Stack info schema for preset metadata
+ * Stack info schema for theme metadata
  */
 export const StackInfoSchema = z.object({
   framework: z.string(),
@@ -129,7 +129,7 @@ export type ComponentDefaults = z.infer<typeof ComponentDefaultsSchema>;
 /**
  * AI context schema - provides context for AI assistants
  */
-export const PresetAIContextSchema = z.object({
+export const ThemeAIContextSchema = z.object({
   brandTone: BrandToneSchema,
   designPhilosophy: z.string(),
   colorGuidance: z.string(),
@@ -137,29 +137,29 @@ export const PresetAIContextSchema = z.object({
   accessibilityNotes: z.string().optional(),
 });
 
-export type PresetAIContext = z.infer<typeof PresetAIContextSchema>;
+export type ThemeAIContext = z.infer<typeof ThemeAIContextSchema>;
 
 /**
- * Complete preset schema for standalone mode
+ * Complete theme schema for standalone mode
  */
 export const ThemeSchema = z.object({
-  id: z.string().min(1, "Preset id is required"),
-  name: z.string().min(1, "Preset name is required"),
+  id: z.string().min(1, "Theme id is required"),
+  name: z.string().min(1, "Theme name is required"),
   description: z.string(),
   stackInfo: StackInfoSchema,
   brandTone: BrandToneSchema,
   colorPalette: ColorPaletteSchema,
   typography: TypographySchema,
   componentDefaults: ComponentDefaultsSchema,
-  aiContext: PresetAIContextSchema,
+  aiContext: ThemeAIContextSchema,
 });
 
-export type Preset = z.infer<typeof ThemeSchema>;
+export type Theme = z.infer<typeof ThemeSchema>;
 
 /**
- * Preset metadata for listing (lightweight version)
+ * Theme metadata for listing (lightweight version)
  */
-export const PresetMetaSchema = z.object({
+export const ThemeMetaSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
@@ -167,12 +167,12 @@ export const PresetMetaSchema = z.object({
   brandTone: BrandToneSchema,
 });
 
-export type PresetMeta = z.infer<typeof PresetMetaSchema>;
+export type ThemeMeta = z.infer<typeof ThemeMetaSchema>;
 
 /**
- * List of all built-in preset IDs
+ * List of all built-in theme IDs
  */
-export const BUILTIN_PRESET_IDS = [
+export const BUILTIN_THEME_IDS = [
   "saas-modern",
   "dynamic-fitness",
   "premium-editorial",
@@ -182,4 +182,4 @@ export const BUILTIN_PRESET_IDS = [
   "warm-humanist",
 ] as const;
 
-export type BuiltinPresetId = (typeof BUILTIN_PRESET_IDS)[number];
+export type BuiltinThemeId = (typeof BUILTIN_THEME_IDS)[number];

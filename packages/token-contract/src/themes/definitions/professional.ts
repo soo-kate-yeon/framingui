@@ -1,11 +1,11 @@
-import type { Preset } from '../types.js';
+import type { Theme } from '../types.js';
 
 /**
- * Professional Preset
+ * Professional Theme
  * Target: Corporate websites, SaaS dashboards, B2B applications
  * Characteristics: High contrast, conservative styling, professional typography
  */
-export const professionalPreset: Preset = {
+export const professionalTheme: Theme = {
   name: 'professional',
   description: 'Corporate and professional design with high contrast and conservative styling',
   tokens: {

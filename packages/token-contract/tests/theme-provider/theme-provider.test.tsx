@@ -7,14 +7,14 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { ThemeProvider } from '../../src/theme-provider/ThemeProvider.js';
 import { useTheme } from '../../src/theme-provider/useTheme.js';
-import type { PresetName } from '../../src/presets/types.js';
+import type { ThemeName } from '../../src/themes/types.js';
 
 // Test component to access theme context
 function TestComponent() {
-  const { preset, tokens, darkMode } = useTheme();
+  const { theme, tokens, darkMode } = useTheme();
   return (
     <div>
-      <div data-testid="preset">{preset}</div>
+      <div data-testid="theme">{theme}</div>
       <div data-testid="dark-mode">{darkMode ? 'dark' : 'light'}</div>
       <div data-testid="has-tokens">{tokens ? 'yes' : 'no'}</div>
     </div>
@@ -32,25 +32,25 @@ describe('ThemeProvider', () => {
   });
 
   describe('Initialization', () => {
-    it('should provide default professional preset', () => {
+    it('should provide default professional theme', () => {
       render(
         <ThemeProvider>
           <TestComponent />
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('preset').textContent).toBe('professional');
+      expect(screen.getByTestId('theme').textContent).toBe('professional');
       expect(screen.getByTestId('has-tokens').textContent).toBe('yes');
     });
 
-    it('should initialize with specified preset', () => {
+    it('should initialize with specified theme', () => {
       render(
         <ThemeProvider defaultTheme="creative">
           <TestComponent />
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('preset').textContent).toBe('creative');
+      expect(screen.getByTestId('theme').textContent).toBe('creative');
     });
 
     it('should initialize with light mode by default', () => {
@@ -79,10 +79,10 @@ describe('ThemeProvider', () => {
         matches: query === '(prefers-color-scheme: dark)',
         media: query,
         onchange: null,
-        addListener: () => {},
-        removeListener: () => {},
-        addEventListener: () => {},
-        removeEventListener: () => {},
+        addListener: () => { },
+        removeListener: () => { },
+        addEventListener: () => { },
+        removeEventListener: () => { },
         dispatchEvent: () => true,
       });
 
@@ -110,7 +110,7 @@ describe('ThemeProvider', () => {
 
       // Check if CSS variables are applied (will be set by applyCSSVariables)
       // We can't test actual computed values in jsdom, but we can verify the provider renders
-      expect(screen.getByTestId('preset').textContent).toBe('professional');
+      expect(screen.getByTestId('theme').textContent).toBe('professional');
     });
 
     it('should apply data-theme attribute for dark mode', () => {
@@ -128,7 +128,7 @@ describe('ThemeProvider', () => {
       document.documentElement.setAttribute('data-theme', 'dark');
 
       render(
-        <ThemeProvider defaultDarkMode={false}>
+        <ThemeProvider defaultDarkMode={false} enableSystemTheme={false}>
           <TestComponent />
         </ThemeProvider>
       );
@@ -162,8 +162,8 @@ describe('ThemeProvider', () => {
 
     it('should support nested providers (inner should override)', () => {
       function InnerComponent() {
-        const { preset } = useTheme();
-        return <div data-testid="inner-preset">{preset}</div>;
+        const { theme } = useTheme();
+        return <div data-testid="inner-theme">{theme}</div>;
       }
 
       render(
@@ -174,21 +174,21 @@ describe('ThemeProvider', () => {
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('inner-preset').textContent).toBe('creative');
+      expect(screen.getByTestId('inner-theme').textContent).toBe('creative');
     });
   });
 
   describe('Error Handling', () => {
-    it('should handle invalid preset gracefully', () => {
+    it('should handle invalid theme gracefully', () => {
       // TypeScript prevents this, but test runtime behavior
       render(
-        <ThemeProvider defaultTheme={'invalid' as PresetName}>
+        <ThemeProvider defaultTheme={'invalid' as ThemeName}>
           <TestComponent />
         </ThemeProvider>
       );
 
       // Should fall back to professional
-      expect(screen.getByTestId('preset').textContent).toBe('professional');
+      expect(screen.getByTestId('theme').textContent).toBe('professional');
     });
 
     it('should provide error-free context even with no props', () => {
@@ -198,7 +198,7 @@ describe('ThemeProvider', () => {
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('preset').textContent).toBeTruthy();
+      expect(screen.getByTestId('theme').textContent).toBeTruthy();
       expect(screen.getByTestId('has-tokens').textContent).toBe('yes');
     });
   });

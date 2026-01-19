@@ -6,17 +6,17 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class CuratedPresetBase(BaseModel):
+class CuratedThemeBase(BaseModel):
     """Base schema for CuratedTheme with common fields."""
 
-    name: str = Field(..., min_length=1, max_length=255, description="Preset name")
-    category: str = Field(..., min_length=1, max_length=100, description="Preset category")
-    description: str | None = Field(None, description="Preset description")
+    name: str = Field(..., min_length=1, max_length=255, description="Theme name")
+    category: str = Field(..., min_length=1, max_length=100, description="Theme category")
+    description: str | None = Field(None, description="Theme description")
     config: dict[str, Any] = Field(default_factory=dict, description="Design system configuration")
-    tags: list[str] = Field(default_factory=list, description="Preset tags")
+    tags: list[str] = Field(default_factory=list, description="Theme tags")
 
 
-class CuratedPresetCreate(CuratedPresetBase):
+class CuratedThemeCreate(CuratedThemeBase):
     """Schema for creating a new CuratedTheme."""
 
     # Style archetype fields
@@ -29,7 +29,7 @@ class CuratedPresetCreate(CuratedPresetBase):
     forbidden_patterns: list[str] | None = Field(None, description="Patterns to avoid")
 
 
-class CuratedPresetUpdate(BaseModel):
+class CuratedThemeUpdate(BaseModel):
     """Schema for updating an existing CuratedTheme."""
 
     name: str | None = Field(None, min_length=1, max_length=255)
@@ -45,7 +45,7 @@ class CuratedPresetUpdate(BaseModel):
     forbidden_patterns: list[str] | None = None
 
 
-class CuratedPresetResponse(CuratedPresetBase):
+class CuratedThemeResponse(CuratedThemeBase):
     """Schema for CuratedTheme response.
     
     Note: principles, component_rules, forbidden_patterns are intentionally
@@ -62,10 +62,10 @@ class CuratedPresetResponse(CuratedPresetBase):
     updated_at: datetime
 
 
-class CuratedPresetList(BaseModel):
-    """Schema for paginated list of CuratedPresets."""
+class CuratedThemeList(BaseModel):
+    """Schema for paginated list of CuratedThemes."""
 
-    items: list[CuratedPresetResponse]
+    items: list[CuratedThemeResponse]
     total: int
     skip: int = 0
     limit: int = 100

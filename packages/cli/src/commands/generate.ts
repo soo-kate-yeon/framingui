@@ -12,7 +12,7 @@ import { generateTokensWrapper } from '../utils/token-wrapper.js';
 export interface GenerateOptions {
   path?: string;
   primaryColor?: string;
-  preset?: string;
+  theme?: string;
   interactive?: boolean;
   force?: boolean;
 }
@@ -32,9 +32,9 @@ export interface GenerateResult {
 }
 
 /**
- * Available presets
+ * Available themes
  */
-const AVAILABLE_PRESETS = ['default', 'accessible', 'vibrant', 'pastel', 'dark'];
+const AVAILABLE_THEMES = ['default', 'accessible', 'vibrant', 'pastel', 'dark'];
 
 /**
  * Generate design tokens
@@ -46,11 +46,11 @@ export async function generate(options: GenerateOptions = {}): Promise<GenerateR
 
   try {
     let primaryColor = options.primaryColor;
-    let preset = options.preset || 'default';
+    let theme = options.theme || 'default';
 
     // Interactive mode
     if (options.interactive && !options.primaryColor) {
-      const answers = await prompt<{ primaryColor: string; preset: string }>([
+      const answers = await prompt<{ primaryColor: string; theme: string }>([
         {
           type: 'input',
           name: 'primaryColor',
@@ -63,15 +63,15 @@ export async function generate(options: GenerateOptions = {}): Promise<GenerateR
         },
         {
           type: 'select',
-          name: 'preset',
-          message: 'Select a preset:',
-          choices: AVAILABLE_PRESETS,
+          name: 'theme',
+          message: 'Select a theme:',
+          choices: AVAILABLE_THEMES,
           initial: 0,
         },
       ]);
 
       primaryColor = answers.primaryColor;
-      preset = answers.preset;
+      theme = answers.theme;
     }
 
     // Validate primary color
@@ -87,7 +87,7 @@ export async function generate(options: GenerateOptions = {}): Promise<GenerateR
     // Full integration with Phase A token-generator will be completed in future iterations
     const tokenResult = await generateTokensWrapper({
       primaryColor,
-      preset: preset as any,
+      theme: theme as any,
     });
 
     // Prepare output directories

@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { loadTheme } from '../../src/presets/theme-loader.js';
-import { validateWCAGCompliance } from '../../src/presets/wcag-compliance.js';
+import { loadTheme } from '../../src/themes/theme-loader.js';
+import { validateWCAGCompliance } from '../../src/themes/wcag-compliance.js';
 
 describe('WCAG Compliance', () => {
-  const presetNames = [
+  const themeNames = [
     'professional',
     'creative',
     'minimal',
@@ -14,10 +14,10 @@ describe('WCAG Compliance', () => {
   ] as const;
 
   describe('AA Compliance', () => {
-    presetNames.forEach(themeName => {
-      it(`should validate ${themeName} preset has contrast checks`, () => {
-        const preset = loadTheme(themeName);
-        const result = validateWCAGCompliance(preset, 'AA');
+    themeNames.forEach(themeName => {
+      it(`should validate ${themeName} theme has contrast checks`, () => {
+        const theme = loadTheme(themeName);
+        const result = validateWCAGCompliance(theme, 'AA');
 
         // Verify that WCAG checks are performed
         expect(result.checks.length).toBeGreaterThan(0);
@@ -26,9 +26,9 @@ describe('WCAG Compliance', () => {
     });
 
     it('should validate primary color contrast against neutral background', () => {
-      presetNames.forEach(themeName => {
-        const preset = loadTheme(themeName);
-        const result = validateWCAGCompliance(preset, 'AA');
+      themeNames.forEach(themeName => {
+        const theme = loadTheme(themeName);
+        const result = validateWCAGCompliance(theme, 'AA');
 
         const primaryChecks = result.checks.filter(
           check => check.semantic === 'primary'
@@ -39,9 +39,9 @@ describe('WCAG Compliance', () => {
     });
 
     it('should validate success color contrast', () => {
-      presetNames.forEach(themeName => {
-        const preset = loadTheme(themeName);
-        const result = validateWCAGCompliance(preset, 'AA');
+      themeNames.forEach(themeName => {
+        const theme = loadTheme(themeName);
+        const result = validateWCAGCompliance(theme, 'AA');
 
         const successChecks = result.checks.filter(
           check => check.semantic === 'success'
@@ -52,9 +52,9 @@ describe('WCAG Compliance', () => {
     });
 
     it('should validate error color contrast', () => {
-      presetNames.forEach(themeName => {
-        const preset = loadTheme(themeName);
-        const result = validateWCAGCompliance(preset, 'AA');
+      themeNames.forEach(themeName => {
+        const theme = loadTheme(themeName);
+        const result = validateWCAGCompliance(theme, 'AA');
 
         const errorChecks = result.checks.filter(
           check => check.semantic === 'error'
@@ -65,9 +65,9 @@ describe('WCAG Compliance', () => {
     });
 
     it('should validate warning color contrast', () => {
-      presetNames.forEach(themeName => {
-        const preset = loadTheme(themeName);
-        const result = validateWCAGCompliance(preset, 'AA');
+      themeNames.forEach(themeName => {
+        const theme = loadTheme(themeName);
+        const result = validateWCAGCompliance(theme, 'AA');
 
         const warningChecks = result.checks.filter(
           check => check.semantic === 'warning'
@@ -78,20 +78,20 @@ describe('WCAG Compliance', () => {
     });
   });
 
-  describe('High Contrast Preset - AAA Compliance', () => {
-    it('should validate high-contrast preset has AAA checks', () => {
-      const preset = loadTheme('high-contrast');
-      const result = validateWCAGCompliance(preset, 'AAA');
+  describe('High Contrast Theme - AAA Compliance', () => {
+    it('should validate high-contrast theme has AAA checks', () => {
+      const theme = loadTheme('high-contrast');
+      const result = validateWCAGCompliance(theme, 'AAA');
 
       expect(result.level).toBe('AAA');
       expect(result.checks.length).toBeGreaterThan(0);
     });
 
-    it('should have high contrast ratios for high-contrast preset', () => {
-      const preset = loadTheme('high-contrast');
-      const result = validateWCAGCompliance(preset, 'AA');
+    it('should have high contrast ratios for high-contrast theme', () => {
+      const theme = loadTheme('high-contrast');
+      const result = validateWCAGCompliance(theme, 'AA');
 
-      // High contrast preset should have higher average contrast
+      // High contrast theme should have higher average contrast
       const avgContrast =
         result.checks.reduce((sum, check) => sum + check.contrastRatio, 0) /
         result.checks.length;
@@ -100,32 +100,32 @@ describe('WCAG Compliance', () => {
     });
   });
 
-  describe('Preset Characteristics', () => {
-    it('should have professional preset with contrast checks', () => {
-      const preset = loadTheme('professional');
-      const result = validateWCAGCompliance(preset, 'AA');
+  describe('Theme Characteristics', () => {
+    it('should have professional theme with contrast checks', () => {
+      const theme = loadTheme('professional');
+      const result = validateWCAGCompliance(theme, 'AA');
 
       const avgContrast =
         result.checks.reduce((sum, check) => sum + check.contrastRatio, 0) /
         result.checks.length;
 
-      // Professional preset should have reasonable contrast
+      // Professional theme should have reasonable contrast
       expect(avgContrast).toBeGreaterThan(2.0);
     });
 
-    it('should have bold preset with maximum chroma', () => {
-      const preset = loadTheme('bold');
+    it('should have bold theme with maximum chroma', () => {
+      const theme = loadTheme('bold');
 
-      // Bold preset should have higher chroma values
-      const primaryChroma = preset.tokens.primary['500']?.c ?? 0;
+      // Bold theme should have higher chroma values
+      const primaryChroma = theme.tokens.primary['500']?.c ?? 0;
       expect(primaryChroma).toBeGreaterThan(0.1);
     });
 
-    it('should have minimal preset with low chroma', () => {
-      const preset = loadTheme('minimal');
+    it('should have minimal theme with low chroma', () => {
+      const theme = loadTheme('minimal');
 
-      // Minimal preset should have lower chroma values
-      const primaryChroma = preset.tokens.primary['500']?.c ?? 0;
+      // Minimal theme should have lower chroma values
+      const primaryChroma = theme.tokens.primary['500']?.c ?? 0;
       expect(primaryChroma).toBeLessThan(0.15);
     });
   });

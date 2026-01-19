@@ -4,17 +4,17 @@
  */
 
 import { createContext } from 'react';
-import type { PresetName } from '../themes/types.js';
+import type { ThemeName } from '../themes/types.js';
 import type { SemanticToken, CompositionToken } from '../schemas/index.js';
 
 /**
- * Theme Context Value Interface
+ * Theme Context Value
  */
 export interface ThemeContextValue {
-  /** Current preset name */
-  preset: PresetName;
-  /** Set the current preset */
-  setTheme: (preset: PresetName) => void;
+  /** Current theme name */
+  theme: ThemeName;
+  /** Set the current theme */
+  setTheme: (theme: ThemeName) => void;
   /** Current semantic tokens */
   tokens: SemanticToken | null;
   /** Current composition tokens */

@@ -47,8 +47,8 @@ export function getDefaultConfig(): TektonConfig {
       frameworkType: "unknown",
       detectedAt: new Date().toISOString(),
     },
-    preset: {
-      activePresetId: null,
+    theme: {
+      activeThemeId: null,
       selectedAt: null,
     },
   };
@@ -128,9 +128,9 @@ export function updateConfig(
       ...existingConfig.project,
       ...(updates.project || {}),
     },
-    preset: {
-      ...existingConfig.preset,
-      ...(updates.preset || {}),
+    theme: {
+      ...existingConfig.theme,
+      ...(updates.theme || {}),
     },
   };
 
