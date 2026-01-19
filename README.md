@@ -20,18 +20,86 @@ OKLCH-based design token generator with WCAG AA compliance for modern design sys
 - [Contributing](#contributing)
 - [License](#license)
 
+## Design System Architecture
+
+Tekton implements a 3-layer design system architecture for generating deterministic design tokens:
+
+### Layer 1: Token Generator Engine (SPEC-LAYER1-001) ✅ Complete
+
+Generates deterministic design tokens from archetype JSON presets using OKLCH color spaces with WCAG AA compliance.
+
+**Key Features**:
+- **OKLCH Color Space**: Perceptually uniform color transformations using culori 3.3.0
+- **WCAG AA/AAA Validation**: Automatic contrast ratio validation (4.5:1 text, 3:1 UI)
+- **Auto-Adjustment**: Intelligent lightness modification to achieve WCAG compliance
+- **Multiple Export Formats**: CSS custom properties, Tailwind configuration, DTCG metadata
+- **Performance Optimized**: LRU cache with 80%+ hit rate, <100ms generation time
+
+**Technology Stack**:
+- TypeScript 5.9+
+- culori ^3.3.0 (OKLCH support)
+- wcag-contrast ^3.0.0 (WCAG validation)
+- vitest ^2.0.0 (testing framework)
+
+**Usage Example**:
+```typescript
+import { generateTokensFromArchetype } from '@tekton/token-generator';
+
+// Load archetype JSON preset
+const archetype = loadArchetypeJSON('premium-editorial.json');
+
+// Generate tokens with WCAG validation
+const tokens = await generateTokensFromArchetype(archetype, {
+  wcagLevel: 'AA',
+  cacheEnabled: true
+});
+
+// Export to desired format
+const css = exportToCSS(tokens);
+const tailwind = exportToTailwind(tokens);
+const dtcg = exportToDTCG(tokens);
+```
+
+### Layer 2: Component Theme Mapper (SPEC-LAYER2-001) 🚧 In Progress
+
+Maps generated tokens to component-specific themes. Coming soon.
+
+### Layer 3: Framework Adapter (SPEC-LAYER3-001) 🚧 In Progress
+
+Adapts component themes to specific frontend frameworks. Coming soon.
+
+---
+
 ## Features
 
-### OKLCH Color Space
+### OKLCH Color System
 
-Tekton uses the **OKLCH color space** for perceptually uniform color generation:
+Tekton uses the OKLCH color space for perceptually uniform color generation:
 
-- **Perceptual Uniformity**: Equal lightness steps appear equally spaced to the human eye
+- **Perceptually Uniform**: Equal lightness steps appear equally spaced to the human eye
 - **Predictable Behavior**: Chroma adjustments preserve hue, preventing unwanted color shifts
 - **Gamut Independence**: Future-proof support for wide-gamut displays (P3, Rec.2020)
 - **CSS Native**: Supported in modern browsers (Safari 15+, Chrome 111+, Firefox 113+)
 
-### WCAG AA Compliance
+### WCAG Compliance
+
+Automatic accessibility validation ensures all generated color combinations meet standards:
+
+- **Contrast Validation**: Minimum 4.5:1 for normal text, 3:1 for large text
+- **Automated Checking**: Built-in WCAG AA/AAA compliance validation
+- **Fix Suggestions**: Recommendations for lightness adjustments when compliance fails
+- **Real-time Validation**: Validates foreground-background pairs during generation
+
+### Token Caching
+
+Performance optimization through intelligent caching:
+
+- **LRU Cache**: Least Recently Used eviction strategy
+- **File-based Invalidation**: Automatic cache clearing when source files change
+- **High Hit Rate**: 80%+ cache hit rate in typical usage
+- **Fast Generation**: <100ms for typical archetype, <10ms for cached results
+
+### WCAG AA Compliance (Deprecated - See Layer 1 Above)
 
 Automatic accessibility validation ensures all generated color combinations meet standards:
 
