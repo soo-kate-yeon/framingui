@@ -100,10 +100,16 @@ logs/
 # ---------------------------------------------
 # Test Coverage
 # ---------------------------------------------
+# Python coverage
 .coverage
 coverage.json
 htmlcov/
 .pytest_cache/
+
+# JavaScript/TypeScript coverage
+coverage/
+packages/*/coverage/
+*.lcov
 
 # ---------------------------------------------
 # Environment Variables & Secrets
