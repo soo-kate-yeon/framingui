@@ -21,6 +21,15 @@ export interface ASTBuildResult {
 }
 
 /**
+ * Options for AST building
+ * TAG: SPEC-THEME-BIND-001 TASK-004
+ */
+export interface ASTBuildOptions {
+  /** Theme ID to apply during code generation */
+  themeId: string;
+}
+
+/**
  * AST Builder class
  * Orchestrates validation, import generation, JSX generation, and function component creation
  */
@@ -33,11 +42,13 @@ export class ASTBuilder {
 
   /**
    * Build complete AST from blueprint
+   * TAG: SPEC-THEME-BIND-001 TASK-004
    *
    * @param blueprint - Blueprint result to build from
+   * @param options - Build options including themeId
    * @returns AST build result with success status and AST or errors
    */
-  build(blueprint: BlueprintResult): ASTBuildResult {
+  build(blueprint: BlueprintResult, _options: ASTBuildOptions): ASTBuildResult {
     // Step 1: Collect all component names from structure
     const componentNames = this.collectComponentNames(blueprint.structure);
 
@@ -62,7 +73,9 @@ export class ASTBuilder {
     // Step 3: Generate imports
     const imports = generateImports(componentNames);
 
-    // Step 4: Generate JSX element
+    // Step 4: Generate JSX element (with theme context for TASK-005)
+    // For now, themeId is passed but not yet used in buildComponentNode
+    // TASK-005 will implement token injection
     const jsxElement = buildComponentNode(blueprint.structure);
 
     // Step 5: Create function component

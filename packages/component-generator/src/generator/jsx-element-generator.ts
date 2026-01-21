@@ -2,33 +2,66 @@
  * JSX Element Generator
  * Converts ComponentNode to JSX AST elements
  * SPEC-LAYER3-MVP-001 M1-TASK-004
+ * TAG: SPEC-THEME-BIND-001 TASK-005
  */
 
 import * as t from '@babel/types';
 import type { ComponentNode } from '../types/knowledge-schema';
+import type { BuildContext } from '../types/theme-types';
+
+// Re-export BuildContext for convenience
+export type { BuildContext };
 
 /**
  * Build a JSX element from a ComponentNode
+ * TAG: SPEC-THEME-BIND-001 TASK-005
  *
  * @param node - ComponentNode to convert
+ * @param buildContext - Optional build context with theme and token information
  * @returns JSXElement AST node
  *
  * @example
+ * // Without theme context (backward compatible)
  * buildComponentNode({
  *   componentName: 'Button',
  *   props: { variant: 'primary' },
  *   slots: { content: { componentName: 'Text', props: {} } }
  * })
  * // Returns AST for: <Button variant="primary"><Text /></Button>
+ *
+ * @example
+ * // With theme context
+ * buildComponentNode(
+ *   { componentName: 'Card', props: {} },
+ *   {
+ *     themeId: 'calm-wellness',
+ *     componentName: 'Card',
+ *     state: 'default',
+ *     tokenBindings: { backgroundColor: 'color-surface', borderRadius: 'radius-lg' }
+ *   }
+ * )
+ * // Returns AST for: <Card style={{ backgroundColor: "var(--color-surface)", borderRadius: "var(--radius-lg)" }} />
  */
-export function buildComponentNode(node: ComponentNode): t.JSXElement {
+export function buildComponentNode(
+  node: ComponentNode,
+  buildContext?: BuildContext
+): t.JSXElement {
   const { componentName, props, slots } = node;
+
+  // Inject theme tokens as style props if buildContext provided
+  // TAG: SPEC-THEME-BIND-001 TASK-005
+  let mergedProps = { ...props };
+  if (buildContext?.tokenBindings) {
+    const tokenStyles = tokensToStyleObject(buildContext.tokenBindings);
+    // Merge with existing style prop, preserving user's custom styles
+    mergedProps.style = { ...tokenStyles, ...(props.style || {}) };
+  }
 
   // Create JSX identifier for component name
   const jsxName = t.jsxIdentifier(componentName);
 
-  // Convert props to JSX attributes
-  const attributes = propsToJSXAttributes(props);
+  // Convert props to JSX attributes (including injected style)
+  const attributes = propsToJSXAttributes(mergedProps);
 
   // Check if component has children
   const hasChildren = slots && Object.keys(slots).length > 0;
@@ -162,4 +195,43 @@ function slotsToJSXChildren(slots: {
   }
 
   return children;
+}
+
+/**
+ * Convert token bindings to React inline style object with CSS variables
+ * TAG: SPEC-THEME-BIND-001 TASK-005
+ *
+ * REQ-TB-004: Always use CSS variable syntax var(--token-name)
+ * REQ-TB-012: NOT hardcode color/size values
+ *
+ * @param tokenBindings - Token bindings mapping CSS properties to token names
+ * @returns Style object with CSS variable values
+ *
+ * @example
+ * tokensToStyleObject({
+ *   backgroundColor: 'color-surface',
+ *   borderRadius: 'radius-lg',
+ *   padding: 'spacing-4'
+ * })
+ * // Returns:
+ * // {
+ * //   backgroundColor: 'var(--color-surface)',
+ * //   borderRadius: 'var(--radius-lg)',
+ * //   padding: 'var(--spacing-4)'
+ * // }
+ */
+function tokensToStyleObject(
+  tokenBindings: Record<string, string>
+): Record<string, string> {
+  const style: Record<string, string> = {};
+
+  // Convert each token binding to CSS variable syntax
+  for (const [cssProperty, tokenName] of Object.entries(tokenBindings)) {
+    if (tokenName) {
+      // REQ-TB-004: Use var(--token-name) syntax
+      style[cssProperty] = `var(--${tokenName})`;
+    }
+  }
+
+  return style;
 }
