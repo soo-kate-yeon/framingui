@@ -1,0 +1,21 @@
+{
+  "id": "bp-1769269628671-9nk3fp",
+  "name": "Test dashboard",
+  "themeId": "dynamic-fitness",
+  "layout": "single-column",
+  "components": [
+    {
+      "type": "Card",
+      "slot": "main",
+      "children": [
+        {
+          "type": "Text",
+          "children": [
+            "Generated content"
+          ]
+        }
+      ]
+    }
+  ],
+  "timestamp": 1769269628671
+}

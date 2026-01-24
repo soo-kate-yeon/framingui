@@ -111,6 +111,13 @@ coverage/
 packages/*/coverage/
 *.lcov
 
+# Test-generated data
+.tekton/
+.tekton-test/
+packages/*/.tekton/
+packages/*/.tekton-test/
+test-exports/
+
 # ---------------------------------------------
 # Environment Variables & Secrets
 # ---------------------------------------------

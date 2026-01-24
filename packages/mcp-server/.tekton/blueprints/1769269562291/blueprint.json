@@ -1,0 +1,21 @@
+{
+  "id": "bp-1769269562290-1t16r9",
+  "name": "Test dashboard with user profile",
+  "themeId": "calm-wellness",
+  "layout": "single-column",
+  "components": [
+    {
+      "type": "Card",
+      "slot": "main",
+      "children": [
+        {
+          "type": "Text",
+          "children": [
+            "Generated content"
+          ]
+        }
+      ]
+    }
+  ],
+  "timestamp": 1769269562290
+}

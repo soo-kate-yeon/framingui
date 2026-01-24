@@ -1,0 +1,21 @@
+{
+  "id": "bp-1769269682097-0g3bkx",
+  "name": "Simple test screen",
+  "themeId": "calm-wellness",
+  "layout": "single-column",
+  "components": [
+    {
+      "type": "Card",
+      "slot": "main",
+      "children": [
+        {
+          "type": "Text",
+          "children": [
+            "Generated content"
+          ]
+        }
+      ]
+    }
+  ],
+  "timestamp": 1769269682097
+}
