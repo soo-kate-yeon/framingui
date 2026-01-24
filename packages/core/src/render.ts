@@ -4,9 +4,8 @@
  * Target: 300 LOC
  */
 
-import type { Blueprint, ComponentNode, RenderResult, RenderOptions, Theme } from './types.js';
+import type { Blueprint, ComponentNode, RenderResult, RenderOptions } from './types.js';
 import { loadTheme, generateCSSVariables } from './theme.js';
-import { LAYOUTS } from './blueprint.js';
 
 // ============================================================================
 // Default Options
@@ -99,7 +98,9 @@ const COMPONENT_RENDERERS: Record<string, ComponentRenderer> = {
 // ============================================================================
 
 function renderProps(props?: Record<string, unknown>): string {
-  if (!props || Object.keys(props).length === 0) return '';
+  if (!props || Object.keys(props).length === 0) {
+    return '';
+  }
 
   const parts: string[] = [];
   for (const [key, value] of Object.entries(props)) {
@@ -116,7 +117,9 @@ function renderProps(props?: Record<string, unknown>): string {
 }
 
 function renderChildren(children: (ComponentNode | string)[] | undefined, indent: string): string {
-  if (!children || children.length === 0) return '';
+  if (!children || children.length === 0) {
+    return '';
+  }
 
   return children
     .map(child => {
@@ -215,10 +218,7 @@ ${layoutJsx}
 /**
  * Render blueprint with theme applied
  */
-export function renderWithTheme(
-  blueprint: Blueprint,
-  options?: RenderOptions
-): RenderResult {
+export function renderWithTheme(blueprint: Blueprint, options?: RenderOptions): RenderResult {
   const theme = loadTheme(blueprint.themeId);
   if (!theme) {
     return { success: false, error: `Theme not found: ${blueprint.themeId}` };
@@ -231,7 +231,9 @@ export function renderWithTheme(
     .join('\n')}\n*/\n`;
 
   const result = render(blueprint, options);
-  if (!result.success) return result;
+  if (!result.success) {
+    return result;
+  }
 
   return {
     success: true,
@@ -265,7 +267,9 @@ function extractComponentTypes(nodes: ComponentNode[]): string[] {
 }
 
 function generateImports(componentTypes: string[], typescript: boolean): string {
-  if (componentTypes.length === 0) return '';
+  if (componentTypes.length === 0) {
+    return '';
+  }
 
   const ext = typescript ? '' : '';
   return `import { ${componentTypes.join(', ')} } from '@/components/ui'${ext};`;

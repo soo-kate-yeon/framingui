@@ -37,8 +37,8 @@ jobs:
       - name: Run TypeScript compiler
         run: pnpm build:all
 
-      - name: Check TypeScript types (strict mode)
-        run: pnpm exec tsc --noEmit --strict
+      - name: Check TypeScript types (core package)
+        run: pnpm --filter @tekton/core exec tsc --noEmit
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

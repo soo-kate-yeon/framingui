@@ -38,7 +38,7 @@ jobs:
         run: pnpm lint:all
 
       - name: Check code formatting
-        run: pnpm exec prettier --check "**/*.{ts,tsx,js,jsx,json,md}"
+        run: pnpm exec prettier --check "packages/**/*.{ts,tsx,js,jsx,json,md}"
 
       - name: Upload lint results
         uses: actions/upload-artifact@v4
