@@ -53,8 +53,8 @@ const validThemeWithTokens: ThemeWithTokens = {
         '8': '32px',
       },
       radius: {
-        'md': '8px',
-        'lg': '12px',
+        md: '8px',
+        lg: '12px',
       },
       typography: {
         body: {
@@ -64,7 +64,7 @@ const validThemeWithTokens: ThemeWithTokens = {
         },
       },
       shadow: {
-        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
       },
     },
     semantic: {
@@ -229,9 +229,9 @@ describe('validateTheme - Atomic Token Errors', () => {
         atomic: {
           // color missing!
           spacing: { '4': '16px' },
-          radius: { 'md': '8px' },
+          radius: { md: '8px' },
           typography: { body: { fontSize: '16px', lineHeight: '24px', fontWeight: '400' } },
-          shadow: { 'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
+          shadow: { md: '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
         },
       },
     };
@@ -250,9 +250,9 @@ describe('validateTheme - Atomic Token Errors', () => {
         atomic: {
           color: { blue: { '500': '#3b82f6' } },
           // spacing missing!
-          radius: { 'md': '8px' },
+          radius: { md: '8px' },
           typography: { body: { fontSize: '16px', lineHeight: '24px', fontWeight: '400' } },
-          shadow: { 'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
+          shadow: { md: '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
         },
       },
     };
@@ -281,7 +281,9 @@ describe('validateTheme - Atomic Token Errors', () => {
 
     const result = validateTheme(invalidTheme);
     expect(result.valid).toBe(false);
-    expect(result.errors?.some(e => e.includes('lineHeight') || e.includes('fontWeight'))).toBe(true);
+    expect(result.errors?.some(e => e.includes('lineHeight') || e.includes('fontWeight'))).toBe(
+      true
+    );
   });
 });
 
@@ -369,7 +371,9 @@ describe('validateTheme - Semantic Token Errors', () => {
 
     const result = validateTheme(invalidTheme);
     expect(result.valid).toBe(false);
-    expect(result.errors?.some(e => e.includes('muted') || e.includes('focus') || e.includes('error'))).toBe(true);
+    expect(
+      result.errors?.some(e => e.includes('muted') || e.includes('focus') || e.includes('error'))
+    ).toBe(true);
   });
 });
 

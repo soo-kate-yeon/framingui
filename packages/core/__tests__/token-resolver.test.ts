@@ -35,8 +35,8 @@ const mockThemeTokens: ThemeWithTokens['tokens'] = {
       '8': '32px',
     },
     radius: {
-      'md': '8px',
-      'lg': '12px',
+      md: '8px',
+      lg: '12px',
     },
     typography: {
       body: {
@@ -46,7 +46,7 @@ const mockThemeTokens: ThemeWithTokens['tokens'] = {
       },
     },
     shadow: {
-      'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+      md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
     },
   },
   semantic: {

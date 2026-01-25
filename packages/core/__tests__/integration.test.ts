@@ -91,7 +91,7 @@ describe('Integration - Token System Workflow', () => {
           neutral: { '50': '#f9fafb', '900': '#111827' },
         },
         spacing: { '4': '16px' },
-        radius: { 'md': '8px' },
+        radius: { md: '8px' },
         typography: {
           body: {
             fontSize: '16px',
@@ -100,7 +100,7 @@ describe('Integration - Token System Workflow', () => {
           },
         },
         shadow: {
-          'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+          md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
         },
       },
       semantic: {
@@ -321,7 +321,7 @@ describe('Integration - End-to-End', () => {
             primary: { '500': '#3b82f6' },
           },
           spacing: { '4': '16px' },
-          radius: { 'md': '8px' },
+          radius: { md: '8px' },
           typography: {
             body: {
               fontSize: '16px',
@@ -330,7 +330,7 @@ describe('Integration - End-to-End', () => {
             },
           },
           shadow: {
-            'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+            md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
           },
         },
         semantic: {

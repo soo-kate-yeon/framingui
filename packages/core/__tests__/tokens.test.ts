@@ -33,21 +33,21 @@ describe('AtomicTokens Type', () => {
         '8': '32px',
       },
       radius: {
-        'md': '8px',
-        'lg': '12px',
+        md: '8px',
+        lg: '12px',
       },
       typography: {
-        'body': {
+        body: {
           fontSize: '16px',
           lineHeight: '24px',
           fontWeight: '400',
         },
       },
       shadow: {
-        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+        md: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
       },
       transition: {
-        'default': '150ms cubic-bezier(0.4, 0, 0.2, 1)',
+        default: '150ms cubic-bezier(0.4, 0, 0.2, 1)',
       },
     };
 
@@ -219,7 +219,7 @@ describe('ThemeWithTokens Type', () => {
             primary: { '500': '#3b82f6' },
           },
           spacing: { '4': '16px' },
-          radius: { 'md': '8px' },
+          radius: { md: '8px' },
           typography: {
             body: {
               fontSize: '16px',
@@ -227,7 +227,7 @@ describe('ThemeWithTokens Type', () => {
               fontWeight: '400',
             },
           },
-          shadow: { 'md': '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
+          shadow: { md: '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
         },
         semantic: {
           background: {
