@@ -5,7 +5,7 @@
  * Tests for 20 component schemas with token bindings and a11y requirements
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   PropDefinition,
   ComponentSchema,
@@ -94,7 +94,9 @@ describe('Primitive Components (10)', () => {
 
       beforeEach(() => {
         const found = PRIMITIVE_COMPONENTS.find(c => c.type === type);
-        if (!found) throw new Error(`${type} schema not found`);
+        if (!found) {
+          throw new Error(`${type} schema not found`);
+        }
         schema = found;
       });
 
@@ -145,7 +147,9 @@ describe('Composed Components (10)', () => {
 
       beforeEach(() => {
         const found = COMPOSED_COMPONENTS.find(c => c.type === type);
-        if (!found) throw new Error(`${type} schema not found`);
+        if (!found) {
+          throw new Error(`${type} schema not found`);
+        }
         schema = found;
       });
 

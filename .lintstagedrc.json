@@ -1,0 +1,11 @@
+{
+  "*.{ts,js}": [
+    "eslint --fix"
+  ],
+  "packages/*/src/**/*.{ts,js}": [
+    "eslint --fix"
+  ],
+  "packages/*/__tests__/**/*.{ts,js}": [
+    "eslint --fix"
+  ]
+}
