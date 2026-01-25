@@ -57,7 +57,7 @@ export default [
     },
   },
   {
-    files: ['tests/**/*.ts', '**/*.test.ts', '**/__tests__/**/*.ts'],
+    files: ['tests/**/*.ts', 'tests/**/*.js', '**/*.test.ts', '**/*.test.js'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -69,6 +69,16 @@ export default [
         ...globals.node,
         performance: 'readonly',
         __dirname: 'readonly',
+        // Vitest globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
       },
     },
     plugins: {
