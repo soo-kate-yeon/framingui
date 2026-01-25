@@ -24,6 +24,11 @@ export default defineConfig({
       },
     },
     include: ['tests/**/*.test.ts'],
+    exclude: [
+      'node_modules/**',
+      'dist/**',
+      'tests/accessibility/**', // Playwright 접근성 테스트 제외
+    ],
     typecheck: {
       enabled: false,
     },
