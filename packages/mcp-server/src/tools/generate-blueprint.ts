@@ -16,17 +16,6 @@ import { getDefaultStorage } from '../storage/blueprint-storage.js';
 import { createThemeNotFoundError, createValidationError, extractErrorMessage } from '../utils/error-handler.js';
 
 /**
- * Generate blueprint configuration
- */
-export interface GenerateBlueprintConfig {
-  baseUrl: string; // Default: http://localhost:3000
-}
-
-const DEFAULT_CONFIG: GenerateBlueprintConfig = {
-  baseUrl: 'http://localhost:3000'
-};
-
-/**
  * Parse natural language description to extract component hints
  * Initial implementation: Simple keyword extraction
  * TODO: Enhance with LLM-based parsing in future iterations
@@ -113,15 +102,11 @@ function extractNameFromDescription(description: string): string {
  * SPEC: E-001 Blueprint Generation Request
  *
  * @param input - Blueprint generation parameters
- * @param config - Generation configuration
- * @returns Generated blueprint with preview URL
+ * @returns Generated blueprint (MCP JSON-RPC format - no preview URL)
  */
 export async function generateBlueprintTool(
-  input: GenerateBlueprintInput,
-  config: Partial<GenerateBlueprintConfig> = {}
+  input: GenerateBlueprintInput
 ): Promise<GenerateBlueprintOutput> {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
-
   try {
     // SPEC: U-005 Theme Validation - Validate theme ID exists
     const theme = loadTheme(input.themeId);
@@ -165,9 +150,7 @@ export async function generateBlueprintTool(
     const storage = getDefaultStorage();
     const blueprintId = await storage.saveBlueprint(blueprintWithTimestamp);
 
-    // SPEC: E-001 Blueprint Generation Request - Generate preview URL
-    const previewUrl = `${finalConfig.baseUrl}/preview/${blueprintId}/${input.themeId}`;
-
+    // MCP JSON-RPC format: Return blueprint data only (no preview URL)
     return {
       success: true,
       blueprint: {
@@ -177,8 +160,7 @@ export async function generateBlueprintTool(
         layout: blueprint.layout,
         components: blueprint.components,
         timestamp
-      },
-      previewUrl
+      }
     };
   } catch (error) {
     return {

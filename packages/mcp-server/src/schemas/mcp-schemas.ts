@@ -46,7 +46,7 @@ export const GenerateBlueprintInputSchema = z.object({
 export type GenerateBlueprintInput = z.infer<typeof GenerateBlueprintInputSchema>;
 
 /**
- * Generate Blueprint Output Schema
+ * Generate Blueprint Output Schema (MCP JSON-RPC format - no previewUrl)
  */
 export const GenerateBlueprintOutputSchema = z.object({
   success: z.boolean(),
@@ -60,7 +60,6 @@ export const GenerateBlueprintOutputSchema = z.object({
       timestamp: z.number()
     })
   ),
-  previewUrl: z.string().optional(),
   error: z.string().optional()
 });
 
@@ -81,7 +80,7 @@ export const PreviewThemeInputSchema = z.object({
 export type PreviewThemeInput = z.infer<typeof PreviewThemeInputSchema>;
 
 /**
- * Preview Theme Output Schema
+ * Preview Theme Output Schema (MCP JSON-RPC format - no previewUrl)
  */
 export const PreviewThemeOutputSchema = z.object({
   success: z.boolean(),
@@ -93,7 +92,6 @@ export const PreviewThemeOutputSchema = z.object({
       cssVariables: z.record(z.string(), z.string())
     })
   ),
-  previewUrl: z.string().optional(),
   error: z.string().optional()
 });
 
@@ -112,24 +110,22 @@ export const ExportFormatSchema = z.enum(['jsx', 'tsx', 'vue']);
 export type ExportFormat = z.infer<typeof ExportFormatSchema>;
 
 /**
- * Export Screen Input Schema
+ * Export Screen Input Schema (MCP JSON-RPC format - accepts blueprint object)
  * SPEC: E-003 Screen Export Request
  */
 export const ExportScreenInputSchema = z.object({
-  blueprintId: z.string(),
-  format: ExportFormatSchema,
-  outputPath: z.string().optional()
+  blueprint: z.any(), // Blueprint from @tekton/core (accept any object for flexibility)
+  format: ExportFormatSchema
 });
 
 export type ExportScreenInput = z.infer<typeof ExportScreenInputSchema>;
 
 /**
- * Export Screen Output Schema
+ * Export Screen Output Schema (MCP JSON-RPC format - no filePath)
  */
 export const ExportScreenOutputSchema = z.object({
   success: z.boolean(),
   code: z.string().optional(),
-  filePath: z.string().optional(),
   error: z.string().optional()
 });
 

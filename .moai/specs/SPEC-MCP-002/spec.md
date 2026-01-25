@@ -1,37 +1,46 @@
 ---
 id: SPEC-MCP-002
-version: "1.0.0"
+version: "2.0.0"
 status: "planned"
 created: "2026-01-25"
+updated: "2026-01-25"
 author: "MoAI-ADK"
 priority: "HIGH"
 lifecycle: "spec-anchored"
-tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
+tags: ["SPEC-MCP-002", "MCP", "Blueprint", "stdio", "JSON-RPC"]
 ---
 
 ## HISTORY
+- 2026-01-25 v2.0.0: Architecture migration from HTTP to stdio MCP standard. Remove web preview functionality. Delegate preview rendering to SPEC-PLAYGROUND-001.
 - 2026-01-25 v1.0.0: Initial SPEC creation - Tekton MCP Server with Timestamp-Based Preview System
 
 ---
 
-# SPEC-MCP-002: Tekton MCP Server with Timestamp-Based Preview System
+# SPEC-MCP-002: Tekton MCP Server - stdio-based MCP Standard Implementation
 
 ## Executive Summary
 
-**Purpose**: Extend Tekton MCP Server with Claude Code integration, enabling AI-driven blueprint generation, theme preview, and timestamp-based screen history management. Provides MCP Protocol tools for blueprint creation, theme switching, and immutable preview URL generation.
+**Purpose**: Implement stdio-based MCP server compliant with Model Context Protocol standard, enabling native Claude Code integration for AI-driven blueprint generation and theme management through @tekton/core pipeline.
 
-**Scope**: Add MCP Tools (generate-blueprint, preview-theme, export-screen) to existing @tekton/core pipeline. Implement web server with timestamp-based preview URLs (`/preview/:timestamp/:themeId`) for immutable screen history and real-time theme switching.
+**Scope**: Implement 3 MCP tools (generate-blueprint, preview-theme, export-screen) using @modelcontextprotocol/sdk with stdio transport. Remove web server and preview URL functionality - preview rendering is delegated to SPEC-PLAYGROUND-001.
 
-**Priority**: HIGH - Enables Google Stitch-like workflow with superior OKLCH-based theme system and type-safe blueprint validation.
+**Priority**: HIGH - Enables true Claude Code native integration via stdio transport, compliant with MCP standard.
 
-**Impact**: Transforms Tekton from local token generator to Claude Code-native MCP service. Users generate production-ready screens through natural language prompts with instant visual feedback and theme quality checks.
+**Impact**: Transforms Tekton from custom HTTP-based server to MCP standard-compliant service. Users invoke tools directly from Claude Code with seamless JSON-RPC communication. All tool outputs are data-only (no file system side effects in export-screen, no preview URLs).
 
 **Differentiators vs Google Stitch**:
 - **OKLCH Color System**: Perceptually uniform color transformations vs RGB approximations
 - **Type-Safe Blueprints**: Zod schema validation prevents invalid component combinations
-- **Immutable History**: Timestamp-based URLs preserve all design iterations
-- **Claude Code Native**: MCP Protocol integration for seamless AI workflow
+- **MCP Standard Compliant**: stdio transport enables native Claude Code integration
 - **13 Built-in Themes**: Production-ready themes vs manual configuration
+- **Data-Only Outputs**: Clean separation between MCP tools and file system operations
+
+**Architecture Migration Summary**:
+- **Transport**: HTTP REST API → stdio (StdioServerTransport)
+- **Protocol**: Custom endpoints → JSON-RPC 2.0
+- **Preview**: Removed entirely (SPEC-PLAYGROUND-001 responsibility)
+- **Output**: No previewUrl, no filePath fields in tool responses
+- **Dependency**: @modelcontextprotocol/sdk@^1.0.0
 
 ---
 
@@ -49,16 +58,18 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 **Technology Stack:**
 - **Runtime**: Node.js 20+, TypeScript 5.7+
-- **MCP Protocol**: Model Context Protocol for AI assistant integration
+- **MCP SDK**: @modelcontextprotocol/sdk v1.x (stable, production-ready)
+- **Transport**: stdio (StdioServerTransport)
+- **Protocol**: JSON-RPC 2.0
 - **Core Pipeline**: @tekton/core (Theme → Blueprint → Screen)
 - **Schema Validation**: Zod 3.23+ for type-safe data validation
-- **Web Server**: Node.js HTTP server or Express.js (TBD)
 - **Color System**: OKLCH with CSS `oklch()` function support
+- **Logging**: stderr only (stdout reserved for JSON-RPC messages)
 
 **Integration Requirements:**
-- **Claude Code**: MCP Protocol tool registration and invocation
+- **Claude Code**: Native MCP Protocol tool registration via stdio transport
 - **@tekton/core**: Reuse existing theme loading, blueprint creation, and render functions
-- **SPEC-PLAYGROUND-001**: Serve preview URLs to Next.js playground
+- **SPEC-PLAYGROUND-001**: Provides preview rendering UI (separate from MCP server)
 
 ---
 
@@ -66,26 +77,26 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 ### Technical Assumptions
 
-**A-001: MCP Protocol Compatibility**
-- **Assumption**: Claude Code supports MCP Protocol with tool registration and JSON-RPC invocation
+**A-001: MCP Protocol stdio Compatibility**
+- **Assumption**: Claude Code supports MCP Protocol via stdio transport with JSON-RPC 2.0 communication
 - **Confidence**: HIGH
-- **Evidence**: MCP Protocol is standard for AI assistant integration (confirmed in SPEC-MCP-001)
-- **Risk if Wrong**: Cannot integrate with Claude Code, manual API calls required
-- **Validation**: MCP Protocol specification review, Claude Code integration testing
+- **Evidence**: MCP SDK v1.x provides stable StdioServerTransport, widely adopted by MCP servers
+- **Risk if Wrong**: Cannot integrate natively with Claude Code
+- **Validation**: MCP Inspector testing, Claude Code integration verification
 
-**A-002: Timestamp Uniqueness**
-- **Assumption**: Timestamp-based preview URLs (`/preview/:timestamp/:themeId`) provide sufficient uniqueness for parallel screen generation
+**A-002: Timestamp Uniqueness for Blueprint IDs**
+- **Assumption**: Timestamp-based blueprint IDs provide sufficient uniqueness for identification
 - **Confidence**: HIGH
 - **Evidence**: `Date.now()` provides millisecond precision, collision probability < 0.001% for typical usage
-- **Risk if Wrong**: Preview URL collisions overwrite previous screens
+- **Risk if Wrong**: Blueprint ID collisions in rapid sequential generation
 - **Validation**: Timestamp generation tests with collision detection, add random suffix if needed
 
-**A-003: Theme Switching Performance**
-- **Assumption**: CSS variable-based theme switching achieves < 100ms update time for smooth UX
-- **Confidence**: MEDIUM
-- **Evidence**: CSS variable updates trigger browser reflow but avoid full re-render
-- **Risk if Wrong**: Slow theme switching degrades user experience
-- **Validation**: Performance benchmarking with Chrome DevTools, optimize CSS variable scope
+**A-003: stdio Debugging Limitations**
+- **Assumption**: Debugging stdio-based MCP servers requires specialized tools (MCP Inspector) since stdout is reserved for JSON-RPC
+- **Confidence**: HIGH
+- **Evidence**: All logging must use stderr; console.log breaks JSON-RPC protocol
+- **Risk if Wrong**: Difficult to debug production issues
+- **Validation**: Implement structured logging to stderr, test with MCP Inspector
 
 **A-004: @tekton/core Stability**
 - **Assumption**: @tekton/core API remains stable for theme loading, blueprint creation, and rendering
@@ -103,21 +114,21 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 - **Risk if Wrong**: Manual JSON authoring remains preferred, MCP integration underutilized
 - **Validation**: User research, workflow comparison studies
 
-**A-006: Timestamp History Usefulness**
-- **Assumption**: Immutable timestamp-based preview history enables design iteration tracking and comparison
-- **Confidence**: MEDIUM
-- **Evidence**: Version control for design decisions is valuable for collaboration
-- **Risk if Wrong**: History grows indefinitely, storage overhead increases
-- **Validation**: User feedback, implement TTL-based cleanup after 30 days
+**A-006: Data-Only Tool Outputs Preferred**
+- **Assumption**: Users prefer MCP tools to return data only, with file system operations handled separately
+- **Confidence**: HIGH
+- **Evidence**: Clean separation of concerns enables flexible integration patterns
+- **Risk if Wrong**: Users expect file system side effects from MCP tools
+- **Validation**: User feedback on export-screen workflow
 
 ### Integration Assumptions
 
-**A-007: SPEC-PLAYGROUND-001 Compatibility**
-- **Assumption**: React playground consumes preview URLs and renders screens with correct theme application
+**A-007: SPEC-PLAYGROUND-001 Preview Responsibility**
+- **Assumption**: SPEC-PLAYGROUND-001 handles all preview rendering and theme switching UI
 - **Confidence**: HIGH
-- **Evidence**: SPEC-PLAYGROUND-001 designed for MCP server integration
-- **Risk if Wrong**: Preview rendering fails, theme variables not applied
-- **Validation**: Cross-SPEC integration tests, end-to-end workflow validation
+- **Evidence**: SPEC-PLAYGROUND-001 designed for React-based preview rendering
+- **Risk if Wrong**: No preview capability until SPEC-PLAYGROUND-001 complete
+- **Validation**: Cross-SPEC integration planning
 
 ---
 
@@ -125,10 +136,10 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 ### Ubiquitous Requirements (Always Active)
 
-**U-001: MCP Tool Registration**
-- The system **shall** register all MCP tools (generate-blueprint, preview-theme, export-screen) with Claude Code for AI assistant discovery and invocation.
-- **Rationale**: Tool visibility enables natural language blueprint generation workflow.
-- **Test Strategy**: MCP Protocol tool list verification, Claude Code integration test.
+**U-001: MCP Tool Registration via stdio**
+- The system **shall** register all MCP tools (generate-blueprint, preview-theme, export-screen) via stdio transport using @modelcontextprotocol/sdk for native Claude Code discovery and invocation.
+- **Rationale**: stdio transport is the MCP standard for Claude Code integration.
+- **Test Strategy**: MCP Inspector tool list verification, Claude Code integration test.
 
 **U-002: Input Schema Validation**
 - The system **shall** validate all MCP tool inputs using Zod schemas before execution to prevent runtime errors and provide clear error messages.
@@ -140,63 +151,66 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 - **Rationale**: Code reuse prevents drift between core pipeline and MCP server logic.
 - **Test Strategy**: Integration tests verifying @tekton/core function calls, no duplicate logic.
 
-**U-004: Error Response Consistency**
-- The system **shall** return standardized error responses with `{ success: false, error: string }` format for all MCP tool failures.
-- **Rationale**: Consistent error format enables AI assistant error handling and user feedback.
-- **Test Strategy**: Error response format validation across all tools, error message actionability check.
+**U-004: JSON-RPC Error Response Format**
+- The system **shall** return JSON-RPC 2.0 compliant error responses with error code, message, and optional data field for all MCP tool failures.
+- **Rationale**: MCP standard requires JSON-RPC 2.0 error format for proper Claude Code error handling.
+- **Test Strategy**: Error response format validation across all tools, JSON-RPC compliance check.
 
 **U-005: Theme Validation**
 - The system **shall** validate theme IDs against 13 built-in themes before blueprint generation and return error for invalid theme IDs.
 - **Rationale**: Invalid theme IDs cause render failures, early validation prevents downstream errors.
 - **Test Strategy**: Theme ID validation tests with valid and invalid IDs, error message clarity.
 
+**U-006: stderr-Only Logging**
+- The system **shall** output all log messages to stderr only, reserving stdout exclusively for JSON-RPC 2.0 messages.
+- **Rationale**: stdout pollution breaks JSON-RPC protocol and causes Claude Code communication failures.
+- **Test Strategy**: Logging output verification, stdout content validation.
+
 ### Event-Driven Requirements (Trigger-Response)
 
 **E-001: Blueprint Generation Request**
-- **WHEN** `generate-blueprint` tool invoked with natural language description, layout type, and theme ID **THEN** generate valid Blueprint JSON with timestamp, component nodes, and preview URL.
+- **WHEN** `generate-blueprint` tool invoked with natural language description, layout type, and theme ID **THEN** generate valid Blueprint JSON with timestamp-based ID and component nodes.
 - **Rationale**: Single MCP tool call creates complete blueprint ready for rendering.
+- **Output**: Blueprint data only (no previewUrl).
 - **Test Strategy**: Blueprint generation tests with various descriptions and layouts, output validation.
 
-**E-002: Theme Preview Request**
-- **WHEN** `preview-theme` tool invoked with theme ID **THEN** return preview URL with current timestamp and theme CSS variables.
-- **Rationale**: Theme preview enables quality check before blueprint generation.
-- **Test Strategy**: Preview URL generation tests, CSS variable extraction verification.
+**E-002: Theme Data Request**
+- **WHEN** `preview-theme` tool invoked with theme ID **THEN** return theme metadata and CSS variables.
+- **Rationale**: Theme data enables quality check and integration with external preview systems.
+- **Output**: Theme data only (no previewUrl) - preview rendering is SPEC-PLAYGROUND-001 responsibility.
+- **Test Strategy**: Theme loading tests, CSS variable extraction verification.
 
-**E-003: Screen Export Request**
-- **WHEN** `export-screen` tool invoked with blueprint ID and format (jsx, tsx, vue) **THEN** return generated code and save to timestamp-based file path.
-- **Rationale**: Screen export enables production code integration from AI-generated blueprints.
-- **Test Strategy**: Code export tests with multiple formats, file path validation, code quality check.
+**E-003: Screen Code Export Request**
+- **WHEN** `export-screen` tool invoked with blueprint data and format (jsx, tsx, vue) **THEN** return generated code as string.
+- **Rationale**: Code export enables production integration from AI-generated blueprints.
+- **Output**: Code string only (no file system writes, no filePath).
+- **Test Strategy**: Code generation tests with multiple formats, syntax validation.
 
-**E-004: Preview URL Access**
-- **WHEN** HTTP GET request to `/preview/:timestamp/:themeId` **THEN** serve HTML page with theme CSS variables and blueprint rendering instructions for SPEC-PLAYGROUND-001.
-- **Rationale**: Preview URL provides immutable access to generated screens with applied theme.
-- **Test Strategy**: HTTP endpoint tests, theme variable injection verification, CORS configuration.
-
-**E-005: Real-Time Theme Switch**
-- **WHEN** theme ID parameter changes in preview URL **THEN** reload page with new theme CSS variables without regenerating blueprint.
-- **Rationale**: Theme switching enables design system quality comparison without recreating screens.
-- **Test Strategy**: Theme switch tests, CSS variable update verification, layout preservation check.
+**E-004: Tool List Request**
+- **WHEN** Claude Code requests tool list via MCP protocol **THEN** return all registered tools with schemas and descriptions.
+- **Rationale**: Tool discovery enables Claude Code to invoke appropriate tools.
+- **Test Strategy**: MCP Inspector tool list verification.
 
 ### State-Driven Requirements (Conditional Behavior)
 
 **S-001: Timestamp Collision Handling**
-- **IF** timestamp collision detected (same millisecond) **THEN** append random 6-character suffix to ensure uniqueness.
-- **Rationale**: Parallel screen generation may produce identical timestamps, suffix prevents overwrites.
+- **IF** timestamp collision detected (same millisecond for blueprint ID generation) **THEN** append random 6-character suffix to ensure uniqueness.
+- **Rationale**: Rapid sequential tool calls may produce identical timestamps, suffix prevents ID collisions.
 - **Test Strategy**: Collision detection tests, suffix uniqueness verification.
 
 **S-002: Theme Availability Check**
-- **IF** requested theme ID exists in built-in themes **THEN** load theme and generate blueprint.
+- **IF** requested theme ID exists in built-in themes **THEN** load theme and return data.
 - **IF** requested theme ID not found **THEN** return error with available theme list.
 - **Rationale**: Clear error messages with alternatives improve user experience.
 - **Test Strategy**: Theme availability tests with valid and invalid IDs, error message verification.
 
 **S-003: Blueprint Validation Result**
-- **IF** generated blueprint passes validation **THEN** save blueprint and return preview URL.
-- **IF** generated blueprint fails validation **THEN** return validation errors without saving.
-- **Rationale**: Invalid blueprints should not persist, preventing broken preview URLs.
+- **IF** generated blueprint passes validation **THEN** return blueprint data.
+- **IF** generated blueprint fails validation **THEN** return validation errors.
+- **Rationale**: Invalid blueprints should not be returned to prevent downstream rendering errors.
 - **Test Strategy**: Blueprint validation tests with valid and invalid structures, error clarity.
 
-**S-004: Export Format Compatibility**
+**S-004: Export Format Selection**
 - **IF** export format is `tsx` **THEN** include TypeScript type annotations in generated code.
 - **IF** export format is `jsx` **THEN** generate vanilla React without TypeScript.
 - **IF** export format is `vue` **THEN** generate Vue 3 Composition API syntax.
@@ -205,19 +219,19 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 ### Unwanted Behaviors (Prohibited Actions)
 
-**UW-001: No Blueprint Mutation**
-- The system **shall not** modify blueprints after creation to preserve timestamp-based immutability.
-- **Rationale**: Immutable blueprints enable design iteration tracking and comparison.
-- **Test Strategy**: Blueprint modification tests, immutability verification.
+**UW-001: No stdout Pollution**
+- The system **shall not** write any non-JSON-RPC content to stdout to prevent protocol corruption.
+- **Rationale**: stdout is reserved for JSON-RPC 2.0 messages; any other content breaks Claude Code communication.
+- **Test Strategy**: stdout content verification, no console.log usage.
 
 **UW-002: No Theme ID Injection**
-- The system **shall not** allow theme ID injection attacks through path parameters to prevent unauthorized theme access.
-- **Rationale**: Security requirement prevents malicious theme loading or path traversal.
+- The system **shall not** allow theme ID injection attacks through malicious input to prevent unauthorized operations.
+- **Rationale**: Security requirement prevents malicious input processing.
 - **Test Strategy**: Security tests with malicious inputs (e.g., `../../../etc/passwd`), input sanitization verification.
 
 **UW-003: No Silent Failures**
-- The system **shall not** return success status when blueprint generation or rendering fails.
-- **Rationale**: Accurate status enables AI assistant error recovery and user feedback.
+- The system **shall not** return success status when blueprint generation or code export fails.
+- **Rationale**: Accurate status enables Claude Code error recovery and user feedback.
 - **Test Strategy**: Failure mode tests with comprehensive error verification.
 
 **UW-004: No Duplicate Tool Registration**
@@ -225,26 +239,117 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 - **Rationale**: Tool name uniqueness ensures predictable AI assistant behavior.
 - **Test Strategy**: Tool registration tests, duplicate name detection.
 
+**UW-005: No File System Writes from Tools**
+- The system **shall not** write files to the file system from MCP tool handlers to maintain data-only output pattern.
+- **Rationale**: Clean separation of concerns - MCP tools return data, file operations are handled externally.
+- **Test Strategy**: File system monitoring during tool execution, no file creation verification.
+
 ### Optional Requirements (Future Enhancements)
 
-**O-001: WebSocket Real-Time Updates**
-- **Where possible**, provide WebSocket connection for real-time theme switching without page reload.
-- **Priority**: DEFERRED to Phase 2
-- **Rationale**: WebSocket enables smoother theme switching UX, but HTTP polling acceptable for MVP.
-
-**O-002: Blueprint Template Library**
+**O-001: Blueprint Template Library**
 - **Where possible**, provide pre-built blueprint templates (dashboard, landing, settings) for common screen patterns.
 - **Priority**: DEFERRED to Phase 2
 - **Rationale**: Templates accelerate screen generation, but AI-driven generation sufficient for MVP.
 
-**O-003: Multi-Theme Preview Comparison**
-- **Where possible**, enable side-by-side preview with 2-3 themes for visual comparison.
+**O-002: Custom Theme Registration**
+- **Where possible**, enable registration of custom themes beyond 13 built-in themes.
 - **Priority**: DEFERRED to Phase 2
-- **Rationale**: Visual comparison aids theme selection, but sequential switching acceptable for MVP.
+- **Rationale**: Custom themes enable brand-specific design systems.
+
+**O-003: Streaming Code Generation**
+- **Where possible**, stream large code outputs incrementally for better UX with large blueprints.
+- **Priority**: DEFERRED to Phase 2
+- **Rationale**: Streaming improves perceived performance for complex screens.
 
 ---
 
 ## SPECIFICATIONS
+
+### stdio Transport Setup
+
+**Entry Point Configuration:**
+```typescript
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+
+// Create MCP server instance
+const server = new Server(
+  {
+    name: 'tekton-mcp-server',
+    version: '2.0.0',
+  },
+  {
+    capabilities: {
+      tools: {},
+    },
+  }
+);
+
+// Connect via stdio transport
+const transport = new StdioServerTransport();
+await server.connect(transport);
+```
+
+**Logging to stderr:**
+```typescript
+// All logging must use stderr
+const logger = {
+  info: (msg: string) => console.error(`[INFO] ${msg}`),
+  error: (msg: string) => console.error(`[ERROR] ${msg}`),
+  debug: (msg: string) => console.error(`[DEBUG] ${msg}`),
+};
+```
+
+### JSON-RPC Message Flow
+
+**Tool Invocation Request (from Claude Code):**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "generate-blueprint",
+    "arguments": {
+      "description": "User profile dashboard with avatar and bio",
+      "layout": "sidebar-left",
+      "themeId": "calm-wellness"
+    }
+  }
+}
+```
+
+**Tool Response (to Claude Code):**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"success\":true,\"blueprint\":{...}}"
+      }
+    ]
+  }
+}
+```
+
+**Error Response (JSON-RPC 2.0 compliant):**
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "error": {
+    "code": -32602,
+    "message": "Invalid params",
+    "data": {
+      "field": "themeId",
+      "message": "Theme not found: invalid-theme"
+    }
+  }
+}
+```
 
 ### MCP Tool Definitions
 
@@ -267,14 +372,13 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 {
   success: boolean,
   blueprint?: {
-    id: string,
+    id: string,           // Format: bp-{timestamp}-{randomSuffix}
     name: string,
     themeId: string,
     layout: LayoutType,
     components: ComponentNode[],
     timestamp: number
   },
-  previewUrl?: string,
   error?: string
 }
 ```
@@ -306,14 +410,13 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
       { "type": "Button", "slot": "sidebar", "props": { "variant": "primary" }, "children": ["Settings"] }
     ],
     "timestamp": 1738123456789
-  },
-  "previewUrl": "http://localhost:3000/preview/1738123456789/calm-wellness"
+  }
 }
 ```
 
 #### preview-theme
 
-**Purpose**: Generate preview URL for theme quality check.
+**Purpose**: Get theme metadata and CSS variables for preview integration.
 
 **Input Schema (Zod)**:
 ```typescript
@@ -332,7 +435,6 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
     description: string,
     cssVariables: Record<string, string>
   },
-  previewUrl?: string,
   error?: string
 }
 ```
@@ -358,21 +460,26 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
       "--font-family": "Georgia, serif",
       "--border-radius": "4px"
     }
-  },
-  "previewUrl": "http://localhost:3000/preview/1738123456790/premium-editorial"
+  }
 }
 ```
 
 #### export-screen
 
-**Purpose**: Export generated screen to production code.
+**Purpose**: Generate production code from blueprint data.
 
 **Input Schema (Zod)**:
 ```typescript
 {
-  blueprintId: z.string(),
-  format: z.enum(['jsx', 'tsx', 'vue']),
-  outputPath?: z.string().optional()
+  blueprint: z.object({
+    id: z.string(),
+    name: z.string(),
+    themeId: z.string(),
+    layout: z.enum(['single-column', 'two-column', 'sidebar-left', 'sidebar-right', 'dashboard', 'landing']),
+    components: z.array(z.any()),
+    timestamp: z.number()
+  }),
+  format: z.enum(['jsx', 'tsx', 'vue'])
 }
 ```
 
@@ -381,7 +488,6 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 {
   success: boolean,
   code?: string,
-  filePath?: string,
   error?: string
 }
 ```
@@ -389,62 +495,6 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 **Example Request**:
 ```json
 {
-  "blueprintId": "bp-1738123456789-abc123",
-  "format": "tsx",
-  "outputPath": "src/screens/user-profile.tsx"
-}
-```
-
-**Example Response**:
-```json
-{
-  "success": true,
-  "code": "export default function UserProfile() {\n  return (\n    <div className=\"container\">\n      <Card>\n        <Avatar size=\"large\" />\n        <Text>User bio content</Text>\n      </Card>\n    </div>\n  );\n}",
-  "filePath": "src/screens/user-profile.tsx"
-}
-```
-
-### Web Server Endpoints
-
-#### GET /preview/:timestamp/:themeId
-
-**Purpose**: Serve preview page with theme CSS variables for SPEC-PLAYGROUND-001.
-
-**Response**:
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tekton Preview - {{ themeId }}</title>
-  <style>
-    :root {
-      {{ cssVariables }}
-    }
-  </style>
-</head>
-<body>
-  <div id="root" data-timestamp="{{ timestamp }}" data-theme-id="{{ themeId }}"></div>
-  <script>
-    window.__TEKTON_PREVIEW__ = {
-      timestamp: {{ timestamp }},
-      themeId: "{{ themeId }}",
-      blueprintUrl: "/api/blueprints/{{ timestamp }}"
-    };
-  </script>
-</body>
-</html>
-```
-
-#### GET /api/blueprints/:timestamp
-
-**Purpose**: Fetch blueprint JSON for rendering in playground.
-
-**Response**:
-```json
-{
-  "success": true,
   "blueprint": {
     "id": "bp-1738123456789-abc123",
     "name": "User Profile Dashboard",
@@ -452,42 +502,58 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
     "layout": "sidebar-left",
     "components": [...],
     "timestamp": 1738123456789
+  },
+  "format": "tsx"
+}
+```
+
+**Example Response**:
+```json
+{
+  "success": true,
+  "code": "import React from 'react';\nimport { Card, Avatar, Text, Button } from '@tekton/components';\n\nexport default function UserProfileDashboard() {\n  return (\n    <div className=\"container sidebar-left\">\n      <Card>\n        <Avatar size=\"large\" />\n        <Text>User bio content</Text>\n      </Card>\n      <Button variant=\"primary\">Settings</Button>\n    </div>\n  );\n}"
+}
+```
+
+### Claude Code Integration
+
+**claude_desktop_config.json Configuration:**
+```json
+{
+  "mcpServers": {
+    "tekton": {
+      "command": "node",
+      "args": ["/path/to/tekton/packages/mcp-server/dist/index.js"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
   }
 }
 ```
 
-#### GET /api/themes
-
-**Purpose**: List all available themes for theme selection UI.
-
-**Response**:
+**Tool Discovery:**
+Claude Code automatically discovers tools via `tools/list` JSON-RPC method:
 ```json
 {
-  "success": true,
-  "themes": [
-    { "id": "calm-wellness", "name": "Calm Wellness", "description": "..." },
-    { "id": "dynamic-fitness", "name": "Dynamic Fitness", "description": "..." },
-    ...
+  "tools": [
+    {
+      "name": "generate-blueprint",
+      "description": "Generate a UI blueprint from natural language description",
+      "inputSchema": { ... }
+    },
+    {
+      "name": "preview-theme",
+      "description": "Get theme metadata and CSS variables",
+      "inputSchema": { ... }
+    },
+    {
+      "name": "export-screen",
+      "description": "Export blueprint to production code (JSX, TSX, or Vue)",
+      "inputSchema": { ... }
+    }
   ]
 }
-```
-
-### File Storage Structure
-
-```
-.tekton/
-├── blueprints/
-│   ├── 1738123456789/
-│   │   ├── blueprint.json
-│   │   ├── metadata.json
-│   │   └── preview.html
-│   ├── 1738123456790/
-│   │   └── ...
-│   └── index.json  # Timestamp index
-└── exports/
-    ├── user-profile.tsx
-    ├── dashboard.tsx
-    └── ...
 ```
 
 ---
@@ -498,16 +564,16 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 | Requirement ID | Test Scenario ID | Component |
 |----------------|------------------|-----------|
-| U-001 | AC-001 | MCP tool registration |
+| U-001 | AC-001 | MCP tool registration via stdio |
 | U-002 | AC-002 | Input schema validation |
 | U-003 | AC-003 | @tekton/core integration |
-| U-004 | AC-004 | Error response consistency |
+| U-004 | AC-004 | JSON-RPC error response format |
 | U-005 | AC-005 | Theme validation |
-| E-001 | AC-006 | Blueprint generation |
-| E-002 | AC-007 | Theme preview |
-| E-003 | AC-008 | Screen export |
-| E-004 | AC-009 | Preview URL access |
-| E-005 | AC-010 | Real-time theme switch |
+| U-006 | AC-006 | stderr-only logging |
+| E-001 | AC-007 | Blueprint generation |
+| E-002 | AC-008 | Theme data retrieval |
+| E-003 | AC-009 | Screen code export |
+| E-004 | AC-010 | Tool list discovery |
 | S-001 | AC-011 | Timestamp collision handling |
 | S-002 | AC-012 | Theme availability check |
 
@@ -515,9 +581,8 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 - **[SPEC-MCP-002]**: All commits related to MCP server implementation
 - **[MCP-TOOLS]**: MCP tool implementations (generate-blueprint, preview-theme, export-screen)
-- **[MCP-SERVER]**: Web server and HTTP endpoints
-- **[MCP-STORAGE]**: Blueprint storage and timestamp management
-- **[MCP-INTEGRATION]**: @tekton/core integration and SPEC-PLAYGROUND-001 compatibility
+- **[MCP-STDIO]**: stdio transport and JSON-RPC handling
+- **[MCP-INTEGRATION]**: @tekton/core integration and Claude Code compatibility
 
 ---
 
@@ -525,18 +590,17 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 ### Internal Dependencies
 - **@tekton/core**: Theme loading, blueprint creation, screen rendering
-- **SPEC-PLAYGROUND-001**: React playground for preview rendering
+- **SPEC-PLAYGROUND-001**: Preview rendering UI (separate implementation)
 
 ### External Dependencies
-- **Zod**: Schema validation (^3.23.0)
-- **MCP Protocol**: Model Context Protocol for Claude Code integration
-- **Node.js HTTP/Express**: Web server framework
-- **TypeScript**: Type safety (^5.7.0)
+- **@modelcontextprotocol/sdk**: ^1.0.0 - MCP SDK with stdio transport
+- **Zod**: ^3.23.0 - Schema validation
+- **TypeScript**: ^5.7.0 - Type safety
 
 ### Technical Dependencies
 - **Node.js**: 20+ runtime
 - **TypeScript**: 5.7+ compiler
-- **Claude Code**: MCP Protocol support
+- **Claude Code**: MCP Protocol support via stdio
 
 ---
 
@@ -544,11 +608,11 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 
 ### High-Risk Areas
 
-**Risk 1: Timestamp Collision**
-- **Likelihood**: LOW
+**Risk 1: stdio Debugging Complexity**
+- **Likelihood**: MEDIUM
 - **Impact**: MEDIUM
-- **Mitigation**: Add random suffix when collision detected, millisecond precision sufficient for typical usage
-- **Contingency**: Implement retry with exponential backoff
+- **Mitigation**: Structured stderr logging, MCP Inspector for testing
+- **Contingency**: Implement detailed debug logging with log levels
 
 **Risk 2: @tekton/core API Changes**
 - **Likelihood**: LOW
@@ -556,62 +620,64 @@ tags: ["SPEC-MCP-002", "MCP", "Blueprint", "Preview", "Timestamp"]
 - **Mitigation**: Version pinning, integration tests, semantic versioning
 - **Contingency**: Implement adapter layer for API changes
 
-**Risk 3: MCP Protocol Compatibility**
-- **Likelihood**: MEDIUM
+**Risk 3: JSON-RPC Protocol Compliance**
+- **Likelihood**: LOW
 - **Impact**: HIGH
-- **Mitigation**: Follow MCP Protocol specification strictly, integration testing with Claude Code
-- **Contingency**: Fallback to REST API if MCP incompatible
+- **Mitigation**: Use @modelcontextprotocol/sdk which handles protocol details
+- **Contingency**: Manual protocol testing with MCP Inspector
 
 ### Medium-Risk Areas
 
-**Risk 4: Theme Switching Performance**
+**Risk 4: Timestamp Collision**
+- **Likelihood**: LOW
+- **Impact**: MEDIUM
+- **Mitigation**: Collision detection with random suffix
+- **Contingency**: Implement UUID-based IDs if collisions increase
+
+**Risk 5: Code Generation Quality**
 - **Likelihood**: MEDIUM
 - **Impact**: MEDIUM
-- **Mitigation**: CSS variable optimization, performance benchmarking
-- **Contingency**: Implement debouncing, reduce CSS variable scope
-
-**Risk 5: Blueprint Storage Growth**
-- **Likelihood**: HIGH
-- **Impact**: LOW
-- **Mitigation**: Implement 30-day TTL cleanup, storage limit warnings
-- **Contingency**: S3/cloud storage migration for large-scale usage
+- **Mitigation**: Comprehensive format-specific tests, syntax validation
+- **Contingency**: Manual review process for generated code
 
 ---
 
 ## SUCCESS CRITERIA
 
 ### Implementation Success Criteria
-- All 3 MCP tools registered and functional in Claude Code
-- Preview URLs generated with unique timestamps (< 0.001% collision rate)
-- Theme switching completes in < 100ms (CSS variable update)
+- All 3 MCP tools registered and functional via stdio transport
+- JSON-RPC 2.0 protocol compliance verified with MCP Inspector
+- stderr-only logging verified (no stdout pollution)
 - @tekton/core integration works without code duplication
 - Blueprint validation prevents invalid component combinations
+- No file system side effects from tool handlers
 
 ### Quality Success Criteria
-- Test coverage ≥ 85% for all new code
+- Test coverage >= 85% for all new code
 - All MCP tool invocations complete in < 500ms
-- Error messages are actionable and include available alternatives
+- Error messages follow JSON-RPC 2.0 format
 - Zero TypeScript compilation errors with strict mode
 - Security audit passes with no critical vulnerabilities
 
 ### Integration Success Criteria
 - MCP tools accessible from Claude Code with natural language prompts
-- Preview URLs render correctly in SPEC-PLAYGROUND-001
-- Theme CSS variables applied without layout shifts
-- Exported code compiles without errors in target framework
+- Tool discovery works correctly via MCP protocol
+- Generated code compiles without errors in target framework
+- Theme data enables SPEC-PLAYGROUND-001 integration
 
 ---
 
 ## REFERENCES
 
 - [SPEC-PLAYGROUND-001: React Playground](../SPEC-PLAYGROUND-001/spec.md)
-- [SPEC-MCP-001: Natural Language Screen Generation](../SPEC-MCP-001/spec.md)
 - [@tekton/core Package](../../packages/core/)
 - [MCP Protocol Specification](https://modelcontextprotocol.io/)
+- [MCP SDK Documentation](https://github.com/modelcontextprotocol/sdk)
 - [TRUST 5 Framework](../../.claude/skills/moai-foundation-core/modules/trust-5-framework.md)
 
 ---
 
 **Last Updated**: 2026-01-25
 **Status**: Planned
+**Version**: 2.0.0
 **Next Steps**: /moai:2-run SPEC-MCP-002 for DDD implementation

@@ -3,11 +3,9 @@
  * SPEC-MCP-002: E-003 Screen Export Request
  */
 
-import { writeFileSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
 import { render } from '@tekton/core';
+import type { Blueprint } from '@tekton/core';
 import type { ExportScreenInput, ExportScreenOutput } from '../schemas/mcp-schemas.js';
-import { getDefaultStorage } from '../storage/blueprint-storage.js';
 import { createErrorResponse, extractErrorMessage } from '../utils/error-handler.js';
 
 /**
@@ -80,19 +78,18 @@ function extractComponentName(blueprintName: string): string {
  * Export screen MCP tool implementation
  * SPEC: E-003 Screen Export Request
  *
- * @param input - Blueprint ID and export format
- * @returns Generated code and file path
+ * @param input - Blueprint object and export format
+ * @returns Generated code (MCP JSON-RPC format - no file write, no filePath)
  */
 export async function exportScreenTool(
   input: ExportScreenInput
 ): Promise<ExportScreenOutput> {
   try {
-    // Load blueprint from storage
-    const storage = getDefaultStorage();
-    const blueprint = await storage.loadBlueprint(input.blueprintId);
+    // MCP JSON-RPC format: Accept blueprint object directly (no storage lookup)
+    const blueprint = input.blueprint as Blueprint;
 
     if (!blueprint) {
-      return createErrorResponse(`Blueprint not found: ${input.blueprintId}`);
+      return createErrorResponse('Blueprint object is required');
     }
 
     // SPEC: U-003 @tekton/core Integration - Use render from @tekton/core
@@ -122,26 +119,10 @@ export async function exportScreenTool(
         return createErrorResponse(`Unsupported format: ${input.format}`);
     }
 
-    // Save to file if outputPath provided
-    let filePath: string | undefined;
-    if (input.outputPath) {
-      try {
-        // Ensure directory exists
-        const dir = dirname(input.outputPath);
-        mkdirSync(dir, { recursive: true });
-
-        // Write file
-        writeFileSync(input.outputPath, finalCode, 'utf-8');
-        filePath = input.outputPath;
-      } catch (error) {
-        return createErrorResponse(`Failed to write file: ${extractErrorMessage(error)}`);
-      }
-    }
-
+    // MCP JSON-RPC format: Return code only (no file write, no filePath)
     return {
       success: true,
-      code: finalCode,
-      filePath
+      code: finalCode
     };
   } catch (error) {
     return {
