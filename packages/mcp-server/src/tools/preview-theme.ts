@@ -8,30 +8,15 @@ import type { PreviewThemeInput, PreviewThemeOutput } from '../schemas/mcp-schem
 import { createThemeNotFoundError, extractErrorMessage } from '../utils/error-handler.js';
 
 /**
- * Preview theme configuration
- */
-export interface PreviewThemeConfig {
-  baseUrl: string; // Default: http://localhost:3000
-}
-
-const DEFAULT_CONFIG: PreviewThemeConfig = {
-  baseUrl: 'http://localhost:3000'
-};
-
-/**
  * Preview theme MCP tool implementation
  * SPEC: E-002 Theme Preview Request
  *
  * @param input - Theme ID to preview
- * @param config - Preview configuration
- * @returns Theme metadata with preview URL and CSS variables
+ * @returns Theme metadata with CSS variables (MCP JSON-RPC format - no preview URL)
  */
 export async function previewThemeTool(
-  input: PreviewThemeInput,
-  config: Partial<PreviewThemeConfig> = {}
+  input: PreviewThemeInput
 ): Promise<PreviewThemeOutput> {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
-
   try {
     // SPEC: U-003 @tekton/core Integration - Use loadTheme from @tekton/core
     const theme = loadTheme(input.themeId);
@@ -45,12 +30,7 @@ export async function previewThemeTool(
     // SPEC: U-003 @tekton/core Integration - Use generateCSSVariables from @tekton/core
     const cssVariables = generateCSSVariables(theme);
 
-    // Generate timestamp for preview URL
-    const timestamp = Date.now();
-
-    // SPEC: E-002 Theme Preview Request - Generate preview URL
-    const previewUrl = `${finalConfig.baseUrl}/preview/${timestamp}/${input.themeId}`;
-
+    // MCP JSON-RPC format: Return theme data only (no preview URL)
     return {
       success: true,
       theme: {
@@ -58,8 +38,7 @@ export async function previewThemeTool(
         name: theme.name,
         description: theme.description,
         cssVariables
-      },
-      previewUrl
+      }
     };
   } catch (error) {
     return {
