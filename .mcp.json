@@ -8,14 +8,11 @@
         "@upstash/context7-mcp@latest"
       ]
     },
-    "tekton-studio": {
+    "tekton-mcp": {
       "command": "node",
       "args": [
-        "packages/studio-mcp/dist/index.js"
-      ],
-      "env": {
-        "STUDIO_API_URL": "http://localhost:8000"
-      }
+        "packages/mcp-server/dist/index.js"
+      ]
     }
   },
   "staggeredStartup": {
