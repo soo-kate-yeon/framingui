@@ -115,6 +115,6 @@ describe('ThemeSwitch', () => {
     const options = Array.from(select.options).map((opt) => opt.value);
 
     // Should match BUILTIN_THEMES order
-    expect(options).toEqual(expect.arrayContaining(BUILTIN_THEMES));
+    expect(options).toEqual(expect.arrayContaining([...BUILTIN_THEMES]));
   });
 });

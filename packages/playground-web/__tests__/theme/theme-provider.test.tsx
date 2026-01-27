@@ -128,6 +128,7 @@ describe('ThemeProvider', () => {
     const mockTheme = createMockTheme();
 
     const { container } = render(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       <ThemeProvider theme={mockTheme as any}>
         <div>Test Content</div>
       </ThemeProvider>
@@ -146,6 +147,7 @@ describe('ThemeProvider', () => {
     const mockTheme = createMockTheme();
 
     const { getByText } = render(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       <ThemeProvider theme={mockTheme as any}>
         <div>Test Content</div>
       </ThemeProvider>

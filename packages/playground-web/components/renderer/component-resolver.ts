@@ -72,6 +72,7 @@ import {
  * Component Map: String type -> React Component
  * Total: 20+ components from @tekton/ui
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const COMPONENT_MAP: Record<string, ComponentType<any>> = {
   // Primitive Components (14)
   Button,
@@ -145,6 +146,7 @@ export const COMPONENT_MAP: Record<string, ComponentType<any>> = {
  * @param type - Component type string (e.g., "Button", "Card")
  * @returns React component or null if not found
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function resolveComponent(type: string): ComponentType<any> | null {
   return COMPONENT_MAP[type] || null;
 }
