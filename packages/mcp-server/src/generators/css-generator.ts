@@ -5,10 +5,7 @@
  * Wraps @tekton/core CSS generation for MCP tool integration
  */
 
-import {
-  generateThemeCSS as coreGenerateThemeCSS,
-  type ThemeWithTokens,
-} from '@tekton/core';
+import { generateThemeCSS as coreGenerateThemeCSS, type ThemeWithTokens } from '@tekton/core';
 
 /**
  * CSS 생성 결과 타입
@@ -55,9 +52,7 @@ export function generateCSS(theme: ThemeWithTokens): CSSGenerationResult {
  * @param theme - ThemeWithTokens 객체
  * @returns CSS Variables 객체 (key-value 쌍)
  */
-export function extractCSSVariables(
-  theme: ThemeWithTokens
-): Record<string, string> {
+export function extractCSSVariables(theme: ThemeWithTokens): Record<string, string> {
   const result = generateCSS(theme);
   if (!result.success || !result.css) {
     return {};

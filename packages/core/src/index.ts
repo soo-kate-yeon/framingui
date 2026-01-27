@@ -58,12 +58,7 @@ export {
   type ValidationResult as TokenValidationResult,
 } from './token-validation.js';
 export { generateThemeCSS } from './css-generator.js';
-export type {
-  AtomicTokens,
-  SemanticTokens,
-  ComponentTokens,
-  ThemeWithTokens,
-} from './tokens.js';
+export type { AtomicTokens, SemanticTokens, ComponentTokens, ThemeWithTokens } from './tokens.js';
 
 // Component Schemas (SPEC-COMPONENT-001-B)
 export type {

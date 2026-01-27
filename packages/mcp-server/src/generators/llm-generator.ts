@@ -139,10 +139,7 @@ export function extractCodeFromResponse(response: string): string {
  * @param componentName - 컴포넌트 이름
  * @returns 검증 결과
  */
-export function validateGeneratedCode(
-  code: string,
-  componentName: string
-): ValidationResult {
+export function validateGeneratedCode(code: string, componentName: string): ValidationResult {
   const errors: string[] = [];
 
   // 빈 코드 검사
@@ -173,9 +170,7 @@ export function validateGeneratedCode(
     new RegExp(`export\\s+(default\\s+)?function\\s+${componentName}`),
   ];
 
-  const hasComponentDefinition = functionPatterns.some(pattern =>
-    pattern.test(code)
-  );
+  const hasComponentDefinition = functionPatterns.some(pattern => pattern.test(code));
 
   if (!hasComponentDefinition) {
     errors.push(`Component "${componentName}" definition not found`);
@@ -264,9 +259,11 @@ export async function generateWithLLM(
         messages: [
           {
             role: 'user',
-            content: prompt + (attempt > 1
-              ? `\n\nPrevious attempt failed validation with errors: ${allValidationErrors.join(', ')}. Please fix these issues.`
-              : ''),
+            content:
+              prompt +
+              (attempt > 1
+                ? `\n\nPrevious attempt failed validation with errors: ${allValidationErrors.join(', ')}. Please fix these issues.`
+                : ''),
           },
         ],
       });

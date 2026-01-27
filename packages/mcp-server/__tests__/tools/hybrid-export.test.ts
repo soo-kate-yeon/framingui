@@ -37,7 +37,7 @@ describe('Hybrid Export System', () => {
       const result = getTier1Example('Button');
       expect(result.success).toBe(true);
       expect(result.code).toContain('Button');
-      expect(result.code).toContain("@tekton/ui");
+      expect(result.code).toContain('@tekton/ui');
       expect(result.source).toBe('tier1-example');
     });
 

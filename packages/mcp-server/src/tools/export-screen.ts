@@ -197,7 +197,11 @@ async function resolveComponent(
     return {
       success: result.success,
       code: result.code,
-      source: result.success ? (process.env.ANTHROPIC_API_KEY ? 'tier2-llm' : 'tier2-mock') : undefined,
+      source: result.success
+        ? process.env.ANTHROPIC_API_KEY
+          ? 'tier2-llm'
+          : 'tier2-mock'
+        : undefined,
       error: result.error,
     };
   }
@@ -220,7 +224,9 @@ async function resolveComponent(
     success: tier2Result.success,
     code: tier2Result.code,
     source: tier2Result.success
-      ? (process.env.ANTHROPIC_API_KEY ? 'tier2-llm' : 'tier2-mock')
+      ? process.env.ANTHROPIC_API_KEY
+        ? 'tier2-llm'
+        : 'tier2-mock'
       : undefined,
     error: tier2Result.error,
   };
