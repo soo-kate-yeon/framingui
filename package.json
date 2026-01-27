@@ -20,6 +20,8 @@
     "lint": "eslint src tests --ext .ts,.js",
     "lint:all": "pnpm --filter \"./packages/*\" lint",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "check:tsup": "node scripts/check-tsup-config.js",
+    "precommit": "pnpm check:tsup && pnpm build:all",
     "prepare": "husky"
   },
   "keywords": [
@@ -34,6 +36,7 @@
   "license": "MIT",
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
+    "@eslint/js": "^9.39.2",
     "@playwright/test": "^1.58.0",
     "@types/culori": "^4.0.1",
     "@types/node": "^22.10.5",
@@ -42,6 +45,7 @@
     "@vitest/coverage-v8": "^2.1.8",
     "axe-core": "^4.11.1",
     "eslint": "^9.18.0",
+    "glob": "^11.0.0",
     "globals": "^17.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",

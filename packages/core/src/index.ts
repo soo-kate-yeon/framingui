@@ -50,14 +50,15 @@ export {
 // Render
 export { render, renderWithTheme, renderSingleComponent, renderComponents } from './render.js';
 
-// TODO: SPEC-COMPONENT-001-A - Token System Files Required
-// export { resolveToken, resolveWithFallback, type TokenReference } from './token-resolver.js';
-// export {
-//   validateTheme,
-//   ThemeWithTokensSchema,
-//   type ValidationResult as TokenValidationResult,
-// } from './token-validation.js';
-// export { generateThemeCSS } from './css-generator.js';
+// Token System (SPEC-COMPONENT-001-A) - Enabled for SPEC-COMPONENT-001-D
+export { resolveToken, resolveWithFallback, type TokenReference } from './token-resolver.js';
+export {
+  validateTheme,
+  ThemeWithTokensSchema,
+  type ValidationResult as TokenValidationResult,
+} from './token-validation.js';
+export { generateThemeCSS } from './css-generator.js';
+export type { AtomicTokens, SemanticTokens, ComponentTokens, ThemeWithTokens } from './tokens.js';
 
 // Component Schemas (SPEC-COMPONENT-001-B)
 export type {
