@@ -1,12 +1,26 @@
 /**
  * Export Screen MCP Tool
  * SPEC-MCP-002: E-003 Screen Export Request
+ * SPEC-COMPONENT-001-D: Hybrid Export System
  */
 
-import { render } from '@tekton/core';
-import type { Blueprint } from '@tekton/core';
-import type { ExportScreenInput, ExportScreenOutput } from '../schemas/mcp-schemas.js';
+import { render, loadTheme } from '@tekton/core';
+import type { Blueprint, ThemeWithTokens } from '@tekton/core';
+import type {
+  ExportScreenInput,
+  ExportScreenOutput,
+  HybridExportInput,
+  HybridExportOutput,
+  ExportTier,
+} from '../schemas/mcp-schemas.js';
 import { createErrorResponse, extractErrorMessage } from '../utils/error-handler.js';
+import {
+  isTier1Component,
+  resolveFromTier1,
+  resolveFromTier2,
+  generateCSS,
+  TIER1_COMPONENTS,
+} from '../generators/index.js';
 
 /**
  * Convert JSX code to TSX format with TypeScript annotations
@@ -136,4 +150,240 @@ export async function exportScreenTool(input: ExportScreenInput): Promise<Export
       error: extractErrorMessage(error),
     };
   }
+}
+
+// ============================================================================
+// Hybrid Export System (SPEC-COMPONENT-001-D)
+// ============================================================================
+
+/**
+ * 컴포넌트 해결 - Tier 1 또는 Tier 2 자동 선택
+ *
+ * @param componentName - 컴포넌트 이름
+ * @param tier - 선호하는 tier (auto, tier1, tier2)
+ * @param description - 컴포넌트 설명 (tier2용)
+ * @returns 해결 결과
+ */
+async function resolveComponent(
+  componentName: string,
+  tier: ExportTier = 'auto',
+  description?: string
+): Promise<{
+  success: boolean;
+  code?: string;
+  source?: 'tier1-ui' | 'tier1-example' | 'tier2-llm' | 'tier2-mock';
+  error?: string;
+}> {
+  // Tier 1 강제
+  if (tier === 'tier1') {
+    if (!isTier1Component(componentName)) {
+      return {
+        success: false,
+        error: `Component "${componentName}" is not available in Tier 1. Available: ${TIER1_COMPONENTS.join(', ')}`,
+      };
+    }
+    const result = resolveFromTier1(componentName);
+    return {
+      success: result.success,
+      code: result.code,
+      source: result.source,
+      error: result.error,
+    };
+  }
+
+  // Tier 2 강제
+  if (tier === 'tier2') {
+    const result = await resolveFromTier2(componentName, description);
+    return {
+      success: result.success,
+      code: result.code,
+      source: result.success ? (process.env.ANTHROPIC_API_KEY ? 'tier2-llm' : 'tier2-mock') : undefined,
+      error: result.error,
+    };
+  }
+
+  // Auto: Tier 1 먼저 시도, 없으면 Tier 2
+  if (isTier1Component(componentName)) {
+    const result = resolveFromTier1(componentName);
+    if (result.success) {
+      return {
+        success: true,
+        code: result.code,
+        source: result.source,
+      };
+    }
+  }
+
+  // Fallback to Tier 2
+  const tier2Result = await resolveFromTier2(componentName, description);
+  return {
+    success: tier2Result.success,
+    code: tier2Result.code,
+    source: tier2Result.success
+      ? (process.env.ANTHROPIC_API_KEY ? 'tier2-llm' : 'tier2-mock')
+      : undefined,
+    error: tier2Result.error,
+  };
+}
+
+/**
+ * Blueprint에서 사용된 컴포넌트 타입 추출
+ */
+function extractComponentTypes(blueprint: Blueprint): string[] {
+  const types = new Set<string>();
+
+  function traverse(node: Blueprint['components'][number]) {
+    if (node.type) {
+      types.add(node.type);
+    }
+    if (Array.isArray(node.children)) {
+      for (const child of node.children) {
+        if (typeof child === 'object' && child !== null) {
+          traverse(child as Blueprint['components'][number]);
+        }
+      }
+    }
+  }
+
+  for (const component of blueprint.components || []) {
+    traverse(component);
+  }
+
+  return Array.from(types);
+}
+
+/**
+ * Hybrid Export MCP Tool
+ * SPEC-COMPONENT-001-D: Hybrid Export System
+ *
+ * 기능:
+ * - Tier 1/2 자동 라우팅
+ * - CSS Variables 생성
+ * - 컴포넌트 코드 + CSS 통합 출력
+ *
+ * @param input - Hybrid export 입력
+ * @returns Hybrid export 결과
+ */
+export async function hybridExportTool(input: HybridExportInput): Promise<HybridExportOutput> {
+  try {
+    const {
+      blueprint,
+      componentName,
+      componentDescription,
+      format,
+      includeCSS = false,
+      tier = 'auto',
+      themeId,
+    } = input;
+
+    // 결과 객체
+    const result: HybridExportOutput = {
+      success: true,
+      components: [],
+    };
+
+    // CSS 생성 (요청된 경우)
+    if (includeCSS && themeId) {
+      try {
+        const theme = loadTheme(themeId) as ThemeWithTokens;
+        if (theme && 'tokens' in theme) {
+          const cssResult = generateCSS(theme);
+          if (cssResult.success && cssResult.css) {
+            result.css = cssResult.css;
+          }
+        }
+      } catch (cssError) {
+        // CSS 생성 실패는 경고만 (전체 실패 아님)
+        console.warn(`[Hybrid Export] CSS generation failed for theme ${themeId}:`, cssError);
+      }
+    }
+
+    // 단일 컴포넌트 요청
+    if (componentName && !blueprint) {
+      const resolution = await resolveComponent(componentName, tier, componentDescription);
+
+      if (!resolution.success) {
+        return {
+          success: false,
+          error: resolution.error || `Failed to resolve component: ${componentName}`,
+        };
+      }
+
+      let finalCode = resolution.code || '';
+
+      // 포맷 변환
+      if (format === 'tsx' && finalCode) {
+        finalCode = convertToTSX(finalCode);
+      } else if (format === 'vue' && finalCode) {
+        finalCode = convertToVue(finalCode, componentName);
+      }
+
+      result.code = finalCode;
+      result.tierUsed = isTier1Component(componentName) && tier !== 'tier2' ? 'tier1' : 'tier2';
+      result.components = [
+        {
+          componentName,
+          code: resolution.code || '',
+          source: resolution.source || 'tier1-example',
+        },
+      ];
+
+      return result;
+    }
+
+    // Blueprint 기반 export
+    if (blueprint) {
+      const bp = blueprint as Blueprint;
+
+      // 기존 exportScreenTool 로직 사용
+      const renderResult = render(bp);
+
+      if (!renderResult.success) {
+        return {
+          success: false,
+          error: `Render failed: ${renderResult.error || 'Unknown error'}`,
+        };
+      }
+
+      let finalCode = renderResult.code || '';
+
+      // 포맷 변환
+      if (format === 'tsx' && finalCode) {
+        finalCode = convertToTSX(finalCode);
+      } else if (format === 'vue' && finalCode) {
+        finalCode = convertToVue(finalCode, extractComponentName(bp.name || 'Component'));
+      }
+
+      result.code = finalCode;
+      result.tierUsed = 'tier1'; // Blueprint render는 Tier 1
+
+      // Blueprint에서 사용된 컴포넌트 정보 추가
+      const componentTypes = extractComponentTypes(bp);
+      result.components = componentTypes.map(type => ({
+        componentName: type,
+        code: '', // Blueprint render는 통합된 코드 반환
+        source: 'tier1-example' as const,
+      }));
+
+      return result;
+    }
+
+    // 입력 없음
+    return {
+      success: false,
+      error: 'Either blueprint or componentName is required',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: extractErrorMessage(error),
+    };
+  }
+}
+
+/**
+ * 사용 가능한 Tier 1 컴포넌트 목록 조회
+ */
+export function getAvailableTier1Components(): string[] {
+  return TIER1_COMPONENTS;
 }

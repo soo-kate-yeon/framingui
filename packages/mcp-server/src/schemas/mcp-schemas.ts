@@ -146,6 +146,73 @@ export const ExportScreenOutputSchema = z.object({
   error: z.string().optional(),
 });
 
+// ============================================================================
+// Hybrid Export Tool Schemas (SPEC-COMPONENT-001-D)
+// ============================================================================
+
+/**
+ * Export component resolution tier
+ * - tier1: Copy from @tekton/ui (fast, deterministic)
+ * - tier2: Generate with LLM (flexible, customizable)
+ * - auto: Automatically choose based on component availability
+ */
+export const ExportTierSchema = z.enum(['tier1', 'tier2', 'auto']);
+
+export type ExportTier = z.infer<typeof ExportTierSchema>;
+
+/**
+ * Hybrid Export Input Schema
+ * SPEC-COMPONENT-001-D: Hybrid Export System
+ */
+export const HybridExportInputSchema = z.object({
+  /** Blueprint or component name */
+  blueprint: z.unknown().optional(),
+  /** Single component name for direct export */
+  componentName: z.string().optional(),
+  /** Component description (for Tier 2 LLM generation) */
+  componentDescription: z.string().optional(),
+  /** Output format */
+  format: ExportFormatSchema,
+  /** Include CSS Variables */
+  includeCSS: z.boolean().optional().default(false),
+  /** Resolution tier preference */
+  tier: ExportTierSchema.optional().default('auto'),
+  /** Theme ID for CSS generation */
+  themeId: ThemeIdSchema.optional(),
+});
+
+export type HybridExportInput = z.infer<typeof HybridExportInputSchema>;
+
+/**
+ * Component resolution result
+ */
+export const ComponentResolutionSchema = z.object({
+  componentName: z.string(),
+  code: z.string(),
+  source: z.enum(['tier1-ui', 'tier1-example', 'tier2-llm', 'tier2-mock']),
+});
+
+export type ComponentResolution = z.infer<typeof ComponentResolutionSchema>;
+
+/**
+ * Hybrid Export Output Schema
+ * SPEC-COMPONENT-001-D: Hybrid Export System
+ */
+export const HybridExportOutputSchema = z.object({
+  success: z.boolean(),
+  /** Screen/component code */
+  code: z.string().optional(),
+  /** CSS Variables (if includeCSS was true) */
+  css: z.string().optional(),
+  /** Component resolution details */
+  components: z.array(ComponentResolutionSchema).optional(),
+  /** Tier used for resolution */
+  tierUsed: ExportTierSchema.optional(),
+  error: z.string().optional(),
+});
+
+export type HybridExportOutput = z.infer<typeof HybridExportOutputSchema>;
+
 export type ExportScreenOutput = z.infer<typeof ExportScreenOutputSchema>;
 
 // ============================================================================
