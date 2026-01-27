@@ -85,20 +85,10 @@ export default async function PreviewPage({ params }: PageProps) {
         );
 
       case 'sidebar-left':
-        return (
-          <SidebarLeftLayout
-            sidebar={<div>Sidebar</div>}
-            main={<div>{components}</div>}
-          />
-        );
+        return <SidebarLeftLayout sidebar={<div>Sidebar</div>} main={<div>{components}</div>} />;
 
       case 'sidebar-right':
-        return (
-          <SidebarRightLayout
-            main={<div>{components}</div>}
-            sidebar={<div>Sidebar</div>}
-          />
-        );
+        return <SidebarRightLayout main={<div>{components}</div>} sidebar={<div>Sidebar</div>} />;
 
       case 'two-column':
         return (

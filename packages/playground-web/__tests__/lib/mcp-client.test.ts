@@ -73,9 +73,7 @@ describe('MCP Client', () => {
     });
 
     it('should return error on network failure', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-        new Error('Network error')
-      );
+      (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('Network error'));
 
       const response = await sendMcpRequest({ method: 'test' });
 
@@ -172,9 +170,7 @@ describe('MCP Client', () => {
     });
 
     it('should return null on network error', async () => {
-      (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
-        new Error('Network error')
-      );
+      (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('Network error'));
 
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 

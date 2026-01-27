@@ -22,9 +22,7 @@ export function ThemeProvider({ theme, children }: ThemeProviderProps) {
   // Note: Only ThemeWithTokens can generate full CSS
   // Plain Theme will render children without CSS injection (graceful degradation)
   const css =
-    theme && 'tokens' in theme && theme.tokens
-      ? generateThemeCSS(theme as ThemeWithTokens)
-      : '';
+    theme && 'tokens' in theme && theme.tokens ? generateThemeCSS(theme as ThemeWithTokens) : '';
 
   return (
     <>
