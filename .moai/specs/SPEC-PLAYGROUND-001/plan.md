@@ -530,12 +530,12 @@ HTML streamed to client with CSS variables
 ## Dependencies
 
 ### Internal Dependencies
-- **SPEC-COMPONENT-001** (CRITICAL, BLOCKING):
+- **SPEC-COMPONENT-001** (COMPLETED ✅):
   - @tekton/ui package with 20 reference components
   - 3-Layer Token System (Atomic → Semantic → Component)
   - CSS Variables generation pipeline
   - Component Schemas
-  - **Status**: Must be completed before starting Milestone 3
+  - **Status**: ✅ Completed (273 tests passed, 98.82% coverage)
 
 - **@tekton/core**: Base types, theme loading, blueprint schemas
 - **SPEC-MCP-002**: MCP server for blueprint fetching
@@ -562,23 +562,21 @@ HTML streamed to client with CSS variables
 
 ## Next Steps
 
-### Immediate Actions
-1. ✅ **Dependency Resolution**: SPEC-COMPONENT-001 identified as blocking dependency
-2. 🔄 **Development Order**: Start SPEC-COMPONENT-001 first (/moai:2-run SPEC-COMPONENT-001)
-3. ⏸️ **SPEC-PLAYGROUND-001**: Begin Milestone 1-2, pause at Milestone 3 until SPEC-COMPONENT-001 completes
+### Immediate Actions (Updated: 2026-01-27)
+1. ✅ **Dependency Resolution**: SPEC-COMPONENT-001 completed
+2. ✅ **Milestone 1-2**: Project setup and dynamic routing completed
+3. ✅ **Milestone 6**: Error handling completed
+4. 🔄 **Ready for Milestone 3-5, 7**: Implementation can proceed immediately
 
-### After SPEC-COMPONENT-001 Completion
-1. **Verify @tekton/ui**: Ensure all 20 components are available
-2. **Implement Milestone 3-5**: Theme integration and component rendering
-3. **Test integration**: Verify blueprint → @tekton/ui → rendered preview
-4. **Implement Milestone 6-7**: Error handling and optimization
+### Remaining Implementation
+1. **Milestone 3 - Theme Integration**: ThemeProvider, CSS variable injection
+2. **Milestone 4 - Production Layouts**: 6 layout components (Dashboard, Landing, etc.)
+3. **Milestone 5 - Blueprint Renderer**: ComponentResolver, @tekton/ui integration
+4. **Milestone 7 - Integration Testing**: Playwright E2E, visual regression, performance
 
 **Recommended Workflow**:
 ```bash
-# Step 1: Complete SPEC-COMPONENT-001 first
-/moai:2-run SPEC-COMPONENT-001
-
-# Step 2: After SPEC-COMPONENT-001 is done, start SPEC-PLAYGROUND-001
+# Continue SPEC-PLAYGROUND-001 implementation (no blockers)
 /moai:2-run SPEC-PLAYGROUND-001
 ```
 
@@ -586,13 +584,35 @@ HTML streamed to client with CSS variables
 
 ---
 
-**Last Updated**: 2026-01-25
-**Status**: Planned (Blocked by SPEC-COMPONENT-001)
-**Ready for**: Wait for SPEC-COMPONENT-001 completion, then /moai:2-run SPEC-PLAYGROUND-001
+**Last Updated**: 2026-01-27
+**Status**: Ready for Implementation (SPEC-COMPONENT-001 completed)
+**Ready for**: /moai:2-run SPEC-PLAYGROUND-001 (Milestone 3-5, 7 remaining)
+
+### Milestone Status Summary
+
+| Milestone | Status | Completion |
+|-----------|--------|------------|
+| 1. Project Setup | ✅ Completed | 100% |
+| 2. Dynamic Routing | ✅ Completed | 100% |
+| 3. Theme Integration | ⏳ Ready | 0% |
+| 4. Production Layouts | ⏳ Ready | 0% |
+| 5. Blueprint Renderer | ⏳ Ready | 0% |
+| 6. Error Handling | ✅ Completed | 100% |
+| 7. Integration Testing | ⏳ Ready | 0% |
 
 ---
 
 ## Change Log
+
+### 2026-01-27 - SPEC FIX: Blocker Resolved
+
+- **Status Change**: "Blocked by SPEC-COMPONENT-001" → "Ready for Implementation"
+- **Verified**: SPEC-COMPONENT-001 completed (20 components, 273 tests, 98.82% coverage)
+- **Milestone 1**: Project Setup - ✅ Completed
+- **Milestone 2**: Dynamic Routing - ✅ Completed
+- **Milestone 6**: Error Handling - ✅ Completed (loading.tsx, error.tsx, not-found.tsx)
+- **Ready**: Milestones 3-5, 7 can proceed immediately
+- **Architecture Review**: Confirmed alignment with @tekton/core and @tekton/ui
 
 ### 2026-01-25 - Dependency Resolution
 - **Identified**: Component implementation overlap with SPEC-COMPONENT-001
