@@ -1140,13 +1140,16 @@ For detailed implementation status, see:
   - Files: 22 new files (+9,597 lines), comprehensive documentation
   - Quality: TypeScript strict mode ✓, ESLint ✓, All tests passing ✓
 
-- 🔜 **SPEC-LAYOUT-002**: Screen Generation Pipeline (Planned)
-  - JSON Schema 기반 화면 정의 (LLM 최적화)
-  - Screen Resolver Pipeline
-  - CSS-in-JS 출력 (styled-components/emotion)
-  - Tailwind CSS 출력
-  - MCP 서버 통합 (Claude 연동)
-  - **의존성**: SPEC-LAYOUT-001 완료 필요
+- ✅ **SPEC-LAYOUT-002**: Screen Generation Pipeline (Completed 2026-01-28)
+  - JSON Schema-based screen definitions with TypeScript + Zod validation
+  - Token resolver pipeline: Shell/Page/Section layout integration
+  - Multi-format code generators: CSS-in-JS (styled-components, Emotion) + Tailwind + React
+  - 20 supported component types from SPEC-COMPONENT-001-B
+  - 3 MCP tools: generate_screen, validate_screen, list_tokens
+  - Performance: Resolver 90.16%, Validators 92.88%, Generators 91.17% coverage
+  - Files: 4 phases + API docs + integration guide + MCP tools guide
+  - Quality: 85%+ overall coverage ✓, TRUST 5 compliant ✓, All tests passing ✓
+  - Documentation: [Screen Generation README](./packages/core/src/screen-generation/README.md)
 
 **Phase G (Future) - Figma Integration:**
 
