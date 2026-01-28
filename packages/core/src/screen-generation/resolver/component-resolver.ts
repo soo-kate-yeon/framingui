@@ -6,7 +6,11 @@
 
 import { getComponentSchema, type ComponentSchema } from '../../component-schemas.js';
 import type { ComponentDefinition } from '../types.js';
-import { resolveBindings, type TokenBindingContext, type ResolvedTokenBindings } from './token-resolver.js';
+import {
+  resolveBindings,
+  type TokenBindingContext,
+  type ResolvedTokenBindings,
+} from './token-resolver.js';
 
 // ============================================================================
 // Types

@@ -361,9 +361,7 @@ describe('Screen Resolver Integration', () => {
       const resolved = resolveScreen(screen);
 
       expect(resolved.sections[0].components[0].children).toBeDefined();
-      expect(
-        (resolved.sections[0].components[0].children![0] as any).children
-      ).toBeDefined();
+      expect((resolved.sections[0].components[0].children![0] as any).children).toBeDefined();
     });
 
     it('should handle multiple sections with different patterns', () => {

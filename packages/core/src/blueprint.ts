@@ -106,7 +106,11 @@ function validateLayoutToken(layoutToken: string): void {
   const pagePattern = /^page\.[a-z0-9-]+$/;
   const sectionPattern = /^section\.[a-z0-9-]+$/;
 
-  if (!shellPattern.test(layoutToken) && !pagePattern.test(layoutToken) && !sectionPattern.test(layoutToken)) {
+  if (
+    !shellPattern.test(layoutToken) &&
+    !pagePattern.test(layoutToken) &&
+    !sectionPattern.test(layoutToken)
+  ) {
     throw new Error(
       `Invalid layoutToken format: "${layoutToken}". Must match "shell.*.*", "page.*", or "section.*"`
     );
@@ -130,7 +134,9 @@ export function createBlueprint(input: CreateBlueprintInput): Blueprint {
     try {
       layoutConfig = resolveLayout(input.layoutToken);
     } catch (error) {
-      throw new Error(`Failed to resolve layoutToken "${input.layoutToken}": ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to resolve layoutToken "${input.layoutToken}": ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 

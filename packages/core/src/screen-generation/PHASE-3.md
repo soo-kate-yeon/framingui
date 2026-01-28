@@ -12,11 +12,11 @@ Phase 3는 ResolvedScreen을 프로덕션 React 컴포넌트로 변환하는 코
 
 ## 지원 출력 형식
 
-| 형식 | CSS 프레임워크 | 사용 사례 |
-|------|---------------|----------|
-| **CSS-in-JS** | styled-components, Emotion | 컴포넌트 스코프 스타일, 동적 테마 |
-| **Tailwind** | Tailwind CSS 3.4+ | 유틸리티 우선 개발, 빠른 프로토타이핑 |
-| **React** | CSS Modules/외부 CSS | 분리된 스타일, 기존 프로젝트 통합 |
+| 형식          | CSS 프레임워크             | 사용 사례                             |
+| ------------- | -------------------------- | ------------------------------------- |
+| **CSS-in-JS** | styled-components, Emotion | 컴포넌트 스코프 스타일, 동적 테마     |
+| **Tailwind**  | Tailwind CSS 3.4+          | 유틸리티 우선 개발, 빠른 프로토타이핑 |
+| **React**     | CSS Modules/외부 CSS       | 분리된 스타일, 기존 프로젝트 통합     |
 
 ## 1. CSS-in-JS Generator
 
@@ -27,24 +27,17 @@ styled-components 및 Emotion을 사용한 컴포넌트 스타일 생성
 styled-components 또는 Emotion 코드를 생성합니다.
 
 ```typescript
-import {
-  generateStyledComponents,
-  type GeneratorOptions
-} from '@tekton/core/screen-generation';
+import { generateStyledComponents, type GeneratorOptions } from '@tekton/core/screen-generation';
 
 const resolved = await resolveScreen(screenDef);
 
 const options: GeneratorOptions = {
   format: 'typescript', // 또는 'javascript'
-  prettier: false // Prettier 포맷팅 비활성화
+  prettier: false, // Prettier 포맷팅 비활성화
 };
 
 // styled-components 출력
-const styledResult = generateStyledComponents(
-  resolved,
-  'styled-components',
-  options
-);
+const styledResult = generateStyledComponents(resolved, 'styled-components', options);
 
 console.log(styledResult.code);
 ```
@@ -92,8 +85,8 @@ const component = {
   resolvedStyles: {
     background: '#3b82f6',
     foreground: '#ffffff',
-    padding: '16px'
-  }
+    padding: '16px',
+  },
 };
 
 const styles = generateComponentStyles(component, 'styled-components');
@@ -114,7 +107,7 @@ import { convertCSSVarsToTheme } from '@tekton/core/screen-generation';
 const cssVariables = {
   '--color-primary-500': '#3b82f6',
   '--spacing-4': '16px',
-  '--radius-md': '8px'
+  '--radius-md': '8px',
 };
 
 const theme = convertCSSVarsToTheme(cssVariables);
@@ -129,11 +122,7 @@ const theme = convertCSSVarsToTheme(cssVariables);
 
 ```typescript
 // Emotion 출력
-const emotionResult = generateStyledComponents(
-  resolved,
-  'emotion',
-  options
-);
+const emotionResult = generateStyledComponents(resolved, 'emotion', options);
 ```
 
 **생성되는 코드 예제 (Emotion):**
@@ -173,16 +162,13 @@ Tailwind CSS 클래스 및 설정 생성
 Tailwind 유틸리티 클래스를 사용하는 React 컴포넌트를 생성합니다.
 
 ```typescript
-import {
-  generateTailwindClasses,
-  type GeneratorOptions
-} from '@tekton/core/screen-generation';
+import { generateTailwindClasses, type GeneratorOptions } from '@tekton/core/screen-generation';
 
 const resolved = await resolveScreen(screenDef);
 
 const options: GeneratorOptions = {
   format: 'typescript',
-  prettier: false
+  prettier: false,
 };
 
 const result = generateTailwindClasses(resolved, options);
@@ -248,8 +234,8 @@ const component = {
     background: '#ffffff',
     padding: '24px',
     borderRadius: '8px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-  }
+    boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+  },
 };
 
 const classes = generateComponentClasses(component);
@@ -277,25 +263,25 @@ module.exports = {
       colors: {
         primary: {
           500: '#3b82f6',
-          600: '#2563eb'
+          600: '#2563eb',
         },
         neutral: {
           50: '#f9fafb',
-          900: '#111827'
-        }
+          900: '#111827',
+        },
       },
       spacing: {
         4: '16px',
         6: '24px',
-        8: '32px'
+        8: '32px',
       },
       borderRadius: {
         md: '8px',
-        lg: '12px'
-      }
-    }
+        lg: '12px',
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };
 ```
 
@@ -308,16 +294,13 @@ module.exports = {
 TypeScript React 함수형 컴포넌트를 생성합니다.
 
 ```typescript
-import {
-  generateReactComponent,
-  type GeneratorOptions
-} from '@tekton/core/screen-generation';
+import { generateReactComponent, type GeneratorOptions } from '@tekton/core/screen-generation';
 
 const resolved = await resolveScreen(screenDef);
 
 const options: GeneratorOptions = {
   format: 'typescript',
-  prettier: false
+  prettier: false,
 };
 
 const result = generateReactComponent(resolved, options);
@@ -368,9 +351,9 @@ const component = {
   schema: {
     props: [
       { name: 'variant', type: 'string', required: false },
-      { name: 'children', type: 'React.ReactNode', required: true }
-    ]
-  }
+      { name: 'children', type: 'React.ReactNode', required: true },
+    ],
+  },
 };
 
 const interfaceCode = generateComponentInterface(component);
@@ -395,11 +378,11 @@ import { generateComponentJSX } from '@tekton/core/screen-generation';
 const component = {
   type: 'Button',
   props: { variant: 'primary' },
-  children: ['Click me']
+  children: ['Click me'],
 };
 
 const context = {
-  format: 'typescript' as const
+  format: 'typescript' as const,
 };
 
 const jsx = generateComponentJSX(component, context);
@@ -416,7 +399,7 @@ import { generateComponentTree } from '@tekton/core/screen-generation';
 const tree = resolved.componentTree;
 const context = {
   format: 'typescript' as const,
-  indent: 2
+  indent: 2,
 };
 
 const treeJSX = generateComponentTree(tree, context);
@@ -430,11 +413,7 @@ const treeJSX = generateComponentTree(tree, context);
 ### 케이스 변환
 
 ```typescript
-import {
-  camelCase,
-  pascalCase,
-  kebabCase
-} from '@tekton/core/screen-generation';
+import { camelCase, pascalCase, kebabCase } from '@tekton/core/screen-generation';
 
 camelCase('dashboard-screen'); // 'dashboardScreen'
 pascalCase('dashboard-screen'); // 'DashboardScreen'
@@ -444,16 +423,12 @@ kebabCase('DashboardScreen'); // 'dashboard-screen'
 ### 코드 포맷팅
 
 ```typescript
-import {
-  formatCode,
-  indent,
-  escapeJSX
-} from '@tekton/core/screen-generation';
+import { formatCode, indent, escapeJSX } from '@tekton/core/screen-generation';
 
 // 코드 포맷팅 (기본 또는 Prettier)
 const formatted = formatCode(code, {
   format: 'typescript',
-  prettier: true
+  prettier: true,
 });
 
 // 들여쓰기 추가
@@ -470,7 +445,7 @@ import { generateImports } from '@tekton/core/screen-generation';
 
 const imports = {
   react: ['React', 'useState'],
-  '@tekton/components': ['Button', 'Card']
+  '@tekton/components': ['Button', 'Card'],
 };
 
 const importCode = generateImports(imports);
@@ -481,10 +456,7 @@ const importCode = generateImports(imports);
 ### Props를 JSX로 변환
 
 ```typescript
-import {
-  propValueToJSX,
-  needsJSXExpression
-} from '@tekton/core/screen-generation';
+import { propValueToJSX, needsJSXExpression } from '@tekton/core/screen-generation';
 
 // 문자열 props
 propValueToJSX('primary'); // '"primary"'
@@ -507,10 +479,7 @@ needsJSXExpression({ variant: 'primary' }); // true (객체)
 ### CSS 변수 유틸리티
 
 ```typescript
-import {
-  cssVarToToken,
-  extractPropertyFromCSSVar
-} from '@tekton/core/screen-generation';
+import { cssVarToToken, extractPropertyFromCSSVar } from '@tekton/core/screen-generation';
 
 // CSS 변수를 토큰 참조로 변환
 cssVarToToken('var(--color-primary-500)'); // 'color.primary.500'
@@ -523,10 +492,7 @@ extractPropertyFromCSSVar('--spacing-4'); // 'spacing'
 ### 식별자 검증 및 정제
 
 ```typescript
-import {
-  isValidIdentifier,
-  sanitizeIdentifier
-} from '@tekton/core/screen-generation';
+import { isValidIdentifier, sanitizeIdentifier } from '@tekton/core/screen-generation';
 
 // 유효한 JavaScript 식별자 확인
 isValidIdentifier('myComponent'); // true
@@ -614,7 +580,7 @@ import {
   resolveScreen,
   generateStyledComponents,
   generateTailwindClasses,
-  generateReactComponent
+  generateReactComponent,
 } from '@tekton/core/screen-generation';
 
 const resolved = await resolveScreen(screenDef);
@@ -626,9 +592,7 @@ const tailwind = generateTailwindClasses(resolved, options);
 const react = generateReactComponent(resolved, options);
 
 // 프로젝트 선호도에 따라 선택
-const output = process.env.CSS_FRAMEWORK === 'tailwind'
-  ? tailwind
-  : styledComponents;
+const output = process.env.CSS_FRAMEWORK === 'tailwind' ? tailwind : styledComponents;
 ```
 
 ### 커스텀 컴포넌트 래핑
@@ -667,7 +631,7 @@ const result = generateReactComponent(resolved, {
   ...options,
   customStyles: isDarkTheme
     ? { background: '#1a1a1a', color: '#ffffff' }
-    : { background: '#ffffff', color: '#000000' }
+    : { background: '#ffffff', color: '#000000' },
 });
 ```
 
@@ -722,13 +686,14 @@ describe('DashboardScreen', () => {
 
 생성기 성능 메트릭:
 
-| 생성기 | 평균 시간 | 최대 컴포넌트 |
-|--------|----------|--------------|
-| CSS-in-JS | ~15ms | 100+ |
-| Tailwind | ~10ms | 100+ |
-| React | ~8ms | 100+ |
+| 생성기    | 평균 시간 | 최대 컴포넌트 |
+| --------- | --------- | ------------- |
+| CSS-in-JS | ~15ms     | 100+          |
+| Tailwind  | ~10ms     | 100+          |
+| React     | ~8ms      | 100+          |
 
 **최적화 팁:**
+
 - 복잡한 화면의 경우 섹션별로 생성
 - Prettier를 비활성화하여 더 빠른 생성
 - 생성된 코드 캐싱

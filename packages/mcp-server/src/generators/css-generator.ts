@@ -64,10 +64,18 @@ export function generateCSS(theme: ThemeV2): CSSGenerationResult {
         lines.push(`  --color-accent-${shade}: ${oklchToCSS(oklch)};`);
       }
     }
-    if (color.success) {lines.push(`  --color-success: ${oklchToCSS(color.success)};`);}
-    if (color.warning) {lines.push(`  --color-warning: ${oklchToCSS(color.warning)};`);}
-    if (color.error) {lines.push(`  --color-error: ${oklchToCSS(color.error)};`);}
-    if (color.info) {lines.push(`  --color-info: ${oklchToCSS(color.info)};`);}
+    if (color.success) {
+      lines.push(`  --color-success: ${oklchToCSS(color.success)};`);
+    }
+    if (color.warning) {
+      lines.push(`  --color-warning: ${oklchToCSS(color.warning)};`);
+    }
+    if (color.error) {
+      lines.push(`  --color-error: ${oklchToCSS(color.error)};`);
+    }
+    if (color.info) {
+      lines.push(`  --color-info: ${oklchToCSS(color.info)};`);
+    }
 
     // Spacing
     lines.push('');
@@ -187,7 +195,9 @@ export function generateCSS(theme: ThemeV2): CSSGenerationResult {
 
     // Background
     if (semantic.background) {
-      if (semantic.background.canvas) {lines.push(`  --bg-canvas: ${semantic.background.canvas};`);}
+      if (semantic.background.canvas) {
+        lines.push(`  --bg-canvas: ${semantic.background.canvas};`);
+      }
       if (semantic.background.surface) {
         for (const [name, value] of Object.entries(semantic.background.surface)) {
           lines.push(`  --bg-surface-${name}: ${value};`);
@@ -212,10 +222,12 @@ export function generateCSS(theme: ThemeV2): CSSGenerationResult {
           lines.push(`  --fg-secondary-${name}: ${value};`);
         }
       }
-      if (semantic.foreground.disabled)
-        {lines.push(`  --fg-disabled: ${semantic.foreground.disabled};`);}
-      if (semantic.foreground.placeholder)
-        {lines.push(`  --fg-placeholder: ${semantic.foreground.placeholder};`);}
+      if (semantic.foreground.disabled) {
+        lines.push(`  --fg-disabled: ${semantic.foreground.disabled};`);
+      }
+      if (semantic.foreground.placeholder) {
+        lines.push(`  --fg-placeholder: ${semantic.foreground.placeholder};`);
+      }
     }
 
     // Border
@@ -225,9 +237,15 @@ export function generateCSS(theme: ThemeV2): CSSGenerationResult {
           lines.push(`  --border-${name}: ${value};`);
         }
       }
-      if (semantic.border.focus) {lines.push(`  --border-focus: ${semantic.border.focus};`);}
-      if (semantic.border.error) {lines.push(`  --border-error: ${semantic.border.error};`);}
-      if (semantic.border.success) {lines.push(`  --border-success: ${semantic.border.success};`);}
+      if (semantic.border.focus) {
+        lines.push(`  --border-focus: ${semantic.border.focus};`);
+      }
+      if (semantic.border.error) {
+        lines.push(`  --border-error: ${semantic.border.error};`);
+      }
+      if (semantic.border.success) {
+        lines.push(`  --border-success: ${semantic.border.success};`);
+      }
     }
 
     lines.push('}');

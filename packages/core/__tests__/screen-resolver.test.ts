@@ -5,7 +5,11 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { resolveScreen, clearScreenCache, getScreenStats } from '../src/screen-generation/resolver/index.js';
+import {
+  resolveScreen,
+  clearScreenCache,
+  getScreenStats,
+} from '../src/screen-generation/resolver/index.js';
 import type { ScreenDefinition, ComponentType } from '../src/screen-generation/types.js';
 
 // ============================================================================

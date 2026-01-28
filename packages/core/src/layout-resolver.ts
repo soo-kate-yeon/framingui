@@ -94,7 +94,9 @@ function parseLayoutType(layoutId: string): LayoutType {
     return 'section';
   }
 
-  throw new Error(`Invalid layout ID format: ${layoutId}. Must start with 'shell.', 'page.', or 'section.'`);
+  throw new Error(
+    `Invalid layout ID format: ${layoutId}. Must start with 'shell.', 'page.', or 'section.'`
+  );
 }
 
 /**
@@ -190,11 +192,11 @@ export function mergeResponsiveConfig<T extends Record<string, unknown>>(
 
   return {
     default: { ...base.default, ...overrides.default } as T,
-    sm: overrides.sm ? { ...base.sm, ...overrides.sm } as Partial<T> : base.sm,
-    md: overrides.md ? { ...base.md, ...overrides.md } as Partial<T> : base.md,
-    lg: overrides.lg ? { ...base.lg, ...overrides.lg } as Partial<T> : base.lg,
-    xl: overrides.xl ? { ...base.xl, ...overrides.xl } as Partial<T> : base.xl,
-    '2xl': overrides['2xl'] ? { ...base['2xl'], ...overrides['2xl'] } as Partial<T> : base['2xl'],
+    sm: overrides.sm ? ({ ...base.sm, ...overrides.sm } as Partial<T>) : base.sm,
+    md: overrides.md ? ({ ...base.md, ...overrides.md } as Partial<T>) : base.md,
+    lg: overrides.lg ? ({ ...base.lg, ...overrides.lg } as Partial<T>) : base.lg,
+    xl: overrides.xl ? ({ ...base.xl, ...overrides.xl } as Partial<T>) : base.xl,
+    '2xl': overrides['2xl'] ? ({ ...base['2xl'], ...overrides['2xl'] } as Partial<T>) : base['2xl'],
   };
 }
 

@@ -323,7 +323,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 
 **Token Types**:
 
-- `shell`: Shell layout tokens (shell.web.*, shell.mobile.*)
+- `shell`: Shell layout tokens (shell.web._, shell.mobile._)
 - `page`: Page layout tokens (page.dashboard, page.detail, etc.)
 - `section`: Section pattern tokens (section.grid-4, section.hero, etc.)
 - `all`: All token types

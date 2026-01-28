@@ -79,7 +79,10 @@ export function clearBindingCache(): void {
  * ); // → 'atomic.spacing.large'
  * ```
  */
-export function substituteTemplateVariables(binding: string, props: Record<string, unknown>): string {
+export function substituteTemplateVariables(
+  binding: string,
+  props: Record<string, unknown>
+): string {
   // Match template variables: {variableName}
   const templateVarRegex = /\{([^}]+)\}/g;
   const matches = [...binding.matchAll(templateVarRegex)];
@@ -277,7 +280,9 @@ export function resolveBindings(
 export function isValidTokenBinding(binding: string): boolean {
   // Check if binding starts with valid layer
   const startsWithLayer =
-    binding.startsWith('atomic.') || binding.startsWith('semantic.') || binding.startsWith('component.');
+    binding.startsWith('atomic.') ||
+    binding.startsWith('semantic.') ||
+    binding.startsWith('component.');
 
   if (!startsWithLayer) {
     return false;

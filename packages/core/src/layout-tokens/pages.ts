@@ -337,7 +337,16 @@ export const PAGE_WIZARD: PageLayoutToken = {
       name: 'step',
       pattern: 'section.stack-start',
       required: true,
-      allowedComponents: ['Form', 'Input', 'Select', 'Textarea', 'Checkbox', 'Radio', 'Heading', 'Text'],
+      allowedComponents: [
+        'Form',
+        'Input',
+        'Select',
+        'Textarea',
+        'Checkbox',
+        'Radio',
+        'Heading',
+        'Text',
+      ],
     },
     {
       name: 'navigation',

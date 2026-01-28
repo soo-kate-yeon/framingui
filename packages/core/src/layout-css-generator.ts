@@ -102,7 +102,10 @@ export function formatCSS(css: string, indent = '  '): string {
   let inMediaQuery = false;
 
   // Split by lines and process each
-  const lines = css.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+  const lines = css
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
 
   for (const line of lines) {
     // Decrease indent for closing braces

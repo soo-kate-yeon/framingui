@@ -366,8 +366,6 @@ export function getAllShellTokens(): ShellToken[] {
  * console.log(`Web shells: ${webShells.length}`);
  * ```
  */
-export function getShellsByPlatform(
-  platform: 'web' | 'mobile' | 'desktop'
-): ShellToken[] {
+export function getShellsByPlatform(platform: 'web' | 'mobile' | 'desktop'): ShellToken[] {
   return getAllShellTokens().filter(shell => shell.platform === platform);
 }

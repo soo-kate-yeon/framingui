@@ -241,7 +241,7 @@ describe('All Shell Tokens Validation', () => {
     'shell.web.minimal',
   ];
 
-  it.each(shellIds)('shell %s should be valid', (shellId) => {
+  it.each(shellIds)('shell %s should be valid', shellId => {
     const shell = getShellToken(shellId);
     expect(shell).toBeDefined();
     expect(shell!.id).toBe(shellId);

@@ -326,7 +326,7 @@ describe('Responsive Token Utility Functions', () => {
     });
 
     it('should handle empty array', () => {
-      const empty: typeof BREAKPOINT_SM[] = [];
+      const empty: (typeof BREAKPOINT_SM)[] = [];
       const result = sortBreakpointsBySize(empty);
       expect(result).toHaveLength(0);
     });

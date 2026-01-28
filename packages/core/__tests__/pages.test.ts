@@ -115,7 +115,7 @@ describe('Page Layout Token Definitions', () => {
       'page.onboarding',
     ];
 
-    test.each(pageIds)('page %s is valid', (pageId) => {
+    test.each(pageIds)('page %s is valid', pageId => {
       const page = getPageLayoutToken(pageId);
       expect(page).toBeDefined();
       expect(page!.id).toBe(pageId);
@@ -125,7 +125,7 @@ describe('Page Layout Token Definitions', () => {
       expect(page!.tokenBindings).toBeDefined();
     });
 
-    test.each(pageIds)('page %s has valid sections', (pageId) => {
+    test.each(pageIds)('page %s has valid sections', pageId => {
       const page = getPageLayoutToken(pageId);
       expect(page).toBeDefined();
 
@@ -137,13 +137,13 @@ describe('Page Layout Token Definitions', () => {
       });
     });
 
-    test.each(pageIds)('page %s has valid responsive config', (pageId) => {
+    test.each(pageIds)('page %s has valid responsive config', pageId => {
       const page = getPageLayoutToken(pageId);
       expect(page).toBeDefined();
       expect(page!.responsive.default).toBeDefined();
     });
 
-    test.each(pageIds)('page %s has valid token bindings', (pageId) => {
+    test.each(pageIds)('page %s has valid token bindings', pageId => {
       const page = getPageLayoutToken(pageId);
       expect(page).toBeDefined();
       expect(Object.keys(page!.tokenBindings).length).toBeGreaterThan(0);

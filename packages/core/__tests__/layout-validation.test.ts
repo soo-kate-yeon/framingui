@@ -188,9 +188,7 @@ describe('ShellToken Validation', () => {
           },
         ],
       };
-      expect(() => validateShellToken(invalidShell)).toThrow(
-        'Token reference format invalid'
-      );
+      expect(() => validateShellToken(invalidShell)).toThrow('Token reference format invalid');
     });
 
     it('should reject shell with missing id', () => {
@@ -232,9 +230,7 @@ describe('ShellToken Validation', () => {
         ...validShellToken,
         tokenBindings: {},
       };
-      expect(() => validateShellToken(invalidShell)).toThrow(
-        'At least 1 token binding required'
-      );
+      expect(() => validateShellToken(invalidShell)).toThrow('At least 1 token binding required');
     });
   });
 });
@@ -252,16 +248,9 @@ describe('PageLayoutToken Validation', () => {
     });
 
     it('should validate all page purposes', () => {
-      const purposes: Array<'job' | 'resource' | 'dashboard' | 'settings' | 'detail' | 'empty' | 'wizard' | 'onboarding'> = [
-        'job',
-        'resource',
-        'dashboard',
-        'settings',
-        'detail',
-        'empty',
-        'wizard',
-        'onboarding',
-      ];
+      const purposes: Array<
+        'job' | 'resource' | 'dashboard' | 'settings' | 'detail' | 'empty' | 'wizard' | 'onboarding'
+      > = ['job', 'resource', 'dashboard', 'settings', 'detail', 'empty', 'wizard', 'onboarding'];
 
       purposes.forEach(purpose => {
         const page: PageLayoutToken = {
@@ -310,9 +299,7 @@ describe('PageLayoutToken Validation', () => {
         ...validPageLayoutToken,
         sections: [],
       };
-      expect(() => validatePageLayoutToken(invalidPage)).toThrow(
-        'At least one section required'
-      );
+      expect(() => validatePageLayoutToken(invalidPage)).toThrow('At least one section required');
     });
 
     it('should reject page with missing section pattern', () => {

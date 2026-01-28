@@ -13,7 +13,9 @@ import { extractErrorMessage } from '../utils/error-handler.js';
  * @param input - Screen definition and generation options
  * @returns Generated code with CSS variables and validation errors
  */
-export async function generateScreenTool(input: GenerateScreenInput): Promise<GenerateScreenOutput> {
+export async function generateScreenTool(
+  input: GenerateScreenInput
+): Promise<GenerateScreenOutput> {
   try {
     const { screenDefinition, outputFormat, options } = input;
 

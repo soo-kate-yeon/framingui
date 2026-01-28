@@ -81,7 +81,9 @@ describe('MCP Schemas', () => {
 
   describe('PreviewThemeInputSchema', () => {
     it('should accept valid theme ID', () => {
-      expect(PreviewThemeInputSchema.safeParse({ themeId: 'atlantic-magazine-v1' }).success).toBe(true);
+      expect(PreviewThemeInputSchema.safeParse({ themeId: 'atlantic-magazine-v1' }).success).toBe(
+        true
+      );
     });
 
     it('should reject invalid theme ID format', () => {

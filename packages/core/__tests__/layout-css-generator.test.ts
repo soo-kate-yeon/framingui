@@ -653,7 +653,11 @@ describe('CSS Output Quality', () => {
     const css = generateAllLayoutCSS();
 
     // CSS should be minifiable (no syntax errors)
-    const minified = css.replace(/\s+/g, ' ').replace(/\s*{\s*/g, '{').replace(/\s*}\s*/g, '}').replace(/\s*;\s*/g, ';');
+    const minified = css
+      .replace(/\s+/g, ' ')
+      .replace(/\s*{\s*/g, '{')
+      .replace(/\s*}\s*/g, '}')
+      .replace(/\s*;\s*/g, ';');
 
     expect(validateCSS(minified)).toBe(true);
   });

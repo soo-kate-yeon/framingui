@@ -7,6 +7,7 @@ JSON 화면 정의를 프로덕션 React 컴포넌트로 변환하는 포괄적�
 Screen Generation Pipeline은 선언적 JSON 화면 정의를 여러 CSS 프레임워크(styled-components, Emotion, Tailwind)를 지원하는 프로덕션 React 코드로 변환합니다. SPEC-LAYOUT-001의 레이아웃 토큰 시스템과 통합되어 일관되고 LLM 친화적인 UI 생성을 가능하게 합니다.
 
 **주요 기능:**
+
 - 🎯 **JSON Schema 기반 정의** - TypeScript 타입 안전성과 Zod 런타임 검증
 - 🔄 **토큰 리졸버 파이프라인** - 자동 레이아웃 및 컴포넌트 토큰 해석
 - 🎨 **다중 CSS 출력 형식** - CSS-in-JS (styled-components, Emotion) 및 Tailwind 지원
@@ -22,7 +23,7 @@ Screen Generation Pipeline은 선언적 JSON 화면 정의를 여러 CSS 프레�
 import {
   validateScreenDefinition,
   resolveScreen,
-  generateReactComponent
+  generateReactComponent,
 } from '@tekton/core/screen-generation';
 
 // 1. 화면 정의 검증
@@ -43,13 +44,13 @@ const screenDef = {
             {
               type: 'Heading',
               props: { level: 3 },
-              children: ['Total Users']
-            }
-          ]
-        }
-      ]
-    }
-  ]
+              children: ['Total Users'],
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };
 
 const validation = validateScreenDefinition(screenDef);
@@ -64,7 +65,7 @@ const resolved = await resolveScreen(screenDef);
 // 3. React 컴포넌트 생성
 const result = generateReactComponent(resolved, {
   format: 'typescript',
-  prettier: false
+  prettier: false,
 });
 
 console.log(result.code);
@@ -78,12 +79,12 @@ import { generateStyledComponents } from '@tekton/core/screen-generation';
 
 // styled-components 출력
 const styledResult = generateStyledComponents(resolved, 'styled-components', {
-  format: 'typescript'
+  format: 'typescript',
 });
 
 // Emotion 출력
 const emotionResult = generateStyledComponents(resolved, 'emotion', {
-  format: 'typescript'
+  format: 'typescript',
 });
 ```
 
@@ -93,7 +94,7 @@ const emotionResult = generateStyledComponents(resolved, 'emotion', {
 import { generateTailwindClasses } from '@tekton/core/screen-generation';
 
 const tailwindResult = generateTailwindClasses(resolved, {
-  format: 'typescript'
+  format: 'typescript',
 });
 
 // Tailwind 설정도 함께 생성
@@ -214,6 +215,7 @@ Screen Generation Pipeline은 SPEC-LAYOUT-001의 레이아웃 토큰 시스템�
 ```
 
 전체 예제는 `examples/` 디렉토리를 참조하세요:
+
 - `dashboard-screen.json` - 지표 그리드가 있는 대시보드
 - `settings-screen.json` - 폼 레이아웃이 있는 설정 페이지
 - `detail-screen.json` - 상세 정보가 있는 상세 페이지
@@ -223,10 +225,12 @@ Screen Generation Pipeline은 SPEC-LAYOUT-001의 레이아웃 토큰 시스템�
 20가지 컴포넌트 타입 지원 (SPEC-COMPONENT-001-B):
 
 **프리미티브 컴포넌트 (10):**
+
 - Button, Input, Text, Heading, Checkbox
 - Radio, Switch, Slider, Badge, Avatar
 
 **조합 컴포넌트 (10):**
+
 - Card, Modal, Tabs, Table, Link
 - List, Image, Form, Dropdown, Progress
 
@@ -234,12 +238,12 @@ Screen Generation Pipeline은 SPEC-LAYOUT-001의 레이아웃 토큰 시스템�
 
 ## 품질 메트릭
 
-| 단계 | 커버리지 | 테스트 | 상태 |
-|------|---------|--------|------|
-| Phase 1: Schema & Validation | 92.88% | ✅ 통과 | ✅ 완료 |
-| Phase 2: Resolver Pipeline | 90.16% | ✅ 통과 | ✅ 완료 |
-| Phase 3: Output Generators | 91.17% | ✅ 통과 | ✅ 완료 |
-| Phase 4: MCP Integration | N/A | ✅ 통과 | ✅ 완료 |
+| 단계                         | 커버리지 | 테스트  | 상태    |
+| ---------------------------- | -------- | ------- | ------- |
+| Phase 1: Schema & Validation | 92.88%   | ✅ 통과 | ✅ 완료 |
+| Phase 2: Resolver Pipeline   | 90.16%   | ✅ 통과 | ✅ 완료 |
+| Phase 3: Output Generators   | 91.17%   | ✅ 통과 | ✅ 완료 |
+| Phase 4: MCP Integration     | N/A      | ✅ 통과 | ✅ 완료 |
 
 **전체 커버리지**: 85%+ (TRUST 5 요구사항 충족)
 

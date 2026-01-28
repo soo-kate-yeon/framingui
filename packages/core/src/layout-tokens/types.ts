@@ -143,14 +143,14 @@ export interface SectionPatternToken {
  * Defines the intended use case and behavior of the page
  */
 export type PagePurpose =
-  | 'job'          // Job execution or task-focused page
-  | 'resource'     // Resource management page
-  | 'dashboard'    // Overview and metrics page
-  | 'settings'     // Configuration page
-  | 'detail'       // Detailed view of a single item
-  | 'empty'        // Empty state or placeholder page
-  | 'wizard'       // Multi-step guided process
-  | 'onboarding';  // User onboarding flow
+  | 'job' // Job execution or task-focused page
+  | 'resource' // Resource management page
+  | 'dashboard' // Overview and metrics page
+  | 'settings' // Configuration page
+  | 'detail' // Detailed view of a single item
+  | 'empty' // Empty state or placeholder page
+  | 'wizard' // Multi-step guided process
+  | 'onboarding'; // User onboarding flow
 
 /**
  * Section Slot - Placeholder for section patterns in page layout

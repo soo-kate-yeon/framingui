@@ -73,6 +73,7 @@ interface SectionDefinition {
 ```
 
 **섹션 패턴 예제:**
+
 - `section.grid-4` - 4열 그리드 레이아웃
 - `section.hero` - 히어로 섹션
 - `section.split` - 좌우 분할 레이아웃
@@ -100,17 +101,35 @@ interface ComponentDefinition {
 **컴포넌트 타입** (20개 지원):
 
 **프리미티브 (10):**
+
 ```typescript
 type ComponentType =
-  | 'Button' | 'Input' | 'Text' | 'Heading' | 'Checkbox'
-  | 'Radio' | 'Switch' | 'Slider' | 'Badge' | 'Avatar'
+  | 'Button'
+  | 'Input'
+  | 'Text'
+  | 'Heading'
+  | 'Checkbox'
+  | 'Radio'
+  | 'Switch'
+  | 'Slider'
+  | 'Badge'
+  | 'Avatar';
 ```
 
 **조합 (10):**
+
 ```typescript
 type ComponentType =
-  | 'Card' | 'Modal' | 'Tabs' | 'Table' | 'Link'
-  | 'List' | 'Image' | 'Form' | 'Dropdown' | 'Progress'
+  | 'Card'
+  | 'Modal'
+  | 'Tabs'
+  | 'Table'
+  | 'Link'
+  | 'List'
+  | 'Image'
+  | 'Form'
+  | 'Dropdown'
+  | 'Progress';
 ```
 
 ### ResponsiveOverrides
@@ -177,27 +196,35 @@ JSON Schema Draft 2020-12 표준을 사용하여 화면 정의를 검증합니�
 화면 정의는 엄격한 토큰 ID 패턴을 따릅니다:
 
 **Shell 토큰 패턴:**
+
 ```
 shell.{platform}.{name}
 ```
+
 예: `shell.web.dashboard`, `shell.mobile.app`
 
 **Page 토큰 패턴:**
+
 ```
 page.{name}
 ```
+
 예: `page.dashboard`, `page.settings`
 
 **Section 토큰 패턴:**
+
 ```
 section.{name} 또는 section.{name}-{number}
 ```
+
 예: `section.grid-4`, `section.hero`, `section.split`
 
 **Screen ID 패턴:**
+
 ```
 kebab-case (소문자, 숫자, 하이픈)
 ```
+
 예: `dashboard-screen`, `user-profile`, `settings-page`
 
 ### Schema 파일
@@ -249,7 +276,7 @@ const context = {
   availablePages: ['page.dashboard', 'page.settings'],
   availableSections: ['section.grid-4', 'section.hero'],
   availableThemes: ['default', 'dark'],
-  strict: true // 경고를 오류로 처리
+  strict: true, // 경고를 오류로 처리
 };
 
 const result = validateScreenDefinition(screenDef, context);
@@ -285,23 +312,22 @@ try {
 개별 컴포넌트 및 섹션도 검증할 수 있습니다:
 
 ```typescript
-import {
-  validateComponent,
-  validateSection
-} from '@tekton/core/screen-generation';
+import { validateComponent, validateSection } from '@tekton/core/screen-generation';
 
 // 컴포넌트 검증
 const componentResult = validateComponent({
   type: 'Button',
   props: { variant: 'primary' },
-  children: ['Click me']
+  children: ['Click me'],
 });
 
 // 섹션 검증
 const sectionResult = validateSection({
   id: 'hero-section',
   pattern: 'section.hero',
-  components: [/* ... */]
+  components: [
+    /* ... */
+  ],
 });
 ```
 
@@ -440,7 +466,7 @@ Duplicate section IDs found: hero-section, metrics-section
 import {
   isValidShellToken,
   isValidPageToken,
-  isValidSectionToken
+  isValidSectionToken,
 } from '@tekton/core/screen-generation';
 
 isValidShellToken('shell.web.dashboard'); // true
@@ -451,10 +477,7 @@ isValidSectionToken('section.grid-4'); // true
 ### 타입 가드
 
 ```typescript
-import {
-  isComponentDefinition,
-  isScreenDefinition
-} from '@tekton/core/screen-generation';
+import { isComponentDefinition, isScreenDefinition } from '@tekton/core/screen-generation';
 
 if (isComponentDefinition(obj)) {
   // obj는 ComponentDefinition

@@ -6,8 +6,17 @@
 
 import type { ScreenDefinition, SectionDefinition, ScreenMeta } from '../types.js';
 import type { ResolvedLayout } from '../../layout-resolver.js';
-import { resolveShell, resolvePage, resolveSection, type LayoutContext } from './layout-resolver.js';
-import { resolveComponent, type ResolvedComponent, type ComponentContext } from './component-resolver.js';
+import {
+  resolveShell,
+  resolvePage,
+  resolveSection,
+  type LayoutContext,
+} from './layout-resolver.js';
+import {
+  resolveComponent,
+  type ResolvedComponent,
+  type ComponentContext,
+} from './component-resolver.js';
 import { tokenRefToCSSVar } from './token-resolver.js';
 
 // ============================================================================
@@ -244,7 +253,11 @@ function generateLayoutCSSVariables(layout: ResolvedLayout): Record<string, stri
  * @param theme - Theme ID for token resolution
  * @returns Resolved section with layout and components
  */
-function resolveScreenSection(section: SectionDefinition, screenId: string, theme: string): ResolvedSection {
+function resolveScreenSection(
+  section: SectionDefinition,
+  screenId: string,
+  theme: string
+): ResolvedSection {
   // Create layout context
   const layoutContext: LayoutContext = {
     screenId,

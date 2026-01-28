@@ -29,7 +29,9 @@ describe('resolveLayout - Shell Layouts', () => {
     expect(resolved.shell).toBeDefined();
     expect(resolved.shell?.id).toBe('shell.web.dashboard');
     expect(resolved.shell?.platform).toBe('web');
-    expect(resolved.shell?.description).toBe('Admin dashboard layout with collapsible sidebar and header');
+    expect(resolved.shell?.description).toBe(
+      'Admin dashboard layout with collapsible sidebar and header'
+    );
 
     // Should have regions
     expect(resolved.shell?.regions).toBeDefined();
@@ -65,7 +67,9 @@ describe('resolveLayout - Shell Layouts', () => {
   });
 
   it('should throw error for non-existent shell', () => {
-    expect(() => resolveLayout('shell.web.nonexistent')).toThrow('Shell token not found: shell.web.nonexistent');
+    expect(() => resolveLayout('shell.web.nonexistent')).toThrow(
+      'Shell token not found: shell.web.nonexistent'
+    );
   });
 });
 
@@ -85,7 +89,9 @@ describe('resolveLayout - Page Layouts', () => {
     expect(resolved.page).toBeDefined();
     expect(resolved.page?.id).toBe('page.dashboard');
     expect(resolved.page?.purpose).toBe('dashboard');
-    expect(resolved.page?.description).toBe('Dashboard page layout with metrics, charts, and data tables');
+    expect(resolved.page?.description).toBe(
+      'Dashboard page layout with metrics, charts, and data tables'
+    );
 
     // Should have section slots
     expect(resolved.page?.sections).toBeDefined();
@@ -141,7 +147,9 @@ describe('resolveLayout - Page Layouts', () => {
   });
 
   it('should throw error for non-existent page', () => {
-    expect(() => resolveLayout('page.nonexistent')).toThrow('Page layout token not found: page.nonexistent');
+    expect(() => resolveLayout('page.nonexistent')).toThrow(
+      'Page layout token not found: page.nonexistent'
+    );
   });
 
   it('should throw error if page references non-existent section', () => {
@@ -170,7 +178,9 @@ describe('resolveLayout - Section Layouts', () => {
     expect(resolved.sections.length).toBe(1);
     expect(resolved.sections[0].id).toBe('section.grid-3');
     expect(resolved.sections[0].type).toBe('grid');
-    expect(resolved.sections[0].description).toBe('3-column grid layout with responsive breakpoints');
+    expect(resolved.sections[0].description).toBe(
+      '3-column grid layout with responsive breakpoints'
+    );
 
     // Should have CSS config
     expect(resolved.sections[0].css).toBeDefined();
@@ -232,7 +242,9 @@ describe('resolveLayout - Section Layouts', () => {
   });
 
   it('should throw error for non-existent section', () => {
-    expect(() => resolveLayout('section.nonexistent')).toThrow('Section pattern token not found: section.nonexistent');
+    expect(() => resolveLayout('section.nonexistent')).toThrow(
+      'Section pattern token not found: section.nonexistent'
+    );
   });
 });
 
@@ -252,7 +264,9 @@ describe('resolveLayout - Invalid IDs', () => {
   });
 
   it('should throw error for empty string', () => {
-    expect(() => resolveLayout('')).toThrow("Invalid layout ID format: . Must start with 'shell.', 'page.', or 'section.'");
+    expect(() => resolveLayout('')).toThrow(
+      "Invalid layout ID format: . Must start with 'shell.', 'page.', or 'section.'"
+    );
   });
 
   it('should throw error for ID with no prefix', () => {
@@ -501,7 +515,9 @@ describe('CSS Variables Generation', () => {
     expect(Object.keys(resolved.cssVariables).length).toBeGreaterThan(0);
 
     // Should include gap variable
-    const hasGapVariable = Object.values(resolved.cssVariables).some(value => value.includes('spacing'));
+    const hasGapVariable = Object.values(resolved.cssVariables).some(value =>
+      value.includes('spacing')
+    );
     expect(hasGapVariable).toBe(true);
   });
 

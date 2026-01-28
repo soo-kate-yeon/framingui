@@ -50,7 +50,7 @@ import { resolveBinding } from '@tekton/core/screen-generation';
 
 const context = {
   themeId: 'default',
-  availableTokens: ['color.primary.500', 'spacing.4']
+  availableTokens: ['color.primary.500', 'spacing.4'],
 };
 
 // 토큰 참조 해석
@@ -72,7 +72,7 @@ import { resolveBindings } from '@tekton/core/screen-generation';
 const bindings = {
   background: '{{color.primary.500}}',
   padding: '{{spacing.4}}',
-  margin: '8px' // 일반 값
+  margin: '8px', // 일반 값
 };
 
 const resolved = resolveBindings(bindings, context);
@@ -93,9 +93,9 @@ import { substituteTemplateVariables } from '@tekton/core/screen-generation';
 const obj = {
   style: {
     backgroundColor: '{{color.primary.500}}',
-    padding: '{{spacing.4}}'
+    padding: '{{spacing.4}}',
   },
-  text: 'Hello' // 템플릿이 아닌 값은 그대로 유지
+  text: 'Hello', // 템플릿이 아닌 값은 그대로 유지
 };
 
 const result = substituteTemplateVariables(obj, context);
@@ -146,7 +146,7 @@ Shell 토큰을 해석합니다 (애플리케이션 레벨 레이아웃).
 import { resolveShell } from '@tekton/core/screen-generation';
 
 const context = {
-  themeId: 'default'
+  themeId: 'default',
 };
 
 const shellLayout = await resolveShell('shell.web.dashboard', context);
@@ -229,11 +229,11 @@ import { resolveComponent } from '@tekton/core/screen-generation';
 const componentDef = {
   type: 'Button',
   props: { variant: 'primary' },
-  children: ['Click me']
+  children: ['Click me'],
 };
 
 const context = {
-  themeId: 'default'
+  themeId: 'default',
 };
 
 const resolved = await resolveComponent(componentDef, context);
@@ -271,13 +271,13 @@ const children = [
   {
     type: 'Heading',
     props: { level: 2 },
-    children: ['Title']
+    children: ['Title'],
   },
   {
     type: 'Text',
     props: {},
-    children: ['Description']
-  }
+    children: ['Description'],
+  },
 ];
 
 const resolved = await resolveChildren(children, context);
@@ -323,9 +323,11 @@ const screenDef = {
     {
       id: 'metrics-section',
       pattern: 'section.grid-4',
-      components: [/* ... */]
-    }
-  ]
+      components: [
+        /* ... */
+      ],
+    },
+  ],
 };
 
 const resolved = await resolveScreen(screenDef);
@@ -416,7 +418,7 @@ interface ResolvedSection {
 import {
   clearBindingCache,
   clearComponentCache,
-  clearScreenCache
+  clearScreenCache,
 } from '@tekton/core/screen-generation';
 
 // 새 테마 로드 시 캐시 클리어
@@ -438,9 +440,7 @@ clearScreenCache();
 ```typescript
 // 내부적으로 resolveScreen()은 Promise.all을 사용
 const resolvedSections = await Promise.all(
-  screenDef.sections.map(section =>
-    resolveSection(section, context)
-  )
+  screenDef.sections.map(section => resolveSection(section, context))
 );
 ```
 
@@ -453,11 +453,7 @@ const resolvedSections = await Promise.all(
 const types = extractComponentTypes(screenDef);
 
 // 2단계: 스키마만 미리 로드 (병렬)
-await Promise.all(
-  Array.from(types).map(type =>
-    loadComponentSchema(type)
-  )
-);
+await Promise.all(Array.from(types).map(type => loadComponentSchema(type)));
 
 // 3단계: 화면 해석
 const resolved = await resolveScreen(screenDef);
@@ -510,7 +506,7 @@ try {
 import {
   validateScreenDefinition,
   resolveScreen,
-  getScreenStats
+  getScreenStats,
 } from '@tekton/core/screen-generation';
 
 // 1. 화면 정의 검증
@@ -534,7 +530,7 @@ console.log(`Max Depth: ${stats.maxDepth}`);
 
 ```typescript
 const context = {
-  themeId: 'dark'
+  themeId: 'dark',
 };
 
 const screenDef = {
@@ -543,7 +539,9 @@ const screenDef = {
   shell: 'shell.web.dashboard',
   page: 'page.dashboard',
   themeId: 'dark', // 화면 레벨 테마 오버라이드
-  sections: [/* ... */]
+  sections: [
+    /* ... */
+  ],
 };
 
 const resolved = await resolveScreen(screenDef);
@@ -564,12 +562,8 @@ const section = screenDef.sections[0];
 const resolvedSection = {
   id: section.id,
   layout: await resolveSection(section.pattern, context),
-  components: await Promise.all(
-    section.components.map(comp =>
-      resolveComponent(comp, context)
-    )
-  ),
-  cssVariables: {} // 레이아웃에서 추출
+  components: await Promise.all(section.components.map(comp => resolveComponent(comp, context))),
+  cssVariables: {}, // 레이아웃에서 추출
 };
 ```
 

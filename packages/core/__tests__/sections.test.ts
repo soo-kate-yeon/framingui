@@ -48,7 +48,7 @@ describe('Section Pattern Tokens - Individual Validation', () => {
     'section.container',
   ];
 
-  test.each(patternIds)('section %s is valid and well-formed', (patternId) => {
+  test.each(patternIds)('section %s is valid and well-formed', patternId => {
     const pattern = getSectionPatternToken(patternId);
 
     // Basic existence check
@@ -69,7 +69,7 @@ describe('Section Pattern Tokens - Individual Validation', () => {
     expect(() => validateSectionPatternToken(pattern!)).not.toThrow();
   });
 
-  test.each(patternIds)('section %s has responsive config', (patternId) => {
+  test.each(patternIds)('section %s has responsive config', patternId => {
     const pattern = getSectionPatternToken(patternId);
 
     expect(pattern!.responsive).toBeDefined();
@@ -79,7 +79,7 @@ describe('Section Pattern Tokens - Individual Validation', () => {
     expect(pattern!.responsive.default.display).toBeDefined();
   });
 
-  test.each(patternIds)('section %s has token bindings', (patternId) => {
+  test.each(patternIds)('section %s has token bindings', patternId => {
     const pattern = getSectionPatternToken(patternId);
 
     expect(pattern!.tokenBindings).toBeDefined();
@@ -120,7 +120,7 @@ describe('Grid Pattern Tokens', () => {
   test('grid sections follow mobile-first responsive pattern', () => {
     const gridSections = [SECTION_GRID_2, SECTION_GRID_3, SECTION_GRID_4, SECTION_GRID_AUTO];
 
-    gridSections.forEach((section) => {
+    gridSections.forEach(section => {
       // Default (mobile) should have 1 column
       expect(section.responsive.default.gridTemplateColumns).toContain('1');
       expect(section.responsive.default.display).toBe('grid');
@@ -135,7 +135,7 @@ describe('Grid Pattern Tokens', () => {
   test('grid sections have gap token references', () => {
     const gridSections = [SECTION_GRID_2, SECTION_GRID_3, SECTION_GRID_4, SECTION_GRID_AUTO];
 
-    gridSections.forEach((section) => {
+    gridSections.forEach(section => {
       expect(section.css.gap).toBeDefined();
       expect(section.css.gap).toContain('atomic.spacing');
     });
@@ -168,7 +168,7 @@ describe('Split Pattern Tokens', () => {
   test('split sections stack vertically on mobile', () => {
     const splitSections = [SECTION_SPLIT_30_70, SECTION_SPLIT_50_50, SECTION_SPLIT_70_30];
 
-    splitSections.forEach((section) => {
+    splitSections.forEach(section => {
       expect(section.responsive.default.flexDirection).toBe('column');
       expect(section.responsive.default.display).toBe('flex');
     });
@@ -177,7 +177,7 @@ describe('Split Pattern Tokens', () => {
   test('split sections have background token bindings', () => {
     const splitSections = [SECTION_SPLIT_30_70, SECTION_SPLIT_50_50, SECTION_SPLIT_70_30];
 
-    splitSections.forEach((section) => {
+    splitSections.forEach(section => {
       expect(section.tokenBindings.leftBackground).toBeDefined();
       expect(section.tokenBindings.rightBackground).toBeDefined();
     });
@@ -214,7 +214,7 @@ describe('Stack Pattern Tokens', () => {
   test('stack sections maintain column direction on all breakpoints', () => {
     const stackSections = [SECTION_STACK_START, SECTION_STACK_CENTER, SECTION_STACK_END];
 
-    stackSections.forEach((section) => {
+    stackSections.forEach(section => {
       expect(section.css.flexDirection).toBe('column');
       expect(section.responsive.default.flexDirection).toBe('column');
       if (section.responsive.md) {
@@ -226,7 +226,7 @@ describe('Stack Pattern Tokens', () => {
   test('stack sections have gap token references', () => {
     const stackSections = [SECTION_STACK_START, SECTION_STACK_CENTER, SECTION_STACK_END];
 
-    stackSections.forEach((section) => {
+    stackSections.forEach(section => {
       expect(section.css.gap).toBeDefined();
       expect(section.css.gap).toContain('atomic.spacing');
     });
@@ -253,7 +253,7 @@ describe('Sidebar Pattern Tokens', () => {
   test('sidebar sections stack vertically on mobile', () => {
     const sidebarSections = [SECTION_SIDEBAR_LEFT, SECTION_SIDEBAR_RIGHT];
 
-    sidebarSections.forEach((section) => {
+    sidebarSections.forEach(section => {
       expect(section.responsive.default.flexDirection).toBe('column');
       expect(section.responsive.default.display).toBe('flex');
     });
@@ -262,7 +262,7 @@ describe('Sidebar Pattern Tokens', () => {
   test('sidebar sections have sidebar width token bindings', () => {
     const sidebarSections = [SECTION_SIDEBAR_LEFT, SECTION_SIDEBAR_RIGHT];
 
-    sidebarSections.forEach((section) => {
+    sidebarSections.forEach(section => {
       expect(section.tokenBindings.sidebarWidth).toBeDefined();
       expect(section.tokenBindings.sidebarWidth).toContain('atomic.spacing');
     });
@@ -271,7 +271,7 @@ describe('Sidebar Pattern Tokens', () => {
   test('sidebar sections have background token bindings', () => {
     const sidebarSections = [SECTION_SIDEBAR_LEFT, SECTION_SIDEBAR_RIGHT];
 
-    sidebarSections.forEach((section) => {
+    sidebarSections.forEach(section => {
       expect(section.tokenBindings.sidebarBackground).toBeDefined();
       expect(section.tokenBindings.mainBackground).toBeDefined();
     });
@@ -335,23 +335,23 @@ describe('Utility Functions', () => {
     const sections = getAllSectionPatternTokens();
 
     expect(sections).toHaveLength(13);
-    expect(sections.every((s) => s.id.startsWith('section.'))).toBe(true);
+    expect(sections.every(s => s.id.startsWith('section.'))).toBe(true);
   });
 
   test('getSectionsByType filters grid sections', () => {
     const gridSections = getSectionsByType('grid');
 
     expect(gridSections.length).toBe(4);
-    expect(gridSections.every((s) => s.type === 'grid')).toBe(true);
-    expect(gridSections.every((s) => s.css.display === 'grid')).toBe(true);
+    expect(gridSections.every(s => s.type === 'grid')).toBe(true);
+    expect(gridSections.every(s => s.css.display === 'grid')).toBe(true);
   });
 
   test('getSectionsByType filters flex sections', () => {
     const flexSections = getSectionsByType('flex');
 
     expect(flexSections.length).toBe(9);
-    expect(flexSections.every((s) => s.type === 'flex')).toBe(true);
-    expect(flexSections.every((s) => s.css.display === 'flex')).toBe(true);
+    expect(flexSections.every(s => s.type === 'flex')).toBe(true);
+    expect(flexSections.every(s => s.css.display === 'flex')).toBe(true);
   });
 
   test('getSectionCSS returns correct CSS', () => {
@@ -377,8 +377,8 @@ describe('Section Type Distribution', () => {
   test('correct number of sections per type', () => {
     const allSections = getAllSectionPatternTokens();
 
-    const gridCount = allSections.filter((s) => s.type === 'grid').length;
-    const flexCount = allSections.filter((s) => s.type === 'flex').length;
+    const gridCount = allSections.filter(s => s.type === 'grid').length;
+    const flexCount = allSections.filter(s => s.type === 'flex').length;
 
     expect(gridCount).toBe(4); // grid-2, grid-3, grid-4, grid-auto
     expect(flexCount).toBe(9); // 3 splits + 3 stacks + 2 sidebars + 1 container
@@ -388,7 +388,7 @@ describe('Section Type Distribution', () => {
   test('all grid sections use display: grid', () => {
     const gridSections = getSectionsByType('grid');
 
-    gridSections.forEach((section) => {
+    gridSections.forEach(section => {
       expect(section.css.display).toBe('grid');
       expect(section.css.gridTemplateColumns).toBeDefined();
     });
@@ -397,7 +397,7 @@ describe('Section Type Distribution', () => {
   test('all flex sections use display: flex', () => {
     const flexSections = getSectionsByType('flex');
 
-    flexSections.forEach((section) => {
+    flexSections.forEach(section => {
       expect(section.css.display).toBe('flex');
       expect(section.css.flexDirection).toBeDefined();
     });
@@ -412,7 +412,7 @@ describe('Responsive Configuration', () => {
   test('all sections have default responsive config', () => {
     const allSections = getAllSectionPatternTokens();
 
-    allSections.forEach((section) => {
+    allSections.forEach(section => {
       expect(section.responsive.default).toBeDefined();
       expect(section.responsive.default.display).toBeDefined();
     });
@@ -431,7 +431,7 @@ describe('Responsive Configuration', () => {
   test('sections have appropriate gap values for mobile', () => {
     const allSections = getAllSectionPatternTokens();
 
-    allSections.forEach((section) => {
+    allSections.forEach(section => {
       if (section.responsive.default.gap) {
         expect(section.responsive.default.gap).toContain('atomic.spacing');
       }
@@ -447,7 +447,7 @@ describe('Token Bindings', () => {
   test('all sections have at least 1 token binding', () => {
     const allSections = getAllSectionPatternTokens();
 
-    allSections.forEach((section) => {
+    allSections.forEach(section => {
       expect(Object.keys(section.tokenBindings).length).toBeGreaterThanOrEqual(1);
     });
   });
@@ -456,8 +456,8 @@ describe('Token Bindings', () => {
     const allSections = getAllSectionPatternTokens();
     const tokenReferencePattern = /^[a-z]+\.[a-z-]+(\.[a-z0-9-]+)*$/;
 
-    allSections.forEach((section) => {
-      Object.values(section.tokenBindings).forEach((value) => {
+    allSections.forEach(section => {
+      Object.values(section.tokenBindings).forEach(value => {
         if (typeof value === 'string') {
           expect(value).toMatch(tokenReferencePattern);
         }
@@ -469,12 +469,12 @@ describe('Token Bindings', () => {
     const allSections = getAllSectionPatternTokens();
 
     // Most sections should have gap binding
-    const sectionsWithGap = allSections.filter((s) => s.tokenBindings.gap);
+    const sectionsWithGap = allSections.filter(s => s.tokenBindings.gap);
     expect(sectionsWithGap.length).toBeGreaterThan(8);
 
     // Background bindings should be common
     const sectionsWithBackground = allSections.filter(
-      (s) => s.tokenBindings.background || s.tokenBindings.itemBackground
+      s => s.tokenBindings.background || s.tokenBindings.itemBackground
     );
     expect(sectionsWithBackground.length).toBeGreaterThan(5);
   });
@@ -488,7 +488,7 @@ describe('Zod Validation Integration', () => {
   test('all 13 sections pass strict validation', () => {
     const allSections = getAllSectionPatternTokens();
 
-    allSections.forEach((section) => {
+    allSections.forEach(section => {
       expect(() => validateSectionPatternToken(section)).not.toThrow();
     });
   });
@@ -563,7 +563,7 @@ describe('Edge Cases', () => {
   test('section IDs follow naming convention', () => {
     const allSections = getAllSectionPatternTokens();
 
-    allSections.forEach((section) => {
+    allSections.forEach(section => {
       expect(section.id).toMatch(/^section\.[a-z0-9-]+$/);
     });
   });
@@ -571,7 +571,7 @@ describe('Edge Cases', () => {
   test('section descriptions are descriptive', () => {
     const allSections = getAllSectionPatternTokens();
 
-    allSections.forEach((section) => {
+    allSections.forEach(section => {
       expect(section.description.length).toBeGreaterThan(20);
       expect(section.description).not.toBe(section.id);
     });

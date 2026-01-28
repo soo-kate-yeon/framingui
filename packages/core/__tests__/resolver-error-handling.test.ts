@@ -8,9 +8,21 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { resolveComponent, type ComponentContext } from '../src/screen-generation/resolver/component-resolver.js';
-import { resolveShell, resolvePage, resolveSection, type LayoutContext } from '../src/screen-generation/resolver/layout-resolver.js';
-import { substituteTemplateVariables, resolveBindings, type TokenBindingContext } from '../src/screen-generation/resolver/token-resolver.js';
+import {
+  resolveComponent,
+  type ComponentContext,
+} from '../src/screen-generation/resolver/component-resolver.js';
+import {
+  resolveShell,
+  resolvePage,
+  resolveSection,
+  type LayoutContext,
+} from '../src/screen-generation/resolver/layout-resolver.js';
+import {
+  substituteTemplateVariables,
+  resolveBindings,
+  type TokenBindingContext,
+} from '../src/screen-generation/resolver/token-resolver.js';
 import type { ComponentDefinition, ComponentType } from '../src/screen-generation/types.js';
 import type { TokenBindings } from '../src/component-schemas.js';
 import { clearScreenCache } from '../src/screen-generation/resolver/index.js';
@@ -43,8 +55,12 @@ describe('Resolver Error Handling', () => {
         screenId: 'test-screen',
       };
 
-      expect(() => resolveComponent(unknownComponent, context)).toThrow(/Unknown component type 'UnknownWidget'/);
-      expect(() => resolveComponent(unknownComponent, context)).toThrow(/Available types: Button, Input, Text, Heading/);
+      expect(() => resolveComponent(unknownComponent, context)).toThrow(
+        /Unknown component type 'UnknownWidget'/
+      );
+      expect(() => resolveComponent(unknownComponent, context)).toThrow(
+        /Available types: Button, Input, Text, Heading/
+      );
     });
 
     it('should include screen context in unknown component error message', () => {
@@ -58,7 +74,9 @@ describe('Resolver Error Handling', () => {
         screenId: 'dashboard-screen',
       };
 
-      expect(() => resolveComponent(unknownComponent, context)).toThrow(/screen 'dashboard-screen'/);
+      expect(() => resolveComponent(unknownComponent, context)).toThrow(
+        /screen 'dashboard-screen'/
+      );
     });
 
     it('should include section context in unknown component error when resolving within section', () => {
@@ -73,7 +91,9 @@ describe('Resolver Error Handling', () => {
         sectionId: 'hero-section',
       };
 
-      expect(() => resolveComponent(unknownComponent, context)).toThrow(/Unknown component type 'InvalidType'/);
+      expect(() => resolveComponent(unknownComponent, context)).toThrow(
+        /Unknown component type 'InvalidType'/
+      );
       expect(() => resolveComponent(unknownComponent, context)).toThrow(/screen 'test-screen'/);
     });
   });
@@ -90,8 +110,12 @@ describe('Resolver Error Handling', () => {
       };
 
       // Invalid format: missing proper namespace
-      expect(() => resolveShell('shell.invalid.nonexistent', context)).toThrow(/Failed to resolve shell 'shell.invalid.nonexistent'/);
-      expect(() => resolveShell('shell.invalid.nonexistent', context)).toThrow(/Available shells: shell.web.dashboard, shell.web.settings/);
+      expect(() => resolveShell('shell.invalid.nonexistent', context)).toThrow(
+        /Failed to resolve shell 'shell.invalid.nonexistent'/
+      );
+      expect(() => resolveShell('shell.invalid.nonexistent', context)).toThrow(
+        /Available shells: shell.web.dashboard, shell.web.settings/
+      );
     });
 
     it('should throw error for invalid page token format with available pages list', () => {
@@ -101,8 +125,12 @@ describe('Resolver Error Handling', () => {
       };
 
       // Non-existent page
-      expect(() => resolvePage('page.nonexistent', context)).toThrow(/Failed to resolve page 'page.nonexistent'/);
-      expect(() => resolvePage('page.nonexistent', context)).toThrow(/Available pages: page.dashboard, page.detail, page.list/);
+      expect(() => resolvePage('page.nonexistent', context)).toThrow(
+        /Failed to resolve page 'page.nonexistent'/
+      );
+      expect(() => resolvePage('page.nonexistent', context)).toThrow(
+        /Available pages: page.dashboard, page.detail, page.list/
+      );
     });
 
     it('should throw error for invalid section token format with available sections list', () => {
@@ -116,9 +144,15 @@ describe('Resolver Error Handling', () => {
       };
 
       // Non-existent section pattern
-      expect(() => resolveSection('section.invalid-pattern', context)).toThrow(/Failed to resolve section 'section.invalid-pattern'/);
-      expect(() => resolveSection('section.invalid-pattern', context)).toThrow(/Available sections: section.grid-2, section.grid-3, section.grid-4/);
-      expect(() => resolveSection('section.invalid-pattern', context)).toThrow(/section 'main-section' at index 0/);
+      expect(() => resolveSection('section.invalid-pattern', context)).toThrow(
+        /Failed to resolve section 'section.invalid-pattern'/
+      );
+      expect(() => resolveSection('section.invalid-pattern', context)).toThrow(
+        /Available sections: section.grid-2, section.grid-3, section.grid-4/
+      );
+      expect(() => resolveSection('section.invalid-pattern', context)).toThrow(
+        /section 'main-section' at index 0/
+      );
     });
 
     it('should include helpful error message for malformed layout token ID', () => {
@@ -128,7 +162,9 @@ describe('Resolver Error Handling', () => {
       };
 
       // Completely invalid format
-      expect(() => resolveShell('invalid-token-format', context)).toThrow(/Failed to resolve shell/);
+      expect(() => resolveShell('invalid-token-format', context)).toThrow(
+        /Failed to resolve shell/
+      );
     });
   });
 
@@ -144,7 +180,9 @@ describe('Resolver Error Handling', () => {
         // variant is missing
       };
 
-      expect(() => substituteTemplateVariables(binding, props)).toThrow(/Template variable 'variant' not found in props/);
+      expect(() => substituteTemplateVariables(binding, props)).toThrow(
+        /Template variable 'variant' not found in props/
+      );
       expect(() => substituteTemplateVariables(binding, props)).toThrow(/Available props: size/);
     });
 
@@ -155,7 +193,9 @@ describe('Resolver Error Handling', () => {
         // size is missing
       };
 
-      expect(() => substituteTemplateVariables(binding, props)).toThrow(/Template variable 'size' not found in props/);
+      expect(() => substituteTemplateVariables(binding, props)).toThrow(
+        /Template variable 'size' not found in props/
+      );
       expect(() => substituteTemplateVariables(binding, props)).toThrow(/Available props: variant/);
     });
 
@@ -174,7 +214,9 @@ describe('Resolver Error Handling', () => {
       };
 
       // First binding will fail with variant error
-      expect(() => resolveBindings(bindings, context)).toThrow(/Template variable 'variant' not found/);
+      expect(() => resolveBindings(bindings, context)).toThrow(
+        /Template variable 'variant' not found/
+      );
     });
 
     it('should throw error for invalid template variable type', () => {
@@ -183,7 +225,9 @@ describe('Resolver Error Handling', () => {
         variant: { complex: 'object' }, // Must be string or number
       };
 
-      expect(() => substituteTemplateVariables(binding, props)).toThrow(/Template variable 'variant' must be string or number/);
+      expect(() => substituteTemplateVariables(binding, props)).toThrow(
+        /Template variable 'variant' must be string or number/
+      );
       expect(() => substituteTemplateVariables(binding, props)).toThrow(/got object/);
     });
   });
@@ -200,8 +244,12 @@ describe('Resolver Error Handling', () => {
       };
 
       // Non-existent shell token
-      expect(() => resolveShell('shell.web.nonexistent', context)).toThrow(/Failed to resolve shell 'shell.web.nonexistent'/);
-      expect(() => resolveShell('shell.web.nonexistent', context)).toThrow(/for screen 'my-screen'/);
+      expect(() => resolveShell('shell.web.nonexistent', context)).toThrow(
+        /Failed to resolve shell 'shell.web.nonexistent'/
+      );
+      expect(() => resolveShell('shell.web.nonexistent', context)).toThrow(
+        /for screen 'my-screen'/
+      );
     });
 
     it('should throw error when page token not found in layout-tokens', () => {
@@ -211,7 +259,9 @@ describe('Resolver Error Handling', () => {
       };
 
       // Non-existent page token
-      expect(() => resolvePage('page.nonexistent-page', context)).toThrow(/Failed to resolve page 'page.nonexistent-page'/);
+      expect(() => resolvePage('page.nonexistent-page', context)).toThrow(
+        /Failed to resolve page 'page.nonexistent-page'/
+      );
       expect(() => resolvePage('page.nonexistent-page', context)).toThrow(/for screen 'my-screen'/);
     });
 
@@ -226,9 +276,15 @@ describe('Resolver Error Handling', () => {
       };
 
       // Non-existent section pattern
-      expect(() => resolveSection('section.nonexistent', context)).toThrow(/Failed to resolve section 'section.nonexistent'/);
-      expect(() => resolveSection('section.nonexistent', context)).toThrow(/for screen 'my-screen'/);
-      expect(() => resolveSection('section.nonexistent', context)).toThrow(/section 'content' at index 1/);
+      expect(() => resolveSection('section.nonexistent', context)).toThrow(
+        /Failed to resolve section 'section.nonexistent'/
+      );
+      expect(() => resolveSection('section.nonexistent', context)).toThrow(
+        /for screen 'my-screen'/
+      );
+      expect(() => resolveSection('section.nonexistent', context)).toThrow(
+        /section 'content' at index 1/
+      );
     });
 
     it('should include context information in section resolution error messages', () => {
@@ -241,7 +297,9 @@ describe('Resolver Error Handling', () => {
         },
       };
 
-      expect(() => resolveSection('section.invalid', context)).toThrow(/section 'stats-section' at index 0/);
+      expect(() => resolveSection('section.invalid', context)).toThrow(
+        /section 'stats-section' at index 0/
+      );
     });
   });
 
@@ -264,7 +322,9 @@ describe('Resolver Error Handling', () => {
         screenId: 'test-screen',
       };
 
-      expect(() => resolveComponent(invalidComponent, context)).toThrow(/Required prop 'children' is missing/);
+      expect(() => resolveComponent(invalidComponent, context)).toThrow(
+        /Required prop 'children' is missing/
+      );
       expect(() => resolveComponent(invalidComponent, context)).toThrow(/for component 'Button'/);
     });
 
@@ -308,8 +368,12 @@ describe('Resolver Error Handling', () => {
         theme: 'default',
       };
 
-      expect(() => resolveBindings(bindings, context)).toThrow(/Failed to resolve token binding for property/);
-      expect(() => resolveBindings(bindings, context)).toThrow(/Template variable 'variant' not found/);
+      expect(() => resolveBindings(bindings, context)).toThrow(
+        /Failed to resolve token binding for property/
+      );
+      expect(() => resolveBindings(bindings, context)).toThrow(
+        /Template variable 'variant' not found/
+      );
     });
 
     it('should handle multiple template variables in single binding', () => {
@@ -320,7 +384,9 @@ describe('Resolver Error Handling', () => {
         // state is missing
       };
 
-      expect(() => substituteTemplateVariables(binding, props)).toThrow(/Template variable 'state' not found/);
+      expect(() => substituteTemplateVariables(binding, props)).toThrow(
+        /Template variable 'state' not found/
+      );
     });
   });
 
@@ -346,7 +412,9 @@ describe('Resolver Error Handling', () => {
         screenId: 'test-screen',
       };
 
-      expect(() => resolveComponent(parentComponent, context)).toThrow(/Unknown component type 'InvalidChild'/);
+      expect(() => resolveComponent(parentComponent, context)).toThrow(
+        /Unknown component type 'InvalidChild'/
+      );
     });
 
     it('should provide helpful error when required prop description is available', () => {

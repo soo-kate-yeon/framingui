@@ -7,6 +7,7 @@ Claude Code/Desktop을 위한 LLM 통합 도구
 Screen Generation Pipeline은 Claude와 함께 사용할 수 있는 3개의 MCP (Model Context Protocol) 도구를 제공합니다. 이를 통해 LLM이 자연어 프롬프트에서 직접 화면 정의를 생성하고 검증하며 프로덕션 코드로 변환할 수 있습니다.
 
 **사용 가능한 도구:**
+
 1. **generate_screen** - JSON 화면 정의를 프로덕션 코드로 변환
 2. **validate_screen** - 화면 정의 검증 및 오류 체크
 3. **list_tokens** - 사용 가능한 레이아웃 토큰 쿼리
@@ -26,11 +27,13 @@ npm run build
 `claude_desktop_config.json` 파일 설정:
 
 **macOS:**
+
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
 **Windows:**
+
 ```
 %APPDATA%\Claude\claude_desktop_config.json
 ```
@@ -42,9 +45,7 @@ npm run build
   "mcpServers": {
     "tekton-screen-generation": {
       "command": "node",
-      "args": [
-        "/absolute/path/to/tekton/packages/mcp-server/dist/index.js"
-      ],
+      "args": ["/absolute/path/to/tekton/packages/mcp-server/dist/index.js"],
       "env": {
         "NODE_ENV": "production"
       }
@@ -64,9 +65,7 @@ npm run build
   "mcpServers": {
     "tekton-screen-generation": {
       "command": "node",
-      "args": [
-        "./packages/mcp-server/dist/index.js"
-      ]
+      "args": ["./packages/mcp-server/dist/index.js"]
     }
   }
 }
@@ -81,6 +80,7 @@ Claude Desktop 또는 Claude Code에서:
 ```
 
 다음 도구들이 표시되어야 합니다:
+
 - generate_screen
 - validate_screen
 - list_tokens
@@ -98,8 +98,8 @@ interface GenerateScreenInput {
   screenDefinition: ScreenDefinition;
   outputFormat: 'css-in-js' | 'tailwind' | 'react';
   options?: {
-    typescript?: boolean;        // 기본값: true
-    prettier?: boolean;          // 기본값: false
+    typescript?: boolean; // 기본값: true
+    prettier?: boolean; // 기본값: false
     cssFramework?: 'styled-components' | 'emotion'; // css-in-js용
   };
 }
@@ -189,7 +189,7 @@ TypeScript: true
 ```typescript
 interface ValidateScreenInput {
   screenDefinition: ScreenDefinition;
-  strict?: boolean;  // 기본값: false (경고를 오류로 처리)
+  strict?: boolean; // 기본값: false (경고를 오류로 처리)
 }
 ```
 
@@ -260,8 +260,8 @@ SPEC-LAYOUT-001의 사용 가능한 레이아웃 토큰을 쿼리합니다.
 
 ```typescript
 interface ListTokensInput {
-  type?: 'shell' | 'page' | 'section' | 'all';  // 기본값: 'all'
-  themeId?: string;  // 기본값: 'default'
+  type?: 'shell' | 'page' | 'section' | 'all'; // 기본값: 'all'
+  themeId?: string; // 기본값: 'default'
 }
 ```
 
@@ -583,6 +583,7 @@ Claude: 문제를 진단하겠습니다.
 ### 베스트 프랙티스
 
 **1. 단계별 검증:**
+
 ```
 1. list_tokens로 토큰 확인
 2. validate_screen으로 정의 검증
@@ -590,6 +591,7 @@ Claude: 문제를 진단하겠습니다.
 ```
 
 **2. 명확한 프롬프트:**
+
 ```
 좋은 예: "4개의 메트릭 카드가 있는 대시보드 화면을 생성해주세요. 각 카드에는 제목, 값, 배지가 있어야 합니다."
 
@@ -597,6 +599,7 @@ Claude: 문제를 진단하겠습니다.
 ```
 
 **3. 오류 처리:**
+
 ```
 생성 실패 시:
 1. validate_screen으로 오류 확인
@@ -609,11 +612,13 @@ Claude: 문제를 진단하겠습니다.
 ### MCP 서버가 연결되지 않음
 
 **증상:**
+
 ```
 Error: MCP server not found
 ```
 
 **해결책:**
+
 1. `claude_desktop_config.json` 경로 확인
 2. MCP 서버 빌드 확인 (`npm run build`)
 3. Claude Desktop 재시작
@@ -621,11 +626,13 @@ Error: MCP server not found
 ### 도구가 표시되지 않음
 
 **증상:**
+
 ```
 @mcp tools 실행 시 도구 목록이 비어있음
 ```
 
 **해결책:**
+
 1. `dist/index.js` 파일 존재 확인
 2. Node.js 버전 확인 (20.0.0+)
 3. 설정 파일 JSON 문법 확인
@@ -633,6 +640,7 @@ Error: MCP server not found
 ### 생성 실패
 
 **증상:**
+
 ```
 {
   "success": false,
@@ -641,6 +649,7 @@ Error: MCP server not found
 ```
 
 **해결책:**
+
 1. `list_tokens` 호출하여 유효한 토큰 확인
 2. 화면 정의에서 토큰 ID 수정
 3. 테마 ID 확인 (기본값: 'default')

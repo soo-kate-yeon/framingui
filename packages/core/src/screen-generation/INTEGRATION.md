@@ -132,7 +132,7 @@ import {
   validateScreenDefinition,
   resolveScreen,
   generateReactComponent,
-  type ScreenDefinition
+  type ScreenDefinition,
 } from '@tekton/core/screen-generation';
 
 async function generateScreen(screenPath: string, outputDir: string) {
@@ -155,7 +155,7 @@ async function generateScreen(screenPath: string, outputDir: string) {
   console.log(`Generating React component...`);
   const result = generateReactComponent(resolved, {
     format: 'typescript',
-    prettier: false
+    prettier: false,
   });
 
   if (!result.success) {
@@ -260,7 +260,7 @@ module.exports = {
       require('./src/scripts/generate-screens.ts');
     }
     return config;
-  }
+  },
 };
 ```
 
@@ -318,7 +318,7 @@ export function screenGenerationPlugin(): Plugin {
       console.log('Generating screens...');
       await generateScreens();
       console.log('✅ Screens generated');
-    }
+    },
   };
 }
 
@@ -328,7 +328,7 @@ import react from '@vitejs/plugin-react';
 import { screenGenerationPlugin } from './vite-plugin-screen-generation';
 
 export default defineConfig({
-  plugins: [react(), screenGenerationPlugin()]
+  plugins: [react(), screenGenerationPlugin()],
 });
 ```
 
@@ -372,7 +372,7 @@ function App() {
 ```typescript
 const result = generateStyledComponents(resolved, 'styled-components', {
   format: 'typescript',
-  prettier: true
+  prettier: true,
 });
 ```
 
@@ -405,7 +405,7 @@ import fs from 'fs/promises';
 import {
   resolveScreen,
   generateTailwindConfig,
-  type ScreenDefinition
+  type ScreenDefinition,
 } from '@tekton/core/screen-generation';
 
 async function generateConfig() {
@@ -439,10 +439,7 @@ npm run generate:tailwind && npm run dev
 ### 검증 에러
 
 ```typescript
-import {
-  validateScreenDefinition,
-  type ValidationResult
-} from '@tekton/core/screen-generation';
+import { validateScreenDefinition, type ValidationResult } from '@tekton/core/screen-generation';
 
 function handleValidationError(result: ValidationResult) {
   if (!result.valid) {
@@ -552,7 +549,7 @@ import { describe, it, expect } from 'vitest';
 import {
   validateScreenDefinition,
   resolveScreen,
-  generateReactComponent
+  generateReactComponent,
 } from '@tekton/core/screen-generation';
 import screenDef from '../../src/screens/dashboard-screen.json';
 
@@ -568,7 +565,7 @@ describe('Screen Generation Integration', () => {
 
     // 3. 생성
     const result = generateReactComponent(resolved, {
-      format: 'typescript'
+      format: 'typescript',
     });
     expect(result.success).toBe(true);
     expect(result.code).toContain('DashboardScreen');
@@ -651,14 +648,11 @@ import crypto from 'crypto';
 
 const cache = new LRUCache<string, string>({
   max: 100,
-  ttl: 1000 * 60 * 60 // 1시간
+  ttl: 1000 * 60 * 60, // 1시간
 });
 
 function getCacheKey(screenDef: ScreenDefinition): string {
-  return crypto
-    .createHash('md5')
-    .update(JSON.stringify(screenDef))
-    .digest('hex');
+  return crypto.createHash('md5').update(JSON.stringify(screenDef)).digest('hex');
 }
 
 async function generateScreenCached(screenDef: ScreenDefinition) {
@@ -687,9 +681,7 @@ async function generateScreenCached(screenDef: ScreenDefinition) {
 ```typescript
 // src/scripts/generate-screens-parallel.ts
 async function generateAllScreens(screenFiles: string[]) {
-  const results = await Promise.all(
-    screenFiles.map(file => generateScreen(file, outputDir))
-  );
+  const results = await Promise.all(screenFiles.map(file => generateScreen(file, outputDir)));
 
   console.log(`✅ Generated ${results.length} screens in parallel`);
 }
@@ -706,6 +698,7 @@ Error: Token not found: color.primary.500
 ```
 
 **해결책:**
+
 - SPEC-LAYOUT-001 토큰 정의 확인
 - 테마 ID가 올바른지 확인
 - 토큰 철자 확인
@@ -717,12 +710,14 @@ Cannot find module '@tekton/core/screen-generation'
 ```
 
 **해결책:**
+
 - tsconfig.json에 `"moduleResolution": "bundler"` 또는 `"node16"` 설정
 - `npm install` 재실행
 
 **문제: 생성된 컴포넌트가 렌더링되지 않음**
 
 **해결책:**
+
 - 컴포넌트 라이브러리 설치 확인 (`@tekton/components`)
 - CSS 프레임워크 설정 확인
 - 브라우저 콘솔에서 에러 확인

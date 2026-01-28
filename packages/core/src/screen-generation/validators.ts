@@ -104,9 +104,7 @@ export const ComponentDefinitionSchema: z.ZodType<ComponentDefinition> = z.lazy(
     props: z.record(z.unknown(), {
       errorMap: () => ({ message: 'Component props must be a valid object' }),
     }),
-    children: z
-      .array(z.union([ComponentDefinitionSchema, z.string()]))
-      .optional(),
+    children: z.array(z.union([ComponentDefinitionSchema, z.string()])).optional(),
     slot: z.string().optional(),
   })
 );
@@ -122,9 +120,7 @@ export const SectionDefinitionSchema = z.object({
       SECTION_TOKEN_PATTERN,
       'Section pattern must match: section.{name} or section.{name}-{number} (e.g., "section.grid-4")'
     ),
-  components: z
-    .array(ComponentDefinitionSchema)
-    .min(1, 'Section must have at least one component'),
+  components: z.array(ComponentDefinitionSchema).min(1, 'Section must have at least one component'),
   responsive: ResponsiveOverridesSchema.optional(),
 });
 
@@ -161,7 +157,10 @@ export const ScreenDefinitionSchema = z.object({
     ),
   page: z
     .string()
-    .regex(PAGE_TOKEN_PATTERN, 'Page token must match pattern: page.{name} (e.g., "page.dashboard")'),
+    .regex(
+      PAGE_TOKEN_PATTERN,
+      'Page token must match pattern: page.{name} (e.g., "page.dashboard")'
+    ),
   themeId: z.string().default('default'),
   sections: z
     .array(SectionDefinitionSchema)

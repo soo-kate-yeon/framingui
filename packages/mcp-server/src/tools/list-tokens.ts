@@ -38,9 +38,8 @@ export async function listTokensTool(input: ListTokensInput): Promise<ListTokens
     const { tokenType = 'all', filter } = input;
 
     // Import token getters from @tekton/core
-    const { getAllShellTokens, getAllPageLayoutTokens, getAllSectionPatternTokens } = await import(
-      '@tekton/core'
-    );
+    const { getAllShellTokens, getAllPageLayoutTokens, getAllSectionPatternTokens } =
+      await import('@tekton/core');
 
     // Get tokens based on type
     let shells: TokenMetadata[] = [];

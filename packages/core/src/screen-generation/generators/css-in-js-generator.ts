@@ -5,11 +5,7 @@
  */
 
 import type { ResolvedScreen, ResolvedComponent } from '../resolver/index.js';
-import type {
-  GeneratorOptions,
-  GeneratorResult,
-  StyledThemeConfig,
-} from './types.js';
+import type { GeneratorOptions, GeneratorResult, StyledThemeConfig } from './types.js';
 import { pascalCase, generateImports, formatCode } from './utils.js';
 
 // ============================================================================
@@ -62,7 +58,9 @@ export function convertCSSVarsToTheme(cssVars: Record<string, string>): StyledTh
   for (const [cssVar, tokenRef] of Object.entries(cssVars)) {
     const parts = tokenRef.split('.');
 
-    if (parts.length < 2) {continue;}
+    if (parts.length < 2) {
+      continue;
+    }
 
     const [layer, category, ...rest] = parts;
     const key = rest.join('-') || category;
@@ -80,14 +78,22 @@ export function convertCSSVarsToTheme(cssVars: Record<string, string>): StyledTh
         theme.shadows[key] = cssVar;
       } else {
         // Custom category
-        if (!theme.custom) {theme.custom = {};}
-        if (!theme.custom[category]) {theme.custom[category] = {};}
+        if (!theme.custom) {
+          theme.custom = {};
+        }
+        if (!theme.custom[category]) {
+          theme.custom[category] = {};
+        }
         theme.custom[category][key] = cssVar;
       }
     } else if (layer === 'component') {
       // Component-specific tokens go to custom
-      if (!theme.custom) {theme.custom = {};}
-      if (!theme.custom[category]) {theme.custom[category] = {};}
+      if (!theme.custom) {
+        theme.custom = {};
+      }
+      if (!theme.custom[category]) {
+        theme.custom[category] = {};
+      }
       theme.custom[category][key] = cssVar;
     }
   }
@@ -284,7 +290,9 @@ function extractThemeKey(cssVar: string): string {
   const varName = cssVar.replace(/^var\(--/, '').replace(/\)$/, '');
   const parts = varName.split('-');
 
-  if (parts.length < 2) {return `custom['${varName}']`;}
+  if (parts.length < 2) {
+    return `custom['${varName}']`;
+  }
 
   const [layer, category, ...rest] = parts;
 

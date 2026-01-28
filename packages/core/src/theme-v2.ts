@@ -322,7 +322,7 @@ export function listThemesV2(): ThemeMetaV2[] {
     return [];
   }
 
-  const files = readdirSync(themesDir).filter((f) => f.endsWith('.json'));
+  const files = readdirSync(themesDir).filter(f => f.endsWith('.json'));
   const themes: ThemeMetaV2[] = [];
 
   for (const file of files) {
@@ -402,7 +402,13 @@ export function resolveTokenRef(ref: string, theme: ThemeV2): string | null {
   }
 
   // If result is OKLCH color object, convert to CSS
-  if (current && typeof current === 'object' && 'l' in current && 'c' in current && 'h' in current) {
+  if (
+    current &&
+    typeof current === 'object' &&
+    'l' in current &&
+    'c' in current &&
+    'h' in current
+  ) {
     return oklchToCSSV2(current as OKLCHColorV2);
   }
 

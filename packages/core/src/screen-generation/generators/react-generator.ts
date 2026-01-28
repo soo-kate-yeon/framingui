@@ -194,7 +194,9 @@ function generateJSXAttributes(
 
   // Add component props (excluding children)
   for (const [propName, propValue] of Object.entries(component.props)) {
-    if (propName === 'children') {continue;}
+    if (propName === 'children') {
+      continue;
+    }
 
     const jsxValue = propValueToJSX(propValue);
     attributes.push(`${propName}=${jsxValue}`);

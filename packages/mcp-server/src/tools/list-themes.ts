@@ -18,7 +18,7 @@ export async function listThemesTool(): Promise<ListThemesOutput> {
 
     return {
       success: true,
-      themes: themes.map((theme) => ({
+      themes: themes.map(theme => ({
         id: theme.id,
         name: theme.name,
         description: theme.description,

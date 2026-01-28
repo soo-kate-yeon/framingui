@@ -6,7 +6,12 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createBlueprint, validateBlueprint } from '../src/blueprint.js';
-import { resolveLayout, clearLayoutCache, resolveTokenReference, mergeResponsiveConfig } from '../src/layout-resolver.js';
+import {
+  resolveLayout,
+  clearLayoutCache,
+  resolveTokenReference,
+  mergeResponsiveConfig,
+} from '../src/layout-resolver.js';
 import {
   generateLayoutCSS,
   generateAllLayoutCSS,
@@ -595,13 +600,15 @@ describe('Layout Tokens Integration Tests', () => {
     });
 
     it('should validate blueprint with invalid layoutToken', () => {
-      expect(() => createBlueprint({
-        name: 'Test',
-        themeId: 'default',
-        layout: 'dashboard',
-        layoutToken: 'invalid.token.format',
-        components: [],
-      })).toThrow('Invalid layoutToken format');
+      expect(() =>
+        createBlueprint({
+          name: 'Test',
+          themeId: 'default',
+          layout: 'dashboard',
+          layoutToken: 'invalid.token.format',
+          components: [],
+        })
+      ).toThrow('Invalid layoutToken format');
     });
 
     it('should handle missing section patterns gracefully', () => {
@@ -642,11 +649,7 @@ describe('Layout Tokens Integration Tests', () => {
       expect(breakpoints).toHaveLength(5);
 
       // Integration: Generate complete CSS
-      const allTokens = [
-        shell!,
-        page!,
-        ...sections.filter(s => s !== undefined),
-      ];
+      const allTokens = [shell!, page!, ...sections.filter(s => s !== undefined)];
 
       const css = generateLayoutCSS(allTokens);
       expect(validateCSS(css)).toBe(true);

@@ -13,6 +13,7 @@ This package replaces 14 bloated packages with a single, focused implementation 
 Transform JSON screen definitions into production-ready React components with multiple CSS frameworks.
 
 **Features:**
+
 - 🎯 **JSON Schema-based definitions** - Type-safe with TypeScript and Zod validation
 - 🔄 **Token resolver pipeline** - Automatic layout and component token resolution
 - 🎨 **Multiple CSS outputs** - CSS-in-JS (styled-components, Emotion) and Tailwind support
@@ -21,11 +22,12 @@ Transform JSON screen definitions into production-ready React components with mu
 - ✅ **85%+ test coverage** - TRUST 5 framework compliant
 
 **Quick Start:**
+
 ```typescript
 import {
   validateScreenDefinition,
   resolveScreen,
-  generateReactComponent
+  generateReactComponent,
 } from '@tekton/core/screen-generation';
 
 const validation = validateScreenDefinition(screenDef);
@@ -34,6 +36,7 @@ const result = generateReactComponent(resolved);
 ```
 
 **📚 Documentation:**
+
 - [Screen Generation README](./src/screen-generation/README.md) - Complete overview
 - [Phase 1: Schema & Validation](./src/screen-generation/PHASE-1.md)
 - [Phase 2: Resolver Pipeline](./src/screen-generation/PHASE-2.md)

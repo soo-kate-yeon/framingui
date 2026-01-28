@@ -113,6 +113,7 @@ console.log(css);
 Defines the persistent frame structure of your application (header, sidebar, footer, main content area).
 
 **Available Shells (6):**
+
 - `shell.web.app` - Standard web application layout
 - `shell.web.marketing` - Marketing and landing page layout
 - `shell.web.auth` - Authentication flow layout
@@ -121,6 +122,7 @@ Defines the persistent frame structure of your application (header, sidebar, foo
 - `shell.web.minimal` - Minimal single-content layout
 
 **Example:**
+
 ```typescript
 import { getShellToken } from '@tekton/core/layout-tokens/shells';
 
@@ -144,6 +146,7 @@ const appShell = getShellToken('shell.web.app');
 Defines page-level layouts optimized for specific use cases and purposes.
 
 **Available Pages (8):**
+
 - `page.job` - Task execution page (forms, actions)
 - `page.resource` - CRUD operations page (toolbar, list, detail)
 - `page.dashboard` - Data overview page (metrics, charts, tables)
@@ -154,6 +157,7 @@ Defines page-level layouts optimized for specific use cases and purposes.
 - `page.onboarding` - First-run experience page (welcome, steps)
 
 **Example:**
+
 ```typescript
 import { getPageLayoutToken } from '@tekton/core/layout-tokens/pages';
 
@@ -178,29 +182,35 @@ Defines reusable layout primitives (grid, flex, split, stack, container).
 **Available Sections (13):**
 
 **Grid Patterns (4):**
+
 - `section.grid-2` - 2-column responsive grid
 - `section.grid-3` - 3-column responsive grid
 - `section.grid-4` - 4-column responsive grid
 - `section.grid-auto` - Auto-fill responsive grid
 
 **Split Patterns (3):**
+
 - `section.split-30-70` - 30/70 sidebar-content layout
 - `section.split-50-50` - Equal 50/50 split layout
 - `section.split-70-30` - 70/30 content-sidebar layout
 
 **Stack Patterns (3):**
+
 - `section.stack-start` - Vertical stack (top-aligned)
 - `section.stack-center` - Vertical stack (center-aligned)
 - `section.stack-end` - Vertical stack (bottom-aligned)
 
 **Sidebar Patterns (2):**
+
 - `section.sidebar-left` - Fixed left sidebar
 - `section.sidebar-right` - Fixed right sidebar
 
 **Container Pattern (1):**
+
 - `section.container` - Centered max-width container
 
 **Example:**
+
 ```typescript
 import { getSectionPatternToken } from '@tekton/core/layout-tokens/sections';
 
@@ -227,6 +237,7 @@ const grid3 = getSectionPatternToken('section.grid-3');
 Defines viewport breakpoints following Tailwind CSS standards.
 
 **Available Breakpoints (5):**
+
 - `breakpoint.sm` - Small devices (640px+, mobile landscape)
 - `breakpoint.md` - Medium devices (768px+, tablets)
 - `breakpoint.lg` - Large devices (1024px+, desktops)
@@ -234,6 +245,7 @@ Defines viewport breakpoints following Tailwind CSS standards.
 - `breakpoint.2xl` - Extra extra large (1536px+, wide screens)
 
 **Example:**
+
 ```typescript
 import { getBreakpointValue, getBreakpointMediaQuery } from '@tekton/core/layout-tokens/responsive';
 
@@ -252,14 +264,17 @@ const mdQuery = getBreakpointMediaQuery('md'); // "@media (min-width: 768px)"
 Resolves a layout ID to complete configuration with CSS variables.
 
 **Parameters:**
+
 - `layoutId` - Layout token ID (`shell.*.*`, `page.*`, or `section.*`)
 
 **Returns:**
+
 - `ResolvedLayout` - Complete layout configuration
 
 **Performance:** <5ms per call (cached after first call)
 
 **Example:**
+
 ```typescript
 import { resolveLayout } from '@tekton/core/layout-resolver';
 
@@ -277,17 +292,20 @@ const layout = resolveLayout('page.dashboard');
 Generates CSS from layout tokens.
 
 **Parameters:**
+
 - `tokens` - Array of layout tokens (shells, pages, sections)
 - `options` - CSS generation options
   - `includeVariables?: boolean` - Include CSS custom properties (default: true)
   - `includeClasses?: boolean` - Include utility classes (default: true)
   - `includeMediaQueries?: boolean` - Include responsive media queries (default: true)
-  - `indent?: string` - Indentation string (default: '  ')
+  - `indent?: string` - Indentation string (default: ' ')
 
 **Returns:**
+
 - `string` - Complete CSS with variables, utilities, and media queries
 
 **Example:**
+
 ```typescript
 import { generateAllLayoutCSS } from '@tekton/core/layout-css-generator';
 
@@ -303,6 +321,7 @@ const css = generateAllLayoutCSS({
 Creates a blueprint with optional layout token.
 
 **Parameters:**
+
 - `input.name` - Blueprint name
 - `input.description?` - Optional description
 - `input.themeId` - Theme ID reference
@@ -311,9 +330,11 @@ Creates a blueprint with optional layout token.
 - `input.components` - Component tree
 
 **Returns:**
+
 - `Blueprint` - Created blueprint with resolved layoutConfig
 
 **Example:**
+
 ```typescript
 import { createBlueprint } from '@tekton/core/blueprint';
 
@@ -329,23 +350,27 @@ const blueprint = createBlueprint({
 ### Token Getter Functions
 
 #### Shell Tokens
+
 - `getShellToken(shellId: string): ShellToken | undefined`
 - `getAllShellTokens(): ShellToken[]`
 - `getShellsByPlatform(platform: 'web' | 'mobile' | 'desktop'): ShellToken[]`
 
 #### Page Layout Tokens
+
 - `getPageLayoutToken(pageId: string): PageLayoutToken | undefined`
 - `getAllPageLayoutTokens(): PageLayoutToken[]`
 - `getPagesByPurpose(purpose: PagePurpose): PageLayoutToken[]`
 - `getPageSections(pageId: string): SectionSlot[]`
 
 #### Section Pattern Tokens
+
 - `getSectionPatternToken(patternId: string): SectionPatternToken | undefined`
 - `getAllSectionPatternTokens(): SectionPatternToken[]`
 - `getSectionsByType(type: SectionType): SectionPatternToken[]`
 - `getSectionCSS(patternId: string): SectionCSS | undefined`
 
 #### Responsive Tokens
+
 - `getResponsiveToken(breakpointId: string): ResponsiveToken | undefined`
 - `getAllResponsiveTokens(): ResponsiveToken[]`
 - `getBreakpointValue(breakpoint: 'sm' | 'md' | 'lg' | 'xl' | '2xl'): number`
@@ -359,6 +384,7 @@ const blueprint = createBlueprint({
 Validates CSS syntax (balanced braces).
 
 **Example:**
+
 ```typescript
 import { validateCSS } from '@tekton/core/layout-css-generator';
 
@@ -370,6 +396,7 @@ const isValid = validateCSS(css); // true or false
 Validates blueprint structure.
 
 **Example:**
+
 ```typescript
 import { validateBlueprint } from '@tekton/core/blueprint';
 
@@ -518,8 +545,8 @@ const section = getSectionPatternToken('section.grid-3');
 
 // Get responsive configurations
 const mobileColumns = section.responsive.default.gridTemplateColumns; // 'repeat(1, 1fr)'
-const tabletColumns = section.responsive.md?.gridTemplateColumns;     // 'repeat(2, 1fr)'
-const desktopColumns = section.responsive.lg?.gridTemplateColumns;    // 'repeat(3, 1fr)'
+const tabletColumns = section.responsive.md?.gridTemplateColumns; // 'repeat(2, 1fr)'
+const desktopColumns = section.responsive.lg?.gridTemplateColumns; // 'repeat(3, 1fr)'
 
 // Get breakpoint values
 const mdBreakpoint = getBreakpointValue('md'); // 768
@@ -532,55 +559,55 @@ const lgBreakpoint = getBreakpointValue('lg'); // 1024
 
 ### Shell Tokens (6)
 
-| ID | Platform | Description | Regions |
-|---|---|---|---|
-| `shell.web.app` | web | Standard web app | header, sidebar, main, footer |
-| `shell.web.marketing` | web | Marketing pages | hero, features, cta, footer |
-| `shell.web.auth` | web | Authentication | logo, main |
-| `shell.web.dashboard` | web | Admin dashboard | header, sidebar, main |
-| `shell.web.admin` | web | Admin panel | header, sidebar, main, footer |
-| `shell.web.minimal` | web | Minimal layout | main |
+| ID                    | Platform | Description      | Regions                       |
+| --------------------- | -------- | ---------------- | ----------------------------- |
+| `shell.web.app`       | web      | Standard web app | header, sidebar, main, footer |
+| `shell.web.marketing` | web      | Marketing pages  | hero, features, cta, footer   |
+| `shell.web.auth`      | web      | Authentication   | logo, main                    |
+| `shell.web.dashboard` | web      | Admin dashboard  | header, sidebar, main         |
+| `shell.web.admin`     | web      | Admin panel      | header, sidebar, main, footer |
+| `shell.web.minimal`   | web      | Minimal layout   | main                          |
 
 ### Page Layout Tokens (8)
 
-| ID | Purpose | Sections | Use Case |
-|---|---|---|---|
-| `page.job` | job | header, form, actions | Task execution forms |
-| `page.resource` | resource | toolbar, list, detail | CRUD operations |
-| `page.dashboard` | dashboard | metrics, charts, tables | Data overview |
-| `page.settings` | settings | sidebar, content, actions | Configuration |
-| `page.detail` | detail | hero, content, related | Item focus view |
-| `page.empty` | empty | illustration, message, cta | Empty states |
-| `page.wizard` | wizard | progress, step, navigation | Multi-step flows |
+| ID                | Purpose    | Sections                   | Use Case             |
+| ----------------- | ---------- | -------------------------- | -------------------- |
+| `page.job`        | job        | header, form, actions      | Task execution forms |
+| `page.resource`   | resource   | toolbar, list, detail      | CRUD operations      |
+| `page.dashboard`  | dashboard  | metrics, charts, tables    | Data overview        |
+| `page.settings`   | settings   | sidebar, content, actions  | Configuration        |
+| `page.detail`     | detail     | hero, content, related     | Item focus view      |
+| `page.empty`      | empty      | illustration, message, cta | Empty states         |
+| `page.wizard`     | wizard     | progress, step, navigation | Multi-step flows     |
 | `page.onboarding` | onboarding | welcome, steps, completion | First-run experience |
 
 ### Section Pattern Tokens (13)
 
-| ID | Type | Columns | Responsive | Use Case |
-|---|---|---|---|---|
-| `section.grid-2` | grid | 2 | 1 → 2 | Comparisons, paired content |
-| `section.grid-3` | grid | 3 | 1 → 2 → 3 | Feature cards, showcases |
-| `section.grid-4` | grid | 4 | 1 → 2 → 4 | Metrics, dashboards |
-| `section.grid-auto` | grid | auto-fill | auto | Dynamic galleries |
-| `section.split-30-70` | flex | 2 | stack → 30/70 | Sidebar-content |
-| `section.split-50-50` | flex | 2 | stack → 50/50 | Balanced layouts |
-| `section.split-70-30` | flex | 2 | stack → 70/30 | Content-sidebar |
-| `section.stack-start` | flex | 1 | N/A | Forms, lists |
-| `section.stack-center` | flex | 1 | N/A | Hero, empty states |
-| `section.stack-end` | flex | 1 | N/A | Action buttons |
-| `section.sidebar-left` | flex | 2 | stack → sidebar | Left navigation |
-| `section.sidebar-right` | flex | 2 | stack → sidebar | Right metadata |
-| `section.container` | flex | 1 | responsive maxWidth | Articles, forms |
+| ID                      | Type | Columns   | Responsive          | Use Case                    |
+| ----------------------- | ---- | --------- | ------------------- | --------------------------- |
+| `section.grid-2`        | grid | 2         | 1 → 2               | Comparisons, paired content |
+| `section.grid-3`        | grid | 3         | 1 → 2 → 3           | Feature cards, showcases    |
+| `section.grid-4`        | grid | 4         | 1 → 2 → 4           | Metrics, dashboards         |
+| `section.grid-auto`     | grid | auto-fill | auto                | Dynamic galleries           |
+| `section.split-30-70`   | flex | 2         | stack → 30/70       | Sidebar-content             |
+| `section.split-50-50`   | flex | 2         | stack → 50/50       | Balanced layouts            |
+| `section.split-70-30`   | flex | 2         | stack → 70/30       | Content-sidebar             |
+| `section.stack-start`   | flex | 1         | N/A                 | Forms, lists                |
+| `section.stack-center`  | flex | 1         | N/A                 | Hero, empty states          |
+| `section.stack-end`     | flex | 1         | N/A                 | Action buttons              |
+| `section.sidebar-left`  | flex | 2         | stack → sidebar     | Left navigation             |
+| `section.sidebar-right` | flex | 2         | stack → sidebar     | Right metadata              |
+| `section.container`     | flex | 1         | responsive maxWidth | Articles, forms             |
 
 ### Breakpoints (5)
 
-| ID | Min Width | Target Devices |
-|---|---|---|
-| `breakpoint.sm` | 640px | Mobile landscape, small tablets |
-| `breakpoint.md` | 768px | Tablets portrait |
-| `breakpoint.lg` | 1024px | Desktops, laptops |
-| `breakpoint.xl` | 1280px | Large desktops |
-| `breakpoint.2xl` | 1536px | Wide screens, ultra-wide |
+| ID               | Min Width | Target Devices                  |
+| ---------------- | --------- | ------------------------------- |
+| `breakpoint.sm`  | 640px     | Mobile landscape, small tablets |
+| `breakpoint.md`  | 768px     | Tablets portrait                |
+| `breakpoint.lg`  | 1024px    | Desktops, laptops               |
+| `breakpoint.xl`  | 1280px    | Large desktops                  |
+| `breakpoint.2xl` | 1536px    | Wide screens, ultra-wide        |
 
 ---
 
@@ -589,6 +616,7 @@ const lgBreakpoint = getBreakpointValue('lg'); // 1024
 ### From Legacy Layouts to Layout Tokens
 
 **Before (Legacy Layout):**
+
 ```typescript
 const blueprint = createBlueprint({
   name: 'Dashboard',
@@ -599,6 +627,7 @@ const blueprint = createBlueprint({
 ```
 
 **After (With Layout Tokens):**
+
 ```typescript
 const blueprint = createBlueprint({
   name: 'Dashboard',
@@ -610,6 +639,7 @@ const blueprint = createBlueprint({
 ```
 
 **Benefits:**
+
 - ✅ Access to responsive configurations
 - ✅ Design system token integration
 - ✅ CSS generation capabilities
@@ -631,24 +661,28 @@ const blueprint = createBlueprint({
 ### 1. Use Semantic Layout Tokens
 
 ❌ **Don't** use generic layout names:
+
 ```typescript
-layout: 'two-column' // Too generic
+layout: 'two-column'; // Too generic
 ```
 
 ✅ **Do** use purpose-specific tokens:
+
 ```typescript
-layoutToken: 'page.dashboard' // Clear intent
+layoutToken: 'page.dashboard'; // Clear intent
 ```
 
 ### 2. Leverage Responsive Configurations
 
 ❌ **Don't** create separate layouts for mobile/desktop:
+
 ```typescript
 const mobileLayout = createBlueprint({ ... });
 const desktopLayout = createBlueprint({ ... });
 ```
 
 ✅ **Do** use responsive token overrides:
+
 ```typescript
 // Layout tokens handle responsive behavior automatically
 const layout = resolveLayout('page.dashboard');
@@ -660,6 +694,7 @@ const layout = resolveLayout('page.dashboard');
 ### 3. Cache Resolution Results
 
 ❌ **Don't** resolve layouts repeatedly:
+
 ```typescript
 function MyComponent() {
   const layout = resolveLayout('page.dashboard'); // ❌ Resolves on every render
@@ -668,6 +703,7 @@ function MyComponent() {
 ```
 
 ✅ **Do** cache resolved layouts:
+
 ```typescript
 // Layout resolution is automatically cached
 // First call: ~5ms
@@ -678,6 +714,7 @@ const layout = resolveLayout('page.dashboard');
 ### 4. Validate Blueprints
 
 ✅ **Always** validate blueprints before use:
+
 ```typescript
 const blueprint = createBlueprint({ ... });
 const validation = validateBlueprint(blueprint);
@@ -690,6 +727,7 @@ if (!validation.valid) {
 ### 5. Use Token References
 
 ✅ **Do** use token references for spacing, colors, sizes:
+
 ```typescript
 const section: SectionPatternToken = {
   // ...
@@ -703,6 +741,7 @@ const section: SectionPatternToken = {
 ### 6. Generate CSS Once
 
 ✅ **Generate CSS at build time** for optimal performance:
+
 ```typescript
 // build-css.ts
 import { generateAllLayoutCSS } from '@tekton/core/layout-css-generator';
@@ -719,16 +758,19 @@ fs.writeFileSync('dist/layout-tokens.css', css);
 ### Caching and Optimization
 
 **Layout Resolution Caching:**
+
 - First call: ~5ms (token lookup + resolution)
 - Cached calls: <1ms (Map lookup)
 - Cache invalidation: Manual via `clearLayoutCache()`
 
 **CSS Generation Performance:**
+
 - All tokens: ~10-15ms (6 shells + 8 pages + 13 sections)
 - Single token: ~1-2ms
 - Validation overhead: <1ms
 
 **Recommendations:**
+
 1. ✅ Generate CSS at build time (not runtime)
 2. ✅ Resolve layouts once and cache in component state
 3. ✅ Clear cache only when layout definitions change
@@ -737,6 +779,7 @@ fs.writeFileSync('dist/layout-tokens.css', css);
 ### Token Reference Resolution
 
 **Performance Characteristics:**
+
 - Token reference lookup: O(1) via Map
 - Recursive token traversal: O(n) where n = nested depth
 - CSS variable generation: O(k) where k = unique token references
@@ -784,30 +827,39 @@ const color: TokenReference = 'semantic.color.primary';
 ### Common Issues
 
 **Issue**: Layout token not found
+
 ```
 Error: Shell token not found: shell.web.custom
 ```
+
 **Solution**: Verify token ID exists in token definitions. Use getter functions to check available tokens.
 
 **Issue**: Invalid layout token format
+
 ```
 Error: Invalid layoutToken format: "custom.layout". Must match "shell.*.*", "page.*", or "section.*"
 ```
+
 **Solution**: Use correct token ID format:
+
 - Shells: `shell.{platform}.{name}`
 - Pages: `page.{name}`
 - Sections: `section.{pattern}`
 
 **Issue**: CSS validation failed
+
 ```
 Error: Generated CSS has unbalanced braces
 ```
+
 **Solution**: Check token definitions for malformed CSS. Use `validateCSS()` to identify issues.
 
 **Issue**: Section pattern not found
+
 ```
 Error: Section pattern not found: section.custom-grid (referenced by page.dashboard)
 ```
+
 **Solution**: Ensure all section patterns referenced in page layouts are defined.
 
 ---
@@ -817,6 +869,7 @@ Error: Section pattern not found: section.custom-grid (referenced by page.dashbo
 ### Adding New Layout Tokens
 
 **1. Add Token Definition:**
+
 ```typescript
 // In layout-tokens/shells.ts (or pages.ts, sections.ts)
 export const SHELL_WEB_CUSTOM: ShellToken = {
@@ -830,6 +883,7 @@ export const SHELL_WEB_CUSTOM: ShellToken = {
 ```
 
 **2. Register in Token Map:**
+
 ```typescript
 const SHELL_TOKENS_MAP: Record<string, ShellToken> = {
   // ...
@@ -838,6 +892,7 @@ const SHELL_TOKENS_MAP: Record<string, ShellToken> = {
 ```
 
 **3. Add Tests:**
+
 ```typescript
 describe('SHELL_WEB_CUSTOM', () => {
   it('should have valid structure', () => {
@@ -848,6 +903,7 @@ describe('SHELL_WEB_CUSTOM', () => {
 ```
 
 **4. Update Documentation:**
+
 - Add to token definitions table
 - Include usage examples
 - Document responsive behavior

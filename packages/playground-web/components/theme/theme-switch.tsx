@@ -24,9 +24,7 @@ export interface ThemeSwitchProps {
  * Theme list is passed as props (loaded by parent server component)
  */
 export function ThemeSwitch({ themes, currentTheme, onThemeChange }: ThemeSwitchProps) {
-  const [selectedTheme, setSelectedTheme] = useState<string>(
-    currentTheme || themes[0] || ''
-  );
+  const [selectedTheme, setSelectedTheme] = useState<string>(currentTheme || themes[0] || '');
 
   const handleThemeChange = (themeId: string) => {
     setSelectedTheme(themeId);
@@ -34,11 +32,7 @@ export function ThemeSwitch({ themes, currentTheme, onThemeChange }: ThemeSwitch
   };
 
   if (themes.length === 0) {
-    return (
-      <div className="text-sm text-gray-500">
-        No themes available
-      </div>
-    );
+    return <div className="text-sm text-gray-500">No themes available</div>;
   }
 
   return (

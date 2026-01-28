@@ -21,11 +21,9 @@ import type {
  * Token Reference Schema
  * Validates token reference format: "atomic.spacing.16" or "semantic.color.primary"
  */
-export const TokenReferenceSchema = z
-  .string()
-  .regex(/^[a-z]+\.[a-z-]+(\.[a-z0-9-]+)*$/, {
-    message: 'Token reference format invalid (e.g., atomic.spacing.16)',
-  });
+export const TokenReferenceSchema = z.string().regex(/^[a-z]+\.[a-z-]+(\.[a-z0-9-]+)*$/, {
+  message: 'Token reference format invalid (e.g., atomic.spacing.16)',
+});
 
 /**
  * Responsive Token Schema
@@ -509,7 +507,9 @@ export function validateLayoutHierarchy(tokens: LayoutTokenCollection): Validati
     tokens.pages.forEach(page => validatePageLayoutToken(page));
     tokens.sections.forEach(section => validateSectionPatternToken(section));
   } catch (error) {
-    errors.push(`Schema validation failed: ${error instanceof Error ? error.message : String(error)}`);
+    errors.push(
+      `Schema validation failed: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 
   // Step 2: Check for circular references
@@ -526,7 +526,9 @@ export function validateLayoutHierarchy(tokens: LayoutTokenCollection): Validati
     for (const section of page.sections) {
       const sectionExists = tokens.sections.some(s => s.id === section.pattern);
       if (!sectionExists) {
-        errors.push(`Page "${page.id}" references non-existent section pattern: ${section.pattern}`);
+        errors.push(
+          `Page "${page.id}" references non-existent section pattern: ${section.pattern}`
+        );
       }
     }
   }
