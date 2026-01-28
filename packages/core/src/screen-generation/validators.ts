@@ -8,11 +8,8 @@ import { z } from 'zod';
 import type { ValidationResult } from '../schema-validation.js';
 import type {
   ScreenDefinition,
-  SectionDefinition,
   ComponentDefinition,
   ComponentType,
-  ResponsiveOverrides,
-  ScreenMeta,
   ValidationContext,
 } from './types.js';
 

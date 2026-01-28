@@ -4,14 +4,13 @@
  * [SPEC-LAYOUT-002] [PHASE-3]
  */
 
-import type { ResolvedScreen, ResolvedSection, ResolvedComponent } from '../resolver/index.js';
+import type { ResolvedScreen, ResolvedComponent } from '../resolver/index.js';
 import type {
   GeneratorOptions,
   GeneratorResult,
   StyledThemeConfig,
-  CSSFramework,
 } from './types.js';
-import { pascalCase, generateImports, formatCode, indent } from './utils.js';
+import { pascalCase, generateImports, formatCode } from './utils.js';
 
 // ============================================================================
 // Types
@@ -63,7 +62,7 @@ export function convertCSSVarsToTheme(cssVars: Record<string, string>): StyledTh
   for (const [cssVar, tokenRef] of Object.entries(cssVars)) {
     const parts = tokenRef.split('.');
 
-    if (parts.length < 2) continue;
+    if (parts.length < 2) {continue;}
 
     const [layer, category, ...rest] = parts;
     const key = rest.join('-') || category;
@@ -81,14 +80,14 @@ export function convertCSSVarsToTheme(cssVars: Record<string, string>): StyledTh
         theme.shadows[key] = cssVar;
       } else {
         // Custom category
-        if (!theme.custom) theme.custom = {};
-        if (!theme.custom[category]) theme.custom[category] = {};
+        if (!theme.custom) {theme.custom = {};}
+        if (!theme.custom[category]) {theme.custom[category] = {};}
         theme.custom[category][key] = cssVar;
       }
     } else if (layer === 'component') {
       // Component-specific tokens go to custom
-      if (!theme.custom) theme.custom = {};
-      if (!theme.custom[category]) theme.custom[category] = {};
+      if (!theme.custom) {theme.custom = {};}
+      if (!theme.custom[category]) {theme.custom[category] = {};}
       theme.custom[category][key] = cssVar;
     }
   }
@@ -196,7 +195,7 @@ function generateThemeCode(theme: StyledThemeConfig): string {
  */
 export function generateComponentStyles(
   component: ResolvedComponent,
-  format: CSSInJSFormat = 'styled-components'
+  _format: CSSInJSFormat = 'styled-components'
 ): string {
   const componentName = pascalCase(component.type);
   const styledName = `Styled${componentName}`;
@@ -219,7 +218,7 @@ export function generateComponentStyles(
   if (styles.length > 0) {
     lines[0] = `export const ${styledName} = styled.${element}\``;
     lines.push(...styles);
-    lines.push('\`;');
+    lines.push('`;');
   }
 
   return lines.join('\n');
@@ -285,7 +284,7 @@ function extractThemeKey(cssVar: string): string {
   const varName = cssVar.replace(/^var\(--/, '').replace(/\)$/, '');
   const parts = varName.split('-');
 
-  if (parts.length < 2) return `custom['${varName}']`;
+  if (parts.length < 2) {return `custom['${varName}']`;}
 
   const [layer, category, ...rest] = parts;
 

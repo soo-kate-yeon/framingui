@@ -5,8 +5,8 @@
  */
 
 import type { ResolvedScreen, ResolvedComponent } from '../resolver/index.js';
-import type { GeneratorOptions, GeneratorResult, TailwindClassMap } from './types.js';
-import { formatCode, cssVarToToken } from './utils.js';
+import type { GeneratorOptions, GeneratorResult } from './types.js';
+import { cssVarToToken } from './utils.js';
 
 // ============================================================================
 // Token to Tailwind Class Mapping
@@ -83,7 +83,7 @@ export function tokenToTailwindClass(
   const tokenRef = cssVarToToken(tokenBinding);
   const parts = tokenRef.split('.');
 
-  if (parts.length < 2) return '';
+  if (parts.length < 2) {return '';}
 
   const [layer, category, ...rest] = parts;
   const prefix = TAILWIND_PROPERTY_MAP[context.prop] || '';
@@ -137,7 +137,7 @@ function mapSpacingToTailwind(value: string): string {
   // Tekton uses 4px base unit, Tailwind uses 0.25rem (4px) base
   // Direct mapping: 16px → 4, 32px → 8, etc.
   const numValue = parseInt(value, 10);
-  if (isNaN(numValue)) return value;
+  if (isNaN(numValue)) {return value;}
 
   return String(numValue / 4);
 }
@@ -228,7 +228,7 @@ export function generateTailwindConfig(cssVars: Record<string, string>): string 
   // Process CSS variables
   for (const [cssVar, tokenRef] of Object.entries(cssVars)) {
     const parts = tokenRef.split('.');
-    if (parts.length < 2) continue;
+    if (parts.length < 2) {continue;}
 
     const [layer, category, ...rest] = parts;
 
@@ -338,7 +338,7 @@ export function generateTailwindConfig(cssVars: Record<string, string>): string 
  */
 export function generateTailwindClasses(
   screen: ResolvedScreen,
-  options: GeneratorOptions = {}
+  _options: GeneratorOptions = {}
 ): GeneratorResult {
   const startTime = performance.now();
 

@@ -150,7 +150,7 @@ export interface ScreenDefinition {
  * Type guard to check if value is a ComponentDefinition
  */
 export function isComponentDefinition(value: unknown): value is ComponentDefinition {
-  if (typeof value !== 'object' || value === null) return false;
+  if (typeof value !== 'object' || value === null) {return false;}
   const obj = value as Record<string, unknown>;
   return typeof obj.type === 'string' && typeof obj.props === 'object';
 }
@@ -159,7 +159,7 @@ export function isComponentDefinition(value: unknown): value is ComponentDefinit
  * Type guard to check if value is a ScreenDefinition
  */
 export function isScreenDefinition(value: unknown): value is ScreenDefinition {
-  if (typeof value !== 'object' || value === null) return false;
+  if (typeof value !== 'object' || value === null) {return false;}
   const obj = value as Record<string, unknown>;
   return (
     typeof obj.id === 'string' &&

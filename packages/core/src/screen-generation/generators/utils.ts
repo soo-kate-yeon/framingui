@@ -80,7 +80,7 @@ export function kebabCase(str: string): string {
  * // → 'const x = { a: 1, b: 2 };\n'
  * ```
  */
-export function formatCode(code: string, parser: 'typescript' | 'babel' = 'typescript'): string {
+export function formatCode(code: string, _parser: 'typescript' | 'babel' = 'typescript'): string {
   try {
     // Try to use prettier if available
     // In a real implementation, this would use prettier programmatically
@@ -224,7 +224,7 @@ export function propValueToJSX(value: unknown): string {
  */
 export function generateImports(
   dependencies: Record<string, string[]>,
-  format: 'typescript' | 'javascript' = 'typescript'
+  _format: 'typescript' | 'javascript' = 'typescript'
 ): string {
   const imports: string[] = [];
 
