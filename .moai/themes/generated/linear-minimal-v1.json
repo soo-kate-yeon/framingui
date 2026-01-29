@@ -1,53 +1,67 @@
 {
-  "id": "hims-v1",
-  "name": "Hims Design System v1",
+  "id": "linear-minimal-v1",
+  "name": "Linear Minimal",
   "schemaVersion": "2.1",
-  "brandTone": "professional",
+  "brandTone": "minimal",
   "designDNA": {
     "moodKeywords": [
-      "modern",
       "clean",
-      "trustworthy",
-      "accessible"
+      "efficient",
+      "focused"
     ],
-    "targetEmotion": "신뢰감",
-    "visualAtmosphere": "전문적인 헬스케어 플랫폼"
+    "targetEmotion": "생산성",
+    "visualAtmosphere": "정돈된 워크스페이스"
   },
   "tokens": {
     "atomic": {
       "color": {
         "brand": {
+          "100": {
+            "l": 0.95,
+            "c": 0.02,
+            "h": 265
+          },
           "500": {
-            "l": 0.38,
-            "c": 0.18,
-            "h": 285
+            "l": 0.55,
+            "c": 0.12,
+            "h": 265
+          },
+          "600": {
+            "l": 0.45,
+            "c": 0.14,
+            "h": 265
           }
         },
         "neutral": {
           "50": {
             "l": 0.99,
             "c": 0.005,
-            "h": 285
+            "h": 265
           },
           "100": {
-            "l": 0.95,
-            "c": 0.008,
-            "h": 285
+            "l": 0.96,
+            "c": 0.01,
+            "h": 265
           },
           "200": {
-            "l": 0.85,
-            "c": 0.01,
-            "h": 285
+            "l": 0.92,
+            "c": 0.015,
+            "h": 265
           },
           "300": {
-            "l": 0.75,
-            "c": 0.012,
-            "h": 285
+            "l": 0.85,
+            "c": 0.02,
+            "h": 265
+          },
+          "500": {
+            "l": 0.6,
+            "c": 0.03,
+            "h": 265
           },
           "900": {
-            "l": 0.15,
-            "c": 0.01,
-            "h": 285
+            "l": 0.2,
+            "c": 0.04,
+            "h": 265
           }
         },
         "white": {
@@ -73,14 +87,14 @@
       },
       "radius": {
         "sm": "4px",
-        "md": "8px",
-        "lg": "12px",
-        "full": "9999px",
+        "md": "6px",
+        "lg": "8px",
         "none": "0",
         "xs": "2px",
         "xl": "12px",
         "2xl": "16px",
-        "3xl": "24px"
+        "3xl": "24px",
+        "full": "9999px"
       }
     },
     "semantic": {
@@ -90,6 +104,11 @@
           "subtle": "atomic.color.neutral.50",
           "default": "atomic.color.white",
           "emphasis": "atomic.color.neutral.100"
+        },
+        "brand": {
+          "subtle": "atomic.color.brand.100",
+          "default": "atomic.color.brand.500",
+          "emphasis": "atomic.color.brand.600"
         }
       },
       "border": {
@@ -103,7 +122,7 @@
   },
   "stateLayer": {
     "hover": {
-      "opacity": 0.08
+      "opacity": 0.06
     },
     "disabled": {
       "opacity": 0.38,
@@ -113,15 +132,16 @@
   "elevation": {
     "level": {
       "0": "none",
-      "1": "0 2px 8px rgba(0,0,0,0.04)",
-      "2": "0 4px 16px rgba(0,0,0,0.08)",
-      "3": "0 8px 24px rgba(0,0,0,0.12)"
+      "1": "0 1px 4px rgba(0,0,0,0.04)",
+      "2": "0 2px 8px rgba(0,0,0,0.06)",
+      "3": "0 4px 16px rgba(0,0,0,0.1)"
     },
     "context": {
       "card": {
-        "default": "elevation.level.1"
+        "default": "elevation.level.1",
+        "hover": "elevation.level.2",
+        "raised": "elevation.level.2"
       },
-      "button": "elevation.level.1",
       "modal": "elevation.level.3"
     }
   },
@@ -135,10 +155,11 @@
     "fontWeight": {
       "regular": "400",
       "medium": "500",
-      "bold": "700",
+      "semiBold": "600",
       "thin": "100",
       "light": "300",
       "semibold": "600",
+      "bold": "700",
       "extrabold": "800",
       "black": "900"
     }
@@ -148,21 +169,21 @@
   },
   "motion": {
     "duration": {
-      "short": "150ms",
-      "medium": "300ms",
+      "slow": "300ms",
+      "medium": "200ms",
+      "fast": "100ms",
       "instant": "0ms",
       "micro": "50ms",
       "quick": "100ms",
       "standard": "150ms",
       "moderate": "200ms",
       "deliberate": "300ms",
-      "slow": "400ms",
       "complex": "500ms"
     },
     "easing": {
       "standard": "ease-out",
+      "decelerate": "cubic-bezier(0,0,0.2,1)",
       "linear": "linear",
-      "decelerate": "cubic-bezier(0, 0, 0.2, 1)",
       "accelerate": "cubic-bezier(0.4, 0, 1, 1)",
       "emphasized": "cubic-bezier(0.2, 0, 0, 1)",
       "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)"
@@ -172,20 +193,20 @@
     "width": {
       "thin": "1px",
       "medium": "2px",
-      "none": "0",
       "thick": "3px",
+      "none": "0",
       "heavy": "4px"
     },
     "radius": {
       "sm": "4px",
-      "md": "8px",
-      "lg": "12px",
-      "full": "9999px",
+      "md": "6px",
+      "lg": "8px",
       "none": "0",
       "xs": "2px",
       "xl": "12px",
       "2xl": "16px",
       "3xl": "24px",
+      "full": "9999px",
       "circle": "50%"
     }
   }
