@@ -157,6 +157,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify workspace dependencies
+        run: pnpm list --depth 0
+
+      - name: Build tokens package first
+        run: pnpm --filter "@tekton/tokens" build
+
       - name: Build all packages
         run: pnpm build:all
 
