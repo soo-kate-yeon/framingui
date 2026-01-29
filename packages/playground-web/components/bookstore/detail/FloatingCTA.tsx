@@ -19,7 +19,7 @@ export function FloatingCTA({ price }: FloatingCTAProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    if (!visible) return null;
+    if (!visible) {return null;}
 
     return (
         <>

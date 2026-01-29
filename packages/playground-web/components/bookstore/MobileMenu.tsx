@@ -20,7 +20,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         };
     }, [isOpen]);
 
-    if (!isOpen) return null;
+    if (!isOpen) {return null;}
 
     return (
         <>
