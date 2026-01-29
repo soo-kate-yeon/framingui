@@ -71,7 +71,7 @@ export function tektonPlugin(options: TektonPluginOptions = {}): Plugin {
       let filesAnalyzed = 0;
 
       // Intercept file loading to analyze code
-      build.onLoad({ filter: /\.tsx?$/ }, async (args) => {
+      build.onLoad({ filter: /\.tsx?$/ }, async args => {
         // Check if file should be processed
         if (!shouldProcess(args.path, include, exclude)) {
           return null;
@@ -95,7 +95,7 @@ export function tektonPlugin(options: TektonPluginOptions = {}): Plugin {
       });
 
       // Report results at build end
-      build.onEnd((result) => {
+      build.onEnd(result => {
         if (filesAnalyzed === 0 && verbose) {
           console.log('[Tekton] No files were analyzed. Check include/exclude patterns.');
         }

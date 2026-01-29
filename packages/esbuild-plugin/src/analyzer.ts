@@ -59,7 +59,12 @@ export function analyzeCode(code: string, filename: string): Violation[] {
 
             // Find violations in this template string
             const colorViolations = findColorViolations(value, filename, lineStart, columnStart);
-            const spacingViolations = findSpacingViolations(value, filename, lineStart, columnStart);
+            const spacingViolations = findSpacingViolations(
+              value,
+              filename,
+              lineStart,
+              columnStart
+            );
 
             violations.push(...colorViolations, ...spacingViolations);
           }
@@ -85,11 +90,31 @@ function findColorViolations(
 ): Violation[] {
   const violations: Violation[] = [];
   const patterns = [
-    { regex: /#[0-9a-fA-F]{3,8}\b/g, type: 'color' as const, suggestion: 'tokens.bg.* or tokens.fg.*' },
-    { regex: /\brgb\s*\([^)]+\)/gi, type: 'color' as const, suggestion: 'tokens.bg.* or tokens.fg.*' },
-    { regex: /\brgba\s*\([^)]+\)/gi, type: 'color' as const, suggestion: 'tokens.bg.* or tokens.fg.*' },
-    { regex: /\bhsl\s*\([^)]+\)/gi, type: 'color' as const, suggestion: 'tokens.bg.* or tokens.fg.*' },
-    { regex: /\bhsla\s*\([^)]+\)/gi, type: 'color' as const, suggestion: 'tokens.bg.* or tokens.fg.*' },
+    {
+      regex: /#[0-9a-fA-F]{3,8}\b/g,
+      type: 'color' as const,
+      suggestion: 'tokens.bg.* or tokens.fg.*',
+    },
+    {
+      regex: /\brgb\s*\([^)]+\)/gi,
+      type: 'color' as const,
+      suggestion: 'tokens.bg.* or tokens.fg.*',
+    },
+    {
+      regex: /\brgba\s*\([^)]+\)/gi,
+      type: 'color' as const,
+      suggestion: 'tokens.bg.* or tokens.fg.*',
+    },
+    {
+      regex: /\bhsl\s*\([^)]+\)/gi,
+      type: 'color' as const,
+      suggestion: 'tokens.bg.* or tokens.fg.*',
+    },
+    {
+      regex: /\bhsla\s*\([^)]+\)/gi,
+      type: 'color' as const,
+      suggestion: 'tokens.bg.* or tokens.fg.*',
+    },
   ];
 
   for (const { regex, type, suggestion } of patterns) {
@@ -120,7 +145,17 @@ function findSpacingViolations(
   baseColumn: number
 ): Violation[] {
   const violations: Violation[] = [];
-  const spacingProps = ['padding', 'margin', 'gap', 'width', 'height', 'top', 'right', 'bottom', 'left'];
+  const spacingProps = [
+    'padding',
+    'margin',
+    'gap',
+    'width',
+    'height',
+    'top',
+    'right',
+    'bottom',
+    'left',
+  ];
 
   for (const prop of spacingProps) {
     const regex = new RegExp(`${prop}\\s*:\\s*(\\d+)px`, 'gi');

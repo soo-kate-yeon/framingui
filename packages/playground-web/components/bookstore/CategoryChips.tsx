@@ -26,9 +26,10 @@ export function CategoryChips({ selectedId, onSelect }: CategoryChipsProps) {
               onClick={() => onSelect(category.id)}
               className={`
                 px-4 md:px-5 py-2.5 md:py-2 rounded-[var(--atomic-radius-full)] text-xs md:text-sm font-medium transition-all duration-200 min-h-[44px] md:min-h-0
-                ${isSelected
-                  ? 'bg-[var(--atomic-semantic-text-brand)] text-white shadow-md'
-                  : 'bg-[var(--atomic-semantic-background-surface-default)] text-[var(--atomic-semantic-text-secondary)] border border-[var(--atomic-semantic-border-default-subtle)] hover:border-[var(--atomic-semantic-border-default-default)] hover:text-[var(--atomic-semantic-text-primary)]'
+                ${
+                  isSelected
+                    ? 'bg-[var(--atomic-semantic-text-brand)] text-white shadow-md'
+                    : 'bg-[var(--atomic-semantic-background-surface-default)] text-[var(--atomic-semantic-text-secondary)] border border-[var(--atomic-semantic-border-default-subtle)] hover:border-[var(--atomic-semantic-border-default-default)] hover:text-[var(--atomic-semantic-text-primary)]'
                 }
               `}
             >

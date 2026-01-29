@@ -525,8 +525,8 @@ const Card = styled.div`
 
 // ❌ Invalid: Hardcoded values produce TypeScript errors
 const BadCard = styled.div`
-  background: #ffffff;  // TypeScript Error!
-  padding: 16px;        // TypeScript Error!
+  background: #ffffff; // TypeScript Error!
+  padding: 16px; // TypeScript Error!
 `;
 
 // Build-time validation with esbuild plugin
@@ -893,6 +893,7 @@ index.ts (Public API)
 ```
 
 **Enforcement Flow:**
+
 ```
 Developer Code
     ↓

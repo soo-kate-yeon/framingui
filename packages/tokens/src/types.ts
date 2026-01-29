@@ -74,19 +74,19 @@ export interface FgTokens {
  */
 export interface SpacingTokens {
   [key: number]: TokenReference;
-  0: TokenReference;   // 0px
-  1: TokenReference;   // 4px
-  2: TokenReference;   // 8px
-  3: TokenReference;   // 12px
-  4: TokenReference;   // 16px
-  5: TokenReference;   // 20px
-  6: TokenReference;   // 24px
-  8: TokenReference;   // 32px
-  10: TokenReference;  // 40px
-  12: TokenReference;  // 48px
-  16: TokenReference;  // 64px
-  20: TokenReference;  // 80px
-  24: TokenReference;  // 96px
+  0: TokenReference; // 0px
+  1: TokenReference; // 4px
+  2: TokenReference; // 8px
+  3: TokenReference; // 12px
+  4: TokenReference; // 16px
+  5: TokenReference; // 20px
+  6: TokenReference; // 24px
+  8: TokenReference; // 32px
+  10: TokenReference; // 40px
+  12: TokenReference; // 48px
+  16: TokenReference; // 64px
+  20: TokenReference; // 80px
+  24: TokenReference; // 96px
 }
 
 /**

@@ -25,10 +25,10 @@ await build({
   bundle: true,
   plugins: [
     tektonPlugin({
-      strict: true,           // Fail build on violations (default: true in production)
-      threshold: 100,         // Required compliance percentage
-      verbose: true,          // Enable logging
-      reportPath: './tekton-report.txt',  // Optional report file
+      strict: true, // Fail build on violations (default: true in production)
+      threshold: 100, // Required compliance percentage
+      verbose: true, // Enable logging
+      reportPath: './tekton-report.txt', // Optional report file
     }),
   ],
 });
@@ -54,12 +54,12 @@ export default defineConfig({
 
 ```typescript
 interface TektonPluginOptions {
-  strict?: boolean;          // Fail build on violations (default: true in prod)
-  include?: RegExp[];        // File patterns to include (default: /.tsx?$/)
-  exclude?: RegExp[];        // File patterns to exclude (default: node_modules, tests)
-  threshold?: number;        // Compliance threshold (default: 100)
-  reportPath?: string;       // Generate report file
-  verbose?: boolean;         // Enable verbose logging
+  strict?: boolean; // Fail build on violations (default: true in prod)
+  include?: RegExp[]; // File patterns to include (default: /.tsx?$/)
+  exclude?: RegExp[]; // File patterns to exclude (default: node_modules, tests)
+  threshold?: number; // Compliance threshold (default: 100)
+  reportPath?: string; // Generate report file
+  verbose?: boolean; // Enable verbose logging
 }
 ```
 
@@ -81,11 +81,11 @@ interface TektonPluginOptions {
 // ❌ Detected violations:
 
 styled.div`
-  background: #ffffff;    // Error: hex color "#ffffff"
-                          // Suggestion: tokens.bg.* or tokens.fg.*
+  background: #ffffff; // Error: hex color "#ffffff"
+  // Suggestion: tokens.bg.* or tokens.fg.*
 
-  padding: 16px;          // Error: pixel spacing "16px"
-                          // Suggestion: tokens.spacing[4]
+  padding: 16px; // Error: pixel spacing "16px"
+  // Suggestion: tokens.spacing[4]
 `;
 ```
 

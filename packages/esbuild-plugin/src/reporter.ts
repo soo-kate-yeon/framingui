@@ -15,11 +15,14 @@ export function generateReport(violations: Violation[]): string {
     return '\n✅ [Tekton] Token compliance: 100% - No violations found\n';
   }
 
-  const grouped = violations.reduce((acc, v) => {
-    acc[v.file] = acc[v.file] || [];
-    acc[v.file].push(v);
-    return acc;
-  }, {} as Record<string, Violation[]>);
+  const grouped = violations.reduce(
+    (acc, v) => {
+      acc[v.file] = acc[v.file] || [];
+      acc[v.file].push(v);
+      return acc;
+    },
+    {} as Record<string, Violation[]>
+  );
 
   let report = '\n❌ [Tekton] Token Compliance Violations\n\n';
 

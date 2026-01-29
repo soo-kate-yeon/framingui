@@ -9,10 +9,7 @@
  * Runtime validation for hardcoded values
  * REQ-STY-017: Error messages provide context
  */
-export function validateNoHardcodedValues(
-  strings: TemplateStringsArray,
-  values: any[]
-): void {
+export function validateNoHardcodedValues(strings: TemplateStringsArray, values: any[]): void {
   // Reconstruct the full template string for analysis
   let fullTemplate = '';
   for (let i = 0; i < strings.length; i++) {

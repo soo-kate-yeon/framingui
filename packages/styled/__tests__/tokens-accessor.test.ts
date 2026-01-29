@@ -4,8 +4,6 @@
  * [SPEC-STYLED-001] [REQ-STY-010]
  */
 
- 
-
 import { describe, it, expect } from 'vitest';
 import { tokens } from '../src/tokens.js';
 
@@ -110,7 +108,9 @@ describe('Token String Coercion', () => {
 
   it('should work in template literals', () => {
     const css = `background: ${tokens.bg.surface.default}; padding: ${tokens.spacing[4]};`;
-    expect(css).toBe('background: var(--tekton-bg-surface-default); padding: var(--tekton-spacing-4);');
+    expect(css).toBe(
+      'background: var(--tekton-bg-surface-default); padding: var(--tekton-spacing-4);'
+    );
   });
 
   it('should work in string concatenation', () => {
@@ -125,8 +125,12 @@ describe('Token String Coercion', () => {
 
 describe('Typography Token Access', () => {
   it('should access font family tokens', () => {
-    expect(String(tokens.typography.fontFamily.sans)).toBe('var(--tekton-typography-fontFamily-sans)');
-    expect(String(tokens.typography.fontFamily.mono)).toBe('var(--tekton-typography-fontFamily-mono)');
+    expect(String(tokens.typography.fontFamily.sans)).toBe(
+      'var(--tekton-typography-fontFamily-sans)'
+    );
+    expect(String(tokens.typography.fontFamily.mono)).toBe(
+      'var(--tekton-typography-fontFamily-mono)'
+    );
   });
 
   it('should access font size tokens', () => {
@@ -135,12 +139,18 @@ describe('Typography Token Access', () => {
   });
 
   it('should access font weight tokens', () => {
-    expect(String(tokens.typography.fontWeight.normal)).toBe('var(--tekton-typography-fontWeight-normal)');
-    expect(String(tokens.typography.fontWeight.bold)).toBe('var(--tekton-typography-fontWeight-bold)');
+    expect(String(tokens.typography.fontWeight.normal)).toBe(
+      'var(--tekton-typography-fontWeight-normal)'
+    );
+    expect(String(tokens.typography.fontWeight.bold)).toBe(
+      'var(--tekton-typography-fontWeight-bold)'
+    );
   });
 
   it('should access line height tokens', () => {
-    expect(String(tokens.typography.lineHeight.normal)).toBe('var(--tekton-typography-lineHeight-normal)');
+    expect(String(tokens.typography.lineHeight.normal)).toBe(
+      'var(--tekton-typography-lineHeight-normal)'
+    );
   });
 });
 

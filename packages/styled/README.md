@@ -27,8 +27,8 @@ const Card = styled.div`
 
 // ❌ Invalid: Hardcoded values throw runtime errors
 const Bad = styled.div`
-  background: #ffffff;  // Error: Hardcoded value detected
-  padding: 16px;        // Error: Hardcoded value detected
+  background: #ffffff; // Error: Hardcoded value detected
+  padding: 16px; // Error: Hardcoded value detected
 `;
 
 // ✅ Valid: Non-token properties work normally
@@ -44,9 +44,9 @@ const Layout = styled.div`
 The `tokens` accessor provides IDE autocomplete and returns CSS variable references:
 
 ```typescript
-tokens.bg.surface.default  // → 'var(--tekton-bg-surface-default)'
-tokens.spacing[4]          // → 'var(--tekton-spacing-4)'
-tokens.fg.primary          // → 'var(--tekton-fg-primary)'
+tokens.bg.surface.default; // → 'var(--tekton-bg-surface-default)'
+tokens.spacing[4]; // → 'var(--tekton-spacing-4)'
+tokens.fg.primary; // → 'var(--tekton-fg-primary)'
 ```
 
 ## Features

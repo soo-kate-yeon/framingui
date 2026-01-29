@@ -57,9 +57,7 @@ const BOOKS = [
 
 export function BookList({ category }: BookListProps) {
   const filteredBooks =
-    category === 'all'
-      ? BOOKS
-      : BOOKS.filter((book) => book.category === category);
+    category === 'all' ? BOOKS : BOOKS.filter((book) => book.category === category);
 
   return (
     <section className="px-6 md:px-10 pb-10">
