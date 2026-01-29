@@ -154,7 +154,7 @@ No migration needed for v0.1.0 (initial release)
   - **27개 레이아웃 토큰 업데이트**:
     - 6개 Shell 토큰 (app, marketing, auth, dashboard, admin, minimal)
     - 8개 Page 토큰 (job, resource, dashboard, settings, detail, empty, wizard, onboarding)
-    - 13개 Section 토큰 (grid-*, split-*, stack-*, sidebar-*, container)
+    - 13개 Section 토큰 (grid-_, split-_, stack-_, sidebar-_, container)
   - **새로운 타입 정의**:
     - `ContainerQueryConfig` - 컨테이너 쿼리 설정
     - `OrientationConfig<T>` - 방향별 오버라이드

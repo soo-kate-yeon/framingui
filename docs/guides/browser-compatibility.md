@@ -30,18 +30,19 @@ SPEC-LAYOUT-003에서 도입된 반응형 기능의 브라우저 지원 현황�
 
 xl/2xl 브레이크포인트는 표준 CSS Media Queries를 사용합니다.
 
-| Browser | Min Version | Status | Notes |
-|---------|-------------|--------|-------|
-| Chrome | All | ✅ Full | 완전 지원 |
-| Safari | All | ✅ Full | 완전 지원 |
-| Firefox | All | ✅ Full | 완전 지원 |
-| Edge | All | ✅ Full | 완전 지원 |
-| Opera | All | ✅ Full | 완전 지원 |
-| Samsung Internet | All | ✅ Full | 완전 지원 |
+| Browser          | Min Version | Status  | Notes     |
+| ---------------- | ----------- | ------- | --------- |
+| Chrome           | All         | ✅ Full | 완전 지원 |
+| Safari           | All         | ✅ Full | 완전 지원 |
+| Firefox          | All         | ✅ Full | 완전 지원 |
+| Edge             | All         | ✅ Full | 완전 지원 |
+| Opera            | All         | ✅ Full | 완전 지원 |
+| Samsung Internet | All         | ✅ Full | 완전 지원 |
 
 **호환성 점수**: 100%
 
 **사용 예제**:
+
 ```css
 @media (min-width: 1280px) {
   /* xl breakpoint */
@@ -58,20 +59,21 @@ xl/2xl 브레이크포인트는 표준 CSS Media Queries를 사용합니다.
 
 컴포넌트 중심 반응형 디자인을 위한 최신 CSS 기능입니다.
 
-| Browser | Min Version | Status | Fallback | Notes |
-|---------|-------------|--------|----------|-------|
-| Chrome | 105+ | ✅ Full | N/A | 2022-09 출시 |
-| Safari | 16+ | ✅ Full | N/A | 2022-09 출시 |
-| Firefox | 110+ | ✅ Full | N/A | 2023-03 출시 |
-| Edge | 105+ | ✅ Full | N/A | Chromium 기반 |
-| Opera | 91+ | ✅ Full | N/A | Chromium 기반 |
-| Samsung Internet | 20+ | ✅ Full | N/A | |
+| Browser          | Min Version | Status  | Fallback | Notes         |
+| ---------------- | ----------- | ------- | -------- | ------------- |
+| Chrome           | 105+        | ✅ Full | N/A      | 2022-09 출시  |
+| Safari           | 16+         | ✅ Full | N/A      | 2022-09 출시  |
+| Firefox          | 110+        | ✅ Full | N/A      | 2023-03 출시  |
+| Edge             | 105+        | ✅ Full | N/A      | Chromium 기반 |
+| Opera            | 91+         | ✅ Full | N/A      | Chromium 기반 |
+| Samsung Internet | 20+         | ✅ Full | N/A      |               |
 
 **호환성 점수**: ~95% (글로벌 브라우저 점유율 기준)
 
 **지원 버전 이하**: 자동 Media Query 폴백
 
 **사용 예제**:
+
 ```css
 /* Modern browsers */
 @supports (container-type: inline-size) {
@@ -79,7 +81,7 @@ xl/2xl 브레이크포인트는 표준 CSS Media Queries를 사용합니다.
     container-type: inline-size;
     container-name: card-grid;
   }
-  
+
   @container card-grid (min-width: 640px) {
     .card-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -103,18 +105,19 @@ xl/2xl 브레이크포인트는 표준 CSS Media Queries를 사용합니다.
 
 디바이스 방향 감지는 CSS Media Queries Level 4 기능입니다.
 
-| Browser | Min Version | Status | Notes |
-|---------|-------------|--------|-------|
-| Chrome | All | ✅ Full | 완전 지원 |
-| Safari | All | ✅ Full | 완전 지원 |
-| Firefox | All | ✅ Full | 완전 지원 |
-| Edge | All | ✅ Full | 완전 지원 |
-| Opera | All | ✅ Full | 완전 지원 |
-| Samsung Internet | All | ✅ Full | 완전 지원 |
+| Browser          | Min Version | Status  | Notes     |
+| ---------------- | ----------- | ------- | --------- |
+| Chrome           | All         | ✅ Full | 완전 지원 |
+| Safari           | All         | ✅ Full | 완전 지원 |
+| Firefox          | All         | ✅ Full | 완전 지원 |
+| Edge             | All         | ✅ Full | 완전 지원 |
+| Opera            | All         | ✅ Full | 완전 지원 |
+| Samsung Internet | All         | ✅ Full | 완전 지원 |
 
 **호환성 점수**: 100%
 
 **사용 예제**:
+
 ```css
 @media (orientation: portrait) {
   .section {
@@ -135,18 +138,19 @@ xl/2xl 브레이크포인트는 표준 CSS Media Queries를 사용합니다.
 
 Tekton의 모든 토큰은 CSS Variables를 사용합니다.
 
-| Browser | Min Version | Status | Notes |
-|---------|-------------|--------|-------|
-| Chrome | 49+ | ✅ Full | 2016-03 출시 |
-| Safari | 9.1+ | ✅ Full | 2016-03 출시 |
-| Firefox | 31+ | ✅ Full | 2014-07 출시 |
-| Edge | 15+ | ✅ Full | 2017-04 출시 (Legacy Edge 미지원) |
-| Opera | 36+ | ✅ Full | 2016-03 출시 |
-| Samsung Internet | 5+ | ✅ Full | |
+| Browser          | Min Version | Status  | Notes                             |
+| ---------------- | ----------- | ------- | --------------------------------- |
+| Chrome           | 49+         | ✅ Full | 2016-03 출시                      |
+| Safari           | 9.1+        | ✅ Full | 2016-03 출시                      |
+| Firefox          | 31+         | ✅ Full | 2014-07 출시                      |
+| Edge             | 15+         | ✅ Full | 2017-04 출시 (Legacy Edge 미지원) |
+| Opera            | 36+         | ✅ Full | 2016-03 출시                      |
+| Samsung Internet | 5+          | ✅ Full |                                   |
 
 **호환성 점수**: ~97%
 
 **사용 예제**:
+
 ```css
 :root {
   --spacing-4: 16px;
@@ -182,8 +186,8 @@ const config: ContainerQueryConfig = {
   type: 'inline-size',
   breakpoints: {
     md: { minWidth: 480, css: { 'grid-template-columns': 'repeat(2, 1fr)' } },
-    lg: { minWidth: 640, css: { 'grid-template-columns': 'repeat(3, 1fr)' } }
-  }
+    lg: { minWidth: 640, css: { 'grid-template-columns': 'repeat(3, 1fr)' } },
+  },
 };
 
 const css = generateContainerQueryCSS(config);
@@ -199,13 +203,17 @@ const css = generateContainerQueryCSS(config);
     container-type: inline-size;
     container-name: product-grid;
   }
-  
+
   @container product-grid (min-width: 480px) {
-    .product-grid { grid-template-columns: repeat(2, 1fr); }
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
-  
+
   @container product-grid (min-width: 640px) {
-    .product-grid { grid-template-columns: repeat(3, 1fr); }
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 }
 
@@ -213,11 +221,15 @@ const css = generateContainerQueryCSS(config);
 @supports not (container-type: inline-size) {
   /* Viewport Media Queries 사용 */
   @media (min-width: 768px) {
-    .product-grid { grid-template-columns: repeat(2, 1fr); }
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
-  
+
   @media (min-width: 1024px) {
-    .product-grid { grid-template-columns: repeat(3, 1fr); }
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 }
 ```
@@ -225,6 +237,7 @@ const css = generateContainerQueryCSS(config);
 #### Strategy 2: Progressive Enhancement
 
 1. **기본 레이아웃** (모든 브라우저)
+
 ```css
 .card-grid {
   display: grid;
@@ -234,21 +247,27 @@ const css = generateContainerQueryCSS(config);
 ```
 
 2. **Media Queries** (모든 브라우저)
+
 ```css
 @media (min-width: 768px) {
-  .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 ```
 
 3. **Container Queries** (Modern browsers only)
+
 ```css
 @supports (container-type: inline-size) {
   .card-grid {
     container-type: inline-size;
   }
-  
+
   @container (min-width: 480px) {
-    .card-grid { grid-template-columns: repeat(2, 1fr); }
+    .card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 ```
@@ -262,19 +281,19 @@ const css = generateContainerQueryCSS(config);
 #### Desktop Testing
 
 | Browser | Versions to Test | Priority |
-|---------|------------------|----------|
-| Chrome | Latest, Latest-1 | High |
-| Safari | Latest, Latest-1 | High |
-| Firefox | Latest, Latest-1 | Medium |
-| Edge | Latest | Medium |
+| ------- | ---------------- | -------- |
+| Chrome  | Latest, Latest-1 | High     |
+| Safari  | Latest, Latest-1 | High     |
+| Firefox | Latest, Latest-1 | Medium   |
+| Edge    | Latest           | Medium   |
 
 #### Mobile Testing
 
-| Device/Browser | Versions to Test | Priority |
-|----------------|------------------|----------|
-| iOS Safari | Latest, Latest-1 | High |
-| Android Chrome | Latest | High |
-| Samsung Internet | Latest | Medium |
+| Device/Browser   | Versions to Test | Priority |
+| ---------------- | ---------------- | -------- |
+| iOS Safari       | Latest, Latest-1 | High     |
+| Android Chrome   | Latest           | High     |
+| Samsung Internet | Latest           | Medium   |
 
 ### 2. Responsive Testing Checklist
 
@@ -306,22 +325,22 @@ browsers:
   # Desktop
   - os: Windows
     browser: chrome
-    versions: ["latest", "latest-1"]
-  
+    versions: ['latest', 'latest-1']
+
   - os: OS X
     browser: safari
-    versions: ["latest", "latest-1"]
-  
+    versions: ['latest', 'latest-1']
+
   # Mobile
   - device: iPhone 14 Pro
     os: iOS
     browser: safari
-    version: "16"
-  
+    version: '16'
+
   - device: Samsung Galaxy S23
     os: Android
     browser: chrome
-    version: "latest"
+    version: 'latest'
 
 features:
   - container_queries: true
@@ -357,6 +376,7 @@ features:
 **Status**: ❌ Not Supported
 
 **Reason**:
+
 - CSS Variables 미지원
 - Container Queries 미지원
 - Modern CSS Grid 제한적 지원
@@ -375,7 +395,9 @@ features:
 /* Safari 15 will use this */
 @supports not (container-type: inline-size) {
   @media (min-width: 1024px) {
-    .grid { grid-template-columns: repeat(3, 1fr); }
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 }
 ```
@@ -392,14 +414,14 @@ features:
 
 ## Browser Market Share (2026-01 기준)
 
-| Browser | Desktop | Mobile | Total |
-|---------|---------|--------|-------|
-| Chrome | 65% | 63% | 64% |
-| Safari | 15% | 25% | 20% |
-| Edge | 5% | - | 3% |
-| Firefox | 3% | - | 2% |
-| Samsung Internet | - | 7% | 4% |
-| Others | 12% | 5% | 7% |
+| Browser          | Desktop | Mobile | Total |
+| ---------------- | ------- | ------ | ----- |
+| Chrome           | 65%     | 63%    | 64%   |
+| Safari           | 15%     | 25%    | 20%   |
+| Edge             | 5%      | -      | 3%    |
+| Firefox          | 3%      | -      | 2%    |
+| Samsung Internet | -       | 7%     | 4%    |
+| Others           | 12%     | 5%     | 7%    |
 
 **Container Queries 지원률**: ~95%
 **CSS Variables 지원률**: ~97%
@@ -431,8 +453,8 @@ features:
 
 ## 업데이트 히스토리
 
-| 날짜 | 버전 | 변경 내용 |
-|------|------|-----------|
+| 날짜       | 버전  | 변경 내용                                   |
+| ---------- | ----- | ------------------------------------------- |
 | 2026-01-29 | 1.0.0 | SPEC-LAYOUT-003 브라우저 호환성 가이드 초안 |
 
 ---

@@ -38,11 +38,11 @@ SPEC-LAYOUT-003에서 도입된 Enhanced Responsive System은 다음을 제공�
 
 ```typescript
 export const BREAKPOINTS = {
-  sm: 640,    // 스마트폰 가로 모드
-  md: 768,    // 태블릿 세로 모드
-  lg: 1024,   // 태블릿 가로 모드 / 노트북
-  xl: 1280,   // 데스크톱 / 대형 노트북
-  '2xl': 1536 // 울트라와이드 / 4K 모니터
+  sm: 640, // 스마트폰 가로 모드
+  md: 768, // 태블릿 세로 모드
+  lg: 1024, // 태블릿 가로 모드 / 노트북
+  xl: 1280, // 데스크톱 / 대형 노트북
+  '2xl': 1536, // 울트라와이드 / 4K 모니터
 } as const;
 ```
 
@@ -52,11 +52,11 @@ export const BREAKPOINTS = {
 
 ```typescript
 interface ResponsiveConfig<T> {
-  default: T;        // 기본값 (모바일)
-  sm?: Partial<T>;   // 640px+
-  md?: Partial<T>;   // 768px+
-  lg?: Partial<T>;   // 1024px+
-  xl?: Partial<T>;   // 1280px+  ✨ NEW
+  default: T; // 기본값 (모바일)
+  sm?: Partial<T>; // 640px+
+  md?: Partial<T>; // 768px+
+  lg?: Partial<T>; // 1024px+
+  xl?: Partial<T>; // 1280px+  ✨ NEW
   '2xl'?: Partial<T>; // 1536px+ ✨ NEW
 }
 ```
@@ -69,22 +69,22 @@ import { generateResponsiveCSS } from '@tekton/core';
 const config: ResponsiveConfig<SectionCSS> = {
   default: {
     padding: 'atomic.spacing.4',
-    gridColumns: 1
+    gridColumns: 1,
   },
   md: {
     padding: 'atomic.spacing.6',
-    gridColumns: 2
+    gridColumns: 2,
   },
   lg: {
-    gridColumns: 3
+    gridColumns: 3,
   },
   xl: {
     padding: 'atomic.spacing.8',
-    gridColumns: 4
+    gridColumns: 4,
   },
   '2xl': {
-    gridColumns: 6
-  }
+    gridColumns: 6,
+  },
 };
 
 const css = generateResponsiveCSS(config);
@@ -143,11 +143,14 @@ Container Queries는 뷰포트가 아닌 **컨테이너 크기**에 반응하는
 ```css
 /* 뷰포트가 1024px 이상이면 3-column */
 @media (min-width: 1024px) {
-  .card-grid { grid-template-columns: repeat(3, 1fr); }
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 ```
 
 **문제점**:
+
 - 사이드바가 있는 페이지에서는 여유 공간이 부족할 수 있음
 - 컴포넌트 재사용성 저하
 
@@ -156,7 +159,9 @@ Container Queries는 뷰포트가 아닌 **컨테이너 크기**에 반응하는
 ```css
 /* 컨테이너가 640px 이상이면 3-column */
 @container (min-width: 640px) {
-  .card-grid { grid-template-columns: repeat(3, 1fr); }
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 ```
 
@@ -173,30 +178,30 @@ const containerConfig: ContainerQueryConfig = {
       minWidth: 320,
       css: {
         'grid-template-columns': 'repeat(1, 1fr)',
-        gap: 'var(--spacing-4)'
-      }
+        gap: 'var(--spacing-4)',
+      },
     },
     md: {
       minWidth: 480,
       css: {
         'grid-template-columns': 'repeat(2, 1fr)',
-        gap: 'var(--spacing-6)'
-      }
+        gap: 'var(--spacing-6)',
+      },
     },
     lg: {
       minWidth: 640,
       css: {
         'grid-template-columns': 'repeat(3, 1fr)',
-        gap: 'var(--spacing-8)'
-      }
+        gap: 'var(--spacing-8)',
+      },
     },
     xl: {
       minWidth: 800,
       css: {
-        'grid-template-columns': 'repeat(4, 1fr)'
-      }
-    }
-  }
+        'grid-template-columns': 'repeat(4, 1fr)',
+      },
+    },
+  },
 };
 
 const css = generateContainerQueryCSS(containerConfig);
@@ -242,19 +247,19 @@ const css = generateContainerQueryCSS(containerConfig);
 
 ```typescript
 export const CONTAINER_BREAKPOINTS = {
-  sm: 320,  // 작은 컴포넌트
-  md: 480,  // 중간 크기 컴포넌트
-  lg: 640,  // 큰 컴포넌트
-  xl: 800   // 매우 큰 컴포넌트
+  sm: 320, // 작은 컴포넌트
+  md: 480, // 중간 크기 컴포넌트
+  lg: 640, // 큰 컴포넌트
+  xl: 800, // 매우 큰 컴포넌트
 } as const;
 ```
 
 **뷰포트 vs 컨테이너 브레이크포인트 비교**:
 
-| 타입 | sm | md | lg | xl | 2xl |
-|------|----|----|----|----|-----|
-| Viewport | 640 | 768 | 1024 | 1280 | 1536 |
-| Container | 320 | 480 | 640 | 800 | - |
+| 타입      | sm  | md  | lg   | xl   | 2xl  |
+| --------- | --- | --- | ---- | ---- | ---- |
+| Viewport  | 640 | 768 | 1024 | 1280 | 1536 |
+| Container | 320 | 480 | 640  | 800  | -    |
 
 ---
 
@@ -270,12 +275,12 @@ import { OrientationConfig, generateOrientationCSS } from '@tekton/core';
 const orientationConfig: OrientationConfig<SectionCSS> = {
   portrait: {
     gridColumns: 1,
-    padding: 'atomic.spacing.4'
+    padding: 'atomic.spacing.4',
   },
   landscape: {
     gridColumns: 2,
-    padding: 'atomic.spacing.6'
-  }
+    padding: 'atomic.spacing.6',
+  },
 };
 
 const css = generateOrientationCSS(orientationConfig, generateCSSFromConfig);
@@ -313,16 +318,16 @@ const fullConfig: FullResponsiveConfig<SectionCSS> = {
   lg: { gridColumns: 3 },
   xl: { gridColumns: 4 },
   '2xl': { gridColumns: 6 },
-  
+
   // Orientation 오버라이드
   orientation: {
     portrait: {
-      gridColumns: 1 // 세로 모드는 항상 1-column
+      gridColumns: 1, // 세로 모드는 항상 1-column
     },
     landscape: {
-      padding: 'atomic.spacing.8' // 가로 모드는 더 넓은 패딩
-    }
-  }
+      padding: 'atomic.spacing.8', // 가로 모드는 더 넓은 패딩
+    },
+  },
 };
 ```
 
@@ -374,13 +379,14 @@ import { resolveLayout, generateLayoutCSS } from '@tekton/core';
 const dashboardLayout = resolveLayout({
   shellToken: 'app',
   pageToken: 'dashboard',
-  sectionToken: 'grid-4col'
+  sectionToken: 'grid-4col',
 });
 
 const css = generateLayoutCSS(dashboardLayout);
 ```
 
 생성된 CSS는 다음을 포함합니다:
+
 - Mobile (default): 1-column grid
 - Tablet (md): 2-column grid
 - Desktop (lg): 3-column grid
@@ -397,8 +403,8 @@ const cardGridConfig: ContainerQueryConfig = {
     sm: { minWidth: 320, css: { 'grid-template-columns': '1fr' } },
     md: { minWidth: 480, css: { 'grid-template-columns': 'repeat(2, 1fr)' } },
     lg: { minWidth: 640, css: { 'grid-template-columns': 'repeat(3, 1fr)' } },
-    xl: { minWidth: 800, css: { 'grid-template-columns': 'repeat(4, 1fr)' } }
-  }
+    xl: { minWidth: 800, css: { 'grid-template-columns': 'repeat(4, 1fr)' } },
+  },
 };
 
 // 이 컴포넌트는 어떤 레이아웃에서든 재사용 가능
@@ -411,21 +417,21 @@ const cardGridConfig: ContainerQueryConfig = {
 const tabletConfig: FullResponsiveConfig<SectionCSS> = {
   default: {
     padding: 'atomic.spacing.4',
-    gridColumns: 1
+    gridColumns: 1,
   },
   md: {
-    padding: 'atomic.spacing.6'
+    padding: 'atomic.spacing.6',
   },
   orientation: {
     portrait: {
       gridColumns: 1,
-      gap: 'atomic.spacing.4'
+      gap: 'atomic.spacing.4',
     },
     landscape: {
       gridColumns: 2,
-      gap: 'atomic.spacing.6'
-    }
-  }
+      gap: 'atomic.spacing.6',
+    },
+  },
 };
 ```
 
@@ -436,19 +442,21 @@ const tabletConfig: FullResponsiveConfig<SectionCSS> = {
 ### 1. Mobile First 접근
 
 **Good**:
+
 ```typescript
 const config = {
-  default: { gridColumns: 1 },      // 모바일 기본
-  md: { gridColumns: 2 },           // 점진적 확장
-  xl: { gridColumns: 4 }
+  default: { gridColumns: 1 }, // 모바일 기본
+  md: { gridColumns: 2 }, // 점진적 확장
+  xl: { gridColumns: 4 },
 };
 ```
 
 **Bad**:
+
 ```typescript
 const config = {
-  default: { gridColumns: 4 },      // 데스크톱 기본 (X)
-  sm: { gridColumns: 1 }            // 모바일 축소 (X)
+  default: { gridColumns: 4 }, // 데스크톱 기본 (X)
+  sm: { gridColumns: 1 }, // 모바일 축소 (X)
 };
 ```
 
@@ -472,13 +480,15 @@ const cardGrid = {
 ### 3. Semantic Token 사용
 
 **Good**:
+
 ```typescript
-padding: 'atomic.spacing.4'
+padding: 'atomic.spacing.4';
 ```
 
 **Bad**:
+
 ```typescript
-padding: '16px'
+padding: '16px';
 ```
 
 ### 4. Orientation은 선택적으로
@@ -488,14 +498,24 @@ padding: '16px'
 ```typescript
 // Tablet-specific content만 Orientation 사용
 const tabletSection = {
-  default: { /* ... */ },
-  orientation: { portrait: { /* ... */ } }
+  default: {
+    /* ... */
+  },
+  orientation: {
+    portrait: {
+      /* ... */
+    },
+  },
 };
 
 // Desktop-only content는 Orientation 불필요
 const desktopSection = {
-  default: { /* ... */ },
-  xl: { /* ... */ }
+  default: {
+    /* ... */
+  },
+  xl: {
+    /* ... */
+  },
 };
 ```
 
