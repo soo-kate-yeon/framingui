@@ -321,7 +321,7 @@ export function applySafeAreaToLayout<
       right?: number;
     };
     [key: string]: unknown;
-  }
+  },
 >(layout: T, config: SafeAreaConfig): T {
   // Get current safe area insets
   const insets = getSafeAreaInsets();
@@ -333,10 +333,18 @@ export function applySafeAreaToLayout<
 
   // Ensure all padding properties exist
   const padding = layout.padding;
-  if (padding.top === undefined) {padding.top = 0;}
-  if (padding.bottom === undefined) {padding.bottom = 0;}
-  if (padding.left === undefined) {padding.left = 0;}
-  if (padding.right === undefined) {padding.right = 0;}
+  if (padding.top === undefined) {
+    padding.top = 0;
+  }
+  if (padding.bottom === undefined) {
+    padding.bottom = 0;
+  }
+  if (padding.left === undefined) {
+    padding.left = 0;
+  }
+  if (padding.right === undefined) {
+    padding.right = 0;
+  }
 
   // Apply safe area based on edges configuration
   if (config.edges.top) {

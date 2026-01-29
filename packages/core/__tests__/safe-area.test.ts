@@ -338,7 +338,8 @@ describe('applySafeAreaToLayout', () => {
   });
 
   test('initializes padding if not present', () => {
-    const layout: { padding?: { top?: number; bottom?: number; left?: number; right?: number } } = {};
+    const layout: { padding?: { top?: number; bottom?: number; left?: number; right?: number } } =
+      {};
 
     const config = {
       top: 'atomic.spacing.0' as const,

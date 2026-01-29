@@ -10,10 +10,7 @@ import {
   SHELL_MOBILE_TAB,
   getAllMobileShellTokens,
 } from '../src/layout-tokens/mobile-shells.js';
-import {
-  getSafeAreaInsets,
-  applySafeAreaToLayout,
-} from '../src/layout-tokens/safe-area.js';
+import { getSafeAreaInsets, applySafeAreaToLayout } from '../src/layout-tokens/safe-area.js';
 import {
   applyKeyboardAvoidance,
   getKeyboardAnimationDuration,

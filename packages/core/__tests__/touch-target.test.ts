@@ -412,9 +412,7 @@ describe('warnIfBelowMinimum', () => {
 
   test('includes element ID in warning message', () => {
     warnIfBelowMinimum(32, 'submit-button');
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('submit-button')
-    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('submit-button'));
   });
 
   test('works without element ID', () => {
@@ -424,23 +422,17 @@ describe('warnIfBelowMinimum', () => {
 
   test('includes size in warning message', () => {
     warnIfBelowMinimum(32, 'submit-button');
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('32pt')
-    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('32pt'));
   });
 
   test('includes minimum size in warning message', () => {
     warnIfBelowMinimum(32, 'submit-button');
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('44pt')
-    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('44pt'));
   });
 
   test('suggests using hitSlop in warning message', () => {
     warnIfBelowMinimum(32, 'submit-button');
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('hitSlop')
-    );
+    expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('hitSlop'));
   });
 
   test('does not warn in production environment', () => {

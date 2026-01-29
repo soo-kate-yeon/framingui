@@ -182,7 +182,6 @@ export function isAccessibleTouchTarget(
  */
 export function warnIfBelowMinimum(size: number, elementId?: string): void {
   if (process.env.NODE_ENV === 'development' && size < TOUCH_TARGET.MIN_SIZE_PT) {
-     
     console.warn(
       `Touch target${elementId ? ` '${elementId}'` : ''} is ${size}pt, ` +
         `below minimum ${TOUCH_TARGET.MIN_SIZE_PT}pt. ` +
