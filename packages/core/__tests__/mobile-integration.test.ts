@@ -174,6 +174,9 @@ describe('Keyboard + Mobile Shell Integration', () => {
     const duration = getKeyboardAnimationDuration();
     const shells = getAllMobileShellTokens();
 
+    // Verify animation duration is retrieved
+    expect(typeof duration).toBe('number');
+
     // All shells use 250ms duration (iOS default)
     shells.forEach(shell => {
       // In web, duration is 0, but in mobile it would be 250

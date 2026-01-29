@@ -312,12 +312,17 @@ export function getSafeAreaInsets(): SafeAreaInsets {
  * // Result: Only top padding is modified
  * ```
  */
-export function applySafeAreaToLayout(
-  layout: {
-    padding?: { top: number; bottom: number; left: number; right: number };
-  },
-  config: SafeAreaConfig
-): typeof layout {
+export function applySafeAreaToLayout<
+  T extends {
+    padding?: {
+      top?: number;
+      bottom?: number;
+      left?: number;
+      right?: number;
+    };
+    [key: string]: unknown;
+  }
+>(layout: T, config: SafeAreaConfig): T {
   // Get current safe area insets
   const insets = getSafeAreaInsets();
 
@@ -326,18 +331,25 @@ export function applySafeAreaToLayout(
     layout.padding = { top: 0, bottom: 0, left: 0, right: 0 };
   }
 
+  // Ensure all padding properties exist
+  const padding = layout.padding;
+  if (padding.top === undefined) {padding.top = 0;}
+  if (padding.bottom === undefined) {padding.bottom = 0;}
+  if (padding.left === undefined) {padding.left = 0;}
+  if (padding.right === undefined) {padding.right = 0;}
+
   // Apply safe area based on edges configuration
   if (config.edges.top) {
-    layout.padding.top += insets.top;
+    padding.top += insets.top;
   }
 
   if (config.edges.bottom) {
-    layout.padding.bottom += insets.bottom;
+    padding.bottom += insets.bottom;
   }
 
   if (config.edges.horizontal) {
-    layout.padding.left += insets.left;
-    layout.padding.right += insets.right;
+    padding.left += insets.left;
+    padding.right += insets.right;
   }
 
   return layout;

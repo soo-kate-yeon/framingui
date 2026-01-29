@@ -4,7 +4,7 @@
  * [SPEC-LAYOUT-004] [MILESTONE-7]
  */
 
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   validateTouchTarget,
   applyMinTouchTarget,
