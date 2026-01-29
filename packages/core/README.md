@@ -98,7 +98,6 @@ const orientation = generateOrientationCSS({
 - [Browser Compatibility Matrix](../../docs/guides/browser-compatibility.md)
 - [SPEC-LAYOUT-003 Specification](../../.moai/specs/SPEC-LAYOUT-003/spec.md)
 - [Acceptance Report](../../.moai/specs/SPEC-LAYOUT-003/acceptance.md)
-
 ## Installation
 
 ```bash
