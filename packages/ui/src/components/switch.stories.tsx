@@ -5,6 +5,8 @@
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
 
+import * as React from 'react';
+
 import type { Meta, StoryObj } from '@storybook/react';
 import { Switch } from './switch';
 import { Label } from './label';

@@ -5,7 +5,7 @@
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -36,13 +36,12 @@ const meta = {
 } satisfies Meta<typeof Form>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
 /**
  * Simple form with validation
  * Accessibility: Proper ARIA labels and error messages for screen readers
  */
-export const Simple: Story = {
+export const Simple = {
   render: () => {
     const formSchema = z.object({
       username: z.string().min(2, {
@@ -88,7 +87,7 @@ export const Simple: Story = {
 /**
  * Complete profile form
  */
-export const ProfileForm: Story = {
+export const ProfileForm = {
   render: () => {
     const formSchema = z.object({
       username: z.string().min(2).max(30),
@@ -168,7 +167,7 @@ export const ProfileForm: Story = {
 /**
  * Form with select
  */
-export const WithSelect: Story = {
+export const WithSelect = {
   render: () => {
     const formSchema = z.object({
       country: z.string({
@@ -221,7 +220,7 @@ export const WithSelect: Story = {
 /**
  * Form with checkbox
  */
-export const WithCheckbox: Story = {
+export const WithCheckbox = {
   render: () => {
     const formSchema = z.object({
       terms: z.boolean().refine(val => val === true, {
@@ -271,7 +270,7 @@ export const WithCheckbox: Story = {
 /**
  * Form with radio group
  */
-export const WithRadioGroup: Story = {
+export const WithRadioGroup = {
   render: () => {
     const formSchema = z.object({
       type: z.enum(['all', 'mentions', 'none'], {
@@ -338,7 +337,7 @@ export const WithRadioGroup: Story = {
 /**
  * Form with switch
  */
-export const WithSwitch: Story = {
+export const WithSwitch = {
   render: () => {
     const formSchema = z.object({
       marketing_emails: z.boolean().default(false),
