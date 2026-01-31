@@ -17,18 +17,18 @@ expect.extend(axeMatchers);
 }));
 
 // Add polyfills for pointer capture (required by Radix UI Tooltip)
-if (!Element.prototype.hasPointerCapture) {
-  Element.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
+if (!(global as any).Element.prototype.hasPointerCapture) {
+  (global as any).Element.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
 }
-if (!Element.prototype.setPointerCapture) {
-  Element.prototype.setPointerCapture = vi.fn();
+if (!(global as any).Element.prototype.setPointerCapture) {
+  (global as any).Element.prototype.setPointerCapture = vi.fn();
 }
-if (!Element.prototype.releasePointerCapture) {
-  Element.prototype.releasePointerCapture = vi.fn();
+if (!(global as any).Element.prototype.releasePointerCapture) {
+  (global as any).Element.prototype.releasePointerCapture = vi.fn();
 }
 
 // Mock Canvas API for components that use canvas (use Object.defineProperty to override jsdom)
-Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+Object.defineProperty((global as any).HTMLCanvasElement.prototype, 'getContext', {
   value: vi.fn().mockImplementation((contextType: string) => {
     if (contextType === '2d') {
       return {
