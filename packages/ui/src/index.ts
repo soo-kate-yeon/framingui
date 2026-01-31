@@ -207,6 +207,30 @@ export {
 export { Progress } from './components/progress';
 
 // ========================================
-// Templates
-// Will be populated in Phase 3 (Day 5-7)
+// Templates (Phase 3)
 // ========================================
+
+// Template Types & Registry
+export type {
+  ScreenTemplate,
+  ScreenCategory,
+  TemplateLayout,
+  ScreenTemplateProps,
+  CustomizationBoundaries,
+  TemplateSkeleton,
+  TemplateLayoutConfig,
+  ResponsiveLayout,
+  ResponsiveBreakpoints,
+  SectionTemplate,
+  TemplateRegistryEntry,
+} from './templates/types';
+
+export { DEFAULT_RESPONSIVE_LAYOUT, DEFAULT_BREAKPOINTS } from './templates/types';
+
+export { TemplateRegistry, templateRegistry } from './templates/registry';
+
+// Auth Templates
+export { LoginTemplate, LoginTemplateComponent } from './templates/auth/login';
+
+// Dashboard Templates
+export { DashboardTemplate, DashboardTemplateComponent } from './templates/dashboard/overview';

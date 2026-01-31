@@ -1,12 +1,14 @@
 'use client';
 
+import { DollarSign, Users, BarChart3, Clock } from 'lucide-react';
+
 const metrics = [
   {
     label: 'Total Revenue',
     value: '$45,231',
     change: '+20.1%',
     trend: 'up' as const,
-    icon: '💰',
+    icon: DollarSign,
     description:
       'Total revenue represents the sum of all income generated from sales, subscriptions, and other revenue streams during the selected period. This metric is crucial for understanding overall business performance and growth trajectory.',
     chartData: [
@@ -24,7 +26,7 @@ const metrics = [
     value: '2,345',
     change: '+12.5%',
     trend: 'up' as const,
-    icon: '👤',
+    icon: Users,
     description:
       'Active users metric tracks the number of unique users who have engaged with your platform within the specified timeframe. This includes users who have logged in, performed actions, or interacted with your service in meaningful ways.',
     chartData: [
@@ -42,7 +44,7 @@ const metrics = [
     value: '3.24%',
     change: '-2.4%',
     trend: 'down' as const,
-    icon: '📊',
+    icon: BarChart3,
     description:
       'Conversion rate measures the percentage of visitors who complete a desired action, such as making a purchase, signing up for a newsletter, or completing a form. A higher conversion rate indicates more effective marketing and user experience.',
     chartData: [
@@ -60,7 +62,7 @@ const metrics = [
     value: '4m 32s',
     change: '+8.2%',
     trend: 'up' as const,
-    icon: '⏱️',
+    icon: Clock,
     description:
       'Average session duration indicates how long users typically spend on your platform during a single visit. Longer sessions often correlate with higher engagement and interest in your content or services.',
     chartData: [
@@ -86,16 +88,15 @@ export function MetricsSummary({ onMetricClick }: MetricsSummaryProps) {
         <button
           key={metric.label}
           onClick={() => onMetricClick(metric)}
-          className="text-left bg-[--lm-background-surface] border border-[--lm-border-subtle] rounded-[--lm-radius-lg] p-5 hover:shadow-[--lm-elevation-card-hover] hover:border-[--lm-brand-default] transition-all duration-[--lm-motion-duration-moderate] group cursor-pointer"
+          className="w-full text-left bg-[--lm-background-surface] border border-[--lm-border-subtle] rounded-[--lm-radius-lg] p-5 hover:shadow-[--lm-elevation-card-hover] hover:border-[--lm-brand-default] transition-all duration-[--lm-motion-duration-moderate] group cursor-pointer"
         >
           <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 rounded-[--lm-radius-md] bg-[--lm-background-emphasis] flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-[--lm-motion-duration-fast]">
-              {metric.icon}
+            <div className="w-10 h-10 rounded-[--lm-radius-md] bg-[--lm-background-emphasis] flex items-center justify-center text-xl group-hover:scale-110 group-hover:bg-[--lm-brand-subtle] group-hover:text-[--lm-brand-default] transition-all duration-[--lm-motion-duration-fast] text-[--lm-text-secondary]">
+              <metric.icon size={20} />
             </div>
             <span
-              className={`text-xs font-[--lm-font-family-sans] font-[--lm-font-weight-medium] px-2 py-1 rounded-[--lm-radius-sm] ${
-                metric.trend === 'up' ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'
-              }`}
+              className={`text-xs font-[--lm-font-family-sans] font-[--lm-font-weight-medium] px-2 py-1 rounded-[--lm-radius-sm] ${metric.trend === 'up' ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'
+                }`}
             >
               {metric.change}
             </span>

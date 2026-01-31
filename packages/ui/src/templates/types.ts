@@ -1,0 +1,170 @@
+/**
+ * @tekton/ui - Screen Template Types
+ * SPEC-UI-001 Phase 3: Screen Template System Foundation
+ */
+
+import type { ComponentType, ReactNode } from 'react';
+
+/**
+ * Screen categories for template organization
+ */
+export type ScreenCategory =
+  | 'auth'           // Login, Signup, Forgot Password, Verification
+  | 'dashboard'      // Dashboard Overview, Analytics
+  | 'form'           // Settings, Profile
+  | 'marketing'      // Landing Page
+  | 'feedback';      // Loading, Error, Empty State, Success
+
+/**
+ * Template layout types
+ */
+export type TemplateLayout =
+  | 'centered'       // Auth screens, feedback screens
+  | 'sidebar'        // Dashboard, Settings
+  | 'full';          // Landing page
+
+/**
+ * Responsive breakpoints
+ */
+export interface ResponsiveBreakpoints {
+  mobile: number;    // < 768px
+  tablet: number;    // 768px - 1024px
+  desktop: number;   // >= 1024px
+}
+
+/**
+ * Layout configuration per breakpoint
+ */
+export interface ResponsiveLayout {
+  mobile: {
+    padding: string;    // var(--tekton-layout-padding-mobile)
+    gap: string;        // var(--tekton-layout-gap-mobile)
+    columns: number;    // 4
+  };
+  tablet: {
+    padding: string;    // var(--tekton-layout-padding-tablet)
+    gap: string;        // var(--tekton-layout-gap-tablet)
+    columns: number;    // 8
+  };
+  desktop: {
+    padding: string;    // var(--tekton-layout-padding-desktop)
+    gap: string;        // var(--tekton-layout-gap-desktop)
+    columns: number;    // 12
+  };
+}
+
+/**
+ * Template layout configuration
+ */
+export interface TemplateLayoutConfig {
+  type: TemplateLayout;
+  responsive: ResponsiveLayout;
+}
+
+/**
+ * Section template for composing screens
+ */
+export interface SectionTemplate {
+  id: string;
+  name: string;
+  slot: string;           // 'header', 'sidebar', 'main', 'footer'
+  required: boolean;
+  Component: ComponentType<any>;
+}
+
+/**
+ * Customization boundaries for AI
+ */
+export interface CustomizationBoundaries {
+  texts: string[];        // AI can modify these text keys
+  optional: string[];     // AI can add/remove these optional features
+  slots: string[];        // AI can inject content into these slots
+}
+
+/**
+ * Template skeleton (non-customizable structure)
+ */
+export interface TemplateSkeleton {
+  shell: string;          // 'centered-card', 'sidebar-layout', 'full-page'
+  page: string;           // Page wrapper configuration
+  sections: SectionTemplate[];
+}
+
+/**
+ * Screen Template Props
+ */
+export interface ScreenTemplateProps {
+  children?: ReactNode;
+  className?: string;
+  slots?: Record<string, ReactNode>;
+  texts?: Record<string, string>;
+  options?: Record<string, boolean>;
+}
+
+/**
+ * Main Screen Template interface
+ */
+export interface ScreenTemplate {
+  id: string;
+  name: string;
+  category: ScreenCategory;
+  description: string;
+
+  // Structure
+  skeleton: TemplateSkeleton;
+  layout: TemplateLayoutConfig;
+
+  // Customization
+  customizable: CustomizationBoundaries;
+  requiredComponents: string[];
+
+  // Component
+  Component: ComponentType<ScreenTemplateProps>;
+
+  // Metadata
+  version: string;
+  created: string;
+  updated: string;
+  tags?: string[];
+}
+
+/**
+ * Template Registry Entry
+ */
+export interface TemplateRegistryEntry {
+  template: ScreenTemplate;
+  metadata: {
+    usageCount: number;
+    lastUsed?: string;
+  };
+}
+
+/**
+ * Default responsive layout configuration
+ */
+export const DEFAULT_RESPONSIVE_LAYOUT: ResponsiveLayout = {
+  mobile: {
+    padding: 'var(--tekton-layout-padding-mobile)',    // 16px
+    gap: 'var(--tekton-layout-gap-mobile)',            // 16px
+    columns: 4,
+  },
+  tablet: {
+    padding: 'var(--tekton-layout-padding-tablet)',    // 32px
+    gap: 'var(--tekton-layout-gap-tablet)',            // 24px
+    columns: 8,
+  },
+  desktop: {
+    padding: 'var(--tekton-layout-padding-desktop)',   // 64px
+    gap: 'var(--tekton-layout-gap-desktop)',           // 32px
+    columns: 12,
+  },
+};
+
+/**
+ * Default breakpoints
+ */
+export const DEFAULT_BREAKPOINTS: ResponsiveBreakpoints = {
+  mobile: 768,
+  tablet: 1024,
+  desktop: 1024,
+};
