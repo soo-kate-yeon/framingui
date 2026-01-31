@@ -50,6 +50,13 @@ const demos = [
     theme: 'Linear Minimal',
     icon: '📚',
   },
+  {
+    title: 'Language App',
+    description: 'Round Minimal 테마 기반 언어 학습 앱',
+    href: '/language-app',
+    theme: 'Round Minimal',
+    icon: '🗣️',
+  },
 ];
 
 export default function HomePage() {

@@ -9,10 +9,10 @@ const detailTabs = [
 ];
 
 const trafficData = [
-  { source: 'Organic Search', visitors: '12,345', percentage: 45, color: 'bg-blue-500' },
-  { source: 'Direct', visitors: '8,234', percentage: 30, color: 'bg-purple-500' },
-  { source: 'Social Media', visitors: '4,123', percentage: 15, color: 'bg-pink-500' },
-  { source: 'Referral', visitors: '2,745', percentage: 10, color: 'bg-green-500' },
+  { source: 'Organic Search', visitors: '12,345', percentage: 45, color: 'bg-[--lm-brand-500]' },
+  { source: 'Direct', visitors: '8,234', percentage: 30, color: 'bg-[--lm-brand-600]' },
+  { source: 'Social Media', visitors: '4,123', percentage: 15, color: 'bg-[--lm-brand-100]' },
+  { source: 'Referral', visitors: '2,745', percentage: 10, color: 'bg-[--lm-neutral-200]' },
 ];
 
 const engagementData = [
@@ -135,10 +135,10 @@ export function MetricsDetail() {
                   <div
                     className={`w-3 h-3 rounded-full ${
                       item.status === 'good'
-                        ? 'bg-green-500'
+                        ? 'bg-[--lm-success-default]'
                         : item.status === 'warning'
-                          ? 'bg-yellow-500'
-                          : 'bg-red-500'
+                          ? 'bg-[--lm-warning-default]'
+                          : 'bg-[--lm-danger-default]'
                     }`}
                   />
                 </div>

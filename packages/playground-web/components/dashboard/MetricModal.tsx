@@ -10,7 +10,7 @@ interface MetricModalProps {
     value: string;
     change: string;
     trend: 'up' | 'down';
-    icon: string;
+    icon: any; // Updated to accept Lucide icon component
     description: string;
     chartData: Array<{ label: string; value: number }>;
   } | null;
@@ -39,6 +39,7 @@ export function MetricModal({ isOpen, onClose, metric }: MetricModalProps) {
   }
 
   const maxValue = Math.max(...metric.chartData.map((d) => d.value));
+  const Icon = metric.icon;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -53,8 +54,8 @@ export function MetricModal({ isOpen, onClose, metric }: MetricModalProps) {
         {/* Header */}
         <div className="sticky top-0 bg-[--lm-background-surface] border-b border-[--lm-border-subtle] px-6 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-[--lm-radius-md] bg-[--lm-background-emphasis] flex items-center justify-center text-2xl">
-              {metric.icon}
+            <div className="w-12 h-12 rounded-[--lm-radius-md] bg-[--lm-background-emphasis] flex items-center justify-center text-2xl text-[--lm-text-secondary]">
+              <Icon size={24} />
             </div>
             <div>
               <h2 className="font-[--lm-font-family-sans] font-[--lm-font-weight-semibold] text-xl text-[--lm-text-primary]">
