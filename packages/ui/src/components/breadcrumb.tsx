@@ -80,7 +80,7 @@ export interface BreadcrumbProps
 }
 
 const Breadcrumb = React.forwardRef<HTMLElement, BreadcrumbProps>(
-  ({ className, size, separator = '/', ...props }, ref) => {
+  ({ className, size, separator: _separator = '/', ...props }, ref) => {
     return (
       <nav
         ref={ref}
