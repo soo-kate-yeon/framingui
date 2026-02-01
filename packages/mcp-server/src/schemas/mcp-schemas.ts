@@ -550,3 +550,313 @@ export const PreviewIconLibraryOutputSchema = z.object({
 });
 
 export type PreviewIconLibraryOutput = z.infer<typeof PreviewIconLibraryOutputSchema>;
+
+// ============================================================================
+// Component Discovery Tool Schemas (SPEC-MCP-003)
+// ============================================================================
+
+/**
+ * Component category types
+ * SPEC-MCP-003: Component tier system
+ */
+export const ComponentCategorySchema = z.enum(['core', 'complex', 'advanced']);
+
+export type ComponentCategory = z.infer<typeof ComponentCategorySchema>;
+
+/**
+ * List Components Input Schema
+ * SPEC-MCP-003: [TAG-MCP003-006]
+ */
+export const ListComponentsInputSchema = z.object({
+  category: z.enum(['core', 'complex', 'advanced', 'all']).optional().default('all'),
+  search: z.string().optional(),
+});
+
+export type ListComponentsInput = z.infer<typeof ListComponentsInputSchema>;
+
+/**
+ * Component metadata schema
+ */
+export const ComponentMetaSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  category: ComponentCategorySchema,
+  description: z.string(),
+  variantsCount: z.number(),
+  hasSubComponents: z.boolean(),
+  tier: z.number(),
+});
+
+export type ComponentMeta = z.infer<typeof ComponentMetaSchema>;
+
+/**
+ * List Components Output Schema
+ */
+export const ListComponentsOutputSchema = z.object({
+  success: z.boolean(),
+  components: z.array(ComponentMetaSchema).optional(),
+  count: z.number().optional(),
+  categories: z
+    .object({
+      core: z.number(),
+      complex: z.number(),
+      advanced: z.number(),
+    })
+    .optional(),
+  error: z.string().optional(),
+});
+
+export type ListComponentsOutput = z.infer<typeof ListComponentsOutputSchema>;
+
+/**
+ * Preview Component Input Schema
+ * SPEC-MCP-003: [TAG-MCP003-007]
+ */
+export const PreviewComponentInputSchema = z.object({
+  componentId: z.string().regex(/^[a-z-]+$/, 'Component ID must be lowercase with hyphens'),
+  includeExamples: z.boolean().optional(),
+  includeDependencies: z.boolean().optional(),
+});
+
+export type PreviewComponentInput = z.infer<typeof PreviewComponentInputSchema>;
+
+/**
+ * Prop definition schema
+ */
+export const PropDefinitionSchema = z.object({
+  name: z.string(),
+  type: z.string(),
+  required: z.boolean(),
+  defaultValue: z.string().optional(),
+  description: z.string().optional(),
+});
+
+export type PropDefinition = z.infer<typeof PropDefinitionSchema>;
+
+/**
+ * Variant schema
+ */
+export const VariantSchema = z.object({
+  name: z.string(),
+  value: z.string(),
+  description: z.string().optional(),
+});
+
+export type Variant = z.infer<typeof VariantSchema>;
+
+/**
+ * Usage example schema
+ */
+export const UsageExampleSchema = z.object({
+  title: z.string(),
+  code: z.string(),
+  description: z.string().optional(),
+});
+
+export type UsageExample = z.infer<typeof UsageExampleSchema>;
+
+/**
+ * Preview Component Output Schema
+ */
+export const PreviewComponentOutputSchema = z.object({
+  success: z.boolean(),
+  component: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      category: ComponentCategorySchema,
+      description: z.string(),
+      tier: z.number(),
+      props: z.array(PropDefinitionSchema),
+      variants: z.array(VariantSchema).optional(),
+      subComponents: z.array(z.string()).optional(),
+      importStatement: z.string(),
+      dependencies: z
+        .object({
+          internal: z.array(z.string()),
+          external: z.array(z.string()),
+        })
+        .optional(),
+      examples: z.array(UsageExampleSchema).optional(),
+      accessibility: z.string().optional(),
+    })
+    .optional(),
+  error: z.string().optional(),
+});
+
+export type PreviewComponentOutput = z.infer<typeof PreviewComponentOutputSchema>;
+
+// ============================================================================
+// Screen Template Discovery Tool Schemas (SPEC-MCP-003)
+// ============================================================================
+
+/**
+ * Template category types
+ */
+export const TemplateCategorySchema = z.enum([
+  'auth',
+  'dashboard',
+  'form',
+  'marketing',
+  'feedback',
+]);
+
+export type TemplateCategory = z.infer<typeof TemplateCategorySchema>;
+
+/**
+ * List Screen Templates Input Schema
+ * SPEC-MCP-003: [TAG-MCP003-008]
+ */
+export const ListScreenTemplatesInputSchema = z.object({
+  category: z
+    .enum(['auth', 'dashboard', 'form', 'marketing', 'feedback', 'all'])
+    .optional()
+    .default('all'),
+  search: z.string().optional(),
+});
+
+export type ListScreenTemplatesInput = z.infer<typeof ListScreenTemplatesInputSchema>;
+
+/**
+ * Template layout type schema
+ */
+export const TemplateLayoutTypeSchema = z.enum(['centered', 'sidebar', 'full']);
+
+export type TemplateLayoutType = z.infer<typeof TemplateLayoutTypeSchema>;
+
+/**
+ * Template metadata schema
+ */
+export const TemplateMetaSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  category: TemplateCategorySchema,
+  description: z.string(),
+  requiredComponentsCount: z.number(),
+  layoutType: TemplateLayoutTypeSchema,
+  version: z.string(),
+  tags: z.array(z.string()).optional(),
+});
+
+export type TemplateMeta = z.infer<typeof TemplateMetaSchema>;
+
+/**
+ * List Screen Templates Output Schema
+ */
+export const ListScreenTemplatesOutputSchema = z.object({
+  success: z.boolean(),
+  templates: z.array(TemplateMetaSchema).optional(),
+  count: z.number().optional(),
+  categories: z
+    .object({
+      auth: z.number(),
+      dashboard: z.number(),
+      form: z.number(),
+      marketing: z.number(),
+      feedback: z.number(),
+    })
+    .optional(),
+  error: z.string().optional(),
+});
+
+export type ListScreenTemplatesOutput = z.infer<typeof ListScreenTemplatesOutputSchema>;
+
+/**
+ * Preview Screen Template Input Schema
+ * SPEC-MCP-003: [TAG-MCP003-009]
+ */
+export const PreviewScreenTemplateInputSchema = z.object({
+  templateId: z.string().regex(/^[a-z]+\.[a-z-]+$/, 'Template ID must be in format category.name'),
+  includeLayoutTokens: z.boolean().optional(),
+});
+
+export type PreviewScreenTemplateInput = z.infer<typeof PreviewScreenTemplateInputSchema>;
+
+/**
+ * Skeleton schema
+ */
+export const SkeletonSchema = z.object({
+  shell: z.string(),
+  page: z.string(),
+  sections: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      slot: z.string(),
+      required: z.boolean(),
+    })
+  ),
+});
+
+export type Skeleton = z.infer<typeof SkeletonSchema>;
+
+/**
+ * Customization schema
+ */
+export const CustomizationSchema = z.object({
+  texts: z.array(z.string()),
+  optional: z.array(z.string()),
+  slots: z.array(z.string()),
+});
+
+export type Customization = z.infer<typeof CustomizationSchema>;
+
+/**
+ * Responsive layout schema
+ */
+export const ResponsiveLayoutSchema = z.object({
+  mobile: z.object({
+    padding: z.string(),
+    gap: z.string(),
+    columns: z.number(),
+  }),
+  tablet: z.object({
+    padding: z.string(),
+    gap: z.string(),
+    columns: z.number(),
+  }),
+  desktop: z.object({
+    padding: z.string(),
+    gap: z.string(),
+    columns: z.number(),
+  }),
+});
+
+export type ResponsiveLayout = z.infer<typeof ResponsiveLayoutSchema>;
+
+/**
+ * Preview Screen Template Output Schema
+ */
+export const PreviewScreenTemplateOutputSchema = z.object({
+  success: z.boolean(),
+  template: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      category: TemplateCategorySchema,
+      description: z.string(),
+      version: z.string(),
+      skeleton: SkeletonSchema,
+      layout: z.object({
+        type: TemplateLayoutTypeSchema,
+        responsive: ResponsiveLayoutSchema.optional(),
+      }),
+      customizable: CustomizationSchema,
+      requiredComponents: z.array(z.string()),
+      importStatement: z.string(),
+      exampleProps: z
+        .object({
+          texts: z.record(z.string()).optional(),
+          options: z.record(z.boolean()).optional(),
+          slots: z.array(z.string()).optional(),
+        })
+        .optional(),
+      created: z.string(),
+      updated: z.string(),
+      tags: z.array(z.string()).optional(),
+    })
+    .optional(),
+  error: z.string().optional(),
+});
+
+export type PreviewScreenTemplateOutput = z.infer<typeof PreviewScreenTemplateOutputSchema>;

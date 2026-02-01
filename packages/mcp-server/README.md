@@ -10,7 +10,7 @@ MCP (Model Context Protocol) server enabling AI-driven blueprint generation, the
 
 ## Features
 
-- **🤖 stdio MCP Protocol**: Claude Code native tool registration via JSON-RPC 2.0 (7 tools)
+- **🤖 stdio MCP Protocol**: Claude Code native tool registration via JSON-RPC 2.0 (13 tools)
 - **🎨 Theme Preview**: 13 built-in OKLCH-based themes with CSS variable generation
 - **📋 Blueprint Generation**: Natural language → Blueprint JSON with validation
 - **💾 Data-Only Output**: No file system writes, Claude Code handles file operations
@@ -18,6 +18,8 @@ MCP (Model Context Protocol) server enabling AI-driven blueprint generation, the
 - **🏗️ Screen Generation** (SPEC-LAYOUT-002): JSON screen definition → Production code
 - **✅ Screen Validation**: Validate screen definitions with helpful error suggestions
 - **🏷️ Layout Tokens**: List shell, page, and section tokens from SPEC-LAYOUT-001
+- **🧩 Component Discovery** (SPEC-MCP-003): Browse 30+ UI components with props and examples
+- **📄 Template Discovery** (SPEC-MCP-003): Explore 13 screen templates with customization boundaries
 - **🔒 Secure Design**: No previewUrl/filePath exposure, input validation, path traversal protection
 
 ## Installation
@@ -328,9 +330,305 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 - `section`: Section pattern tokens (section.grid-4, section.hero, etc.)
 - `all`: All token types
 
+## Component & Template Discovery Tools (SPEC-MCP-003)
+
+### 8. List Components
+
+**Tool**: `list-components`
+
+**Description**: List all available UI components from @tekton/ui component catalog
+
+**Input**:
+
+```json
+{
+  "category": "core",
+  "search": "button"
+}
+```
+
+**Parameters**:
+
+- `category` (optional): Filter by category - `'core' | 'complex' | 'advanced' | 'all'` (default: `'all'`)
+- `search` (optional): Search components by name or description
+
+**Output**:
+
+```json
+{
+  "success": true,
+  "components": [
+    {
+      "id": "button",
+      "name": "Button",
+      "category": "core",
+      "description": "Interactive button with variants",
+      "variantsCount": 6,
+      "hasSubComponents": false,
+      "tier": 1
+    }
+  ],
+  "count": 15,
+  "categories": {
+    "core": 15,
+    "complex": 10,
+    "advanced": 5
+  }
+}
+```
+
+**Component Categories**:
+
+- **core** (Tier 1): Button, Input, Label, Card, Badge, Avatar, Separator, Checkbox, RadioGroup, Switch, Textarea, Skeleton, ScrollArea, Form, Select
+- **complex** (Tier 2): Dialog, DropdownMenu, Table, Tabs, Toast, Tooltip, Popover, Sheet, AlertDialog, Progress
+- **advanced** (Tier 3): Sidebar, NavigationMenu, Breadcrumb, Command, Calendar
+
+**Total Components**: 30+
+
+### 9. Preview Component
+
+**Tool**: `preview-component`
+
+**Description**: Get detailed information about a specific UI component including props, variants, sub-components, and usage examples
+
+**Input**:
+
+```json
+{
+  "componentId": "button",
+  "includeExamples": true,
+  "includeDependencies": true
+}
+```
+
+**Parameters**:
+
+- `componentId` (required): Component ID (lowercase with hyphens, e.g., `'button'`, `'card'`, `'dialog'`)
+- `includeExamples` (optional): Include usage examples (default: `true`)
+- `includeDependencies` (optional): Include dependency information (default: `true`)
+
+**Output**:
+
+```json
+{
+  "success": true,
+  "component": {
+    "id": "button",
+    "name": "Button",
+    "category": "core",
+    "description": "Interactive button with variants",
+    "tier": 1,
+    "props": [
+      {
+        "name": "variant",
+        "type": "'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'",
+        "required": false,
+        "defaultValue": "'default'",
+        "description": "Visual style variant"
+      },
+      {
+        "name": "size",
+        "type": "'default' | 'sm' | 'lg' | 'icon'",
+        "required": false,
+        "defaultValue": "'default'",
+        "description": "Button size"
+      }
+    ],
+    "variants": [
+      {
+        "name": "variant",
+        "value": "default",
+        "description": "Default blue button"
+      },
+      {
+        "name": "variant",
+        "value": "destructive",
+        "description": "Red destructive action"
+      }
+    ],
+    "importStatement": "import { Button } from '@tekton/ui';",
+    "dependencies": {
+      "internal": [],
+      "external": ["@radix-ui/react-slot"]
+    },
+    "examples": [
+      {
+        "title": "Basic Usage",
+        "code": "import { Button } from '@tekton/ui';\n\n<Button variant=\"default\">Click me</Button>",
+        "description": "Simple button with default variant"
+      }
+    ],
+    "accessibility": "Supports keyboard navigation and ARIA attributes"
+  }
+}
+```
+
+**Error Handling**: When component not found, returns error with list of available components
+
+### 10. List Screen Templates
+
+**Tool**: `list-screen-templates`
+
+**Description**: List all available screen templates from the Tekton template registry
+
+**Input**:
+
+```json
+{
+  "category": "auth",
+  "search": "login"
+}
+```
+
+**Parameters**:
+
+- `category` (optional): Filter by category - `'auth' | 'dashboard' | 'form' | 'marketing' | 'feedback' | 'all'` (default: `'all'`)
+- `search` (optional): Search templates by name or description
+
+**Output**:
+
+```json
+{
+  "success": true,
+  "templates": [
+    {
+      "id": "auth.login",
+      "name": "Login",
+      "category": "auth",
+      "description": "User authentication login screen",
+      "requiredComponentsCount": 5,
+      "layoutType": "centered",
+      "version": "1.0.0",
+      "tags": ["authentication", "form"]
+    }
+  ],
+  "count": 4,
+  "categories": {
+    "auth": 4,
+    "dashboard": 1,
+    "form": 0,
+    "marketing": 3,
+    "feedback": 5
+  }
+}
+```
+
+**Template Categories**:
+
+- **auth**: login, signup, forgot-password, verification
+- **marketing**: landing, preferences, profile
+- **feedback**: loading, error, empty, confirmation, success
+- **dashboard**: overview
+
+**Total Templates**: 13
+
+### 11. Preview Screen Template
+
+**Tool**: `preview-screen-template`
+
+**Description**: Get detailed information about a specific screen template including skeleton structure, layout configuration, and customization boundaries
+
+**Input**:
+
+```json
+{
+  "templateId": "auth.login",
+  "includeLayoutTokens": true
+}
+```
+
+**Parameters**:
+
+- `templateId` (required): Template ID in format `category.name` (e.g., `'auth.login'`, `'feedback.loading'`)
+- `includeLayoutTokens` (optional): Include responsive layout tokens (default: `true`)
+
+**Output**:
+
+```json
+{
+  "success": true,
+  "template": {
+    "id": "auth.login",
+    "name": "Login",
+    "category": "auth",
+    "description": "User authentication login screen",
+    "version": "1.0.0",
+    "skeleton": {
+      "shell": "centered-card",
+      "page": "auth-page",
+      "sections": [
+        {
+          "id": "header",
+          "name": "Header",
+          "slot": "logo",
+          "required": true
+        },
+        {
+          "id": "form",
+          "name": "Form",
+          "slot": "main",
+          "required": true
+        }
+      ]
+    },
+    "layout": {
+      "type": "centered",
+      "responsive": {
+        "mobile": {
+          "padding": "1rem",
+          "gap": "1rem",
+          "columns": 1
+        },
+        "tablet": {
+          "padding": "2rem",
+          "gap": "1.5rem",
+          "columns": 1
+        },
+        "desktop": {
+          "padding": "2rem",
+          "gap": "2rem",
+          "columns": 1
+        }
+      }
+    },
+    "customizable": {
+      "texts": ["title", "subtitle", "button_label"],
+      "optional": ["social_login", "remember_me"],
+      "slots": ["logo", "footer", "socialLogin"]
+    },
+    "requiredComponents": ["Input", "Button", "Card", "Form", "Label"],
+    "importStatement": "import { LoginTemplate } from '@tekton/ui';",
+    "exampleProps": {
+      "texts": {
+        "title": "Welcome Back",
+        "subtitle": "Sign in to your account"
+      },
+      "options": {
+        "social_login": true,
+        "remember_me": true
+      }
+    },
+    "created": "2026-01-15",
+    "updated": "2026-01-20",
+    "tags": ["authentication", "form"]
+  }
+}
+```
+
+**Error Handling**: When template not found, returns error with list of available templates
+
+**Use Cases**:
+
+- AI agents exploring available templates
+- Template integration planning
+- Understanding customization boundaries
+- Component dependency analysis
+
 ## Usage Examples
 
 ### From Claude Code
+
+**Blueprint & Theme Workflows**:
 
 ```
 User: "Create a user dashboard with profile card using calm-wellness theme"
@@ -344,7 +642,11 @@ User: "Show me the premium-editorial theme"
 User: "Export that dashboard as TypeScript React"
 → Claude Code calls export-screen
 → TSX code returned (ready to copy/paste)
+```
 
+**Screen Generation Workflows**:
+
+```
 User: "Generate a dashboard screen using shell.web.dashboard and page.dashboard"
 → Claude Code calls generate_screen
 → Production-ready React code with CSS variables returned
@@ -354,6 +656,38 @@ User: "What layout tokens are available for sections?"
 → List of section tokens (grid-2, grid-3, hero, etc.) returned
 ```
 
+**Component Discovery Workflows** (SPEC-MCP-003):
+
+```
+User: "What UI components are available?"
+→ Claude Code calls list-components
+→ List of 30+ components categorized by tier returned
+
+User: "Show me details about the Button component"
+→ Claude Code calls preview-component with componentId='button'
+→ Props, variants, examples, and dependencies returned
+
+User: "I need a dialog component. What are the props?"
+→ Claude Code calls preview-component with componentId='dialog'
+→ Complete Dialog component specification with sub-components returned
+```
+
+**Template Discovery Workflows** (SPEC-MCP-003):
+
+```
+User: "What screen templates are available for authentication?"
+→ Claude Code calls list-screen-templates with category='auth'
+→ 4 auth templates (login, signup, forgot-password, verification) returned
+
+User: "Show me the login template structure"
+→ Claude Code calls preview-screen-template with templateId='auth.login'
+→ Skeleton, layout, customization boundaries, and required components returned
+
+User: "What can I customize in the loading template?"
+→ Claude Code calls preview-screen-template with templateId='feedback.loading'
+→ Customizable texts, slots, and optional features returned
+```
+
 See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-INTEGRATION.md) for complete examples.
 
 ## Architecture
@@ -361,15 +695,24 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 ```
 packages/mcp-server/
 ├── src/
-│   ├── index.ts               # stdio MCP server entry point (7 tools)
+│   ├── index.ts               # stdio MCP server entry point (13 tools)
 │   ├── tools/                 # MCP tool implementations
 │   │   ├── generate-blueprint.ts    # Blueprint generation
 │   │   ├── preview-theme.ts         # Theme preview
 │   │   ├── list-themes.ts           # Theme listing
+│   │   ├── list-icon-libraries.ts   # Icon library listing
+│   │   ├── preview-icon-library.ts  # Icon library preview
 │   │   ├── export-screen.ts         # Blueprint export
 │   │   ├── generate-screen.ts       # Screen code generation (SPEC-LAYOUT-002)
 │   │   ├── validate-screen.ts       # Screen validation (SPEC-LAYOUT-002)
-│   │   └── list-tokens.ts           # Layout token listing (SPEC-LAYOUT-002)
+│   │   ├── list-tokens.ts           # Layout token listing (SPEC-LAYOUT-002)
+│   │   ├── list-components.ts       # Component listing (SPEC-MCP-003)
+│   │   ├── preview-component.ts     # Component preview (SPEC-MCP-003)
+│   │   ├── list-screen-templates.ts # Template listing (SPEC-MCP-003)
+│   │   └── preview-screen-template.ts # Template preview (SPEC-MCP-003)
+│   ├── data/                  # Static data registries (SPEC-MCP-003)
+│   │   ├── component-registry.ts    # Component metadata registry
+│   │   └── component-metadata.json  # Static component metadata
 │   ├── storage/               # Blueprint storage
 │   │   ├── blueprint-storage.ts
 │   │   └── timestamp-manager.ts
@@ -383,7 +726,11 @@ packages/mcp-server/
     │   ├── generate-blueprint.test.ts
     │   ├── preview-theme.test.ts
     │   ├── export-screen.test.ts
-    │   └── screen-tools.test.ts      # SPEC-LAYOUT-002 Phase 4 tests
+    │   ├── screen-tools.test.ts       # SPEC-LAYOUT-002 Phase 4 tests
+    │   ├── list-components.test.ts    # SPEC-MCP-003 tests
+    │   ├── preview-component.test.ts  # SPEC-MCP-003 tests
+    │   ├── list-screen-templates.test.ts # SPEC-MCP-003 tests
+    │   └── preview-screen-template.test.ts # SPEC-MCP-003 tests
     ├── mcp-protocol/          # JSON-RPC validation
     ├── storage/               # Storage tests
     └── utils/                 # Utility tests
@@ -456,6 +803,13 @@ All MCP tools reuse `@tekton/core` functions:
 - `getAllPageLayoutTokens()` - Page token listing
 - `getAllSectionPatternTokens()` - Section token listing
 
+**Component & Template Discovery** (SPEC-MCP-003):
+
+- `templateRegistry` from `@tekton/ui` - Template metadata and search
+- Component metadata registry - Static component catalog with 30+ components
+- Component type definitions - TypeScript interfaces for props and variants
+- Template structure definitions - Skeleton, layout, and customization schemas
+
 **Zero code duplication** - Single source of truth maintained.
 
 ## Documentation
@@ -467,6 +821,12 @@ All MCP tools reuse `@tekton/core` functions:
 - ✅ [Acceptance Criteria](../../.moai/specs/SPEC-MCP-002/acceptance.md) - AC-001 ~ AC-012
 - 🔄 [Handover Document](../../.moai/specs/SPEC-MCP-002/HANDOVER.md) - Implementation details
 
+### SPEC-MCP-003 v1.0.0 Documentation (Component & Template Discovery)
+
+- 📋 [Specification](../../.moai/specs/SPEC-MCP-003/spec.md) - Component & template discovery requirements
+- 🧩 Component Registry - 30+ UI components with metadata
+- 📄 Template Registry - 13 screen templates with customization boundaries
+
 ### Integration Guides
 
 - 🤖 [Claude Code Integration](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-INTEGRATION.md) - Setup and usage
@@ -477,6 +837,8 @@ All MCP tools reuse `@tekton/core` functions:
 
 - 🧪 [Test Coverage Report](./coverage/) - 94.39% coverage
 - 🎨 [Theme System](../../packages/core/src/themes/) - 13 built-in themes
+- 🧩 [UI Component Library](../../packages/ui/) - 30+ production-ready components
+- 📄 [Template Registry](../../packages/ui/src/templates/) - 13 screen templates
 - 🔧 [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) - Protocol testing tool
 
 ## Development
@@ -550,6 +912,7 @@ MIT
 
 ---
 
-**Version**: 2.1.0 (stdio-based MCP standard + SPEC-LAYOUT-002 Phase 4)
-**Last Updated**: 2026-01-28
-**SPEC**: SPEC-MCP-002 v2.0.0, SPEC-LAYOUT-002 Phase 4
+**Version**: 3.0.0 (stdio-based MCP standard + Component & Template Discovery)
+**Last Updated**: 2026-02-01
+**SPEC**: SPEC-MCP-002 v2.0.0, SPEC-LAYOUT-002 Phase 4, SPEC-MCP-003 v1.0.0
+**Total Tools**: 13 (9 existing + 4 new discovery tools)
