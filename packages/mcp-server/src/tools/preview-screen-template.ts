@@ -85,15 +85,6 @@ export async function previewScreenTemplateTool(
     // Build import statement
     const importStatement = `import { ${template.name}Template } from '@tekton/ui';`;
 
-    // Build example props
-    const exampleProps = template.exampleProps
-      ? {
-          texts: template.exampleProps.texts,
-          options: template.exampleProps.options,
-          slots: template.exampleProps.slots,
-        }
-      : undefined;
-
     return {
       success: true,
       template: {
@@ -107,7 +98,6 @@ export async function previewScreenTemplateTool(
         customizable,
         requiredComponents: template.requiredComponents,
         importStatement,
-        exampleProps,
         created: template.created,
         updated: template.updated,
         tags: template.tags,
