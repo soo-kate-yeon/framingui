@@ -166,6 +166,7 @@ export const PreviewThemeOutputSchema = z.object({
         atomic: z.unknown(),
         semantic: z.unknown(),
         component: z.unknown().optional(),
+        recipes: z.unknown().optional(),
       }),
       stateLayer: z.unknown().optional(),
       motion: z.unknown().optional(),

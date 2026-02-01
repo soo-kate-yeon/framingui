@@ -40,6 +40,7 @@ export async function previewThemeTool(input: PreviewThemeInput): Promise<Previe
           atomic: theme.tokens.atomic,
           semantic: theme.tokens.semantic,
           component: theme.tokens.component,
+          recipes: (theme.tokens as any).recipes,
         },
         stateLayer: theme.stateLayer,
         motion: theme.motion,
