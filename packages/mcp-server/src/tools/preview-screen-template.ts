@@ -27,6 +27,9 @@ export async function previewScreenTemplateTool(
   input: PreviewScreenTemplateInput
 ): Promise<PreviewScreenTemplateOutput> {
   try {
+    // Set default value for optional parameter
+    const includeLayoutTokens = input.includeLayoutTokens ?? true;
+
     const template = templateRegistry.get(input.templateId);
 
     if (!template) {
@@ -54,7 +57,7 @@ export async function previewScreenTemplateTool(
     const layout = {
       type: template.layout.type as TemplateLayoutType,
       responsive:
-        input.includeLayoutTokens && template.layout.responsive
+        includeLayoutTokens && template.layout.responsive
           ? {
               mobile: {
                 padding: template.layout.responsive.mobile.padding,

@@ -155,6 +155,10 @@ export async function previewComponentTool(
   input: PreviewComponentInput
 ): Promise<PreviewComponentOutput> {
   try {
+    // Set default values for optional parameters
+    const includeExamples = input.includeExamples ?? true;
+    const includeDependencies = input.includeDependencies ?? true;
+
     const componentMeta = getComponentById(input.componentId);
 
     if (!componentMeta) {
@@ -176,13 +180,13 @@ export async function previewComponentTool(
       description: componentMeta.description,
       tier: componentMeta.tier,
       props: details?.props || [],
-      variants: input.includeExamples && details?.variants ? details.variants : undefined,
+      variants: includeExamples && details?.variants ? details.variants : undefined,
       subComponents: details?.subComponents,
       importStatement: details?.subComponents
         ? `import { ${componentMeta.name}, ${details.subComponents.join(', ')} } from '@tekton/ui';`
         : `import { ${componentMeta.name} } from '@tekton/ui';`,
-      dependencies: input.includeDependencies ? details?.dependencies : undefined,
-      examples: input.includeExamples && details?.examples ? details.examples : undefined,
+      dependencies: includeDependencies ? details?.dependencies : undefined,
+      examples: includeExamples && details?.examples ? details.examples : undefined,
       accessibility: details?.accessibility,
     };
 

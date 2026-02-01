@@ -614,8 +614,8 @@ export type ListComponentsOutput = z.infer<typeof ListComponentsOutputSchema>;
  */
 export const PreviewComponentInputSchema = z.object({
   componentId: z.string().regex(/^[a-z-]+$/, 'Component ID must be lowercase with hyphens'),
-  includeExamples: z.boolean().optional().default(true),
-  includeDependencies: z.boolean().optional().default(true),
+  includeExamples: z.boolean().optional(),
+  includeDependencies: z.boolean().optional(),
 });
 
 export type PreviewComponentInput = z.infer<typeof PreviewComponentInputSchema>;
@@ -767,7 +767,7 @@ export type ListScreenTemplatesOutput = z.infer<typeof ListScreenTemplatesOutput
  */
 export const PreviewScreenTemplateInputSchema = z.object({
   templateId: z.string().regex(/^[a-z]+\.[a-z-]+$/, 'Template ID must be in format category.name'),
-  includeLayoutTokens: z.boolean().optional().default(true),
+  includeLayoutTokens: z.boolean().optional(),
 });
 
 export type PreviewScreenTemplateInput = z.infer<typeof PreviewScreenTemplateInputSchema>;
