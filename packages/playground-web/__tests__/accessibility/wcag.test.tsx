@@ -8,7 +8,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { AuthProvider } from '@/contexts/AuthContext';
 
 // Mock components for testing (will be replaced with actual components)
 function MockTemplateCard({ title, price }: { title: string; price: string }) {
