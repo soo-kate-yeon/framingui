@@ -14,10 +14,47 @@ export interface ThemePreset {
 }
 
 /**
- * Color Presets (3개) - Platform Minimal 기반
+ * Color Presets (4개) - Round Minimal 추가
  * [TAG-UI003-007] 프리셋 선택 시 CSS Variables 즉시 업데이트
  */
 export const colorPresets: ThemePreset[] = [
+  {
+    id: 'color-round-minimal',
+    name: 'Round Minimal',
+    category: 'color',
+    values: {
+      // Brand Color (보라색 계열)
+      '--tekton-color-brand': 'oklch(0.65 0.18 260)',
+
+      // Background (Neutral 50, 100 기반)
+      '--tekton-bg-canvas': 'oklch(0.98 0.01 240)',
+      '--tekton-bg-surface': 'oklch(1 0 0)',
+      '--tekton-bg-surface-subtle': 'oklch(0.96 0.015 240)',
+      '--tekton-bg-emphasis': 'oklch(0.9 0.02 240)',
+
+      // Border (Neutral 100, 200, 300)
+      '--tekton-border-subtle': 'oklch(0.96 0.015 240)',
+      '--tekton-border-default': 'oklch(0.9 0.02 240)',
+      '--tekton-border-emphasis': 'oklch(0.8 0.03 240)',
+
+      // Text (Neutral 700, 500)
+      '--tekton-text-primary': 'oklch(0.3 0.03 240)',
+      '--tekton-text-secondary': 'oklch(0.5 0.03 240)',
+      '--tekton-text-brand': 'oklch(0.65 0.18 260)',
+      '--tekton-text-inverse': 'oklch(1 0 0)',
+
+      // Icon
+      '--tekton-icon-default': 'oklch(0.3 0.03 240)',
+      '--tekton-icon-secondary': 'oklch(0.5 0.03 240)',
+      '--tekton-icon-brand': 'oklch(0.65 0.18 260)',
+
+      // Action (Button)
+      '--tekton-action-primary': 'oklch(0.65 0.18 260)',
+      '--tekton-action-primary-text': 'oklch(1 0 0)',
+      '--tekton-action-disabled': 'oklch(0.8 0.03 240)',
+      '--tekton-action-disabled-text': 'oklch(0.5 0.03 240)',
+    },
+  },
   {
     id: 'color-platform-minimal',
     name: 'Platform Minimal',
@@ -132,9 +169,24 @@ export const colorPresets: ThemePreset[] = [
 ];
 
 /**
- * Typography Presets (3개) - Platform Minimal 기반
+ * Typography Presets (4개) - Round Minimal 추가
  */
 export const typographyPresets: ThemePreset[] = [
+  {
+    id: 'typo-round-minimal',
+    name: 'Round Minimal',
+    category: 'typography',
+    values: {
+      '--tekton-font-family': 'Inter, sans-serif',
+      '--tekton-font-family-display': 'Inter Display, sans-serif',
+      '--tekton-font-size-base': '16px',
+      '--tekton-font-weight-regular': '400',
+      '--tekton-font-weight-medium': '500',
+      '--tekton-font-weight-semibold': '600',
+      '--tekton-font-weight-bold': '700',
+      '--tekton-line-height': '1.5',
+    },
+  },
   {
     id: 'typo-platform-sans',
     name: 'Platform Sans',
@@ -180,9 +232,38 @@ export const typographyPresets: ThemePreset[] = [
 ];
 
 /**
- * Spacing Presets (3개) - Platform Minimal 기반
+ * Spacing Presets (4개) - Round Minimal 추가
  */
 export const spacingPresets: ThemePreset[] = [
+  {
+    id: 'spacing-round-minimal',
+    name: 'Round Minimal',
+    category: 'spacing',
+    values: {
+      '--tekton-spacing-unit': '4px',
+      '--tekton-spacing-0': '0',
+      '--tekton-spacing-1': '4px',
+      '--tekton-spacing-2': '8px',
+      '--tekton-spacing-3': '12px',
+      '--tekton-spacing-4': '16px',
+      '--tekton-spacing-5': '20px',
+      '--tekton-spacing-6': '24px',
+      '--tekton-spacing-8': '32px',
+      '--tekton-spacing-10': '40px',
+      '--tekton-spacing-12': '48px',
+      '--tekton-spacing-16': '64px',
+      '--tekton-spacing-20': '80px',
+      '--tekton-spacing-24': '96px',
+      '--tekton-radius-xs': '2px',
+      '--tekton-radius-sm': '4px',
+      '--tekton-radius-md': '8px',
+      '--tekton-radius-lg': '12px',
+      '--tekton-radius-xl': '12px',
+      '--tekton-radius-2xl': '16px',
+      '--tekton-radius-3xl': '24px',
+      '--tekton-radius-full': '9999px',
+    },
+  },
   {
     id: 'spacing-platform-compact',
     name: 'Platform Compact',

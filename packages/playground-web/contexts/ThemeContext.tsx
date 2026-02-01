@@ -11,6 +11,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   type ReactNode,
 } from 'react';
 import {
@@ -70,12 +71,12 @@ interface ThemeContextValue {
 }
 
 /**
- * 기본 테마 상태 (Platform Minimal 기반)
+ * 기본 테마 상태 (Round Minimal 기반)
  */
 const DEFAULT_THEME: ThemeState = {
-  colorPreset: 'color-platform-minimal',
-  typographyPreset: 'typo-platform-sans',
-  spacingPreset: 'spacing-platform-standard',
+  colorPreset: 'color-round-minimal',
+  typographyPreset: 'typo-round-minimal',
+  spacingPreset: 'spacing-round-minimal',
   customOverrides: {},
 };
 
@@ -195,6 +196,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const resetTheme = useCallback(() => {
     setTheme(DEFAULT_THEME);
   }, []);
+
+  /**
+   * 테마 변경 시 자동으로 CSS Variables 적용
+   * [TAG-UI003-007] WHEN 프리셋이 선택되면 THEN CSS Variables가 즉시 업데이트
+   */
+  useEffect(() => {
+    applyTheme();
+  }, [applyTheme]);
 
   const value: ThemeContextValue = {
     theme,
