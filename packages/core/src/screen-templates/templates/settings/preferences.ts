@@ -213,7 +213,8 @@ export const preferencesTemplate: ScreenTemplate = {
   id: 'settings.preferences',
   name: 'Settings/Preferences',
   category: 'form',
-  description: 'Settings and preferences screen with sidebar menu and settings panel. Organized sections with switches and selects.',
+  description:
+    'Settings and preferences screen with sidebar menu and settings panel. Organized sections with switches and selects.',
 
   skeleton: {
     shell: 'shell.web.app',

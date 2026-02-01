@@ -5,6 +5,10 @@ coverage
 .moai
 .claude
 pnpm-lock.yaml
+storybook-static
+playwright-report
+test-results
+.next
 
 # TypeScript build artifacts (root level)
 src/**/*.js
@@ -19,6 +23,14 @@ examples/**/*.js
 examples/**/*.d.ts
 examples/**/*.js.map
 examples/**/*.d.ts.map
+
+# Package build artifacts
+packages/**/src/**/*.js
+packages/**/src/**/*.d.ts
+packages/**/src/**/*.js.map
+packages/**/src/**/*.d.ts.map
+packages/**/__tests__/**/*.js
+packages/**/__tests__/**/*.d.ts
 
 # Root config build artifacts
 *.config.js

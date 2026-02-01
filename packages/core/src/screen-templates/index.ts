@@ -63,7 +63,12 @@ export {
 // Template Collection (for easy registration)
 // ============================================================================
 
-import { loginTemplate, signupTemplate, forgotPasswordTemplate, verificationTemplate } from './templates/auth/index.js';
+import {
+  loginTemplate,
+  signupTemplate,
+  forgotPasswordTemplate,
+  verificationTemplate,
+} from './templates/auth/index.js';
 import { landingTemplate } from './templates/home/index.js';
 import { preferencesTemplate } from './templates/settings/index.js';
 import { profileTemplate } from './templates/account/index.js';

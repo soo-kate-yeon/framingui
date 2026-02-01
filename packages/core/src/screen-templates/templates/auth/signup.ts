@@ -260,7 +260,8 @@ export const signupTemplate: ScreenTemplate = {
   id: 'auth.signup',
   name: 'Signup',
   category: 'auth',
-  description: 'User signup screen with name, email, password, and terms agreement. Follows auth.login layout structure with additional fields.',
+  description:
+    'User signup screen with name, email, password, and terms agreement. Follows auth.login layout structure with additional fields.',
 
   skeleton: {
     shell: 'shell.web.app',

@@ -35,12 +35,12 @@ describe('Screen Templates', () => {
     });
 
     it('should include all auth templates (4)', () => {
-      const authTemplates = allTemplates.filter((t) => t.category === 'auth');
+      const authTemplates = allTemplates.filter(t => t.category === 'auth');
       expect(authTemplates).toHaveLength(4);
     });
 
     it('should include all feedback templates (5)', () => {
-      const feedbackTemplates = allTemplates.filter((t) => t.category === 'feedback');
+      const feedbackTemplates = allTemplates.filter(t => t.category === 'feedback');
       expect(feedbackTemplates).toHaveLength(5);
     });
   });
@@ -155,7 +155,7 @@ describe('Screen Templates', () => {
 
   describe('Responsive Layout [TAG-UI002-005]', () => {
     it('should have responsive layouts for all templates', () => {
-      allTemplates.forEach((template) => {
+      allTemplates.forEach(template => {
         expect(template.layout.responsive).toBeDefined();
         expect(template.layout.responsive.desktop).toBeDefined();
         expect(template.layout.responsive.tablet).toBeDefined();
@@ -164,7 +164,7 @@ describe('Screen Templates', () => {
     });
 
     it('should use layout tokens (not hardcoded values)', () => {
-      allTemplates.forEach((template) => {
+      allTemplates.forEach(template => {
         const { desktop, tablet, mobile } = template.layout.responsive;
 
         // Check that padding/gap use token references
@@ -183,7 +183,7 @@ describe('Screen Templates', () => {
 
   describe('AI Customization [TAG-UI002-003]', () => {
     it('should define customizable areas for all templates', () => {
-      allTemplates.forEach((template) => {
+      allTemplates.forEach(template => {
         expect(template.customizable).toBeDefined();
         expect(template.customizable.texts).toBeDefined();
         expect(template.customizable.optional).toBeDefined();
@@ -192,7 +192,7 @@ describe('Screen Templates', () => {
     });
 
     it('should have at least one customizable text', () => {
-      allTemplates.forEach((template) => {
+      allTemplates.forEach(template => {
         expect(template.customizable.texts.length).toBeGreaterThan(0);
       });
     });
@@ -200,16 +200,14 @@ describe('Screen Templates', () => {
 
   describe('Required Components [TAG-UI002-004]', () => {
     it('should specify required components for all templates', () => {
-      allTemplates.forEach((template) => {
+      allTemplates.forEach(template => {
         expect(template.requiredComponents).toBeDefined();
         expect(template.requiredComponents.length).toBeGreaterThan(0);
       });
     });
 
     it('should have Button component in most templates', () => {
-      const templatesWithButton = allTemplates.filter((t) =>
-        t.requiredComponents.includes('Button')
-      );
+      const templatesWithButton = allTemplates.filter(t => t.requiredComponents.includes('Button'));
       expect(templatesWithButton.length).toBeGreaterThan(8);
     });
   });
@@ -217,14 +215,14 @@ describe('Screen Templates', () => {
   describe('Template Registration', () => {
     it('should register all templates without errors', () => {
       expect(() => {
-        allTemplates.forEach((template) => registry.register(template));
+        allTemplates.forEach(template => registry.register(template));
       }).not.toThrow();
 
       expect(registry.count()).toBe(12);
     });
 
     it('should retrieve all templates by category', () => {
-      allTemplates.forEach((template) => registry.register(template));
+      allTemplates.forEach(template => registry.register(template));
 
       const authTemplates = registry.getByCategory('auth');
       expect(authTemplates).toHaveLength(4);
