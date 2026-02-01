@@ -47,10 +47,13 @@ export default function SquareMinimalismDemo() {
                         <button className="bg-neutral-900 text-white rounded-none px-8 py-4 uppercase tracking-wider text-sm font-semibold hover:bg-neutral-800 transition-all flex items-center gap-3 active:translate-y-px">
                             Start Building <ArrowRight className="w-4 h-4" />
                         </button>
-                        {/* Button: Secondary (Recipe: button.secondary) */}
-                        <button className="bg-white text-neutral-900 border border-l-0 border-neutral-200 rounded-none px-8 py-4 uppercase tracking-wider text-sm font-semibold hover:bg-neutral-50 transition-all">
+                        {/* Button: Secondary (Recipe: button.secondary) - Link to Documentation */}
+                        <a
+                            href="/studio/square-minimalism/docs"
+                            className="bg-white text-neutral-900 border border-l-0 border-neutral-200 rounded-none px-8 py-4 uppercase tracking-wider text-sm font-semibold hover:bg-neutral-50 transition-all flex items-center justify-center"
+                        >
                             Documentation
-                        </button>
+                        </a>
                     </div>
                 </div>
             </section>
