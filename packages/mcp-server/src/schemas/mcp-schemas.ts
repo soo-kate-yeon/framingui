@@ -613,9 +613,7 @@ export type ListComponentsOutput = z.infer<typeof ListComponentsOutputSchema>;
  * SPEC-MCP-003: [TAG-MCP003-007]
  */
 export const PreviewComponentInputSchema = z.object({
-  componentId: z
-    .string()
-    .regex(/^[a-z-]+$/, 'Component ID must be lowercase with hyphens'),
+  componentId: z.string().regex(/^[a-z-]+$/, 'Component ID must be lowercase with hyphens'),
   includeExamples: z.boolean().optional().default(true),
   includeDependencies: z.boolean().optional().default(true),
 });
@@ -768,9 +766,7 @@ export type ListScreenTemplatesOutput = z.infer<typeof ListScreenTemplatesOutput
  * SPEC-MCP-003: [TAG-MCP003-009]
  */
 export const PreviewScreenTemplateInputSchema = z.object({
-  templateId: z
-    .string()
-    .regex(/^[a-z]+\.[a-z-]+$/, 'Template ID must be in format category.name'),
+  templateId: z.string().regex(/^[a-z]+\.[a-z-]+$/, 'Template ID must be in format category.name'),
   includeLayoutTokens: z.boolean().optional().default(true),
 });
 

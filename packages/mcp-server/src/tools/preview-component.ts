@@ -94,13 +94,7 @@ const COMPONENT_DETAILS: Record<
         description: 'Additional CSS classes',
       },
     ],
-    subComponents: [
-      'CardHeader',
-      'CardTitle',
-      'CardDescription',
-      'CardContent',
-      'CardFooter',
-    ],
+    subComponents: ['CardHeader', 'CardTitle', 'CardDescription', 'CardContent', 'CardFooter'],
     dependencies: {
       internal: [],
       external: [],

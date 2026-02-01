@@ -143,11 +143,13 @@ vi.mock('@tekton/ui', () => ({
       },
     ]),
     getByCategory: vi.fn((category: string) => {
-      const mockTemplates = vi.mocked(vi.fn(() => ({
-        templateRegistry: {
-          getAll: vi.fn(),
-        },
-      }))).mock.calls;
+      const mockTemplates = vi.mocked(
+        vi.fn(() => ({
+          templateRegistry: {
+            getAll: vi.fn(),
+          },
+        }))
+      ).mock.calls;
       const allTemplates = [
         {
           id: 'auth.login',

@@ -306,7 +306,9 @@ export function getAllComponents(): ComponentMeta[] {
 /**
  * Get components by category
  */
-export function getComponentsByCategory(category: 'core' | 'complex' | 'advanced'): ComponentMeta[] {
+export function getComponentsByCategory(
+  category: 'core' | 'complex' | 'advanced'
+): ComponentMeta[] {
   return COMPONENT_CATALOG.filter(c => c.category === category);
 }
 

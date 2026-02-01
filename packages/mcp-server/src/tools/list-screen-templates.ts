@@ -31,9 +31,11 @@ export async function listScreenTemplatesTool(
 
     // Apply search filter if provided
     if (input.search) {
-      templates = templateRegistry.search(input.search).filter((t: any) =>
-        input.category === 'all' || !input.category ? true : t.category === input.category
-      );
+      templates = templateRegistry
+        .search(input.search)
+        .filter((t: any) =>
+          input.category === 'all' || !input.category ? true : t.category === input.category
+        );
     }
 
     // Calculate category counts

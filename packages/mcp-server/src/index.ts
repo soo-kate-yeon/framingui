@@ -292,7 +292,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'preview-screen-template',
-        description: 'Preview a screen template with skeleton, layout, and customization boundaries',
+        description:
+          'Preview a screen template with skeleton, layout, and customization boundaries',
         inputSchema: {
           type: 'object',
           properties: {

@@ -53,25 +53,26 @@ export async function previewScreenTemplateTool(
     // Build layout configuration
     const layout = {
       type: template.layout.type as TemplateLayoutType,
-      responsive: input.includeLayoutTokens && template.layout.responsive
-        ? {
-            mobile: {
-              padding: template.layout.responsive.mobile.padding,
-              gap: template.layout.responsive.mobile.gap,
-              columns: template.layout.responsive.mobile.columns,
-            },
-            tablet: {
-              padding: template.layout.responsive.tablet.padding,
-              gap: template.layout.responsive.tablet.gap,
-              columns: template.layout.responsive.tablet.columns,
-            },
-            desktop: {
-              padding: template.layout.responsive.desktop.padding,
-              gap: template.layout.responsive.desktop.gap,
-              columns: template.layout.responsive.desktop.columns,
-            },
-          }
-        : undefined,
+      responsive:
+        input.includeLayoutTokens && template.layout.responsive
+          ? {
+              mobile: {
+                padding: template.layout.responsive.mobile.padding,
+                gap: template.layout.responsive.mobile.gap,
+                columns: template.layout.responsive.mobile.columns,
+              },
+              tablet: {
+                padding: template.layout.responsive.tablet.padding,
+                gap: template.layout.responsive.tablet.gap,
+                columns: template.layout.responsive.tablet.columns,
+              },
+              desktop: {
+                padding: template.layout.responsive.desktop.padding,
+                gap: template.layout.responsive.desktop.gap,
+                columns: template.layout.responsive.desktop.columns,
+              },
+            }
+          : undefined,
     };
 
     // Build customization boundaries

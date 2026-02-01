@@ -234,7 +234,8 @@ describe('previewScreenTemplateTool', () => {
 
       // Verify responsive config structure
       ['mobile', 'tablet', 'desktop'].forEach(breakpoint => {
-        const config = result.template?.layout.responsive?.[breakpoint as 'mobile' | 'tablet' | 'desktop'];
+        const config =
+          result.template?.layout.responsive?.[breakpoint as 'mobile' | 'tablet' | 'desktop'];
         expect(config?.padding).toBeDefined();
         expect(config?.gap).toBeDefined();
         expect(config?.columns).toBeDefined();
