@@ -155,7 +155,8 @@ export const forgotPasswordTemplate: ScreenTemplate = {
   id: 'auth.forgot-password',
   name: 'Forgot Password',
   category: 'auth',
-  description: 'Password reset screen with email input. Simple and clear instructions for users to reset their password.',
+  description:
+    'Password reset screen with email input. Simple and clear instructions for users to reset their password.',
 
   skeleton: {
     shell: 'shell.web.app',

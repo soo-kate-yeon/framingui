@@ -184,7 +184,8 @@ export const verificationTemplate: ScreenTemplate = {
   id: 'auth.verification',
   name: 'Email Verification',
   category: 'auth',
-  description: 'Email verification screen with status message and action buttons. Clear next steps for users after signup.',
+  description:
+    'Email verification screen with status message and action buttons. Clear next steps for users after signup.',
 
   skeleton: {
     shell: 'shell.web.app',

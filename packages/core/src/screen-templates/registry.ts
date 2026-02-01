@@ -66,7 +66,7 @@ export class TemplateRegistry {
     // Validate template before registration
     const validationResult = this.validateTemplate(template);
     if (!validationResult.valid) {
-      const errors = validationResult.errors?.map((e) => e.message).join(', ');
+      const errors = validationResult.errors?.map(e => e.message).join(', ');
       throw new Error(`Template validation failed for ${template.id}: ${errors}`);
     }
 
@@ -81,7 +81,7 @@ export class TemplateRegistry {
    * @throws Error if any template validation fails
    */
   registerAll(templates: ScreenTemplate[]): void {
-    templates.forEach((template) => this.register(template));
+    templates.forEach(template => this.register(template));
   }
 
   /**
@@ -113,9 +113,7 @@ export class TemplateRegistry {
    * ```
    */
   getByCategory(category: ScreenCategory): ScreenTemplate[] {
-    return Array.from(this.templates.values()).filter(
-      (template) => template.category === category
-    );
+    return Array.from(this.templates.values()).filter(template => template.category === category);
   }
 
   /**
@@ -141,8 +139,8 @@ export class TemplateRegistry {
    * ```
    */
   findByRequiredComponents(components: string[]): ScreenTemplate[] {
-    return Array.from(this.templates.values()).filter((template) =>
-      components.every((comp) => template.requiredComponents.includes(comp))
+    return Array.from(this.templates.values()).filter(template =>
+      components.every(comp => template.requiredComponents.includes(comp))
     );
   }
 
@@ -218,7 +216,7 @@ export class TemplateRegistry {
     }
 
     // Validate required sections
-    const requiredSections = template.skeleton.sections.filter((s) => s.required);
+    const requiredSections = template.skeleton.sections.filter(s => s.required);
     if (requiredSections.length === 0) {
       errors.push({
         type: 'missing_section',
@@ -260,7 +258,7 @@ export class TemplateRegistry {
    * @returns Array of template IDs
    */
   getIdsByCategory(category: ScreenCategory): string[] {
-    return this.getByCategory(category).map((t) => t.id);
+    return this.getByCategory(category).map(t => t.id);
   }
 
   /**
@@ -272,7 +270,7 @@ export class TemplateRegistry {
    * @returns JSON string of all templates (without Component field)
    */
   exportToJSON(): string {
-    const exportData = this.getAll().map((template) => {
+    const exportData = this.getAll().map(template => {
       const { Component: _Component, ...rest } = template;
       return rest;
     });

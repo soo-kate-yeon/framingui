@@ -202,7 +202,8 @@ export const profileTemplate: ScreenTemplate = {
   id: 'account.profile',
   name: 'Account/Profile',
   category: 'form',
-  description: 'User profile and account management screen with avatar, editable fields, and save functionality.',
+  description:
+    'User profile and account management screen with avatar, editable fields, and save functionality.',
 
   skeleton: {
     shell: 'shell.web.app',

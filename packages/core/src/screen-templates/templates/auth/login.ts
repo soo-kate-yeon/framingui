@@ -198,7 +198,8 @@ export const loginTemplate: ScreenTemplate = {
   id: 'auth.login',
   name: 'Login',
   category: 'auth',
-  description: 'User login screen with email/password authentication. Clean, centered layout following Claude.ai design principles.',
+  description:
+    'User login screen with email/password authentication. Clean, centered layout following Claude.ai design principles.',
 
   skeleton: {
     shell: 'shell.web.app',
@@ -226,7 +227,15 @@ export const loginTemplate: ScreenTemplate = {
   },
 
   customizable: {
-    texts: ['title', 'subtitle', 'emailLabel', 'passwordLabel', 'loginButton', 'forgotPassword', 'signupLink'],
+    texts: [
+      'title',
+      'subtitle',
+      'emailLabel',
+      'passwordLabel',
+      'loginButton',
+      'forgotPassword',
+      'signupLink',
+    ],
     optional: ['social_login', 'remember_me', 'logo'],
     slots: ['header', 'footer'],
   },
