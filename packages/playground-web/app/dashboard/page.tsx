@@ -11,6 +11,7 @@ type Metric = {
   value: string;
   change: string;
   trend: 'up' | 'down';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   icon: any; // Updated to accept Lucide icon component
   description: string;
   chartData: Array<{ label: string; value: number }>;
