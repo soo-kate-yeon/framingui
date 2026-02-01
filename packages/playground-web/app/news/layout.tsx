@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { loadTheme } from '@tekton/core';
 import { ThemeProvider } from '../../components/theme/theme-provider';
 

@@ -69,9 +69,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const userData = await loadUserData(token.sub);
 
         // 세션에 사용자 데이터 추가
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).licenses = userData.licenses;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).likedTemplates = userData.likedTemplates;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).savedThemes = userData.savedThemes;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).userId = token.sub;
       }
       return session;

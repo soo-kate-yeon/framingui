@@ -26,13 +26,13 @@ function TestComponent() {
       <div data-testid="color-preset">{theme.colorPreset}</div>
       <div data-testid="typography-preset">{theme.typographyPreset}</div>
       <div data-testid="spacing-preset">{theme.spacingPreset}</div>
-      <button onClick={() => setColorPreset('color-forest')}>
-        Set Color Forest
+      <button onClick={() => setColorPreset('color-platform-warm')}>
+        Set Color Warm
       </button>
-      <button onClick={() => setTypographyPreset('typo-classic')}>
-        Set Typography Classic
+      <button onClick={() => setTypographyPreset('typo-platform-serif')}>
+        Set Typography Serif
       </button>
-      <button onClick={() => setSpacingPreset('spacing-spacious')}>
+      <button onClick={() => setSpacingPreset('spacing-platform-spacious')}>
         Set Spacing Spacious
       </button>
       <button onClick={() => setCustomOverride('--custom-var', 'test-value')}>
@@ -55,6 +55,7 @@ function TestComponent() {
 
 describe('ThemeContext', () => {
   // Mock document.documentElement.style.setProperty
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let styleSetPropertyMock: any;
 
   beforeEach(() => {
@@ -80,12 +81,12 @@ describe('ThemeContext', () => {
         </ThemeProvider>,
       );
 
-      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-ocean');
+      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-round-minimal');
       expect(screen.getByTestId('typography-preset')).toHaveTextContent(
-        'typo-modern',
+        'typo-round-minimal',
       );
       expect(screen.getByTestId('spacing-preset')).toHaveTextContent(
-        'spacing-comfortable',
+        'spacing-round-minimal',
       );
     });
 
@@ -97,10 +98,10 @@ describe('ThemeContext', () => {
       );
 
       act(() => {
-        screen.getByText('Set Color Forest').click();
+        screen.getByText('Set Color Warm').click();
       });
 
-      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-forest');
+      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-platform-warm');
     });
 
     it('setTypographyPreset() 호출 시 상태 업데이트', () => {
@@ -111,11 +112,11 @@ describe('ThemeContext', () => {
       );
 
       act(() => {
-        screen.getByText('Set Typography Classic').click();
+        screen.getByText('Set Typography Serif').click();
       });
 
       expect(screen.getByTestId('typography-preset')).toHaveTextContent(
-        'typo-classic',
+        'typo-platform-serif',
       );
     });
 
@@ -131,7 +132,7 @@ describe('ThemeContext', () => {
       });
 
       expect(screen.getByTestId('spacing-preset')).toHaveTextContent(
-        'spacing-spacious',
+        'spacing-platform-spacious',
       );
     });
 
@@ -166,7 +167,7 @@ describe('ThemeContext', () => {
 
       // 버튼 클릭을 각각 act로 감싸기
       await act(async () => {
-        screen.getByText('Set Color Forest').click();
+        screen.getByText('Set Color Warm').click();
       });
 
       await act(async () => {
@@ -185,9 +186,9 @@ describe('ThemeContext', () => {
       expect(json).toHaveProperty('exportedAt');
 
       expect(json.version).toBe('1.0.0');
-      expect(json.presets.color).toBe('color-forest');
-      expect(json.presets.typography).toBe('typo-modern');
-      expect(json.presets.spacing).toBe('spacing-comfortable');
+      expect(json.presets.color).toBe('color-platform-warm');
+      expect(json.presets.typography).toBe('typo-round-minimal');
+      expect(json.presets.spacing).toBe('spacing-round-minimal');
     });
 
     it('resetTheme() 호출 시 기본값으로 재설정', () => {
@@ -199,24 +200,24 @@ describe('ThemeContext', () => {
 
       // 프리셋 변경
       act(() => {
-        screen.getByText('Set Color Forest').click();
-        screen.getByText('Set Typography Classic').click();
+        screen.getByText('Set Color Warm').click();
+        screen.getByText('Set Typography Serif').click();
         screen.getByText('Set Spacing Spacious').click();
       });
 
-      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-forest');
+      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-platform-warm');
 
       // 리셋
       act(() => {
         screen.getByText('Reset Theme').click();
       });
 
-      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-ocean');
+      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-round-minimal');
       expect(screen.getByTestId('typography-preset')).toHaveTextContent(
-        'typo-modern',
+        'typo-round-minimal',
       );
       expect(screen.getByTestId('spacing-preset')).toHaveTextContent(
-        'spacing-comfortable',
+        'spacing-round-minimal',
       );
     });
 

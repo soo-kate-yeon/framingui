@@ -15,8 +15,8 @@ import {
 
 describe('Theme Presets', () => {
   describe('colorPresets', () => {
-    it('정확히 3개의 프리셋 존재', () => {
-      expect(colorPresets).toHaveLength(3);
+    it('정확히 4개의 프리셋 존재', () => {
+      expect(colorPresets).toHaveLength(4);
     });
 
     it('모든 프리셋이 color 카테고리', () => {
@@ -39,22 +39,23 @@ describe('Theme Presets', () => {
 
     it('필수 프리셋 ID 존재', () => {
       const ids = colorPresets.map((p) => p.id);
-      expect(ids).toContain('color-ocean');
-      expect(ids).toContain('color-forest');
-      expect(ids).toContain('color-sunset');
+      expect(ids).toContain('color-round-minimal');
+      expect(ids).toContain('color-platform-minimal');
+      expect(ids).toContain('color-platform-warm');
+      expect(ids).toContain('color-platform-cool');
     });
 
-    it('각 프리셋에 primary 색상 포함', () => {
+    it('각 프리셋에 brand 색상 포함', () => {
       colorPresets.forEach((preset) => {
-        expect(preset.values).toHaveProperty('--tekton-bg-primary');
-        expect(preset.values).toHaveProperty('--tekton-bg-primary-foreground');
+        expect(preset.values).toHaveProperty('--tekton-color-brand');
+        expect(preset.values).toHaveProperty('--tekton-bg-canvas');
       });
     });
   });
 
   describe('typographyPresets', () => {
-    it('정확히 3개의 프리셋 존재', () => {
-      expect(typographyPresets).toHaveLength(3);
+    it('정확히 4개의 프리셋 존재', () => {
+      expect(typographyPresets).toHaveLength(4);
     });
 
     it('모든 프리셋이 typography 카테고리', () => {
@@ -65,9 +66,10 @@ describe('Theme Presets', () => {
 
     it('필수 프리셋 ID 존재', () => {
       const ids = typographyPresets.map((p) => p.id);
-      expect(ids).toContain('typo-modern');
-      expect(ids).toContain('typo-classic');
-      expect(ids).toContain('typo-minimal');
+      expect(ids).toContain('typo-round-minimal');
+      expect(ids).toContain('typo-platform-sans');
+      expect(ids).toContain('typo-platform-serif');
+      expect(ids).toContain('typo-platform-mono');
     });
 
     it('각 프리셋에 폰트 패밀리 포함', () => {
@@ -79,8 +81,8 @@ describe('Theme Presets', () => {
   });
 
   describe('spacingPresets', () => {
-    it('정확히 3개의 프리셋 존재', () => {
-      expect(spacingPresets).toHaveLength(3);
+    it('정확히 4개의 프리셋 존재', () => {
+      expect(spacingPresets).toHaveLength(4);
     });
 
     it('모든 프리셋이 spacing 카테고리', () => {
@@ -91,9 +93,10 @@ describe('Theme Presets', () => {
 
     it('필수 프리셋 ID 존재', () => {
       const ids = spacingPresets.map((p) => p.id);
-      expect(ids).toContain('spacing-compact');
-      expect(ids).toContain('spacing-comfortable');
-      expect(ids).toContain('spacing-spacious');
+      expect(ids).toContain('spacing-round-minimal');
+      expect(ids).toContain('spacing-platform-compact');
+      expect(ids).toContain('spacing-platform-standard');
+      expect(ids).toContain('spacing-platform-spacious');
     });
 
     it('각 프리셋에 spacing-unit 포함', () => {
@@ -105,9 +108,9 @@ describe('Theme Presets', () => {
 
   describe('getPresetById', () => {
     it('유효한 ID로 프리셋 검색', () => {
-      const preset = getPresetById('color-ocean');
+      const preset = getPresetById('color-round-minimal');
       expect(preset).toBeDefined();
-      expect(preset?.id).toBe('color-ocean');
+      expect(preset?.id).toBe('color-round-minimal');
       expect(preset?.category).toBe('color');
     });
 
@@ -117,28 +120,28 @@ describe('Theme Presets', () => {
     });
 
     it('모든 카테고리에서 검색 가능', () => {
-      expect(getPresetById('color-ocean')).toBeDefined();
-      expect(getPresetById('typo-modern')).toBeDefined();
-      expect(getPresetById('spacing-compact')).toBeDefined();
+      expect(getPresetById('color-round-minimal')).toBeDefined();
+      expect(getPresetById('typo-round-minimal')).toBeDefined();
+      expect(getPresetById('spacing-round-minimal')).toBeDefined();
     });
   });
 
   describe('getPresetsByCategory', () => {
     it('color 카테고리 프리셋 반환', () => {
       const presets = getPresetsByCategory('color');
-      expect(presets).toHaveLength(3);
+      expect(presets).toHaveLength(4);
       expect(presets).toEqual(colorPresets);
     });
 
     it('typography 카테고리 프리셋 반환', () => {
       const presets = getPresetsByCategory('typography');
-      expect(presets).toHaveLength(3);
+      expect(presets).toHaveLength(4);
       expect(presets).toEqual(typographyPresets);
     });
 
     it('spacing 카테고리 프리셋 반환', () => {
       const presets = getPresetsByCategory('spacing');
-      expect(presets).toHaveLength(3);
+      expect(presets).toHaveLength(4);
       expect(presets).toEqual(spacingPresets);
     });
   });
