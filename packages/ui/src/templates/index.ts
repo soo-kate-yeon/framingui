@@ -18,6 +18,21 @@ export { TemplateRegistry, templateRegistry } from './registry';
 
 // Auth Templates
 export { LoginTemplate, LoginTemplateComponent } from './auth/login';
+export { SignupTemplate, SignupTemplateComponent } from './auth/signup';
+export { ForgotPasswordTemplate, ForgotPasswordTemplateComponent } from './auth/forgot-password';
+export { VerificationTemplate, VerificationTemplateComponent } from './auth/verification';
+
+// Core Templates
+export { LandingTemplate, LandingTemplateComponent } from './core/landing';
+export { PreferencesTemplate, PreferencesTemplateComponent } from './core/preferences';
+export { ProfileTemplate, ProfileTemplateComponent } from './core/profile';
+
+// Feedback Templates
+export { LoadingTemplate, LoadingTemplateComponent } from './feedback/loading';
+export { ErrorTemplate, ErrorTemplateComponent } from './feedback/error';
+export { EmptyTemplate, EmptyTemplateComponent } from './feedback/empty';
+export { ConfirmationTemplate, ConfirmationTemplateComponent } from './feedback/confirmation';
+export { SuccessTemplate, SuccessTemplateComponent } from './feedback/success';
 
 // Dashboard Templates
 export { DashboardTemplate, DashboardTemplateComponent } from './dashboard/overview';
@@ -25,7 +40,36 @@ export { DashboardTemplate, DashboardTemplateComponent } from './dashboard/overv
 // Auto-register templates
 import { templateRegistry } from './registry';
 import { LoginTemplate } from './auth/login';
+import { SignupTemplate } from './auth/signup';
+import { ForgotPasswordTemplate } from './auth/forgot-password';
+import { VerificationTemplate } from './auth/verification';
+import { LandingTemplate } from './core/landing';
+import { PreferencesTemplate } from './core/preferences';
+import { ProfileTemplate } from './core/profile';
+import { LoadingTemplate } from './feedback/loading';
+import { ErrorTemplate } from './feedback/error';
+import { EmptyTemplate } from './feedback/empty';
+import { ConfirmationTemplate } from './feedback/confirmation';
+import { SuccessTemplate } from './feedback/success';
 import { DashboardTemplate } from './dashboard/overview';
 
 // Register all built-in templates
-templateRegistry.registerMany([LoginTemplate, DashboardTemplate]);
+templateRegistry.registerMany([
+  // Auth
+  LoginTemplate,
+  SignupTemplate,
+  ForgotPasswordTemplate,
+  VerificationTemplate,
+  // Core
+  LandingTemplate,
+  PreferencesTemplate,
+  ProfileTemplate,
+  // Feedback
+  LoadingTemplate,
+  ErrorTemplate,
+  EmptyTemplate,
+  ConfirmationTemplate,
+  SuccessTemplate,
+  // Dashboard
+  DashboardTemplate,
+]);
