@@ -5,6 +5,12 @@
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
+ * [TAG-UI002-001] ScreenTemplate interface 정의 및 타입 준수
+ * [TAG-UI002-002] Tekton 레이아웃 토큰 사용 (CSS 변수)
+ * [TAG-UI002-003] AI 커스터마이징 경계 정의
+ * [TAG-UI002-004] 필수 컴포넌트 검증 시스템
+ * [TAG-UI002-005] 반응형 브레이크포인트 지원
+ * [TAG-UI002-006] WCAG 2.1 AA 준수 기반 타입 설계
  *
  * WHY: 타입 정의가 템플릿 시스템의 타입 안전성을 보장
  * IMPACT: 타입 정의 누락 시 런타임 오류 발생

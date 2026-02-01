@@ -5,6 +5,8 @@
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
+ * [TAG-UI002-001] ScreenTemplate interface 준수
+ * [TAG-UI002-004] 필수 컴포넌트 검증 시스템
  *
  * WHY: 템플릿 모듈이 스크린 템플릿 시스템을 통합
  * IMPACT: 모듈 오류 시 템플릿 사용 불가

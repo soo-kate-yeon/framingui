@@ -5,6 +5,12 @@
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
+ * [TAG-UI002-031] 로딩 상태 템플릿 구현
+ * [TAG-UI002-001] ScreenTemplate interface 준수
+ * [TAG-UI002-002] Tekton 레이아웃 토큰 사용
+ * [TAG-UI002-003] AI 커스터마이징 경계 정의 (texts, options, slots)
+ * [TAG-UI002-005] 반응형 브레이크포인트 지원
+ * [TAG-UI002-006] WCAG 2.1 AA 준수
  *
  * WHY: 로딩 템플릿이 비동기 작업 피드백 UX를 보장
  * IMPACT: 템플릿 오류 시 사용자 로딩 상태 인지 불가

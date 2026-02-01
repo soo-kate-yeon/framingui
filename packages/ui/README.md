@@ -4,13 +4,14 @@ Tekton UI Reference Component Library - High-quality, accessible React component
 
 ## Overview
 
-@tekton/ui provides 20 production-ready components built with:
+@tekton/ui provides 20 production-ready components + 13 screen templates built with:
 
+- **Screen Templates (NEW)**: 13 full-page layouts for rapid development
 - **React 19** - Latest React features with Server Components support
 - **TypeScript 5.7+** - Full type safety with strict mode
 - **Radix UI v1.0+** - Accessible headless primitives
 - **CSS Variables** - 3-layer architecture (Atomic → Semantic → Component)
-- **WCAG 2.1 AA** - Fully accessible (98.93% test coverage)
+- **WCAG 2.1 AA** - Fully accessible
 
 ## Installation
 
@@ -654,7 +655,7 @@ import { Button } from '@tekton/ui';
 
 ## Screen Templates (Phase 3)
 
-**New in Phase 3**: Screen Template System for rapid full-screen composition.
+**New in Phase 3**: 13 Screen Templates for rapid full-screen composition.
 
 ### Overview
 
@@ -662,205 +663,132 @@ Screen Templates provide pre-built, theme-aware full-screen layouts that combine
 
 **Features:**
 
-- **Pre-built Layouts**: Login, Dashboard, and more coming soon
+- **13 Pre-built Layouts**: Auth (4), Core (3), Feedback (5), Dashboard (1)
 - **Theme-Aware**: Automatically adapts to active theme via CSS Variables
-- **Composable**: Combine templates with custom slots
-- **Type-Safe**: Full TypeScript support with template metadata
+- **AI-Friendly**: Clear customization boundaries for AI agents
+- **Type-Safe**: Full TypeScript support with ScreenTemplate interface
+- **Responsive**: Desktop, Tablet, Mobile layouts
 
 ### Quick Start
 
 ```tsx
-import { getTemplate } from '@tekton/ui/templates';
+import { templateRegistry } from '@tekton/ui/templates';
 
-// Get a registered template by ID
-const LoginTemplate = getTemplate('login-minimal');
+// Get all templates
+const allTemplates = templateRegistry.getAll(); // 13 templates
 
-// Render with custom slots
-<LoginTemplate
-  slots={{
-    branding: <YourLogo />,
-    footer: <YourFooter />,
-  }}
-/>;
+// Get by category
+const authTemplates = templateRegistry.getByCategory('auth'); // 4 templates
+
+// Get specific template
+const loginTemplate = templateRegistry.get('auth.login');
 ```
 
-### Available Templates
+### Available Templates (13)
 
-#### LoginTemplate
-
-Minimal authentication screen with centered card layout.
+#### Auth Templates (4)
 
 ```tsx
-import { LoginTemplate } from '@tekton/ui/templates/auth/login';
-
-<LoginTemplate
-  slots={{
-    branding: <img src="/logo.svg" alt="Brand" />,
-    footer: <p>© 2026 Your Company</p>,
-  }}
-/>;
+import {
+  LoginTemplate,
+  SignupTemplate,
+  ForgotPasswordTemplate,
+  VerificationTemplate
+} from '@tekton/ui/templates/auth';
 ```
 
-**Metadata:**
+- **LoginTemplate** (`auth.login`) - Centered login card with email/password
+- **SignupTemplate** (`auth.signup`) - Registration form with terms acceptance
+- **ForgotPasswordTemplate** (`auth.forgot-password`) - Password reset flow
+- **VerificationTemplate** (`auth.verification`) - Email verification confirmation
 
-- **ID**: `login-minimal`
-- **Category**: `auth`
-- **Supported Themes**: All
-- **Slots**: `branding` (optional), `footer` (optional)
-
-#### DashboardTemplate
-
-Full dashboard with sidebar navigation and content area.
+#### Core Templates (3)
 
 ```tsx
-import { DashboardTemplate } from '@tekton/ui/templates/dashboard/overview';
-
-<DashboardTemplate
-  slots={{
-    sidebar: <YourSidebar />,
-    header: <YourHeader />,
-    content: <YourDashboardContent />,
-  }}
-/>;
+import {
+  LandingTemplate,
+  PreferencesTemplate,
+  ProfileTemplate
+} from '@tekton/ui/templates/core';
 ```
 
-**Metadata:**
+- **LandingTemplate** (`home.landing`) - Full-width landing page with CTA
+- **PreferencesTemplate** (`settings.preferences`) - Sidebar settings layout
+- **ProfileTemplate** (`account.profile`) - User profile with avatar editing
 
-- **ID**: `dashboard-minimal`
-- **Category**: `dashboard`
-- **Supported Themes**: All
-- **Slots**: `sidebar` (required), `header` (optional), `content` (required)
+#### Feedback Templates (5)
+
+```tsx
+import {
+  LoadingTemplate,
+  ErrorTemplate,
+  EmptyTemplate,
+  ConfirmationTemplate,
+  SuccessTemplate
+} from '@tekton/ui/templates/feedback';
+```
+
+- **LoadingTemplate** (`feedback.loading`) - Loading skeleton state
+- **ErrorTemplate** (`feedback.error`) - Error state with retry button
+- **EmptyTemplate** (`feedback.empty`) - Empty state with CTA
+- **ConfirmationTemplate** (`feedback.confirmation`) - Dialog confirmation
+- **SuccessTemplate** (`feedback.success`) - Success message with next steps
+
+#### Dashboard Template (1)
+
+```tsx
+import { DashboardTemplate } from '@tekton/ui/templates/dashboard';
+```
+
+- **DashboardTemplate** (`dashboard.overview`) - Dashboard layout with sidebar
+
+### Template Features
+
+- **Type-Safe**: Full TypeScript support with `ScreenTemplate` interface
+- **AI-Friendly**: Clear customization boundaries (`slots`, `texts`, `options`)
+- **Theme-Aware**: CSS Variables for automatic theme adaptation
+- **Responsive**: Breakpoint-based layouts (Desktop 1024px+, Tablet 768-1024px, Mobile <768px)
+- **Accessible**: WCAG 2.1 AA compliance (validation in progress)
 
 ### TemplateRegistry API
 
 The `TemplateRegistry` provides centralized template management:
 
 ```tsx
-import { TemplateRegistry } from '@tekton/ui/templates/registry';
+import { templateRegistry } from '@tekton/ui/templates/registry';
 
 // Get all templates
-const allTemplates = TemplateRegistry.getAll();
+const allTemplates = templateRegistry.getAll(); // 13 templates
 
 // Get templates by category
-const authTemplates = TemplateRegistry.getByCategory('auth');
+const authTemplates = templateRegistry.getByCategory('auth'); // 4 templates
 
 // Get specific template
-const loginTemplate = TemplateRegistry.get('login-minimal');
+const loginTemplate = templateRegistry.get('auth.login');
+
+// Find by required components
+const formsTemplates = templateRegistry.findByRequiredComponents(['Button', 'Input', 'Form']);
 ```
 
-**API Reference**: See [docs/templates-api.md](./docs/templates-api.md) for complete API documentation.
-
-### Template Anatomy
-
-Each template includes:
-
-1. **Metadata**: ID, name, category, description, tags, supported themes
-2. **Layout Configuration**: Type, max width, padding, gap (using CSS Variables)
-3. **Slot Definitions**: Required/optional slots with type constraints
-4. **Token Bindings**: CSS Variable mappings for theming
-5. **React Component**: The actual template implementation
-
-**Example Template Structure:**
-
-```tsx
-export const LoginTemplate: ScreenTemplate = {
-  meta: {
-    id: 'login-minimal',
-    name: 'Minimal Login',
-    category: 'auth',
-    description: 'Centered login card with branding',
-    tags: ['auth', 'login', 'minimal'],
-    supportedThemes: ['*'], // All themes
-  },
-  layout: {
-    type: 'centered',
-    maxWidth: 'sm',
-    padding: 'var(--tekton-spacing-4)',
-  },
-  slots: [
-    {
-      id: 'branding',
-      name: 'Brand Logo',
-      required: false,
-    },
-    {
-      id: 'footer',
-      name: 'Footer Content',
-      required: false,
-    },
-  ],
-  Component: LoginScreenComponent, // React component
-};
-```
-
-### Creating Custom Templates
-
-To create your own template:
-
-1. Define template metadata following `ScreenTemplate` interface
-2. Implement React component with slot support
-3. Register template in `TemplateRegistry`
-4. Export from your module
-
-**Example:**
-
-```tsx
-import type { ScreenTemplate } from '@tekton/ui/templates/types';
-
-export const MyCustomTemplate: ScreenTemplate = {
-  meta: {
-    id: 'custom-template',
-    name: 'My Custom Template',
-    category: 'content',
-    description: 'Custom template description',
-    tags: ['custom'],
-    supportedThemes: ['*'],
-  },
-  layout: {
-    type: 'full',
-    maxWidth: 'xl',
-  },
-  slots: [
-    {
-      id: 'header',
-      name: 'Header',
-      required: true,
-    },
-  ],
-  Component: ({ slots }) => (
-    <div className="min-h-screen">
-      <header>{slots?.header}</header>
-      {/* Template implementation */}
-    </div>
-  ),
-};
-
-// Register
-import { TemplateRegistry } from '@tekton/ui/templates/registry';
-TemplateRegistry.register(MyCustomTemplate);
-```
+**Design Reference**: All templates follow [Claude.ai Design Philosophy](../../.moai/specs/SPEC-UI-002/reference-guide.md) - clarity, accessibility, universality.
 
 ### Phase 3 Status
 
-**Completed:**
+**Completed (2026-02-01):**
 
 - ✅ Template type system (`ScreenTemplate`, `TemplateRegistry`)
-- ✅ LoginTemplate implementation
-- ✅ DashboardTemplate implementation
+- ✅ 13 templates implemented (Auth 4, Core 3, Feedback 5, Dashboard 1)
 - ✅ Template registry with category filtering
-- ✅ 497 tests with 91.72% coverage
+- ✅ Storybook stories for all templates
+- ✅ SPEC TAG annotations (TAG-UI002-001 ~ 035)
+- ⚠️ Test coverage: 17.26% (improvement planned)
 
-**Upcoming (Phase 4):**
+**Next Steps:**
 
-- Additional templates (Settings, Profile, Analytics)
-- Enhanced template customization
-- Storybook documentation
-- Template preview gallery
-
-**Known Issues:**
-
-- TAG comment annotations incomplete (see [SPEC-UI-001 improvements.md](../../.moai/specs/SPEC-UI-001/improvements.md))
-- 23 TypeScript type definition warnings
+- Test coverage to 85%+
+- Accessibility validation (axe-core, WCAG 2.1 AA)
+- Additional template variants
+- Template preview gallery in Storybook
 
 ---
 
