@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -16,7 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
