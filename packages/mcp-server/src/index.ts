@@ -12,6 +12,10 @@ import { validateScreenTool } from './tools/validate-screen.js';
 import { listTokensTool } from './tools/list-tokens.js';
 import { listIconLibrariesTool } from './tools/list-icon-libraries.js';
 import { previewIconLibraryTool } from './tools/preview-icon-library.js';
+import { listComponentsTool } from './tools/list-components.js';
+import { previewComponentTool } from './tools/preview-component.js';
+import { listScreenTemplatesTool } from './tools/list-screen-templates.js';
+import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import {
   GenerateBlueprintInputSchema,
   PreviewThemeInputSchema,
@@ -22,12 +26,16 @@ import {
   ListTokensInputSchema,
   ListIconLibrariesInputSchema,
   PreviewIconLibraryInputSchema,
+  ListComponentsInputSchema,
+  PreviewComponentInputSchema,
+  ListScreenTemplatesInputSchema,
+  PreviewScreenTemplateInputSchema,
 } from './schemas/mcp-schemas.js';
 
 const server = new Server(
   {
     name: 'tekton-mcp-server',
-    version: '2.0.0',
+    version: '2.1.0',
   },
   {
     capabilities: {
@@ -223,6 +231,84 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: 'list-components',
+        description: 'List all available UI components from @tekton/ui with metadata',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            category: {
+              type: 'string',
+              description: 'Filter by component category',
+              enum: ['core', 'complex', 'advanced', 'all'],
+            },
+            search: {
+              type: 'string',
+              description: 'Search components by keyword',
+            },
+          },
+        },
+      },
+      {
+        name: 'preview-component',
+        description: 'Preview a component with detailed props, variants, and usage examples',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            componentId: {
+              type: 'string',
+              description: 'Component ID to preview (e.g., button, card, dialog)',
+              pattern: '^[a-z-]+$',
+            },
+            includeExamples: {
+              type: 'boolean',
+              description: 'Include usage examples (default: true)',
+            },
+            includeDependencies: {
+              type: 'boolean',
+              description: 'Include dependency information (default: true)',
+            },
+          },
+          required: ['componentId'],
+        },
+      },
+      {
+        name: 'list-screen-templates',
+        description: 'List all available screen templates from Template Registry',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            category: {
+              type: 'string',
+              description: 'Filter by template category',
+              enum: ['auth', 'dashboard', 'form', 'marketing', 'feedback', 'all'],
+            },
+            search: {
+              type: 'string',
+              description: 'Search templates by keyword',
+            },
+          },
+        },
+      },
+      {
+        name: 'preview-screen-template',
+        description: 'Preview a screen template with skeleton, layout, and customization boundaries',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            templateId: {
+              type: 'string',
+              description: 'Template ID to preview (format: category.name, e.g., auth.login)',
+              pattern: '^[a-z]+\\.[a-z-]+$',
+            },
+            includeLayoutTokens: {
+              type: 'boolean',
+              description: 'Include responsive layout tokens (default: true)',
+            },
+          },
+          required: ['templateId'],
+        },
+      },
     ],
   };
 });
@@ -373,6 +459,66 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         };
       }
 
+      case 'list-components': {
+        // Validate input
+        const validatedInput = ListComponentsInputSchema.parse(args);
+        const result = await listComponentsTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'preview-component': {
+        // Validate input
+        const validatedInput = PreviewComponentInputSchema.parse(args);
+        const result = await previewComponentTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'list-screen-templates': {
+        // Validate input
+        const validatedInput = ListScreenTemplatesInputSchema.parse(args);
+        const result = await listScreenTemplatesTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'preview-screen-template': {
+        // Validate input
+        const validatedInput = PreviewScreenTemplateInputSchema.parse(args);
+        const result = await previewScreenTemplateTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -405,11 +551,11 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 // Connect via stdio
 const transport = new StdioServerTransport();
 
-info('Starting Tekton MCP Server v2.0.0...');
+info('Starting Tekton MCP Server v2.1.0...');
 
 await server.connect(transport);
 
 info('Tekton MCP Server connected via stdio transport');
 info(
-  '9 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens'
+  '13 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template'
 );
