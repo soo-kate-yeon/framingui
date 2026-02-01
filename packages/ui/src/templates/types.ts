@@ -111,7 +111,7 @@ export interface ScreenTemplateProps {
   className?: string;
   slots?: Record<string, ReactNode>;
   texts?: Record<string, string>;
-  options?: Record<string, boolean>;
+  options?: Record<string, string | boolean | number>;
 }
 
 /**

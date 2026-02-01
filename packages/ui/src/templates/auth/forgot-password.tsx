@@ -41,8 +41,7 @@ export function ForgotPasswordTemplateComponent({
   texts = {},
 }: ScreenTemplateProps) {
   const title = texts.title || 'Forgot Password?';
-  const subtitle =
-    texts.subtitle || "Enter your email address and we'll send you a reset link";
+  const subtitle = texts.subtitle || "Enter your email address and we'll send you a reset link";
   const buttonLabel = texts.button_label || 'Send Reset Link';
 
   return (

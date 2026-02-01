@@ -17,13 +17,7 @@
  * IMPACT: 템플릿 오류 시 사용자 설정 변경 불가
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/card';
 import { Button } from '../../components/button';
 import type { ScreenTemplate, ScreenTemplateProps } from '../types';
 import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
@@ -116,7 +110,7 @@ export function PreferencesTemplateComponent({
 export const PreferencesTemplate: ScreenTemplate = {
   id: 'core.preferences',
   name: 'Preferences',
-  category: 'core',
+  category: 'form',
   description: 'Settings and preferences page with categorized options',
 
   skeleton: {

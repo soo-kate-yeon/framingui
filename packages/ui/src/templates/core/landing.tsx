@@ -89,7 +89,7 @@ export function LandingTemplateComponent({
 export const LandingTemplate: ScreenTemplate = {
   id: 'core.landing',
   name: 'Landing',
-  category: 'core',
+  category: 'marketing',
   description: 'Main dashboard landing page with sidebar and CTA',
 
   skeleton: {

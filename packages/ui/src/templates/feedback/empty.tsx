@@ -78,9 +78,7 @@ export function EmptyTemplateComponent({
 
         {/* Help Text */}
         {slots.helpText && (
-          <div className="text-sm text-[var(--tekton-text-muted-foreground)]">
-            {slots.helpText}
-          </div>
+          <div className="text-sm text-[var(--tekton-text-muted-foreground)]">{slots.helpText}</div>
         )}
       </div>
       {children}

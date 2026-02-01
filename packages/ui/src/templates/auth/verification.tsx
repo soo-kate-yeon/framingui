@@ -40,8 +40,7 @@ export function VerificationTemplateComponent({
   options = {},
 }: ScreenTemplateProps) {
   const title = texts.title || 'Verify Your Email';
-  const subtitle =
-    texts.subtitle || "We've sent a verification link to your email address";
+  const subtitle = texts.subtitle || "We've sent a verification link to your email address";
   const buttonLabel = texts.button_label || 'Continue';
   const showResend = options.show_resend ?? true;
   const userEmail = options.user_email || 'user@example.com';

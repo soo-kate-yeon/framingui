@@ -17,13 +17,7 @@
  * IMPACT: 템플릿 오류 시 사용자 프로필 수정 불가
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/card';
 import { Button } from '../../components/button';
 import { Input } from '../../components/input';
 import { Label } from '../../components/label';
@@ -43,8 +37,8 @@ export function ProfileTemplateComponent({
   const title = texts.title || 'Profile';
   const subtitle = texts.subtitle || 'Manage your profile information';
   const saveLabel = texts.save_label || 'Save Changes';
-  const userName = options.user_name || 'John Doe';
-  const userEmail = options.user_email || 'john@example.com';
+  const userName = String(options.user_name || 'John Doe');
+  const userEmail = String(options.user_email || 'john@example.com');
 
   return (
     <div className={`min-h-screen p-[var(--tekton-spacing-8)] ${className}`}>
@@ -124,11 +118,11 @@ export function ProfileTemplateComponent({
 export const ProfileTemplate: ScreenTemplate = {
   id: 'core.profile',
   name: 'Profile',
-  category: 'core',
+  category: 'form',
   description: 'User profile page with editable information',
 
   skeleton: {
-    shell: 'default',
+    shell: 'centered-layout',
     page: 'profile-page',
     sections: [
       {
@@ -142,7 +136,7 @@ export const ProfileTemplate: ScreenTemplate = {
   },
 
   layout: {
-    type: 'default',
+    type: 'centered',
     responsive: DEFAULT_RESPONSIVE_LAYOUT,
   },
 
