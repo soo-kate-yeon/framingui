@@ -62,9 +62,7 @@ function MockForm() {
 describe('WCAG 2.1 AA Accessibility', () => {
   describe('Semantic HTML', () => {
     it('템플릿 카드에 적절한 ARIA 레이블 사용', () => {
-      const { container } = render(
-        <MockTemplateCard title="Dashboard Template" price="$99" />,
-      );
+      const { container } = render(<MockTemplateCard title="Dashboard Template" price="$99" />);
 
       const article = container.querySelector('article');
       expect(article).toHaveAttribute('aria-label', 'Template: Dashboard Template');
@@ -81,9 +79,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
     });
 
     it('버튼에 설명적인 aria-label 또는 텍스트 제공', () => {
-      const { getByRole } = render(
-        <MockTemplateCard title="Test Template" price="$50" />,
-      );
+      const { getByRole } = render(<MockTemplateCard title="Test Template" price="$50" />);
 
       const button = getByRole('button', { name: /View Test Template/i });
       expect(button).toBeInTheDocument();
@@ -125,9 +121,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
     it('모든 인터랙티브 요소가 포커스 가능', () => {
       const { container } = render(<MockForm />);
 
-      const focusableElements = container.querySelectorAll(
-        'button, input, select, a, [tabindex]',
-      );
+      const focusableElements = container.querySelectorAll('button, input, select, a, [tabindex]');
 
       focusableElements.forEach((element) => {
         // 포커스 가능 여부 확인 (tabindex가 음수가 아님)
@@ -141,7 +135,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
         <>
           <MockNavigation />
           <MockForm />
-        </>,
+        </>
       );
 
       const links = container.querySelectorAll('a');
@@ -161,10 +155,8 @@ describe('WCAG 2.1 AA Accessibility', () => {
     it('CSS Variables를 통한 색상 정의 (하드코딩 금지) [TAG-UI003-027]', () => {
       const { container } = render(
         <ThemeProvider>
-          <div className="text-primary bg-secondary">
-            Test content with semantic colors
-          </div>
-        </ThemeProvider>,
+          <div className="text-primary bg-secondary">Test content with semantic colors</div>
+        </ThemeProvider>
       );
 
       // CSS Variables를 사용하는지 확인 (직접적인 검증은 수동 테스트 필요)
@@ -191,7 +183,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
           <footer role="contentinfo">
             <p>Footer</p>
           </footer>
-        </>,
+        </>
       );
 
       expect(container.querySelector('[role="banner"]')).toBeInTheDocument();
@@ -205,7 +197,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
         <ul role="list">
           <li>Item 1</li>
           <li>Item 2</li>
-        </ul>,
+        </ul>
       );
 
       const list = container.querySelector('ul');
@@ -220,7 +212,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
           <div role="main">
             <h1>Content</h1>
           </div>
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       const main = container.querySelector('[role="main"]');
@@ -234,7 +226,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
   describe('Image Alternatives', () => {
     it('이미지에 alt 텍스트 제공 (예시)', () => {
       const { container } = render(
-        <img src="/template-thumbnail.jpg" alt="Dashboard template preview" />,
+        <img src="/template-thumbnail.jpg" alt="Dashboard template preview" />
       );
 
       const img = container.querySelector('img');
@@ -244,7 +236,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
 
     it('장식용 이미지는 빈 alt 사용 (예시)', () => {
       const { container } = render(
-        <img src="/decorative-pattern.svg" alt="" role="presentation" />,
+        <img src="/decorative-pattern.svg" alt="" role="presentation" />
       );
 
       const img = container.querySelector('img');
@@ -259,7 +251,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
         <div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
           <h2 id="dialog-title">Dialog Title</h2>
           <button>Close</button>
-        </div>,
+        </div>
       );
 
       const dialog = container.querySelector('[role="dialog"]');
@@ -278,7 +270,7 @@ describe('Accessibility Best Practices', () => {
           <h2>Section Title</h2>
           <h3>Subsection Title</h3>
         </section>
-      </>,
+      </>
     );
 
     const h1 = container.querySelector('h1');
@@ -291,9 +283,7 @@ describe('Accessibility Best Practices', () => {
   });
 
   it('링크에 의미 있는 텍스트 사용 (Click here 금지)', () => {
-    const { getByRole } = render(
-      <a href="/template/123">View Dashboard Template Details</a>,
-    );
+    const { getByRole } = render(<a href="/template/123">View Dashboard Template Details</a>);
 
     const link = getByRole('link');
     expect(link).toHaveTextContent(/View Dashboard Template Details/i);

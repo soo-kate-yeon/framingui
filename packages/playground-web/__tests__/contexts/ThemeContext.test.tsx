@@ -26,9 +26,7 @@ function TestComponent() {
       <div data-testid="color-preset">{theme.colorPreset}</div>
       <div data-testid="typography-preset">{theme.typographyPreset}</div>
       <div data-testid="spacing-preset">{theme.spacingPreset}</div>
-      <button onClick={() => setColorPreset('color-platform-warm')}>
-        Set Color Warm
-      </button>
+      <button onClick={() => setColorPreset('color-platform-warm')}>Set Color Warm</button>
       <button onClick={() => setTypographyPreset('typo-platform-serif')}>
         Set Typography Serif
       </button>
@@ -78,23 +76,19 @@ describe('ThemeContext', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       expect(screen.getByTestId('color-preset')).toHaveTextContent('color-round-minimal');
-      expect(screen.getByTestId('typography-preset')).toHaveTextContent(
-        'typo-round-minimal',
-      );
-      expect(screen.getByTestId('spacing-preset')).toHaveTextContent(
-        'spacing-round-minimal',
-      );
+      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-round-minimal');
+      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-round-minimal');
     });
 
     it('setColorPreset() 호출 시 상태 업데이트', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       act(() => {
@@ -108,39 +102,35 @@ describe('ThemeContext', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       act(() => {
         screen.getByText('Set Typography Serif').click();
       });
 
-      expect(screen.getByTestId('typography-preset')).toHaveTextContent(
-        'typo-platform-serif',
-      );
+      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-platform-serif');
     });
 
     it('setSpacingPreset() 호출 시 상태 업데이트', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       act(() => {
         screen.getByText('Set Spacing Spacious').click();
       });
 
-      expect(screen.getByTestId('spacing-preset')).toHaveTextContent(
-        'spacing-platform-spacious',
-      );
+      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-platform-spacious');
     });
 
     it('applyTheme() 호출 시 CSS Variables 설정 [TAG-UI003-007]', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       act(() => {
@@ -152,9 +142,7 @@ describe('ThemeContext', () => {
 
       // --tekton- 으로 시작하는 CSS Variable이 설정되었는지 확인
       const calls = styleSetPropertyMock.mock.calls;
-      const hasValidCall = calls.some(
-        (call: [string, string]) => call[0].startsWith('--tekton-'),
-      );
+      const hasValidCall = calls.some((call: [string, string]) => call[0].startsWith('--tekton-'));
       expect(hasValidCall).toBe(true);
     });
 
@@ -162,7 +150,7 @@ describe('ThemeContext', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       // 버튼 클릭을 각각 act로 감싸기
@@ -195,7 +183,7 @@ describe('ThemeContext', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       // 프리셋 변경
@@ -213,19 +201,15 @@ describe('ThemeContext', () => {
       });
 
       expect(screen.getByTestId('color-preset')).toHaveTextContent('color-round-minimal');
-      expect(screen.getByTestId('typography-preset')).toHaveTextContent(
-        'typo-round-minimal',
-      );
-      expect(screen.getByTestId('spacing-preset')).toHaveTextContent(
-        'spacing-round-minimal',
-      );
+      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-round-minimal');
+      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-round-minimal');
     });
 
     it('customOverrides가 프리셋보다 우선 적용', async () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       await act(async () => {
@@ -239,8 +223,7 @@ describe('ThemeContext', () => {
       // Custom override가 CSS setProperty로 호출되었는지 확인
       const calls = styleSetPropertyMock.mock.calls;
       const customVarCall = calls.find(
-        (call: [string, string]) =>
-          call[0] === '--custom-var' && call[1] === 'test-value',
+        (call: [string, string]) => call[0] === '--custom-var' && call[1] === 'test-value'
       );
       expect(customVarCall).toBeDefined();
     });
@@ -264,7 +247,7 @@ describe('ThemeContext', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       act(() => {
@@ -275,16 +258,14 @@ describe('ThemeContext', () => {
       const json = JSON.parse(exportedData!);
 
       // ISO 8601 형식 검증
-      expect(json.exportedAt).toMatch(
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
-      );
+      expect(json.exportedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
     });
 
     it('overrides 필드가 빈 객체로 초기화', () => {
       render(
         <ThemeProvider>
           <TestComponent />
-        </ThemeProvider>,
+        </ThemeProvider>
       );
 
       act(() => {

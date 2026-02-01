@@ -60,10 +60,7 @@ export const mockRevokedLicense: License = {
  * @param ui - React element to render
  * @param options - Render options
  */
-export function renderWithProviders(
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
-) {
+export function renderWithProviders(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) {
   const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <AuthProvider>{children}</AuthProvider>
   );

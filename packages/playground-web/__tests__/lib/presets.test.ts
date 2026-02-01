@@ -148,11 +148,7 @@ describe('Theme Presets', () => {
 
   describe('CSS Variable 키 규칙', () => {
     it('모든 프리셋 값 키가 --tekton- 으로 시작', () => {
-      const allPresets = [
-        ...colorPresets,
-        ...typographyPresets,
-        ...spacingPresets,
-      ];
+      const allPresets = [...colorPresets, ...typographyPresets, ...spacingPresets];
 
       allPresets.forEach((preset) => {
         Object.keys(preset.values).forEach((key) => {

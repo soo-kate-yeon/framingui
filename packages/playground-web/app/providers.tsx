@@ -7,6 +7,7 @@
 
 import { SessionProvider } from 'next-auth/react';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 import type { ReactNode } from 'react';
 
 interface ProvidersProps {
@@ -16,12 +17,14 @@ interface ProvidersProps {
 /**
  * 전역 Provider 컴포넌트
  *
- * NextAuth SessionProvider와 AuthContext를 통합
+ * NextAuth SessionProvider와 AuthContext, ThemeContext를 통합
  */
 export function Providers({ children }: ProvidersProps) {
   return (
     <SessionProvider>
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
     </SessionProvider>
   );
 }

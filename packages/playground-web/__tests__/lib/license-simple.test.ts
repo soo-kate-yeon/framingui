@@ -5,18 +5,9 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  getLicenseStatus,
-  getUserLicenses,
-  isLicenseExpired,
-  isLicenseValid,
-} from '@/lib/license';
+import { getLicenseStatus, getUserLicenses, isLicenseExpired, isLicenseValid } from '@/lib/license';
 import type { License } from '@/lib/types/user';
-import {
-  mockActiveLicense,
-  mockExpiredLicense,
-  mockRevokedLicense,
-} from '../utils/test-utils';
+import { mockActiveLicense, mockExpiredLicense, mockRevokedLicense } from '../utils/test-utils';
 
 describe('License Verification System (Pure Functions)', () => {
   describe('isLicenseExpired', () => {
