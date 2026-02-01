@@ -1,20 +1,20 @@
 /**
- * @tekton/ui - Login Template
- * SPEC-UI-001 Phase 3: Authentication Screen Template
+ * @tekton/ui - Signup Template
+ * SPEC-UI-002: Authentication Screen Template
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
- * [TAG-UI002-024] 로그인 템플릿 구현
+ * [TAG-UI002-025] 회원가입 템플릿 구현
  * [TAG-UI002-001] ScreenTemplate interface 준수
  * [TAG-UI002-002] Tekton 레이아웃 토큰 사용
  * [TAG-UI002-003] AI 커스터마이징 경계 정의 (texts, slots)
- * [TAG-UI002-004] 필수 컴포넌트 검증 (Button, Input, Form, Card, Label)
+ * [TAG-UI002-004] 필수 컴포넌트 검증 (Button, Input, Form, Card, Label, Checkbox)
  * [TAG-UI002-005] 반응형 브레이크포인트 지원
  * [TAG-UI002-006] WCAG 2.1 AA 준수
  *
- * WHY: 로그인 템플릿이 인증 UX를 보장
- * IMPACT: 템플릿 오류 시 사용자 로그인 불가
+ * WHY: 회원가입 템플릿이 사용자 온보딩 UX를 보장
+ * IMPACT: 템플릿 오류 시 사용자 가입 불가
  */
 
 import {
@@ -33,20 +33,19 @@ import type { ScreenTemplate, ScreenTemplateProps } from '../types';
 import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 
 /**
- * Login Template Component
+ * Signup Template Component
  */
-export function LoginTemplateComponent({
+export function SignupTemplateComponent({
   children,
   className = '',
   slots = {},
   texts = {},
   options = {},
 }: ScreenTemplateProps) {
-  const title = texts.title || 'Welcome Back';
-  const subtitle = texts.subtitle || 'Sign in to your account';
-  const buttonLabel = texts.button_label || 'Sign In';
-  const showSocialLogin = options.social_login ?? false;
-  const showRememberMe = options.remember_me ?? false;
+  const title = texts.title || 'Create Account';
+  const subtitle = texts.subtitle || 'Sign up to get started';
+  const buttonLabel = texts.button_label || 'Sign Up';
+  const showSocialSignup = options.social_signup ?? false;
 
   return (
     <div
@@ -60,6 +59,12 @@ export function LoginTemplateComponent({
         </CardHeader>
 
         <CardContent className="space-y-[var(--tekton-spacing-4)]">
+          {/* Name Input */}
+          <div className="space-y-[var(--tekton-spacing-2)]">
+            <Label htmlFor="name">Name</Label>
+            <Input id="name" type="text" placeholder="Enter your name" />
+          </div>
+
           {/* Email Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
             <Label htmlFor="email">Email</Label>
@@ -68,25 +73,28 @@ export function LoginTemplateComponent({
 
           {/* Password Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              {slots.forgotPassword && <div>{slots.forgotPassword}</div>}
-            </div>
+            <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" placeholder="Enter your password" />
           </div>
 
-          {/* Remember Me */}
-          {showRememberMe && slots.rememberMe && (
-            <div className="flex items-center space-x-[var(--tekton-spacing-2)]">
-              {slots.rememberMe}
+          {/* Password Confirm Input */}
+          <div className="space-y-[var(--tekton-spacing-2)]">
+            <Label htmlFor="password-confirm">Confirm Password</Label>
+            <Input id="password-confirm" type="password" placeholder="Confirm your password" />
+          </div>
+
+          {/* Terms Checkbox */}
+          {slots.termsCheckbox && (
+            <div className="flex items-start space-x-[var(--tekton-spacing-2)]">
+              {slots.termsCheckbox}
             </div>
           )}
 
-          {/* Sign In Button */}
+          {/* Sign Up Button */}
           <Button className="w-full">{buttonLabel}</Button>
 
-          {/* Social Login */}
-          {showSocialLogin && slots.socialLogin && (
+          {/* Social Signup */}
+          {showSocialSignup && slots.socialSignup && (
             <>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
@@ -94,12 +102,12 @@ export function LoginTemplateComponent({
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-[var(--tekton-bg-background)] px-[var(--tekton-spacing-2)] text-[var(--tekton-text-muted-foreground)]">
-                    Or continue with
+                    Or sign up with
                   </span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-[var(--tekton-spacing-4)]">
-                {slots.socialLogin}
+                {slots.socialSignup}
               </div>
             </>
           )}
@@ -108,9 +116,9 @@ export function LoginTemplateComponent({
         <CardFooter>
           {slots.footer || (
             <p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
-              Don&apos;t have an account?{' '}
+              Already have an account?{' '}
               <a href="#" className="text-[var(--tekton-text-primary)] hover:underline">
-                Sign up
+                Sign in
               </a>
             </p>
           )}
@@ -122,24 +130,24 @@ export function LoginTemplateComponent({
 }
 
 /**
- * Login Template Definition
+ * Signup Template Definition
  */
-export const LoginTemplate: ScreenTemplate = {
-  id: 'auth.login',
-  name: 'Login',
+export const SignupTemplate: ScreenTemplate = {
+  id: 'auth.signup',
+  name: 'Signup',
   category: 'auth',
-  description: 'Standard login screen with email and password',
+  description: 'Standard signup screen with name, email, and password',
 
   skeleton: {
     shell: 'centered-card',
     page: 'auth-page',
     sections: [
       {
-        id: 'login-form',
-        name: 'Login Form',
+        id: 'signup-form',
+        name: 'Signup Form',
         slot: 'main',
         required: true,
-        Component: LoginTemplateComponent,
+        Component: SignupTemplateComponent,
       },
     ],
   },
@@ -151,16 +159,16 @@ export const LoginTemplate: ScreenTemplate = {
 
   customizable: {
     texts: ['title', 'subtitle', 'button_label'],
-    optional: ['social_login', 'remember_me'],
-    slots: ['logo', 'forgotPassword', 'rememberMe', 'socialLogin', 'footer'],
+    optional: ['social_signup'],
+    slots: ['logo', 'termsCheckbox', 'socialSignup', 'footer'],
   },
 
-  requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label'],
+  requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label', 'Checkbox'],
 
-  Component: LoginTemplateComponent,
+  Component: SignupTemplateComponent,
 
   version: '1.0.0',
-  created: '2026-01-31',
-  updated: '2026-01-31',
-  tags: ['auth', 'login', 'form'],
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['auth', 'signup', 'registration', 'form'],
 };

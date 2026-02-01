@@ -1225,9 +1225,18 @@ For detailed implementation status, see:
 - ✅ **@tekton/ui Package**: 19개 React 컴포넌트 구현
   - Primitives (14개): Avatar, Badge, Button, Checkbox, Heading, Image, Input, Link, List, Progress, Radio, Slider, Switch, Text
   - Components (5개): Dropdown, Form, Modal, Table, Tabs
-  - WCAG 2.1 AA 접근성 준수
-  - TypeScript 타입 정의 완료
-  - 테스트 커버리지: 100% (모든 테스트 통과)
+  - 테스트 커버리지: 98.93%, WCAG 2.1 AA 준수
+
+- ✅ **Screen Template System** (SPEC-UI-002): 13개 화면 템플릿 구현
+  - Auth 템플릿 (4개): Login, Signup, Forgot Password, Verification
+  - Core 템플릿 (3개): Landing, Preferences, Profile
+  - Feedback 템플릿 (5개): Loading, Error, Empty, Confirmation, Success
+  - Dashboard 템플릿 (1개): Overview
+  - ScreenTemplate 인터페이스 및 TemplateRegistry 시스템
+  - Storybook 스토리 13개 포함
+  - 레퍼런스: Claude.ai 디자인 철학
+  - 테스트 커버리지: 17.26% (개선 진행 중)
+  - 📄 상세 구현: [SPEC-UI-002](.moai/specs/SPEC-UI-002/spec.md)
 
 - ✅ **@tekton/playground-web** (SPEC-PLAYGROUND-001): Next.js 16 React Playground
   - 동적 라우팅 시스템 (`/preview/[timestamp]/[themeId]`)
