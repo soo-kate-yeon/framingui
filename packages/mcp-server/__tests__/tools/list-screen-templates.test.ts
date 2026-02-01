@@ -4,7 +4,7 @@
  * [TAG-MCP003-008] List all available screen templates
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { listScreenTemplatesTool } from '../../src/tools/list-screen-templates.js';
 
 // Mock @tekton/ui templateRegistry
@@ -143,13 +143,6 @@ vi.mock('@tekton/ui', () => ({
       },
     ]),
     getByCategory: vi.fn((category: string) => {
-      const mockTemplates = vi.mocked(
-        vi.fn(() => ({
-          templateRegistry: {
-            getAll: vi.fn(),
-          },
-        }))
-      ).mock.calls;
       const allTemplates = [
         {
           id: 'auth.login',
