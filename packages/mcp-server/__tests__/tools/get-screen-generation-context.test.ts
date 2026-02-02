@@ -220,6 +220,56 @@ describe('get-screen-generation-context Tool', () => {
     });
   });
 
+  describe('Workflow Guide', () => {
+    it('should include workflow guide in response', async () => {
+      const result = await getScreenGenerationContextTool({
+        description: 'A dashboard screen',
+        includeExamples: false,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.workflow).toBeDefined();
+      expect(result.workflow?.title).toBe('Screen Generation Workflow');
+      expect(result.workflow?.steps).toBeDefined();
+      expect(Array.isArray(result.workflow?.steps)).toBe(true);
+    });
+
+    it('should have 6 workflow steps', async () => {
+      const result = await getScreenGenerationContextTool({
+        description: 'Login page',
+        includeExamples: false,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.workflow?.steps).toHaveLength(6);
+    });
+
+    it('should include tool names in workflow steps', async () => {
+      const result = await getScreenGenerationContextTool({
+        description: 'Settings page',
+        includeExamples: false,
+      });
+
+      expect(result.success).toBe(true);
+      const validateStep = result.workflow?.steps.find(s => s.tool === 'validate-screen-definition');
+      expect(validateStep).toBeDefined();
+      const generateStep = result.workflow?.steps.find(s => s.tool === 'generate_screen');
+      expect(generateStep).toBeDefined();
+    });
+
+    it('should include notes for agents', async () => {
+      const result = await getScreenGenerationContextTool({
+        description: 'Profile page',
+        includeExamples: false,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.workflow?.notes).toBeDefined();
+      expect(Array.isArray(result.workflow?.notes)).toBe(true);
+      expect(result.workflow?.notes?.length).toBeGreaterThan(0);
+    });
+  });
+
   describe('Edge Cases', () => {
     it('should handle very short descriptions', async () => {
       const result = await getScreenGenerationContextTool({

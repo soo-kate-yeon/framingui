@@ -1004,6 +1004,33 @@ export const GenerationHintSchema = z.object({
 export type GenerationHint = z.infer<typeof GenerationHintSchema>;
 
 /**
+ * Workflow Step Schema
+ * SPEC-MCP-004 Phase 5: E2E workflow guide for agents
+ */
+export const WorkflowStepSchema = z.object({
+  step: z.number(),
+  action: z.string(),
+  tool: z.string().optional(),
+  description: z.string(),
+  example: z.string().optional(),
+});
+
+export type WorkflowStep = z.infer<typeof WorkflowStepSchema>;
+
+/**
+ * Workflow Guide Schema
+ * Provides step-by-step guidance for agents to generate screens
+ */
+export const WorkflowGuideSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  steps: z.array(WorkflowStepSchema),
+  notes: z.array(z.string()).optional(),
+});
+
+export type WorkflowGuide = z.infer<typeof WorkflowGuideSchema>;
+
+/**
  * Get Screen Generation Context Output Schema
  */
 export const GetScreenGenerationContextOutputSchema = z.object({
@@ -1019,6 +1046,7 @@ export const GetScreenGenerationContextOutputSchema = z.object({
   examples: z.array(ScreenExampleSchema).optional(),
   themeRecipes: z.array(ThemeRecipeInfoSchema).optional(),
   hints: z.array(GenerationHintSchema).optional(),
+  workflow: WorkflowGuideSchema.optional(),
   error: z.string().optional(),
 });
 

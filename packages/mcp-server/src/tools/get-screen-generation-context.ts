@@ -12,6 +12,7 @@ import type {
   ContextComponentInfo,
   ThemeRecipeInfo,
   ScreenExample,
+  WorkflowGuide,
 } from '../schemas/mcp-schemas.js';
 import { matchTemplates } from '../data/template-matcher.js';
 import { getAllRecipes } from '../data/recipe-resolver.js';
@@ -276,6 +277,61 @@ export async function getScreenGenerationContextTool(
     // 5. Generate contextual hints
     const hints = generateHints(input.description, input.themeId);
 
+    // 6. Generate workflow guide
+    const workflow: WorkflowGuide = {
+      title: 'Screen Generation Workflow',
+      description: 'Follow these steps to generate a screen from natural language description',
+      steps: [
+        {
+          step: 1,
+          action: 'Review Context',
+          description: 'Review the templateMatch, components, schema, examples, and hints provided in this response',
+        },
+        {
+          step: 2,
+          action: 'Generate Screen Definition',
+          description: 'Create a JSON Screen Definition following the schema structure. Use templateMatch.skeleton as a starting point if available.',
+          example: JSON.stringify({
+            id: 'my-screen',
+            shell: 'shell.web.app',
+            page: 'page.dashboard',
+            themeId: input.themeId || 'your-theme-id',
+            sections: [{ id: 'main', pattern: 'section.container', components: [] }],
+          }, null, 2),
+        },
+        {
+          step: 3,
+          action: 'Validate Definition',
+          tool: 'validate-screen-definition',
+          description: 'Call validate-screen-definition with your generated definition to check for errors',
+          example: '{ "definition": <your-screen-definition>, "strict": true }',
+        },
+        {
+          step: 4,
+          action: 'Fix Validation Errors',
+          description: 'If validation fails, review the errors and suggestions, then fix and re-validate',
+        },
+        {
+          step: 5,
+          action: 'Generate Code',
+          tool: 'generate_screen',
+          description: 'Once validation passes, call generate_screen to produce React code',
+          example: '{ "screenDefinition": <validated-definition>, "outputFormat": "react" }',
+        },
+        {
+          step: 6,
+          action: 'Save File',
+          description: 'Write the generated code to the target file path (e.g., app/page.tsx)',
+        },
+      ],
+      notes: [
+        'Use components from the "components" field - they are available in @tekton/ui',
+        'Apply theme recipes by setting variant props on components',
+        'If themeId is provided, recipes will be auto-applied during code generation',
+        'Check hints for layout and component recommendations',
+      ],
+    };
+
     return {
       success: true,
       templateMatch: bestMatch,
@@ -287,6 +343,7 @@ export async function getScreenGenerationContextTool(
       examples: examples && examples.length > 0 ? examples : undefined,
       themeRecipes: themeRecipes && themeRecipes.length > 0 ? themeRecipes : undefined,
       hints: hints.length > 0 ? hints : undefined,
+      workflow,
     };
   } catch (error) {
     return {
