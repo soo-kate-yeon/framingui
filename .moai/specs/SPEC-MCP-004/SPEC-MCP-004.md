@@ -368,9 +368,9 @@ function generateBlueprint(description: string, themeId: string): Blueprint {
 
 ### Success Criteria
 
-- [x] "Fitness dashboard with stats" → `dashboard.overview` 템플릿 매칭 (confidence: 20+)
-- [x] "Login page with social auth" → `auth.login` 템플릿 매칭 (confidence: 10+)
-- [x] 템플릿 추천에 layoutRecommendation 포함 (shell, page, description)
+- [x] "Fitness dashboard with stats" → `dashboard.overview` 템플릿 매칭 (confidence: 20+) **COMPLETED 2026-02-02**
+- [x] "Login page with social auth" → `auth.login` 템플릿 매칭 (confidence: 10+) **COMPLETED 2026-02-02**
+- [x] 템플릿 추천에 layoutRecommendation 포함 (shell, page, description) **COMPLETED 2026-02-02**
 
 ---
 
@@ -741,9 +741,9 @@ interface VariantMapping {
 
 ### Success Criteria
 
-- [x] Generated code includes theme recipe classNames (resolveRecipe 함수)
-- [x] 기존 className과 레시피 병합 (mergeClassName 함수)
-- [x] Fallback to default styles when recipe missing (우선순위 경로 시도)
+- [x] Generated code includes theme recipe classNames (resolveRecipe 함수) **COMPLETED 2026-02-02**
+- [x] 기존 className과 레시피 병합 (mergeClassName 함수) **COMPLETED 2026-02-02**
+- [x] Fallback to default styles when recipe missing (우선순위 경로 시도) **COMPLETED 2026-02-02**
 
 ---
 
