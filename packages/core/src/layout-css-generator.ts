@@ -17,9 +17,6 @@ import type {
   MasonrySectionCSS,
   StickySectionCSS,
   CollapsibleSectionCSS,
-  ScrollSectionCSS,
-  MultiPaneSectionCSS,
-  FoldableSectionCSS,
 } from './layout-tokens/types.js';
 import { resolveTokenReference } from './layout-resolver.js';
 import { getAllShellTokens } from './layout-tokens/shells.js';
@@ -35,11 +32,7 @@ import { BREAKPOINT_VALUES } from './layout-tokens/responsive.js';
 /**
  * Layout token union type - can be shell, page, section, or advanced section
  */
-export type LayoutToken =
-  | ShellToken
-  | PageLayoutToken
-  | SectionPatternToken
-  | AdvancedSectionPatternToken;
+export type LayoutToken = ShellToken | PageLayoutToken | SectionPatternToken | AdvancedSectionPatternToken;
 
 /**
  * CSS generation options
@@ -359,10 +352,8 @@ export function generateSectionClasses(sections: SectionPatternToken[]): string 
  * @returns true if the token is an advanced section pattern (masonry, sticky, collapsible)
  */
 function isAdvancedSectionToken(token: LayoutToken): token is AdvancedSectionPatternToken {
-  if (!('type' in token)) {
-    return false;
-  }
-  const advancedTypes = ['masonry', 'sticky', 'collapsible', 'scroll', 'multipane', 'foldable'];
+  if (!('type' in token)) {return false;}
+  const advancedTypes = ['masonry', 'sticky', 'collapsible'];
   return advancedTypes.includes((token as SectionPatternToken | AdvancedSectionPatternToken).type);
 }
 
@@ -508,104 +499,6 @@ export function generateAdvancedSectionClasses(sections: AdvancedSectionPatternT
         const gapValue = tokenRefToVar(collapsibleCSS.gap);
         css += `  gap: ${gapValue};\n`;
       }
-    } else if (section.type === 'scroll') {
-      const scrollCSS = sectionCSS as ScrollSectionCSS;
-
-      if (scrollCSS.display) {
-        css += `  display: ${scrollCSS.display};\n`;
-      }
-      if (scrollCSS.flexDirection) {
-        css += `  flex-direction: ${scrollCSS.flexDirection};\n`;
-      }
-      if (scrollCSS.alignItems) {
-        css += `  align-items: ${scrollCSS.alignItems};\n`;
-      }
-      if (scrollCSS.justifyContent) {
-        css += `  justify-content: ${scrollCSS.justifyContent};\n`;
-      }
-      if (scrollCSS.gap) {
-        const gapValue = tokenRefToVar(scrollCSS.gap);
-        css += `  gap: ${gapValue};\n`;
-      }
-      if (scrollCSS.position) {
-        css += `  position: ${scrollCSS.position};\n`;
-      }
-      if (scrollCSS.top) {
-        const topValue = tokenRefToVar(scrollCSS.top);
-        css += `  top: ${topValue};\n`;
-      }
-      if (scrollCSS.bottom) {
-        const bottomValue = tokenRefToVar(scrollCSS.bottom);
-        css += `  bottom: ${bottomValue};\n`;
-      }
-      if (scrollCSS.zIndex !== undefined) {
-        css += `  z-index: ${scrollCSS.zIndex};\n`;
-      }
-      if (scrollCSS.height) {
-        const heightValue = tokenRefToVar(scrollCSS.height);
-        css += `  height: ${heightValue};\n`;
-      }
-      if (scrollCSS.minHeight) {
-        const minHeightValue = tokenRefToVar(scrollCSS.minHeight);
-        css += `  min-height: ${minHeightValue};\n`;
-      }
-      if (scrollCSS.transition) {
-        css += `  transition: ${scrollCSS.transition};\n`;
-      }
-      if (scrollCSS.transform) {
-        css += `  transform: ${scrollCSS.transform};\n`;
-      }
-      if (scrollCSS.overflow) {
-        css += `  overflow: ${scrollCSS.overflow};\n`;
-      }
-      if (scrollCSS.padding) {
-        const paddingValue = tokenRefToVar(scrollCSS.padding);
-        css += `  padding: ${paddingValue};\n`;
-      }
-      if (scrollCSS.backgroundColor) {
-        const bgValue = tokenRefToVar(scrollCSS.backgroundColor);
-        css += `  background-color: ${bgValue};\n`;
-      }
-      if (scrollCSS.boxShadow) {
-        const shadowValue = tokenRefToVar(scrollCSS.boxShadow);
-        css += `  box-shadow: ${shadowValue};\n`;
-      }
-    } else if (section.type === 'multipane') {
-      const multipaneCSS = sectionCSS as MultiPaneSectionCSS;
-
-      if (multipaneCSS.display) {
-        css += `  display: ${multipaneCSS.display};\n`;
-      }
-      if (multipaneCSS.gridTemplateColumns) {
-        css += `  grid-template-columns: ${multipaneCSS.gridTemplateColumns};\n`;
-      }
-      if (multipaneCSS.gridTemplateRows) {
-        css += `  grid-template-rows: ${multipaneCSS.gridTemplateRows};\n`;
-      }
-      if (multipaneCSS.height) {
-        css += `  height: ${multipaneCSS.height};\n`;
-      }
-      if (multipaneCSS.overflow) {
-        css += `  overflow: ${multipaneCSS.overflow};\n`;
-      }
-    } else if (section.type === 'foldable') {
-      const foldableCSS = sectionCSS as FoldableSectionCSS;
-
-      if (foldableCSS.display) {
-        css += `  display: ${foldableCSS.display};\n`;
-      }
-      if (foldableCSS.gridTemplateColumns) {
-        css += `  grid-template-columns: ${foldableCSS.gridTemplateColumns};\n`;
-      }
-      if (foldableCSS.columnGap) {
-        css += `  column-gap: ${foldableCSS.columnGap};\n`;
-      }
-      if (foldableCSS.height) {
-        css += `  height: ${foldableCSS.height};\n`;
-      }
-      if (foldableCSS.overflow) {
-        css += `  overflow: ${foldableCSS.overflow};\n`;
-      }
     }
 
     css += `}\n\n`;
@@ -621,15 +514,11 @@ export function generateAdvancedSectionClasses(sections: AdvancedSectionPatternT
  * @param sections - Array of advanced section pattern tokens
  * @returns CSS state classes for advanced sections
  */
-export function generateAdvancedSectionStateClasses(
-  sections: AdvancedSectionPatternToken[]
-): string {
+export function generateAdvancedSectionStateClasses(sections: AdvancedSectionPatternToken[]): string {
   let css = '';
 
   for (const section of sections) {
-    if (!section.states) {
-      continue;
-    }
+    if (!section.states) {continue;}
 
     const className = section.id.replace(/\./g, '-');
 
@@ -657,7 +546,7 @@ export function generateAdvancedSectionStateClasses(
     }
 
     // Generate collapsed state for collapsible patterns
-    if (section.states.collapsed && section.type === 'collapsible') {
+    if (section.states.collapsed) {
       css += `.${className}.is-collapsed {\n`;
 
       const collapsedCSS = section.states.collapsed as Partial<CollapsibleSectionCSS>;
@@ -683,67 +572,15 @@ export function generateAdvancedSectionStateClasses(
 
       css += `}\n\n`;
     }
-
-    // scroll 패턴의 collapsed 상태 생성
-    if (section.states.collapsed && section.type === 'scroll') {
-      const scrollCollapsedCSS = section.states.collapsed as Partial<ScrollSectionCSS>;
-      css += `.${className}.is-collapsed {\n`;
-      if (scrollCollapsedCSS.height) {
-        const heightValue = tokenRefToVar(scrollCollapsedCSS.height);
-        css += `  height: ${heightValue};\n`;
-      }
-      if (scrollCollapsedCSS.minHeight) {
-        const minHeightValue = tokenRefToVar(scrollCollapsedCSS.minHeight as string);
-        css += `  min-height: ${minHeightValue};\n`;
-      }
-      if (scrollCollapsedCSS.boxShadow) {
-        const shadowValue = tokenRefToVar(scrollCollapsedCSS.boxShadow as string);
-        css += `  box-shadow: ${shadowValue};\n`;
-      }
-      css += `}\n\n`;
-    }
-
-    // scroll 패턴의 revealed 상태 생성
-    if (section.states.revealed && section.type === 'scroll') {
-      const scrollRevealedCSS = section.states.revealed as Partial<ScrollSectionCSS>;
-      css += `.${className}.is-revealed {\n`;
-      if (scrollRevealedCSS.transform) {
-        css += `  transform: ${scrollRevealedCSS.transform};\n`;
-      }
-      if (scrollRevealedCSS.boxShadow) {
-        const shadowValue = tokenRefToVar(scrollRevealedCSS.boxShadow as string);
-        css += `  box-shadow: ${shadowValue};\n`;
-      }
-      css += `}\n\n`;
-    }
-
-    // foldable 패턴의 split 상태 생성
-    if (section.states.split && section.type === 'foldable') {
-      const foldableSplitCSS = section.states.split as Partial<FoldableSectionCSS>;
-      css += `.${className}.is-split {\n`;
-      if (foldableSplitCSS.gridTemplateColumns) {
-        css += `  grid-template-columns: ${foldableSplitCSS.gridTemplateColumns};\n`;
-      }
-      if (foldableSplitCSS.columnGap) {
-        css += `  column-gap: ${foldableSplitCSS.columnGap};\n`;
-      }
-      css += `}\n\n`;
-    }
   }
 
   return css;
 }
 
 /**
- * 고급 섹션 타입 유니온
+ * Advanced section type union
  */
-type AdvancedSectionType =
-  | 'masonry'
-  | 'sticky'
-  | 'collapsible'
-  | 'scroll'
-  | 'multipane'
-  | 'foldable';
+type AdvancedSectionType = 'masonry' | 'sticky' | 'collapsible';
 
 /**
  * Generate media query CSS for advanced section patterns
@@ -893,110 +730,6 @@ function generateAdvancedSectionMediaQueryCSS(
     if (collapsibleConfig.gap) {
       const gapValue = tokenRefToVar(collapsibleConfig.gap);
       css += `    gap: ${gapValue};\n`;
-    }
-  } else if (type === 'scroll') {
-    const scrollConfig = responsiveConfig as Partial<ScrollSectionCSS>;
-
-    if (scrollConfig.display) {
-      css += `    display: ${scrollConfig.display};\n`;
-    }
-    if (scrollConfig.flexDirection) {
-      css += `    flex-direction: ${scrollConfig.flexDirection};\n`;
-    }
-    if (scrollConfig.alignItems) {
-      css += `    align-items: ${scrollConfig.alignItems};\n`;
-    }
-    if (scrollConfig.justifyContent) {
-      css += `    justify-content: ${scrollConfig.justifyContent};\n`;
-    }
-    if (scrollConfig.gap) {
-      const gapValue = tokenRefToVar(scrollConfig.gap);
-      css += `    gap: ${gapValue};\n`;
-    }
-    if (scrollConfig.position) {
-      css += `    position: ${scrollConfig.position};\n`;
-    }
-    if (scrollConfig.top) {
-      const topValue = tokenRefToVar(scrollConfig.top);
-      css += `    top: ${topValue};\n`;
-    }
-    if (scrollConfig.bottom) {
-      const bottomValue = tokenRefToVar(scrollConfig.bottom);
-      css += `    bottom: ${bottomValue};\n`;
-    }
-    if (scrollConfig.zIndex !== undefined) {
-      css += `    z-index: ${scrollConfig.zIndex};\n`;
-    }
-    if (scrollConfig.height) {
-      const heightValue = tokenRefToVar(scrollConfig.height);
-      css += `    height: ${heightValue};\n`;
-    }
-    if (scrollConfig.minHeight) {
-      const minHeightValue = tokenRefToVar(scrollConfig.minHeight);
-      css += `    min-height: ${minHeightValue};\n`;
-    }
-    if (scrollConfig.transition) {
-      css += `    transition: ${scrollConfig.transition};\n`;
-    }
-    if (scrollConfig.transform) {
-      css += `    transform: ${scrollConfig.transform};\n`;
-    }
-    if (scrollConfig.overflow) {
-      css += `    overflow: ${scrollConfig.overflow};\n`;
-    }
-    if (scrollConfig.padding) {
-      const paddingValue = tokenRefToVar(scrollConfig.padding);
-      css += `    padding: ${paddingValue};\n`;
-    }
-    if (scrollConfig.backgroundColor) {
-      const bgValue = tokenRefToVar(scrollConfig.backgroundColor);
-      css += `    background-color: ${bgValue};\n`;
-    }
-    if (scrollConfig.boxShadow) {
-      const shadowValue = tokenRefToVar(scrollConfig.boxShadow);
-      css += `    box-shadow: ${shadowValue};\n`;
-    }
-  } else if (type === 'multipane') {
-    const multipaneConfig = responsiveConfig as Partial<MultiPaneSectionCSS>;
-
-    if (multipaneConfig.display) {
-      css += `    display: ${multipaneConfig.display};\n`;
-    }
-    if (multipaneConfig.flexDirection) {
-      css += `    flex-direction: ${multipaneConfig.flexDirection};\n`;
-    }
-    if (multipaneConfig.gridTemplateColumns) {
-      css += `    grid-template-columns: ${multipaneConfig.gridTemplateColumns};\n`;
-    }
-    if (multipaneConfig.gridTemplateRows) {
-      css += `    grid-template-rows: ${multipaneConfig.gridTemplateRows};\n`;
-    }
-    if (multipaneConfig.height) {
-      css += `    height: ${multipaneConfig.height};\n`;
-    }
-    if (multipaneConfig.overflow) {
-      css += `    overflow: ${multipaneConfig.overflow};\n`;
-    }
-  } else if (type === 'foldable') {
-    const foldableConfig = responsiveConfig as Partial<FoldableSectionCSS>;
-
-    if (foldableConfig.display) {
-      css += `    display: ${foldableConfig.display};\n`;
-    }
-    if (foldableConfig.flexDirection) {
-      css += `    flex-direction: ${foldableConfig.flexDirection};\n`;
-    }
-    if (foldableConfig.gridTemplateColumns) {
-      css += `    grid-template-columns: ${foldableConfig.gridTemplateColumns};\n`;
-    }
-    if (foldableConfig.columnGap) {
-      css += `    column-gap: ${foldableConfig.columnGap};\n`;
-    }
-    if (foldableConfig.height) {
-      css += `    height: ${foldableConfig.height};\n`;
-    }
-    if (foldableConfig.overflow) {
-      css += `    overflow: ${foldableConfig.overflow};\n`;
     }
   }
 
@@ -1150,16 +883,13 @@ export function generateLayoutCSS(
   const pages = tokens.filter(t => 'purpose' in t) as PageLayoutToken[];
 
   // Separate standard sections from advanced sections
-  const allSections = tokens.filter(t => 'type' in t) as (
-    | SectionPatternToken
-    | AdvancedSectionPatternToken
-  )[];
-  const advancedTypes = ['masonry', 'sticky', 'collapsible', 'scroll', 'multipane', 'foldable'];
+  const allSections = tokens.filter(t => 'type' in t) as (SectionPatternToken | AdvancedSectionPatternToken)[];
+  const advancedTypes = ['masonry', 'sticky', 'collapsible'];
   const standardSections = allSections.filter(
     t => !advancedTypes.includes(t.type)
   ) as SectionPatternToken[];
-  const advancedSections = allSections.filter(t =>
-    advancedTypes.includes(t.type)
+  const advancedSections = allSections.filter(
+    t => advancedTypes.includes(t.type)
   ) as AdvancedSectionPatternToken[];
 
   // 1. Generate CSS variables
