@@ -16,6 +16,8 @@ import { listComponentsTool } from './tools/list-components.js';
 import { previewComponentTool } from './tools/preview-component.js';
 import { listScreenTemplatesTool } from './tools/list-screen-templates.js';
 import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
+import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
+import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
 import {
   GenerateBlueprintInputSchema,
   PreviewThemeInputSchema,
@@ -30,6 +32,8 @@ import {
   PreviewComponentInputSchema,
   ListScreenTemplatesInputSchema,
   PreviewScreenTemplateInputSchema,
+  GetScreenGenerationContextInputSchema,
+  ValidateScreenDefinitionInputSchema,
 } from './schemas/mcp-schemas.js';
 
 const server = new Server(
@@ -310,6 +314,51 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['templateId'],
         },
       },
+      {
+        name: 'get-screen-generation-context',
+        description:
+          'Get complete context for AI agents to generate screen definitions from natural language. Returns template matches, component info, schema, examples, theme recipes, and hints.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            description: {
+              type: 'string',
+              description: 'Natural language description of the screen to generate (5-1000 characters)',
+              minLength: 5,
+              maxLength: 1000,
+            },
+            themeId: {
+              type: 'string',
+              description: 'Optional theme ID for recipe information',
+              pattern: '^[a-z0-9-]+$',
+            },
+            includeExamples: {
+              type: 'boolean',
+              description: 'Include example screen definitions (default: true)',
+            },
+          },
+          required: ['description'],
+        },
+      },
+      {
+        name: 'validate-screen-definition',
+        description:
+          'Validate a screen definition JSON with detailed error messages, suggestions, and improvement recommendations',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            definition: {
+              type: 'object',
+              description: 'Screen definition object to validate',
+            },
+            strict: {
+              type: 'boolean',
+              description: 'Enable strict validation (default: true). In strict mode, unknown tokens/components are errors; otherwise they are warnings.',
+            },
+          },
+          required: ['definition'],
+        },
+      },
     ],
   };
 });
@@ -520,6 +569,36 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         };
       }
 
+      case 'get-screen-generation-context': {
+        // Validate input
+        const validatedInput = GetScreenGenerationContextInputSchema.parse(args);
+        const result = await getScreenGenerationContextTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'validate-screen-definition': {
+        // Validate input
+        const validatedInput = ValidateScreenDefinitionInputSchema.parse(args);
+        const result = await validateScreenDefinitionTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -558,5 +637,5 @@ await server.connect(transport);
 
 info('Tekton MCP Server connected via stdio transport');
 info(
-  '13 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template'
+  '15 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition'
 );

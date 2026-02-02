@@ -71,8 +71,28 @@ export const GenerateBlueprintInputSchema = z.object({
 export type GenerateBlueprintInput = z.infer<typeof GenerateBlueprintInputSchema>;
 
 /**
+ * Template Recommendation Schema
+ * SPEC-MCP-004 Phase 3: Blueprint Generator Enhancement
+ */
+export const TemplateRecommendationSchema = z.object({
+  templateId: z.string(),
+  templateName: z.string(),
+  category: z.string(),
+  confidence: z.number(), // 0-100
+  matchedKeywords: z.array(z.string()),
+  layoutRecommendation: z.object({
+    shell: z.string(),
+    page: z.string(),
+    description: z.string(),
+  }),
+});
+
+export type TemplateRecommendation = z.infer<typeof TemplateRecommendationSchema>;
+
+/**
  * Generate Blueprint Output Schema (MCP JSON-RPC format - no previewUrl)
  * SPEC-ICON-001: Added iconLibrary field
+ * SPEC-MCP-004: Added templateRecommendations field
  */
 export const GenerateBlueprintOutputSchema = z.object({
   success: z.boolean(),
@@ -87,6 +107,8 @@ export const GenerateBlueprintOutputSchema = z.object({
       timestamp: z.number(),
     })
   ),
+  // SPEC-MCP-004 Phase 3: Template recommendations based on description analysis
+  templateRecommendations: z.array(TemplateRecommendationSchema).optional(),
   error: z.string().optional(),
 });
 
@@ -861,3 +883,210 @@ export const PreviewScreenTemplateOutputSchema = z.object({
 });
 
 export type PreviewScreenTemplateOutput = z.infer<typeof PreviewScreenTemplateOutputSchema>;
+
+// ============================================================================
+// Get Screen Generation Context Tool Schemas (SPEC-MCP-004 Phase 3.5)
+// ============================================================================
+
+/**
+ * Get Screen Generation Context Input Schema
+ * SPEC-MCP-004 Phase 3.5: Provides coding agents with complete context for screen generation
+ */
+export const GetScreenGenerationContextInputSchema = z.object({
+  description: z
+    .string()
+    .min(5, 'Description must be at least 5 characters')
+    .max(1000, 'Description must not exceed 1000 characters'),
+  themeId: ThemeIdSchema.optional(),
+  includeExamples: z.boolean().optional().default(true),
+});
+
+export type GetScreenGenerationContextInput = z.infer<typeof GetScreenGenerationContextInputSchema>;
+
+/**
+ * Template match result for generation context
+ */
+export const ContextTemplateMatchSchema = z.object({
+  templateId: z.string(),
+  templateName: z.string(),
+  category: z.string(),
+  confidence: z.number(),
+  matchedKeywords: z.array(z.string()),
+  skeleton: SkeletonSchema.optional(),
+  requiredComponents: z.array(z.string()).optional(),
+});
+
+export type ContextTemplateMatch = z.infer<typeof ContextTemplateMatchSchema>;
+
+/**
+ * Component info for generation context
+ */
+export const ContextComponentInfoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  category: ComponentCategorySchema,
+  description: z.string(),
+  importStatement: z.string(),
+  props: z.array(PropDefinitionSchema),
+  variants: z.array(VariantSchema).optional(),
+});
+
+export type ContextComponentInfo = z.infer<typeof ContextComponentInfoSchema>;
+
+/**
+ * Screen definition schema for validation and examples
+ */
+export const ScreenDefinitionSchema = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/, 'Screen ID must be lowercase alphanumeric with hyphens'),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  shell: z.string().regex(/^shell\.[a-z]+\.[a-z-]+$/, 'Shell token must be in format shell.platform.name'),
+  page: z.string().regex(/^page\.[a-z-]+$/, 'Page token must be in format page.name'),
+  themeId: ThemeIdSchema.optional(),
+  sections: z.array(
+    z.object({
+      id: z.string(),
+      pattern: z.string().regex(/^section\.[a-z0-9-]+$/, 'Section pattern must be in format section.name'),
+      slot: z.string().optional(),
+      components: z.array(
+        z.object({
+          type: z.string(),
+          props: z.record(z.unknown()).optional(),
+          children: z.union([z.string(), z.array(z.unknown())]).optional(),
+        })
+      ),
+    })
+  ),
+  metadata: z
+    .object({
+      version: z.string().optional(),
+      author: z.string().optional(),
+      created: z.string().optional(),
+      updated: z.string().optional(),
+    })
+    .optional(),
+});
+
+export type ScreenDefinition = z.infer<typeof ScreenDefinitionSchema>;
+
+/**
+ * Example screen definition with description
+ */
+export const ScreenExampleSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  definition: ScreenDefinitionSchema,
+});
+
+export type ScreenExample = z.infer<typeof ScreenExampleSchema>;
+
+/**
+ * Theme recipe info for generation context
+ */
+export const ThemeRecipeInfoSchema = z.object({
+  componentType: z.string(),
+  variants: z.array(z.string()),
+  defaultClassName: z.string().optional(),
+});
+
+export type ThemeRecipeInfo = z.infer<typeof ThemeRecipeInfoSchema>;
+
+/**
+ * Generation hint for coding agents
+ */
+export const GenerationHintSchema = z.object({
+  category: z.enum(['layout', 'component', 'styling', 'accessibility', 'best-practice']),
+  priority: z.enum(['high', 'medium', 'low']),
+  message: z.string(),
+  example: z.string().optional(),
+});
+
+export type GenerationHint = z.infer<typeof GenerationHintSchema>;
+
+/**
+ * Get Screen Generation Context Output Schema
+ */
+export const GetScreenGenerationContextOutputSchema = z.object({
+  success: z.boolean(),
+  templateMatch: ContextTemplateMatchSchema.optional(),
+  components: z.array(ContextComponentInfoSchema).optional(),
+  schema: z
+    .object({
+      screenDefinition: z.unknown(), // JSON Schema representation
+      description: z.string(),
+    })
+    .optional(),
+  examples: z.array(ScreenExampleSchema).optional(),
+  themeRecipes: z.array(ThemeRecipeInfoSchema).optional(),
+  hints: z.array(GenerationHintSchema).optional(),
+  error: z.string().optional(),
+});
+
+export type GetScreenGenerationContextOutput = z.infer<typeof GetScreenGenerationContextOutputSchema>;
+
+// ============================================================================
+// Validate Screen Definition Tool Schemas (SPEC-MCP-004 Phase 3.5)
+// ============================================================================
+
+/**
+ * Validate Screen Definition Input Schema
+ * SPEC-MCP-004 Phase 3.5: Validates screen definitions with helpful feedback
+ */
+export const ValidateScreenDefinitionInputSchema = z.object({
+  definition: z.unknown(), // Accept any object for validation
+  strict: z.boolean().optional().default(true),
+});
+
+export type ValidateScreenDefinitionInput = z.infer<typeof ValidateScreenDefinitionInputSchema>;
+
+/**
+ * Validation error with path and suggestion
+ */
+export const ValidationErrorSchema = z.object({
+  path: z.string(),
+  code: z.string(),
+  message: z.string(),
+  expected: z.string().optional(),
+  received: z.string().optional(),
+  suggestion: z.string().optional(),
+});
+
+export type ValidationError = z.infer<typeof ValidationErrorSchema>;
+
+/**
+ * Validation warning (non-blocking)
+ */
+export const ValidationWarningSchema = z.object({
+  path: z.string(),
+  code: z.string(),
+  message: z.string(),
+  recommendation: z.string().optional(),
+});
+
+export type ValidationWarning = z.infer<typeof ValidationWarningSchema>;
+
+/**
+ * Improvement suggestion
+ */
+export const ImprovementSuggestionSchema = z.object({
+  category: z.enum(['accessibility', 'performance', 'maintainability', 'consistency']),
+  message: z.string(),
+  affectedPath: z.string().optional(),
+  suggestedChange: z.string().optional(),
+});
+
+export type ImprovementSuggestion = z.infer<typeof ImprovementSuggestionSchema>;
+
+/**
+ * Validate Screen Definition Output Schema
+ */
+export const ValidateScreenDefinitionOutputSchema = z.object({
+  success: z.boolean(),
+  valid: z.boolean().optional(),
+  errors: z.array(ValidationErrorSchema).optional(),
+  warnings: z.array(ValidationWarningSchema).optional(),
+  suggestions: z.array(ImprovementSuggestionSchema).optional(),
+  error: z.string().optional(),
+});
+
+export type ValidateScreenDefinitionOutput = z.infer<typeof ValidateScreenDefinitionOutputSchema>;
