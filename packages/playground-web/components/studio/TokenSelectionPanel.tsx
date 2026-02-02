@@ -60,7 +60,9 @@ export function TokenSelectionPanel({ themeId, className = '' }: TokenSelectionP
   // 테마 동적 로드
   useEffect(() => {
     async function loadTheme() {
-      if (!themeId) return;
+      if (!themeId) {
+        return;
+      }
 
       setIsLoading(true);
       setError(null);

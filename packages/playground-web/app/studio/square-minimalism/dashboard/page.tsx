@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TrendingUp, Activity } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 
 /**
  * [VERIFICATION] Screen Template + Theme Recipe Integration
