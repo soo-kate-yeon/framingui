@@ -275,12 +275,17 @@ export interface CollapsibleSectionCSS extends SectionCSS {
  *
  * @extends SectionPatternToken
  */
-export interface AdvancedSectionPatternToken extends Omit<SectionPatternToken, 'css' | 'responsive'> {
+export interface AdvancedSectionPatternToken extends Omit<
+  SectionPatternToken,
+  'css' | 'responsive'
+> {
   /** CSS properties (may include advanced properties) */
   css: SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS;
 
   /** Responsive overrides with advanced CSS */
-  responsive: ResponsiveConfig<SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS>;
+  responsive: ResponsiveConfig<
+    SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS
+  >;
 
   /** State configurations for interactive patterns (e.g., collapsed/expanded) */
   states?: {

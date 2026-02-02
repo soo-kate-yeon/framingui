@@ -528,7 +528,9 @@ export function getAdvancedSectionCSS(
   breakpoint: 'default' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'default'
 ): (MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS) | undefined {
   const pattern = getAdvancedSectionPatternToken(patternId);
-  if (!pattern) {return undefined;}
+  if (!pattern) {
+    return undefined;
+  }
 
   if (breakpoint === 'default') {
     return pattern.responsive.default;
@@ -575,7 +577,9 @@ export function getAdvancedSectionStateCSS(
   state: 'default' | 'collapsed' | 'stuck'
 ): Partial<MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS> | undefined {
   const pattern = getAdvancedSectionPatternToken(patternId);
-  if (!pattern?.states) {return undefined;}
+  if (!pattern?.states) {
+    return undefined;
+  }
 
   return pattern.states[state];
 }
