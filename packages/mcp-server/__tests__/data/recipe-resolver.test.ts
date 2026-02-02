@@ -3,7 +3,7 @@
  * SPEC-MCP-004 Phase 4: Theme Recipes Auto-Application
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   resolveRecipe,
   applyRecipeToNode,

@@ -3,7 +3,7 @@
  * SPEC-MCP-004 Phase 3: Blueprint Generator Enhancement
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   matchTemplates,
   getBestMatch,
