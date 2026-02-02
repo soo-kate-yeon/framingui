@@ -36,13 +36,7 @@ const VALID_SHELLS = [
 /**
  * Valid page tokens from SPEC-LAYOUT-001
  */
-const VALID_PAGES = [
-  'page.dashboard',
-  'page.detail',
-  'page.wizard',
-  'page.resource',
-  'page.empty',
-];
+const VALID_PAGES = ['page.dashboard', 'page.detail', 'page.wizard', 'page.resource', 'page.empty'];
 
 /**
  * Valid section patterns from SPEC-LAYOUT-001
@@ -142,9 +136,10 @@ function validateShell(
       message: `Unknown shell token: "${shell}"`,
       expected: VALID_SHELLS.slice(0, 5).join(', ') + '...',
       received: shell,
-      suggestion: similar.length > 0
-        ? `Did you mean: ${similar.join(', ')}?`
-        : `Valid shells: ${VALID_SHELLS.join(', ')}`,
+      suggestion:
+        similar.length > 0
+          ? `Did you mean: ${similar.join(', ')}?`
+          : `Valid shells: ${VALID_SHELLS.join(', ')}`,
     });
   }
 
@@ -181,9 +176,10 @@ function validatePage(
       message: `Unknown page token: "${page}"`,
       expected: VALID_PAGES.join(', '),
       received: page,
-      suggestion: similar.length > 0
-        ? `Did you mean: ${similar.join(', ')}?`
-        : `Valid pages: ${VALID_PAGES.join(', ')}`,
+      suggestion:
+        similar.length > 0
+          ? `Did you mean: ${similar.join(', ')}?`
+          : `Valid pages: ${VALID_PAGES.join(', ')}`,
     });
   }
 
@@ -222,9 +218,10 @@ function validateSectionPattern(
         message: `Unknown section pattern: "${pattern}"`,
         expected: VALID_SECTION_PATTERNS.slice(0, 5).join(', ') + '...',
         received: pattern,
-        suggestion: similar.length > 0
-          ? `Did you mean: ${similar.join(', ')}?`
-          : `Valid patterns: ${VALID_SECTION_PATTERNS.join(', ')}`,
+        suggestion:
+          similar.length > 0
+            ? `Did you mean: ${similar.join(', ')}?`
+            : `Valid patterns: ${VALID_SECTION_PATTERNS.join(', ')}`,
       });
     } else {
       warnings.push({
@@ -264,18 +261,20 @@ function validateComponentType(
         message: `Unknown component type: "${type}"`,
         expected: 'A component from @tekton/ui catalog',
         received: type,
-        suggestion: similar.length > 0
-          ? `Did you mean: ${similar.join(', ')}?`
-          : 'Use list-components tool to see available components',
+        suggestion:
+          similar.length > 0
+            ? `Did you mean: ${similar.join(', ')}?`
+            : 'Use list-components tool to see available components',
       });
     } else {
       warnings.push({
         path,
         code: 'CUSTOM_COMPONENT',
         message: `Component "${type}" not found in catalog - ensure it's a valid custom component`,
-        recommendation: similar.length > 0
-          ? `Did you mean: ${similar.join(', ')}?`
-          : 'Use list-components tool to see available components',
+        recommendation:
+          similar.length > 0
+            ? `Did you mean: ${similar.join(', ')}?`
+            : 'Use list-components tool to see available components',
       });
     }
   } else {
@@ -312,9 +311,10 @@ function validateSlot(
       message: `Invalid slot value: "${slot}"`,
       expected: VALID_SLOTS.join(', '),
       received: slot,
-      suggestion: similar.length > 0
-        ? `Did you mean: ${similar.join(', ')}?`
-        : `Valid slots: ${VALID_SLOTS.join(', ')}`,
+      suggestion:
+        similar.length > 0
+          ? `Did you mean: ${similar.join(', ')}?`
+          : `Valid slots: ${VALID_SLOTS.join(', ')}`,
     });
   }
 
@@ -381,7 +381,8 @@ function generateSuggestions(definition: any): ImprovementSuggestion[] {
           category: 'consistency',
           message: `Section "${section.id || i}" has no slot assigned`,
           affectedPath: `sections[${i}].slot`,
-          suggestedChange: 'Assign to a slot (header, main, sidebar, footer) for proper layout positioning',
+          suggestedChange:
+            'Assign to a slot (header, main, sidebar, footer) for proper layout positioning',
         });
       }
 
@@ -422,9 +423,7 @@ function generateSuggestions(definition: any): ImprovementSuggestion[] {
     }
 
     // Check for no main slot
-    const hasMainSlot = definition.sections.some(
-      (s: any) => s.slot === 'main' || !s.slot
-    );
+    const hasMainSlot = definition.sections.some((s: any) => s.slot === 'main' || !s.slot);
     if (!hasMainSlot) {
       suggestions.push({
         category: 'consistency',
@@ -499,10 +498,7 @@ export async function validateScreenDefinitionTool(
 
           // Validate slot
           if (section.slot) {
-            const slotResult = validateSlot(
-              section.slot,
-              `sections[${i}].slot`
-            );
+            const slotResult = validateSlot(section.slot, `sections[${i}].slot`);
             errors.push(...slotResult.errors);
             warnings.push(...slotResult.warnings);
           }

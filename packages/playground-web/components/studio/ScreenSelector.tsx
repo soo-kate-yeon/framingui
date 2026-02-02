@@ -3,6 +3,10 @@
  * [SPEC-UI-003][TAG-UI003-051]
  *
  * Preview Mode (2개 화면) vs Edit Mode (12개 화면) 선택기
+ * Theme: Square Minimalism
+ * - Radius: 0
+ * - Typography: Uppercase, Tracking Wider
+ * - Border: Neutral-200
  */
 
 'use client';
@@ -59,16 +63,7 @@ export function ScreenSelector({
 
   return (
     <div
-      className={`screen-selector ${className}`}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 'var(--tekton-spacing-md, 12px)',
-        padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-md, 12px)',
-        backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-        border: '1px solid var(--tekton-border-default, #e5e7eb)',
-        borderRadius: 'var(--tekton-radius-lg, 8px)',
-      }}
+      className={`flex items-center gap-3 px-3 py-2 bg-white border border-neutral-200 ${className}`}
     >
       {/* Previous Button */}
       <button
@@ -76,28 +71,13 @@ export function ScreenSelector({
         onClick={handlePrevious}
         disabled={currentIndex === 0}
         aria-label="Previous screen"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 'var(--tekton-spacing-xs, 4px)',
-          backgroundColor: 'transparent',
-          border: 'none',
-          borderRadius: 'var(--tekton-radius-sm, 4px)',
-          cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
-          opacity: currentIndex === 0 ? 0.5 : 1,
-          transition: 'all 0.2s ease',
-        }}
-        onMouseEnter={(e) => {
-          if (currentIndex > 0) {
-            e.currentTarget.style.backgroundColor = 'var(--tekton-bg-muted, #f9fafb)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }}
+        className={`flex items-center justify-center p-1 bg-transparent border-none transition-all ${
+          currentIndex === 0
+            ? 'opacity-50 cursor-not-allowed text-neutral-300'
+            : 'cursor-pointer text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900'
+        }`}
       >
-        <ChevronLeft size={20} />
+        <ChevronLeft size={18} />
       </button>
 
       {/* Screen Dropdown */}
@@ -105,18 +85,7 @@ export function ScreenSelector({
         value={selectedScreenId}
         onChange={(e) => onScreenChange(e.target.value)}
         aria-label="Select screen"
-        style={{
-          flex: 1,
-          minWidth: '200px',
-          padding: 'var(--tekton-spacing-sm, 8px)',
-          backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-          border: '1px solid var(--tekton-border-default, #e5e7eb)',
-          borderRadius: 'var(--tekton-radius-md, 6px)',
-          fontSize: 'var(--tekton-font-size-sm, 14px)',
-          fontWeight: '500',
-          color: 'var(--tekton-text-foreground, #111827)',
-          cursor: 'pointer',
-        }}
+        className="flex-1 min-w-[200px] px-2 py-1 bg-white border border-neutral-200 rounded-none text-xs uppercase tracking-wider font-bold text-neutral-900 cursor-pointer hover:border-neutral-900 focus:border-neutral-900 focus:outline-none transition-colors"
       >
         {screens.map((screen) => (
           <option key={screen.id} value={screen.id}>
@@ -126,13 +95,7 @@ export function ScreenSelector({
       </select>
 
       {/* Screen Counter */}
-      <span
-        style={{
-          fontSize: 'var(--tekton-font-size-sm, 14px)',
-          color: 'var(--tekton-text-muted-foreground, #6b7280)',
-          whiteSpace: 'nowrap',
-        }}
-      >
+      <span className="text-[10px] uppercase tracking-widest text-neutral-400 whitespace-nowrap font-mono">
         {currentIndex + 1} / {screens.length}
       </span>
 
@@ -142,43 +105,18 @@ export function ScreenSelector({
         onClick={handleNext}
         disabled={currentIndex === screens.length - 1}
         aria-label="Next screen"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 'var(--tekton-spacing-xs, 4px)',
-          backgroundColor: 'transparent',
-          border: 'none',
-          borderRadius: 'var(--tekton-radius-sm, 4px)',
-          cursor: currentIndex === screens.length - 1 ? 'not-allowed' : 'pointer',
-          opacity: currentIndex === screens.length - 1 ? 0.5 : 1,
-          transition: 'all 0.2s ease',
-        }}
-        onMouseEnter={(e) => {
-          if (currentIndex < screens.length - 1) {
-            e.currentTarget.style.backgroundColor = 'var(--tekton-bg-muted, #f9fafb)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'transparent';
-        }}
+        className={`flex items-center justify-center p-1 bg-transparent border-none transition-all ${
+          currentIndex === screens.length - 1
+            ? 'opacity-50 cursor-not-allowed text-neutral-300'
+            : 'cursor-pointer text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900'
+        }`}
       >
-        <ChevronRight size={20} />
+        <ChevronRight size={18} />
       </button>
 
       {/* Mode Badge */}
       {isPreviewMode && (
-        <span
-          style={{
-            padding: 'var(--tekton-spacing-xs, 4px) var(--tekton-spacing-sm, 8px)',
-            backgroundColor: 'var(--tekton-bg-muted, #f9fafb)',
-            color: 'var(--tekton-text-muted-foreground, #6b7280)',
-            fontSize: 'var(--tekton-font-size-xs, 12px)',
-            fontWeight: '500',
-            borderRadius: 'var(--tekton-radius-sm, 4px)',
-            whiteSpace: 'nowrap',
-          }}
-        >
+        <span className="inline-flex items-center rounded-none border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-600 tracking-wide whitespace-nowrap">
           Preview
         </span>
       )}

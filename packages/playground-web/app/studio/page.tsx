@@ -2,109 +2,75 @@
  * Explore Page (Studio Home)
  * [SPEC-UI-003][TAG-UI003-037]
  *
- * 템플릿 갤러리 메인 페이지
+ * Theme: Square Minimalism
+ * Function: Lists ACTUAL themes from .moai/themes/generated via @tekton/core
  */
 
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { listThemes } from '@tekton/core';
 import { TemplateGallery } from '../../components/studio/TemplateGallery';
+import type { Metadata } from 'next';
 
-// ============================================================================
-// Mock Templates (실제로는 @tekton/core에서 가져옴)
-// ============================================================================
+export const metadata: Metadata = {
+  title: 'Select Theme | Tekton Studio',
+  description: 'Choose a design system theme to start building.',
+};
 
-const MOCK_TEMPLATES = [
-  {
-    id: 'linear-minimal-v1',
-    name: 'Linear Minimal',
-    description: 'Clean and minimal design system inspired by Linear',
-    category: 'dashboard',
-    thumbnail: '/templates/linear-minimal.png',
-  },
-  {
-    id: 'login-modern',
-    name: 'Modern Login',
-    description: 'Contemporary authentication interface with glassmorphism',
-    category: 'auth',
-    thumbnail: '/templates/login-modern.png',
-  },
-  {
-    id: 'dashboard-pro',
-    name: 'Dashboard Pro',
-    description: 'Professional dashboard with advanced charts and widgets',
-    category: 'dashboard',
-    thumbnail: '/templates/dashboard-pro.png',
-  },
-  {
-    id: 'settings-clean',
-    name: 'Clean Settings',
-    description: 'Organized settings panel with clear hierarchy',
-    category: 'settings',
-    thumbnail: '/templates/settings-clean.png',
-  },
-  {
-    id: 'profile-card',
-    name: 'Profile Card',
-    description: 'Beautiful user profile with social integration',
-    category: 'profile',
-    thumbnail: '/templates/profile-card.png',
-  },
-  {
-    id: 'error-friendly',
-    name: 'Friendly Error',
-    description: 'User-friendly error pages with helpful actions',
-    category: 'feedback',
-    thumbnail: '/templates/error-friendly.png',
-  },
-];
-
-// ============================================================================
-// Component
-// ============================================================================
+interface GalleryItem {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  thumbnail?: string;
+}
 
 export default function ExplorePage() {
-  const router = useRouter();
+  // Fetch real themes from the connected MCP core (FileSystem)
+  let themes;
+  let galleryItems: GalleryItem[];
 
-  const handleTemplateClick = (templateId: string) => {
-    // [TAG-UI003-008] 템플릿 클릭 시 Editor 페이지로 이동
-    router.push(`/studio/template/${templateId}`);
-  };
+  try {
+    themes = listThemes();
+
+    // Map themes to TemplateGallery format
+    galleryItems = themes.map(theme => ({
+      id: theme.id,
+      name: theme.name,
+      description: theme.description || `A ${theme.brandTone || 'Modern'} design system.`,
+      category: 'Design System',
+      thumbnail: undefined
+    }));
+  } catch (error) {
+    console.error('[Studio Page] Error loading themes:', error);
+    galleryItems = [];
+  }
 
   return (
-    <div
-      style={{
-        padding: 'var(--tekton-spacing-xl, 24px)',
-      }}
-    >
+    <div className="p-12 max-w-[1600px] mx-auto">
       {/* Header */}
-      <header
-        style={{
-          marginBottom: 'var(--tekton-spacing-xl, 24px)',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 'var(--tekton-font-size-2xl, 24px)',
-            fontWeight: '600',
-            color: 'var(--tekton-text-foreground, #111827)',
-            marginBottom: 'var(--tekton-spacing-xs, 4px)',
-          }}
-        >
-          Explore Templates
+      <header className="mb-24">
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+          Tekton Studio
+        </span>
+        <h1 className="text-6xl font-bold tracking-tighter text-neutral-900 mb-6">
+          SELECT THEME
         </h1>
-        <p
-          style={{
-            fontSize: 'var(--tekton-font-size-base, 16px)',
-            color: 'var(--tekton-text-muted-foreground, #6b7280)',
-          }}
-        >
-          Browse and preview professionally designed templates
+        <p className="text-xl text-neutral-500 max-w-2xl leading-relaxed">
+          Choose a design system to activate the Agentic Styling engine.
+          Every theme is loaded directly from the MCP knowledge base.
         </p>
       </header>
 
-      {/* Template Gallery */}
-      <TemplateGallery templates={MOCK_TEMPLATES} onTemplateClick={handleTemplateClick} />
+      {/* Real Theme Gallery */}
+      <div className="border-t border-neutral-200 pt-12">
+        {galleryItems && galleryItems.length > 0 ? (
+          <TemplateGallery templates={galleryItems} />
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-neutral-500 mb-4">No themes found or error loading themes</p>
+            <p className="text-xs text-neutral-400">Check browser console and server terminal for errors</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

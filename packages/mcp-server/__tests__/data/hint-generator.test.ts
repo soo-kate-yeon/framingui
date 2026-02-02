@@ -16,8 +16,8 @@ describe('hint-generator', () => {
       const layoutHints = hints.filter(h => h.category === 'layout');
       expect(layoutHints.length).toBeGreaterThan(0);
 
-      const dashboardHint = layoutHints.find(h =>
-        h.message.includes('dashboard') || h.example?.includes('dashboard')
+      const dashboardHint = layoutHints.find(
+        h => h.message.includes('dashboard') || h.example?.includes('dashboard')
       );
       expect(dashboardHint).toBeDefined();
     });
@@ -26,8 +26,8 @@ describe('hint-generator', () => {
       const hints = generateHints('User login page with authentication');
 
       const layoutHints = hints.filter(h => h.category === 'layout');
-      const authHint = layoutHints.find(h =>
-        h.message.includes('auth') || h.example?.includes('auth')
+      const authHint = layoutHints.find(
+        h => h.message.includes('auth') || h.example?.includes('auth')
       );
       expect(authHint).toBeDefined();
     });
@@ -45,10 +45,11 @@ describe('hint-generator', () => {
       const accessibilityHints = hints.filter(h => h.category === 'accessibility');
       expect(accessibilityHints.length).toBeGreaterThan(0);
 
-      const formAccessibilityHint = accessibilityHints.find(h =>
-        h.message.toLowerCase().includes('form') ||
-        h.message.toLowerCase().includes('input') ||
-        h.message.toLowerCase().includes('label')
+      const formAccessibilityHint = accessibilityHints.find(
+        h =>
+          h.message.toLowerCase().includes('form') ||
+          h.message.toLowerCase().includes('input') ||
+          h.message.toLowerCase().includes('label')
       );
       expect(formAccessibilityHint).toBeDefined();
     });
@@ -80,17 +81,15 @@ describe('hint-generator', () => {
     it('should mention theme when themeId provided', () => {
       const hintsWithTheme = generateHints('Dashboard', 'my-theme');
 
-      const themeHint = hintsWithTheme.find(h =>
-        h.message.includes('my-theme')
-      );
+      const themeHint = hintsWithTheme.find(h => h.message.includes('my-theme'));
       expect(themeHint).toBeDefined();
     });
 
     it('should suggest adding theme when themeId not provided', () => {
       const hintsWithoutTheme = generateHints('Dashboard');
 
-      const suggestThemeHint = hintsWithoutTheme.find(h =>
-        h.message.includes('themeId') && h.priority === 'medium'
+      const suggestThemeHint = hintsWithoutTheme.find(
+        h => h.message.includes('themeId') && h.priority === 'medium'
       );
       expect(suggestThemeHint).toBeDefined();
     });
@@ -173,18 +172,14 @@ describe('hint-generator', () => {
     it('should include examples for layout hints', () => {
       const hints = generateHints('Dashboard with sidebar');
 
-      const layoutHintsWithExamples = hints.filter(
-        h => h.category === 'layout' && h.example
-      );
+      const layoutHintsWithExamples = hints.filter(h => h.category === 'layout' && h.example);
       expect(layoutHintsWithExamples.length).toBeGreaterThan(0);
     });
 
     it('should include examples for component hints', () => {
       const hints = generateHints('Page with avatar and card');
 
-      const componentHintsWithExamples = hints.filter(
-        h => h.category === 'component' && h.example
-      );
+      const componentHintsWithExamples = hints.filter(h => h.category === 'component' && h.example);
       expect(componentHintsWithExamples.length).toBeGreaterThan(0);
     });
 
@@ -192,11 +187,21 @@ describe('hint-generator', () => {
       const hints = generateHints('Form page');
 
       // At least some hints should have actionable words
-      const actionableWords = ['use', 'consider', 'ensure', 'add', 'include', 'define', 'assign', 'group', 'check', 'theme', 'recipe'];
+      const actionableWords = [
+        'use',
+        'consider',
+        'ensure',
+        'add',
+        'include',
+        'define',
+        'assign',
+        'group',
+        'check',
+        'theme',
+        'recipe',
+      ];
       const hintsWithActionable = hints.filter(hint => {
-        return actionableWords.some(word =>
-          hint.message.toLowerCase().includes(word)
-        );
+        return actionableWords.some(word => hint.message.toLowerCase().includes(word));
       });
 
       // Most hints should be actionable (at least 50%)
@@ -211,34 +216,26 @@ describe('hint-generator', () => {
 
   describe('Keyword Detection', () => {
     it('should detect form-related keywords', () => {
-      const descriptions = [
-        'registration form',
-        'contact form page',
-        'signup with input fields',
-      ];
+      const descriptions = ['registration form', 'contact form page', 'signup with input fields'];
 
       descriptions.forEach(desc => {
         const hints = generateHints(desc);
-        const formHints = hints.filter(h =>
-          h.message.toLowerCase().includes('form') ||
-          h.message.toLowerCase().includes('input')
+        const formHints = hints.filter(
+          h => h.message.toLowerCase().includes('form') || h.message.toLowerCase().includes('input')
         );
         expect(formHints.length).toBeGreaterThan(0);
       });
     });
 
     it('should detect table-related keywords', () => {
-      const descriptions = [
-        'data table view',
-        'list of records',
-        'grid with data',
-      ];
+      const descriptions = ['data table view', 'list of records', 'grid with data'];
 
       descriptions.forEach(desc => {
         const hints = generateHints(desc);
-        const tableHints = hints.filter(h =>
-          h.message.toLowerCase().includes('table') ||
-          h.message.toLowerCase().includes('resource')
+        const tableHints = hints.filter(
+          h =>
+            h.message.toLowerCase().includes('table') ||
+            h.message.toLowerCase().includes('resource')
         );
         expect(tableHints.length).toBeGreaterThan(0);
       });
@@ -247,9 +244,8 @@ describe('hint-generator', () => {
     it('should detect landing page keywords', () => {
       const hints = generateHints('Landing page with hero section');
 
-      const landingHints = hints.filter(h =>
-        h.message.toLowerCase().includes('marketing') ||
-        h.example?.includes('marketing')
+      const landingHints = hints.filter(
+        h => h.message.toLowerCase().includes('marketing') || h.example?.includes('marketing')
       );
       expect(landingHints.length).toBeGreaterThan(0);
     });

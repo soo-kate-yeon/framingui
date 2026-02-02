@@ -2,15 +2,21 @@
  * Sidebar Component
  * [SPEC-UI-003][TAG-UI003-045]
  *
- * Midjourney 스타일 사이드바 네비게이션 (Explore, Account 탭)
+ * Theme: Square Minimalism
+ * - Radius: 0
+ * - Typography: Uppercase, Tracking Widest
+ * - Active State: Black/White High Contrast
+ * - 접힌 상태: 아이콘만 표시
+ * - 펼친 상태: 전체 메뉴 표시
  */
 
 'use client';
 
-import { Layout, User, LogIn, LogOut } from 'lucide-react';
+import { Layout, User, LogIn, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
+import { useSidebar } from '../../contexts/SidebarContext';
 
 // ============================================================================
 // Types
@@ -46,7 +52,7 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Account',
     href: '/studio/account',
     icon: User,
-    requireAuth: true, // [TAG-UI003-016]
+    requireAuth: true,
   },
 ];
 
@@ -57,65 +63,61 @@ const NAV_ITEMS: NavItem[] = [
 export function Sidebar({ className = '' }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
-  // 로그인 상태에 따라 네비게이션 필터링 [TAG-UI003-015~016]
+  // 로그인 상태에 따라 네비게이션 필터링
   const visibleNavItems = NAV_ITEMS.filter((item) => {
     if (item.requireAuth && !user) {
-      return false; // [TAG-UI003-030] 비로그인 사용자에게 Account 탭 숨김
+      return false;
     }
     return true;
   });
 
   return (
     <aside
-      className={`sidebar ${className}`}
-      style={{
-        width: '240px',
-        minWidth: '240px',
-        height: '100vh',
-        backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-        borderRight: '1px solid var(--tekton-border-default, #e5e7eb)',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'auto',
-      }}
+      className={`sidebar h-full bg-white border-r border-neutral-200 flex flex-col overflow-hidden z-10 transition-all duration-300 ${
+        isCollapsed ? 'w-[64px] min-w-[64px]' : 'w-[240px] min-w-[240px]'
+      } ${className}`}
     >
       {/* Header */}
-      <div
-        style={{
-          padding: 'var(--tekton-spacing-lg, 16px)',
-          borderBottom: '1px solid var(--tekton-border-default, #e5e7eb)',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 'var(--tekton-font-size-lg, 18px)',
-            fontWeight: '600',
-            color: 'var(--tekton-text-foreground, #111827)',
-          }}
-        >
-          Tekton Studio
-        </h1>
+      <div className={`border-b border-neutral-100 ${isCollapsed ? 'p-4' : 'p-6'}`}>
+        {isCollapsed ? (
+          // 접힌 상태: 로고 + 토글 버튼 세로 배치
+          <div className="flex flex-col items-center gap-3">
+            <div className="text-lg font-bold tracking-tighter">T</div>
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="p-2 hover:bg-neutral-100 transition-colors border border-neutral-200"
+              aria-label="Expand sidebar"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        ) : (
+          // 펼친 상태: 로고 + 토글 버튼 가로 배치
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xl font-bold tracking-tighter">TEKTON</div>
+              <span className="text-[10px] uppercase tracking-widest text-neutral-400 mt-1 block">
+                Studio
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="p-2 hover:bg-neutral-100 transition-colors"
+              aria-label="Collapse sidebar"
+            >
+              <ChevronLeft size={14} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav
-        style={{
-          flex: 1,
-          padding: 'var(--tekton-spacing-md, 12px)',
-        }}
-        aria-label="Main navigation"
-      >
-        <ul
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--tekton-spacing-xs, 4px)',
-          }}
-        >
+      <nav className={`flex-1 ${isCollapsed ? 'p-2' : 'p-4'}`} aria-label="Main navigation">
+        <ul className="space-y-1">
           {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -125,36 +127,16 @@ export function Sidebar({ className = '' }: SidebarProps) {
                 <Link
                   href={item.href}
                   aria-current={isActive ? 'page' : undefined}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--tekton-spacing-sm, 8px)',
-                    padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-md, 12px)',
-                    backgroundColor: isActive
-                      ? 'var(--tekton-bg-accent, #f3f4f6)'
-                      : 'transparent',
-                    color: isActive
-                      ? 'var(--tekton-text-foreground, #111827)'
-                      : 'var(--tekton-text-muted-foreground, #6b7280)',
-                    borderRadius: 'var(--tekton-radius-md, 6px)',
-                    fontSize: 'var(--tekton-font-size-sm, 14px)',
-                    fontWeight: isActive ? '500' : '400',
-                    textDecoration: 'none',
-                    transition: 'all 0.2s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.backgroundColor = 'var(--tekton-bg-muted, #f9fafb)';
+                  title={isCollapsed ? item.label : undefined}
+                  className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3'} text-xs font-bold uppercase tracking-wider transition-all
+                    ${isActive
+                      ? 'bg-neutral-900 text-white'
+                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
                     }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }
-                  }}
+                  `}
                 >
-                  <Icon size={18} aria-hidden="true" />
-                  <span>{item.label}</span>
+                  <Icon size={16} aria-hidden="true" />
+                  {!isCollapsed && <span>{item.label}</span>}
                 </Link>
               </li>
             );
@@ -163,123 +145,63 @@ export function Sidebar({ className = '' }: SidebarProps) {
       </nav>
 
       {/* Footer (User Info / Login) */}
-      <div
-        style={{
-          padding: 'var(--tekton-spacing-md, 12px)',
-          borderTop: '1px solid var(--tekton-border-default, #e5e7eb)',
-        }}
-      >
+      <div className={`border-t border-neutral-100 ${isCollapsed ? 'p-2' : 'p-4'}`}>
         {user ? (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--tekton-spacing-sm, 8px)',
-            }}
-          >
-            {/* User Info */}
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 'var(--tekton-spacing-sm, 8px)',
-                padding: 'var(--tekton-spacing-sm, 8px)',
-              }}
-            >
-              {user.image && (
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                  }}
-                />
-              )}
-              <div style={{ flex: 1, overflow: 'hidden' }}>
-                <div
-                  style={{
-                    fontSize: 'var(--tekton-font-size-sm, 14px)',
-                    fontWeight: '500',
-                    color: 'var(--tekton-text-foreground, #111827)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
+          <div className={`flex flex-col ${isCollapsed ? 'items-center gap-2' : 'gap-3'}`}>
+            {/* User Avatar */}
+            {user.image ? (
+              <img
+                src={user.image}
+                alt={user.name}
+                title={isCollapsed ? user.name : undefined}
+                className="w-8 h-8 rounded-none object-cover grayscale"
+              />
+            ) : (
+              <div
+                className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center text-xs font-bold"
+                title={isCollapsed ? user.name : undefined}
+              >
+                {user.name.charAt(0)}
+              </div>
+            )}
+
+            {/* User Info - 펼친 상태에서만 */}
+            {!isCollapsed && (
+              <div className="flex-1 overflow-hidden">
+                <div className="text-sm font-bold text-neutral-900 truncate uppercase tracking-tight">
                   {user.name}
                 </div>
-                <div
-                  style={{
-                    fontSize: 'var(--tekton-font-size-xs, 12px)',
-                    color: 'var(--tekton-text-muted-foreground, #6b7280)',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
+                <div className="text-[10px] text-neutral-400 truncate font-mono">
                   {user.email}
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Logout Button */}
             <button
               type="button"
               onClick={logout}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 'var(--tekton-spacing-xs, 4px)',
-                padding: 'var(--tekton-spacing-sm, 8px)',
-                backgroundColor: 'transparent',
-                border: '1px solid var(--tekton-border-default, #e5e7eb)',
-                borderRadius: 'var(--tekton-radius-md, 6px)',
-                fontSize: 'var(--tekton-font-size-sm, 14px)',
-                color: 'var(--tekton-text-muted-foreground, #6b7280)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--tekton-bg-muted, #f9fafb)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
+              title={isCollapsed ? 'Logout' : undefined}
+              className={`flex items-center justify-center bg-transparent border border-neutral-200 text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 transition-colors ${
+                isCollapsed
+                  ? 'p-2'
+                  : 'gap-2 w-full py-2 text-[10px] uppercase font-bold tracking-widest'
+              }`}
             >
-              <LogOut size={16} aria-hidden="true" />
-              <span>Logout</span>
+              <LogOut size={isCollapsed ? 14 : 12} aria-hidden="true" />
+              {!isCollapsed && <span>Logout</span>}
             </button>
           </div>
         ) : (
           <Link
             href="/auth/login"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 'var(--tekton-spacing-xs, 4px)',
-              padding: 'var(--tekton-spacing-sm, 8px)',
-              backgroundColor: 'var(--tekton-bg-primary, #3b82f6)',
-              color: 'var(--tekton-bg-primary-foreground, #ffffff)',
-              border: 'none',
-              borderRadius: 'var(--tekton-radius-md, 6px)',
-              fontSize: 'var(--tekton-font-size-sm, 14px)',
-              fontWeight: '500',
-              textDecoration: 'none',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = '0.9';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = '1';
-            }}
+            title={isCollapsed ? 'Login' : undefined}
+            className={`flex items-center justify-center bg-neutral-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors ${
+              isCollapsed ? 'p-3' : 'gap-2 w-full py-3'
+            }`}
           >
-            <LogIn size={16} aria-hidden="true" />
-            <span>Login</span>
+            <LogIn size={14} aria-hidden="true" />
+            {!isCollapsed && <span>Login</span>}
           </Link>
         )}
       </div>

@@ -43,7 +43,8 @@ function generateLayoutHints(description: string): GenerationHint[] {
     hints.push({
       category: 'layout',
       priority: 'high',
-      message: 'Use shell.web.dashboard with page.dashboard for admin-style layouts with sidebar navigation',
+      message:
+        'Use shell.web.dashboard with page.dashboard for admin-style layouts with sidebar navigation',
       example: 'shell: "shell.web.dashboard", page: "page.dashboard"',
     });
     hints.push({
@@ -131,7 +132,8 @@ function generateComponentHints(description: string): GenerationHint[] {
     hints.push({
       category: 'component',
       priority: 'medium',
-      message: 'Use Card with variant="elevated" for prominent content or variant="outline" for subtle containers',
+      message:
+        'Use Card with variant="elevated" for prominent content or variant="outline" for subtle containers',
       example: '{ type: "Card", props: { variant: "elevated" } }',
     });
   }
@@ -140,7 +142,8 @@ function generateComponentHints(description: string): GenerationHint[] {
     hints.push({
       category: 'component',
       priority: 'high',
-      message: 'Define table columns with key, header, and sortable properties for interactive tables',
+      message:
+        'Define table columns with key, header, and sortable properties for interactive tables',
       example: 'columns: [{ key: "name", header: "Name", sortable: true }]',
     });
     hints.push({
@@ -177,7 +180,8 @@ function generateComponentHints(description: string): GenerationHint[] {
     hints.push({
       category: 'component',
       priority: 'medium',
-      message: 'Use variant="primary" for main actions and variant="secondary" or variant="outline" for secondary actions',
+      message:
+        'Use variant="primary" for main actions and variant="secondary" or variant="outline" for secondary actions',
     });
   }
 
@@ -233,7 +237,8 @@ function generateAccessibilityHints(description: string): GenerationHint[] {
   hints.push({
     category: 'accessibility',
     priority: 'high',
-    message: 'Use semantic HTML elements (Heading for titles, List for lists) for proper document structure',
+    message:
+      'Use semantic HTML elements (Heading for titles, List for lists) for proper document structure',
   });
 
   // Add context-specific accessibility hints
@@ -282,7 +287,8 @@ function generateBestPracticeHints(description: string): GenerationHint[] {
   hints.push({
     category: 'best-practice',
     priority: 'low',
-    message: 'Assign sections to appropriate slots (header, main, sidebar, footer) for proper layout positioning',
+    message:
+      'Assign sections to appropriate slots (header, main, sidebar, footer) for proper layout positioning',
   });
 
   // Add context-specific best practices
@@ -323,8 +329,7 @@ export function generateHints(description: string, themeId?: string): Generation
 
   // Remove duplicates and limit total hints
   const uniqueHints = allHints.filter(
-    (hint, index, self) =>
-      index === self.findIndex(h => h.message === hint.message)
+    (hint, index, self) => index === self.findIndex(h => h.message === hint.message)
   );
 
   // Return top 10 hints to avoid overwhelming the agent

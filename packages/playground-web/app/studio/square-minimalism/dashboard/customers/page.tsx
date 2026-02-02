@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+
 import { Plus, Filter, MoreHorizontal } from "lucide-react";
 
 /**

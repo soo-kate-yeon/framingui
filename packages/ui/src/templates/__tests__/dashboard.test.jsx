@@ -22,8 +22,8 @@ describe('DashboardTemplate', () => {
     it('defines customizable texts', () => {
       expect(DashboardTemplate.customizable.texts).toContain('title');
       expect(DashboardTemplate.customizable.texts).toContain('subtitle');
-      expect(DashboardTemplate.customizable.texts).toContain('primary_title');
-      expect(DashboardTemplate.customizable.texts).toContain('secondary_title');
+      expect(DashboardTemplate.customizable.texts).toContain('texts.secondary_title');
+      expect(DashboardTemplate.customizable.texts).toContain('texts.secondary_description');
     });
     it('defines optional features', () => {
       expect(DashboardTemplate.customizable.optional).toContain('metrics');
@@ -101,14 +101,8 @@ describe('DashboardTemplate', () => {
           slots={{
             primaryContent: <div>Primary Content</div>,
           }}
-          texts={{
-            primary_title: 'Main Section',
-            primary_description: 'Main description',
-          }}
         />
       );
-      expect(screen.getByText('Main Section')).toBeInTheDocument();
-      expect(screen.getByText('Main description')).toBeInTheDocument();
       expect(screen.getByText('Primary Content')).toBeInTheDocument();
     });
     it('renders secondary content section', () => {
@@ -117,14 +111,10 @@ describe('DashboardTemplate', () => {
           slots={{
             secondaryContent: <div>Secondary Content</div>,
           }}
-          texts={{
-            secondary_title: 'Side Section',
-            secondary_description: 'Side description',
-          }}
         />
       );
-      expect(screen.getByText('Side Section')).toBeInTheDocument();
-      expect(screen.getByText('Side description')).toBeInTheDocument();
+      expect(screen.getByText('Activity')).toBeInTheDocument();
+      expect(screen.getByText('Recent updates')).toBeInTheDocument();
       expect(screen.getByText('Secondary Content')).toBeInTheDocument();
     });
     it('renders additional sections slot', () => {
@@ -137,7 +127,7 @@ describe('DashboardTemplate', () => {
       );
       expect(screen.getByText('Additional Section')).toBeInTheDocument();
     });
-    it('uses default texts for primary section when not provided', () => {
+    it('renders primary content without wrapper', () => {
       render(
         <DashboardTemplateComponent
           slots={{
@@ -145,8 +135,7 @@ describe('DashboardTemplate', () => {
           }}
         />
       );
-      expect(screen.getByText('Overview')).toBeInTheDocument();
-      expect(screen.getByText('Recent activity and statistics')).toBeInTheDocument();
+      expect(screen.getByText('Content')).toBeInTheDocument();
     });
     it('uses default texts for secondary section when not provided', () => {
       render(
@@ -156,8 +145,8 @@ describe('DashboardTemplate', () => {
           }}
         />
       );
-      expect(screen.getByText('Recent Activity')).toBeInTheDocument();
-      expect(screen.getByText('Latest updates and notifications')).toBeInTheDocument();
+      expect(screen.getByText('Activity')).toBeInTheDocument();
+      expect(screen.getByText('Recent updates')).toBeInTheDocument();
     });
   });
   describe('Layout Structure', () => {

@@ -54,9 +54,7 @@ describe('validate-screen-definition Tool', () => {
           {
             id: 'section1',
             pattern: 'section.container',
-            components: [
-              { type: 'Text', props: { children: 'Content' } },
-            ],
+            components: [{ type: 'Text', props: { children: 'Content' } }],
           },
         ],
       };
@@ -236,9 +234,7 @@ describe('validate-screen-definition Tool', () => {
           {
             id: 'section1',
             pattern: 'section.container',
-            components: [
-              { type: 'UnknownComponent', props: {} },
-            ],
+            components: [{ type: 'UnknownComponent', props: {} }],
           },
         ],
       };
@@ -405,9 +401,7 @@ describe('validate-screen-definition Tool', () => {
           {
             id: 'main',
             pattern: 'section.container',
-            components: [
-              { type: 'Avatar', props: { src: '/image.jpg' } },
-            ],
+            components: [{ type: 'Avatar', props: { src: '/image.jpg' } }],
           },
         ],
       };
@@ -448,9 +442,7 @@ describe('validate-screen-definition Tool', () => {
       expect(result.success).toBe(true);
       expect(result.suggestions).toBeDefined();
 
-      const slotSuggestion = result.suggestions!.find(
-        s => s.message.includes('slot')
-      );
+      const slotSuggestion = result.suggestions!.find(s => s.message.includes('slot'));
       expect(slotSuggestion).toBeDefined();
     });
   });
@@ -545,9 +537,7 @@ describe('validate-screen-definition Tool', () => {
           {
             id: 'section1',
             pattern: 'section.custom',
-            components: [
-              { type: 'CustomComponent', props: {} },
-            ],
+            components: [{ type: 'CustomComponent', props: {} }],
           },
         ],
       };

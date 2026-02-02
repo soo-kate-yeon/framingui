@@ -3,6 +3,10 @@
  * [SPEC-UI-003][TAG-UI003-049]
  *
  * Desktop/Tablet/Mobile 디바이스 전환 토글
+ * Theme: Square Minimalism
+ * - Radius: 0
+ * - Typography: Uppercase, Tracking Wider
+ * - Active State: Black/White High Contrast
  */
 
 'use client';
@@ -50,17 +54,9 @@ export function DeviceSwitcher({
 }: DeviceSwitcherProps) {
   return (
     <div
-      className={`device-switcher ${className}`}
+      className={`inline-flex gap-1 p-1 bg-neutral-50 border border-neutral-200 ${className}`}
       role="toolbar"
       aria-label="Device selector"
-      style={{
-        display: 'inline-flex',
-        gap: 'var(--tekton-spacing-xs, 4px)',
-        padding: 'var(--tekton-spacing-xs, 4px)',
-        backgroundColor: 'var(--tekton-bg-muted, #f9fafb)',
-        borderRadius: 'var(--tekton-radius-md, 6px)',
-        border: '1px solid var(--tekton-border-default, #e5e7eb)',
-      }}
     >
       {DEVICE_OPTIONS.map(({ type, icon: Icon, label }) => {
         const isSelected = selectedDevice === type;
@@ -72,37 +68,14 @@ export function DeviceSwitcher({
             onClick={() => onDeviceChange(type)}
             aria-label={`Switch to ${label} view`}
             aria-pressed={isSelected}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--tekton-spacing-xs, 4px)',
-              padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-md, 12px)',
-              backgroundColor: isSelected
-                ? 'var(--tekton-bg-primary, #3b82f6)'
-                : 'transparent',
-              color: isSelected
-                ? 'var(--tekton-bg-primary-foreground, #ffffff)'
-                : 'var(--tekton-text-muted-foreground, #6b7280)',
-              border: 'none',
-              borderRadius: 'var(--tekton-radius-sm, 4px)',
-              cursor: 'pointer',
-              fontSize: 'var(--tekton-font-size-sm, 14px)',
-              fontWeight: isSelected ? '500' : '400',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              if (!isSelected) {
-                e.currentTarget.style.backgroundColor = 'var(--tekton-bg-accent, #f3f4f6)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isSelected) {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }
-            }}
+            className={`flex items-center gap-2 px-3 py-2 text-xs uppercase tracking-wider font-bold transition-all ${
+              isSelected
+                ? 'bg-neutral-900 text-white'
+                : 'bg-transparent text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900'
+            }`}
           >
-            <Icon size={16} aria-hidden="true" />
-            <span className="device-label">{label}</span>
+            <Icon size={14} aria-hidden="true" />
+            <span>{label}</span>
           </button>
         );
       })}

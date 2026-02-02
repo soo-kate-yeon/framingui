@@ -10,7 +10,7 @@
 
 'use client';
 
-import { Heart, Lock, ArrowRight, ExternalLink } from 'lucide-react';
+import { Heart, ArrowRight, ExternalLink } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 // ============================================================================
@@ -56,10 +56,8 @@ export function TemplateCard({
   onClick,
   className = '',
 }: TemplateCardProps) {
-  const { user, hasLicense, toggleLike, userData } = useAuth();
+  const { user, toggleLike, userData } = useAuth();
   const isLiked = userData?.likedTemplates.includes(id) ?? false;
-  // For Square Minimalism demo, generally treating all as accessible or preview-able
-  const hasValidLicense = true;
 
   // 데모 앱 라우트 확인
   const demoRoute = DEMO_ROUTES[id];

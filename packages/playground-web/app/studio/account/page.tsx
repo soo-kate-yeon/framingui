@@ -3,6 +3,10 @@
  * [SPEC-UI-003][TAG-UI003-038]
  *
  * 라이선스 관리 및 좋아요 목록 페이지
+ * Theme: Square Minimalism
+ * - Radius: 0
+ * - Typography: Uppercase, Tracking Widest
+ * - Border: Neutral-200
  */
 
 'use client';
@@ -24,216 +28,85 @@ export default function AccountPage() {
   }
 
   return (
-    <div
-      style={{
-        padding: 'var(--tekton-spacing-xl, 24px)',
-        maxWidth: '1200px',
-        margin: '0 auto',
-      }}
-    >
+    <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <header
-        style={{
-          marginBottom: 'var(--tekton-spacing-xl, 24px)',
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 'var(--tekton-font-size-2xl, 24px)',
-            fontWeight: '600',
-            color: 'var(--tekton-text-foreground, #111827)',
-            marginBottom: 'var(--tekton-spacing-xs, 4px)',
-          }}
-        >
+      <header className="mb-12">
+        <h1 className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">
           My Account
         </h1>
-        <p
-          style={{
-            fontSize: 'var(--tekton-font-size-base, 16px)',
-            color: 'var(--tekton-text-muted-foreground, #6b7280)',
-          }}
-        >
+        <p className="text-2xl font-bold text-neutral-900 leading-tight">
           Manage your licenses and saved templates
         </p>
       </header>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-          gap: 'var(--tekton-spacing-xl, 24px)',
-        }}
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Licenses Section */}
-        <section
-          style={{
-            backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-            border: '1px solid var(--tekton-border-default, #e5e7eb)',
-            borderRadius: 'var(--tekton-radius-lg, 8px)',
-            padding: 'var(--tekton-spacing-lg, 16px)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--tekton-spacing-sm, 8px)',
-              marginBottom: 'var(--tekton-spacing-md, 12px)',
-            }}
-          >
-            <Key size={20} aria-hidden="true" />
-            <h2
-              style={{
-                fontSize: 'var(--tekton-font-size-lg, 18px)',
-                fontWeight: '600',
-                color: 'var(--tekton-text-foreground, #111827)',
-              }}
-            >
+        <section className="bg-white border border-neutral-200 p-6">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-neutral-100">
+            <Key size={20} aria-hidden="true" className="text-neutral-900" />
+            <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-900">
               My Licenses
             </h2>
           </div>
 
           {userData?.licenses && userData.licenses.length > 0 ? (
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--tekton-spacing-sm, 8px)',
-              }}
-            >
+            <ul className="space-y-3">
               {userData.licenses.map((license) => (
                 <li
                   key={license.id}
-                  style={{
-                    padding: 'var(--tekton-spacing-md, 12px)',
-                    backgroundColor: 'var(--tekton-bg-muted, #f9fafb)',
-                    borderRadius: 'var(--tekton-radius-md, 6px)',
-                  }}
+                  className="p-4 bg-neutral-50 border border-neutral-200 hover:border-neutral-900 transition-colors"
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginBottom: 'var(--tekton-spacing-xs, 4px)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: 'var(--tekton-font-size-sm, 14px)',
-                        fontWeight: '500',
-                        color: 'var(--tekton-text-foreground, #111827)',
-                      }}
-                    >
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-neutral-900">
                       {license.templateId}
                     </span>
                     <span
-                      style={{
-                        fontSize: 'var(--tekton-font-size-xs, 12px)',
-                        padding: 'var(--tekton-spacing-xs, 4px) var(--tekton-spacing-sm, 8px)',
-                        backgroundColor:
-                          license.status === 'active'
-                            ? 'var(--tekton-bg-success, #10b981)'
-                            : 'var(--tekton-bg-destructive, #ef4444)',
-                        color: '#ffffff',
-                        borderRadius: 'var(--tekton-radius-sm, 4px)',
-                        textTransform: 'capitalize',
-                      }}
+                      className={`inline-flex items-center rounded-none px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide border ${
+                        license.status === 'active'
+                          ? 'border-green-200 bg-green-50 text-green-700'
+                          : 'border-red-200 bg-red-50 text-red-700'
+                      }`}
                     >
                       {license.status}
                     </span>
                   </div>
-                  <div
-                    style={{
-                      fontSize: 'var(--tekton-font-size-xs, 12px)',
-                      color: 'var(--tekton-text-muted-foreground, #6b7280)',
-                    }}
-                  >
+                  <div className="text-[10px] uppercase tracking-wider text-neutral-400">
                     Purchased: {new Date(license.purchasedAt).toLocaleDateString()}
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p
-              style={{
-                fontSize: 'var(--tekton-font-size-sm, 14px)',
-                color: 'var(--tekton-text-muted-foreground, #6b7280)',
-                textAlign: 'center',
-                padding: 'var(--tekton-spacing-lg, 16px)',
-              }}
-            >
+            <p className="text-xs uppercase tracking-wider text-neutral-400 text-center py-8">
               No licenses yet
             </p>
           )}
         </section>
 
         {/* Liked Templates Section */}
-        <section
-          style={{
-            backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-            border: '1px solid var(--tekton-border-default, #e5e7eb)',
-            borderRadius: 'var(--tekton-radius-lg, 8px)',
-            padding: 'var(--tekton-spacing-lg, 16px)',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--tekton-spacing-sm, 8px)',
-              marginBottom: 'var(--tekton-spacing-md, 12px)',
-            }}
-          >
-            <Heart size={20} aria-hidden="true" />
-            <h2
-              style={{
-                fontSize: 'var(--tekton-font-size-lg, 18px)',
-                fontWeight: '600',
-                color: 'var(--tekton-text-foreground, #111827)',
-              }}
-            >
+        <section className="bg-white border border-neutral-200 p-6">
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-neutral-100">
+            <Heart size={20} aria-hidden="true" className="text-neutral-900" />
+            <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-900">
               Liked Templates
             </h2>
           </div>
 
           {userData?.likedTemplates && userData.likedTemplates.length > 0 ? (
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-                margin: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--tekton-spacing-sm, 8px)',
-              }}
-            >
+            <ul className="space-y-3">
               {userData.likedTemplates.map((templateId) => (
                 <li
                   key={templateId}
-                  style={{
-                    padding: 'var(--tekton-spacing-md, 12px)',
-                    backgroundColor: 'var(--tekton-bg-muted, #f9fafb)',
-                    borderRadius: 'var(--tekton-radius-md, 6px)',
-                    fontSize: 'var(--tekton-font-size-sm, 14px)',
-                    color: 'var(--tekton-text-foreground, #111827)',
-                  }}
+                  className="p-4 bg-neutral-50 border border-neutral-200 hover:border-neutral-900 transition-colors"
                 >
-                  {templateId}
+                  <span className="text-xs font-bold uppercase tracking-wider text-neutral-900">
+                    {templateId}
+                  </span>
                 </li>
               ))}
             </ul>
           ) : (
-            <p
-              style={{
-                fontSize: 'var(--tekton-font-size-sm, 14px)',
-                color: 'var(--tekton-text-muted-foreground, #6b7280)',
-                textAlign: 'center',
-                padding: 'var(--tekton-spacing-lg, 16px)',
-              }}
-            >
+            <p className="text-xs uppercase tracking-wider text-neutral-400 text-center py-8">
               No liked templates yet
             </p>
           )}

@@ -11,7 +11,8 @@ import type { ScreenExample } from '../../schemas/mcp-schemas.js';
  */
 export const teamGridExample: ScreenExample = {
   name: 'Team Grid',
-  description: 'Dashboard screen showing team members in a responsive grid with avatars and role information',
+  description:
+    'Dashboard screen showing team members in a responsive grid with avatars and role information',
   definition: {
     id: 'team-grid',
     name: 'Team Grid Dashboard',
@@ -137,7 +138,8 @@ export const teamGridExample: ScreenExample = {
  */
 export const dataTableExample: ScreenExample = {
   name: 'Data Table',
-  description: 'Screen with a data table showing records with search, filter, and pagination controls',
+  description:
+    'Screen with a data table showing records with search, filter, and pagination controls',
   definition: {
     id: 'data-table-view',
     name: 'Data Table View',
@@ -225,7 +227,8 @@ export const dataTableExample: ScreenExample = {
  */
 export const loginFormExample: ScreenExample = {
   name: 'Login Form',
-  description: 'Authentication screen with email and password fields, social login options, and forgot password link',
+  description:
+    'Authentication screen with email and password fields, social login options, and forgot password link',
   definition: {
     id: 'login-screen',
     name: 'Login',
@@ -447,12 +450,7 @@ export const dashboardOverviewExample: ScreenExample = {
  * Get all example screen definitions
  */
 export function getAllExamples(): ScreenExample[] {
-  return [
-    teamGridExample,
-    dataTableExample,
-    loginFormExample,
-    dashboardOverviewExample,
-  ];
+  return [teamGridExample, dataTableExample, loginFormExample, dashboardOverviewExample];
 }
 
 /**
@@ -477,13 +475,27 @@ export function getMatchingExamples(description: string, limit: number = 2): Scr
     }
 
     // Boost score for category matches
-    if (lowerDesc.includes('team') && example.name.toLowerCase().includes('team')) {score += 5;}
-    if (lowerDesc.includes('table') && example.name.toLowerCase().includes('table')) {score += 5;}
-    if (lowerDesc.includes('login') && example.name.toLowerCase().includes('login')) {score += 5;}
-    if (lowerDesc.includes('dashboard') && example.name.toLowerCase().includes('dashboard')) {score += 5;}
-    if (lowerDesc.includes('grid') && example.name.toLowerCase().includes('grid')) {score += 3;}
-    if (lowerDesc.includes('form') && example.name.toLowerCase().includes('form')) {score += 3;}
-    if (lowerDesc.includes('auth') && example.name.toLowerCase().includes('login')) {score += 3;}
+    if (lowerDesc.includes('team') && example.name.toLowerCase().includes('team')) {
+      score += 5;
+    }
+    if (lowerDesc.includes('table') && example.name.toLowerCase().includes('table')) {
+      score += 5;
+    }
+    if (lowerDesc.includes('login') && example.name.toLowerCase().includes('login')) {
+      score += 5;
+    }
+    if (lowerDesc.includes('dashboard') && example.name.toLowerCase().includes('dashboard')) {
+      score += 5;
+    }
+    if (lowerDesc.includes('grid') && example.name.toLowerCase().includes('grid')) {
+      score += 3;
+    }
+    if (lowerDesc.includes('form') && example.name.toLowerCase().includes('form')) {
+      score += 3;
+    }
+    if (lowerDesc.includes('auth') && example.name.toLowerCase().includes('login')) {
+      score += 3;
+    }
 
     return { example, score };
   });

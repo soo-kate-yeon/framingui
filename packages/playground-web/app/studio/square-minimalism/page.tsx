@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { ArrowRight, Search, Menu } from "lucide-react";
+
+import { ArrowRight, Menu } from "lucide-react";
 
 /**
  * [VERIFICATION] Agentic Styling output simulation
