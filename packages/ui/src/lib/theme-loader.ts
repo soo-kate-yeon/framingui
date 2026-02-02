@@ -26,6 +26,7 @@ export interface ThemeDefinition {
         brand: Record<string, OKLCHColor>;
         neutral: Record<string, OKLCHColor>;
         accent?: Record<string, OKLCHColor>;
+        white: OKLCHColor;
       };
       spacing: Record<string, string>;
       radius: Record<string, string>;
