@@ -32,7 +32,11 @@ import { BREAKPOINT_VALUES } from './layout-tokens/responsive.js';
 /**
  * Layout token union type - can be shell, page, section, or advanced section
  */
-export type LayoutToken = ShellToken | PageLayoutToken | SectionPatternToken | AdvancedSectionPatternToken;
+export type LayoutToken =
+  | ShellToken
+  | PageLayoutToken
+  | SectionPatternToken
+  | AdvancedSectionPatternToken;
 
 /**
  * CSS generation options
@@ -352,7 +356,9 @@ export function generateSectionClasses(sections: SectionPatternToken[]): string 
  * @returns true if the token is an advanced section pattern (masonry, sticky, collapsible)
  */
 function isAdvancedSectionToken(token: LayoutToken): token is AdvancedSectionPatternToken {
-  if (!('type' in token)) {return false;}
+  if (!('type' in token)) {
+    return false;
+  }
   const advancedTypes = ['masonry', 'sticky', 'collapsible'];
   return advancedTypes.includes((token as SectionPatternToken | AdvancedSectionPatternToken).type);
 }
@@ -514,11 +520,15 @@ export function generateAdvancedSectionClasses(sections: AdvancedSectionPatternT
  * @param sections - Array of advanced section pattern tokens
  * @returns CSS state classes for advanced sections
  */
-export function generateAdvancedSectionStateClasses(sections: AdvancedSectionPatternToken[]): string {
+export function generateAdvancedSectionStateClasses(
+  sections: AdvancedSectionPatternToken[]
+): string {
   let css = '';
 
   for (const section of sections) {
-    if (!section.states) {continue;}
+    if (!section.states) {
+      continue;
+    }
 
     const className = section.id.replace(/\./g, '-');
 
@@ -883,13 +893,16 @@ export function generateLayoutCSS(
   const pages = tokens.filter(t => 'purpose' in t) as PageLayoutToken[];
 
   // Separate standard sections from advanced sections
-  const allSections = tokens.filter(t => 'type' in t) as (SectionPatternToken | AdvancedSectionPatternToken)[];
+  const allSections = tokens.filter(t => 'type' in t) as (
+    | SectionPatternToken
+    | AdvancedSectionPatternToken
+  )[];
   const advancedTypes = ['masonry', 'sticky', 'collapsible'];
   const standardSections = allSections.filter(
     t => !advancedTypes.includes(t.type)
   ) as SectionPatternToken[];
-  const advancedSections = allSections.filter(
-    t => advancedTypes.includes(t.type)
+  const advancedSections = allSections.filter(t =>
+    advancedTypes.includes(t.type)
   ) as AdvancedSectionPatternToken[];
 
   // 1. Generate CSS variables

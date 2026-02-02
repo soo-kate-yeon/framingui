@@ -72,23 +72,20 @@ describe('Advanced Section Pattern Tokens - Token Definitions', () => {
     expect(['grid', 'flex']).toContain(pattern!.css.display);
   });
 
-  test.each(advancedPatternIds)(
-    'token %s has responsive config for all breakpoints',
-    patternId => {
-      const pattern = getAdvancedSectionPatternToken(patternId);
+  test.each(advancedPatternIds)('token %s has responsive config for all breakpoints', patternId => {
+    const pattern = getAdvancedSectionPatternToken(patternId);
 
-      // default는 필수
-      expect(pattern!.responsive.default).toBeDefined();
-      expect(pattern!.responsive.default.display).toBeDefined();
+    // default는 필수
+    expect(pattern!.responsive.default).toBeDefined();
+    expect(pattern!.responsive.default.display).toBeDefined();
 
-      // 다른 breakpoint는 선택적이지만 존재해야 함
-      expect(pattern!.responsive.sm).toBeDefined();
-      expect(pattern!.responsive.md).toBeDefined();
-      expect(pattern!.responsive.lg).toBeDefined();
-      expect(pattern!.responsive.xl).toBeDefined();
-      expect(pattern!.responsive['2xl']).toBeDefined();
-    }
-  );
+    // 다른 breakpoint는 선택적이지만 존재해야 함
+    expect(pattern!.responsive.sm).toBeDefined();
+    expect(pattern!.responsive.md).toBeDefined();
+    expect(pattern!.responsive.lg).toBeDefined();
+    expect(pattern!.responsive.xl).toBeDefined();
+    expect(pattern!.responsive['2xl']).toBeDefined();
+  });
 
   test.each(advancedPatternIds)('token %s has tokenBindings', patternId => {
     const pattern = getAdvancedSectionPatternToken(patternId);
@@ -661,13 +658,7 @@ describe('Responsive Configurations', () => {
   it('all tokens use valid token reference format in bindings (where applicable)', () => {
     const tokenReferencePattern = /^[a-z]+\.[a-z-]+(\.[a-z0-9-]+)*$/;
     // CSS literal values that are not token references
-    const cssLiteralValues = [
-      'responsive',
-      'sticky',
-      '100',
-      '200ms',
-      'ease-in-out',
-    ];
+    const cssLiteralValues = ['responsive', 'sticky', '100', '200ms', 'ease-in-out'];
 
     allTokens.forEach(token => {
       Object.entries(token.tokenBindings).forEach(([key, value]) => {
@@ -790,7 +781,9 @@ describe('Token Bindings', () => {
     const stickySections = getAdvancedSectionsByType('sticky');
 
     stickySections.forEach(section => {
-      expect(section.tokenBindings.shadowDefault || section.tokenBindings.shadowStuck).toBeDefined();
+      expect(
+        section.tokenBindings.shadowDefault || section.tokenBindings.shadowStuck
+      ).toBeDefined();
     });
   });
 
@@ -853,7 +846,9 @@ describe('Mobile-First Responsive Behavior', () => {
     const defaultCSS = SECTION_MASONRY.responsive.default as MasonrySectionCSS;
     const lgCSS = SECTION_MASONRY.responsive.lg as Partial<MasonrySectionCSS>;
 
-    expect(parseInt(defaultCSS.columnCount ?? '0')).toBeLessThan(parseInt(lgCSS?.columnCount ?? '0'));
+    expect(parseInt(defaultCSS.columnCount ?? '0')).toBeLessThan(
+      parseInt(lgCSS?.columnCount ?? '0')
+    );
   });
 
   it('collapsible sidebar is hidden on mobile', () => {
