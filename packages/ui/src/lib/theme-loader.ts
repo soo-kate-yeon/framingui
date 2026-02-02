@@ -142,7 +142,7 @@ export function themeToCSS(theme: ThemeDefinition): string {
   --tekton-bg-popover-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
 
   --tekton-bg-primary: ${resolveColor(tokens.semantic.background.brand.default)};
-  --tekton-bg-primary-foreground: ${oklchToCSS(tokens.atomic.color.neutral.white)};
+  --tekton-bg-primary-foreground: ${oklchToCSS(tokens.atomic.color.white)};
 
   --tekton-bg-secondary: ${resolveColor(tokens.semantic.background.surface.emphasis)};
   --tekton-bg-secondary-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
@@ -154,7 +154,7 @@ export function themeToCSS(theme: ThemeDefinition): string {
   --tekton-bg-accent-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
 
   --tekton-bg-destructive: ${oklchToCSS({ l: 0.5, c: 0.2, h: 30 })}; /* Default red */
-  --tekton-bg-destructive-foreground: ${oklchToCSS(tokens.atomic.color.neutral.white)};
+  --tekton-bg-destructive-foreground: ${oklchToCSS(tokens.atomic.color.white)};
 
   /* ========================================
      Tekton Border Tokens

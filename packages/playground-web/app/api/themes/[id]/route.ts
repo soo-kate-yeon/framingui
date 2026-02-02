@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { loadTheme } from '@tekton/core';
 
 export async function GET(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
