@@ -111,7 +111,10 @@ export function resolveRecipe(
 
     return undefined;
   } catch (error) {
-    console.warn(`[Recipe Resolver] Failed to resolve recipe for ${componentType}.${variant}:`, error);
+    console.warn(
+      `[Recipe Resolver] Failed to resolve recipe for ${componentType}.${variant}:`,
+      error
+    );
     return undefined;
   }
 }
@@ -125,7 +128,9 @@ export function resolveRecipe(
  * mergeClassName("p-4", "bg-white border") → "bg-white border p-4"
  */
 function mergeClassName(existing: string | undefined, recipe: string): string {
-  if (!existing) {return recipe;}
+  if (!existing) {
+    return recipe;
+  }
 
   // 중복 제거를 위해 Set 사용
   const existingClasses = existing.split(/\s+/).filter(Boolean);
@@ -144,10 +149,7 @@ function mergeClassName(existing: string | undefined, recipe: string): string {
  * @param themeId - 테마 ID
  * @returns 레시피가 적용된 노드 (원본 수정하지 않음)
  */
-export function applyRecipeToNode(
-  node: ComponentNode,
-  themeId: string
-): ComponentNode {
+export function applyRecipeToNode(node: ComponentNode, themeId: string): ComponentNode {
   const result = { ...node };
 
   // variant가 있으면 레시피 조회
@@ -201,10 +203,7 @@ export function applyRecipesToBlueprint(
  * @param themeId - 테마 ID
  * @returns 적용된 레시피 개수
  */
-export function countAppliedRecipes(
-  components: ComponentNode[],
-  themeId: string
-): number {
+export function countAppliedRecipes(components: ComponentNode[], themeId: string): number {
   let count = 0;
 
   function traverse(node: ComponentNode) {

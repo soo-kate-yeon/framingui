@@ -91,10 +91,7 @@ const SCREEN_DEFINITION_SCHEMA = {
                   description: 'Component props',
                 },
                 children: {
-                  oneOf: [
-                    { type: 'string' },
-                    { type: 'array' },
-                  ],
+                  oneOf: [{ type: 'string' }, { type: 'array' }],
                   description: 'Child content or nested components',
                 },
               },
@@ -285,31 +282,39 @@ export async function getScreenGenerationContextTool(
         {
           step: 1,
           action: 'Review Context',
-          description: 'Review the templateMatch, components, schema, examples, and hints provided in this response',
+          description:
+            'Review the templateMatch, components, schema, examples, and hints provided in this response',
         },
         {
           step: 2,
           action: 'Generate Screen Definition',
-          description: 'Create a JSON Screen Definition following the schema structure. Use templateMatch.skeleton as a starting point if available.',
-          example: JSON.stringify({
-            id: 'my-screen',
-            shell: 'shell.web.app',
-            page: 'page.dashboard',
-            themeId: input.themeId || 'your-theme-id',
-            sections: [{ id: 'main', pattern: 'section.container', components: [] }],
-          }, null, 2),
+          description:
+            'Create a JSON Screen Definition following the schema structure. Use templateMatch.skeleton as a starting point if available.',
+          example: JSON.stringify(
+            {
+              id: 'my-screen',
+              shell: 'shell.web.app',
+              page: 'page.dashboard',
+              themeId: input.themeId || 'your-theme-id',
+              sections: [{ id: 'main', pattern: 'section.container', components: [] }],
+            },
+            null,
+            2
+          ),
         },
         {
           step: 3,
           action: 'Validate Definition',
           tool: 'validate-screen-definition',
-          description: 'Call validate-screen-definition with your generated definition to check for errors',
+          description:
+            'Call validate-screen-definition with your generated definition to check for errors',
           example: '{ "definition": <your-screen-definition>, "strict": true }',
         },
         {
           step: 4,
           action: 'Fix Validation Errors',
-          description: 'If validation fails, review the errors and suggestions, then fix and re-validate',
+          description:
+            'If validation fails, review the errors and suggestions, then fix and re-validate',
         },
         {
           step: 5,
@@ -338,7 +343,8 @@ export async function getScreenGenerationContextTool(
       components: components.length > 0 ? components : undefined,
       schema: {
         screenDefinition: SCREEN_DEFINITION_SCHEMA,
-        description: 'JSON Schema for Screen Definition - use this structure to create valid screen definitions',
+        description:
+          'JSON Schema for Screen Definition - use this structure to create valid screen definitions',
       },
       examples: examples && examples.length > 0 ? examples : undefined,
       themeRecipes: themeRecipes && themeRecipes.length > 0 ? themeRecipes : undefined,

@@ -108,16 +108,7 @@ const KEYWORD_TEMPLATE_MAP: Record<string, string[]> = {
 
   // Feedback Templates
   'feedback.loading': ['loading', 'spinner', 'wait', '로딩', 'progress', 'ローディング', '加载中'],
-  'feedback.error': [
-    'error',
-    '404',
-    '500',
-    'not found',
-    '오류',
-    'error page',
-    'エラー',
-    '错误',
-  ],
+  'feedback.error': ['error', '404', '500', 'not found', '오류', 'error page', 'エラー', '错误'],
   'feedback.empty': [
     'empty',
     'no data',
@@ -275,7 +266,9 @@ export function getLayoutRecommendation(
   templateId: string
 ): (typeof TEMPLATE_LAYOUT_RECOMMENDATIONS)[string] | null {
   const category = templateId.split('.')[0];
-  if (!category) {return null;}
+  if (!category) {
+    return null;
+  }
   return TEMPLATE_LAYOUT_RECOMMENDATIONS[category] || null;
 }
 

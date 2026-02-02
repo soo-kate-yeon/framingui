@@ -323,7 +323,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             description: {
               type: 'string',
-              description: 'Natural language description of the screen to generate (5-1000 characters)',
+              description:
+                'Natural language description of the screen to generate (5-1000 characters)',
               minLength: 5,
               maxLength: 1000,
             },
@@ -353,7 +354,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             strict: {
               type: 'boolean',
-              description: 'Enable strict validation (default: true). In strict mode, unknown tokens/components are errors; otherwise they are warnings.',
+              description:
+                'Enable strict validation (default: true). In strict mode, unknown tokens/components are errors; otherwise they are warnings.',
             },
           },
           required: ['definition'],

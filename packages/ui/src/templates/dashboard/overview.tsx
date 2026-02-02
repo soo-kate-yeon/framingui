@@ -79,11 +79,11 @@ export function DashboardTemplateComponent({
                 <Card className="h-full">
                   <CardHeader>
                     <CardTitle>{texts.secondary_title || 'Activity'}</CardTitle>
-                    <CardDescription>{texts.secondary_description || 'Recent updates'}</CardDescription>
+                    <CardDescription>
+                      {texts.secondary_description || 'Recent updates'}
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-0">
-                    {slots.secondaryContent}
-                  </CardContent>
+                  <CardContent className="p-0">{slots.secondaryContent}</CardContent>
                 </Card>
               </div>
             )}
@@ -105,7 +105,8 @@ export const DashboardTemplate: ScreenTemplate = {
   id: 'dashboard.overview',
   name: 'Dashboard Overview',
   category: 'dashboard',
-  description: 'Standard dashboard layout with sidebar, metrics, and content areas (12-column grid)',
+  description:
+    'Standard dashboard layout with sidebar, metrics, and content areas (12-column grid)',
 
   skeleton: {
     shell: 'sidebar-layout',
@@ -141,12 +142,7 @@ export const DashboardTemplate: ScreenTemplate = {
   },
 
   customizable: {
-    texts: [
-      'title',
-      'subtitle',
-      'texts.secondary_title',
-      'texts.secondary_description',
-    ],
+    texts: ['title', 'subtitle', 'texts.secondary_title', 'texts.secondary_description'],
     optional: ['metrics', 'additionalSections'],
     slots: [
       'sidebar',
