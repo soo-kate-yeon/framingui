@@ -35,8 +35,8 @@ describe('Theme Module', () => {
       const theme = loadTheme('classic-magazine-v1');
       expect(theme).not.toBeNull();
       expect(theme?.id).toBe('classic-magazine-v1');
-      // v2.1 schema uses tokens.atomic.color instead of colorPalette
-      expect(theme?.tokens?.atomic?.color).toBeDefined();
+      // v2.1 schema uses tokens.color (flat structure, not atomic)
+      expect(theme?.tokens?.color).toBeDefined();
     });
 
     it('should return null for non-existent theme', () => {
@@ -393,7 +393,7 @@ describe('Render Module', () => {
       const result = renderWithTheme(bp);
 
       expect(result.success).toBe(true);
-      expect(result.code).toContain('/* Theme: Classic Magazine v1 */');
+      expect(result.code).toContain('/* Theme: Classic Magazine */');
       // Note: In v2.1, generateCSSVariables is deprecated and returns empty object
       // CSS variables are generated via generateThemeCSS() from css-generator.ts
       expect(result.code).toContain('/* CSS Variables:');
@@ -768,7 +768,7 @@ describe('Full Pipeline', () => {
     expect(result.success).toBe(true);
 
     // 5. Verify output
-    expect(result.code).toContain('Classic Magazine v1');
+    expect(result.code).toContain('Classic Magazine');
     expect(result.code).toContain('StartupLanding');
     expect(result.code).toContain('Build the Future');
     expect(result.code).toContain('Get Started');

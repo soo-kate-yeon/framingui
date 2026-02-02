@@ -52,7 +52,7 @@ describe('MCP Schemas', () => {
       const result = GenerateBlueprintInputSchema.safeParse(input);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toContain('at least 10 characters');
+        expect(result.error.errors[0]!.message).toContain('at least 10 characters');
       }
     });
 
@@ -65,7 +65,7 @@ describe('MCP Schemas', () => {
       const result = GenerateBlueprintInputSchema.safeParse(input);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.errors[0].message).toContain('not exceed 500 characters');
+        expect(result.error.errors[0]!.message).toContain('not exceed 500 characters');
       }
     });
 

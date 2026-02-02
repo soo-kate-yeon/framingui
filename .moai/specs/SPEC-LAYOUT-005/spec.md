@@ -1,9 +1,9 @@
 ---
 id: SPEC-LAYOUT-005
-version: "1.0.0"
-status: "draft"
+version: "1.1.0"
+status: "completed"
 created: "2026-01-29"
-updated: "2026-01-29"
+updated: "2026-02-03"
 author: "soo-kate-yeon"
 priority: "medium"
 ---
@@ -12,6 +12,7 @@ priority: "medium"
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.1.0 | 2026-02-03 | soo-kate-yeon | HIGH priority patterns implemented (Phase 1 complete) |
 | 1.0.0 | 2026-01-29 | soo-kate-yeon | Initial draft |
 
 ---

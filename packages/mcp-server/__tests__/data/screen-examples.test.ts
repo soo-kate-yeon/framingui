@@ -84,9 +84,6 @@ describe('screen-examples', () => {
     });
 
     it('data table example should have table component', () => {
-      const hasTable = teamGridExample.definition.sections.some(section =>
-        section.components.some(comp => comp.type === 'Table' || comp.type === 'Card')
-      );
       // This example may not have Table, adjust expectation
       expect(dataTableExample.definition.sections.length).toBeGreaterThan(0);
     });

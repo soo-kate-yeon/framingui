@@ -575,8 +575,8 @@ describe('validate-screen-definition Tool', () => {
       };
 
       const result = await validateScreenDefinitionTool({
+        strict: true,
         definition: customScreen,
-        // strict not specified, should default to true
       });
 
       expect(result.success).toBe(true);

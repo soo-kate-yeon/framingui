@@ -3,7 +3,7 @@
  * SPEC-MCP-004 Phase 4: Theme Recipes Auto-Application
  */
 
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   resolveRecipe,
   applyRecipeToNode,
@@ -262,8 +262,8 @@ describe('Recipe Resolver', () => {
       const count = countAppliedRecipes(result, 'equinox-fitness-v2');
 
       // Card에 레시피 적용됨
-      const card = result[0];
-      const cardClassName = (card.props as any)?.className;
+      const card = result[0]!;
+      const cardClassName = (card.props as Record<string, unknown>)?.className;
       expect(cardClassName).toContain('p-6'); // 기존 className 유지
       expect(cardClassName).toMatch(/bg-|border/); // 레시피 추가됨
 

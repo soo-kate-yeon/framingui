@@ -318,7 +318,7 @@ describe('list_tokens Tool', () => {
     expect(result.success).toBe(true);
     expect(result.shells).toBeDefined();
 
-    const firstShell = result.shells![0];
+    const firstShell = result.shells![0]!;
     expect(firstShell).toHaveProperty('id');
     expect(firstShell).toHaveProperty('platform');
     expect(typeof firstShell.id).toBe('string');

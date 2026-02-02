@@ -16,6 +16,8 @@
     "ci:test": "pnpm --filter \"./packages/core\" --filter \"./packages/ui\" test",
     "build": "tsc",
     "build:all": "pnpm --filter \"./packages/*\" build",
+    "typecheck": "tsc --build",
+    "ci:local": "pnpm lint:all && pnpm build:all && pnpm typecheck && pnpm ci:test",
     "dev": "tsc --watch",
     "lint": "eslint src tests --ext .ts,.js",
     "lint:all": "pnpm --filter \"./packages/*\" lint",
