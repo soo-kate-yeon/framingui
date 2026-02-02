@@ -6,16 +6,16 @@
   "designDNA": {
     "moodKeywords": [
       "friendly",
-      "human",
-      "intuitive",
-      "approachable"
+      "chunky",
+      "approachable",
+      "tactile"
     ],
     "targetEmotion": "joyful_clarity",
-    "visualAtmosphere": "modern tech playground",
+    "visualAtmosphere": "modern mobility app",
     "principles": [
-      "Super-ellipses everywhere (Radius is character)",
-      "Touch-first sizing (Chunky & Clickable)",
-      "Color as energy (Dynamic primaries)"
+      "Surface over Border (Use White on Gray)",
+      "Maximum Radius (Super-ellipse everywhere)",
+      "Chunky Padding (Touch-first sizing)"
     ]
   },
   "tokens": {
@@ -25,52 +25,22 @@
           "50": {
             "l": 0.98,
             "c": 0.02,
-            "h": 250
+            "h": 220
           },
           "100": {
             "l": 0.95,
             "c": 0.05,
-            "h": 250
-          },
-          "200": {
-            "l": 0.90,
-            "c": 0.10,
-            "h": 250
-          },
-          "300": {
-            "l": 0.82,
-            "c": 0.15,
-            "h": 250
-          },
-          "400": {
-            "l": 0.70,
-            "c": 0.20,
-            "h": 250
+            "h": 220
           },
           "500": {
-            "l": 0.60,
-            "c": 0.25,
-            "h": 250
-          },
-          "600": {
             "l": 0.50,
-            "c": 0.28,
-            "h": 250
-          },
-          "700": {
-            "l": 0.40,
-            "c": 0.20,
-            "h": 250
-          },
-          "800": {
-            "l": 0.25,
-            "c": 0.15,
-            "h": 250
+            "c": 0.25,
+            "h": 220
           },
           "900": {
-            "l": 0.15,
+            "l": 0.10,
             "c": 0.10,
-            "h": 250
+            "h": 220
           }
         },
         "neutral": {
@@ -79,158 +49,87 @@
             "c": 0,
             "h": 0
           },
-          "50": {
-            "l": 0.98,
-            "c": 0.005,
-            "h": 240
-          },
-          "100": {
-            "l": 0.95,
-            "c": 0.01,
-            "h": 240
-          },
-          "200": {
-            "l": 0.90,
-            "c": 0.02,
-            "h": 240
-          },
-          "300": {
-            "l": 0.80,
-            "c": 0.03,
-            "h": 240
-          },
-          "400": {
-            "l": 0.65,
-            "c": 0.04,
-            "h": 240
-          },
-          "500": {
-            "l": 0.50,
-            "c": 0.05,
-            "h": 240
-          },
-          "600": {
-            "l": 0.40,
-            "c": 0.05,
-            "h": 240
-          },
-          "700": {
-            "l": 0.30,
-            "c": 0.04,
-            "h": 240
-          },
-          "800": {
-            "l": 0.20,
-            "c": 0.03,
-            "h": 240
-          },
-          "900": {
-            "l": 0.10,
-            "c": 0.02,
-            "h": 240
+          "cool": {
+            "50": {
+              "l": 0.96,
+              "c": 0.01,
+              "h": 210
+            },
+            "100": {
+              "l": 0.93,
+              "c": 0.02,
+              "h": 210
+            },
+            "200": {
+              "l": 0.88,
+              "c": 0.03,
+              "h": 210
+            },
+            "900": {
+              "l": 0.10,
+              "c": 0.05,
+              "h": 210
+            }
           }
         }
       },
+      "spacing": {
+        "4": "16px",
+        "6": "24px",
+        "8": "32px",
+        "12": "48px"
+      },
       "radius": {
-        "none": "0px",
-        "sm": "8px",
         "md": "16px",
         "lg": "24px",
         "xl": "32px",
         "2xl": "40px",
         "3xl": "48px",
-        "full": "9999px",
-        "circle": "50%"
-      },
-      "spacing": {
-        "0": "0",
-        "1": "4px",
-        "2": "8px",
-        "3": "12px",
-        "4": "16px",
-        "5": "20px",
-        "6": "24px",
-        "8": "32px",
-        "10": "40px",
-        "12": "48px",
-        "16": "64px",
-        "20": "80px",
-        "24": "96px"
+        "full": "9999px"
       }
     },
     "semantic": {
       "background": {
-        "canvas": "atomic.color.neutral.50",
+        "canvas": "atomic.color.neutral.cool.50",
         "surface": {
-          "subtle": "atomic.color.neutral.50",
           "default": "atomic.color.neutral.white",
-          "emphasis": "atomic.color.neutral.100"
+          "subtle": "atomic.color.neutral.cool.100"
         },
         "brand": {
-          "subtle": "atomic.color.brand.50",
-          "default": "atomic.color.brand.500",
-          "emphasis": "atomic.color.brand.600"
-        }
-      },
-      "border": {
-        "default": {
-          "subtle": "atomic.color.neutral.100",
-          "default": "atomic.color.neutral.200",
-          "emphasis": "atomic.color.neutral.300"
+          "default": "atomic.color.brand.500"
         }
       },
       "text": {
-        "primary": "atomic.color.neutral.900",
-        "secondary": "atomic.color.neutral.500",
-        "muted": "atomic.color.neutral.400",
-        "onBrand": "atomic.color.neutral.white"
+        "primary": "atomic.color.neutral.cool.900",
+        "secondary": "atomic.color.neutral.cool.500"
+      },
+      "border": {
+        "subtle": "atomic.color.neutral.cool.200"
       }
     },
     "recipes": {
       "card": {
-        "default": "bg-white rounded-[32px] p-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-neutral-100/50",
-        "highlight": "bg-brand-50 rounded-[32px] p-6 border border-brand-100",
-        "glass": "bg-white/80 backdrop-blur-xl rounded-[32px] border border-white/40 shadow-sm",
-        "outlined": "bg-transparent border-2 border-neutral-200 rounded-[32px] p-6 hover:border-neutral-300 transition-colors"
+        "default": "bg-white rounded-[32px] p-6 shadow-sm border-none",
+        "floating": "bg-white rounded-[40px] p-8 shadow-xl shadow-neutral-900/5 border-none",
+        "flat": "bg-neutral-100 rounded-[24px] p-6 border-none"
       },
       "button": {
-        "primary": "bg-neutral-900 text-white rounded-full px-8 py-4 text-base font-bold shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-neutral-900/20",
-        "secondary": "bg-white text-neutral-900 border-2 border-neutral-200 rounded-full px-8 py-4 font-bold hover:bg-neutral-50 hover:border-neutral-300 transition-all",
-        "ghost": "bg-transparent text-neutral-600 rounded-full px-6 py-3 font-semibold hover:bg-neutral-100 hover:text-neutral-900 transition-colors",
-        "icon": "p-3 rounded-full hover:bg-neutral-100 text-neutral-900 transition-colors"
+        "primary": "bg-brand-500 text-white rounded-full h-14 px-8 text-lg font-bold shadow-lg shadow-brand-500/20 hover:scale-105 active:scale-95 transition-all",
+        "secondary": "bg-white text-neutral-900 rounded-full h-14 px-8 text-lg font-bold shadow-sm hover:bg-neutral-50 transition-colors",
+        "ghost": "bg-transparent text-neutral-600 rounded-full h-12 px-6 font-semibold hover:bg-neutral-100 transition-colors"
       },
       "input": {
-        "default": "w-full bg-neutral-100 border-transparent focus:bg-white focus:border-neutral-900 focus:ring-0 rounded-full py-4 px-6 text-lg placeholder:text-neutral-400 transition-all duration-200",
-        "search": "w-full bg-white shadow-sm border border-neutral-200 rounded-full py-4 pl-12 pr-6 text-lg focus:shadow-md transition-shadow"
-      },
-      "table": {
-        "root": "w-full text-left border-collapse",
-        "header": "pb-4 text-xs font-bold uppercase tracking-wider text-neutral-400 pl-6",
-        "row": "hover:bg-neutral-50 transition-colors group border-b border-transparent hover:border-neutral-100 rounded-2xl",
-        "cell": "py-5 pl-6 text-sm text-neutral-600 font-medium group-hover:text-neutral-900 first:rounded-l-2xl last:rounded-r-2xl"
-      },
-      "badge": {
-        "neutral": "inline-flex items-center rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-bold text-neutral-600 shadow-sm",
-        "brand": "inline-flex items-center rounded-full bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow-sm shadow-brand-500/30"
-      },
-      "toggle": {
-        "label": "relative inline-flex items-center cursor-pointer",
-        "input": "sr-only peer",
-        "wrapper": "w-14 h-8 bg-neutral-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-neutral-900"
-      },
-      "tabs": {
-        "list": "inline-flex bg-neutral-100 p-1.5 rounded-full gap-1",
-        "trigger": "px-6 py-2.5 rounded-full text-sm font-bold text-neutral-500 data-[state=active]:bg-white data-[state=active]:text-neutral-900 data-[state=active]:shadow-sm transition-all"
+        "default": "w-full bg-white rounded-full h-16 px-8 text-xl shadow-sm border-none placeholder:text-neutral-400 focus:ring-4 focus:ring-brand-500/10 transition-all",
+        "search": "w-full bg-white rounded-full h-14 px-12 text-lg shadow-[0_2px_12px_rgba(0,0,0,0.04)] border-none"
       },
       "typography": {
-        "hero": "text-5xl md:text-7xl font-extrabold tracking-tight text-neutral-900 leading-[0.9]",
-        "eyebrow": "text-sm font-bold uppercase tracking-widest text-brand-600 mb-3 block",
-        "body": "text-lg leading-relaxed text-neutral-600 font-medium",
-        "label": "text-sm font-bold text-neutral-900 mb-1.5 block ml-1"
+        "h1": "font-sans text-5xl md:text-6xl font-bold tracking-tight text-neutral-900",
+        "h2": "font-sans text-3xl font-bold tracking-tight text-neutral-900",
+        "body": "font-sans text-lg text-neutral-600 leading-relaxed font-medium"
       },
       "layout": {
-        "section": "py-12 px-6 max-w-7xl mx-auto bg-white rounded-[48px] my-6 shadow-sm border border-neutral-100",
-        "grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        "container": "bg-neutral-50 min-h-screen",
+        "section": "max-w-7xl mx-auto px-6 py-20"
       }
     }
   }
