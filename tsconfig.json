@@ -19,7 +19,18 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true
   },
-  "exclude": ["node_modules", "dist", "coverage", "packages/playground-web", "packages/ui", "**/__tests__/**", "**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "packages/playground-web",
+    "packages/ui",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "references": [
     { "path": "./packages/core" },
     { "path": "./packages/tokens" },
