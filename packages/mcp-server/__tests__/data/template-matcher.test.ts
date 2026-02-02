@@ -21,28 +21,28 @@ describe('Template Matcher', () => {
     it('로그인 관련 설명에서 auth.login 템플릿 매칭', () => {
       const result = matchTemplates('Create a login page with email and password');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].templateId).toBe('auth.login');
-      expect(result[0].matchedKeywords).toContain('login');
+      expect(result[0]!.templateId).toBe('auth.login');
+      expect(result[0]!.matchedKeywords).toContain('login');
     });
 
     it('대시보드 관련 설명에서 dashboard.overview 템플릿 매칭', () => {
       const result = matchTemplates('Build an analytics dashboard with metrics and charts');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].templateId).toBe('dashboard.overview');
-      expect(result[0].matchedKeywords).toContain('dashboard');
+      expect(result[0]!.templateId).toBe('dashboard.overview');
+      expect(result[0]!.matchedKeywords).toContain('dashboard');
     });
 
     it('회원가입 관련 설명에서 auth.signup 템플릿 매칭', () => {
       const result = matchTemplates('Create a signup form for new user registration');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].templateId).toBe('auth.signup');
+      expect(result[0]!.templateId).toBe('auth.signup');
     });
 
     it('한국어 키워드 지원', () => {
       const result = matchTemplates('사용자 로그인 페이지 만들기');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].templateId).toBe('auth.login');
-      expect(result[0].matchedKeywords).toContain('로그인');
+      expect(result[0]!.templateId).toBe('auth.login');
+      expect(result[0]!.matchedKeywords).toContain('로그인');
     });
 
     it('topN 파라미터로 결과 개수 제한', () => {
@@ -61,9 +61,9 @@ describe('Template Matcher', () => {
     it('layoutRecommendation 포함', () => {
       const result = matchTemplates('Build a login page');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].layoutRecommendation).toBeDefined();
-      expect(result[0].layoutRecommendation.shell).toBeDefined();
-      expect(result[0].layoutRecommendation.page).toBeDefined();
+      expect(result[0]!.layoutRecommendation).toBeDefined();
+      expect(result[0]!.layoutRecommendation.shell).toBeDefined();
+      expect(result[0]!.layoutRecommendation.page).toBeDefined();
     });
   });
 
@@ -122,13 +122,13 @@ describe('Template Matcher', () => {
     it('일본어 키워드 지원 (ダッシュボード)', () => {
       const result = matchTemplates('ダッシュボード画面を作成');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].templateId).toBe('dashboard.overview');
+      expect(result[0]!.templateId).toBe('dashboard.overview');
     });
 
     it('중국어 키워드 지원 (登录)', () => {
       const result = matchTemplates('创建一个登录页面');
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].templateId).toBe('auth.login');
+      expect(result[0]!.templateId).toBe('auth.login');
     });
   });
 
@@ -139,14 +139,14 @@ describe('Template Matcher', () => {
       );
       expect(result.length).toBeGreaterThan(0);
       // login이 더 많이 언급되므로 auth.login이 우선
-      expect(['auth.login', 'auth.forgot-password']).toContain(result[0].templateId);
+      expect(['auth.login', 'auth.forgot-password']).toContain(result[0]!.templateId);
     });
 
     it('신뢰도순 정렬 확인', () => {
       const result = matchTemplates('dashboard with user profile settings');
       // 결과가 신뢰도 내림차순으로 정렬되어야 함
       for (let i = 0; i < result.length - 1; i++) {
-        expect(result[i].confidence).toBeGreaterThanOrEqual(result[i + 1].confidence);
+        expect(result[i]!.confidence).toBeGreaterThanOrEqual(result[i + 1]!.confidence);
       }
     });
   });
