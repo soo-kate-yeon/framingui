@@ -15,10 +15,18 @@ export const metadata: Metadata = {
   description: 'Choose a design system theme to start building.',
 };
 
+interface GalleryItem {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  thumbnail?: string;
+}
+
 export default function ExplorePage() {
   // Fetch real themes from the connected MCP core (FileSystem)
   let themes;
-  let galleryItems;
+  let galleryItems: GalleryItem[];
 
   try {
     themes = listThemes();
