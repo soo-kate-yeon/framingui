@@ -13,11 +13,16 @@ import type {
   OrientationConfig,
   FullResponsiveConfig,
   ResponsiveConfig,
+  AdvancedSectionPatternToken,
+  MasonrySectionCSS,
+  StickySectionCSS,
+  CollapsibleSectionCSS,
 } from './layout-tokens/types.js';
 import { resolveTokenReference } from './layout-resolver.js';
 import { getAllShellTokens } from './layout-tokens/shells.js';
 import { getAllPageLayoutTokens } from './layout-tokens/pages.js';
 import { getAllSectionPatternTokens } from './layout-tokens/sections.js';
+import { getAllAdvancedSectionPatternTokens } from './layout-tokens/sections-advanced.js';
 import { BREAKPOINT_VALUES } from './layout-tokens/responsive.js';
 
 // ============================================================================
@@ -25,9 +30,9 @@ import { BREAKPOINT_VALUES } from './layout-tokens/responsive.js';
 // ============================================================================
 
 /**
- * Layout token union type - can be shell, page, or section
+ * Layout token union type - can be shell, page, section, or advanced section
  */
-export type LayoutToken = ShellToken | PageLayoutToken | SectionPatternToken;
+export type LayoutToken = ShellToken | PageLayoutToken | SectionPatternToken | AdvancedSectionPatternToken;
 
 /**
  * CSS generation options
@@ -341,6 +346,399 @@ export function generateSectionClasses(sections: SectionPatternToken[]): string 
 }
 
 /**
+ * Check if a token is an advanced section pattern
+ *
+ * @param token - Token to check
+ * @returns true if the token is an advanced section pattern (masonry, sticky, collapsible)
+ */
+function isAdvancedSectionToken(token: LayoutToken): token is AdvancedSectionPatternToken {
+  if (!('type' in token)) {return false;}
+  const advancedTypes = ['masonry', 'sticky', 'collapsible'];
+  return advancedTypes.includes((token as SectionPatternToken | AdvancedSectionPatternToken).type);
+}
+
+/**
+ * Generate utility classes for advanced section pattern tokens
+ * Handles masonry, sticky, and collapsible patterns
+ *
+ * @param sections - Array of advanced section pattern tokens
+ * @returns CSS classes for advanced sections
+ */
+export function generateAdvancedSectionClasses(sections: AdvancedSectionPatternToken[]): string {
+  let css = '';
+
+  for (const section of sections) {
+    // Generate class name: .section-{pattern}
+    // section.masonry → .section-masonry
+    const className = section.id.replace(/\./g, '-');
+
+    css += `.${className} {\n`;
+
+    const sectionCSS = section.css;
+
+    // Handle based on section type
+    if (section.type === 'masonry') {
+      const masonryCSS = sectionCSS as MasonrySectionCSS;
+
+      // Masonry-specific properties
+      if (masonryCSS.columnCount) {
+        css += `  column-count: ${masonryCSS.columnCount};\n`;
+      }
+
+      if (masonryCSS.columnGap) {
+        const columnGapValue = tokenRefToVar(masonryCSS.columnGap);
+        css += `  column-gap: ${columnGapValue};\n`;
+      }
+
+      if (masonryCSS.breakInside) {
+        css += `  break-inside: ${masonryCSS.breakInside};\n`;
+      }
+
+      if (masonryCSS.columnFill) {
+        css += `  column-fill: ${masonryCSS.columnFill};\n`;
+      }
+    } else if (section.type === 'sticky') {
+      const stickyCSS = sectionCSS as StickySectionCSS;
+
+      // Common flex properties first
+      if (stickyCSS.display) {
+        css += `  display: ${stickyCSS.display};\n`;
+      }
+
+      if (stickyCSS.flexDirection) {
+        css += `  flex-direction: ${stickyCSS.flexDirection};\n`;
+      }
+
+      if (stickyCSS.alignItems) {
+        css += `  align-items: ${stickyCSS.alignItems};\n`;
+      }
+
+      if (stickyCSS.justifyContent) {
+        css += `  justify-content: ${stickyCSS.justifyContent};\n`;
+      }
+
+      if (stickyCSS.gap) {
+        const gapValue = tokenRefToVar(stickyCSS.gap);
+        css += `  gap: ${gapValue};\n`;
+      }
+
+      // Sticky-specific properties
+      if (stickyCSS.position) {
+        css += `  position: ${stickyCSS.position};\n`;
+      }
+
+      if (stickyCSS.top) {
+        const topValue = tokenRefToVar(stickyCSS.top);
+        css += `  top: ${topValue};\n`;
+      }
+
+      if (stickyCSS.bottom) {
+        const bottomValue = tokenRefToVar(stickyCSS.bottom);
+        css += `  bottom: ${bottomValue};\n`;
+      }
+
+      if (stickyCSS.zIndex !== undefined) {
+        css += `  z-index: ${stickyCSS.zIndex};\n`;
+      }
+
+      if (stickyCSS.padding) {
+        const paddingValue = tokenRefToVar(stickyCSS.padding);
+        css += `  padding: ${paddingValue};\n`;
+      }
+
+      if (stickyCSS.backgroundColor) {
+        const bgValue = tokenRefToVar(stickyCSS.backgroundColor);
+        css += `  background-color: ${bgValue};\n`;
+      }
+
+      if (stickyCSS.boxShadow) {
+        const shadowValue = tokenRefToVar(stickyCSS.boxShadow);
+        css += `  box-shadow: ${shadowValue};\n`;
+      }
+    } else if (section.type === 'collapsible') {
+      const collapsibleCSS = sectionCSS as CollapsibleSectionCSS;
+
+      // Common flex properties first
+      if (collapsibleCSS.display) {
+        css += `  display: ${collapsibleCSS.display};\n`;
+      }
+
+      if (collapsibleCSS.flexDirection) {
+        css += `  flex-direction: ${collapsibleCSS.flexDirection};\n`;
+      }
+
+      // Collapsible-specific properties
+      if (collapsibleCSS.width) {
+        const widthValue = tokenRefToVar(collapsibleCSS.width);
+        css += `  width: ${widthValue};\n`;
+      }
+
+      if (collapsibleCSS.minWidth) {
+        const minWidthValue = tokenRefToVar(collapsibleCSS.minWidth);
+        css += `  min-width: ${minWidthValue};\n`;
+      }
+
+      if (collapsibleCSS.transition) {
+        css += `  transition: ${collapsibleCSS.transition};\n`;
+      }
+
+      if (collapsibleCSS.overflow) {
+        css += `  overflow: ${collapsibleCSS.overflow};\n`;
+      }
+
+      if (collapsibleCSS.willChange) {
+        css += `  will-change: ${collapsibleCSS.willChange};\n`;
+      }
+
+      if (collapsibleCSS.padding) {
+        const paddingValue = tokenRefToVar(collapsibleCSS.padding);
+        css += `  padding: ${paddingValue};\n`;
+      }
+
+      if (collapsibleCSS.gap) {
+        const gapValue = tokenRefToVar(collapsibleCSS.gap);
+        css += `  gap: ${gapValue};\n`;
+      }
+    }
+
+    css += `}\n\n`;
+  }
+
+  return css;
+}
+
+/**
+ * Generate state classes for interactive advanced section patterns
+ * Handles stuck states for sticky patterns and collapsed states for collapsible patterns
+ *
+ * @param sections - Array of advanced section pattern tokens
+ * @returns CSS state classes for advanced sections
+ */
+export function generateAdvancedSectionStateClasses(sections: AdvancedSectionPatternToken[]): string {
+  let css = '';
+
+  for (const section of sections) {
+    if (!section.states) {continue;}
+
+    const className = section.id.replace(/\./g, '-');
+
+    // Generate stuck state for sticky patterns
+    if (section.states.stuck) {
+      css += `.${className}.is-stuck {\n`;
+
+      const stuckCSS = section.states.stuck as Partial<StickySectionCSS>;
+
+      if (stuckCSS.boxShadow) {
+        const shadowValue = tokenRefToVar(stuckCSS.boxShadow);
+        css += `  box-shadow: ${shadowValue};\n`;
+      }
+
+      if (stuckCSS.backgroundColor) {
+        const bgValue = tokenRefToVar(stuckCSS.backgroundColor);
+        css += `  background-color: ${bgValue};\n`;
+      }
+
+      if (stuckCSS.zIndex !== undefined) {
+        css += `  z-index: ${stuckCSS.zIndex};\n`;
+      }
+
+      css += `}\n\n`;
+    }
+
+    // Generate collapsed state for collapsible patterns
+    if (section.states.collapsed) {
+      css += `.${className}.is-collapsed {\n`;
+
+      const collapsedCSS = section.states.collapsed as Partial<CollapsibleSectionCSS>;
+
+      if (collapsedCSS.width) {
+        const widthValue = tokenRefToVar(collapsedCSS.width);
+        css += `  width: ${widthValue};\n`;
+      }
+
+      if (collapsedCSS.minWidth) {
+        const minWidthValue = tokenRefToVar(collapsedCSS.minWidth);
+        css += `  min-width: ${minWidthValue};\n`;
+      }
+
+      if (collapsedCSS.overflow) {
+        css += `  overflow: ${collapsedCSS.overflow};\n`;
+      }
+
+      if (collapsedCSS.padding) {
+        const paddingValue = tokenRefToVar(collapsedCSS.padding);
+        css += `  padding: ${paddingValue};\n`;
+      }
+
+      css += `}\n\n`;
+    }
+  }
+
+  return css;
+}
+
+/**
+ * Advanced section type union
+ */
+type AdvancedSectionType = 'masonry' | 'sticky' | 'collapsible';
+
+/**
+ * Generate media query CSS for advanced section patterns
+ * Internal helper function for generateMediaQueries
+ *
+ * @param className - CSS class name for the section
+ * @param type - Section type ('masonry', 'sticky', 'collapsible')
+ * @param responsiveConfig - Responsive configuration for this breakpoint
+ * @returns CSS string for the media query content
+ */
+function generateAdvancedSectionMediaQueryCSS(
+  className: string,
+  type: AdvancedSectionType,
+  responsiveConfig: unknown
+): string {
+  let css = '';
+
+  if (!responsiveConfig || Object.keys(responsiveConfig as object).length === 0) {
+    return css;
+  }
+
+  css += `  .${className} {\n`;
+
+  if (type === 'masonry') {
+    const masonryConfig = responsiveConfig as Partial<MasonrySectionCSS>;
+
+    if (masonryConfig.columnCount) {
+      css += `    column-count: ${masonryConfig.columnCount};\n`;
+    }
+
+    if (masonryConfig.columnGap) {
+      const columnGapValue = tokenRefToVar(masonryConfig.columnGap);
+      css += `    column-gap: ${columnGapValue};\n`;
+    }
+
+    if (masonryConfig.breakInside) {
+      css += `    break-inside: ${masonryConfig.breakInside};\n`;
+    }
+
+    if (masonryConfig.columnFill) {
+      css += `    column-fill: ${masonryConfig.columnFill};\n`;
+    }
+
+    // Common section properties
+    if (masonryConfig.display) {
+      css += `    display: ${masonryConfig.display};\n`;
+    }
+
+    if (masonryConfig.gap) {
+      const gapValue = tokenRefToVar(masonryConfig.gap);
+      css += `    gap: ${gapValue};\n`;
+    }
+  } else if (type === 'sticky') {
+    const stickyConfig = responsiveConfig as Partial<StickySectionCSS>;
+
+    if (stickyConfig.display) {
+      css += `    display: ${stickyConfig.display};\n`;
+    }
+
+    if (stickyConfig.flexDirection) {
+      css += `    flex-direction: ${stickyConfig.flexDirection};\n`;
+    }
+
+    if (stickyConfig.alignItems) {
+      css += `    align-items: ${stickyConfig.alignItems};\n`;
+    }
+
+    if (stickyConfig.justifyContent) {
+      css += `    justify-content: ${stickyConfig.justifyContent};\n`;
+    }
+
+    if (stickyConfig.gap) {
+      const gapValue = tokenRefToVar(stickyConfig.gap);
+      css += `    gap: ${gapValue};\n`;
+    }
+
+    if (stickyConfig.position) {
+      css += `    position: ${stickyConfig.position};\n`;
+    }
+
+    if (stickyConfig.top) {
+      const topValue = tokenRefToVar(stickyConfig.top);
+      css += `    top: ${topValue};\n`;
+    }
+
+    if (stickyConfig.bottom) {
+      const bottomValue = tokenRefToVar(stickyConfig.bottom);
+      css += `    bottom: ${bottomValue};\n`;
+    }
+
+    if (stickyConfig.zIndex !== undefined) {
+      css += `    z-index: ${stickyConfig.zIndex};\n`;
+    }
+
+    if (stickyConfig.padding) {
+      const paddingValue = tokenRefToVar(stickyConfig.padding);
+      css += `    padding: ${paddingValue};\n`;
+    }
+
+    if (stickyConfig.backgroundColor) {
+      const bgValue = tokenRefToVar(stickyConfig.backgroundColor);
+      css += `    background-color: ${bgValue};\n`;
+    }
+
+    if (stickyConfig.boxShadow) {
+      const shadowValue = tokenRefToVar(stickyConfig.boxShadow);
+      css += `    box-shadow: ${shadowValue};\n`;
+    }
+  } else if (type === 'collapsible') {
+    const collapsibleConfig = responsiveConfig as Partial<CollapsibleSectionCSS>;
+
+    if (collapsibleConfig.display) {
+      css += `    display: ${collapsibleConfig.display};\n`;
+    }
+
+    if (collapsibleConfig.flexDirection) {
+      css += `    flex-direction: ${collapsibleConfig.flexDirection};\n`;
+    }
+
+    if (collapsibleConfig.width) {
+      const widthValue = tokenRefToVar(collapsibleConfig.width);
+      css += `    width: ${widthValue};\n`;
+    }
+
+    if (collapsibleConfig.minWidth) {
+      const minWidthValue = tokenRefToVar(collapsibleConfig.minWidth);
+      css += `    min-width: ${minWidthValue};\n`;
+    }
+
+    if (collapsibleConfig.transition) {
+      css += `    transition: ${collapsibleConfig.transition};\n`;
+    }
+
+    if (collapsibleConfig.overflow) {
+      css += `    overflow: ${collapsibleConfig.overflow};\n`;
+    }
+
+    if (collapsibleConfig.willChange) {
+      css += `    will-change: ${collapsibleConfig.willChange};\n`;
+    }
+
+    if (collapsibleConfig.padding) {
+      const paddingValue = tokenRefToVar(collapsibleConfig.padding);
+      css += `    padding: ${paddingValue};\n`;
+    }
+
+    if (collapsibleConfig.gap) {
+      const gapValue = tokenRefToVar(collapsibleConfig.gap);
+      css += `    gap: ${gapValue};\n`;
+    }
+  }
+
+  css += `  }\n\n`;
+
+  return css;
+}
+
+/**
  * Generate responsive media queries for all breakpoints
  *
  * @param tokens - Array of layout tokens
@@ -373,56 +771,66 @@ export function generateMediaQueries(tokens: LayoutToken[]): string {
         // PageLayoutToken
         className = token.id.replace(/\./g, '-');
       } else if ('type' in token) {
-        // SectionPatternToken
-        const sectionToken = token as SectionPatternToken;
+        // SectionPatternToken or AdvancedSectionPatternToken
+        const sectionToken = token as SectionPatternToken | AdvancedSectionPatternToken;
         className = sectionToken.id.replace(/\./g, '-');
 
-        // Generate section CSS for this breakpoint
-        const responsiveCss = responsiveConfig as Partial<SectionCSS>;
+        // Check if this is an advanced section pattern
+        if (isAdvancedSectionToken(token)) {
+          const advancedToken = token as AdvancedSectionPatternToken;
+          mediaQueryContent += generateAdvancedSectionMediaQueryCSS(
+            className,
+            advancedToken.type as AdvancedSectionType,
+            responsiveConfig
+          );
+        } else {
+          // Generate standard section CSS for this breakpoint
+          const responsiveCss = responsiveConfig as Partial<SectionCSS>;
 
-        if (Object.keys(responsiveCss).length > 0) {
-          mediaQueryContent += `  .${className} {\n`;
+          if (Object.keys(responsiveCss).length > 0) {
+            mediaQueryContent += `  .${className} {\n`;
 
-          if (responsiveCss.display) {
-            mediaQueryContent += `    display: ${responsiveCss.display};\n`;
+            if (responsiveCss.display) {
+              mediaQueryContent += `    display: ${responsiveCss.display};\n`;
+            }
+
+            if (responsiveCss.gridTemplateColumns) {
+              mediaQueryContent += `    grid-template-columns: ${responsiveCss.gridTemplateColumns};\n`;
+            }
+
+            if (responsiveCss.gridTemplateRows) {
+              mediaQueryContent += `    grid-template-rows: ${responsiveCss.gridTemplateRows};\n`;
+            }
+
+            if (responsiveCss.gap) {
+              const gapValue = tokenRefToVar(responsiveCss.gap);
+              mediaQueryContent += `    gap: ${gapValue};\n`;
+            }
+
+            if (responsiveCss.flexDirection) {
+              mediaQueryContent += `    flex-direction: ${responsiveCss.flexDirection};\n`;
+            }
+
+            if (responsiveCss.alignItems) {
+              mediaQueryContent += `    align-items: ${responsiveCss.alignItems};\n`;
+            }
+
+            if (responsiveCss.justifyContent) {
+              mediaQueryContent += `    justify-content: ${responsiveCss.justifyContent};\n`;
+            }
+
+            if (responsiveCss.maxWidth) {
+              const maxWidthValue = tokenRefToVar(responsiveCss.maxWidth);
+              mediaQueryContent += `    max-width: ${maxWidthValue};\n`;
+            }
+
+            if (responsiveCss.padding) {
+              const paddingValue = tokenRefToVar(responsiveCss.padding);
+              mediaQueryContent += `    padding: ${paddingValue};\n`;
+            }
+
+            mediaQueryContent += `  }\n\n`;
           }
-
-          if (responsiveCss.gridTemplateColumns) {
-            mediaQueryContent += `    grid-template-columns: ${responsiveCss.gridTemplateColumns};\n`;
-          }
-
-          if (responsiveCss.gridTemplateRows) {
-            mediaQueryContent += `    grid-template-rows: ${responsiveCss.gridTemplateRows};\n`;
-          }
-
-          if (responsiveCss.gap) {
-            const gapValue = tokenRefToVar(responsiveCss.gap);
-            mediaQueryContent += `    gap: ${gapValue};\n`;
-          }
-
-          if (responsiveCss.flexDirection) {
-            mediaQueryContent += `    flex-direction: ${responsiveCss.flexDirection};\n`;
-          }
-
-          if (responsiveCss.alignItems) {
-            mediaQueryContent += `    align-items: ${responsiveCss.alignItems};\n`;
-          }
-
-          if (responsiveCss.justifyContent) {
-            mediaQueryContent += `    justify-content: ${responsiveCss.justifyContent};\n`;
-          }
-
-          if (responsiveCss.maxWidth) {
-            const maxWidthValue = tokenRefToVar(responsiveCss.maxWidth);
-            mediaQueryContent += `    max-width: ${maxWidthValue};\n`;
-          }
-
-          if (responsiveCss.padding) {
-            const paddingValue = tokenRefToVar(responsiveCss.padding);
-            mediaQueryContent += `    padding: ${paddingValue};\n`;
-          }
-
-          mediaQueryContent += `  }\n\n`;
         }
       }
     }
@@ -473,7 +881,16 @@ export function generateLayoutCSS(
   // Separate tokens by type
   const shells = tokens.filter(t => 'platform' in t) as ShellToken[];
   const pages = tokens.filter(t => 'purpose' in t) as PageLayoutToken[];
-  const sections = tokens.filter(t => 'type' in t) as SectionPatternToken[];
+
+  // Separate standard sections from advanced sections
+  const allSections = tokens.filter(t => 'type' in t) as (SectionPatternToken | AdvancedSectionPatternToken)[];
+  const advancedTypes = ['masonry', 'sticky', 'collapsible'];
+  const standardSections = allSections.filter(
+    t => !advancedTypes.includes(t.type)
+  ) as SectionPatternToken[];
+  const advancedSections = allSections.filter(
+    t => advancedTypes.includes(t.type)
+  ) as AdvancedSectionPatternToken[];
 
   // 1. Generate CSS variables
   if (includeVariables) {
@@ -501,11 +918,25 @@ export function generateLayoutCSS(
       }
     }
 
-    // Section classes
-    if (sections.length > 0) {
-      const sectionCSS = generateSectionClasses(sections);
+    // Standard section classes
+    if (standardSections.length > 0) {
+      const sectionCSS = generateSectionClasses(standardSections);
       if (sectionCSS) {
         css += sectionCSS;
+      }
+    }
+
+    // Advanced section classes (masonry, sticky, collapsible)
+    if (advancedSections.length > 0) {
+      const advancedCSS = generateAdvancedSectionClasses(advancedSections);
+      if (advancedCSS) {
+        css += advancedCSS;
+      }
+
+      // Generate state classes for interactive patterns
+      const stateCSS = generateAdvancedSectionStateClasses(advancedSections);
+      if (stateCSS) {
+        css += stateCSS;
       }
     }
   }
@@ -545,8 +976,9 @@ export function generateAllLayoutCSS(options: CSSGenerationOptions = {}): string
   const shells = getAllShellTokens();
   const pages = getAllPageLayoutTokens();
   const sections = getAllSectionPatternTokens();
+  const advancedSections = getAllAdvancedSectionPatternTokens();
 
-  return generateLayoutCSS([...shells, ...pages, ...sections], options);
+  return generateLayoutCSS([...shells, ...pages, ...sections, ...advancedSections], options);
 }
 
 // ============================================================================

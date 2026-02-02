@@ -148,8 +148,19 @@ export interface FullResponsiveConfig<T> extends ResponsiveConfig<T> {
 /**
  * Section Type - Layout primitive classification
  * Defines the fundamental layout pattern type
+ *
+ * Basic types: grid, flex, split, stack, container
+ * Advanced types: masonry, sticky, collapsible
  */
-export type SectionType = 'grid' | 'flex' | 'split' | 'stack' | 'container';
+export type SectionType =
+  | 'grid'
+  | 'flex'
+  | 'split'
+  | 'stack'
+  | 'container'
+  | 'masonry'
+  | 'sticky'
+  | 'collapsible';
 
 /**
  * Section CSS Configuration
@@ -182,6 +193,104 @@ export interface SectionCSS {
 
   /** Padding (token reference) */
   padding?: TokenReference;
+}
+
+// ============================================================================
+// Advanced Section CSS Interfaces - Extended CSS for advanced patterns
+// ============================================================================
+
+/**
+ * Masonry Section CSS Configuration
+ * CSS properties for Pinterest-style waterfall grid layouts
+ * Uses CSS columns for broad browser support
+ *
+ * @extends SectionCSS
+ */
+export interface MasonrySectionCSS extends SectionCSS {
+  /** Number of columns (CSS column-count value as string) */
+  columnCount?: string;
+
+  /** Gap between columns (token reference, e.g., "atomic.spacing.4") */
+  columnGap?: TokenReference;
+
+  /** Prevent item breaking inside columns */
+  breakInside?: 'avoid' | 'auto';
+
+  /** Column fill behavior */
+  columnFill?: 'auto' | 'balance';
+}
+
+/**
+ * Sticky Section CSS Configuration
+ * CSS properties for sticky header/footer layouts
+ *
+ * @extends SectionCSS
+ */
+export interface StickySectionCSS extends SectionCSS {
+  /** CSS position property for sticky behavior */
+  position?: 'sticky' | 'relative';
+
+  /** Distance from top of viewport (token reference) */
+  top?: TokenReference;
+
+  /** Distance from bottom of viewport (token reference) */
+  bottom?: TokenReference;
+
+  /** Z-index for stacking context */
+  zIndex?: number;
+
+  /** Box shadow for visual depth when stuck */
+  boxShadow?: TokenReference;
+
+  /** Background color for opaque sticky element */
+  backgroundColor?: TokenReference;
+}
+
+/**
+ * Collapsible Section CSS Configuration
+ * CSS properties for expandable/collapsible sidebar layouts
+ *
+ * @extends SectionCSS
+ */
+export interface CollapsibleSectionCSS extends SectionCSS {
+  /** Width when expanded (token reference) */
+  width?: TokenReference;
+
+  /** Minimum width when collapsed (token reference) */
+  minWidth?: TokenReference;
+
+  /** CSS transition for smooth collapse/expand animation */
+  transition?: string;
+
+  /** Overflow handling during collapse */
+  overflow?: 'hidden' | 'visible' | 'auto';
+
+  /** Whether the element will collapse (controls rendering behavior) */
+  willChange?: string;
+}
+
+/**
+ * Advanced Section Pattern Token - Extended token for advanced patterns
+ * Extends SectionPatternToken with additional advanced CSS properties
+ *
+ * @extends SectionPatternToken
+ */
+export interface AdvancedSectionPatternToken extends Omit<SectionPatternToken, 'css' | 'responsive'> {
+  /** CSS properties (may include advanced properties) */
+  css: SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS;
+
+  /** Responsive overrides with advanced CSS */
+  responsive: ResponsiveConfig<SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS>;
+
+  /** State configurations for interactive patterns (e.g., collapsed/expanded) */
+  states?: {
+    /** Default state configuration */
+    default?: Partial<SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS>;
+    /** Collapsed state configuration (for collapsible patterns) */
+    collapsed?: Partial<CollapsibleSectionCSS>;
+    /** Stuck state configuration (for sticky patterns) */
+    stuck?: Partial<StickySectionCSS>;
+  };
 }
 
 /**
