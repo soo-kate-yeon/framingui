@@ -20,87 +20,6 @@
     },
     "tokens": {
         "atomic": {
-            "color": {
-                "brand": {
-                    "100": {
-                        "l": 0.95,
-                        "c": 0,
-                        "h": 0
-                    },
-                    "500": {
-                        "l": 0,
-                        "c": 0,
-                        "h": 0
-                    },
-                    "900": {
-                        "l": 0,
-                        "c": 0,
-                        "h": 0
-                    }
-                },
-                "neutral": {
-                    "white": {
-                        "l": 1,
-                        "c": 0,
-                        "h": 0
-                    },
-                    "50": {
-                        "l": 0.98,
-                        "c": 0,
-                        "h": 0
-                    },
-                    "100": {
-                        "l": 0.96,
-                        "c": 0,
-                        "h": 0.01
-                    },
-                    "200": {
-                        "l": 0.92,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "300": {
-                        "l": 0.87,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "400": {
-                        "l": 0.75,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "500": {
-                        "l": 0.60,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "600": {
-                        "l": 0.45,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "700": {
-                        "l": 0.30,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "800": {
-                        "l": 0.15,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "900": {
-                        "l": 0.10,
-                        "c": 0.01,
-                        "h": 0
-                    },
-                    "950": {
-                        "l": 0.05,
-                        "c": 0.01,
-                        "h": 0
-                    }
-                }
-            },
             "radius": {
                 "none": "0px",
                 "sm": "0px",
@@ -108,40 +27,6 @@
                 "lg": "0px",
                 "full": "0px",
                 "circle": "50%"
-            },
-            "spacing": {
-                "4": "1rem",
-                "6": "1.5rem",
-                "8": "2rem",
-                "12": "3rem",
-                "24": "6rem"
-            }
-        },
-        "semantic": {
-            "background": {
-                "canvas": "atomic.color.neutral.white",
-                "surface": {
-                    "subtle": "atomic.color.neutral.50",
-                    "default": "atomic.color.neutral.white",
-                    "emphasis": "atomic.color.neutral.100"
-                },
-                "brand": {
-                    "subtle": "atomic.color.neutral.100",
-                    "default": "atomic.color.brand.500",
-                    "emphasis": "atomic.color.brand.900"
-                }
-            },
-            "border": {
-                "default": {
-                    "subtle": "atomic.color.neutral.100",
-                    "default": "atomic.color.neutral.200",
-                    "emphasis": "atomic.color.neutral.900"
-                }
-            },
-            "text": {
-                "primary": "atomic.color.neutral.900",
-                "secondary": "atomic.color.neutral.600",
-                "muted": "atomic.color.neutral.400"
             }
         },
         "recipes": {

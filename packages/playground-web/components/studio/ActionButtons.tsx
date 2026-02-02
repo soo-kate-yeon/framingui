@@ -75,68 +75,24 @@ export function ActionButtons({
   };
 
   return (
-    <div
-      className={`action-buttons ${className}`}
-      style={{
-        display: 'flex',
-        gap: 'var(--tekton-spacing-sm, 8px)',
-      }}
-    >
-      {/* Save Button */}
+    <div className={`action-buttons flex gap-2 ${className}`}>
+      {/* Save Button - Square Minimalism Primary */}
       <button
         type="button"
         onClick={handleSave}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--tekton-spacing-xs, 4px)',
-          padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-md, 12px)',
-          backgroundColor: 'var(--tekton-bg-primary, #3b82f6)',
-          color: 'var(--tekton-bg-primary-foreground, #ffffff)',
-          border: 'none',
-          borderRadius: 'var(--tekton-radius-md, 6px)',
-          fontSize: 'var(--tekton-font-size-sm, 14px)',
-          fontWeight: '500',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = '0.9';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = '1';
-        }}
+        className="flex items-center gap-2 px-4 py-2 bg-neutral-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors"
       >
-        <Save size={16} aria-hidden="true" />
+        <Save size={14} aria-hidden="true" />
         <span>Save</span>
       </button>
 
-      {/* Export Button */}
+      {/* Export Button - Square Minimalism Secondary */}
       <button
         type="button"
         onClick={handleExport}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--tekton-spacing-xs, 4px)',
-          padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-md, 12px)',
-          backgroundColor: 'var(--tekton-bg-secondary, #6b7280)',
-          color: 'var(--tekton-bg-secondary-foreground, #ffffff)',
-          border: 'none',
-          borderRadius: 'var(--tekton-radius-md, 6px)',
-          fontSize: 'var(--tekton-font-size-sm, 14px)',
-          fontWeight: '500',
-          cursor: 'pointer',
-          transition: 'all 0.2s ease',
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.opacity = '0.9';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.opacity = '1';
-        }}
+        className="flex items-center gap-2 px-4 py-2 bg-white text-neutral-900 border border-neutral-200 text-xs font-bold uppercase tracking-wider hover:bg-neutral-50 hover:border-neutral-900 transition-colors"
       >
-        <Download size={16} aria-hidden="true" />
+        <Download size={14} aria-hidden="true" />
         <span>Export</span>
       </button>
     </div>

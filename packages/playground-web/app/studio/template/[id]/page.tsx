@@ -3,6 +3,7 @@
  * [SPEC-UI-003][TAG-UI003-039]
  *
  * 미리보기 모드 (라이선스 없이 2개 대표 화면 표시)
+ * Theme: Square Minimalism
  */
 
 'use client';
@@ -48,155 +49,74 @@ export default function TemplatePreviewPage({ params }: TemplatePreviewPageProps
   const hasValidLicense = hasLicense(templateId);
 
   // [TAG-UI003-018] 유효한 라이선스가 있으면 Edit Mode로 리디렉션
+  // templateId가 설정된 후에만 리디렉션 체크
   useEffect(() => {
-    if (hasValidLicense) {
+    if (templateId && hasValidLicense) {
       router.push(`/studio/template/${templateId}/edit`);
     }
   }, [hasValidLicense, templateId, router]);
 
+  // templateId 로딩 중
+  if (!templateId) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-xs uppercase tracking-wider text-neutral-400">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Header */}
-      <header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'var(--tekton-spacing-md, 12px) var(--tekton-spacing-lg, 16px)',
-          backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-          borderBottom: '1px solid var(--tekton-border-default, #e5e7eb)',
-          gap: 'var(--tekton-spacing-md, 12px)',
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              fontSize: 'var(--tekton-font-size-lg, 18px)',
-              fontWeight: '600',
-              color: 'var(--tekton-text-foreground, #111827)',
-            }}
-          >
-            {templateId}
-          </h1>
-          <p
-            style={{
-              fontSize: 'var(--tekton-font-size-sm, 14px)',
-              color: 'var(--tekton-text-muted-foreground, #6b7280)',
-            }}
-          >
-            Preview Mode - 2 screens available
-          </p>
-        </div>
-
-        <DeviceSwitcher selectedDevice={device} onDeviceChange={setDevice} />
-      </header>
-
-      {/* Screen Selector */}
-      <div
-        style={{
-          padding: 'var(--tekton-spacing-md, 12px) var(--tekton-spacing-lg, 16px)',
-          backgroundColor: 'var(--tekton-bg-background, #ffffff)',
-          borderBottom: '1px solid var(--tekton-border-default, #e5e7eb)',
-        }}
-      >
-        <ScreenSelector
-          screens={PREVIEW_SCREENS}
-          selectedScreenId={selectedScreenId}
-          onScreenChange={setSelectedScreenId}
-          isPreviewMode={true}
-        />
-      </div>
-
-      {/* Preview Area */}
-      <div
-        style={{
-          flex: 1,
-          overflow: 'auto',
-          backgroundColor: 'var(--tekton-bg-muted, #f9fafb)',
-        }}
-      >
-        <DevicePreview device={device}>
-          <div
-            style={{
-              padding: 'var(--tekton-spacing-xl, 24px)',
-              minHeight: '600px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              gap: 'var(--tekton-spacing-lg, 16px)',
-            }}
-          >
-            {/* Preview Content Placeholder */}
-            <div
-              style={{
-                textAlign: 'center',
-                padding: 'var(--tekton-spacing-xl, 24px)',
-                backgroundColor: 'var(--tekton-bg-muted, #f9fafb)',
-                borderRadius: 'var(--tekton-radius-lg, 8px)',
-                border: '2px dashed var(--tekton-border-default, #e5e7eb)',
-              }}
-            >
-              <div
-                style={{
-                  width: '64px',
-                  height: '64px',
-                  margin: '0 auto var(--tekton-spacing-md, 12px)',
-                  backgroundColor: 'var(--tekton-bg-accent, #f3f4f6)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Lock size={32} color="var(--tekton-text-muted-foreground, #6b7280)" />
-              </div>
-              <h2
-                style={{
-                  fontSize: 'var(--tekton-font-size-lg, 18px)',
-                  fontWeight: '600',
-                  color: 'var(--tekton-text-foreground, #111827)',
-                  marginBottom: 'var(--tekton-spacing-sm, 8px)',
-                }}
-              >
-                {selectedScreenId === 'dashboard' ? 'Dashboard Preview' : 'Login Preview'}
-              </h2>
-              <p
-                style={{
-                  fontSize: 'var(--tekton-font-size-sm, 14px)',
-                  color: 'var(--tekton-text-muted-foreground, #6b7280)',
-                  marginBottom: 'var(--tekton-spacing-lg, 16px)',
-                }}
-              >
-                Purchase a license to unlock full access and customization
+    <div className="flex flex-col h-full overflow-hidden">
+          {/* Header - Square Minimalism Theme */}
+          <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-neutral-200">
+            <div>
+              <h1 className="text-lg font-bold uppercase tracking-wider text-neutral-900">
+                {templateId}
+              </h1>
+              <p className="text-[10px] uppercase tracking-widest text-neutral-400 mt-0.5">
+                Preview Mode - 2 screens available
               </p>
-              <button
-                type="button"
-                onClick={() => router.push('/studio/account')}
-                style={{
-                  padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-lg, 16px)',
-                  backgroundColor: 'var(--tekton-bg-primary, #3b82f6)',
-                  color: 'var(--tekton-bg-primary-foreground, #ffffff)',
-                  border: 'none',
-                  borderRadius: 'var(--tekton-radius-md, 6px)',
-                  fontSize: 'var(--tekton-font-size-sm, 14px)',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                }}
-              >
-                Get License
-              </button>
             </div>
+
+            <DeviceSwitcher selectedDevice={device} onDeviceChange={setDevice} />
+          </header>
+
+          {/* Screen Selector */}
+          <div className="px-6 py-3 bg-white border-b border-neutral-200">
+            <ScreenSelector
+              screens={PREVIEW_SCREENS}
+              selectedScreenId={selectedScreenId}
+              onScreenChange={setSelectedScreenId}
+              isPreviewMode={true}
+            />
           </div>
-        </DevicePreview>
-      </div>
+
+          {/* Preview Area */}
+          <div className="flex-1 overflow-auto bg-neutral-50">
+            <DevicePreview device={device}>
+              <div className="p-12 min-h-[600px] flex items-center justify-center">
+                {/* Preview Content Placeholder - Square Minimalism */}
+                <div className="text-center p-12 bg-white border-2 border-dashed border-neutral-200">
+                  <div className="w-16 h-16 mx-auto mb-6 bg-neutral-100 flex items-center justify-center">
+                    <Lock size={32} className="text-neutral-400" />
+                  </div>
+                  <h2 className="text-lg font-bold uppercase tracking-wider text-neutral-900 mb-2">
+                    {selectedScreenId === 'dashboard' ? 'Dashboard Preview' : 'Login Preview'}
+                  </h2>
+                  <p className="text-xs uppercase tracking-wide text-neutral-400 mb-6">
+                    Purchase a license to unlock full access
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/studio/account')}
+                    className="bg-neutral-900 text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors"
+                  >
+                    Get License
+                  </button>
+                </div>
+              </div>
+            </DevicePreview>
+          </div>
     </div>
   );
 }

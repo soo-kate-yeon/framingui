@@ -54,22 +54,29 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 const MOCK_LICENSES: License[] = [
   {
     id: 'lic-001',
-    templateId: 'linear-minimal-v1',
+    templateId: 'round-minimal-v1',
     key: 'MOCK-KEY-001',
     purchasedAt: new Date('2024-01-15'),
     status: 'active',
   },
   {
     id: 'lic-002',
-    templateId: 'dashboard-pro',
+    templateId: 'square-minimalism',
     key: 'MOCK-KEY-002',
     purchasedAt: new Date('2024-02-01'),
     status: 'active',
   },
   {
     id: 'lic-003',
-    templateId: 'round-minimal-v1',
+    templateId: 'equinox-fitness-v2',
     key: 'MOCK-KEY-003',
+    purchasedAt: new Date('2024-02-01'),
+    status: 'active',
+  },
+  {
+    id: 'lic-004',
+    templateId: 'classic-magazine-v1',
+    key: 'MOCK-KEY-004',
     purchasedAt: new Date('2024-02-01'),
     status: 'active',
   },
@@ -110,7 +117,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const mockUserData: UserData = {
         userId: mockUser.id,
         licenses: MOCK_LICENSES,
-        likedTemplates: ['linear-minimal-v1'],
+        likedTemplates: ['square-minimalism'],
         savedThemes: [],
       };
 

@@ -15,6 +15,8 @@ import { Separator } from '../../components/separator';
 import type { ScreenTemplate, ScreenTemplateProps } from '../types';
 import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 
+// ... imports
+
 /**
  * Dashboard Template Component
  */
@@ -31,18 +33,18 @@ export function DashboardTemplateComponent({
     <div className={`min-h-screen flex ${className}`}>
       {/* Sidebar */}
       {slots.sidebar && (
-        <aside className="w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-card)]">
+        <aside className="w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-card)] hidden lg:block">
           {slots.sidebar}
         </aside>
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-[var(--tekton-bg-background)]">
         {/* Header */}
-        <header className="sticky top-0 z-10 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-background)] p-[var(--tekton-spacing-4)]">
+        <header className="sticky top-0 z-10 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-background)]/80 backdrop-blur-md p-[var(--tekton-spacing-4)]">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold">{title}</h1>
+              <h1 className="text-2xl font-bold text-[var(--tekton-text-foreground)]">{title}</h1>
               <p className="text-sm text-[var(--tekton-text-muted-foreground)]">{subtitle}</p>
             </div>
             {slots.headerActions && <div>{slots.headerActions}</div>}
@@ -50,42 +52,40 @@ export function DashboardTemplateComponent({
         </header>
 
         {/* Content Area */}
-        <div className="p-[var(--tekton-spacing-6)] space-y-[var(--tekton-spacing-6)]">
+        <div className="py-[var(--tekton-layout-section-py,var(--tekton-spacing-6))] px-[var(--tekton-layout-container-px,var(--tekton-spacing-6))] space-y-[var(--tekton-layout-stack-gap,var(--tekton-spacing-6))] max-w-[var(--tekton-layout-container-xl)] mx-auto">
           {/* Metrics Row */}
           {slots.metrics && (
-            <div className="grid gap-[var(--tekton-spacing-4)] md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-[var(--tekton-spacing-4)] grid-cols-2 lg:grid-cols-4">
               {slots.metrics}
             </div>
           )}
 
           <Separator />
 
-          {/* Main Content Grid */}
-          <div className="grid gap-[var(--tekton-spacing-6)] lg:grid-cols-2">
-            {/* Primary Content */}
+          {/* Main Content Grid (12 Columns) */}
+          <div className="grid gap-x-[var(--tekton-layout-grid-gap-x,var(--tekton-spacing-6))] gap-y-[var(--tekton-layout-grid-gap-y,var(--tekton-spacing-6))] lg:grid-cols-12">
+            {/* Primary Content (8 Cols) */}
             {slots.primaryContent && (
-              <Card className="lg:col-span-1">
-                <CardHeader>
-                  <CardTitle>{texts.primary_title || 'Overview'}</CardTitle>
-                  <CardDescription>
-                    {texts.primary_description || 'Recent activity and statistics'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>{slots.primaryContent}</CardContent>
-              </Card>
+              <div className="lg:col-span-8 space-y-[var(--tekton-layout-stack-gap,var(--tekton-spacing-6))]">
+                {/* We remove the forced Card wrapper to allow full design control (e.g. Equinox Poster) */}
+                {slots.primaryContent}
+              </div>
             )}
 
-            {/* Secondary Content */}
+            {/* Secondary Content (4 Cols) */}
             {slots.secondaryContent && (
-              <Card className="lg:col-span-1">
-                <CardHeader>
-                  <CardTitle>{texts.secondary_title || 'Recent Activity'}</CardTitle>
-                  <CardDescription>
-                    {texts.secondary_description || 'Latest updates and notifications'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>{slots.secondaryContent}</CardContent>
-              </Card>
+              <div className="lg:col-span-4 space-y-[var(--tekton-layout-stack-gap,var(--tekton-spacing-6))]">
+                {/* Secondary content usually behaves like a sidebar panel */}
+                <Card className="h-full">
+                  <CardHeader>
+                    <CardTitle>{texts.secondary_title || 'Activity'}</CardTitle>
+                    <CardDescription>{texts.secondary_description || 'Recent updates'}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    {slots.secondaryContent}
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
 
@@ -105,7 +105,7 @@ export const DashboardTemplate: ScreenTemplate = {
   id: 'dashboard.overview',
   name: 'Dashboard Overview',
   category: 'dashboard',
-  description: 'Standard dashboard layout with sidebar, metrics, and content areas',
+  description: 'Standard dashboard layout with sidebar, metrics, and content areas (12-column grid)',
 
   skeleton: {
     shell: 'sidebar-layout',
@@ -119,11 +119,18 @@ export const DashboardTemplate: ScreenTemplate = {
         Component: () => null,
       },
       {
-        id: 'dashboard-content',
-        name: 'Dashboard Content',
-        slot: 'main',
+        id: 'dashboard-main',
+        name: 'Main Content',
+        slot: 'primaryContent',
         required: true,
-        Component: DashboardTemplateComponent,
+        Component: () => null,
+      },
+      {
+        id: 'dashboard-side',
+        name: 'Side Panel',
+        slot: 'secondaryContent',
+        required: false,
+        Component: () => null,
       },
     ],
   },
@@ -137,10 +144,8 @@ export const DashboardTemplate: ScreenTemplate = {
     texts: [
       'title',
       'subtitle',
-      'primary_title',
-      'primary_description',
-      'secondary_title',
-      'secondary_description',
+      'texts.secondary_title',
+      'texts.secondary_description',
     ],
     optional: ['metrics', 'additionalSections'],
     slots: [
@@ -157,8 +162,8 @@ export const DashboardTemplate: ScreenTemplate = {
 
   Component: DashboardTemplateComponent,
 
-  version: '1.0.0',
+  version: '1.1.0',
   created: '2026-01-31',
-  updated: '2026-01-31',
+  updated: '2026-02-01',
   tags: ['dashboard', 'overview', 'analytics'],
 };
