@@ -1,0 +1,169 @@
+{
+  "$schema": "../screen-definition.schema.json",
+  "_comment": "Theme-integrated example with equinox-fitness-v2 - matches @tekton/core ScreenDefinitionSchema",
+
+  "id": "fitness-dashboard",
+  "name": "Fitness Performance Dashboard",
+  "description": "Elite workout stats dashboard with True Black canvas",
+  "shell": "shell.web.dashboard",
+  "page": "page.dashboard",
+  "themeId": "equinox-fitness-v2",
+
+  "sections": [
+    {
+      "id": "header",
+      "pattern": "section.container",
+      "components": [
+        {
+          "type": "Badge",
+          "props": { "variant": "neutral", "children": "MEMBER PORTAL" }
+        },
+        {
+          "type": "Heading",
+          "props": { "level": 1, "children": "YOUR PERFORMANCE" }
+        },
+        {
+          "type": "Text",
+          "props": { "children": "Track your progress. Push your limits. Achieve excellence." }
+        }
+      ]
+    },
+
+    {
+      "id": "stats",
+      "pattern": "section.grid-4",
+      "components": [
+        {
+          "type": "Card",
+          "props": { "variant": "glass" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "eyebrow", "children": "WORKOUTS THIS WEEK" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "12" }
+            },
+            {
+              "type": "Badge",
+              "props": { "variant": "accent", "children": "+3 FROM LAST WEEK" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "glass" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "eyebrow", "children": "CALORIES BURNED" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "4,820" }
+            },
+            {
+              "type": "Text",
+              "props": { "variant": "muted", "children": "687 daily average" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "glass" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "eyebrow", "children": "ACTIVE MINUTES" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "540" }
+            },
+            {
+              "type": "Text",
+              "props": { "variant": "muted", "children": "90% of 600 goal" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "glass" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "eyebrow", "children": "CURRENT STREAK" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "18" }
+            },
+            {
+              "type": "Badge",
+              "props": { "variant": "accent", "children": "DAYS" }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "progress",
+      "pattern": "section.container",
+      "components": [
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "eyebrow", "children": "WEEKLY GOAL PROGRESS" }
+            },
+            {
+              "type": "Progress",
+              "props": { "value": 90, "max": 100 }
+            },
+            {
+              "type": "Text",
+              "props": { "children": "1 more workout to hit your weekly goal" }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "cta",
+      "pattern": "section.container",
+      "components": [
+        {
+          "type": "Button",
+          "props": { "variant": "primary", "children": "START WORKOUT" }
+        },
+        {
+          "type": "Button",
+          "props": { "variant": "secondary", "children": "BOOK A CLASS" }
+        }
+      ]
+    }
+  ],
+
+  "meta": {
+    "version": "1.0.0",
+    "tags": ["fitness", "dashboard", "workout", "health"]
+  },
+
+  "_theme_recipe_mapping": {
+    "description": "When themeId is set, component variants map to theme recipes",
+    "mappings": {
+      "Card.glass": "tokens.recipes.card.glass → 'bg-neutral-900/50 backdrop-blur-md border-b border-white/10'",
+      "Card.outlined": "tokens.recipes.card.outlined → 'bg-transparent border border-neutral-800'",
+      "Button.primary": "tokens.recipes.button.primary → 'bg-white text-black h-12 px-8 uppercase tracking-widest text-xs font-bold'",
+      "Button.secondary": "tokens.recipes.button.secondary → 'bg-transparent border border-white/30 text-white h-12 px-8'",
+      "Badge.neutral": "tokens.recipes.badge.neutral",
+      "Badge.accent": "tokens.recipes.badge.accent",
+      "Text.eyebrow": "tokens.recipes.typography.eyebrow → 'text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500'"
+    }
+  }
+}

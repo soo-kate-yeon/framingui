@@ -1,0 +1,192 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tekton.dev/schemas/screen-definition.schema.json",
+  "title": "Screen Definition Schema",
+  "description": "JSON Schema for Tekton MCP generate_screen and validate_screen tools",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["id", "shell", "page", "sections"],
+
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Unique screen identifier (lowercase alphanumeric with hyphens)",
+      "examples": ["fitness-dashboard", "user-settings", "login-page"]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "description": "Human-readable screen name",
+      "examples": ["Fitness Dashboard", "User Settings", "Login Page"]
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Brief description of the screen purpose"
+    },
+    "themeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Theme ID for recipe mapping (e.g., 'equinox-fitness-v2')",
+      "examples": ["equinox-fitness-v2", "square-minimalism", "platform-minimal"]
+    },
+    "shell": {
+      "$ref": "#/definitions/shellToken"
+    },
+    "page": {
+      "$ref": "#/definitions/pageToken"
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/section" },
+      "description": "Array of page sections defining the content structure"
+    }
+  },
+
+  "definitions": {
+    "shellToken": {
+      "type": "string",
+      "enum": [
+        "shell.web.app",
+        "shell.web.dashboard",
+        "shell.web.auth",
+        "shell.web.marketing",
+        "shell.web.admin",
+        "shell.web.minimal",
+        "shell.mobile.app",
+        "shell.mobile.fullscreen",
+        "shell.mobile.modal",
+        "shell.mobile.tab",
+        "shell.mobile.drawer",
+        "shell.mobile.detail"
+      ],
+      "description": "Layout shell token defining the overall page structure (header, sidebar, footer placement)"
+    },
+    "pageToken": {
+      "type": "string",
+      "enum": [
+        "page.dashboard",
+        "page.resource",
+        "page.settings",
+        "page.detail",
+        "page.wizard",
+        "page.job",
+        "page.empty",
+        "page.onboarding"
+      ],
+      "description": "Page layout token defining the content area structure"
+    },
+    "sectionToken": {
+      "type": "string",
+      "enum": [
+        "section.grid-2",
+        "section.grid-3",
+        "section.grid-4",
+        "section.grid-auto",
+        "section.split-30-70",
+        "section.split-50-50",
+        "section.split-70-30",
+        "section.stack-start",
+        "section.stack-center",
+        "section.stack-end",
+        "section.sidebar-left",
+        "section.sidebar-right",
+        "section.container"
+      ],
+      "description": "Section layout token defining the grid/flex arrangement"
+    },
+        "section": {
+      "type": "object",
+      "required": ["id", "pattern", "components"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$",
+          "description": "Section identifier (lowercase, starts with letter)",
+          "examples": ["header", "stats-grid", "main-content", "cta-section"]
+        },
+        "pattern": {
+          "$ref": "#/definitions/sectionToken",
+          "description": "Section pattern token (serves as layout definition)"
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/component" },
+          "description": "Array of components in this section"
+        },
+        "repeat": {
+          "type": "object",
+          "properties": {
+            "count": { "type": "integer", "minimum": 1, "maximum": 20 },
+            "variable": { "type": "string" }
+          },
+          "description": "Repeat configuration for dynamic content (e.g., stat cards)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Component type from @tekton/ui",
+          "examples": ["card", "button", "text", "input", "badge", "progress", "table", "chart"]
+        },
+        "variant": {
+          "type": "string",
+          "description": "Component variant (maps to theme recipe)",
+          "examples": ["glass", "outlined", "minimal", "primary", "secondary", "ghost"]
+        },
+        "slot": {
+          "type": "string",
+          "enum": ["main", "sidebar", "header", "footer"],
+          "description": "Layout slot placement for split layouts"
+        },
+        "props": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Component props (supports {{variable}} placeholders for dynamic content)"
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/component" },
+          "description": "Nested child components"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "examples": [
+    {
+      "id": "fitness-dashboard",
+      "name": "Fitness Dashboard",
+      "themeId": "equinox-fitness-v2",
+      "shell": "shell.web.dashboard",
+      "page": "page.dashboard",
+      "sections": [
+        {
+          "id": "stats",
+          "layout": "section.grid-4",
+          "pattern": "stat-cards",
+          "components": [
+            {
+              "type": "card",
+              "variant": "glass",
+              "children": [
+                { "type": "text", "variant": "eyebrow", "props": { "children": "WORKOUTS" } },
+                { "type": "text", "variant": "value", "props": { "children": "12" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
