@@ -36,6 +36,7 @@
     { "path": "./packages/tokens" },
     { "path": "./packages/ui" },
     { "path": "./packages/styled" },
-    { "path": "./packages/esbuild-plugin" }
+    { "path": "./packages/esbuild-plugin" },
+    { "path": "./packages/mcp-server" }
   ]
 }
