@@ -8,6 +8,7 @@ export * from './types.js';
 export * from './shells.js';
 export * from './pages.js';
 export * from './sections.js';
+export * from './sections-advanced.js';
 export * from './responsive.js';
 export * from './mobile-shells.js';
 export * from './safe-area.js';
