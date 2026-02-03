@@ -269,7 +269,9 @@ export type { BrandDNA, BrandAxis } from './schemas/brand-dna';
 export { AxisInterpreter } from './interpreter/axis-interpreter';
 export type { DesignToken } from './types/design-tokens';
 export { BrandDNAStorage } from './storage/brand-dna-storage';
-export { loadPreset, listPresets } from './presets/preset-loader';
+export { getPreset, listPresets, PresetNotFoundError } from './presets/preset-loader';
+export { PresetSchema } from './schemas/preset';
+export type { Preset, PresetSummary } from './schemas/preset';
 ```
 
 **Documentation Sections**:

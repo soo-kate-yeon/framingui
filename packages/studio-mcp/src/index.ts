@@ -51,3 +51,11 @@ export {
 
 // Storage exports
 export { saveBrandDNA, loadBrandDNA, listBrandDNA } from "./storage/storage.js";
+
+// Preset exports
+export { PresetSchema, type Preset } from "./presets/schema.js";
+export {
+  listPresets,
+  getPreset,
+  PresetNotFoundError,
+} from "./presets/loader.js";

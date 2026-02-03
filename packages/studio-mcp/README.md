@@ -174,6 +174,166 @@ const interpretation = interpretBrandDNA(myBrandDNA);
 // }
 ```
 
+### Preset Management
+
+#### `listPresets()`
+
+Lists all available Brand DNA presets included in the package.
+
+**Returns:** Array of preset summary objects with `id`, `name`, and `description`
+
+**Example:**
+
+```typescript
+import { listPresets } from '@tekton/studio-mcp';
+
+const presets = listPresets();
+// Returns:
+// [
+//   { id: 'modern-tech', name: 'Modern Tech', description: 'Clean, minimal, high-energy brand' },
+//   { id: 'luxury-fashion', name: 'Luxury Fashion', description: 'Elegant, warm, refined brand' },
+//   { id: 'friendly-casual', name: 'Friendly Casual', description: 'Playful, approachable, energetic brand' }
+// ]
+
+console.log(`Available presets: ${presets.length}`);
+presets.forEach(preset => {
+  console.log(`- ${preset.name}: ${preset.description}`);
+});
+```
+
+#### `getPreset(presetId)`
+
+Loads a specific Brand DNA preset by ID.
+
+**Parameters:**
+- `presetId`: Preset identifier (e.g., `'modern-tech'`, `'luxury-fashion'`, `'friendly-casual'`)
+
+**Returns:** Complete `BrandDNA` object with all axis values and metadata
+
+**Throws:**
+- `PresetNotFoundError` if preset ID doesn't exist
+
+**Available Presets:**
+
+**Modern Tech** (`modern-tech`):
+- Density: 0.7 (Compact spacing, small components)
+- Warmth: 0.4 (Neutral-cool color temperature)
+- Playfulness: 0.3 (Subtle animations, moderate corners)
+- Sophistication: 0.6 (Balanced-elegant style)
+- Energy: 0.8 (High contrast, vibrant colors)
+- **Use Case**: SaaS products, tech startups, developer tools
+
+**Luxury Fashion** (`luxury-fashion`):
+- Density: 0.2 (Generous spacing, large components)
+- Warmth: 0.75 (Warm color temperature)
+- Playfulness: 0.15 (Minimal animations, sharp corners)
+- Sophistication: 0.9 (Elegant style, refined details)
+- Energy: 0.35 (Low-medium contrast, muted colors)
+- **Use Case**: High-end retail, premium brands, luxury services
+
+**Friendly Casual** (`friendly-casual`):
+- Density: 0.5 (Comfortable spacing, medium components)
+- Warmth: 0.8 (Warm color temperature)
+- Playfulness: 0.85 (Playful animations, round corners)
+- Sophistication: 0.4 (Casual style, moderate details)
+- Energy: 0.7 (Medium-high contrast, balanced saturation)
+- **Use Case**: Consumer apps, social platforms, lifestyle brands
+
+**Example:**
+
+```typescript
+import { getPreset } from '@tekton/studio-mcp';
+
+try {
+  // Load Modern Tech preset
+  const modernTech = getPreset('modern-tech');
+  console.log(modernTech.name); // "Modern Tech"
+  console.log(modernTech.axes.energy); // 0.8
+
+  // Load Luxury Fashion preset
+  const luxury = getPreset('luxury-fashion');
+  console.log(luxury.axes.sophistication); // 0.9
+
+  // Load non-existent preset
+  const invalid = getPreset('unknown'); // Throws PresetNotFoundError
+} catch (error) {
+  if (error instanceof PresetNotFoundError) {
+    console.error('Preset not found:', error.message);
+  }
+}
+```
+
+#### `PresetSchema`
+
+Zod schema for validating Brand DNA presets.
+
+**Schema Structure:**
+
+```typescript
+const PresetSchema = z.object({
+  id: z.string().min(1),           // Preset identifier (kebab-case)
+  name: z.string().min(1),         // Display name
+  description: z.string().min(1),  // Brief description
+  brandDNA: BrandDNASchema         // Complete Brand DNA object
+});
+```
+
+**Example:**
+
+```typescript
+import { PresetSchema } from '@tekton/studio-mcp';
+
+// Validate preset structure
+const customPreset = {
+  id: 'my-preset',
+  name: 'My Custom Preset',
+  description: 'A custom brand personality',
+  brandDNA: {
+    id: 'custom-brand',
+    name: 'Custom Brand',
+    axes: {
+      density: 0.5,
+      warmth: 0.5,
+      playfulness: 0.5,
+      sophistication: 0.5,
+      energy: 0.5
+    },
+    version: '1.0.0',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+};
+
+const validatedPreset = PresetSchema.parse(customPreset);
+```
+
+#### `PresetNotFoundError`
+
+Custom error class thrown when attempting to load a non-existent preset.
+
+**Properties:**
+- `name`: Always `'PresetNotFoundError'`
+- `message`: Detailed error message including preset ID
+- `presetId`: The requested preset ID that wasn't found
+
+**Example:**
+
+```typescript
+import { getPreset, PresetNotFoundError } from '@tekton/studio-mcp';
+
+try {
+  const preset = getPreset('non-existent-preset');
+} catch (error) {
+  if (error instanceof PresetNotFoundError) {
+    console.error('Error:', error.message);
+    console.error('Requested preset:', error.presetId);
+    // Suggest alternatives
+    const available = listPresets();
+    console.log('Available presets:', available.map(p => p.id).join(', '));
+  }
+}
+```
+
 ### Storage
 
 #### `saveBrandDNA(projectId, brandId, brandDNA, basePath?)`
@@ -304,8 +464,13 @@ import type {
   SophisticationInterpretation,
   EnergyInterpretation,
   DesignToken,
-  TypographyValue
+  TypographyValue,
+  Preset,
+  PresetSummary
 } from '@tekton/studio-mcp';
+
+// Import classes
+import { PresetNotFoundError } from '@tekton/studio-mcp';
 ```
 
 ## Error Handling
