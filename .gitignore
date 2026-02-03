@@ -87,6 +87,37 @@ node_modules/
 .next/
 out/
 
+# TypeScript compilation outputs (prevent committing build artifacts)
+# Only exclude from source/test directories in packages
+packages/*/src/**/*.js
+packages/*/src/**/*.d.ts
+packages/*/src/**/*.js.map
+packages/*/src/**/*.d.ts.map
+packages/*/__tests__/**/*.js
+packages/*/__tests__/**/*.d.ts
+packages/*/__tests__/**/*.js.map
+packages/*/__tests__/**/*.d.ts.map
+packages/*/*.config.js
+packages/*/*.config.d.ts
+packages/*/*.config.js.map
+packages/*/*.config.d.ts.map
+packages/*/*.setup.js
+packages/*/*.setup.d.ts
+packages/*/*.setup.js.map
+packages/*/*.setup.d.ts.map
+
+# Root level config build artifacts
+playwright.config.js
+playwright.config.d.ts
+playwright.config.js.map
+playwright.config.d.ts.map
+
+# Accessibility test build artifacts
+tests/accessibility/**/*.js
+tests/accessibility/**/*.d.ts
+tests/accessibility/**/*.js.map
+tests/accessibility/**/*.d.ts.map
+
 # ---------------------------------------------
 # Logs & Temporary Files
 # ---------------------------------------------
@@ -100,10 +131,28 @@ logs/
 # ---------------------------------------------
 # Test Coverage
 # ---------------------------------------------
+# Python coverage
 .coverage
 coverage.json
 htmlcov/
 .pytest_cache/
+
+# JavaScript/TypeScript coverage
+coverage/
+packages/*/coverage/
+*.lcov
+
+# Test-generated data
+.tekton/
+.tekton-test/
+packages/*/.tekton/
+packages/*/.tekton-test/
+test-exports/
+
+# Playwright test artifacts
+playwright-report/
+test-results/
+.playwright/
 
 # ---------------------------------------------
 # Environment Variables & Secrets
@@ -171,7 +220,7 @@ secret-*.*
 # ---------------------------------------------
 # MoAI Directory Management
 # ---------------------------------------------
-# Tracked in git: config/, memory/, scripts/, specs/
+# Tracked in git: config/, memory/, scripts/, specs/, themes/
 # User-generated content: logs/, cache/, reports/, etc.
 
 .moai/*
@@ -183,6 +232,8 @@ secret-*.*
 !.moai/scripts/**
 !.moai/specs/
 !.moai/specs/**
+!.moai/themes/
+!.moai/themes/**
 
 # Legacy config format (migrated to YAML in v0.32.0)
 .moai/config/config.json
@@ -220,3 +271,22 @@ secret-*.*
 # uv.lock is intentionally included for reproducible builds
 # Add to .gitignore if needed per project
 # uv.lock
+packages/studio-mcp/coverage/
+# Secrets and Credentials (CRITICAL)
+# Skill-specific credentials
+# Claude Code Configuration
+# Environment files
+# Updated: 2026-01-10
+# Python Cache & Bytecode
+# Build Tools & Frameworks
+.turbo/
+# Credential patterns in environment files
+# Deployment & CI/CD
+# Build Artifacts & Distribution
+dist-ssr/
+# Version: 0.33.0
+# ===========================================
+# Private keys (specific patterns to avoid false positives)
+.nuxt/
+service-account.json
+.DS_Store

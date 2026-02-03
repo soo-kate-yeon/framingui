@@ -1,0 +1,50 @@
+node_modules
+dist
+coverage
+*.min.js
+.moai
+.claude
+pnpm-lock.yaml
+storybook-static
+playwright-report
+test-results
+.next
+
+# TypeScript build artifacts (root level)
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+src/**/*.d.ts.map
+tests/**/*.js
+tests/**/*.d.ts
+tests/**/*.js.map
+tests/**/*.d.ts.map
+examples/**/*.js
+examples/**/*.d.ts
+examples/**/*.js.map
+examples/**/*.d.ts.map
+
+# Package build artifacts
+packages/**/src/**/*.js
+packages/**/src/**/*.d.ts
+packages/**/src/**/*.js.map
+packages/**/src/**/*.d.ts.map
+packages/**/__tests__/**/*.js
+packages/**/__tests__/**/*.d.ts
+
+# Root config build artifacts
+*.config.js
+*.config.d.ts
+*.config.base.js
+*.config.base.d.ts
+*.setup.js
+*.setup.d.ts
+
+# Next.js generated files
+packages/*/next-env.d.ts
+
+# Generator build artifacts
+src/generator/**/*.js
+src/generator/**/*.d.ts
+src/themes/**/*.js
+src/themes/**/*.d.ts

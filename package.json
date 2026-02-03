@@ -9,12 +9,23 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:all": "pnpm --filter \"./packages/*\" test",
+    "test:a11y": "playwright test",
+    "test:a11y:ui": "playwright test --ui",
+    "test:a11y:debug": "playwright test --debug",
+    "test:a11y:report": "playwright show-report playwright-report",
+    "ci:test": "pnpm --filter \"./packages/core\" --filter \"./packages/ui\" test",
     "build": "tsc",
     "build:all": "pnpm --filter \"./packages/*\" build",
+    "typecheck": "tsc --build",
+    "ci:local": "pnpm lint:all && pnpm build:all && pnpm typecheck && pnpm ci:test",
     "dev": "tsc --watch",
-    "lint": "eslint src tests --ext .ts",
+    "lint": "eslint src tests --ext .ts,.js",
     "lint:all": "pnpm --filter \"./packages/*\" lint",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "check:tsup": "node scripts/check-tsup-config.js",
+    "validate:tags": "npx tsx .moai/scripts/validate-tags.ts",
+    "precommit": "pnpm check:tsup && pnpm build:all && pnpm validate:tags",
+    "prepare": "husky"
   },
   "keywords": [
     "design-tokens",
@@ -27,20 +38,40 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
+    "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.58.0",
+    "@types/culori": "^4.0.1",
     "@types/node": "^22.10.5",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",
     "@vitest/coverage-v8": "^2.1.8",
+    "axe-core": "^4.11.1",
     "eslint": "^9.18.0",
+    "glob": "^11.0.0",
+    "globals": "^17.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
     "vitest": "^2.1.8",
     "yaml": "^2.8.2"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@googleapis/drive": "^20.0.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "googleapis": "^170.1.0",
     "zod": "^3.23.8"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "~18.2.79",
+      "@types/react-dom": "~18.2.25"
+    }
   }
 }

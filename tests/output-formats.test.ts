@@ -1,12 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import {
-  exportToCSS,
-  exportToDTCG,
-  exportToTailwind,
-  type ExportConfig,
-} from '../src/generator/output';
+import { exportToCSS, exportToDTCG, exportToTailwind } from '../src/generator/output';
 import type { SemanticTokens } from '../src/generator/semantic-mapper';
-import type { OKLCHColor } from '../src/schemas';
 
 describe('Output Format Exporters - TASK-005 to TASK-007', () => {
   const mockTokens: SemanticTokens = {
@@ -63,7 +57,7 @@ describe('Output Format Exporters - TASK-005 to TASK-007', () => {
     it('should include dark mode with .dark selector', () => {
       const darkTokens: SemanticTokens = {
         ...mockTokens,
-        background: { l: 0.10, c: 0.002, h: 0 },
+        background: { l: 0.1, c: 0.002, h: 0 },
         foreground: { l: 0.98, c: 0.002, h: 0 },
       };
 
@@ -131,7 +125,7 @@ describe('Output Format Exporters - TASK-005 to TASK-007', () => {
       });
 
       const parsed = JSON.parse(json);
-      Object.keys(mockTokens).forEach((key) => {
+      Object.keys(mockTokens).forEach(key => {
         expect(parsed[key].$type).toBe('color');
       });
     });
@@ -161,7 +155,7 @@ describe('Output Format Exporters - TASK-005 to TASK-007', () => {
     it('should support dark mode tokens', () => {
       const darkTokens: SemanticTokens = {
         ...mockTokens,
-        background: { l: 0.10, c: 0.002, h: 0 },
+        background: { l: 0.1, c: 0.002, h: 0 },
       };
 
       const json = exportToDTCG({

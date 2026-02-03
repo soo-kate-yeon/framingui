@@ -46,7 +46,9 @@ export function exportToCSS(config: ExportConfig): string {
   // Color scales
   Object.entries(colorScales).forEach(([scaleName, scale]) => {
     Object.entries(scale).forEach(([step, color]) => {
-      lines.push(`${indent}--${prefixStr}${scaleName}-${step}:${space}${formatOKLCH(color)};${newline}`);
+      lines.push(
+        `${indent}--${prefixStr}${scaleName}-${step}:${space}${formatOKLCH(color)};${newline}`
+      );
     });
   });
 
@@ -67,13 +69,28 @@ export function exportToCSS(config: ExportConfig): string {
 }
 
 /**
+ * DTCG token type definition
+ */
+interface DTCGToken {
+  $type: 'color';
+  $value: string;
+}
+
+/**
+ * DTCG output structure
+ */
+interface DTCGOutput {
+  [key: string]: DTCGToken | Record<string, DTCGToken>;
+}
+
+/**
  * Export to Design Token Community Group (DTCG) format
  * TASK-006: DTCG JSON Output (EDR-002)
  */
 export function exportToDTCG(config: ExportConfig): string {
   const { semanticTokens, darkTokens, colorScales = {} } = config;
 
-  const output: Record<string, any> = {};
+  const output: DTCGOutput = {};
 
   // Semantic tokens
   Object.entries(semanticTokens).forEach(([name, color]) => {
@@ -90,7 +107,7 @@ export function exportToDTCG(config: ExportConfig): string {
     }
 
     Object.entries(scale).forEach(([step, color]) => {
-      output[scaleName][step] = {
+      (output[scaleName] as Record<string, DTCGToken>)[step] = {
         $type: 'color',
         $value: formatOKLCH(color),
       };
@@ -102,7 +119,7 @@ export function exportToDTCG(config: ExportConfig): string {
     output.dark = {};
 
     Object.entries(darkTokens).forEach(([name, color]) => {
-      output.dark[name] = {
+      (output.dark as Record<string, DTCGToken>)[name] = {
         $type: 'color',
         $value: formatOKLCH(color),
       };

@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-debug.log
+
+# Build outputs
+dist/
+storybook-static/
+*.tsbuildinfo
+
+# Testing
+coverage/
+.vitest/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TypeScript build artifacts in src/
+src/**/*.js
+src/**/*.js.map
+!src/**/*.tsx
+!src/**/*.ts
+# Re-ignore .d.ts after !*.ts (order matters in gitignore)
+src/**/*.d.ts
+src/**/*.d.ts.map
+
+# TypeScript build artifacts in __tests__/
+__tests__/**/*.js
+__tests__/**/*.js.map
+!__tests__/**/*.tsx
+!__tests__/**/*.ts
+# Re-ignore .d.ts after !*.ts (order matters in gitignore)
+__tests__/**/*.d.ts
+__tests__/**/*.d.ts.map

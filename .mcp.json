@@ -1,13 +1,11 @@
 {
   "mcpServers": {
-    "context7": {
-      "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+    "tekton": {
+      "command": "node",
+      "args": ["/Users/sooyeon/Developer/tekton/packages/mcp-server/dist/index.js"],
+      "env": {
+        "NODE_ENV": "production"
+      }
     }
-  },
-  "staggeredStartup": {
-    "enabled": true,
-    "delayMs": 500,
-    "connectionTimeout": 15000
   }
 }

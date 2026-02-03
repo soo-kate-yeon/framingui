@@ -12,8 +12,6 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -21,6 +19,24 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "coverage",
+    "packages/playground-web",
+    "packages/ui",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/tokens" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/styled" },
+    { "path": "./packages/esbuild-plugin" },
+    { "path": "./packages/mcp-server" }
+  ]
 }

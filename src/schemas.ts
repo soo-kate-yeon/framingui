@@ -30,12 +30,21 @@ export type RGBColor = z.infer<typeof RGBColorSchema>;
  * Color Scale Schema
  * Valid scale values: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950
  */
-const scaleKeys = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'] as const;
+const scaleKeys = [
+  '50',
+  '100',
+  '200',
+  '300',
+  '400',
+  '500',
+  '600',
+  '700',
+  '800',
+  '900',
+  '950',
+] as const;
 
-export const ColorScaleSchema = z.record(
-  z.enum(scaleKeys),
-  OKLCHColorSchema
-);
+export const ColorScaleSchema = z.record(z.enum(scaleKeys), OKLCHColorSchema);
 
 export type ColorScale = z.infer<typeof ColorScaleSchema>;
 
@@ -68,16 +77,28 @@ export const AccessibilityCheckSchema = z.object({
 export type AccessibilityCheck = z.infer<typeof AccessibilityCheckSchema>;
 
 /**
- * Component Preset Schema
+ * Component Theme Schema
  * Defines color tokens for component states
  */
-export const ComponentPresetSchema = z.object({
+export const ComponentThemeSchema = z.object({
   name: z.string(),
   states: z.record(z.string(), OKLCHColorSchema),
   accessibility: z.array(AccessibilityCheckSchema).optional(),
 });
 
-export type ComponentPreset = z.infer<typeof ComponentPresetSchema>;
+export type ComponentTheme = z.infer<typeof ComponentThemeSchema>;
+
+/**
+ * Backward compatibility alias for ComponentThemeSchema
+ * @deprecated Use ComponentThemeSchema instead
+ */
+export const ComponentPresetSchema = ComponentThemeSchema;
+
+/**
+ * Backward compatibility type alias
+ * @deprecated Use ComponentTheme instead
+ */
+export type ComponentPreset = ComponentTheme;
 
 /**
  * Token Output Format Schema

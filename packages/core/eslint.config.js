@@ -1,0 +1,95 @@
+import js from '@eslint/js';
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import globals from 'globals';
+
+export default [
+  js.configs.recommended,
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: 'readonly',
+        NodeJS: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+
+      // TypeScript-specific rules
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+          caughtErrors: 'none',
+        },
+      ],
+
+      // Code quality rules
+      'no-console': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+
+      // Best practices
+      eqeqeq: ['error', 'always'],
+      curly: ['error', 'all'],
+      'no-throw-literal': 'error',
+    },
+  },
+  {
+    files: ['tests/**/*.ts', 'tests/**/*.js', '**/*.test.ts', '**/*.test.js'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        performance: 'readonly',
+        __dirname: 'readonly',
+        // Vitest globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      ...tsPlugin.configs.recommended.rules,
+      // Relax some rules for test files
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-console': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
+  {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.config.js', '.claude/**', '.moai/**'],
+  },
+];

@@ -1,0 +1,213 @@
+/**
+ * Layout Styles - CSS Grid based
+ * SPEC-PLAYGROUND-001 Milestone 4: Production Layouts
+ */
+
+/* ============================================================================
+   Dashboard Layout
+   ============================================================================ */
+.dashboard {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'header header'
+    'sidebar main';
+  min-height: 100vh;
+  gap: 0;
+}
+
+.dashboardHeader {
+  grid-area: header;
+  border-bottom: 1px solid var(--border-default, #e5e7eb);
+  padding: 1rem 1.5rem;
+}
+
+.dashboardSidebar {
+  grid-area: sidebar;
+  border-right: 1px solid var(--border-default, #e5e7eb);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.dashboardMain {
+  grid-area: main;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      'header'
+      'sidebar'
+      'main';
+  }
+
+  .dashboardSidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-default, #e5e7eb);
+  }
+}
+
+/* ============================================================================
+   Landing Layout
+   ============================================================================ */
+.landing {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'header'
+    'main'
+    'footer';
+  min-height: 100vh;
+}
+
+.landingHeader {
+  grid-area: header;
+  border-bottom: 1px solid var(--border-default, #e5e7eb);
+  padding: 1rem 1.5rem;
+}
+
+.landingMain {
+  grid-area: main;
+  padding: 2rem 1.5rem;
+}
+
+.landingFooter {
+  grid-area: footer;
+  border-top: 1px solid var(--border-default, #e5e7eb);
+  padding: 2rem 1.5rem;
+  background-color: var(--background-subtle, #f9fafb);
+}
+
+/* ============================================================================
+   Sidebar Left Layout
+   ============================================================================ */
+.sidebarLeft {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-areas: 'sidebar main';
+  min-height: 100vh;
+  gap: 0;
+}
+
+.sidebarLeftSidebar {
+  grid-area: sidebar;
+  border-right: 1px solid var(--border-default, #e5e7eb);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.sidebarLeftMain {
+  grid-area: main;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebarLeft {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'sidebar'
+      'main';
+  }
+
+  .sidebarLeftSidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-default, #e5e7eb);
+  }
+}
+
+/* ============================================================================
+   Sidebar Right Layout
+   ============================================================================ */
+.sidebarRight {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  grid-template-areas: 'main sidebar';
+  min-height: 100vh;
+  gap: 0;
+}
+
+.sidebarRightMain {
+  grid-area: main;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.sidebarRightSidebar {
+  grid-area: sidebar;
+  border-left: 1px solid var(--border-default, #e5e7eb);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebarRight {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      'main'
+      'sidebar';
+  }
+
+  .sidebarRightSidebar {
+    border-left: none;
+    border-top: 1px solid var(--border-default, #e5e7eb);
+  }
+}
+
+/* ============================================================================
+   Two Column Layout
+   ============================================================================ */
+.twoColumn {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 'left right';
+  min-height: 100vh;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.twoColumnLeft {
+  grid-area: left;
+}
+
+.twoColumnRight {
+  grid-area: right;
+}
+
+@media (max-width: 768px) {
+  .twoColumn {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      'left'
+      'right';
+  }
+}
+
+/* ============================================================================
+   Single Column Layout
+   ============================================================================ */
+.singleColumn {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+}
+
+.singleColumnMain {
+  width: 100%;
+  max-width: 1200px;
+}
+
+@media (max-width: 768px) {
+  .singleColumnMain {
+    max-width: 100%;
+  }
+}

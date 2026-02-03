@@ -20,7 +20,7 @@ Welcome to the Tekton documentation! This guide will help you find the informati
   - Installation instructions
   - Basic usage examples
   - Color palette generation
-  - Component presets
+  - Component themes
   - Export formats
   - Dark mode setup
   - WCAG compliance validation
@@ -35,7 +35,7 @@ Welcome to the Tekton documentation! This guide will help you find the informati
   - Color conversion module (OKLCH ↔ RGB ↔ Hex)
   - Scale generation module (10-step palettes)
   - Token generator module (core functionality)
-  - Component presets module (8 UI components)
+  - Component themes module (8 UI components)
   - WCAG validator module (accessibility)
   - Usage patterns and integration examples
 
@@ -57,7 +57,7 @@ Welcome to the Tekton documentation! This guide will help you find the informati
 **Specifications and Status**
 
 - **[SPEC-PHASEAB-001](../.moai/specs/SPEC-PHASEAB-001/spec.md)** - Phase A requirements
-  - A1: Preset Definition System
+  - A1: Theme Definition System
   - A2: Token Generator (current phase)
   - A3: Component Contracts
 
@@ -92,29 +92,37 @@ Welcome to the Tekton documentation! This guide will help you find the informati
 ### Looking for Specific Information?
 
 **Installation**:
+
 - [Getting Started - Installation](./guides/getting-started.md#installation)
 
 **Color Conversion**:
+
 - [API Reference - Color Conversion Module](./api/README.md#color-conversion-module)
 
-**Component Presets**:
-- [Getting Started - Component Presets](./guides/getting-started.md#using-component-presets)
-- [API Reference - Component Presets Module](./api/README.md#component-presets-module)
+**Component Themes**:
+
+- [Getting Started - Component Themes](./guides/getting-started.md#using-component-themes)
+- [API Reference - Component Themes Module](./api/README.md#component-themes-module)
 
 **Accessibility / WCAG**:
+
 - [Getting Started - WCAG Compliance](./guides/getting-started.md#wcag-compliance-validation)
 - [API Reference - WCAG Validator Module](./api/README.md#wcag-validator-module)
 
 **Dark Mode**:
+
 - [Getting Started - Dark Mode Setup](./guides/getting-started.md#dark-mode-setup)
 
 **Export Formats**:
+
 - [Getting Started - Exporting Tokens](./guides/getting-started.md#exporting-tokens)
 
 **Contributing**:
+
 - [CONTRIBUTING.md](../CONTRIBUTING.md)
 
 **Project Status**:
+
 - [README - Project Status](../README.md#project-status)
 - [Implementation Status](../.moai/specs/SPEC-PHASEAB-001/implementation-status.md)
 
@@ -128,7 +136,7 @@ Tekton is an **OKLCH-based design token generator** with built-in **WCAG AA comp
 
 - **OKLCH Color Space**: Perceptually uniform color generation
 - **10-Step Scales**: Tailwind-compatible color scales
-- **Component Presets**: Pre-configured tokens for 8 UI components
+- **Component Themes**: Pre-configured tokens for 8 UI components
 - **Multi-Format Export**: CSS, JSON, JavaScript, TypeScript
 - **Dark Mode**: Automatic dark theme generation
 - **WCAG Validation**: Built-in accessibility checking
