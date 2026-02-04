@@ -103,6 +103,33 @@ No migration needed for v0.1.0 (initial release)
 
 ## [Unreleased]
 
+### Added
+
+- **SPEC-AUTH-001**: Supabase Authentication 통합 (완료)
+  - **Supabase 클라이언트 설정**: 브라우저, 서버, 미들웨어 클라이언트 구현
+    - `lib/supabase/client.ts` - 브라우저용 Supabase 클라이언트
+    - `lib/supabase/server.ts` - 서버용 Supabase 클라이언트
+    - `lib/supabase/middleware.ts` - 세션 갱신 헬퍼
+  - **인증 헬퍼 함수**: OAuth 로그인 및 로그아웃 기능
+    - `lib/auth/supabase-auth.ts` - signInWithGoogle, signInWithGitHub, signOut
+  - **데이터베이스 유틸리티**: 사용자 및 라이선스 관리
+    - `lib/db/users.ts` - 사용자 CRUD 작업
+    - `lib/db/licenses.ts` - 라이선스 관리 함수
+    - `lib/db/templates.ts` - 템플릿 접근 제어
+  - **API 라우트**: OAuth 및 MCP 인증 처리
+    - `app/api/auth/callback/route.ts` - OAuth 콜백 핸들러
+    - `app/api/mcp/auth/route.ts` - MCP 인증 API
+  - **프론트엔드 통합**: 전역 인증 상태 관리
+    - `contexts/AuthContext.tsx` - AuthProvider (실제 Supabase 통합)
+    - `middleware.ts` - 루트 미들웨어 (세션 관리)
+  - **데이터베이스 스키마**: 사용자 라이선스 및 템플릿 테이블
+    - `supabase/migrations/20260204_initial_auth_schema.sql` - 테이블 및 RLS 정책
+    - `user_licenses` 테이블 - 사용자 템플릿 라이선스 정보
+    - `free_screen_templates` 테이블 - 무료 템플릿 목록
+  - **문서화**: 종합 인증 가이드 작성
+    - `packages/playground-web/docs/authentication.md` - 완전한 인증 문서
+    - README.md에 Authentication Setup 섹션 추가
+
 ### Future Plans (v0.3.0)
 
 - [ ] Implement esbuild bundling for production hardening

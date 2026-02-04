@@ -2,32 +2,26 @@
  * Login Page
  * Theme: Square Minimalism
  * - Radius: 0
- * - Inputs: Architectural (Border Bottom)
+ * - OAuth-only authentication with Google and GitHub
  */
 
 'use client';
 
-import { useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { Chrome, Github } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 
 export default function LoginPage() {
-    const router = useRouter();
     const { login, isLoading, error } = useAuth();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleGoogleLogin = async () => {
+        await login('google');
+        // OAuth 리다이렉트가 발생하므로 router.push 불필요
+    };
 
-        // Mock login: 모든 이메일을 'google' provider로 처리
-        // 실제 구현 시 password 검증 및 실제 인증 처리
-        await login(email, 'google');
-
-        // 로그인 성공 시 Studio로 리디렉션
-        router.push('/studio');
+    const handleGitHubLogin = async () => {
+        await login('github');
+        // OAuth 리다이렉트가 발생하므로 router.push 불필요
     };
 
     return (
@@ -57,62 +51,37 @@ export default function LoginPage() {
                 {/* Demo Account Info */}
                 <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200">
                     <p className="text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-2">
-                        Demo Account
-                    </p>
-                    <p className="text-xs text-neutral-600 mb-1">
-                        Email: <span className="font-mono">demo@tekton.com</span>
+                        OAuth Login
                     </p>
                     <p className="text-xs text-neutral-600">
-                        Password: <span className="font-mono">any password</span>
+                        Sign in with your Google or GitHub account to access TEKTON Studio.
                     </p>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-8">
-                    <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500 mb-2">
-                            Email Address
-                        </label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="name@company.com"
-                            required
-                            disabled={isLoading}
-                            className="w-full bg-transparent border-b border-neutral-200 p-0 py-3 text-neutral-900 placeholder:text-neutral-300 focus:border-neutral-900 focus:outline-none rounded-none transition-colors text-sm disabled:opacity-50"
-                        />
-                    </div>
-
-                    <div>
-                        <div className="flex justify-between items-center mb-2">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-neutral-500">
-                                Password
-                            </label>
-                            <a href="#" className="text-xs text-neutral-400 hover:text-neutral-900 transition-colors">
-                                Forgot?
-                            </a>
-                        </div>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            required
-                            disabled={isLoading}
-                            className="w-full bg-transparent border-b border-neutral-200 p-0 py-3 text-neutral-900 placeholder:text-neutral-300 focus:border-neutral-900 focus:outline-none rounded-none transition-colors text-sm disabled:opacity-50"
-                        />
-                    </div>
-
+                {/* OAuth Buttons */}
+                <div className="space-y-4">
+                    {/* Google Login Button */}
                     <button
-                        type="submit"
+                        type="button"
+                        onClick={handleGoogleLogin}
                         disabled={isLoading}
-                        className="w-full bg-neutral-900 text-white rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-white text-neutral-900 border border-neutral-300 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:border-neutral-900 hover:bg-neutral-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <span>{isLoading ? 'Signing In...' : 'Sign In'}</span>
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                        <Chrome size={16} className="text-[#4285F4]" />
+                        <span>{isLoading ? 'Connecting...' : 'Sign in with Google'}</span>
                     </button>
-                </form>
+
+                    {/* GitHub Login Button */}
+                    <button
+                        type="button"
+                        onClick={handleGitHubLogin}
+                        disabled={isLoading}
+                        className="w-full bg-neutral-900 text-white border border-neutral-900 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:bg-neutral-800 hover:border-neutral-800 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <Github size={16} />
+                        <span>{isLoading ? 'Connecting...' : 'Sign in with GitHub'}</span>
+                    </button>
+                </div>
 
                 {/* Footer */}
                 <div className="mt-8 pt-8 border-t border-neutral-100 text-center">

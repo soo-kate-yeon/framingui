@@ -1,9 +1,9 @@
 ---
 id: SPEC-AUTH-001
-version: "1.0.0"
-status: draft
+version: "1.1.0"
+status: completed
 created: "2026-02-03"
-updated: "2026-02-03"
+updated: "2026-02-04"
 author: soo-kate-yeon
 priority: HIGH
 ---
@@ -13,6 +13,7 @@ priority: HIGH
 | 날짜 | 버전 | 변경 내용 |
 |------|------|----------|
 | 2026-02-03 | 1.0.0 | 초안 작성 |
+| 2026-02-04 | 1.1.0 | 구현 완료 및 문서화 |
 
 ---
 

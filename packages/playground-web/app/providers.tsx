@@ -1,11 +1,15 @@
 /**
  * Client-side Providers
- * SPEC-UI-003: Session and Auth Context Providers
+ * SPEC-AUTH-001: Supabase 인증 통합
+ *
+ * [TAG-AUTH-001-U001] Supabase Auth를 단독 인증 제공자로 사용
+ *
+ * WHY: Supabase Auth로 인증 시스템 단일화
+ * IMPACT: AuthProvider가 Supabase Auth 기반 세션 관리 제공
  */
 
 'use client';
 
-import { SessionProvider } from 'next-auth/react';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import type { ReactNode } from 'react';
@@ -15,32 +19,14 @@ interface ProvidersProps {
 }
 
 /**
- * 인증 활성화 여부 확인
- * AUTH_SECRET이 설정되지 않으면 인증 기능 비활성화
- */
-const isAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_AUTH === 'true';
-
-/**
  * 전역 Provider 컴포넌트
  *
- * NextAuth SessionProvider와 AuthContext, ThemeContext를 통합
- * 인증이 비활성화된 경우 SessionProvider만 건너뜀 (AuthProvider는 Mock 모드로 유지)
+ * AuthProvider (Supabase Auth)와 ThemeContext를 통합
  */
 export function Providers({ children }: ProvidersProps) {
-  // 인증 비활성화 시 SessionProvider 없이 렌더링 (AuthProvider는 Mock 모드로 유지)
-  if (!isAuthEnabled) {
-    return (
-      <AuthProvider>
-        <ThemeProvider>{children}</ThemeProvider>
-      </AuthProvider>
-    );
-  }
-
   return (
-    <SessionProvider>
-      <AuthProvider>
-        <ThemeProvider>{children}</ThemeProvider>
-      </AuthProvider>
-    </SessionProvider>
+    <AuthProvider>
+      <ThemeProvider>{children}</ThemeProvider>
+    </AuthProvider>
   );
 }
