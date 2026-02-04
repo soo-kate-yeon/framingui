@@ -6,9 +6,16 @@ import {
     Users,
     Activity,
     Search,
-    ChevronDown
+    ChevronDown,
+    Menu
 } from "lucide-react";
-
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@tekton/ui";
 /**
  * Minimal Workspace Landing Page
  * Theme: Modern SaaS Dashboard
@@ -19,9 +26,34 @@ export default function MinimalWorkspaceDemo() {
 
             {/* Header */}
             <header className="border-b border-neutral-200 sticky top-0 bg-white/80 backdrop-blur-md z-50">
-                <div className="flex h-16 items-center px-6 gap-4">
-                    {/* Team Switcher Simulation */}
-                    <button className="w-56 h-9 flex items-center justify-between border border-neutral-200 rounded-md px-3 hover:bg-neutral-100 transition-colors">
+                <div className="flex h-16 items-center px-4 md:px-6 gap-4">
+                    {/* Mobile Menu */}
+                    <div className="md:hidden">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <button className="p-2 -ml-2 text-neutral-500 hover:text-neutral-950 transition-colors">
+                                    <Menu size={20} />
+                                </button>
+                            </SheetTrigger>
+                            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
+                                <SheetHeader className="text-left pb-4 mb-4 border-b border-neutral-100">
+                                    <SheetTitle className="flex items-center gap-2">
+                                        <div className="w-6 h-6 rounded-full bg-neutral-900"></div>
+                                        <span>Acme Inc.</span>
+                                    </SheetTitle>
+                                </SheetHeader>
+                                <nav className="flex flex-col gap-4">
+                                    <a href="#" className="text-sm font-medium text-neutral-950 px-2 py-1.5 rounded-md bg-neutral-100">Overview</a>
+                                    <a href="#" className="text-sm font-medium text-neutral-500 hover:text-neutral-950 px-2 py-1.5 transition-colors">Customers</a>
+                                    <a href="#" className="text-sm font-medium text-neutral-500 hover:text-neutral-950 px-2 py-1.5 transition-colors">Products</a>
+                                    <a href="#" className="text-sm font-medium text-neutral-500 hover:text-neutral-950 px-2 py-1.5 transition-colors">Settings</a>
+                                </nav>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
+
+                    {/* Team Switcher Simulation - Hidden on Mobile */}
+                    <button className="hidden md:flex w-56 h-9 items-center justify-between border border-neutral-200 rounded-md px-3 hover:bg-neutral-100 transition-colors">
                         <div className="flex items-center gap-2">
                             <div className="w-5 h-5 rounded-full bg-neutral-900"></div>
                             <span className="text-sm font-medium">Acme Inc.</span>
@@ -29,24 +61,24 @@ export default function MinimalWorkspaceDemo() {
                         <ChevronDown size={14} className="text-neutral-500" />
                     </button>
 
-                    {/* Nav */}
-                    <nav className="flex items-center gap-6 ml-4">
+                    {/* Nav - Hidden on Mobile */}
+                    <nav className="hidden lg:flex items-center gap-6 ml-4">
                         <a href="#" className="text-sm font-medium text-neutral-950">Overview</a>
                         <a href="#" className="text-sm font-medium text-neutral-500 hover:text-neutral-950 transition-colors">Customers</a>
                         <a href="#" className="text-sm font-medium text-neutral-500 hover:text-neutral-950 transition-colors">Products</a>
                         <a href="#" className="text-sm font-medium text-neutral-500 hover:text-neutral-950 transition-colors">Settings</a>
                     </nav>
 
-                    <div className="ml-auto flex items-center gap-4">
-                        {/* Search */}
-                        <div className="relative">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-500" />
+                    <div className="ml-auto flex items-center gap-2 md:gap-4">
+                        {/* Search - Icon only on small mobile, expanded on Tablet/Desktop */}
+                        <div className="relative group">
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-500 group-focus-within:text-neutral-950 transition-colors" />
                             <input
-                                className="h-9 w-64 rounded-md border border-neutral-200 bg-white px-9 py-2 text-sm outline-none placeholder:text-neutral-500 focus:ring-1 focus:ring-neutral-950 transition-all"
+                                className="h-9 w-9 md:w-64 rounded-md border border-neutral-200 bg-white pl-9 md:pr-4 py-2 text-sm outline-none placeholder:text-neutral-500 focus:ring-1 focus:ring-neutral-950 transition-all cursor-pointer md:cursor-text"
                                 placeholder="Search..."
                             />
                         </div>
-                        <button className="w-9 h-9 rounded-full overflow-hidden border border-neutral-200">
+                        <button className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border border-neutral-200 flex-shrink-0">
                             <img src="https://github.com/shadcn.png" alt="User" />
                         </button>
                     </div>
@@ -54,30 +86,30 @@ export default function MinimalWorkspaceDemo() {
             </header>
 
             {/* Main Content */}
-            <main className="p-8 max-w-[1600px] mx-auto space-y-8">
+            <main className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8">
 
-                <div className="flex items-center justify-between">
-                    <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
                     <div className="flex items-center gap-2">
-                        <button className="h-9 px-4 py-2 bg-white border border-neutral-200 rounded-md text-sm font-medium hover:bg-neutral-100 transition-colors">
+                        <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-white border border-neutral-200 rounded-md text-sm font-medium hover:bg-neutral-100 transition-colors">
                             Download
                         </button>
-                        <button className="h-9 px-4 py-2 bg-neutral-900 text-white rounded-md text-sm font-medium hover:bg-neutral-900/90 transition-colors">
-                            Download Report
+                        <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-neutral-900 text-white rounded-md text-sm font-medium hover:bg-neutral-900/90 transition-colors">
+                            New Report
                         </button>
                     </div>
                 </div>
 
                 {/* Tabs */}
                 <div className="space-y-4">
-                    <div className="inline-flex h-9 items-center justify-center rounded-lg bg-neutral-100 p-1 text-neutral-500">
-                        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-white px-3 py-1.5 text-sm font-medium text-neutral-950 shadow-sm ring-offset-white transition-all">Overview</button>
-                        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium hover:text-neutral-900 transition-all">Analytics</button>
-                        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium hover:text-neutral-900 transition-all">Reports</button>
+                    <div className="inline-flex h-9 items-center justify-center rounded-lg bg-neutral-100 p-1 text-neutral-500 w-full sm:w-auto">
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center whitespace-nowrap rounded-md bg-white px-3 py-1.5 text-sm font-medium text-neutral-950 shadow-sm ring-offset-white transition-all">Overview</button>
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium hover:text-neutral-900 transition-all">Analytics</button>
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium hover:text-neutral-900 transition-all">Reports</button>
                     </div>
 
                     {/* KPIs */}
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                         {[
                             { title: "Total Revenue", value: "$45,231.89", icon: DollarSign, sub: "+20.1% from last month" },
                             { title: "Subscriptions", value: "+2350", icon: Users, sub: "+180.1% from last month" },
@@ -97,10 +129,10 @@ export default function MinimalWorkspaceDemo() {
                         ))}
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                    <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
 
                         {/* Chart Simulation */}
-                        <div className="col-span-4 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm">
+                        <div className="lg:col-span-4 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm overflow-hidden">
                             <div className="flex flex-col space-y-1.5 p-6">
                                 <h3 className="font-semibold leading-none tracking-tight">Overview</h3>
                             </div>
@@ -119,7 +151,7 @@ export default function MinimalWorkspaceDemo() {
                         </div>
 
                         {/* Recent Sales */}
-                        <div className="col-span-3 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm">
+                        <div className="lg:col-span-3 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm">
                             <div className="flex flex-col space-y-1.5 p-6">
                                 <h3 className="font-semibold leading-none tracking-tight">Recent Sales</h3>
                                 <p className="text-sm text-neutral-500">You made 265 sales this month.</p>
