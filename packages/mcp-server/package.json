@@ -9,6 +9,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./schemas": {
+      "import": "./dist/schemas/mcp-schemas.js",
+      "types": "./dist/schemas/mcp-schemas.d.ts"
     }
   },
   "bin": {
