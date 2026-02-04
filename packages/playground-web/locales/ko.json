@@ -1,62 +1,35 @@
 {
   "studio": {
     "landing": {
-      "nav": {
-        "about": "소개",
-        "howToUse": "사용 방법",
-        "documentation": "문서",
-        "demo": "데모",
-        "buy": "구매"
-      },
       "hero": {
-        "openFullDemo": "전체 데모 열기",
-        "buyNow": "지금 구매"
+        "openDemo": "데모 열기",
+        "buyNow": "지금 구매",
+        "tryFree": "무료 체험"
       },
-      "codeBlock": {
-        "copy": "코드 복사",
-        "copied": "복사됨!"
-      },
-      "componentOverview": {
-        "preview": "미리보기",
-        "noComponents": "사용 가능한 컴포넌트가 없습니다"
-      },
-      "mcpGuide": {
-        "title": "사용 방법",
-        "installation": "설치",
-        "usage": "사용법",
-        "usageDescription": "설치가 완료되면 Claude Desktop MCP 설정에서 템플릿을 사용할 수 있습니다."
+      "topNav": {
+        "features": "기능",
+        "pricing": "가격",
+        "docs": "문서",
+        "signIn": "로그인"
       },
       "pricing": {
-        "title": "가격",
-        "single": {
-          "tier": "싱글",
-          "features": [
-            "템플릿 라이선스 1개",
-            "1년 업데이트",
-            "이메일 지원"
-          ]
-        },
-        "double": {
-          "tier": "더블",
-          "features": [
-            "템플릿 라이선스 2개",
-            "1년 업데이트",
-            "16% 할인",
-            "우선 지원"
-          ]
-        },
-        "creatorPass": {
-          "tier": "크리에이터 패스",
-          "features": [
-            "현재 모든 템플릿",
-            "향후 모든 템플릿",
-            "평생 업데이트",
-            "VIP 지원"
-          ]
-        },
-        "buyNow": "지금 구매",
-        "manageLicense": "라이선스 관리"
+        "title": "간단하고 투명한 가격",
+        "description": "당신에게 맞는 플랜을 선택하세요",
+        "perMonth": "/월",
+        "perYear": "/년",
+        "getStarted": "시작하기",
+        "mostPopular": "가장 인기"
+      },
+      "component": {
+        "title": "컴포넌트 개요"
+      },
+      "codeBlock": {
+        "copy": "복사",
+        "copied": "복사됨!"
       }
     }
+  },
+  "common": {
+    "learnMore": "자세히 보기"
   }
 }

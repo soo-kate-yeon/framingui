@@ -1,62 +1,35 @@
 {
   "studio": {
     "landing": {
-      "nav": {
-        "about": "About",
-        "howToUse": "How to use",
-        "documentation": "Documentation",
-        "demo": "DEMO",
-        "buy": "BUY"
-      },
       "hero": {
-        "openFullDemo": "Open Full Demo",
-        "buyNow": "Buy Now"
+        "openDemo": "Open Demo",
+        "buyNow": "Buy Now",
+        "tryFree": "Try Free"
       },
-      "codeBlock": {
-        "copy": "Copy code to clipboard",
-        "copied": "Copied!"
-      },
-      "componentOverview": {
-        "preview": "Preview",
-        "noComponents": "No components available"
-      },
-      "mcpGuide": {
-        "title": "How to Use",
-        "installation": "Installation",
-        "usage": "Usage",
-        "usageDescription": "Once installed, the template will be available in your Claude Desktop MCP settings."
+      "topNav": {
+        "features": "Features",
+        "pricing": "Pricing",
+        "docs": "Docs",
+        "signIn": "Sign In"
       },
       "pricing": {
-        "title": "Pricing",
-        "single": {
-          "tier": "Single",
-          "features": [
-            "1 template license",
-            "1 year of updates",
-            "Email support"
-          ]
-        },
-        "double": {
-          "tier": "Double",
-          "features": [
-            "2 template licenses",
-            "1 year of updates",
-            "16% discount",
-            "Priority support"
-          ]
-        },
-        "creatorPass": {
-          "tier": "Creator Pass",
-          "features": [
-            "All current templates",
-            "All future templates",
-            "Lifetime updates",
-            "VIP support"
-          ]
-        },
-        "buyNow": "Buy Now",
-        "manageLicense": "Manage License"
+        "title": "Simple, Transparent Pricing",
+        "description": "Choose the plan that works best for you",
+        "perMonth": "/month",
+        "perYear": "/year",
+        "getStarted": "Get Started",
+        "mostPopular": "Most Popular"
+      },
+      "component": {
+        "title": "Component Overview"
+      },
+      "codeBlock": {
+        "copy": "Copy",
+        "copied": "Copied!"
       }
     }
+  },
+  "common": {
+    "learnMore": "Learn More"
   }
 }

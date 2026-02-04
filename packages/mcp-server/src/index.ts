@@ -38,7 +38,7 @@ import {
 
 const server = new Server(
   {
-    name: 'tekton-mcp-server',
+    name: '@tekton/mcp-server',
     version: '2.1.0',
   },
   {
@@ -59,7 +59,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
     tools: [
       {
         name: 'generate-blueprint',
-        description: 'Generate a UI blueprint from natural language description',
+        description:
+          '[RECOMMENDED WORKFLOW] Step 1: Use get-screen-generation-context first to get component lists, schema, and examples. Then use validate-screen-definition before calling this tool. This tool generates a UI blueprint from natural language description.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -170,7 +171,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'generate_screen',
-        description: 'Generate production-ready code from JSON screen definition',
+        description:
+          '[RECOMMENDED WORKFLOW] Step 3 of 3: Before calling this, use get-screen-generation-context (Step 1) and validate-screen-definition (Step 2) to ensure your screen definition is valid. This tool generates production-ready code from JSON screen definition.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -317,7 +319,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'get-screen-generation-context',
         description:
-          'Get complete context for AI agents to generate screen definitions from natural language. Returns template matches, component info, schema, examples, theme recipes, and hints.',
+          '[RECOMMENDED WORKFLOW - Step 1 of 3] Use this FIRST before generating any screen. Returns template matches, component info, schema, examples, theme recipes, and hints. After getting context, proceed to Step 2: validate-screen-definition.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -344,7 +346,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-screen-definition',
         description:
-          'Validate a screen definition JSON with detailed error messages, suggestions, and improvement recommendations',
+          '[RECOMMENDED WORKFLOW - Step 2 of 3] Use this AFTER get-screen-generation-context (Step 1) and BEFORE generate_screen (Step 3). Validates screen definition JSON with detailed error messages, suggestions, and improvement recommendations.',
         inputSchema: {
           type: 'object',
           properties: {

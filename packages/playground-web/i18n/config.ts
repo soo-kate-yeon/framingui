@@ -1,6 +1,6 @@
 /**
- * TAG: TAG-STUDIO-001-U003 (Internationalization Support)
  * i18n configuration for next-intl
+ * Note: Middleware removed for Next.js 16 compatibility
  */
 
 export const locales = ['en', 'ko'] as const;
