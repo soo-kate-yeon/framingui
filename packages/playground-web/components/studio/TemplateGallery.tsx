@@ -7,6 +7,7 @@
 
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
 
 // ============================================================================
@@ -24,8 +25,6 @@ interface Template {
 interface TemplateGalleryProps {
   /** 템플릿 목록 */
   templates: Template[];
-  /** 템플릿 클릭 콜백 */
-  onTemplateClick?: (templateId: string) => void;
   /** 추가 className */
   className?: string;
 }
@@ -36,9 +35,14 @@ interface TemplateGalleryProps {
 
 export function TemplateGallery({
   templates,
-  onTemplateClick,
   className = '',
 }: TemplateGalleryProps) {
+  const router = useRouter();
+
+  // Handle template card click - navigate to template detail page
+  const handleTemplateClick = (templateId: string) => {
+    router.push(`/studio/template/${templateId}`);
+  };
   if (templates.length === 0) {
     return (
       <div
@@ -74,7 +78,7 @@ export function TemplateGallery({
           description={template.description}
           thumbnail={template.thumbnail}
           category={template.category}
-          onClick={() => onTemplateClick?.(template.id)}
+          onClick={() => handleTemplateClick(template.id)}
         />
       ))}
     </div>

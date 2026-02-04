@@ -1,169 +1,270 @@
 /**
  * Recipe Resolver Module
- * SPEC-MCP-004 Phase 3.5: Extract theme recipes for component styling
+ * SPEC-MCP-004 Phase 4: Theme Recipes Auto-Application
  *
- * Resolves and flattens theme recipe definitions into a usable format
- * for screen generation and component styling.
+ * 테마에서 레시피를 조회하고 컴포넌트 className에 적용합니다.
  */
 
 import { loadTheme } from '@tekton/core';
+import type { ComponentNode } from '@tekton/core';
 
 /**
- * Flatten nested recipe object into dot-notation paths
- * Converts { card: { glass: "className" } } to { "recipes.card.glass": "className" }
+ * 컴포넌트 타입과 variant에서 레시피 경로 생성
  *
- * @param obj - Nested recipe object
- * @param prefix - Path prefix for recursion
- * @returns Flattened recipe map with dot-notation paths
+ * 규칙:
+ * - card + glass → recipes.card.glass
+ * - button + primary → recipes.button.primary
+ * - Text + hero → recipes.typography.hero (특수 케이스)
+ * - Badge + neutral → recipes.badge.neutral
  */
-function flattenRecipes(
-  obj: Record<string, any>,
-  prefix: string = 'recipes'
-): Record<string, string> {
-  const result: Record<string, string> = {};
+function getRecipePath(componentType: string, variant?: string): string[] {
+  if (!variant) {
+    return [`recipes.${componentType.toLowerCase()}.default`];
+  }
 
-  for (const [key, value] of Object.entries(obj)) {
-    const path = `${prefix}.${key}`;
+  const type = componentType.toLowerCase();
+  const paths: string[] = [];
 
-    if (typeof value === 'string') {
-      // Leaf node: className string
-      result[path] = value;
-    } else if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-      // Nested object: recurse
-      const nested = flattenRecipes(value, path);
-      Object.assign(result, nested);
+  // Typography 특수 처리 (Text → recipes.typography)
+  if (type === 'text' || type === 'heading') {
+    paths.push(`recipes.typography.${variant}`);
+  }
+  // 일반 컴포넌트
+  else {
+    paths.push(`recipes.${type}.${variant}`);
+  }
+
+  // Fallback: variant 없이 기본 레시피
+  paths.push(`recipes.${type}.default`);
+  paths.push(`recipes.${type}`);
+
+  return paths;
+}
+
+/**
+ * 중첩 객체에서 경로로 값 조회
+ *
+ * @example
+ * getNestedValue({ a: { b: { c: 'value' } } }, 'a.b.c') → 'value'
+ */
+function getNestedValue(obj: any, path: string): any {
+  const keys = path.split('.');
+  let current = obj;
+
+  for (const key of keys) {
+    if (current && typeof current === 'object' && key in current) {
+      current = current[key];
+    } else {
+      return undefined;
     }
-    // Skip non-object, non-string values (arrays, null, etc.)
+  }
+
+  return current;
+}
+
+/**
+ * 테마에서 레시피 조회
+ *
+ * @param themeId - 테마 ID
+ * @param componentType - 컴포넌트 타입 (Card, Button, Text 등)
+ * @param variant - 컴포넌트 variant (glass, primary, hero 등)
+ * @returns 레시피 className 문자열 또는 undefined
+ */
+export function resolveRecipe(
+  themeId: string,
+  componentType: string,
+  variant?: string
+): string | undefined {
+  try {
+    const theme = loadTheme(themeId) as any;
+    if (!theme) {
+      return undefined;
+    }
+
+    // recipes는 tokens 내부가 아니라 최상위 필드
+    const recipes = theme.recipes || theme.tokens?.recipes;
+    if (!recipes) {
+      return undefined;
+    }
+
+    const paths = getRecipePath(componentType, variant);
+
+    // 우선순위대로 레시피 경로 시도
+    for (const path of paths) {
+      const recipe = getNestedValue(recipes, path.replace('recipes.', ''));
+
+      // 레시피가 문자열이면 반환
+      if (typeof recipe === 'string') {
+        return recipe;
+      }
+
+      // 레시피가 객체면 'base' 또는 'default' 키 확인
+      if (recipe && typeof recipe === 'object') {
+        if (typeof recipe.base === 'string') {
+          return recipe.base;
+        }
+        if (typeof recipe.default === 'string') {
+          return recipe.default;
+        }
+      }
+    }
+
+    return undefined;
+  } catch (error) {
+    console.warn(
+      `[Recipe Resolver] Failed to resolve recipe for ${componentType}.${variant}:`,
+      error
+    );
+    return undefined;
+  }
+}
+
+/**
+ * ComponentNode의 props.className에 레시피 병합
+ *
+ * 기존 className이 있으면 레시피를 앞에 추가합니다.
+ *
+ * @example
+ * mergeClassName("p-4", "bg-white border") → "bg-white border p-4"
+ */
+function mergeClassName(existing: string | undefined, recipe: string): string {
+  if (!existing) {
+    return recipe;
+  }
+
+  // 중복 제거를 위해 Set 사용
+  const existingClasses = existing.split(/\s+/).filter(Boolean);
+  const recipeClasses = recipe.split(/\s+/).filter(Boolean);
+
+  // 레시피 클래스를 앞에, 기존 클래스를 뒤에 (specificity 우선순위)
+  const merged = [...new Set([...recipeClasses, ...existingClasses])];
+
+  return merged.join(' ');
+}
+
+/**
+ * ComponentNode에 레시피 적용 (재귀)
+ *
+ * @param node - 컴포넌트 노드
+ * @param themeId - 테마 ID
+ * @returns 레시피가 적용된 노드 (원본 수정하지 않음)
+ */
+export function applyRecipeToNode(node: ComponentNode, themeId: string): ComponentNode {
+  const result = { ...node };
+
+  // variant가 있으면 레시피 조회
+  if (result.type) {
+    const variant = (result.props as any)?.variant;
+    const recipe = resolveRecipe(themeId, result.type, variant);
+
+    if (recipe) {
+      // props 복사 (immutability 보장)
+      const currentProps = result.props || {};
+      const existingClassName = (currentProps as any).className;
+
+      result.props = {
+        ...currentProps,
+        className: mergeClassName(existingClassName, recipe),
+      };
+    }
+  }
+
+  // children 재귀 처리
+  if (Array.isArray(result.children)) {
+    result.children = result.children.map(child => {
+      if (typeof child === 'object' && child !== null && 'type' in child) {
+        return applyRecipeToNode(child as ComponentNode, themeId);
+      }
+      return child;
+    });
   }
 
   return result;
 }
 
 /**
- * Get all recipes from a theme
- * Extracts and flattens recipe definitions for component styling
+ * Blueprint의 모든 컴포넌트에 레시피 적용
  *
- * @param themeId - Theme identifier (e.g., "square-minimalism", "blue-bottle-v2")
- * @returns Flattened recipe map with paths like "recipes.card.glass" -> className
+ * @param components - 컴포넌트 배열
+ * @param themeId - 테마 ID
+ * @returns 레시피가 적용된 컴포넌트 배열
+ */
+export function applyRecipesToBlueprint(
+  components: ComponentNode[],
+  themeId: string
+): ComponentNode[] {
+  return components.map(component => applyRecipeToNode(component, themeId));
+}
+
+/**
+ * 레시피 통계 계산
  *
- * @example
- * const recipes = getAllRecipes("square-minimalism");
- * // Returns:
- * // {
- * //   "recipes.card.glass": "bg-white/80 backdrop-blur-xl ...",
- * //   "recipes.button.primary": "bg-neutral-900 text-white ...",
- * //   ...
- * // }
+ * @param components - 컴포넌트 배열
+ * @param themeId - 테마 ID
+ * @returns 적용된 레시피 개수
+ */
+export function countAppliedRecipes(components: ComponentNode[], themeId: string): number {
+  let count = 0;
+
+  function traverse(node: ComponentNode) {
+    const variant = (node.props as any)?.variant;
+    if (node.type && resolveRecipe(themeId, node.type, variant)) {
+      count++;
+    }
+
+    if (Array.isArray(node.children)) {
+      for (const child of node.children) {
+        if (typeof child === 'object' && child !== null && 'type' in child) {
+          traverse(child as ComponentNode);
+        }
+      }
+    }
+  }
+
+  for (const component of components) {
+    traverse(component);
+  }
+
+  return count;
+}
+
+/**
+ * 사용 가능한 모든 레시피 조회 (디버깅용)
+ *
+ * @param themeId - 테마 ID
+ * @returns 레시피 경로 → className 매핑
  */
 export function getAllRecipes(themeId: string): Record<string, string> {
   try {
-    // Load theme from .moai/themes/generated/
-    const theme = loadTheme(themeId);
-
+    const theme = loadTheme(themeId) as any;
     if (!theme) {
       return {};
     }
 
-    // Check if theme has recipes in tokens
-    // Theme v2.1 structure: theme.tokens.recipes
-    const recipes = (theme.tokens as any)?.recipes;
-
-    if (!recipes || typeof recipes !== 'object') {
+    // recipes는 tokens 내부가 아니라 최상위 필드
+    const recipes = theme.recipes || theme.tokens?.recipes;
+    if (!recipes) {
       return {};
     }
 
-    // Flatten nested recipe structure
-    return flattenRecipes(recipes);
+    const result: Record<string, string> = {};
+
+    function traverse(obj: any, path: string = 'recipes') {
+      for (const [key, value] of Object.entries(obj)) {
+        const currentPath = path ? `${path}.${key}` : key;
+
+        if (typeof value === 'string') {
+          result[currentPath] = value;
+        } else if (typeof value === 'object' && value !== null) {
+          traverse(value, currentPath);
+        }
+      }
+    }
+
+    traverse(recipes);
+    return result;
   } catch (error) {
-    // Theme loading failed or recipes not available
-    console.warn(`Failed to load recipes for theme "${themeId}":`, error);
+    console.warn(`[Recipe Resolver] Failed to get all recipes for ${themeId}:`, error);
     return {};
   }
-}
-
-/**
- * Get recipes for a specific component type
- *
- * @param themeId - Theme identifier
- * @param componentType - Component type (e.g., "card", "button", "input")
- * @returns Map of variant names to classNames
- *
- * @example
- * const cardRecipes = getComponentRecipes("square-minimalism", "card");
- * // Returns: { glass: "bg-white/80 ...", outlined: "bg-transparent ...", ... }
- */
-export function getComponentRecipes(
-  themeId: string,
-  componentType: string
-): Record<string, string> {
-  const allRecipes = getAllRecipes(themeId);
-  const prefix = `recipes.${componentType}.`;
-  const result: Record<string, string> = {};
-
-  for (const [path, className] of Object.entries(allRecipes)) {
-    if (path.startsWith(prefix)) {
-      const variantName = path.slice(prefix.length);
-      result[variantName] = className;
-    }
-  }
-
-  return result;
-}
-
-/**
- * Get a specific recipe by full path
- *
- * @param themeId - Theme identifier
- * @param recipePath - Full recipe path (e.g., "recipes.card.glass" or "card.glass")
- * @returns ClassName string or undefined if not found
- *
- * @example
- * const className = getRecipe("square-minimalism", "card.glass");
- * // Returns: "bg-white/80 backdrop-blur-xl ..."
- */
-export function getRecipe(themeId: string, recipePath: string): string | undefined {
-  const allRecipes = getAllRecipes(themeId);
-
-  // Normalize path: add "recipes." prefix if not present
-  const normalizedPath = recipePath.startsWith('recipes.')
-    ? recipePath
-    : `recipes.${recipePath}`;
-
-  return allRecipes[normalizedPath];
-}
-
-/**
- * Check if a theme has recipes defined
- *
- * @param themeId - Theme identifier
- * @returns True if theme has at least one recipe
- */
-export function hasRecipes(themeId: string): boolean {
-  const recipes = getAllRecipes(themeId);
-  return Object.keys(recipes).length > 0;
-}
-
-/**
- * Get list of all component types that have recipes in a theme
- *
- * @param themeId - Theme identifier
- * @returns Array of component type names
- *
- * @example
- * const types = getRecipeComponentTypes("square-minimalism");
- * // Returns: ["card", "button", "input", "table", "badge", ...]
- */
-export function getRecipeComponentTypes(themeId: string): string[] {
-  const allRecipes = getAllRecipes(themeId);
-  const types = new Set<string>();
-
-  for (const path of Object.keys(allRecipes)) {
-    // Extract component type from path: "recipes.card.glass" -> "card"
-    const parts = path.replace('recipes.', '').split('.');
-    if (parts.length >= 1 && parts[0]) {
-      types.add(parts[0]);
-    }
-  }
-
-  return Array.from(types).sort();
 }

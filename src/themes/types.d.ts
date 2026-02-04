@@ -16,13 +16,13 @@ export declare const StackSchema: z.ZodObject<{
     styling: z.ZodLiteral<"tailwindcss">;
     components: z.ZodLiteral<"shadcn-ui">;
 }, "strip", z.ZodTypeAny, {
-    components: "shadcn-ui";
     framework: "nextjs" | "vite" | "remix";
     styling: "tailwindcss";
+    components: "shadcn-ui";
 }, {
-    components: "shadcn-ui";
     framework: "nextjs" | "vite" | "remix";
     styling: "tailwindcss";
+    components: "shadcn-ui";
 }>;
 /**
  * Theme metadata schema
@@ -37,12 +37,12 @@ export declare const ThemeMetadataSchema: z.ZodObject<{
     author: z.ZodOptional<z.ZodString>;
     homepage: z.ZodOptional<z.ZodString>;
 }, "strip", z.ZodTypeAny, {
-    author?: string | undefined;
     tags?: string[] | undefined;
+    author?: string | undefined;
     homepage?: string | undefined;
 }, {
-    author?: string | undefined;
     tags?: string[] | undefined;
+    author?: string | undefined;
     homepage?: string | undefined;
 }>;
 /**
@@ -87,13 +87,13 @@ export declare const ThemeSchema: z.ZodObject<{
         styling: z.ZodLiteral<"tailwindcss">;
         components: z.ZodLiteral<"shadcn-ui">;
     }, "strip", z.ZodTypeAny, {
-        components: "shadcn-ui";
         framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        components: "shadcn-ui";
     }, {
-        components: "shadcn-ui";
         framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        components: "shadcn-ui";
     }>;
     questionnaire: z.ZodObject<{
         brandTone: z.ZodEnum<["professional", "playful", "elegant", "bold", "minimal"]>;
@@ -145,24 +145,24 @@ export declare const ThemeSchema: z.ZodObject<{
         author: z.ZodOptional<z.ZodString>;
         homepage: z.ZodOptional<z.ZodString>;
     }, "strip", z.ZodTypeAny, {
-        author?: string | undefined;
         tags?: string[] | undefined;
+        author?: string | undefined;
         homepage?: string | undefined;
     }, {
-        author?: string | undefined;
         tags?: string[] | undefined;
+        author?: string | undefined;
         homepage?: string | undefined;
     }>>;
 }, "strip", z.ZodTypeAny, {
     id: string;
     name: string;
+    version: string;
+    description: string;
     stack: {
-        components: "shadcn-ui";
         framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        components: "shadcn-ui";
     };
-    description: string;
-    version: string;
     questionnaire: {
         brandTone: "professional" | "playful" | "elegant" | "bold" | "minimal";
         contrast: "maximum" | "low" | "medium" | "high";
@@ -177,20 +177,20 @@ export declare const ThemeSchema: z.ZodObject<{
         fontScale: "medium" | "small" | "large";
     };
     metadata?: {
-        author?: string | undefined;
         tags?: string[] | undefined;
+        author?: string | undefined;
         homepage?: string | undefined;
     } | undefined;
 }, {
     id: string;
     name: string;
+    version: string;
+    description: string;
     stack: {
-        components: "shadcn-ui";
         framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        components: "shadcn-ui";
     };
-    description: string;
-    version: string;
     questionnaire: {
         brandTone: "professional" | "playful" | "elegant" | "bold" | "minimal";
         contrast: "maximum" | "low" | "medium" | "high";
@@ -205,8 +205,8 @@ export declare const ThemeSchema: z.ZodObject<{
         fontScale: "medium" | "small" | "large";
     };
     metadata?: {
-        author?: string | undefined;
         tags?: string[] | undefined;
+        author?: string | undefined;
         homepage?: string | undefined;
     } | undefined;
 }>;

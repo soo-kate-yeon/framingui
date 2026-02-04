@@ -965,13 +965,17 @@ export const ScreenDefinitionSchema = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/, 'Screen ID must be lowercase alphanumeric with hyphens'),
   name: z.string().optional(),
   description: z.string().optional(),
-  shell: z.string().regex(/^shell\.[a-z]+\.[a-z-]+$/, 'Shell token must be in format shell.platform.name'),
+  shell: z
+    .string()
+    .regex(/^shell\.[a-z]+\.[a-z-]+$/, 'Shell token must be in format shell.platform.name'),
   page: z.string().regex(/^page\.[a-z-]+$/, 'Page token must be in format page.name'),
   themeId: ThemeIdSchema.optional(),
   sections: z.array(
     z.object({
       id: z.string(),
-      pattern: z.string().regex(/^section\.[a-z0-9-]+$/, 'Section pattern must be in format section.name'),
+      pattern: z
+        .string()
+        .regex(/^section\.[a-z0-9-]+$/, 'Section pattern must be in format section.name'),
       slot: z.string().optional(),
       components: z.array(
         z.object({
@@ -1075,7 +1079,9 @@ export const GetScreenGenerationContextOutputSchema = z.object({
   error: z.string().optional(),
 });
 
-export type GetScreenGenerationContextOutput = z.infer<typeof GetScreenGenerationContextOutputSchema>;
+export type GetScreenGenerationContextOutput = z.infer<
+  typeof GetScreenGenerationContextOutputSchema
+>;
 
 // ============================================================================
 // Validate Screen Definition Tool Schemas (SPEC-MCP-004 Phase 3.5)

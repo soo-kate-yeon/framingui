@@ -2,6 +2,7 @@
  * Export Screen MCP Tool
  * SPEC-MCP-002: E-003 Screen Export Request
  * SPEC-COMPONENT-001-D: Hybrid Export System
+ * SPEC-MCP-004 Phase 4: Theme Recipes Auto-Application
  */
 
 import { render, loadTheme } from '@tekton/core';
@@ -21,6 +22,7 @@ import {
   generateCSS,
   TIER1_COMPONENTS,
 } from '../generators/index.js';
+import { applyRecipesToBlueprint } from '../data/recipe-resolver.js';
 
 /**
  * Convert JSX code to TSX format with TypeScript annotations
@@ -96,6 +98,7 @@ function extractComponentName(blueprintName: string): string {
 /**
  * Export screen MCP tool implementation
  * SPEC: E-003 Screen Export Request
+ * SPEC-MCP-004 Phase 4: Apply theme recipes before rendering
  *
  * @param input - Blueprint object and export format
  * @returns Generated code (MCP JSON-RPC format - no file write, no filePath)
@@ -103,10 +106,22 @@ function extractComponentName(blueprintName: string): string {
 export async function exportScreenTool(input: ExportScreenInput): Promise<ExportScreenOutput> {
   try {
     // MCP JSON-RPC format: Accept blueprint object directly (no storage lookup)
-    const blueprint = input.blueprint as Blueprint;
+    let blueprint = input.blueprint as Blueprint;
 
     if (!blueprint) {
       return createErrorResponse('Blueprint object is required');
+    }
+
+    // SPEC-MCP-004 Phase 4: Apply theme recipes if themeId exists
+    if (blueprint.themeId && blueprint.components) {
+      const componentsWithRecipes = applyRecipesToBlueprint(
+        blueprint.components,
+        blueprint.themeId
+      );
+      blueprint = {
+        ...blueprint,
+        components: componentsWithRecipes,
+      };
     }
 
     // SPEC: U-003 @tekton/core Integration - Use render from @tekton/core
@@ -339,7 +354,17 @@ export async function hybridExportTool(input: HybridExportInput): Promise<Hybrid
 
     // Blueprint 기반 export
     if (blueprint) {
-      const bp = blueprint as Blueprint;
+      let bp = blueprint as Blueprint;
+
+      // SPEC-MCP-004 Phase 4: Apply theme recipes if themeId exists
+      if ((bp.themeId || themeId) && bp.components) {
+        const targetThemeId = bp.themeId || themeId;
+        const componentsWithRecipes = applyRecipesToBlueprint(bp.components, targetThemeId!);
+        bp = {
+          ...bp,
+          components: componentsWithRecipes,
+        };
+      }
 
       // 기존 exportScreenTool 로직 사용
       const renderResult = render(bp);

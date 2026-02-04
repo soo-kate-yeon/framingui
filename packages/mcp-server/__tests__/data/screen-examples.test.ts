@@ -84,11 +84,6 @@ describe('screen-examples', () => {
     });
 
     it('data table example should have table component', () => {
-      const hasTable = teamGridExample.definition.sections.some(section =>
-        section.components.some(comp =>
-          comp.type === 'Table' || comp.type === 'Card'
-        )
-      );
       // This example may not have Table, adjust expectation
       expect(dataTableExample.definition.sections.length).toBeGreaterThan(0);
     });
@@ -111,9 +106,8 @@ describe('screen-examples', () => {
       const matches = getMatchingExamples('team members grid');
 
       expect(matches.length).toBeGreaterThan(0);
-      const hasTeamExample = matches.some(m =>
-        m.name.toLowerCase().includes('team') ||
-        m.description.toLowerCase().includes('team')
+      const hasTeamExample = matches.some(
+        m => m.name.toLowerCase().includes('team') || m.description.toLowerCase().includes('team')
       );
       expect(hasTeamExample).toBe(true);
     });
@@ -122,9 +116,8 @@ describe('screen-examples', () => {
       const matches = getMatchingExamples('data table with records');
 
       expect(matches.length).toBeGreaterThan(0);
-      const hasTableExample = matches.some(m =>
-        m.name.toLowerCase().includes('table') ||
-        m.description.toLowerCase().includes('table')
+      const hasTableExample = matches.some(
+        m => m.name.toLowerCase().includes('table') || m.description.toLowerCase().includes('table')
       );
       expect(hasTableExample).toBe(true);
     });
@@ -133,9 +126,8 @@ describe('screen-examples', () => {
       const matches = getMatchingExamples('login authentication form');
 
       expect(matches.length).toBeGreaterThan(0);
-      const hasLoginExample = matches.some(m =>
-        m.name.toLowerCase().includes('login') ||
-        m.description.toLowerCase().includes('login')
+      const hasLoginExample = matches.some(
+        m => m.name.toLowerCase().includes('login') || m.description.toLowerCase().includes('login')
       );
       expect(hasLoginExample).toBe(true);
     });
@@ -144,9 +136,10 @@ describe('screen-examples', () => {
       const matches = getMatchingExamples('analytics dashboard metrics');
 
       expect(matches.length).toBeGreaterThan(0);
-      const hasDashboardExample = matches.some(m =>
-        m.name.toLowerCase().includes('dashboard') ||
-        m.description.toLowerCase().includes('dashboard')
+      const hasDashboardExample = matches.some(
+        m =>
+          m.name.toLowerCase().includes('dashboard') ||
+          m.description.toLowerCase().includes('dashboard')
       );
       expect(hasDashboardExample).toBe(true);
     });

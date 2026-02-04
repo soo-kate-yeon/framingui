@@ -147,7 +147,7 @@ export function WrongName() {
       expect(result.code).toContain('Button');
       expect(result.tierUsed).toBe('tier1');
       expect(result.components).toHaveLength(1);
-      expect(result.components![0].source).toBe('tier1-example');
+      expect(result.components![0]!.source).toBe('tier1-example');
     });
 
     it('should export single Tier 1 component in TSX format', async () => {

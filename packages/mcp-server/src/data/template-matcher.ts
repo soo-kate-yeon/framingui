@@ -1,180 +1,280 @@
 /**
  * Template Matcher Module
- * SPEC-MCP-004 Phase 3.5: Match user descriptions to screen templates
+ * SPEC-MCP-004 Phase 3: Blueprint Generator Enhancement
  *
- * Analyzes user input description and finds matching templates from the registry
- * using keyword-based scoring and semantic matching.
+ * 자연어 설명에서 최적의 Screen Template을 매칭합니다.
  */
 
 import { templateRegistry } from '@tekton/ui';
 
 /**
- * Template match result with confidence scoring
+ * 키워드-템플릿 매핑 정의
+ * 각 템플릿 ID에 대해 관련 키워드를 정의
  */
-export interface TemplateMatch {
+const KEYWORD_TEMPLATE_MAP: Record<string, string[]> = {
+  // Auth Templates
+  'auth.login': [
+    'login',
+    'sign in',
+    'signin',
+    'log in',
+    '로그인',
+    'authentication',
+    'auth page',
+    'user login',
+    'member login',
+    'ログイン',
+    '登录',
+  ],
+  'auth.signup': [
+    'signup',
+    'sign up',
+    'register',
+    'registration',
+    'create account',
+    '회원가입',
+    'new user',
+    'join',
+    'サインアップ',
+    '注册',
+  ],
+  'auth.forgot-password': [
+    'forgot password',
+    'reset password',
+    'password recovery',
+    '비밀번호 찾기',
+    'recover account',
+    'パスワードリセット',
+    '忘记密码',
+  ],
+  'auth.verification': [
+    'verification',
+    'verify',
+    'confirm email',
+    'otp',
+    '인증',
+    'code verification',
+    '認証',
+    '验证',
+  ],
+
+  // Dashboard Templates
+  'dashboard.overview': [
+    'dashboard',
+    'analytics',
+    'metrics',
+    'stats',
+    'statistics',
+    '대시보드',
+    'admin panel',
+    'overview',
+    'kpi',
+    'ダッシュボード',
+    '仪表板',
+  ],
+
+  // Core Templates
+  'core.landing': [
+    'landing',
+    'landing page',
+    'home',
+    'homepage',
+    '랜딩',
+    'hero',
+    'marketing page',
+    'ランディング',
+    '首页',
+  ],
+  'core.profile': [
+    'profile',
+    'user profile',
+    'my page',
+    '프로필',
+    'account',
+    'my account',
+    'プロフィール',
+    '个人资料',
+  ],
+  'core.preferences': [
+    'settings',
+    'preferences',
+    'configuration',
+    '설정',
+    'options',
+    'config',
+    '設定',
+    '设置',
+  ],
+
+  // Feedback Templates
+  'feedback.loading': ['loading', 'spinner', 'wait', '로딩', 'progress', 'ローディング', '加载中'],
+  'feedback.error': ['error', '404', '500', 'not found', '오류', 'error page', 'エラー', '错误'],
+  'feedback.empty': [
+    'empty',
+    'no data',
+    'no results',
+    '빈 화면',
+    'empty state',
+    'nothing found',
+    '空',
+    '空状态',
+  ],
+  'feedback.confirmation': [
+    'confirm',
+    'confirmation',
+    'are you sure',
+    '확인',
+    'modal confirm',
+    '確認',
+    '确认',
+  ],
+  'feedback.success': [
+    'success',
+    'completed',
+    'done',
+    '성공',
+    'thank you',
+    'congratulations',
+    '成功',
+    '成功',
+  ],
+};
+
+/**
+ * 템플릿 카테고리별 Shell/Page 토큰 권장 매핑
+ */
+export const TEMPLATE_LAYOUT_RECOMMENDATIONS: Record<
+  string,
+  { shell: string; page: string; description: string }
+> = {
+  auth: {
+    shell: 'shell.web.auth',
+    page: 'page.wizard',
+    description: 'Centered layout for authentication flows',
+  },
+  dashboard: {
+    shell: 'shell.web.dashboard',
+    page: 'page.dashboard',
+    description: 'Admin layout with sidebar for analytics',
+  },
+  core: {
+    shell: 'shell.web.app',
+    page: 'page.resource',
+    description: 'Standard app layout for content pages',
+  },
+  feedback: {
+    shell: 'shell.web.minimal',
+    page: 'page.empty',
+    description: 'Minimal layout for feedback states',
+  },
+  marketing: {
+    shell: 'shell.web.marketing',
+    page: 'page.detail',
+    description: 'Full-width layout for marketing pages',
+  },
+};
+
+/**
+ * 템플릿 매칭 결과
+ */
+export interface TemplateMatchResult {
   templateId: string;
   templateName: string;
   category: string;
   confidence: number; // 0-100
   matchedKeywords: string[];
+  layoutRecommendation: {
+    shell: string;
+    page: string;
+    description: string;
+  };
 }
 
 /**
- * Category keywords for better matching
+ * 설명과 키워드 간 매칭 점수 계산
  */
-const CATEGORY_KEYWORDS: Record<string, string[]> = {
-  auth: ['login', 'signin', 'signup', 'register', 'authentication', 'password', 'forgot', 'reset', 'verify', 'verification', 'email', 'otp', 'two-factor', '2fa', 'sso'],
-  dashboard: ['dashboard', 'overview', 'analytics', 'metrics', 'stats', 'statistics', 'chart', 'graph', 'kpi', 'report', 'summary', 'panel', 'admin', 'workspace'],
-  form: ['form', 'input', 'settings', 'profile', 'preferences', 'configuration', 'edit', 'update', 'account', 'personal', 'user', 'information'],
-  marketing: ['landing', 'hero', 'cta', 'call-to-action', 'pricing', 'feature', 'benefits', 'testimonial', 'showcase', 'promote', 'marketing', 'sales'],
-  feedback: ['loading', 'error', 'success', 'empty', 'not-found', '404', '500', 'confirmation', 'message', 'alert', 'notification', 'state'],
-};
-
-/**
- * Component-related keywords for additional matching
- */
-const COMPONENT_KEYWORDS: Record<string, string[]> = {
-  card: ['card', 'box', 'container', 'panel'],
-  form: ['form', 'input', 'field', 'textbox', 'textarea'],
-  button: ['button', 'cta', 'action', 'submit', 'click'],
-  table: ['table', 'list', 'grid', 'data', 'row', 'column'],
-  navigation: ['nav', 'menu', 'sidebar', 'header', 'navigation'],
-  chart: ['chart', 'graph', 'visualization', 'data-viz'],
-};
-
-/**
- * Extract keywords from description
- * Normalizes and tokenizes the input text
- */
-function extractKeywords(description: string): string[] {
-  const normalized = description
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, ' ') // Remove special chars except hyphen
-    .trim();
-
-  const words = normalized.split(/\s+/);
-
-  // Filter out common stop words
-  const stopWords = new Set(['a', 'an', 'the', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'should', 'could', 'may', 'might', 'must', 'can']);
-
-  return words.filter(word => word.length > 2 && !stopWords.has(word));
-}
-
-/**
- * Calculate confidence score for a template match
- * Based on keyword matching, category relevance, and template metadata
- */
-function calculateConfidence(
-  template: any,
-  descriptionKeywords: string[],
-  matchedKeywords: string[]
-): number {
+function calculateMatchScore(
+  description: string,
+  keywords: string[]
+): { score: number; matched: string[] } {
+  const normalizedDesc = description.toLowerCase();
+  const matched: string[] = [];
   let score = 0;
 
-  // Base score from matched keywords (0-50 points)
-  const keywordScore = Math.min(50, (matchedKeywords.length / descriptionKeywords.length) * 50);
-  score += keywordScore;
+  for (const keyword of keywords) {
+    if (normalizedDesc.includes(keyword.toLowerCase())) {
+      matched.push(keyword);
+      // 긴 키워드에 더 높은 점수 부여
+      score += keyword.split(' ').length * 10;
+    }
+  }
 
-  // Category relevance bonus (0-20 points)
-  const categoryKeywords = CATEGORY_KEYWORDS[template.category] || [];
-  const categoryMatches = descriptionKeywords.filter(kw =>
-    categoryKeywords.some(ck => ck.includes(kw) || kw.includes(ck))
-  ).length;
-  const categoryScore = Math.min(20, categoryMatches * 5);
-  score += categoryScore;
-
-  // Component match bonus (0-20 points)
-  const requiredComponents = template.requiredComponents || [];
-  const componentMatches = descriptionKeywords.filter(kw =>
-    requiredComponents.some((comp: string) =>
-      comp.toLowerCase().includes(kw) || kw.includes(comp.toLowerCase())
-    ) ||
-    Object.entries(COMPONENT_KEYWORDS).some(([comp, keywords]) =>
-      keywords.includes(kw) && requiredComponents.includes(comp)
-    )
-  ).length;
-  const componentScore = Math.min(20, componentMatches * 5);
-  score += componentScore;
-
-  // Name/description match bonus (0-10 points)
-  const templateText = `${template.name} ${template.description}`.toLowerCase();
-  const directMatches = descriptionKeywords.filter(kw => templateText.includes(kw)).length;
-  const directScore = Math.min(10, directMatches * 2);
-  score += directScore;
-
-  return Math.min(100, Math.round(score));
+  return { score, matched };
 }
 
 /**
- * Match templates based on user description
- * Returns top matching templates sorted by confidence score
+ * 자연어 설명에서 최적의 템플릿 매칭
  *
- * @param description - User's natural language description of desired screen
- * @param limit - Maximum number of results to return (default: 5)
- * @returns Array of template matches sorted by confidence (highest first)
+ * @param description - 사용자의 자연어 화면 설명
+ * @param topN - 반환할 상위 N개 결과 (기본: 3)
+ * @returns 매칭된 템플릿 결과 배열 (신뢰도순 정렬)
  */
-export function matchTemplates(description: string, limit: number = 5): TemplateMatch[] {
-  // Extract keywords from description
-  const descriptionKeywords = extractKeywords(description);
+export function matchTemplates(description: string, topN: number = 3): TemplateMatchResult[] {
+  const results: TemplateMatchResult[] = [];
 
-  if (descriptionKeywords.length === 0) {
-    return [];
-  }
+  // 각 템플릿 키워드와 매칭
+  for (const [templateId, keywords] of Object.entries(KEYWORD_TEMPLATE_MAP)) {
+    const { score, matched } = calculateMatchScore(description, keywords);
 
-  // Get all templates from registry
-  const allTemplates = templateRegistry.getAll();
+    if (score > 0) {
+      // 템플릿 메타데이터 가져오기
+      const template = templateRegistry.get(templateId);
+      const category = templateId.split('.')[0] || 'core';
 
-  if (allTemplates.length === 0) {
-    return [];
-  }
-
-  // Score each template
-  const matches: TemplateMatch[] = [];
-
-  for (const template of allTemplates) {
-    const matchedKeywords: string[] = [];
-
-    // Check category keywords
-    const categoryKeywords = CATEGORY_KEYWORDS[template.category] || [];
-    for (const keyword of descriptionKeywords) {
-      if (categoryKeywords.some(ck => ck.includes(keyword) || keyword.includes(ck))) {
-        matchedKeywords.push(keyword);
-      }
-    }
-
-    // Check template name and description
-    const templateText = `${template.name} ${template.description}`.toLowerCase();
-    for (const keyword of descriptionKeywords) {
-      if (templateText.includes(keyword) && !matchedKeywords.includes(keyword)) {
-        matchedKeywords.push(keyword);
-      }
-    }
-
-    // Check template tags
-    if (template.tags) {
-      for (const keyword of descriptionKeywords) {
-        if (template.tags.some(tag => tag.toLowerCase().includes(keyword)) && !matchedKeywords.includes(keyword)) {
-          matchedKeywords.push(keyword);
-        }
-      }
-    }
-
-    // Only include templates with at least one match
-    if (matchedKeywords.length > 0) {
-      const confidence = calculateConfidence(template, descriptionKeywords, matchedKeywords);
-
-      matches.push({
-        templateId: template.id,
-        templateName: template.name,
-        category: template.category,
-        confidence,
-        matchedKeywords,
+      results.push({
+        templateId,
+        templateName: template?.name || templateId,
+        category,
+        confidence: Math.min(100, score), // 0-100 범위로 제한
+        matchedKeywords: matched,
+        layoutRecommendation: TEMPLATE_LAYOUT_RECOMMENDATIONS[category] || {
+          shell: 'shell.web.app',
+          page: 'page.resource',
+          description: 'Default app layout',
+        },
       });
     }
   }
 
-  // Sort by confidence (descending) and return top results
-  return matches
-    .sort((a, b) => b.confidence - a.confidence)
-    .slice(0, limit);
+  // 신뢰도순 정렬 후 상위 N개 반환
+  return results.sort((a, b) => b.confidence - a.confidence).slice(0, topN);
+}
+
+/**
+ * 최적 단일 템플릿 반환
+ */
+export function getBestMatch(description: string): TemplateMatchResult | null {
+  const matches = matchTemplates(description, 1);
+  const firstMatch = matches[0];
+  return firstMatch ?? null;
+}
+
+/**
+ * 템플릿 ID로 레이아웃 권장사항 조회
+ */
+export function getLayoutRecommendation(
+  templateId: string
+): (typeof TEMPLATE_LAYOUT_RECOMMENDATIONS)[string] | null {
+  const category = templateId.split('.')[0];
+  if (!category) {
+    return null;
+  }
+  return TEMPLATE_LAYOUT_RECOMMENDATIONS[category] || null;
+}
+
+/**
+ * 모든 템플릿 키워드 목록 조회 (디버깅용)
+ */
+export function getAllKeywordMappings(): Record<string, string[]> {
+  return { ...KEYWORD_TEMPLATE_MAP };
 }

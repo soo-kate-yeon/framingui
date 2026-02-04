@@ -3,6 +3,7 @@ import path from 'path';
 
 export default defineConfig({
   esbuild: {
+    jsx: 'automatic',
     loader: 'tsx',
     include: /\.(tsx?|jsx?)$/,
   },
@@ -10,6 +11,7 @@ export default defineConfig({
     esbuildOptions: {
       loader: {
         '.js': 'jsx',
+        '.ts': 'tsx',
       },
     },
   },

@@ -1,6 +1,7 @@
 /**
  * Generate Blueprint MCP Tool
  * SPEC-MCP-002: E-001 Blueprint Generation Request
+ * SPEC-MCP-004 Phase 3: Enhanced with Template Matching
  */
 
 import {
@@ -13,13 +14,18 @@ import {
   listIconLibraries,
 } from '@tekton/core';
 import type { ComponentNode } from '@tekton/core';
-import type { GenerateBlueprintInput, GenerateBlueprintOutput } from '../schemas/mcp-schemas.js';
+import type {
+  GenerateBlueprintInput,
+  GenerateBlueprintOutput,
+  TemplateRecommendation,
+} from '../schemas/mcp-schemas.js';
 import { getDefaultStorage } from '../storage/blueprint-storage.js';
 import {
   createThemeNotFoundError,
   createValidationError,
   extractErrorMessage,
 } from '../utils/error-handler.js';
+import { matchTemplates } from '../data/template-matcher.js';
 
 type ComponentType = (typeof COMPONENT_CATALOG)[number];
 
@@ -167,7 +173,18 @@ export async function generateBlueprintTool(
     const storage = getDefaultStorage();
     const blueprintId = await storage.saveBlueprint(blueprintWithTimestamp);
 
-    // MCP JSON-RPC format: Return blueprint data only (no preview URL)
+    // SPEC-MCP-004 Phase 3: Match templates based on description
+    const templateMatches = matchTemplates(input.description, 3);
+    const templateRecommendations: TemplateRecommendation[] = templateMatches.map(match => ({
+      templateId: match.templateId,
+      templateName: match.templateName,
+      category: match.category,
+      confidence: match.confidence,
+      matchedKeywords: match.matchedKeywords,
+      layoutRecommendation: match.layoutRecommendation,
+    }));
+
+    // MCP JSON-RPC format: Return blueprint data with template recommendations
     return {
       success: true,
       blueprint: {
@@ -179,6 +196,9 @@ export async function generateBlueprintTool(
         components: blueprint.components,
         timestamp,
       },
+      // SPEC-MCP-004: Include template recommendations for LLM guidance
+      templateRecommendations:
+        templateRecommendations.length > 0 ? templateRecommendations : undefined,
     };
   } catch (error) {
     return {

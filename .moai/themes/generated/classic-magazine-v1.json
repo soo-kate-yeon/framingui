@@ -1,189 +1,96 @@
 {
   "id": "classic-magazine-v1",
-  "name": "Classic Magazine v1",
+  "name": "Classic Magazine",
   "schemaVersion": "2.1",
-  "brandTone": "professional",
-  "designDNA": {
-    "moodKeywords": [
-      "articulate",
-      "informed",
-      "structured"
-    ],
-    "targetEmotion": "신뢰감",
-    "visualAtmosphere": "고품격 저널리즘"
-  },
+  "description": "A typography-first theme inspired by traditional print media. Features a sophisticated mix of serif and sans-serif fonts, strict 0px radius, and high-contrast borders.",
+  "brandTone": "Authoritative",
   "tokens": {
-    "atomic": {
-      "color": {
-        "brand": {
-          "500": {
-            "l": 0.6,
-            "c": 0.28,
-            "h": 25
-          }
-        },
-        "neutral": {
-          "50": {
-            "l": 0.98,
-            "c": 0.01,
-            "h": 0
-          },
-          "100": {
-            "l": 0.95,
-            "c": 0.01,
-            "h": 0
-          },
-          "200": {
-            "l": 0.88,
-            "c": 0.01,
-            "h": 0
-          },
-          "300": {
-            "l": 0.78,
-            "c": 0.01,
-            "h": 0
-          },
-          "900": {
-            "l": 0.15,
-            "c": 0.01,
-            "h": 0
-          },
-          "white": {
-            "l": 1,
-            "c": 0,
-            "h": 0
-          }
-        }
+    "color": {
+      "brand": {
+        "50": "#F9F9F9",
+        "100": "#F2F2F2",
+        "200": "#E5E5E5",
+        "300": "#D4D4D4",
+        "400": "#A3A3A3",
+        "500": "#737373",
+        "600": "#525252",
+        "700": "#404040",
+        "800": "#262626",
+        "900": "#000000",
+        "950": "#000000"
       },
-      "spacing": {
-        "0": "0",
-        "1": "4px",
-        "2": "8px",
-        "3": "12px",
-        "4": "16px",
-        "5": "20px",
-        "6": "24px",
-        "8": "32px",
-        "10": "40px",
-        "12": "48px",
-        "16": "64px",
-        "20": "80px",
-        "24": "96px"
-      },
-      "radius": {
-        "sm": "4px",
-        "md": "8px",
-        "lg": "12px",
-        "none": "0",
-        "xs": "2px",
-        "xl": "12px",
-        "2xl": "16px",
-        "3xl": "24px",
-        "full": "9999px"
+      "accent": {
+        "50": "#FFF1F2",
+        "500": "#E11D48",
+        "900": "#881337"
       }
-    },
-    "semantic": {
-      "background": {
-        "canvas": "atomic.color.neutral.50",
-        "surface": {
-          "subtle": "atomic.color.neutral.50",
-          "default": "atomic.color.white",
-          "emphasis": "atomic.color.neutral.100"
-        }
-      },
-      "border": {
-        "default": {
-          "subtle": "atomic.color.neutral.100",
-          "default": "atomic.color.neutral.200",
-          "emphasis": "atomic.color.neutral.300"
-        }
-      }
-    }
-  },
-  "stateLayer": {
-    "hover": {
-      "opacity": 0.08
-    },
-    "disabled": {
-      "opacity": 0.38,
-      "contentOpacity": 0.38
-    }
-  },
-  "elevation": {
-    "level": {
-      "0": "none",
-      "1": "0 1px 4px rgba(0,0,0,0.06)",
-      "2": "0 2px 8px rgba(0,0,0,0.08)",
-      "3": "0 4px 16px rgba(0,0,0,0.1)"
-    },
-    "context": {
-      "modal": "elevation.level.3",
-      "popup": "elevation.level.2"
-    }
-  },
-  "typography": {
-    "fontFamily": {
-      "display": "Playfair Display, serif",
-      "body": "Inter, sans-serif",
-      "sans": "Inter, system-ui, sans-serif",
-      "serif": "Georgia, Times, serif",
-      "mono": "JetBrains Mono, monospace"
-    },
-    "fontWeight": {
-      "regular": "400",
-      "medium": "500",
-      "bold": "700",
-      "thin": "100",
-      "light": "300",
-      "semibold": "600",
-      "extrabold": "800",
-      "black": "900"
-    }
-  },
-  "density": {
-    "mode": "comfortable"
-  },
-  "motion": {
-    "duration": {
-      "fast": "150ms",
-      "medium": "300ms",
-      "slow": "450ms",
-      "instant": "0ms",
-      "micro": "50ms",
-      "quick": "100ms",
-      "standard": "150ms",
-      "moderate": "200ms",
-      "deliberate": "300ms",
-      "complex": "500ms"
-    },
-    "easing": {
-      "standard": "ease-out",
-      "accelerate": "ease-in",
-      "decelerate": "cubic-bezier(0.0, 0.0, 0.2, 1.0)",
-      "linear": "linear",
-      "emphasized": "cubic-bezier(0.2, 0, 0, 1)",
-      "spring": "cubic-bezier(0.34, 1.56, 0.64, 1)"
-    }
-  },
-  "border": {
-    "width": {
-      "thin": "1px",
-      "medium": "2px",
-      "none": "0",
-      "thick": "3px",
-      "heavy": "4px"
     },
     "radius": {
-      "sm": "atomic.radius.sm",
-      "md": "atomic.radius.md",
-      "lg": "atomic.radius.lg",
-      "full": "9999px",
-      "none": "0",
-      "xs": "2px",
-      "xl": "12px",
-      "2xl": "16px",
-      "3xl": "24px",
-      "circle": "50%"
+      "none": "0px",
+      "sm": "0px",
+      "md": "0px",
+      "lg": "0px",
+      "xl": "0px",
+      "2xl": "0px",
+      "3xl": "0px",
+      "full": "0px"
+    },
+    "border": {
+      "width": {
+        "thin": "1px",
+        "thick": "2px",
+        "hairline": "0.5px"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "serif": "Merriweather, Georgia, serif",
+        "sans": "Inter, SYSTEM-UI, sans-serif",
+        "display": "Playfair Display, serif"
+      }
+    }
+  },
+  "semantic": {
+    "background": {
+      "canvas": "bg-white",
+      "surface": "bg-white",
+      "subtle": "bg-neutral-50"
+    },
+    "border": {
+      "default": "border-neutral-200",
+      "strong": "border-neutral-900",
+      "divider": "border-b border-neutral-200"
+    },
+    "text": {
+      "primary": "text-black",
+      "secondary": "text-neutral-600",
+      "accent": "text-red-700 font-bold"
+    }
+  },
+  "recipes": {
+    "card": {
+      "article": "bg-white border-b border-neutral-200 pb-6 mb-6 hover:opacity-80 transition-opacity cursor-pointer",
+      "feature": "bg-neutral-50 p-8 border border-neutral-900",
+      "compact": "flex gap-4 items-start border-b border-neutral-100 pb-4 mb-4"
+    },
+    "button": {
+      "primary": "bg-black text-white h-12 px-8 text-xs font-bold uppercase tracking-widest hover:bg-neutral-800 transition-colors rounded-none",
+      "secondary": "bg-white text-black border border-black h-12 px-8 text-xs font-bold uppercase tracking-widest hover:bg-neutral-50 transition-colors rounded-none",
+      "ghost": "text-neutral-900 hover:text-black font-bold uppercase tracking-widest text-[10px]"
+    },
+    "input": {
+      "search": "w-full border-b border-neutral-300 py-3 text-lg font-serif placeholder:font-sans placeholder:text-neutral-400 focus:outline-none focus:border-black transition-colors bg-transparent"
+    },
+    "typography": {
+      "h1": "font-serif text-5xl md:text-7xl font-bold leading-tight tracking-tight text-neutral-900",
+      "h2": "font-serif text-3xl md:text-4xl font-bold leading-tight text-neutral-900",
+      "h3": "font-sans text-xs font-bold uppercase tracking-widest text-neutral-900 mb-2",
+      "body": "font-serif text-lg leading-relaxed text-neutral-700",
+      "caption": "font-sans text-xs text-neutral-500 uppercase tracking-wider"
+    },
+    "layout": {
+      "section": "py-16 md:py-24 border-b border-neutral-900",
+      "grid": "grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-12"
     }
   }
 }

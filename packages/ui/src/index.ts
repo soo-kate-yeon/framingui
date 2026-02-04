@@ -297,27 +297,7 @@ export { Calendar } from './components/calendar';
 // Templates (Phase 3)
 // ========================================
 
-// Template Types & Registry
-export type {
-  ScreenTemplate,
-  ScreenCategory,
-  TemplateLayout,
-  ScreenTemplateProps,
-  CustomizationBoundaries,
-  TemplateSkeleton,
-  TemplateLayoutConfig,
-  ResponsiveLayout,
-  ResponsiveBreakpoints,
-  SectionTemplate,
-  TemplateRegistryEntry,
-} from './templates/types';
-
-export { DEFAULT_RESPONSIVE_LAYOUT, DEFAULT_BREAKPOINTS } from './templates/types';
-
-export { TemplateRegistry, templateRegistry } from './templates/registry';
-
-// Auth Templates
-export { LoginTemplate, LoginTemplateComponent } from './templates/auth/login';
-
-// Dashboard Templates
-export { DashboardTemplate, DashboardTemplateComponent } from './templates/dashboard/overview';
+// Import templates module to trigger auto-registration
+// WHY: templates/index.ts contains templateRegistry.registerMany() which registers all built-in templates
+// IMPACT: Without this import, templateRegistry.getAll() returns empty array
+export * from './templates';

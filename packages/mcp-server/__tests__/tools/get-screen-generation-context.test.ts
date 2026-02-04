@@ -118,8 +118,8 @@ describe('get-screen-generation-context Tool', () => {
       if (result.examples && result.examples.length > 0) {
         // Should include login-related example
         const loginExample = result.examples.find(
-          e => e.name.toLowerCase().includes('login') ||
-               e.description.toLowerCase().includes('login')
+          e =>
+            e.name.toLowerCase().includes('login') || e.description.toLowerCase().includes('login')
         );
         expect(loginExample).toBeDefined();
       }
@@ -251,7 +251,9 @@ describe('get-screen-generation-context Tool', () => {
       });
 
       expect(result.success).toBe(true);
-      const validateStep = result.workflow?.steps.find(s => s.tool === 'validate-screen-definition');
+      const validateStep = result.workflow?.steps.find(
+        s => s.tool === 'validate-screen-definition'
+      );
       expect(validateStep).toBeDefined();
       const generateStep = result.workflow?.steps.find(s => s.tool === 'generate_screen');
       expect(generateStep).toBeDefined();
