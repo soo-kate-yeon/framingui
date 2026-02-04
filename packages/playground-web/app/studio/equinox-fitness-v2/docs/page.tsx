@@ -56,7 +56,7 @@ export default function EquinoxFitnessV2Docs() {
 
     TOC_SECTIONS.forEach(({ id }) => {
       const element = document.getElementById(id);
-      if (element) observer.observe(element);
+      if (element) {observer.observe(element);}
     });
 
     return () => observer.disconnect();
