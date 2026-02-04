@@ -18,6 +18,7 @@ import { listScreenTemplatesTool } from './tools/list-screen-templates.js';
 import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
 import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
+import { validateEnvironmentTool } from './tools/validate-environment.js';
 import {
   GenerateBlueprintInputSchema,
   PreviewThemeInputSchema,
@@ -34,6 +35,7 @@ import {
   PreviewScreenTemplateInputSchema,
   GetScreenGenerationContextInputSchema,
   ValidateScreenDefinitionInputSchema,
+  ValidateEnvironmentInputSchema,
 } from './schemas/mcp-schemas.js';
 
 const server = new Server(
@@ -485,6 +487,38 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ['definition'],
         },
       },
+      {
+        name: 'validate-environment',
+        description:
+          'Validate user environment by checking if required NPM packages are installed.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After generate_screen returns dependencies.missing array\n' +
+          '- When user wants to check if their project has required packages\n' +
+          '- Before running generated code to ensure all dependencies are available\n\n' +
+          'RETURNS:\n' +
+          '- installed: Packages already in package.json with versions\n' +
+          '- missing: Packages that need to be installed\n' +
+          '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n\n' +
+          'EXAMPLE WORKFLOW:\n' +
+          '1. Call generate_screen → get dependencies.external\n' +
+          '2. Call validate-environment with projectPath + requiredPackages\n' +
+          '3. Show user the missing packages and install commands',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            projectPath: {
+              type: 'string',
+              description: 'Path to package.json or project root directory',
+            },
+            requiredPackages: {
+              type: 'array',
+              description: 'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
+              items: { type: 'string' },
+            },
+          },
+          required: ['projectPath', 'requiredPackages'],
+        },
+      },
     ],
   };
 });
@@ -725,6 +759,21 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         };
       }
 
+      case 'validate-environment': {
+        // Validate input
+        const validatedInput = ValidateEnvironmentInputSchema.parse(args);
+        const result = await validateEnvironmentTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -763,5 +812,5 @@ await server.connect(transport);
 
 info('Tekton MCP Server connected via stdio transport');
 info(
-  '15 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition'
+  '16 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
 );

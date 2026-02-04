@@ -6,6 +6,7 @@
 import type { ScreenDefinition } from '@tekton/core';
 import type { GenerateScreenInput, GenerateScreenOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
+import { extractDependencies } from '../utils/dependency-extractor.js';
 
 /**
  * Generate production-ready code from JSON screen definition
@@ -82,10 +83,14 @@ export async function generateScreenTool(
     // For now, we return the generated code without separate CSS variables
     // Future enhancement: Extract CSS variables from resolved screen
 
+    // Extract dependencies from generated code
+    const dependencies = extractDependencies(code);
+
     return {
       success: true,
       code,
       cssVariables,
+      dependencies,
     };
   } catch (error) {
     return {

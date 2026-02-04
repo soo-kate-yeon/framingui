@@ -360,12 +360,37 @@ export const GenerateScreenInputSchema = z.object({
 export type GenerateScreenInput = z.infer<typeof GenerateScreenInputSchema>;
 
 /**
+ * Dependencies structure for generated code
+ * SPEC-MCP-005: Automatic dependency extraction and environment validation
+ */
+export const DependenciesSchema = z.object({
+  external: z.array(z.string()).describe('External NPM packages required by generated code'),
+  internal: z.array(z.string()).describe('Internal @tekton packages'),
+  installCommands: z.object({
+    npm: z.string(),
+    yarn: z.string(),
+    pnpm: z.string(),
+    bun: z.string(),
+  }),
+  compatibility: z
+    .object({
+      react: z.string().optional(),
+      node: z.string().optional(),
+    })
+    .optional(),
+  notes: z.array(z.string()).optional(),
+});
+
+export type Dependencies = z.infer<typeof DependenciesSchema>;
+
+/**
  * Generate Screen Output Schema
  */
 export const GenerateScreenOutputSchema = z.object({
   success: z.boolean(),
   code: z.string().optional(),
   cssVariables: z.string().optional(),
+  dependencies: DependenciesSchema.optional(),
   errors: z.array(z.string()).optional(),
   error: z.string().optional(),
 });
@@ -1118,3 +1143,41 @@ export const ValidateScreenDefinitionOutputSchema = z.object({
 });
 
 export type ValidateScreenDefinitionOutput = z.infer<typeof ValidateScreenDefinitionOutputSchema>;
+
+// ============================================================================
+// Validate Environment Tool Schemas (SPEC-MCP-005 Phase 2)
+// ============================================================================
+
+/**
+ * Validate Environment Input Schema
+ * SPEC-MCP-005 Phase 2: Check user's environment for missing dependencies
+ */
+export const ValidateEnvironmentInputSchema = z.object({
+  projectPath: z.string().describe('Path to package.json or project root'),
+  requiredPackages: z
+    .array(z.string())
+    .describe('Packages to validate (from generate_screen.dependencies.external)'),
+});
+
+export type ValidateEnvironmentInput = z.infer<typeof ValidateEnvironmentInputSchema>;
+
+/**
+ * Validate Environment Output Schema
+ */
+export const ValidateEnvironmentOutputSchema = z.object({
+  success: z.boolean(),
+  installed: z.record(z.string()).optional().describe('Packages already installed with versions'),
+  missing: z.array(z.string()).optional().describe('Packages that need to be installed'),
+  installCommands: z
+    .object({
+      npm: z.string(),
+      yarn: z.string(),
+      pnpm: z.string(),
+      bun: z.string(),
+    })
+    .optional(),
+  warnings: z.array(z.string()).optional().describe('Version conflicts or compatibility issues'),
+  error: z.string().optional(),
+});
+
+export type ValidateEnvironmentOutput = z.infer<typeof ValidateEnvironmentOutputSchema>;
