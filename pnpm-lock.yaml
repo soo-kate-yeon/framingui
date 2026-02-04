@@ -175,6 +175,18 @@ importers:
         specifier: ^3.23.8
         version: 3.25.76
     devDependencies:
+      '@babel/parser':
+        specifier: ^7.28.6
+        version: 7.28.6
+      '@babel/traverse':
+        specifier: ^7.28.6
+        version: 7.28.6
+      '@babel/types':
+        specifier: ^7.28.6
+        version: 7.28.6
+      '@types/babel__traverse':
+        specifier: ^7.28.0
+        version: 7.28.0
       '@types/node':
         specifier: ^22.10.5
         version: 22.19.7

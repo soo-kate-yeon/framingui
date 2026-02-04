@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+
 import { TrendingUp, Flame, Clock, Zap, ChevronRight } from "lucide-react";
 
 /**
