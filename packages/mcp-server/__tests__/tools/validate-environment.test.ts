@@ -23,12 +23,12 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           dependencies: {
-            'react': '^19.0.0',
+            react: '^19.0.0',
             'framer-motion': '^11.0.0',
           },
         },
         installedPackages: {
-          'react': '^19.0.0',
+          react: '^19.0.0',
           'framer-motion': '^11.0.0',
         },
       });
@@ -42,7 +42,7 @@ describe('validateEnvironmentTool', () => {
       // Assert: 모든 패키지가 설치되어 있고 누락된 패키지가 없어야 함
       expect(result.success).toBe(true);
       expect(result.installed).toEqual({
-        'react': '^19.0.0',
+        react: '^19.0.0',
         'framer-motion': '^11.0.0',
       });
       expect(result.missing).toEqual([]);
@@ -55,11 +55,11 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           dependencies: {
-            'react': '^19.0.0',
+            react: '^19.0.0',
           },
         },
         installedPackages: {
-          'react': '^19.0.0',
+          react: '^19.0.0',
         },
       });
 
@@ -71,7 +71,7 @@ describe('validateEnvironmentTool', () => {
 
       // Assert: 설치된 패키지와 누락된 패키지가 올바르게 구분되어야 함
       expect(result.success).toBe(true);
-      expect(result.installed).toEqual({ 'react': '^19.0.0' });
+      expect(result.installed).toEqual({ react: '^19.0.0' });
       expect(result.missing).toContain('framer-motion');
       expect(result.missing).toContain('@radix-ui/react-slot');
       expect(result.missing).toHaveLength(2);
@@ -83,11 +83,11 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           devDependencies: {
-            'vitest': '^2.0.0',
+            vitest: '^2.0.0',
           },
         },
         installedPackages: {
-          'vitest': '^2.0.0',
+          vitest: '^2.0.0',
         },
       });
 
@@ -99,7 +99,7 @@ describe('validateEnvironmentTool', () => {
 
       // Assert: devDependencies 패키지가 설치된 것으로 인식되어야 함
       expect(result.success).toBe(true);
-      expect(result.installed).toEqual({ 'vitest': '^2.0.0' });
+      expect(result.installed).toEqual({ vitest: '^2.0.0' });
       expect(result.missing).toEqual([]);
     });
 
@@ -172,11 +172,11 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           dependencies: {
-            'react': '^19.0.0',
+            react: '^19.0.0',
           },
         },
         installedPackages: {
-          'react': '^19.0.0',
+          react: '^19.0.0',
         },
       });
 
@@ -258,11 +258,11 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           dependencies: {
-            'React': '^19.0.0', // 잘못된 대소문자
+            React: '^19.0.0', // 잘못된 대소문자
           },
         },
         installedPackages: {
-          'React': '^19.0.0',
+          React: '^19.0.0',
         },
       });
 
@@ -285,18 +285,18 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           dependencies: {
-            'react': '^19.0.0',
+            react: '^19.0.0',
             'react-dom': '^19.0.0',
           },
           devDependencies: {
-            'vitest': '^2.0.0',
+            vitest: '^2.0.0',
             '@testing-library/react': '^14.0.0',
           },
         },
         installedPackages: {
-          'react': '^19.0.0',
+          react: '^19.0.0',
           'react-dom': '^19.0.0',
-          'vitest': '^2.0.0',
+          vitest: '^2.0.0',
           '@testing-library/react': '^14.0.0',
         },
       });
@@ -316,9 +316,9 @@ describe('validateEnvironmentTool', () => {
       // Assert: 설치된 패키지와 누락된 패키지가 올바르게 구분되어야 함
       expect(result.success).toBe(true);
       expect(result.installed).toEqual({
-        'react': '^19.0.0',
+        react: '^19.0.0',
         'react-dom': '^19.0.0',
-        'vitest': '^2.0.0',
+        vitest: '^2.0.0',
         '@testing-library/react': '^14.0.0',
       });
       expect(result.missing).toEqual(['missing-package']);
@@ -342,10 +342,7 @@ describe('validateEnvironmentTool', () => {
       // Act: scoped 패키지 검증
       const result = await validateEnvironmentTool({
         projectPath: '/project',
-        requiredPackages: [
-          '@radix-ui/react-slot',
-          '@radix-ui/react-dialog',
-        ],
+        requiredPackages: ['@radix-ui/react-slot', '@radix-ui/react-dialog'],
       });
 
       // Assert: scoped 패키지가 올바르게 처리되어야 함
@@ -362,17 +359,17 @@ describe('validateEnvironmentTool', () => {
         success: true,
         packageJson: {
           dependencies: {
-            'react': '^19.0.0',
-            'lodash': '~4.17.21',
-            'axios': '1.6.0',
-            'typescript': '>=5.0.0',
+            react: '^19.0.0',
+            lodash: '~4.17.21',
+            axios: '1.6.0',
+            typescript: '>=5.0.0',
           },
         },
         installedPackages: {
-          'react': '^19.0.0',
-          'lodash': '~4.17.21',
-          'axios': '1.6.0',
-          'typescript': '>=5.0.0',
+          react: '^19.0.0',
+          lodash: '~4.17.21',
+          axios: '1.6.0',
+          typescript: '>=5.0.0',
         },
       });
 
@@ -385,10 +382,10 @@ describe('validateEnvironmentTool', () => {
       // Assert: 각 패키지의 버전 정보가 정확하게 포함되어야 함
       expect(result.success).toBe(true);
       expect(result.installed).toEqual({
-        'react': '^19.0.0',
-        'lodash': '~4.17.21',
-        'axios': '1.6.0',
-        'typescript': '>=5.0.0',
+        react: '^19.0.0',
+        lodash: '~4.17.21',
+        axios: '1.6.0',
+        typescript: '>=5.0.0',
       });
     });
   });
