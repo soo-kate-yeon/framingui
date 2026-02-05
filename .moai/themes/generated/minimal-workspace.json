@@ -1,6 +1,6 @@
 {
-    "id": "minimal-workspace-v3",
-    "name": "Minimal Workspace v3",
+    "id": "minimal-workspace",
+    "name": "Minimal Workspace",
     "schemaVersion": "2.1",
     "brandTone": "neutral",
     "designDNA": {

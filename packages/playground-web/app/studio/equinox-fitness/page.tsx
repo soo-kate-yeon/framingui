@@ -29,14 +29,14 @@ export default function EquinoxFitnessPage() {
 
                     <div className="flex gap-4">
                         <Link
-                            href="/studio/equinox-fitness-v2/dashboard"
+                            href="/studio/equinox-fitness/dashboard"
                             className="bg-white text-black h-14 px-10 uppercase tracking-widest text-xs font-bold hover:bg-neutral-200 transition-colors inline-flex items-center gap-3"
                         >
                             Enter Dashboard
                             <ArrowRight size={16} />
                         </Link>
                         <Link
-                            href="/studio/equinox-fitness-v2/docs"
+                            href="/studio/equinox-fitness/docs"
                             className="bg-transparent border border-white/30 text-white h-14 px-10 uppercase tracking-widest text-xs font-bold hover:bg-white/10 transition-colors inline-flex items-center"
                         >
                             Documentation
@@ -89,7 +89,7 @@ export default function EquinoxFitnessPage() {
                         </h2>
                     </div>
                     <Link
-                        href="/studio/equinox-fitness-v2/dashboard"
+                        href="/studio/equinox-fitness/dashboard"
                         className="text-[10px] uppercase font-bold tracking-widest text-neutral-500 hover:text-white border-b border-transparent hover:border-white pb-px transition-all flex items-center gap-2"
                     >
                         Open Dashboard

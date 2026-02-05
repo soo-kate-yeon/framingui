@@ -24,10 +24,10 @@ export default function EquinoxDashboardLayout({ children }: { children: React.R
 
                 <nav className="flex-1 p-6 space-y-1">
                     <NavItem
-                        href="/studio/equinox-fitness-v2/dashboard"
+                        href="/studio/equinox-fitness/dashboard"
                         icon={<LayoutDashboard size={18} />}
                         label="Performance"
-                        active={pathname === '/studio/equinox-fitness-v2/dashboard'}
+                        active={pathname === '/studio/equinox-fitness/dashboard'}
                     />
                     <NavItem
                         href="#"
@@ -45,7 +45,7 @@ export default function EquinoxDashboardLayout({ children }: { children: React.R
                         label="Achievements"
                     />
                     <NavItem
-                        href="/studio/equinox-fitness-v2/dashboard/settings"
+                        href="/studio/equinox-fitness/dashboard/settings"
                         icon={<Settings size={18} />}
                         label="Settings"
                     />

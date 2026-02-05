@@ -50,8 +50,8 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   };
 
   const handleDocumentationClick = () => {
-    // Navigate to documentation (anchor or external)
-    window.open('https://docs.tekton.studio', '_blank');
+    // Navigate to template documentation page
+    router.push(`/studio/${templateId}/docs`);
   };
 
   // Loading state
@@ -102,10 +102,9 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <button
                   type="button"
                   onClick={handleDocumentationClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded flex items-center justify-center gap-2"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded"
                 >
                   Documentation
-                  <ExternalLink size={14} />
                 </button>
               </div>
             </div>

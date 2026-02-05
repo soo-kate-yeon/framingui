@@ -32,9 +32,9 @@ import {
 describe('Theme Module', () => {
   describe('loadTheme', () => {
     it('should load built-in theme', () => {
-      const theme = loadTheme('classic-magazine-v1');
+      const theme = loadTheme('classic-magazine');
       expect(theme).not.toBeNull();
-      expect(theme?.id).toBe('classic-magazine-v1');
+      expect(theme?.id).toBe('classic-magazine');
       // v2.1 schema uses tokens.color (flat structure, not atomic)
       expect(theme?.tokens?.color).toBeDefined();
     });
@@ -62,7 +62,7 @@ describe('Theme Module', () => {
 
     it('should accept valid theme ID format', () => {
       // Valid: lowercase alphanumeric + hyphens
-      const theme = loadTheme('classic-magazine-v1');
+      const theme = loadTheme('classic-magazine');
       expect(theme).not.toBeNull();
     });
   });
@@ -82,7 +82,7 @@ describe('Theme Module', () => {
     // BUILTIN_THEMES is empty in v2.1 - themes are in .moai/themes/generated/
     it('should return false for all themes in v2.1 (dynamic loading)', () => {
       // v2.1 does not have built-in themes - all themes are external
-      expect(isBuiltinTheme('classic-magazine-v1')).toBe(false);
+      expect(isBuiltinTheme('classic-magazine')).toBe(false);
       expect(isBuiltinTheme('hims-v1')).toBe(false);
     });
 
@@ -130,7 +130,7 @@ describe('Theme Module', () => {
     // v2.1: generateCSSVariables() is deprecated and returns empty object
     // Use generateThemeCSS() from css-generator.ts for v2.1 themes
     it('should be deprecated in v2.1 and return empty object', () => {
-      const theme = loadTheme('classic-magazine-v1');
+      const theme = loadTheme('classic-magazine');
       expect(theme).not.toBeNull();
 
       const vars = generateCSSVariables(theme!);
@@ -139,7 +139,7 @@ describe('Theme Module', () => {
     });
 
     it('should return empty object for any theme in v2.1', () => {
-      const theme = loadTheme('classic-magazine-v1');
+      const theme = loadTheme('classic-magazine');
       expect(theme).not.toBeNull();
 
       const vars = generateCSSVariables(theme!);
@@ -168,14 +168,14 @@ describe('Blueprint Module', () => {
     it('should create blueprint with unique id', () => {
       const bp = createBlueprint({
         name: 'Test Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       });
 
       expect(bp.id).toMatch(/^bp-/);
       expect(bp.name).toBe('Test Page');
-      expect(bp.themeId).toBe('classic-magazine-v1');
+      expect(bp.themeId).toBe('classic-magazine');
     });
   });
 
@@ -183,7 +183,7 @@ describe('Blueprint Module', () => {
     it('should validate correct blueprint', () => {
       const bp = createBlueprint({
         name: 'Test',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Button' }],
       });
@@ -237,7 +237,7 @@ describe('Blueprint Module', () => {
     it('should detect invalid layout type', () => {
       const bp = createBlueprint({
         name: 'Test',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       });
@@ -254,7 +254,7 @@ describe('Blueprint Module', () => {
       const result = validateBlueprint({
         id: 'test-id',
         name: 'Test',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: 'not-an-array' as any,
       });
@@ -266,7 +266,7 @@ describe('Blueprint Module', () => {
     it('should detect component without type', () => {
       const bp = createBlueprint({
         name: 'Test',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: '' } as any],
       });
@@ -325,7 +325,7 @@ describe('Render Module', () => {
     it('should render simple blueprint to JSX', () => {
       const bp = createBlueprint({
         name: 'Hello Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [
           { type: 'Heading', props: { level: 1 }, children: ['Hello World'] },
@@ -345,7 +345,7 @@ describe('Render Module', () => {
     it('should handle nested components', () => {
       const bp = createBlueprint({
         name: 'Card Demo',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [
           {
@@ -369,7 +369,7 @@ describe('Render Module', () => {
     it('should generate correct imports', () => {
       const bp = createBlueprint({
         name: 'Multi Component',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Button' }, { type: 'Input' }, { type: 'Card' }],
       });
@@ -385,7 +385,7 @@ describe('Render Module', () => {
     it('should include theme header comment', () => {
       const bp = createBlueprint({
         name: 'Themed Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Button' }],
       });
@@ -418,7 +418,7 @@ describe('Render Module', () => {
     it('should render dashboard layout', () => {
       const bp = createBlueprint({
         name: 'Dashboard',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'dashboard',
         components: [{ type: 'Text', children: ['Content'] }],
       });
@@ -434,7 +434,7 @@ describe('Render Module', () => {
     it('should render sidebar-left layout', () => {
       const bp = createBlueprint({
         name: 'Sidebar Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'sidebar-left',
         components: [],
       });
@@ -449,7 +449,7 @@ describe('Render Module', () => {
     it('should render two-column layout', () => {
       const bp = createBlueprint({
         name: 'Two Column',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'two-column',
         components: [],
       });
@@ -463,7 +463,7 @@ describe('Render Module', () => {
     it('should render sidebar-right layout', () => {
       const bp = createBlueprint({
         name: 'Sidebar Right',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'sidebar-right',
         components: [],
       });
@@ -478,7 +478,7 @@ describe('Render Module', () => {
     it('should render landing layout', () => {
       const bp = createBlueprint({
         name: 'Landing',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'landing',
         components: [],
       });
@@ -494,7 +494,7 @@ describe('Render Module', () => {
     it('should render Input component', () => {
       const bp = createBlueprint({
         name: 'Form Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Input', props: { type: 'email', placeholder: 'Enter email' } }],
       });
@@ -510,7 +510,7 @@ describe('Render Module', () => {
     it('should render Image component', () => {
       const bp = createBlueprint({
         name: 'Gallery',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Image', props: { src: '/photo.jpg', alt: 'Photo' } }],
       });
@@ -526,7 +526,7 @@ describe('Render Module', () => {
     it('should render Link component', () => {
       const bp = createBlueprint({
         name: 'Nav Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Link', props: { href: '/about' }, children: ['About Us'] }],
       });
@@ -542,7 +542,7 @@ describe('Render Module', () => {
     it('should render List component', () => {
       const bp = createBlueprint({
         name: 'List Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'List', children: [{ type: 'Text', children: ['Item 1'] }] }],
       });
@@ -557,7 +557,7 @@ describe('Render Module', () => {
     it('should render Form component', () => {
       const bp = createBlueprint({
         name: 'Form Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Form', children: [{ type: 'Input' }] }],
       });
@@ -572,7 +572,7 @@ describe('Render Module', () => {
     it('should render Modal component', () => {
       const bp = createBlueprint({
         name: 'Modal Page',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Modal', props: { title: 'Confirm' }, children: ['Are you sure?'] }],
       });
@@ -588,7 +588,7 @@ describe('Render Module', () => {
     it('should handle component with number props', () => {
       const bp = createBlueprint({
         name: 'Number Props',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Heading', props: { level: 3 }, children: ['Title'] }],
       });
@@ -602,7 +602,7 @@ describe('Render Module', () => {
     it('should handle component with boolean props', () => {
       const bp = createBlueprint({
         name: 'Bool Props',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [
           {
@@ -623,7 +623,7 @@ describe('Render Module', () => {
     it('should handle unknown component with Default renderer', () => {
       const bp = createBlueprint({
         name: 'Unknown Component',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'UnknownWidget', props: { custom: 'value' }, children: ['Content'] }],
       });
@@ -638,7 +638,7 @@ describe('Render Module', () => {
     it('should handle component with object props', () => {
       const bp = createBlueprint({
         name: 'Object Props',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'CustomComponent', props: { config: { foo: 'bar' } } }],
       });
@@ -652,7 +652,7 @@ describe('Render Module', () => {
     it('should handle component with null and undefined props', () => {
       const bp = createBlueprint({
         name: 'Null Props',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Button', props: { value: null, other: undefined } }],
       });
@@ -667,7 +667,7 @@ describe('Render Module', () => {
     it('should render component without children using self-closing tag', () => {
       const bp = createBlueprint({
         name: 'No Children',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Divider' }],
       });
@@ -683,7 +683,7 @@ describe('Render Module', () => {
     it('should respect typescript option', () => {
       const bp = createBlueprint({
         name: 'JS File',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Button' }],
       });
@@ -697,7 +697,7 @@ describe('Render Module', () => {
     it('should respect semicolons option', () => {
       const bp = createBlueprint({
         name: 'No Semicolons',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       });
@@ -712,7 +712,7 @@ describe('Render Module', () => {
     it('should respect indent option', () => {
       const bp = createBlueprint({
         name: 'Custom Indent',
-        themeId: 'classic-magazine-v1',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [{ type: 'Button' }],
       });
@@ -732,7 +732,7 @@ describe('Render Module', () => {
 describe('Full Pipeline', () => {
   it('should complete Theme -> Blueprint -> Render flow', () => {
     // 1. Load theme
-    const theme = loadTheme('classic-magazine-v1');
+    const theme = loadTheme('classic-magazine');
     expect(theme).not.toBeNull();
 
     // 2. Create blueprint

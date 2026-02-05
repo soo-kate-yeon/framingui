@@ -1,8 +1,8 @@
 import { TemplateDocsPage } from '../../../../components/studio/docs/TemplateDocsPage';
 import { getTemplateDocsData } from '../../../../data/template-docs';
 
-export default function NeutralHumanismDocs() {
-  const data = getTemplateDocsData('neutral-humanism');
+export default function EquinoxFitnessDocs() {
+  const data = getTemplateDocsData('equinox-fitness');
 
   if (!data) {
     return <div>Documentation not found</div>;

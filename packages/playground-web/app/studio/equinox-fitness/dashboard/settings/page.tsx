@@ -3,7 +3,7 @@
  * SPEC-MCP-004 Phase 1-4 Integration Test
  *
  * Phase 3: Template Matcher → core.preferences
- * Phase 4: Recipe Resolver → equinox-fitness-v2 recipes applied
+ * Phase 4: Recipe Resolver → equinox-fitness recipes applied
  */
 
 'use client';
@@ -16,7 +16,7 @@ export default function SettingsPage() {
 
   const handleLogout = () => {
     // 실제 로그아웃 로직
-    router.push('/studio/equinox-fitness-v2');
+    router.push('/studio/equinox-fitness');
   };
 
   return (

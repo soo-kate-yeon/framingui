@@ -130,17 +130,17 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'equinox-fitness-v2': {
-    id: 'equinox-fitness-v2',
+  'equinox-fitness': {
+    id: 'equinox-fitness',
     name: 'Equinox Fitness',
     tagline: 'Energetic, bold fitness & wellness design',
     description: '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스 및 웰니스 브랜드를 위한 디자인 시스템입니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('equinox-fitness-v2', 'hero.png'),
-      getScreenshotUrl('equinox-fitness-v2', 'workouts.png'),
-      getScreenshotUrl('equinox-fitness-v2', 'profile.png'),
-      getScreenshotUrl('equinox-fitness-v2', 'plans.png'),
+      getScreenshotUrl('equinox-fitness', 'hero.png'),
+      getScreenshotUrl('equinox-fitness', 'workouts.png'),
+      getScreenshotUrl('equinox-fitness', 'profile.png'),
+      getScreenshotUrl('equinox-fitness', 'plans.png'),
     ],
     features: [
       {
@@ -206,17 +206,17 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'round-minimal-v1': {
-    id: 'round-minimal-v1',
+  'round-minimal': {
+    id: 'round-minimal',
     name: 'Round Minimal',
     tagline: 'Soft, rounded, gentle user experience',
     description: '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 제공하는 미니멀 디자인 시스템입니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('round-minimal-v1', 'hero.png'),
-      getScreenshotUrl('round-minimal-v1', 'features.png'),
-      getScreenshotUrl('round-minimal-v1', 'auth.png'),
-      getScreenshotUrl('round-minimal-v1', 'dashboard.png'),
+      getScreenshotUrl('round-minimal', 'hero.png'),
+      getScreenshotUrl('round-minimal', 'features.png'),
+      getScreenshotUrl('round-minimal', 'auth.png'),
+      getScreenshotUrl('round-minimal', 'dashboard.png'),
     ],
     features: [
       {
@@ -282,17 +282,17 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'classic-magazine-v1': {
-    id: 'classic-magazine-v1',
+  'classic-magazine': {
+    id: 'classic-magazine',
     name: 'Classic Magazine',
     tagline: 'Editorial, content-rich, timeless typography',
     description: '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심의 웹사이트를 위한 디자인 시스템입니다. 가독성과 편집 디자인의 전통을 계승합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('classic-magazine-v1', 'hero.png'),
-      getScreenshotUrl('classic-magazine-v1', 'articles.png'),
-      getScreenshotUrl('classic-magazine-v1', 'detail.png'),
-      getScreenshotUrl('classic-magazine-v1', 'sidebar.png'),
+      getScreenshotUrl('classic-magazine', 'hero.png'),
+      getScreenshotUrl('classic-magazine', 'articles.png'),
+      getScreenshotUrl('classic-magazine', 'detail.png'),
+      getScreenshotUrl('classic-magazine', 'sidebar.png'),
     ],
     features: [
       {
@@ -358,17 +358,17 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'neutral-humanism-v1': {
-    id: 'neutral-humanism-v1',
+  'neutral-humanism': {
+    id: 'neutral-humanism',
     name: 'Neutral Humanism',
     tagline: 'Human-centered, approachable, balanced design',
     description: '사람 중심의 따뜻한 디자인과 중립적인 컬러 팔레트로 접근성과 가독성을 우선하는 디자인 시스템입니다. 모든 사용자에게 편안한 경험을 제공합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('neutral-humanism-v1', 'hero.png'),
-      getScreenshotUrl('neutral-humanism-v1', 'features.png'),
-      getScreenshotUrl('neutral-humanism-v1', 'form.png'),
-      getScreenshotUrl('neutral-humanism-v1', 'cards.png'),
+      getScreenshotUrl('neutral-humanism', 'hero.png'),
+      getScreenshotUrl('neutral-humanism', 'features.png'),
+      getScreenshotUrl('neutral-humanism', 'form.png'),
+      getScreenshotUrl('neutral-humanism', 'cards.png'),
     ],
     features: [
       {
@@ -434,17 +434,17 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'minimal-workspace-v3': {
-    id: 'minimal-workspace-v3',
+  'minimal-workspace': {
+    id: 'minimal-workspace',
     name: 'Minimal Workspace',
     tagline: 'Productivity-focused, distraction-free, efficient',
     description: '생산성과 집중력을 극대화하는 미니멀 워크스페이스 디자인 시스템입니다. 불필요한 요소를 제거하고 사용자가 작업에만 몰입할 수 있도록 설계되었습니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('minimal-workspace-v3', 'workspace.png'),
-      getScreenshotUrl('minimal-workspace-v3', 'sidebar.png'),
-      getScreenshotUrl('minimal-workspace-v3', 'editor.png'),
-      getScreenshotUrl('minimal-workspace-v3', 'settings.png'),
+      getScreenshotUrl('minimal-workspace', 'workspace.png'),
+      getScreenshotUrl('minimal-workspace', 'sidebar.png'),
+      getScreenshotUrl('minimal-workspace', 'editor.png'),
+      getScreenshotUrl('minimal-workspace', 'settings.png'),
     ],
     features: [
       {
