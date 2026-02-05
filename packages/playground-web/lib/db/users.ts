@@ -10,7 +10,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import type { UserProfile, UpdateUserData, DatabaseError } from './types';
+import type { UserProfile, UpdateUserData } from './types';
 import type { User } from '@supabase/supabase-js';
 
 /**

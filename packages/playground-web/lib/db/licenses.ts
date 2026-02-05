@@ -44,11 +44,7 @@ export async function getUserLicenses(
 
     if (error) {
       console.error('Failed to get user licenses:', error.message);
-      throw {
-        message: 'Failed to get user licenses',
-        code: error.code,
-        details: error.message,
-      } as DatabaseError;
+      throw new Error(`Failed to get user licenses: ${error.message}`);
     }
 
     return (data as UserLicense[]) ?? [];
@@ -58,10 +54,8 @@ export async function getUserLicenses(
     }
 
     console.error('Unexpected error getting user licenses:', error);
-    throw {
-      message: 'Unexpected error getting user licenses',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    } as DatabaseError;
+    const details = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Unexpected error getting user licenses: ${details}`);
   }
 }
 
@@ -105,25 +99,14 @@ export async function createLicense(
 
       // 중복 키 에러 처리
       if (error.code === '23505') {
-        throw {
-          message: 'License already exists for this user and theme',
-          code: error.code,
-          details: 'UNIQUE constraint violation',
-        } as DatabaseError;
+        throw new Error('License already exists for this user and theme: UNIQUE constraint violation');
       }
 
-      throw {
-        message: 'Failed to create license',
-        code: error.code,
-        details: error.message,
-      } as DatabaseError;
+      throw new Error(`Failed to create license: ${error.message}`);
     }
 
     if (!data) {
-      throw {
-        message: 'No data returned after license creation',
-        details: 'Insert operation succeeded but no data returned',
-      } as DatabaseError;
+      throw new Error('No data returned after license creation: Insert operation succeeded but no data returned');
     }
 
     return data as UserLicense;
@@ -133,10 +116,8 @@ export async function createLicense(
     }
 
     console.error('Unexpected error creating license:', error);
-    throw {
-      message: 'Unexpected error creating license',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    } as DatabaseError;
+    const details = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Unexpected error creating license: ${details}`);
   }
 }
 
@@ -239,19 +220,11 @@ export async function updateLicense(
 
     if (error) {
       console.error('Failed to update license:', error.message);
-      throw {
-        message: 'Failed to update license',
-        code: error.code,
-        details: error.message,
-      } as DatabaseError;
+      throw new Error(`Failed to update license: ${error.message}`);
     }
 
     if (!data) {
-      throw {
-        message: 'License not found',
-        code: 'PGRST116',
-        details: 'No license found with the given ID',
-      } as DatabaseError;
+      throw new Error('License not found: No license found with the given ID');
     }
 
     return data as UserLicense;
@@ -261,10 +234,8 @@ export async function updateLicense(
     }
 
     console.error('Unexpected error updating license:', error);
-    throw {
-      message: 'Unexpected error updating license',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    } as DatabaseError;
+    const details = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Unexpected error updating license: ${details}`);
   }
 }
 
@@ -331,11 +302,7 @@ export async function deactivateExpiredLicenses(): Promise<number> {
 
     if (error) {
       console.error('Failed to deactivate expired licenses:', error.message);
-      throw {
-        message: 'Failed to deactivate expired licenses',
-        code: error.code,
-        details: error.message,
-      } as DatabaseError;
+      throw new Error(`Failed to deactivate expired licenses: ${error.message}`);
     }
 
     return data?.length ?? 0;
@@ -345,9 +312,7 @@ export async function deactivateExpiredLicenses(): Promise<number> {
     }
 
     console.error('Unexpected error deactivating licenses:', error);
-    throw {
-      message: 'Unexpected error deactivating licenses',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    } as DatabaseError;
+    const details = error instanceof Error ? error.message : 'Unknown error';
+    throw new Error(`Unexpected error deactivating licenses: ${details}`);
   }
 }

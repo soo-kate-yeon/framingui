@@ -9,7 +9,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import type { FreeScreenTemplate, DatabaseError } from './types';
+import type { FreeScreenTemplate } from './types';
 
 /**
  * 모든 무료 템플릿 조회
