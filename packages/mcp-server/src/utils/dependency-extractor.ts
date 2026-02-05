@@ -51,7 +51,7 @@ const COMPATIBILITY_MAP: Record<string, { react?: string; node?: string }> = {
   '@radix-ui/react-dropdown-menu': { react: '^18.0.0 || ^19.0.0' },
   '@radix-ui/react-tooltip': { react: '^18.0.0 || ^19.0.0' },
   '@radix-ui/react-popover': { react: '^18.0.0 || ^19.0.0' },
-  'next': { react: '^18.0.0 || ^19.0.0', node: '>=18.17.0' },
+  next: { react: '^18.0.0 || ^19.0.0', node: '>=18.17.0' },
   'lucide-react': { react: '^16.x || ^17.x || ^18.x || ^19.x' },
 };
 
@@ -62,7 +62,7 @@ const COMPATIBILITY_NOTES: Record<string, string> = {
   'framer-motion': 'framer-motion requires React 18+ for concurrent features',
   '@radix-ui/react-slot': '@radix-ui/react-slot is a peer dependency of @tekton/ui',
   '@radix-ui/react-dialog': '@radix-ui/react-dialog requires peer dependencies: react, react-dom',
-  'next': 'Next.js requires peer dependencies: react, react-dom',
+  next: 'Next.js requires peer dependencies: react, react-dom',
   'lucide-react': 'lucide-react is compatible with React 16.x, 17.x, 18.x, and 19.x',
 };
 

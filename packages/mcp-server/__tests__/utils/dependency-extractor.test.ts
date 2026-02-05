@@ -124,15 +124,9 @@ describe('extractDependencies', () => {
       `;
       const result = extractDependencies(code);
 
-      expect(result.installCommands.npm).toBe(
-        'npm install @radix-ui/react-slot framer-motion'
-      );
-      expect(result.installCommands.yarn).toBe(
-        'yarn add @radix-ui/react-slot framer-motion'
-      );
-      expect(result.installCommands.pnpm).toBe(
-        'pnpm add @radix-ui/react-slot framer-motion'
-      );
+      expect(result.installCommands.npm).toBe('npm install @radix-ui/react-slot framer-motion');
+      expect(result.installCommands.yarn).toBe('yarn add @radix-ui/react-slot framer-motion');
+      expect(result.installCommands.pnpm).toBe('pnpm add @radix-ui/react-slot framer-motion');
       expect(result.installCommands.bun).toBe('bun add @radix-ui/react-slot framer-motion');
     });
 
@@ -183,9 +177,7 @@ describe('extractDependencies', () => {
       const result = extractDependencies(code);
 
       expect(result.notes).toBeDefined();
-      expect(result.notes).toContain(
-        'framer-motion requires React 18+ for concurrent features'
-      );
+      expect(result.notes).toContain('framer-motion requires React 18+ for concurrent features');
     });
 
     it('여러 패키지의 노트를 포함해야 함', () => {
@@ -197,12 +189,8 @@ describe('extractDependencies', () => {
 
       expect(result.notes).toBeDefined();
       expect(result.notes?.length).toBeGreaterThan(0);
-      expect(result.notes).toContain(
-        'framer-motion requires React 18+ for concurrent features'
-      );
-      expect(result.notes).toContain(
-        '@radix-ui/react-slot is a peer dependency of @tekton/ui'
-      );
+      expect(result.notes).toContain('framer-motion requires React 18+ for concurrent features');
+      expect(result.notes).toContain('@radix-ui/react-slot is a peer dependency of @tekton/ui');
     });
 
     it('노트가 없는 패키지의 경우 undefined여야 함', () => {
@@ -290,11 +278,7 @@ describe('extractDependencies', () => {
       const result = extractDependencies(code);
 
       // 알파벳 순서로 정렬되어야 함
-      expect(result.external).toEqual([
-        '@radix-ui/react-slot',
-        'framer-motion',
-        'zod',
-      ]);
+      expect(result.external).toEqual(['@radix-ui/react-slot', 'framer-motion', 'zod']);
     });
 
     it('혼합된 import 형식을 처리해야 함', () => {
@@ -338,15 +322,9 @@ describe('extractDependencies', () => {
       `;
       const result = extractDependencies(code);
 
-      expect(result.external).toEqual([
-        '@radix-ui/react-slot',
-        'framer-motion',
-        'zod',
-      ]);
+      expect(result.external).toEqual(['@radix-ui/react-slot', 'framer-motion', 'zod']);
       expect(result.internal).toEqual(['@tekton/core', '@tekton/ui']);
-      expect(result.installCommands.npm).toBe(
-        'npm install @radix-ui/react-slot framer-motion zod'
-      );
+      expect(result.installCommands.npm).toBe('npm install @radix-ui/react-slot framer-motion zod');
       expect(result.compatibility).toBeDefined();
       expect(result.notes).toBeDefined();
     });

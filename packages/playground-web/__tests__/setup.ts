@@ -15,3 +15,5 @@ afterEach(() => {
 // Mock environment variables
 process.env.MCP_SERVER_URL = 'http://localhost:3000';
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3001';
+process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock.supabase.co';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-anon-key-12345';

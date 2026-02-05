@@ -14,6 +14,8 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.8.0",
+    "@supabase/supabase-js": "^2.94.0",
     "@tanstack/react-query": "^5.62.11",
     "@tekton/core": "workspace:*",
     "@tekton/ui": "workspace:*",
