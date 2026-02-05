@@ -3,7 +3,10 @@
  * SPEC-MCP-005 Phase 2: Check if user's project has required NPM packages installed
  */
 
-import type { ValidateEnvironmentInput, ValidateEnvironmentOutput } from '../schemas/mcp-schemas.js';
+import type {
+  ValidateEnvironmentInput,
+  ValidateEnvironmentOutput,
+} from '../schemas/mcp-schemas.js';
 import { readPackageJson } from '../utils/package-json-reader.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 

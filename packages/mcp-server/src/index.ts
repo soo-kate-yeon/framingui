@@ -419,7 +419,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         description:
           '[WORKFLOW STEP 1/4] Get complete context for AI agents to generate screen definitions from natural language.\n\n' +
           'THIS IS THE FIRST STEP in the screen generation workflow:\n' +
-          '1. Call THIS TOOL with user\'s description (Step 1/4)\n' +
+          "1. Call THIS TOOL with user's description (Step 1/4)\n" +
           '2. Use returned context to generate/validate Screen Definition (Step 2/4)\n' +
           '3. Call generate_screen with the definition (Step 3/4)\n' +
           '4. Call validate-environment if path known (Step 4/4 - Phase 2)\n\n' +
@@ -514,7 +514,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
             requiredPackages: {
               type: 'array',
-              description: 'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
+              description:
+                'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
               items: { type: 'string' },
             },
           },

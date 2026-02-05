@@ -494,13 +494,13 @@ describe('updateLicense', () => {
       error: null,
     });
 
-    await expect(
-      updateLicense('non-existent-license', { is_active: false })
-    ).rejects.toMatchObject({
-      message: 'License not found',
-      code: 'PGRST116',
-      details: 'No license found with the given ID',
-    });
+    await expect(updateLicense('non-existent-license', { is_active: false })).rejects.toMatchObject(
+      {
+        message: 'License not found',
+        code: 'PGRST116',
+        details: 'No license found with the given ID',
+      }
+    );
   });
 
   it('should throw DatabaseError when update fails', async () => {
@@ -512,9 +512,7 @@ describe('updateLicense', () => {
       },
     });
 
-    await expect(
-      updateLicense('license-1', { tier: 'invalid' as any })
-    ).rejects.toMatchObject({
+    await expect(updateLicense('license-1', { tier: 'invalid' as any })).rejects.toMatchObject({
       message: 'Failed to update license',
       code: '400',
       details: 'Invalid tier value',
@@ -524,9 +522,7 @@ describe('updateLicense', () => {
   it('should handle unexpected errors', async () => {
     mockSingle.mockRejectedValue(new Error('Connection lost'));
 
-    await expect(
-      updateLicense('license-1', { is_active: false })
-    ).rejects.toMatchObject({
+    await expect(updateLicense('license-1', { is_active: false })).rejects.toMatchObject({
       message: 'Unexpected error updating license',
       details: 'Connection lost',
     });
@@ -618,11 +614,7 @@ describe('deactivateExpiredLicenses', () => {
   });
 
   it('should successfully deactivate expired licenses', async () => {
-    const deactivatedLicenses = [
-      { id: 'license-1' },
-      { id: 'license-2' },
-      { id: 'license-3' },
-    ];
+    const deactivatedLicenses = [{ id: 'license-1' }, { id: 'license-2' }, { id: 'license-3' }];
 
     mockSelect.mockResolvedValue({
       data: deactivatedLicenses,

@@ -49,9 +49,7 @@ describe('GET /api/auth/callback', () => {
 
   describe('Parameter Validation', () => {
     it('should return error when state parameter is missing (CSRF protection)', async () => {
-      const request = new NextRequest(
-        `http://localhost:3000/api/auth/callback?code=${validCode}`
-      );
+      const request = new NextRequest(`http://localhost:3000/api/auth/callback?code=${validCode}`);
 
       const response = await GET(request);
 
@@ -71,9 +69,7 @@ describe('GET /api/auth/callback', () => {
 
       expect(response.status).toBe(302);
       expect(response.headers.get('Location')).toContain('/auth/login?error=missing_code');
-      expect(console.error).toHaveBeenCalledWith(
-        '[OAuth Callback] Missing authorization code'
-      );
+      expect(console.error).toHaveBeenCalledWith('[OAuth Callback] Missing authorization code');
     });
 
     it('should return error when both code and state are missing', async () => {
@@ -148,9 +144,7 @@ describe('GET /api/auth/callback', () => {
       const response = await GET(request);
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toContain(
-        '/auth/login?error=exchange_failed'
-      );
+      expect(response.headers.get('Location')).toContain('/auth/login?error=exchange_failed');
       expect(console.error).toHaveBeenCalledWith(
         '[OAuth Callback] Code exchange failed:',
         expect.objectContaining({
@@ -176,9 +170,7 @@ describe('GET /api/auth/callback', () => {
       const response = await GET(request);
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toContain(
-        '/auth/login?error=invalid_session'
-      );
+      expect(response.headers.get('Location')).toContain('/auth/login?error=invalid_session');
     });
 
     it('should return error when user is null after exchange', async () => {
@@ -201,9 +193,7 @@ describe('GET /api/auth/callback', () => {
       const response = await GET(request);
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toContain(
-        '/auth/login?error=invalid_session'
-      );
+      expect(response.headers.get('Location')).toContain('/auth/login?error=invalid_session');
     });
   });
 
@@ -268,9 +258,7 @@ describe('GET /api/auth/callback', () => {
       const response = await GET(request);
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toContain(
-        '/auth/login?error=user_creation_failed'
-      );
+      expect(response.headers.get('Location')).toContain('/auth/login?error=user_creation_failed');
       expect(console.error).toHaveBeenCalledWith(
         '[OAuth Callback] Failed to create/update user profile'
       );
@@ -286,9 +274,7 @@ describe('GET /api/auth/callback', () => {
       const response = await GET(request);
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toContain(
-        '/auth/login?error=database_error'
-      );
+      expect(response.headers.get('Location')).toContain('/auth/login?error=database_error');
       expect(console.error).toHaveBeenCalledWith(
         '[OAuth Callback] Database error during user creation:',
         expect.any(Error)
@@ -363,9 +349,7 @@ describe('GET /api/auth/callback', () => {
 
   describe('Error Handling', () => {
     it('should handle unexpected errors gracefully', async () => {
-      mockExchangeCodeForSession.mockRejectedValue(
-        new Error('Unexpected network error')
-      );
+      mockExchangeCodeForSession.mockRejectedValue(new Error('Unexpected network error'));
 
       const request = new NextRequest(
         `http://localhost:3000/api/auth/callback?code=${validCode}&state=${validState}`
@@ -374,9 +358,7 @@ describe('GET /api/auth/callback', () => {
       const response = await GET(request);
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toContain(
-        '/auth/login?error=unexpected_error'
-      );
+      expect(response.headers.get('Location')).toContain('/auth/login?error=unexpected_error');
       expect(console.error).toHaveBeenCalledWith(
         '[OAuth Callback] Unexpected error:',
         expect.any(Error)
@@ -384,9 +366,7 @@ describe('GET /api/auth/callback', () => {
     });
 
     it('should preserve origin URL in redirects', async () => {
-      const request = new NextRequest(
-        `https://example.com/api/auth/callback?state=${validState}`
-      );
+      const request = new NextRequest(`https://example.com/api/auth/callback?state=${validState}`);
 
       const response = await GET(request);
 
@@ -398,9 +378,7 @@ describe('GET /api/auth/callback', () => {
 
   describe('CSRF Protection', () => {
     it('should validate state parameter presence', async () => {
-      const request = new NextRequest(
-        `http://localhost:3000/api/auth/callback?code=${validCode}`
-      );
+      const request = new NextRequest(`http://localhost:3000/api/auth/callback?code=${validCode}`);
 
       const response = await GET(request);
 

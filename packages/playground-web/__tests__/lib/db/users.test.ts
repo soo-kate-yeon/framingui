@@ -7,12 +7,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  createOrUpdateUser,
-  getUserById,
-  updateUser,
-  getCurrentUser,
-} from '@/lib/db/users';
+import { createOrUpdateUser, getUserById, updateUser, getCurrentUser } from '@/lib/db/users';
 import type { User } from '@supabase/supabase-js';
 
 // Mock Supabase server client
@@ -306,9 +301,7 @@ describe('updateUser', () => {
       },
     });
 
-    await expect(
-      updateUser('user-123', { email: 'invalid-email' })
-    ).rejects.toMatchObject({
+    await expect(updateUser('user-123', { email: 'invalid-email' })).rejects.toMatchObject({
       message: 'Failed to update user',
       code: '400',
       details: 'Invalid email format',
@@ -318,9 +311,7 @@ describe('updateUser', () => {
   it('should handle unexpected errors', async () => {
     mockUpdateUserById.mockRejectedValue(new Error('Database timeout'));
 
-    await expect(
-      updateUser('user-123', { email: 'test@example.com' })
-    ).rejects.toMatchObject({
+    await expect(updateUser('user-123', { email: 'test@example.com' })).rejects.toMatchObject({
       message: 'Unexpected error updating user',
       details: 'Database timeout',
     });
@@ -386,10 +377,7 @@ describe('getCurrentUser', () => {
     const result = await getCurrentUser();
 
     expect(result).toBeNull();
-    expect(console.error).toHaveBeenCalledWith(
-      'Failed to get current user:',
-      'Invalid token'
-    );
+    expect(console.error).toHaveBeenCalledWith('Failed to get current user:', 'Invalid token');
   });
 
   it('should handle unexpected errors', async () => {
