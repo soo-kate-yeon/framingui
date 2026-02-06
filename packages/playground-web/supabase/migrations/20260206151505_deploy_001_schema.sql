@@ -1,0 +1,137 @@
+-- ============================================================
+-- Migration: SPEC-DEPLOY-001 Phase 1.1 - Production Deployment Schema
+-- Created: 2026-02-06
+-- Description: Supabase DB tables for authentication and licensing
+-- ============================================================
+--
+-- Tables:
+--   1. user_profiles: User profile information
+--   2. api_keys: MCP server authentication API keys
+--   3. user_licenses: Theme license purchases
+--
+-- Notes:
+--   - This migration may conflict with existing user_licenses table
+--   - Review and merge with 20260205000000_init_auth_schema.sql if needed
+--   - Execute via Supabase Dashboard > SQL Editor or Supabase CLI
+-- ============================================================
+
+-- ============================================================
+-- Table: user_profiles
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  display_name TEXT,
+  avatar_url TEXT,
+  plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'pro', 'creator')),
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE public.user_profiles IS 'SPEC-DEPLOY-001: User profile information';
+COMMENT ON COLUMN public.user_profiles.id IS 'References auth.users(id)';
+COMMENT ON COLUMN public.user_profiles.plan IS 'Subscription plan: free, pro, creator';
+
+-- RLS
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can read own profile" ON public.user_profiles;
+CREATE POLICY "Users can read own profile" ON public.user_profiles
+  FOR SELECT USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Users can update own profile" ON public.user_profiles;
+CREATE POLICY "Users can update own profile" ON public.user_profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+DROP POLICY IF EXISTS "Service role can manage all user_profiles" ON public.user_profiles;
+CREATE POLICY "Service role can manage all user_profiles" ON public.user_profiles
+  USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- Table: api_keys
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.api_keys (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  key_hash TEXT NOT NULL,
+  key_prefix TEXT NOT NULL,        -- "tk_live_xxxx" (for identification)
+  name TEXT NOT NULL DEFAULT 'Default',
+  last_used_at TIMESTAMPTZ,
+  expires_at TIMESTAMPTZ,          -- nullable = no expiration
+  revoked_at TIMESTAMPTZ,          -- nullable = active
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE public.api_keys IS 'SPEC-DEPLOY-001: API keys for MCP server authentication';
+COMMENT ON COLUMN public.api_keys.key_hash IS 'Hashed API key (never store plain text)';
+COMMENT ON COLUMN public.api_keys.key_prefix IS 'First 8-10 chars for UI display';
+COMMENT ON COLUMN public.api_keys.revoked_at IS 'Revocation timestamp (NULL = active)';
+
+CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON public.api_keys(user_id);
+CREATE INDEX IF NOT EXISTS idx_api_keys_key_hash ON public.api_keys(key_hash);
+
+-- RLS
+ALTER TABLE public.api_keys ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can read own keys" ON public.api_keys;
+CREATE POLICY "Users can read own keys" ON public.api_keys
+  FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can create own keys" ON public.api_keys;
+CREATE POLICY "Users can create own keys" ON public.api_keys
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users can revoke own keys" ON public.api_keys;
+CREATE POLICY "Users can revoke own keys" ON public.api_keys
+  FOR UPDATE USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Service role can manage all api_keys" ON public.api_keys;
+CREATE POLICY "Service role can manage all api_keys" ON public.api_keys
+  USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- Table: user_licenses (Enhanced Version)
+-- ============================================================
+-- WARNING: This table may already exist from SPEC-AUTH-001
+-- If conflicts occur, merge schemas or drop old table first
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.user_licenses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  theme_id TEXT NOT NULL,
+  tier TEXT NOT NULL CHECK (tier IN ('single', 'double', 'creator')),
+  paddle_subscription_id TEXT,
+  paddle_transaction_id TEXT,
+  purchased_at TIMESTAMPTZ DEFAULT now(),
+  expires_at TIMESTAMPTZ,          -- nullable = permanent
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE public.user_licenses IS 'SPEC-DEPLOY-001: Theme license purchases';
+COMMENT ON COLUMN public.user_licenses.tier IS 'License tier: single, double, creator';
+COMMENT ON COLUMN public.user_licenses.paddle_subscription_id IS 'Paddle subscription ID (recurring)';
+COMMENT ON COLUMN public.user_licenses.paddle_transaction_id IS 'Paddle transaction ID (one-time)';
+
+CREATE INDEX IF NOT EXISTS idx_user_licenses_user_id ON public.user_licenses(user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_user_licenses_unique ON public.user_licenses(user_id, theme_id)
+  WHERE is_active = true;
+
+-- RLS
+ALTER TABLE public.user_licenses ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can read own licenses" ON public.user_licenses;
+CREATE POLICY "Users can read own licenses" ON public.user_licenses
+  FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Service role can manage all user_licenses" ON public.user_licenses;
+CREATE POLICY "Service role can manage all user_licenses" ON public.user_licenses
+  USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- Migration Complete
+-- ============================================================

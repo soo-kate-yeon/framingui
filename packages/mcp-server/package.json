@@ -18,6 +18,20 @@
   "bin": {
     "tekton-mcp": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soo-kate-yeon/tekton",
+    "directory": "packages/mcp-server"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

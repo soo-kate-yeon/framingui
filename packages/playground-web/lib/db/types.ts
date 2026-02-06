@@ -80,6 +80,53 @@ export interface UpdateUserData {
 }
 
 /**
+ * API Key 레코드
+ * SPEC-DEPLOY-001: MCP 서버 인증을 위한 API Key
+ */
+export interface ApiKey {
+  id: string;
+  user_id: string;
+  key_hash: string;
+  key_prefix: string;
+  name: string;
+  last_used_at: string | null;
+  expires_at: string | null;
+  revoked_at: string | null;
+  created_at: string;
+}
+
+/**
+ * API Key 생성 데이터
+ */
+export interface CreateApiKeyData {
+  user_id: string;
+  name: string;
+  key_hash: string;
+  key_prefix: string;
+}
+
+/**
+ * API Key 응답 (평문 키 포함 - 생성 시에만 반환)
+ */
+export interface ApiKeyWithPlaintext {
+  id: string;
+  key: string; // 평문 키 (한 번만 반환)
+  name: string;
+  created_at: string;
+}
+
+/**
+ * API Key 목록 항목 (평문 키 없음)
+ */
+export interface ApiKeyListItem {
+  id: string;
+  key_prefix: string;
+  name: string;
+  last_used_at: string | null;
+  created_at: string;
+}
+
+/**
  * 데이터베이스 에러 타입
  */
 export interface DatabaseError {

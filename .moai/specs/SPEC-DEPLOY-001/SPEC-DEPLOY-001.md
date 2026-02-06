@@ -267,27 +267,33 @@ NEXT_PUBLIC_ENABLE_PAYMENTS=true
 ### Objective
 NextAuth 5를 제거하고 Supabase Auth로 단일화. API Key 발급/검증 시스템 구축.
 
-### 2.1 NextAuth Removal
+### 2.1 NextAuth Removal ✅ COMPLETED
 
-**제거 대상 파일**:
-- `packages/playground-web/lib/auth.ts` (NextAuth 설정)
-- `packages/playground-web/app/api/auth/[...nextauth]/route.ts`
-- `packages/playground-web/app/providers.tsx`의 `SessionProvider` 래핑
+**제거 대상 파일**: (이미 존재하지 않음)
+- ~~`packages/playground-web/lib/auth.ts`~~ ✅ 미존재 (Supabase Auth로 마이그레이션됨)
+- ~~`packages/playground-web/app/api/auth/[...nextauth]/route.ts`~~ ✅ 미존재
+- ~~`packages/playground-web/app/providers.tsx`의 `SessionProvider` 래핑~~ ✅ 미존재
 
-**수정 대상 파일**:
-- `packages/playground-web/app/providers.tsx` → SessionProvider 제거, AuthProvider만 유지
-- `packages/playground-web/middleware.ts` → Supabase 세션 체크로 교체
+**수정 완료 파일**:
+- `packages/playground-web/package.json` ✅ next-auth 의존성 제거
+- `.env.example` ✅ NextAuth 환경변수 제거
+- `__tests__/accessibility/wcag.test.tsx` ✅ 주석 업데이트
 
-**유지 파일** (이미 Supabase 기반):
-- `lib/auth/supabase-auth.ts` ✅
-- `lib/supabase/client.ts` ✅
-- `lib/supabase/server.ts` ✅
-- `contexts/AuthContext.tsx` ✅ (이미 Supabase 기반)
-- `app/auth/callback/route.ts` ✅ (Supabase OAuth 콜백)
+**이미 Supabase 기반**:
+- `lib/auth/index.ts` ✅ Supabase Auth만 export
+- `lib/auth/supabase-auth.ts` ✅ Supabase Auth 구현
+- `lib/supabase/client.ts` ✅ Supabase 클라이언트
+- `lib/supabase/server.ts` ✅ Supabase 서버 클라이언트
+- `lib/supabase/middleware.ts` ✅ 세션 갱신 미들웨어
+- `contexts/AuthContext.tsx` ✅ Supabase 기반 Context
+- `app/providers.tsx` ✅ AuthProvider만 사용
+- `middleware.ts` ✅ Supabase 세션 체크
+- `app/auth/callback/route.ts` ✅ Supabase OAuth 콜백
 
-**의존성 제거**:
+**의존성 제거 완료**:
 ```bash
-pnpm --filter @tekton/playground-web remove next-auth
+pnpm --filter @tekton/playground-web remove next-auth  ✅
+pnpm install  ✅
 ```
 
 ### 2.2 API Key System
@@ -349,21 +355,22 @@ pnpm --filter @tekton/playground-web remove next-auth
 
 ### Tasks
 
-| # | Task | Owner | Priority |
-|---|------|-------|----------|
-| 2.1 | NextAuth 완전 제거 + Supabase Auth 미들웨어 | expert-backend | P0 |
-| 2.2 | API Key 생성/조회/삭제 API Routes | expert-backend | P0 |
-| 2.3 | /api/mcp/verify 엔드포인트 구현 | expert-backend | P0 |
-| 2.4 | API Key 보안 (bcrypt, rate limiting) | expert-security | P0 |
-| 2.5 | 인증 플로우 E2E 테스트 | expert-testing | P1 |
+| # | Task | Owner | Priority | Status |
+|---|------|-------|----------|--------|
+| 2.1 | NextAuth 완전 제거 + Supabase Auth 미들웨어 | expert-backend | P0 | ✅ DONE |
+| 2.2 | API Key 생성/조회/삭제 API Routes | expert-backend | P0 | ✅ DONE |
+| 2.3 | /api/mcp/verify 엔드포인트 구현 | expert-backend | P0 | ✅ DONE |
+| 2.4 | API Key 보안 (bcrypt, rate limiting) | expert-security | P0 | ✅ DONE |
+| 2.5 | 인증 플로우 E2E 테스트 | expert-testing | P1 | ✅ DONE |
 
 ### Success Criteria
 
-- [ ] NextAuth 의존성 완전 제거 (package.json, 코드, 라우트)
-- [ ] Supabase Auth로 Google/GitHub OAuth 로그인 정상 동작
-- [ ] API Key 생성 시 평문 1회 반환, DB에 해시 저장
-- [ ] /api/mcp/verify에서 유효한 API Key로 라이선스 목록 반환
-- [ ] 무효한/만료된 API Key는 401 반환
+- [x] NextAuth 의존성 완전 제거 (package.json, 코드, 라우트)
+- [x] Supabase Auth로 Google/GitHub OAuth 로그인 정상 동작 (이미 구현됨)
+- [x] API Key 생성 시 평문 1회 반환, DB에 해시 저장
+- [x] /api/mcp/verify에서 유효한 API Key로 라이선스 목록 반환
+- [x] 무효한/만료된 API Key는 401 반환
+- [x] E2E 테스트 전체 시나리오 구현 완료 (6개 테스트 파일, 30+ 테스트 케이스)
 
 ---
 
@@ -380,12 +387,12 @@ Paddle 결제를 통한 테마 라이선스 구매 및 자동 활성화
 - [ ] 웹훅 URL 등록: `https://tekton-ui.com/api/webhooks/paddle`
 - [ ] 웹훅 시크릿 발급 → Vercel 환경변수
 
-**가격 구조 (예시)**:
+**가격 구조** (pricing.md 기준):
 | Tier | 설명 | 가격 |
 |------|------|------|
-| single | 테마 1개 | $29 일회성 |
-| double | 테마 2개 번들 | $49 일회성 |
-| creator | 전체 테마 접근 | $19/월 구독 |
+| single | 테마 1개 | $59 일회성 |
+| double | 테마 2개 번들 | $99 일회성 |
+| creator | 전체 테마 접근 | $149/년 구독 |
 
 ### 3.2 Paddle Webhook Handler
 

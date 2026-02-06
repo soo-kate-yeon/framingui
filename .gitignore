@@ -183,6 +183,10 @@ private-key*
 *.secret.*
 secret-*.*
 
+# Exceptions: Allow source code files with key-related names
+!**/lib/security/api-key.ts
+!**/lib/security/*-key.ts
+
 # API credentials patterns
 *_secret=*
 *_token=*

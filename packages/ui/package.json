@@ -11,6 +11,21 @@
     },
     "./styles": "./styles/tokens.css"
   },
+  "files": [
+    "dist",
+    "styles",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soo-kate-yeon/tekton",
+    "directory": "packages/ui"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts --tsconfig tsconfig.build.json",
     "test": "vitest run",

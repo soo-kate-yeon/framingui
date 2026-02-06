@@ -16,6 +16,10 @@ export type {
   UserProfile,
   UpdateUserData,
   DatabaseError,
+  ApiKey,
+  CreateApiKeyData,
+  ApiKeyWithPlaintext,
+  ApiKeyListItem,
 } from './types';
 
 // User operations
@@ -45,3 +49,12 @@ export {
   canAccessTemplate,
   getFreeTemplateCount,
 } from './templates';
+
+// API Key operations (SPEC-DEPLOY-001)
+export {
+  createApiKey,
+  getApiKeysByUserId,
+  revokeApiKey,
+  generateApiKey,
+  verifyApiKey,
+} from './api-keys';
