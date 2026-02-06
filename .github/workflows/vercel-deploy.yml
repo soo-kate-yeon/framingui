@@ -51,6 +51,7 @@ jobs:
 
       - name: Build Workspace Dependencies
         run: |
+          pnpm --filter @tekton/tokens build
           pnpm --filter @tekton/core build
           pnpm --filter @tekton/ui build
 
