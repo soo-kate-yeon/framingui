@@ -1,6 +1,6 @@
 {
   "name": "@tekton/mcp-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",
-    "@modelcontextprotocol/sdk": "^1.25.3",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@tekton/core": "workspace:*",
     "@tekton/ui": "workspace:*",
     "zod": "^3.23.8"

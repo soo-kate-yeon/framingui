@@ -1,6 +1,6 @@
 {
   "name": "@tekton/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Core design system pipeline: Theme -> Blueprint -> Screen (~800 LOC)",
   "type": "module",
   "main": "./dist/index.js",
@@ -13,7 +13,6 @@
   },
   "files": [
     "dist",
-    "themes",
     "README.md",
     "package.json"
   ],

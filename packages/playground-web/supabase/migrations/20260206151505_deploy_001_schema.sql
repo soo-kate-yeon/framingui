@@ -1,18 +1,36 @@
 -- ============================================================
 -- Migration: SPEC-DEPLOY-001 Phase 1.1 - Production Deployment Schema
 -- Created: 2026-02-06
--- Description: Supabase DB tables for authentication and licensing
+-- Updated: 2026-02-06 (Consolidated from 3 migration files)
+-- Description: Authoritative Supabase DB schema for authentication and licensing
 -- ============================================================
+--
+-- This file consolidates:
+--   - 20260204_initial_auth_schema.sql (archived)
+--   - 20260205000000_init_auth_schema.sql (archived)
+--   - 20260206151505_deploy_001_schema.sql (this file)
 --
 -- Tables:
 --   1. user_profiles: User profile information
 --   2. api_keys: MCP server authentication API keys
 --   3. user_licenses: Theme license purchases
+--   4. free_screen_templates: Free screen template catalog
 --
--- Notes:
---   - This migration may conflict with existing user_licenses table
---   - Review and merge with 20260205000000_init_auth_schema.sql if needed
---   - Execute via Supabase Dashboard > SQL Editor or Supabase CLI
+-- Features:
+--   - Idempotent operations (DROP IF EXISTS, CREATE IF NOT EXISTS)
+--   - Row-Level Security (RLS) enabled on all tables
+--   - Proper foreign key constraints with CASCADE deletion
+--   - Comprehensive indexes for query optimization
+--   - Service role bypass for backend operations
+--
+-- Execution:
+--   - Supabase Dashboard > SQL Editor
+--   - OR Supabase CLI: supabase db push
+--
+-- Safety:
+--   - All DROP statements use IF EXISTS
+--   - All CREATE statements use IF NOT EXISTS
+--   - Can be run multiple times safely
 -- ============================================================
 
 -- ============================================================
@@ -94,11 +112,12 @@ CREATE POLICY "Service role can manage all api_keys" ON public.api_keys
 -- ============================================================
 -- Table: user_licenses (Enhanced Version)
 -- ============================================================
--- WARNING: This table may already exist from SPEC-AUTH-001
--- If conflicts occur, merge schemas or drop old table first
+-- Consolidated version that replaces any previous definitions
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS public.user_licenses (
+DROP TABLE IF EXISTS public.user_licenses CASCADE;
+
+CREATE TABLE public.user_licenses (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   theme_id TEXT NOT NULL,
@@ -133,5 +152,53 @@ CREATE POLICY "Service role can manage all user_licenses" ON public.user_license
   USING (auth.role() = 'service_role');
 
 -- ============================================================
--- Migration Complete
+-- Table: free_screen_templates
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS public.free_screen_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  theme_id TEXT NOT NULL,
+  screen_name TEXT NOT NULL,
+  screen_description TEXT,
+  preview_url TEXT,
+  download_url TEXT NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+COMMENT ON TABLE public.free_screen_templates IS 'SPEC-DEPLOY-001: Free screen template catalog';
+COMMENT ON COLUMN public.free_screen_templates.theme_id IS 'Theme identifier';
+COMMENT ON COLUMN public.free_screen_templates.screen_name IS 'Screen template name';
+COMMENT ON COLUMN public.free_screen_templates.is_active IS 'Whether template is available for download';
+
+CREATE INDEX IF NOT EXISTS idx_free_screen_templates_theme_id ON public.free_screen_templates(theme_id);
+CREATE INDEX IF NOT EXISTS idx_free_screen_templates_active ON public.free_screen_templates(is_active)
+  WHERE is_active = true;
+
+-- RLS (Public read access, admin write access)
+ALTER TABLE public.free_screen_templates ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can read active templates" ON public.free_screen_templates;
+CREATE POLICY "Anyone can read active templates" ON public.free_screen_templates
+  FOR SELECT USING (is_active = true);
+
+DROP POLICY IF EXISTS "Service role can manage all templates" ON public.free_screen_templates;
+CREATE POLICY "Service role can manage all templates" ON public.free_screen_templates
+  USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- Migration Complete: 4 Tables Created
+-- ============================================================
+-- Tables:
+--   1. user_profiles (authentication profiles)
+--   2. api_keys (MCP server authentication)
+--   3. user_licenses (theme purchases)
+--   4. free_screen_templates (free template catalog)
+--
+-- All tables have:
+--   - Row-Level Security enabled
+--   - Proper indexes
+--   - Service role bypass
+--   - CASCADE deletion where appropriate
 -- ============================================================

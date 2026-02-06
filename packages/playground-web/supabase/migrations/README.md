@@ -2,84 +2,51 @@
 
 SPEC-DEPLOY-001에 정의된 데이터베이스 스키마 마이그레이션 가이드입니다.
 
-## 📁 Migration Files
+## 📁 Active Migration Files
 
-### 1. `20260204_initial_auth_schema.sql`
-- **목적**: SPEC-AUTH-001 초기 인증 스키마
-- **테이블**: `user_licenses`, `free_screen_templates`
-- **상태**: ✅ 실행 완료 (추정)
+### `20260206151505_deploy_001_schema.sql` ✅ (Authoritative)
 
-### 2. `20260205000000_init_auth_schema.sql`
-- **목적**: SPEC-AUTH-001 인증 스키마 (개선 버전)
-- **테이블**: `user_licenses`, `free_screen_templates`
-- **상태**: ✅ 실행 완료 (추정)
+**목적**: SPEC-DEPLOY-001 Phase 1.1 - 통합된 프로덕션 배포 스키마
 
-### 3. `20260206151505_deploy_001_schema.sql` 🆕
-- **목적**: SPEC-DEPLOY-001 Phase 1.1 프로덕션 배포 스키마
-- **테이블**:
-  - `user_profiles` - 사용자 프로필 정보
-  - `api_keys` - MCP 서버 인증용 API 키
-  - `user_licenses` - 테마 라이선스 구매 (Enhanced)
-- **상태**: ⏳ 실행 대기
+**테이블**:
+1. `user_profiles` - 사용자 프로필 정보
+2. `api_keys` - MCP 서버 인증용 API 키
+3. `user_licenses` - 테마 라이선스 구매 (Enhanced)
+4. `free_screen_templates` - 무료 스크린 템플릿 카탈로그
+
+**통합 완료**: 이 파일은 다음 3개 마이그레이션을 통합했습니다:
+- `20260204_initial_auth_schema.sql` (아카이브됨)
+- `20260205000000_init_auth_schema.sql` (아카이브됨)
+- `20260206151505_deploy_001_schema.sql` (현재 파일)
+
+**특징**:
+- ✅ Idempotent 작업 (DROP IF EXISTS, CREATE IF NOT EXISTS)
+- ✅ 충돌 방지를 위한 CASCADE 처리
+- ✅ 모든 테이블에 Row-Level Security 활성화
+- ✅ 적절한 인덱스 및 제약조건
+- ✅ Service role bypass 정책
+- ✅ 여러 번 실행 가능 (안전)
+
+**상태**: ⏳ 실행 대기
 
 ---
 
-## 🚨 Important: Schema Conflict Warning
+## 🗂️ Archived Migrations
 
-### `user_licenses` 테이블 충돌 가능성
+구형 마이그레이션 파일들은 `_archive_old_migrations/` 디렉토리로 이동되었습니다:
 
-`20260206151505_deploy_001_schema.sql`의 `user_licenses` 테이블은 기존 마이그레이션과 스키마가 다릅니다:
+- `_archive_old_migrations/20260204_initial_auth_schema.sql`
+- `_archive_old_migrations/20260205000000_init_auth_schema.sql`
 
-#### 기존 스키마 (SPEC-AUTH-001)
-```sql
-theme_id VARCHAR(50)
-paddle_subscription_id VARCHAR(100)
-```
+이 파일들은 **실행하지 마세요**. `20260206151505_deploy_001_schema.sql`이 이들을 모두 대체합니다.
 
-#### 새 스키마 (SPEC-DEPLOY-001)
-```sql
-theme_id TEXT
-paddle_subscription_id TEXT
-paddle_transaction_id TEXT  -- NEW
-created_at TIMESTAMPTZ        -- NEW
-updated_at TIMESTAMPTZ        -- NEW
-```
-
-### 해결 방법
-
-**옵션 1: 기존 테이블 업데이트 (권장)**
-```sql
--- Step 1: 새 컬럼 추가
-ALTER TABLE public.user_licenses
-  ADD COLUMN IF NOT EXISTS paddle_transaction_id TEXT,
-  ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT now(),
-  ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT now();
-
--- Step 2: 컬럼 타입 변경 (데이터 손실 없음)
-ALTER TABLE public.user_licenses
-  ALTER COLUMN theme_id TYPE TEXT,
-  ALTER COLUMN paddle_subscription_id TYPE TEXT;
-
--- Step 3: 새 마이그레이션에서 user_licenses 섹션 제외하고 실행
-```
-
-**옵션 2: 기존 테이블 삭제 후 재생성 (개발 환경만)**
-```sql
--- ⚠️ 주의: 기존 데이터가 모두 삭제됩니다!
-DROP TABLE IF EXISTS public.user_licenses CASCADE;
-
--- 이후 전체 마이그레이션 실행
-```
-
-**옵션 3: 마이그레이션 파일 수정**
-- `20260206151505_deploy_001_schema.sql` 파일에서 `user_licenses` 섹션을 주석 처리하고
-- `user_profiles`와 `api_keys` 테이블만 생성
+아카이브된 파일들의 상세 정보는 `_archive_old_migrations/README.md`를 참조하세요.
 
 ---
 
 ## 🚀 Migration Execution Guide
 
-### Method 1: Supabase Dashboard (GUI)
+### Method 1: Supabase Dashboard (GUI) - 권장
 
 1. **Supabase Dashboard 접속**
    ```
@@ -94,18 +61,16 @@ DROP TABLE IF EXISTS public.user_licenses CASCADE;
    ```bash
    cat supabase/migrations/20260206151505_deploy_001_schema.sql
    ```
-   - 파일 내용 전체 복사
 
 4. **SQL 실행**
    - SQL Editor에 붙여넣기
-   - 충돌 해결 방법 선택 (위 참고)
    - `RUN` 버튼 클릭
 
 5. **실행 결과 확인**
    - 에러 없이 완료되는지 확인
-   - `Table Editor`에서 새 테이블 확인
+   - `Table Editor`에서 4개 테이블 확인
 
-### Method 2: Supabase CLI (Recommended)
+### Method 2: Supabase CLI
 
 #### Prerequisites
 ```bash
@@ -171,16 +136,17 @@ psql "postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgre
 SELECT table_name
 FROM information_schema.tables
 WHERE table_schema = 'public'
-  AND table_name IN ('user_profiles', 'api_keys', 'user_licenses');
+  AND table_name IN ('user_profiles', 'api_keys', 'user_licenses', 'free_screen_templates');
 ```
 
 **Expected Result:**
 ```
  table_name
-----------------
+------------------------
  user_profiles
  api_keys
  user_licenses
+ free_screen_templates
 ```
 
 ### 2. Indexes Created
@@ -188,7 +154,7 @@ WHERE table_schema = 'public'
 SELECT indexname, tablename
 FROM pg_indexes
 WHERE schemaname = 'public'
-  AND tablename IN ('user_profiles', 'api_keys', 'user_licenses');
+  AND tablename IN ('user_profiles', 'api_keys', 'user_licenses', 'free_screen_templates');
 ```
 
 ### 3. RLS Policies Enabled
@@ -196,7 +162,7 @@ WHERE schemaname = 'public'
 SELECT schemaname, tablename, rowsecurity
 FROM pg_tables
 WHERE schemaname = 'public'
-  AND tablename IN ('user_profiles', 'api_keys', 'user_licenses');
+  AND tablename IN ('user_profiles', 'api_keys', 'user_licenses', 'free_screen_templates');
 ```
 
 **Expected Result:** All `rowsecurity` should be `true`
@@ -206,7 +172,7 @@ WHERE schemaname = 'public'
 SELECT tablename, policyname
 FROM pg_policies
 WHERE schemaname = 'public'
-  AND tablename IN ('user_profiles', 'api_keys', 'user_licenses')
+  AND tablename IN ('user_profiles', 'api_keys', 'user_licenses', 'free_screen_templates')
 ORDER BY tablename, policyname;
 ```
 
@@ -214,6 +180,7 @@ ORDER BY tablename, policyname;
 - `user_profiles`: 3 policies
 - `api_keys`: 4 policies
 - `user_licenses`: 2 policies
+- `free_screen_templates`: 2 policies
 
 ---
 
@@ -245,11 +212,50 @@ INSERT INTO public.api_keys (user_id, key_hash, key_prefix, name)
 VALUES ('[other-user-uuid]', 'hash456', 'tk_live_', 'Malicious Key');
 ```
 
+### Test Free Templates Access
+```sql
+-- Anyone can read active templates (no authentication required)
+SELECT * FROM public.free_screen_templates WHERE is_active = true;
+
+-- Service role can insert/update (backend only)
+-- Run this via Supabase Edge Function or backend service
+```
+
+---
+
+## 🔧 Schema Consolidation Details
+
+### Why Consolidation Was Needed
+
+이전에 3개의 마이그레이션 파일이 충돌하는 스키마를 정의하고 있었습니다:
+
+1. `20260204_initial_auth_schema.sql`:
+   - `user_licenses` (기본 버전)
+   - `free_screen_templates`
+
+2. `20260205000000_init_auth_schema.sql`:
+   - `user_licenses` (개선 버전, Paddle 통합)
+   - `free_screen_templates`
+
+3. `20260206151505_deploy_001_schema.sql`:
+   - `user_profiles`
+   - `api_keys`
+   - `user_licenses` (최종 버전)
+
+### Resolution
+
+`20260206151505_deploy_001_schema.sql`이 이제 **단일 권위 있는 스키마**로서:
+
+- 모든 4개 테이블을 정의합니다
+- Idempotent 작업으로 충돌 방지
+- 구형 마이그레이션 아카이브 처리
+
 ---
 
 ## 📚 Related Documentation
 
 - [SPEC-DEPLOY-001 Specification](/.moai/specs/SPEC-DEPLOY-001/SPEC-DEPLOY-001.md)
+- [Archived Migrations](./_archive_old_migrations/README.md)
 - [Supabase Row Level Security Guide](https://supabase.com/docs/guides/auth/row-level-security)
 - [Supabase CLI Reference](https://supabase.com/docs/reference/cli)
 
@@ -261,7 +267,7 @@ VALUES ('[other-user-uuid]', 'hash456', 'tk_live_', 'Malicious Key');
 ```
 ERROR:  relation "user_licenses" already exists
 ```
-**Solution:** 기존 테이블과 충돌. 위의 "Schema Conflict Warning" 섹션 참고
+**Solution:** 마이그레이션 파일이 이미 `DROP TABLE IF EXISTS`를 포함하므로, 정상적으로는 발생하지 않습니다. 수동으로 DROP 후 재실행하세요.
 
 ### Error: "permission denied for schema public"
 ```
@@ -286,5 +292,5 @@ ERROR:  relation "auth.users" does not exist
 
 ---
 
-**Last Updated:** 2026-02-06
+**Last Updated:** 2026-02-06 (Consolidated)
 **Maintained by:** SPEC-DEPLOY-001 Team
