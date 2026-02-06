@@ -12,6 +12,7 @@
  *
  * Pattern: react-day-picker + CVA + Tekton tokens
  */
+// eslint-disable-next-line no-unused-vars
 import { DayPicker } from 'react-day-picker';
 import { cn } from '../lib/utils';
 function Calendar({ className, classNames, showOutsideDays = true, ...props }) {

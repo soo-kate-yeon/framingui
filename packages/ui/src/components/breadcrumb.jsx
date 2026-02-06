@@ -59,6 +59,7 @@ BreadcrumbList.displayName = 'BreadcrumbList';
 const BreadcrumbItem = React.forwardRef(({ className, ...props }, ref) => (<li ref={ref} className={cn(breadcrumbItemVariants({ className }))} {...props}/>));
 BreadcrumbItem.displayName = 'BreadcrumbItem';
 const BreadcrumbLink = React.forwardRef(({ className, active, asChild = false, ...props }, ref) => {
+    // eslint-disable-next-line no-unused-vars
     const Comp = asChild ? React.Fragment : 'a';
     return (<Comp ref={asChild ? undefined : ref} className={cn(breadcrumbLinkVariants({ active, className }))} aria-current={active ? 'page' : undefined} {...(asChild ? {} : props)}>
         {asChild ? props.children : props.children}

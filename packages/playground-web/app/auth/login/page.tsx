@@ -48,7 +48,7 @@ export default function LoginPage() {
                     </div>
                 )}
 
-                {/* Demo Account Info */}
+                {/* OAuth Login Info */}
                 <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200">
                     <p className="text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-2">
                         OAuth Login
@@ -88,7 +88,7 @@ export default function LoginPage() {
                     <p className="text-xs text-neutral-500">
                         Don't have an account?{' '}
                         <Link href="/auth/signup" className="font-bold text-neutral-900 hover:underline">
-                            Create one
+                            Sign up
                         </Link>
                     </p>
                 </div>

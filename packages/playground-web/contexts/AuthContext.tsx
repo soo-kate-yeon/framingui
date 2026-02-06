@@ -285,7 +285,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const hasLicense = useCallback(
     (templateId: string): boolean => {
-      if (!userData) {return false;}
+      if (!userData) {
+        return false;
+      }
 
       return userData.licenses.some(
         (license) => license.templateId === templateId && license.status === 'active'
@@ -300,7 +302,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const toggleLike = useCallback((templateId: string) => {
     setUserData((prev) => {
-      if (!prev) {return null;}
+      if (!prev) {
+        return null;
+      }
 
       const isLiked = prev.likedTemplates.includes(templateId);
 

@@ -19,11 +19,11 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const DEMO_ROUTES: Record<string, string> = {
   'square-minimalism': '/studio/square-minimalism',
-  'equinox-fitness-v2': '/studio/equinox-fitness-v2',
-  'round-minimal-v1': '/studio/round-minimal',
-  'classic-magazine-v1': '/studio/classic-magazine',
-  'neutral-humanism-v1': '/studio/neutral-humanism',
-  'minimal-workspace-v3': '/studio/minimal-workspace',
+  'equinox-fitness': '/studio/equinox-fitness',
+  'round-minimal': '/studio/round-minimal',
+  'classic-magazine': '/studio/classic-magazine',
+  'neutral-humanism': '/studio/neutral-humanism',
+  'minimal-workspace': '/studio/minimal-workspace',
 };
 
 // ============================================================================

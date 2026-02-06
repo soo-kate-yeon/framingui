@@ -47,3 +47,6 @@ export { PricingSectionI18n } from './PricingSection.i18n';
 export type { PricingSectionI18nProps } from './PricingSection.i18n';
 
 export { LanguageSwitcher } from './LanguageSwitcher';
+
+export { ScrollReveal } from './ScrollReveal';
+export type { ScrollRevealProps } from './ScrollReveal';

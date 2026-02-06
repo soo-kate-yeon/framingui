@@ -9,9 +9,12 @@
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  */
 import * as React from 'react';
+// eslint-disable-next-line no-unused-vars
 import { Slot } from '@radix-ui/react-slot';
+// eslint-disable-next-line no-unused-vars
 import { Controller, FormProvider, useFormContext, } from 'react-hook-form';
 import { cn } from '../lib/utils';
+// eslint-disable-next-line no-unused-vars
 import { Label } from './label';
 const Form = FormProvider;
 const FormFieldContext = React.createContext({});

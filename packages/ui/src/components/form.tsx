@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일

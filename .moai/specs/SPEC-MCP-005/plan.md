@@ -1,400 +1,493 @@
----
-id: SPEC-MCP-005
-type: plan
-version: "1.0.0"
-created: "2026-02-03"
-updated: "2026-02-03"
----
+# SPEC-MCP-005 Implementation Plan
 
-# SPEC-MCP-005: 구현 계획
+## Overview
 
-## Traceability Tags
-
-- [TAG-MCP-005-U001] ~ [TAG-MCP-005-U003]: Ubiquitous Requirements
-- [TAG-MCP-005-E001] ~ [TAG-MCP-005-E003]: Event-Driven Requirements
-- [TAG-MCP-005-S001] ~ [TAG-MCP-005-S003]: State-Driven Requirements
+| Field | Value |
+|-------|-------|
+| **SPEC ID** | SPEC-MCP-005 |
+| **Title** | Agent Workflow Integration and Dependency Management |
+| **Total Phases** | 3 |
+| **Estimated Effort** | 20 hours |
 
 ---
 
-## 마일스톤
+## Phase 1: Enhanced Tool Descriptions (Priority: High)
 
-### Phase 1: 라이선스 검증 서비스 구현 (Primary Goal)
+### Objective
 
-**목표**: 핵심 라이선스 검증 로직 구현
+Update all MCP tool descriptions to include workflow step indicators and dependency handling instructions.
 
-**작업 항목**:
-- [ ] LicenseService 클래스 생성 [TAG-MCP-005-U001]
-- [ ] checkTemplateAccess 함수 구현
-- [ ] isFreeTemplate 헬퍼 함수 구현 [TAG-MCP-005-U002]
-- [ ] 라이선스 조회 쿼리 최적화
-- [ ] 라이선스 캐싱 로직 구현
+### Deliverables
 
-**코드 구조**:
+```
+packages/mcp-server/src/
+├── index.ts                  # Updated tool descriptions
+├── tools/
+│   ├── generate-screen.ts    # Add dependency extraction
+│   └── validate-environment.ts (NEW)
+```
+
+### Tasks
+
+| # | Task | Owner | Estimate |
+|---|------|-------|----------|
+| 1.1 | Add [WORKFLOW STEP X/4] prefix to all tool descriptions | expert-backend | 1h |
+| 1.2 | Add "AFTER RECEIVING RESPONSE" section to generate_screen | expert-backend | 1h |
+| 1.3 | Add "WHEN TO CALL" section to each tool | expert-backend | 1h |
+| 1.4 | Update get-screen-generation-context description | expert-backend | 0.5h |
+| 1.5 | Update validate-screen-definition description | expert-backend | 0.5h |
+
+### Tool Description Templates
+
+#### Template A: Context/Validation Tools
+
 ```typescript
-// lib/services/licenseService.ts
-export class LicenseService {
-  private cache: Map<string, CachedLicense> = new Map();
-  private CACHE_TTL = 5 * 60 * 1000; // 5분
+{
+  description: `[WORKFLOW STEP ${step}/${total}] ${shortDescription}
 
-  async checkTemplateAccess(
-    userId: string | null,
-    themeId: string,
-    templateId: string
-  ): Promise<LicenseCheckResult>;
+${mainDescription}
 
-  async getLicenseForUser(
-    userId: string,
-    themeId: string
-  ): Promise<License | null>;
+WHEN TO CALL:
+${whenToCall}
 
-  private isFreeTemplate(templateId: string): boolean;
-  private getCachedLicense(key: string): License | null;
-  private setCachedLicense(key: string, license: License): void;
+NEXT STEP:
+${nextStepGuidance}`,
 }
 ```
 
-### Phase 2: 무료 템플릿 관리 구현 (Primary Goal)
+#### Template B: Code Generation Tools
 
-**목표**: 무료 템플릿 목록 관리 및 조회
-
-**작업 항목**:
-- [ ] free_screen_templates 테이블 조회 로직 [TAG-MCP-005-U002]
-- [ ] 무료 템플릿 목록 캐싱
-- [ ] isFreeTemplate 데이터베이스 연동
-- [ ] 무료 템플릿 관리 어드민 API (선택사항)
-
-**무료 템플릿 상수**:
 ```typescript
-// lib/constants/freeTemplates.ts
-export const FREE_TEMPLATES = [
-  'landing-basic',
-  'signup',
-  'contact-form',
-] as const;
+{
+  description: `[WORKFLOW STEP ${step}/${total}] ${shortDescription}
 
-export type FreeTemplateId = typeof FREE_TEMPLATES[number];
+REQUIRED WORKFLOW:
+1. Call get-screen-generation-context (Step 1)
+2. Generate/validate Screen Definition (Step 2)
+3. Call THIS TOOL (Step 3)
+4. Call validate-environment if path known (Step 4)
 
-export function isFreeTemplate(templateId: string): boolean {
-  return FREE_TEMPLATES.includes(templateId as FreeTemplateId);
+AFTER RECEIVING RESPONSE:
+- Check 'dependencies' field
+- If dependencies.external is non-empty:
+  ${dependencyHandling}
+
+CRITICAL: ${criticalNote}`,
 }
 ```
 
-### Phase 3: MCP list_templates 도구 수정 (Secondary Goal)
+### Success Criteria
 
-**목표**: 라이선스에 따른 템플릿 목록 필터링
+- [ ] All 5+ MCP tools include `[WORKFLOW STEP X/4]` prefix
+- [ ] All tools include "WHEN TO CALL" section
+- [ ] generate_screen includes "AFTER RECEIVING RESPONSE" guidance
 
-**작업 항목**:
-- [ ] list_templates 응답 형식 수정 [TAG-MCP-005-E001]
-- [ ] 무료 템플릿 우선 정렬
-- [ ] 잠금 상태(isLocked) 표시
-- [ ] 필요 티어(requiredTier) 표시
+---
 
-**수정된 list_templates**:
+## Phase 2: Dependency Management System (Priority: High)
+
+### Objective
+
+Implement automatic dependency extraction and environment validation.
+
+### Deliverables
+
+```
+packages/mcp-server/src/
+├── tools/
+│   ├── validate-environment.ts (NEW)
+│   └── generate-screen.ts (UPDATED)
+├── utils/
+│   ├── dependency-extractor.ts (NEW)
+│   └── package-json-reader.ts (NEW)
+└── __tests__/
+    ├── tools/validate-environment.test.ts (NEW)
+    └── utils/dependency-extractor.test.ts (NEW)
+```
+
+### Tasks
+
+| # | Task | Owner | Estimate |
+|---|------|-------|----------|
+| 2.1 | Implement dependency-extractor.ts | expert-backend | 2h |
+| 2.2 | Implement package-json-reader.ts | expert-backend | 1h |
+| 2.3 | Create validate-environment tool | expert-backend | 3h |
+| 2.4 | Update generate-screen to include dependencies | expert-backend | 2h |
+| 2.5 | Add install command generators (npm/yarn/pnpm/bun) | expert-backend | 1h |
+| 2.6 | Add compatibility notes (React version, etc.) | expert-backend | 1h |
+| 2.7 | Write unit tests | expert-testing | 2h |
+
+### Dependency Extractor Design
+
 ```typescript
-// mcp/tools/listTemplates.ts
-export async function listTemplates(
-  themeId: string,
-  authToken?: string
-): Promise<ListTemplatesResponse> {
-  const userId = authToken ? await verifyToken(authToken) : null;
-  const userLicense = userId
-    ? await licenseService.getLicenseForUser(userId, themeId)
-    : null;
+// src/utils/dependency-extractor.ts
 
-  const allTemplates = await getTemplatesByTheme(themeId);
+import * as parser from '@babel/parser';
+import traverse from '@babel/traverse';
 
-  const templates = allTemplates.map(template => {
-    const isFree = isFreeTemplate(template.id);
-    const hasAccess = isFree || checkAccess(userLicense, template);
-
-    return {
-      id: template.id,
-      name: template.name,
-      description: template.description,
-      isFree,
-      isLocked: !hasAccess,
-      requiredTier: isFree ? undefined : 'single',
-    };
-  });
-
-  // 무료 템플릿 우선 정렬
-  templates.sort((a, b) => {
-    if (a.isFree && !b.isFree) return -1;
-    if (!a.isFree && b.isFree) return 1;
-    return 0;
-  });
-
-  return {
-    templates,
-    userTier: userLicense?.tier ?? 'free',
+interface Dependencies {
+  external: string[];        // npm packages
+  internal: string[];        // @tekton/* packages
+  installCommands: {
+    npm: string;
+    yarn: string;
+    pnpm: string;
+    bun: string;
   };
+  compatibility: {
+    react?: string;
+    node?: string;
+  };
+  notes: string[];
 }
-```
 
-### Phase 4: MCP get_template 도구 수정 (Secondary Goal)
-
-**목표**: 라이선스 검증 후 템플릿 반환
-
-**작업 항목**:
-- [ ] get_template 라이선스 검증 추가 [TAG-MCP-005-E002, E003]
-- [ ] 접근 거부 응답 형식 구현 [TAG-MCP-005-U003]
-- [ ] 무료 대안 제안 로직
-- [ ] 업그레이드 URL 생성
-
-**수정된 get_template**:
-```typescript
-// mcp/tools/getTemplate.ts
-export async function getTemplate(
-  templateId: string,
-  themeId: string,
-  authToken?: string
-): Promise<TemplateAccessGranted | TemplateAccessDenied> {
-  const userId = authToken ? await verifyToken(authToken) : null;
-
-  const accessResult = await licenseService.checkTemplateAccess(
-    userId,
-    themeId,
-    templateId
-  );
-
-  if (!accessResult.hasAccess) {
-    return createAccessDeniedResponse(accessResult, templateId, themeId);
+const KNOWN_DEPENDENCIES: Record<string, { compatibility?: object; notes?: string[] }> = {
+  'framer-motion': {
+    compatibility: { react: '^18.0.0 || ^19.0.0' },
+    notes: ['Requires React 18+ for concurrent features']
+  },
+  '@radix-ui/react-slot': {
+    compatibility: { react: '^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0' }
+  },
+  'lucide-react': {
+    compatibility: { react: '^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0' }
   }
-
-  const template = await fetchTemplate(templateId, themeId);
-
-  return {
-    success: true,
-    template,
-    license: {
-      tier: accessResult.tier!,
-      expiresAt: accessResult.expiresAt?.toISOString() ?? null,
-    },
-  };
-}
-
-function createAccessDeniedResponse(
-  result: LicenseCheckResult,
-  templateId: string,
-  themeId: string
-): TemplateAccessDenied {
-  return {
-    success: false,
-    error: mapReasonToError(result.reason!),
-    message: getErrorMessage(result.reason!),
-    freeAlternatives: ['landing-basic', 'signup', 'contact-form'],
-    upgradeUrl: `/studio/template/${themeId}#pricing`,
-    details: {
-      requestedTemplate: templateId,
-      requiredTier: 'single',
-      currentTier: result.tier,
-    },
-  };
-}
-```
-
-### Phase 5: 에러 메시지 및 국제화 (Secondary Goal)
-
-**목표**: AI 에이전트 친화적 에러 메시지
-
-**작업 항목**:
-- [ ] 에러 코드별 메시지 정의 [TAG-MCP-005-U003]
-- [ ] 다국어 메시지 지원 (영어/한국어)
-- [ ] 구조화된 에러 응답 검증
-
-**에러 메시지 모듈**:
-```typescript
-// lib/messages/licenseErrors.ts
-export const LICENSE_ERROR_MESSAGES = {
-  AUTHENTICATION_REQUIRED: {
-    en: 'Authentication required to access this template.',
-    ko: '이 템플릿을 사용하려면 로그인이 필요합니다.',
-  },
-  TEMPLATE_ACCESS_DENIED: {
-    en: 'This template requires a license. Use free alternatives or purchase a license.',
-    ko: '이 템플릿은 라이선스가 필요합니다. 무료 대안을 사용하거나 라이선스를 구매하세요.',
-  },
-  LICENSE_EXPIRED: {
-    en: 'Your license has expired. Please renew to continue using premium templates.',
-    ko: '라이선스가 만료되었습니다. 프리미엄 템플릿을 계속 사용하려면 갱신하세요.',
-  },
-  THEME_NOT_LICENSED: {
-    en: "You don't have a license for this theme.",
-    ko: '이 테마의 라이선스가 없습니다.',
-  },
 };
-```
 
-### Phase 6: 캐싱 및 성능 최적화 (Final Goal)
+export function extractDependencies(code: string): Dependencies {
+  const ast = parser.parse(code, {
+    sourceType: 'module',
+    plugins: ['typescript', 'jsx']
+  });
 
-**목표**: 라이선스 검증 성능 최적화
+  const external: Set<string> = new Set();
+  const internal: Set<string> = new Set();
 
-**작업 항목**:
-- [ ] 인메모리 캐시 구현 (5분 TTL)
-- [ ] 캐시 무효화 로직 (라이선스 변경 시)
-- [ ] 데이터베이스 쿼리 최적화
-- [ ] 성능 모니터링 로깅
-
-**캐싱 전략**:
-```typescript
-// lib/cache/licenseCache.ts
-interface CachedLicense {
-  license: License | null;
-  cachedAt: number;
-}
-
-export class LicenseCache {
-  private cache = new Map<string, CachedLicense>();
-  private TTL = 5 * 60 * 1000; // 5분
-
-  get(userId: string, themeId: string): License | null | undefined {
-    const key = `${userId}:${themeId}`;
-    const cached = this.cache.get(key);
-
-    if (!cached) return undefined;
-    if (Date.now() - cached.cachedAt > this.TTL) {
-      this.cache.delete(key);
-      return undefined;
-    }
-
-    return cached.license;
-  }
-
-  set(userId: string, themeId: string, license: License | null): void {
-    const key = `${userId}:${themeId}`;
-    this.cache.set(key, { license, cachedAt: Date.now() });
-  }
-
-  invalidate(userId: string, themeId?: string): void {
-    if (themeId) {
-      this.cache.delete(`${userId}:${themeId}`);
-    } else {
-      // 해당 사용자의 모든 캐시 무효화
-      for (const key of this.cache.keys()) {
-        if (key.startsWith(`${userId}:`)) {
-          this.cache.delete(key);
-        }
+  traverse(ast, {
+    ImportDeclaration(path) {
+      const source = path.node.source.value;
+      if (source.startsWith('@tekton/')) {
+        internal.add(source);
+      } else if (!source.startsWith('.') && !isNodeBuiltin(source)) {
+        external.add(source);
       }
     }
+  });
+
+  const externalArray = [...external];
+
+  return {
+    external: externalArray,
+    internal: [...internal],
+    installCommands: {
+      npm: `npm install ${externalArray.join(' ')}`,
+      yarn: `yarn add ${externalArray.join(' ')}`,
+      pnpm: `pnpm add ${externalArray.join(' ')}`,
+      bun: `bun add ${externalArray.join(' ')}`
+    },
+    compatibility: mergeCompatibility(externalArray),
+    notes: collectNotes(externalArray)
+  };
+}
+```
+
+### validate-environment Tool Design
+
+```typescript
+// src/tools/validate-environment.ts
+
+import { readPackageJson } from '../utils/package-json-reader';
+
+interface ValidateEnvironmentInput {
+  projectPath: string;
+  requiredPackages: string[];
+}
+
+interface ValidateEnvironmentOutput {
+  installed: Record<string, string>;   // package -> version
+  missing: string[];
+  installCommands: {
+    npm: string;
+    yarn: string;
+    pnpm: string;
+    bun: string;
+  };
+  warnings: string[];
+}
+
+export async function validateEnvironment(
+  input: ValidateEnvironmentInput
+): Promise<ValidateEnvironmentOutput> {
+  const packageJson = await readPackageJson(input.projectPath);
+
+  const allDeps = {
+    ...packageJson.dependencies,
+    ...packageJson.devDependencies
+  };
+
+  const installed: Record<string, string> = {};
+  const missing: string[] = [];
+
+  for (const pkg of input.requiredPackages) {
+    if (allDeps[pkg]) {
+      installed[pkg] = allDeps[pkg];
+    } else {
+      missing.push(pkg);
+    }
+  }
+
+  const warnings = checkVersionConflicts(installed, input.requiredPackages);
+
+  return {
+    installed,
+    missing,
+    installCommands: missing.length > 0 ? {
+      npm: `npm install ${missing.join(' ')}`,
+      yarn: `yarn add ${missing.join(' ')}`,
+      pnpm: `pnpm add ${missing.join(' ')}`,
+      bun: `bun add ${missing.join(' ')}`
+    } : { npm: '', yarn: '', pnpm: '', bun: '' },
+    warnings
+  };
+}
+```
+
+### Success Criteria
+
+- [ ] `generate_screen` returns `dependencies` field with all external packages
+- [ ] `validate-environment` correctly identifies missing packages
+- [ ] Install commands generated for npm/yarn/pnpm/bun
+- [ ] Compatibility notes included for known packages
+
+---
+
+## Phase 3: Error Recovery and Agent Documentation (Priority: Medium)
+
+### Objective
+
+Implement automatic error recovery and create comprehensive agent training documentation.
+
+### Deliverables
+
+```
+packages/mcp-server/src/
+├── utils/
+│   └── error-recovery.ts (NEW)
+
+.moai/docs/
+├── mcp-workflow-guide.md (NEW)
+└── mcp-dependency-management.md (NEW)
+```
+
+### Tasks
+
+| # | Task | Owner | Estimate |
+|---|------|-------|----------|
+| 3.1 | Implement error pattern detection | expert-backend | 1h |
+| 3.2 | Create error-recovery utility | expert-backend | 1h |
+| 3.3 | Write mcp-workflow-guide.md | manager-docs | 2h |
+| 3.4 | Write mcp-dependency-management.md | manager-docs | 1h |
+| 3.5 | Add inline documentation to tools | manager-docs | 1h |
+| 3.6 | Integration testing with Claude Code | expert-testing | 2h |
+| 3.7 | Integration testing with Gemini Agent | expert-testing | 2h |
+
+### Error Recovery Utility
+
+```typescript
+// src/utils/error-recovery.ts
+
+const MODULE_ERROR_PATTERNS = [
+  /Cannot find module '([^']+)'/,
+  /Module not found: Error: Can't resolve '([^']+)'/,
+  /Error: Cannot find module '([^']+)'/,
+  /ModuleNotFoundError: No module named '([^']+)'/,
+  /The requested module '([^']+)' does not provide/
+];
+
+export function detectModuleError(errorMessage: string): string | null {
+  for (const pattern of MODULE_ERROR_PATTERNS) {
+    const match = errorMessage.match(pattern);
+    if (match) {
+      return match[1];
+    }
+  }
+  return null;
+}
+
+export function generateRecoveryGuidance(missingModule: string): string {
+  return `
+## Missing Module Detected: ${missingModule}
+
+### Quick Fix
+Run one of the following commands:
+
+\`\`\`bash
+npm install ${missingModule}
+# or
+yarn add ${missingModule}
+# or
+pnpm add ${missingModule}
+\`\`\`
+
+### Verification
+After installation, restart your development server.
+`;
+}
+```
+
+### Agent Documentation Structure
+
+#### mcp-workflow-guide.md
+
+```markdown
+# MCP Screen Generation Workflow Guide
+
+## For AI Coding Agents
+
+### Quick Reference
+
+| Step | Tool | Purpose |
+|------|------|---------|
+| 1 | get-screen-generation-context | Get components, schema, examples |
+| 2 | validate-screen-definition | Validate before generation |
+| 3 | generate_screen | Generate code + dependencies |
+| 4 | validate-environment | Check user's environment |
+
+### Mandatory Checkpoints
+
+#### Checkpoint 1: After generate_screen
+
+```
+IF response.dependencies.external.length > 0:
+  - Log: "Generated code requires external dependencies"
+  - IF projectPath known:
+    - Call validate-environment
+  - ELSE:
+    - Show response.dependencies.installCommands to user
+```
+
+#### Checkpoint 2: Before Code Delivery
+
+```
+IF validate-environment.missing.length > 0:
+  - Show missing packages to user
+  - Show install commands
+  - Ask user to install before proceeding
+```
+
+### Error Recovery
+
+When user reports error matching:
+- "Cannot find module"
+- "Module not found"
+- "Cannot resolve"
+
+Then:
+1. Parse error for module name
+2. Call validate-environment with that module
+3. Show install command
+4. Suggest restart after install
+```
+
+### Success Criteria
+
+- [ ] mcp-workflow-guide.md created with complete workflow
+- [ ] Error patterns cover 95%+ of common module errors
+- [ ] Claude Code follows workflow successfully
+- [ ] Gemini Agent follows workflow successfully
+
+---
+
+## Implementation Timeline
+
+```
+Day 1 (Phase 1):
+├── 1.1 Add workflow step prefixes (1h)
+├── 1.2 Add response handling sections (1h)
+├── 1.3 Add "when to call" sections (1h)
+└── 1.4-1.5 Update existing tool descriptions (1h)
+
+Day 2 (Phase 2 - Part 1):
+├── 2.1 Implement dependency-extractor (2h)
+├── 2.2 Implement package-json-reader (1h)
+└── 2.3 Create validate-environment tool (3h)
+
+Day 3 (Phase 2 - Part 2):
+├── 2.4 Update generate-screen (2h)
+├── 2.5 Add install command generators (1h)
+├── 2.6 Add compatibility notes (1h)
+└── 2.7 Write unit tests (2h)
+
+Day 4 (Phase 3):
+├── 3.1-3.2 Error recovery utility (2h)
+├── 3.3-3.4 Agent documentation (3h)
+└── 3.5 Inline documentation (1h)
+
+Day 5 (Testing):
+├── 3.6 Claude Code integration test (2h)
+└── 3.7 Gemini Agent integration test (2h)
+```
+
+---
+
+## Risk Assessment
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Agents ignore workflow hints | Medium | High | Make tool fail without prerequisites |
+| Package.json not accessible | Medium | Medium | Provide manual fallback |
+| Unknown dependency compatibility | Low | Medium | Default to latest, warn user |
+| Cross-platform path issues | Low | Low | Use path.normalize |
+
+---
+
+## Success Metrics
+
+| Metric | Current | Target | Measurement |
+|--------|---------|--------|-------------|
+| Agent workflow adoption | 0% | 90%+ | Agent test sessions |
+| Runtime 404 errors | ~30% | <5% | Error tracking |
+| Dependency validation rate | 0% | 95%+ | Tool call logs |
+| Error recovery success | 0% | 80%+ | User feedback |
+
+---
+
+## Appendix
+
+### A. Full Tool List with Updated Descriptions
+
+| Tool | Step | Updated Description |
+|------|------|---------------------|
+| get-screen-generation-context | 1/4 | Get context for Screen Definition |
+| validate-screen-definition | 2/4 | Validate before generation |
+| generate_screen | 3/4 | Generate code + extract deps |
+| validate-environment | 4/4 | Check user environment |
+| list-themes | - | List available themes |
+| preview-theme | - | Preview theme tokens |
+
+### B. Dependency Knowledge Base
+
+```json
+{
+  "framer-motion": {
+    "react": "^18.0.0 || ^19.0.0",
+    "notes": ["Concurrent features require React 18+"]
+  },
+  "@radix-ui/*": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+    "notes": ["Peer dependencies: react-dom"]
+  },
+  "lucide-react": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+  },
+  "@tanstack/react-query": {
+    "react": "^18.0.0 || ^19.0.0",
+    "notes": ["v5 requires React 18+"]
   }
 }
 ```
 
----
+### C. Related SPECs
 
-## 기술 접근 방식
-
-### 아키텍처 개요
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                   MCP Client (Cursor/Claude)                 │
-│  ┌───────────────┐  ┌───────────────┐                       │
-│  │ list_templates│  │ get_template  │                       │
-│  └───────┬───────┘  └───────┬───────┘                       │
-└──────────┼──────────────────┼───────────────────────────────┘
-           │                  │
-           ▼                  ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     MCP Server                               │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐   │
-│  │ Auth          │  │ License       │  │ Template      │   │
-│  │ Middleware    │->│ Service       │->│ Service       │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘   │
-│                            │                                 │
-│                     ┌──────┴──────┐                         │
-│                     │ License     │                         │
-│                     │ Cache       │                         │
-│                     └─────────────┘                         │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     Supabase                                 │
-│  ┌───────────────┐  ┌───────────────┐                       │
-│  │ user_licenses │  │ free_screen   │                       │
-│  │               │  │ _templates    │                       │
-│  └───────────────┘  └───────────────┘                       │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 라이선스 티어별 접근 권한
-
-| 티어 | 무료 템플릿 | 구매 테마 | 전체 테마 |
-|------|------------|----------|----------|
-| Free | O | X | X |
-| Single | O | O (1개) | X |
-| Double | O | O (2개) | X |
-| Creator | O | O | O |
-
----
-
-## 위험 요소 및 대응 방안
-
-| 위험 요소 | 영향도 | 대응 방안 |
-|----------|--------|----------|
-| 라이선스 검증 지연 | 중간 | 캐싱으로 응답 시간 단축 |
-| 캐시 불일치 | 낮음 | 결제 웹훅에서 캐시 무효화 |
-| 인증 토큰 만료 | 중간 | 토큰 갱신 안내 메시지 |
-| AI 에이전트 오해 | 중간 | 명확하고 구조화된 에러 응답 |
-
----
-
-## 의존성
-
-### 선행 조건
-- SPEC-AUTH-001: 사용자 인증 및 토큰 검증
-- SPEC-PAYMENT-001: user_licenses 테이블 및 데이터
-
-### 후속 작업
-- MCP 문서 업데이트 (라이선스 요구사항 설명)
-- AI 에이전트 통합 테스트
-
----
-
-## 테스트 전략
-
-### 단위 테스트
-
-```typescript
-describe('LicenseService', () => {
-  describe('checkTemplateAccess', () => {
-    it('무료 템플릿은 항상 접근 허용', async () => {
-      const result = await licenseService.checkTemplateAccess(
-        null,
-        'neutral-theme',
-        'landing-basic'
-      );
-      expect(result.hasAccess).toBe(true);
-      expect(result.tier).toBe('free');
-    });
-
-    it('비인증 사용자의 프리미엄 접근 거부', async () => {
-      const result = await licenseService.checkTemplateAccess(
-        null,
-        'neutral-theme',
-        'dashboard-analytics'
-      );
-      expect(result.hasAccess).toBe(false);
-      expect(result.reason).toBe('AUTHENTICATION_REQUIRED');
-    });
-
-    it('Creator Pass는 모든 템플릿 접근', async () => {
-      // Mock Creator Pass 라이선스
-      const result = await licenseService.checkTemplateAccess(
-        'user-with-creator-pass',
-        'any-theme',
-        'any-template'
-      );
-      expect(result.hasAccess).toBe(true);
-      expect(result.tier).toBe('creator');
-    });
-  });
-});
-```
-
-### 통합 테스트
-
-- MCP 클라이언트 시뮬레이션
-- 실제 데이터베이스 연동 테스트
-- 캐시 동작 검증
+- SPEC-MCP-004: Tekton MCP Workflow Optimization (Phase 3.5, 4)
+- SPEC-MCP-003: Component & Template Discovery Tools
