@@ -1,5 +1,5 @@
 /**
- * Login Page
+ * Signup Page
  * Theme: Square Minimalism
  * - Radius: 0
  * - OAuth-only authentication with Google and GitHub
@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { Chrome, Github } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 
-export default function LoginPage() {
+export default function SignupPage() {
     const { login, isLoading, error } = useAuth();
 
     const handleGoogleLogin = async () => {
@@ -34,10 +34,10 @@ export default function LoginPage() {
                         <div className="text-2xl font-bold tracking-tighter">TEKTON</div>
                     </Link>
                     <h1 className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">
-                        Welcome Back
+                        Welcome
                     </h1>
                     <p className="text-xl font-bold text-neutral-900 leading-tight">
-                        Log in to your workspace.
+                        Create your account.
                     </p>
                 </div>
 
@@ -51,10 +51,10 @@ export default function LoginPage() {
                 {/* OAuth Login Info */}
                 <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200">
                     <p className="text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-2">
-                        OAuth Login
+                        OAuth Signup
                     </p>
                     <p className="text-xs text-neutral-600">
-                        Sign in with your Google or GitHub account to access TEKTON Studio.
+                        Create an account with your Google or GitHub to get started with TEKTON Studio.
                     </p>
                 </div>
 
@@ -68,7 +68,7 @@ export default function LoginPage() {
                         className="w-full bg-white text-neutral-900 border border-neutral-300 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:border-neutral-900 hover:bg-neutral-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Chrome size={16} className="text-[#4285F4]" />
-                        <span>{isLoading ? 'Connecting...' : 'Sign in with Google'}</span>
+                        <span>{isLoading ? 'Connecting...' : 'Sign up with Google'}</span>
                     </button>
 
                     {/* GitHub Login Button */}
@@ -79,16 +79,16 @@ export default function LoginPage() {
                         className="w-full bg-neutral-900 text-white border border-neutral-900 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:bg-neutral-800 hover:border-neutral-800 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Github size={16} />
-                        <span>{isLoading ? 'Connecting...' : 'Sign in with GitHub'}</span>
+                        <span>{isLoading ? 'Connecting...' : 'Sign up with GitHub'}</span>
                     </button>
                 </div>
 
                 {/* Footer */}
                 <div className="mt-8 pt-8 border-t border-neutral-100 text-center">
                     <p className="text-xs text-neutral-500">
-                        Don't have an account?{' '}
-                        <Link href="/auth/signup" className="font-bold text-neutral-900 hover:underline">
-                            Sign up
+                        Already have an account?{' '}
+                        <Link href="/auth/login" className="font-bold text-neutral-900 hover:underline">
+                            Sign in
                         </Link>
                     </p>
                 </div>
