@@ -14,6 +14,7 @@ import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { SidebarProvider } from '../../contexts/SidebarContext';
 import { Sidebar } from '../../components/studio/Sidebar';
+import { Footer } from '../../components/shared/Footer';
 
 interface StudioLayoutProps {
   children: ReactNode;
@@ -32,7 +33,12 @@ export default function StudioLayout({ children }: StudioLayoutProps) {
         <Sidebar />
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">{children}</main>
+        <main className="flex-1 overflow-auto">
+          <div className="min-h-full flex flex-col">
+            <div className="flex-1">{children}</div>
+            <Footer className="bg-white/50" />
+          </div>
+        </main>
       </div>
     </SidebarProvider>
   );

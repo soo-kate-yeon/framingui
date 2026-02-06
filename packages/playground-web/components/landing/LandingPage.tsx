@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Accordion } from './Accordion';
 import { Button } from '@tekton/ui';
+import { Footer } from '../shared/Footer';
 
 function FadeIn({ children, delay = 0, className }: { children: React.ReactNode, delay?: number, className?: string }) {
     return (
@@ -243,11 +244,7 @@ export function LandingPage() {
             </section>
 
             {/* Footer */}
-            <footer className="border-t border-neutral-200 py-12">
-                <div className="container mx-auto px-6 md:px-8 text-center text-neutral-500 text-sm">
-                    <p>© 2026 Tekton. All rights reserved.</p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
