@@ -2,7 +2,7 @@ name: Auto-fix PR Checks
 
 on:
   workflow_run:
-    workflows: ["Quality Gate"]
+    workflows: ['Quality Gate']
     types:
       - completed
     branches-ignore:
@@ -59,12 +59,12 @@ jobs:
         id: analyze
         run: |
           LOG_FILE="workflow_logs.txt"
-          
+
           # Initialize flags
           echo "needs_lint_fix=false" >> $GITHUB_OUTPUT
           echo "needs_format_fix=false" >> $GITHUB_OUTPUT
           echo "needs_type_check=false" >> $GITHUB_OUTPUT
-          
+
           if [ -f "$LOG_FILE" ]; then
             # Check for lint errors
             if grep -qi "eslint\|lint" "$LOG_FILE"; then
@@ -120,20 +120,20 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           git add .
-          
+
           cat << EOF > commit_message.txt
           chore: auto-fix CI/CD failures
-          
+
           Auto-fixes applied by GitHub Actions:
           - ESLint auto-fix
           - Prettier formatting
-          
+
           Triggered by failed workflow run: ${{ github.event.workflow_run.id }}
           Original workflow: ${{ github.event.workflow_run.html_url }}
           EOF
-          
+
           git commit -F commit_message.txt
           git push
 
@@ -144,15 +144,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER=$(gh pr list --head ${{ github.event.workflow_run.head_branch }} --json number --jq '.[0].number')
-          
+
           if [ -n "$PR_NUMBER" ]; then
             cat << 'COMMENT_EOF' > pr_comment.txt
           🤖 **Auto-fix Applied**
-          
+
           I've automatically fixed some CI/CD failures:
           - ✅ ESLint issues
           - ✅ Prettier formatting
-          
+
           The checks should re-run automatically. If they still fail, manual intervention may be required.
           COMMENT_EOF
             
@@ -167,7 +167,7 @@ jobs:
         run: |
           echo "## Auto-fix Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [ "${{ steps.check-changes.outputs.has_changes }}" == "true" ]; then
             echo "✅ Fixes were applied and committed" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -183,6 +183,6 @@ jobs:
             echo "- Test failures" >> $GITHUB_STEP_SUMMARY
             echo "- Build errors" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Original workflow: ${{ github.event.workflow_run.html_url }}" >> $GITHUB_STEP_SUMMARY
