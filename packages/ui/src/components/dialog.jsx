@@ -10,6 +10,7 @@
  */
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+// eslint-disable-next-line no-unused-vars
 import { X } from 'lucide-react';
 import { cn } from '../lib/utils';
 const Dialog = DialogPrimitive.Root;

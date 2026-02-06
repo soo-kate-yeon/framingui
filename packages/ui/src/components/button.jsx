@@ -38,6 +38,7 @@ const buttonVariants = cva('inline-flex items-center justify-center whitespace-n
     },
 });
 const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
+    // eslint-disable-next-line no-unused-vars
     const Comp = asChild ? Slot : 'button';
     return (<Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}/>);
 });

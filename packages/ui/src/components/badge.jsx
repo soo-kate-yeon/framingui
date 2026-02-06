@@ -8,7 +8,6 @@
  * @tekton/ui - Badge Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  */
-import * as React from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 const badgeVariants = cva('inline-flex items-center rounded-[var(--tekton-radius-full)] border px-[var(--tekton-spacing-3)] py-[var(--tekton-spacing-1)] text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--tekton-border-ring)] focus:ring-offset-2', {

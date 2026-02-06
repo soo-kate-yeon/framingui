@@ -10,6 +10,7 @@
  */
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
+// eslint-disable-next-line no-unused-vars
 import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '../lib/utils';
 const Select = SelectPrimitive.Root;
