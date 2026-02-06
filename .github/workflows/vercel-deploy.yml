@@ -1,0 +1,135 @@
+name: Vercel Deploy - Playground Web
+
+# Production 배포: master 브랜치에 push 시
+# Preview 배포: Pull Request 생성/업데이트 시
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths:
+      - 'packages/playground-web/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - 'pnpm-lock.yaml'
+  pull_request:
+    branches:
+      - master
+      - main
+    paths:
+      - 'packages/playground-web/**'
+      - 'packages/core/**'
+      - 'packages/ui/**'
+      - 'pnpm-lock.yaml'
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Workspace Dependencies
+        run: |
+          pnpm --filter @tekton/core build
+          pnpm --filter @tekton/ui build
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Pull Vercel Environment Information
+        working-directory: packages/playground-web
+        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/master' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        working-directory: packages/playground-web
+        run: vercel build ${{ github.ref == 'refs/heads/master' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel (Production)
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+        working-directory: packages/playground-web
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "Deployment URL: $DEPLOYMENT_URL"
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Vercel (Preview)
+        if: github.event_name == 'pull_request'
+        working-directory: packages/playground-web
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "Preview URL: $DEPLOYMENT_URL"
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+
+      - name: Comment Preview URL on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deploymentUrl = process.env.DEPLOYMENT_URL;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## 🚀 Vercel Preview Deployment\n\n✅ Preview deployment is ready!\n\n**Preview URL:** ${deploymentUrl}\n\n---\n*Deployed from commit: ${context.sha.substring(0, 7)}*`
+            });
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment_url }}
+
+# ============================================================
+# GitHub Secrets 설정 필요 (Repository Settings > Secrets and variables > Actions)
+# ============================================================
+#
+# 1. VERCEL_TOKEN
+#    - Vercel 대시보드에서 생성: https://vercel.com/account/tokens
+#    - Scope: Full Account
+#
+# 2. VERCEL_ORG_ID
+#    - Vercel CLI로 확인: vercel link
+#    - 또는 Vercel 대시보드 > Settings > General > Organization ID
+#
+# 3. VERCEL_PROJECT_ID
+#    - Vercel CLI로 확인: vercel link
+#    - 또는 Vercel 대시보드 > Project Settings > General > Project ID
+#
+# ============================================================
+# Vercel 환경 변수 설정 (Vercel Dashboard에서 수동 설정)
+# ============================================================
+#
+# Production 환경 변수:
+# - AUTH_SECRET (필수)
+# - AUTH_GOOGLE_ID
+# - AUTH_GOOGLE_SECRET
+# - AUTH_GITHUB_ID
+# - AUTH_GITHUB_SECRET
+# - NEXTAUTH_URL=https://your-production-domain.vercel.app
+# - NEXT_PUBLIC_SUPABASE_URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY
+# - SUPABASE_SERVICE_ROLE_KEY
+# - NEXT_PUBLIC_ENABLE_AUTH=true
+# - NEXT_PUBLIC_ENABLE_MCP_EXPORT=true
+#
+# Preview 환경 변수:
+# - 동일한 환경 변수 설정 (NEXTAUTH_URL은 Vercel이 자동으로 설정)
+#
+# ============================================================
