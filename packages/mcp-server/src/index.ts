@@ -18,6 +18,7 @@ import { listScreenTemplatesTool } from './tools/list-screen-templates.js';
 import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
 import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
+import { validateEnvironmentTool } from './tools/validate-environment.js';
 import {
   GenerateBlueprintInputSchema,
   PreviewThemeInputSchema,
@@ -34,11 +35,12 @@ import {
   PreviewScreenTemplateInputSchema,
   GetScreenGenerationContextInputSchema,
   ValidateScreenDefinitionInputSchema,
+  ValidateEnvironmentInputSchema,
 } from './schemas/mcp-schemas.js';
 
 const server = new Server(
   {
-    name: '@tekton/mcp-server',
+    name: 'tekton-mcp-server',
     version: '2.1.0',
   },
   {
@@ -60,7 +62,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'generate-blueprint',
         description:
-          '[RECOMMENDED WORKFLOW] Step 1: Use get-screen-generation-context first to get component lists, schema, and examples. Then use validate-screen-definition before calling this tool. This tool generates a UI blueprint from natural language description.',
+          'Generate a UI blueprint from natural language description.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- For rapid prototyping and design exploration\n' +
+          '- When user wants a quick visual structure without full Screen Definition\n' +
+          '- As an alternative lightweight workflow to get-screen-generation-context\n\n' +
+          'NOTE: For production-ready code generation, use the main workflow:\n' +
+          'get-screen-generation-context → validate-screen-definition → generate_screen\n\n' +
+          'RETURNS: Simplified blueprint object with layout structure and component suggestions',
         inputSchema: {
           type: 'object',
           properties: {
@@ -103,7 +112,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list-icon-libraries',
-        description: 'List all available icon libraries from .moai/icon-libraries/generated/',
+        description:
+          'List all available icon libraries from .moai/icon-libraries/generated/\n\n' +
+          'WHEN TO CALL:\n' +
+          '- When user asks which icon libraries are available\n' +
+          '- Before calling preview-icon-library to select a library\n' +
+          '- When deciding which iconLibrary parameter to use in generate-blueprint\n\n' +
+          'RETURNS: Array of icon library IDs (e.g., lucide, heroicons, feather) with metadata',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -113,7 +128,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'preview-icon-library',
         description:
-          'Preview an icon library and retrieve its configuration including package names and icon samples',
+          'Preview an icon library and retrieve its configuration including package names and icon samples.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After list-icon-libraries to inspect a specific library\n' +
+          '- When user wants to know available icons in a library\n' +
+          '- To get the NPM package name for an icon library\n' +
+          '- Before using icons in a Screen Definition\n\n' +
+          'RETURNS: Library configuration, package name, icon samples, and usage instructions',
         inputSchema: {
           type: 'object',
           properties: {
@@ -128,7 +149,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list-themes',
-        description: 'List all available themes from .moai/themes/generated/',
+        description:
+          'List all available themes from .moai/themes/generated/\n\n' +
+          'WHEN TO CALL:\n' +
+          '- When user asks which themes are available\n' +
+          '- Before calling preview-theme to select a theme\n' +
+          '- When deciding which themeId parameter to use in generate-blueprint or get-screen-generation-context\n\n' +
+          'RETURNS: Array of theme IDs with names and descriptions',
         inputSchema: {
           type: 'object',
           properties: {},
@@ -137,7 +164,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'preview-theme',
-        description: 'Preview a theme and retrieve its full v2.1 theme data including tokens',
+        description:
+          'Preview a theme and retrieve its full v2.1 theme data including design tokens.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After list-themes to inspect a specific theme\n' +
+          '- When user wants to see color palettes, typography, or spacing tokens\n' +
+          '- To understand theme structure before using in generate-blueprint or get-screen-generation-context\n' +
+          '- When user asks about theme customization options\n\n' +
+          'RETURNS: Complete theme data including colors, typography, spacing, and component tokens',
         inputSchema: {
           type: 'object',
           properties: {
@@ -152,7 +186,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'export-screen',
-        description: 'Export a blueprint to JSX, TSX, or Vue code',
+        description:
+          'Export a blueprint to JSX, TSX, or Vue code.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After generate-blueprint to convert blueprint to code\n' +
+          '- When user wants code in JSX/TSX/Vue format\n' +
+          '- For lightweight prototyping without full Screen Definition workflow\n\n' +
+          'NOTE: For production-ready code with full validation, use:\n' +
+          'get-screen-generation-context → validate-screen-definition → generate_screen\n\n' +
+          'RETURNS: Exported code in requested format',
         inputSchema: {
           type: 'object',
           properties: {
@@ -172,7 +214,22 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'generate_screen',
         description:
-          '[RECOMMENDED WORKFLOW] Step 3 of 3: Before calling this, use get-screen-generation-context (Step 1) and validate-screen-definition (Step 2) to ensure your screen definition is valid. This tool generates production-ready code from JSON screen definition.',
+          '[WORKFLOW STEP 3/4] Generate production-ready React code from validated Screen Definition.\n\n' +
+          'REQUIRED WORKFLOW:\n' +
+          '1. Call get-screen-generation-context (Step 1/4)\n' +
+          '2. Generate/validate Screen Definition (Step 2/4)\n' +
+          '3. Call THIS TOOL (Step 3/4)\n' +
+          '4. Call validate-environment if path known (Step 4/4)\n\n' +
+          'AFTER RECEIVING RESPONSE:\n' +
+          '- ALWAYS check the "dependencies" field in the response\n' +
+          '- If dependencies.external is non-empty:\n' +
+          '  * User provided package.json path? → Call validate-environment (Step 4/4)\n' +
+          '  * Path unknown? → Show dependencies.installCommands to user\n' +
+          '- Display the list of required packages to user before delivering code\n\n' +
+          'CRITICAL:\n' +
+          '- This workflow prevents "Module not found" errors at runtime\n' +
+          '- Never deliver code without informing user about dependencies\n' +
+          '- Phase 2 will add validate-environment tool for automatic checking',
         inputSchema: {
           type: 'object',
           properties: {
@@ -203,7 +260,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'validate_screen',
-        description: 'Validate JSON screen definition with helpful feedback',
+        description:
+          'Validate JSON screen definition with helpful feedback.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- To validate a screen definition structure\n' +
+          '- Before passing definition to generate_screen\n\n' +
+          'NOTE: For the recommended workflow, use validate-screen-definition (Step 2/4) instead,\n' +
+          'which provides more detailed validation, suggestions, and improvement recommendations.\n\n' +
+          'RETURNS: Validation result with errors and warnings',
         inputSchema: {
           type: 'object',
           properties: {
@@ -221,7 +285,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list_tokens',
-        description: 'List available layout tokens from SPEC-LAYOUT-001',
+        description:
+          'List available layout tokens from SPEC-LAYOUT-001.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- When user asks about available shell, page, or section tokens\n' +
+          '- Before creating a Screen Definition to see valid token options\n' +
+          '- When validation errors mention unknown tokens\n' +
+          '- To explore layout options for different screen types\n\n' +
+          'RETURNS: Array of layout tokens with descriptions and usage contexts',
         inputSchema: {
           type: 'object',
           properties: {
@@ -239,7 +310,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list-components',
-        description: 'List all available UI components from @tekton/ui with metadata',
+        description:
+          'List all available UI components from @tekton/ui with metadata.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- When user asks which components are available\n' +
+          '- Before calling preview-component to select a component\n' +
+          '- To discover components for a specific category (core, complex, advanced)\n' +
+          '- When planning a Screen Definition structure\n\n' +
+          'RETURNS: Array of component IDs with categories, descriptions, and metadata',
         inputSchema: {
           type: 'object',
           properties: {
@@ -257,7 +335,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'preview-component',
-        description: 'Preview a component with detailed props, variants, and usage examples',
+        description:
+          'Preview a component with detailed props, variants, and usage examples.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After list-components to inspect a specific component\n' +
+          '- When user wants to know component props, variants, or usage\n' +
+          '- Before using a component in a Screen Definition\n' +
+          '- To understand component dependencies and requirements\n\n' +
+          'RETURNS: Component details including props, variants, usage examples, and dependencies',
         inputSchema: {
           type: 'object',
           properties: {
@@ -280,7 +365,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       },
       {
         name: 'list-screen-templates',
-        description: 'List all available screen templates from Template Registry',
+        description:
+          'List all available screen templates from Template Registry.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- When user asks about available screen templates\n' +
+          '- Before calling preview-screen-template to select a template\n' +
+          '- To discover templates for specific categories (auth, dashboard, form, marketing, feedback)\n' +
+          '- When user wants to start from a template instead of building from scratch\n\n' +
+          'RETURNS: Array of template IDs with categories, descriptions, and preview information',
         inputSchema: {
           type: 'object',
           properties: {
@@ -299,7 +391,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'preview-screen-template',
         description:
-          'Preview a screen template with skeleton, layout, and customization boundaries',
+          'Preview a screen template with skeleton, layout, and customization boundaries.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After list-screen-templates to inspect a specific template\n' +
+          '- When user wants to see template structure and customization options\n' +
+          '- Before using a template as base for a Screen Definition\n' +
+          '- To understand template layout tokens and component structure\n\n' +
+          'RETURNS: Template details including skeleton, layout tokens, customization boundaries, and usage guide',
         inputSchema: {
           type: 'object',
           properties: {
@@ -319,7 +417,22 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'get-screen-generation-context',
         description:
-          '[RECOMMENDED WORKFLOW - Step 1 of 3] Use this FIRST before generating any screen. Returns template matches, component info, schema, examples, theme recipes, and hints. After getting context, proceed to Step 2: validate-screen-definition.',
+          '[WORKFLOW STEP 1/4] Get complete context for AI agents to generate screen definitions from natural language.\n\n' +
+          'THIS IS THE FIRST STEP in the screen generation workflow:\n' +
+          "1. Call THIS TOOL with user's description (Step 1/4)\n" +
+          '2. Use returned context to generate/validate Screen Definition (Step 2/4)\n' +
+          '3. Call generate_screen with the definition (Step 3/4)\n' +
+          '4. Call validate-environment if path known (Step 4/4 - Phase 2)\n\n' +
+          'WHEN TO CALL:\n' +
+          '- When user requests a new screen/page/component\n' +
+          '- Before attempting to generate a Screen Definition JSON\n' +
+          '- When you need to know available components, templates, or layout tokens\n\n' +
+          'RETURNS:\n' +
+          '- Template matches based on description\n' +
+          '- Available components with usage examples\n' +
+          '- JSON schema for Screen Definition\n' +
+          '- Example definitions for reference\n' +
+          '- Theme recipes and contextual hints',
         inputSchema: {
           type: 'object',
           properties: {
@@ -346,7 +459,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-screen-definition',
         description:
-          '[RECOMMENDED WORKFLOW - Step 2 of 3] Use this AFTER get-screen-generation-context (Step 1) and BEFORE generate_screen (Step 3). Validates screen definition JSON with detailed error messages, suggestions, and improvement recommendations.',
+          '[WORKFLOW STEP 2/4] Validate a screen definition JSON with detailed error messages, suggestions, and improvement recommendations.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After creating a Screen Definition JSON (from Step 1 context)\n' +
+          '- Before calling generate_screen (Step 3)\n' +
+          '- When user reports validation errors in generated code\n' +
+          '- To get improvement suggestions for an existing definition\n\n' +
+          'RETURNS:\n' +
+          '- valid: boolean indicating if definition is valid\n' +
+          '- errors: Array of validation errors with suggestions\n' +
+          '- warnings: Array of potential issues\n' +
+          '- suggestions: Improvement recommendations\n\n' +
+          'NEXT STEP:\n' +
+          '- If valid: true, proceed to generate_screen (Step 3/4)\n' +
+          '- If valid: false, fix errors in definition and re-validate',
         inputSchema: {
           type: 'object',
           properties: {
@@ -361,6 +487,39 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
           },
           required: ['definition'],
+        },
+      },
+      {
+        name: 'validate-environment',
+        description:
+          'Validate user environment by checking if required NPM packages are installed.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- After generate_screen returns dependencies.missing array\n' +
+          '- When user wants to check if their project has required packages\n' +
+          '- Before running generated code to ensure all dependencies are available\n\n' +
+          'RETURNS:\n' +
+          '- installed: Packages already in package.json with versions\n' +
+          '- missing: Packages that need to be installed\n' +
+          '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n\n' +
+          'EXAMPLE WORKFLOW:\n' +
+          '1. Call generate_screen → get dependencies.external\n' +
+          '2. Call validate-environment with projectPath + requiredPackages\n' +
+          '3. Show user the missing packages and install commands',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            projectPath: {
+              type: 'string',
+              description: 'Path to package.json or project root directory',
+            },
+            requiredPackages: {
+              type: 'array',
+              description:
+                'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
+              items: { type: 'string' },
+            },
+          },
+          required: ['projectPath', 'requiredPackages'],
         },
       },
     ],
@@ -603,6 +762,21 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         };
       }
 
+      case 'validate-environment': {
+        // Validate input
+        const validatedInput = ValidateEnvironmentInputSchema.parse(args);
+        const result = await validateEnvironmentTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -641,5 +815,5 @@ await server.connect(transport);
 
 info('Tekton MCP Server connected via stdio transport');
 info(
-  '15 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition'
+  '16 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
 );

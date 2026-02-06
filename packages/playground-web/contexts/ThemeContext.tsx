@@ -144,7 +144,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
    * [TAG-UI003-007] WHEN 프리셋이 선택되면 THEN CSS Variables가 즉시 업데이트
    */
   const applyTheme = useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
 
     const root = document.documentElement;
 

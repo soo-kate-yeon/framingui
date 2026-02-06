@@ -7,7 +7,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
-      include: ['tests/**/*.ts'],
+      include: ['packages/*/src/**/*.ts', 'packages/*/src/**/*.tsx'],
       exclude: [
         'node_modules/**',
         'dist/**',
@@ -23,7 +23,6 @@ export default defineConfig({
         'examples/**',
         'eslint.config.js',
         'src/**', // Legacy code (moved to packages/core)
-        'packages/**', // Packages have their own coverage
         '**/__tests__/**', // Test files
         '**/coverage/**', // Coverage reports
       ],

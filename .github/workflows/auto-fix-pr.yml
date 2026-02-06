@@ -1,0 +1,188 @@
+name: Auto-fix PR Checks
+
+on:
+  workflow_run:
+    workflows: ["Quality Gate"]
+    types:
+      - completed
+    branches-ignore:
+      - main
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  auto-fix:
+    name: Auto-fix Failed Checks
+    # Only run on PR branches when quality gate fails
+    if: |
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download failed workflow logs
+        id: download-logs
+        continue-on-error: true
+        run: |
+          echo "Downloading logs from workflow run ${{ github.event.workflow_run.id }}"
+          gh run view ${{ github.event.workflow_run.id }} --log > workflow_logs.txt || echo "Could not download logs"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Analyze logs and determine fixes
+        id: analyze
+        run: |
+          LOG_FILE="workflow_logs.txt"
+          
+          # Initialize flags
+          echo "needs_lint_fix=false" >> $GITHUB_OUTPUT
+          echo "needs_format_fix=false" >> $GITHUB_OUTPUT
+          echo "needs_type_check=false" >> $GITHUB_OUTPUT
+          
+          if [ -f "$LOG_FILE" ]; then
+            # Check for lint errors
+            if grep -qi "eslint\|lint" "$LOG_FILE"; then
+              echo "needs_lint_fix=true" >> $GITHUB_OUTPUT
+              echo "🔍 Detected linting issues"
+            fi
+            
+            # Check for formatting errors
+            if grep -qi "prettier\|format" "$LOG_FILE"; then
+              echo "needs_format_fix=true" >> $GITHUB_OUTPUT
+              echo "🔍 Detected formatting issues"
+            fi
+            
+            # Check for type errors
+            if grep -qi "typescript\|tsc\|type error" "$LOG_FILE"; then
+              echo "needs_type_check=true" >> $GITHUB_OUTPUT
+              echo "🔍 Detected TypeScript issues"
+            fi
+          else
+            echo "⚠️ No log file found, will attempt common fixes"
+            echo "needs_lint_fix=true" >> $GITHUB_OUTPUT
+            echo "needs_format_fix=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run ESLint auto-fix
+        if: steps.analyze.outputs.needs_lint_fix == 'true'
+        continue-on-error: true
+        run: |
+          echo "🔧 Running ESLint auto-fix..."
+          pnpm --filter "./packages/*" exec eslint --fix "src/**/*.{ts,tsx}" "__tests__/**/*.{ts,tsx}" || true
+
+      - name: Run Prettier auto-fix
+        if: steps.analyze.outputs.needs_format_fix == 'true'
+        continue-on-error: true
+        run: |
+          echo "🎨 Running Prettier auto-fix..."
+          pnpm exec prettier --write "packages/*/src/**/*.{ts,tsx}" "packages/*/__tests__/**/*.{ts,tsx}" "*.{ts,js,json}" ".github/**/*.yml" || true
+
+      - name: Check for changes
+        id: check-changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "📝 Changes detected:"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No changes to commit"
+          fi
+
+      - name: Commit and push fixes
+        if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add .
+          
+          cat << EOF > commit_message.txt
+          chore: auto-fix CI/CD failures
+          
+          Auto-fixes applied by GitHub Actions:
+          - ESLint auto-fix
+          - Prettier formatting
+          
+          Triggered by failed workflow run: ${{ github.event.workflow_run.id }}
+          Original workflow: ${{ github.event.workflow_run.html_url }}
+          EOF
+          
+          git commit -F commit_message.txt
+          git push
+
+      - name: Add comment to PR
+        if: steps.check-changes.outputs.has_changes == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head ${{ github.event.workflow_run.head_branch }} --json number --jq '.[0].number')
+          
+          if [ -n "$PR_NUMBER" ]; then
+            cat << 'COMMENT_EOF' > pr_comment.txt
+          🤖 **Auto-fix Applied**
+          
+          I've automatically fixed some CI/CD failures:
+          - ✅ ESLint issues
+          - ✅ Prettier formatting
+          
+          The checks should re-run automatically. If they still fail, manual intervention may be required.
+          COMMENT_EOF
+            
+            echo "" >> pr_comment.txt
+            echo "Workflow run: ${{ github.event.workflow_run.html_url }}" >> pr_comment.txt
+            
+            gh pr comment $PR_NUMBER --body-file pr_comment.txt
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Auto-fix Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check-changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Fixes were applied and committed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Changes made:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            git diff HEAD~1 --stat >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No automatic fixes were available" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Manual intervention may be required for:" >> $GITHUB_STEP_SUMMARY
+            echo "- TypeScript type errors" >> $GITHUB_STEP_SUMMARY
+            echo "- Test failures" >> $GITHUB_STEP_SUMMARY
+            echo "- Build errors" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Original workflow: ${{ github.event.workflow_run.html_url }}" >> $GITHUB_STEP_SUMMARY

@@ -9,12 +9,12 @@ import { previewThemeTool } from '../../src/tools/preview-theme.js';
 describe('previewThemeTool', () => {
   it('should generate preview for valid theme', async () => {
     const result = await previewThemeTool({
-      themeId: 'atlantic-magazine-v1',
+      themeId: 'classic-magazine-v1',
     });
 
     expect(result.success).toBe(true);
     expect(result.theme).toBeDefined();
-    expect(result.theme?.id).toBe('atlantic-magazine-v1');
+    expect(result.theme?.id).toBe('classic-magazine-v1');
     expect(result.theme?.name).toBeDefined();
     // Note: description is optional in v2.1 theme schema
     // v2.1 schema uses tokens instead of cssVariables
@@ -23,7 +23,7 @@ describe('previewThemeTool', () => {
 
   it('should include OKLCH color tokens', async () => {
     const result = await previewThemeTool({
-      themeId: 'hims-v1',
+      themeId: 'equinox-fitness-v1',
     });
 
     expect(result.success).toBe(true);
@@ -44,7 +44,7 @@ describe('previewThemeTool', () => {
   });
 
   it('should return theme without custom base URL', async () => {
-    const result = await previewThemeTool({ themeId: 'atlantic-magazine-v1' });
+    const result = await previewThemeTool({ themeId: 'classic-magazine-v1' });
 
     expect(result.success).toBe(true);
     expect(result.theme).toBeDefined();

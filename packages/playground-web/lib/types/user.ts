@@ -121,19 +121,8 @@ export interface ThemeConfigJSON {
 }
 
 /**
- * NextAuth 세션 확장
+ * SPEC-AUTH-001: Supabase Auth 사용으로 NextAuth 모듈 선언 제거
+ * [TAG-AUTH-001-U001] Supabase Auth를 단독 인증 제공자로 사용
+ *
+ * 사용자 타입은 위의 User 및 UserData 인터페이스로 정의됨
  */
-declare module 'next-auth' {
-  interface Session {
-    user: {
-      id: string;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      licenses: License[];
-      likedTemplates: string[];
-      savedThemes: SavedTheme[];
-      userId: string;
-    };
-  }
-}
