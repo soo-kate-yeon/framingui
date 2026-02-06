@@ -290,7 +290,7 @@ describe('checkLicense', () => {
       data: {
         id: 'license-1',
         is_active: true,
-        expires_at: '2025-12-31T23:59:59Z',
+        expires_at: '2027-12-31T23:59:59Z',
       },
       error: null,
     });
@@ -443,7 +443,7 @@ describe('updateLicense', () => {
       tier: 'creator',
       paddle_subscription_id: 'sub_123',
       purchased_at: '2024-01-01T00:00:00Z',
-      expires_at: '2025-12-31T23:59:59Z',
+      expires_at: '2027-12-31T23:59:59Z',
       is_active: true,
     };
 
@@ -454,13 +454,13 @@ describe('updateLicense', () => {
 
     const result = await updateLicense('license-1', {
       tier: 'creator',
-      expires_at: '2025-12-31T23:59:59Z',
+      expires_at: '2027-12-31T23:59:59Z',
     });
 
     expect(mockFrom).toHaveBeenCalledWith('user_licenses');
     expect(mockUpdate).toHaveBeenCalledWith({
       tier: 'creator',
-      expires_at: '2025-12-31T23:59:59Z',
+      expires_at: '2027-12-31T23:59:59Z',
     });
     expect(mockEq).toHaveBeenCalledWith('id', 'license-1');
     expect(result).toEqual(mockLicense);

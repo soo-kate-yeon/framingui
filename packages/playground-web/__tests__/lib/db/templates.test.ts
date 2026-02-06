@@ -436,7 +436,7 @@ describe('canAccessTemplate', () => {
       data: {
         id: 'license-1',
         is_active: true,
-        expires_at: '2025-12-31T23:59:59Z',
+        expires_at: '2027-12-31T23:59:59Z',
       },
       error: null,
     });

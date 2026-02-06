@@ -72,7 +72,8 @@ describe('CodeBlock', () => {
     it('should have responsive padding', () => {
       const { container } = render(<CodeBlock code={sampleCode} />);
       const wrapper = container.firstChild;
-      expect(wrapper).toHaveClass('p-4');
+      expect(wrapper).toHaveClass('p-3');
+      expect(wrapper).toHaveClass('sm:p-4');
     });
 
     it('should apply custom className', () => {

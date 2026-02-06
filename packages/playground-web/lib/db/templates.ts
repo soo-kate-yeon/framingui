@@ -9,7 +9,8 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import type { FreeScreenTemplate } from './types';
+import type { FreeScreenTemplate, DatabaseError } from './types';
+import { toDatabaseError } from './error';
 
 /**
  * 모든 무료 템플릿 조회
@@ -36,18 +37,18 @@ export async function getFreeTemplates(): Promise<FreeScreenTemplate[]> {
 
     if (error) {
       console.error('Failed to get free templates:', error.message);
-      throw new Error(`Failed to get free templates: ${error.message}`);
+      throw toDatabaseError('Failed to get free templates', error.message, error.code);
     }
 
     return (data as FreeScreenTemplate[]) ?? [];
   } catch (error) {
-    if (error instanceof Error) {
+    if ((error as DatabaseError).code !== undefined) {
       throw error;
     }
 
     console.error('Unexpected error getting free templates:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error getting free templates: ${details}`);
+    throw toDatabaseError('Unexpected error getting free templates', details);
   }
 }
 
@@ -86,18 +87,18 @@ export async function getTemplateById(
       }
 
       console.error('Failed to get template by ID:', error.message);
-      throw new Error(`Failed to get template by ID: ${error.message}`);
+      throw toDatabaseError('Failed to get template by ID', error.message, error.code);
     }
 
     return data as FreeScreenTemplate;
   } catch (error) {
-    if (error instanceof Error) {
+    if ((error as DatabaseError).code !== undefined) {
       throw error;
     }
 
     console.error('Unexpected error getting template:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error getting template: ${details}`);
+    throw toDatabaseError('Unexpected error getting template', details);
   }
 }
 

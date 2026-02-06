@@ -15,6 +15,7 @@ import type {
   UpdateLicenseData,
   DatabaseError,
 } from './types';
+import { toDatabaseError, createDatabaseError } from './error';
 
 /**
  * 사용자의 모든 라이선스 조회
@@ -44,18 +45,18 @@ export async function getUserLicenses(
 
     if (error) {
       console.error('Failed to get user licenses:', error.message);
-      throw new Error(`Failed to get user licenses: ${error.message}`);
+      throw toDatabaseError('Failed to get user licenses', error.message, error.code);
     }
 
     return (data as UserLicense[]) ?? [];
   } catch (error) {
-    if ((error as DatabaseError).code) {
+    if ((error as DatabaseError).code !== undefined || (error as DatabaseError).message?.startsWith('Failed to get')) {
       throw error;
     }
 
     console.error('Unexpected error getting user licenses:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error getting user licenses: ${details}`);
+    throw toDatabaseError('Unexpected error getting user licenses', details);
   }
 }
 
@@ -99,25 +100,41 @@ export async function createLicense(
 
       // 중복 키 에러 처리
       if (error.code === '23505') {
-        throw new Error('License already exists for this user and theme: UNIQUE constraint violation');
+        throw createDatabaseError(
+          'License already exists for this user and theme',
+          '23505',
+          'UNIQUE constraint violation'
+        );
       }
 
-      throw new Error(`Failed to create license: ${error.message}`);
+      throw toDatabaseError('Failed to create license', error.message, error.code);
     }
 
     if (!data) {
-      throw new Error('No data returned after license creation: Insert operation succeeded but no data returned');
+      throw createDatabaseError(
+        'No data returned after license creation',
+        undefined,
+        'Insert operation succeeded but no data returned'
+      );
     }
 
     return data as UserLicense;
   } catch (error) {
-    if ((error as DatabaseError).code) {
-      throw error;
+    // Check if it's already a DatabaseError by checking for message property
+    if ((error as any).message && typeof (error as any).message === 'string') {
+      if (
+        (error as any).message.startsWith('License already exists') ||
+        (error as any).message.startsWith('No data returned') ||
+        (error as any).message.startsWith('Failed to create') ||
+        (error as any).code !== undefined
+      ) {
+        throw error;
+      }
     }
 
     console.error('Unexpected error creating license:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error creating license: ${details}`);
+    throw toDatabaseError('Unexpected error creating license', details);
   }
 }
 
@@ -220,22 +237,32 @@ export async function updateLicense(
 
     if (error) {
       console.error('Failed to update license:', error.message);
-      throw new Error(`Failed to update license: ${error.message}`);
+      throw toDatabaseError('Failed to update license', error.message, error.code);
     }
 
     if (!data) {
-      throw new Error('License not found: No license found with the given ID');
+      throw createDatabaseError(
+        'License not found',
+        'PGRST116',
+        'No license found with the given ID'
+      );
     }
 
     return data as UserLicense;
   } catch (error) {
-    if ((error as DatabaseError).code) {
-      throw error;
+    if ((error as any).message && typeof (error as any).message === 'string') {
+      if (
+        (error as any).message.startsWith('License not found') ||
+        (error as any).message.startsWith('Failed to update') ||
+        (error as any).code !== undefined
+      ) {
+        throw error;
+      }
     }
 
     console.error('Unexpected error updating license:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error updating license: ${details}`);
+    throw toDatabaseError('Unexpected error updating license', details);
   }
 }
 
@@ -302,17 +329,17 @@ export async function deactivateExpiredLicenses(): Promise<number> {
 
     if (error) {
       console.error('Failed to deactivate expired licenses:', error.message);
-      throw new Error(`Failed to deactivate expired licenses: ${error.message}`);
+      throw toDatabaseError('Failed to deactivate expired licenses', error.message, error.code);
     }
 
     return data?.length ?? 0;
   } catch (error) {
-    if ((error as DatabaseError).code) {
+    if ((error as DatabaseError).code !== undefined || (error as DatabaseError).message?.startsWith('Failed to deactivate')) {
       throw error;
     }
 
     console.error('Unexpected error deactivating licenses:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error deactivating licenses: ${details}`);
+    throw toDatabaseError('Unexpected error deactivating licenses', details);
   }
 }

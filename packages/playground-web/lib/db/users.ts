@@ -10,8 +10,9 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import type { UserProfile, UpdateUserData } from './types';
+import type { UserProfile, UpdateUserData, DatabaseError } from './types';
 import type { User } from '@supabase/supabase-js';
+import { toDatabaseError } from './error';
 
 /**
  * 사용자 생성 또는 업데이트
@@ -50,7 +51,7 @@ export async function createOrUpdateUser(
   } catch (error) {
     console.error('Failed to create or update user:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to create or update user: ${details}`);
+    throw toDatabaseError('Failed to create or update user', details);
   }
 }
 
@@ -80,7 +81,7 @@ export async function getUserById(
 
     if (error) {
       console.error('Failed to get user by ID:', error.message);
-      throw new Error(`Failed to get user by ID: ${error.message}`);
+      throw toDatabaseError('Failed to get user by ID', error.message, error.code);
     }
 
     if (!data.user) {
@@ -96,13 +97,13 @@ export async function getUserById(
 
     return profile;
   } catch (error) {
-    if (error instanceof Error) {
+    if ((error as DatabaseError).code !== undefined) {
       throw error;
     }
 
     console.error('Unexpected error getting user:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error getting user: ${details}`);
+    throw toDatabaseError('Unexpected error getting user', details);
   }
 }
 
@@ -140,7 +141,7 @@ export async function updateUser(
 
     if (error) {
       console.error('Failed to update user:', error.message);
-      throw new Error(`Failed to update user: ${error.message}`);
+      throw toDatabaseError('Failed to update user', error.message, error.code);
     }
 
     if (!updatedUser.user) {
@@ -156,13 +157,13 @@ export async function updateUser(
 
     return profile;
   } catch (error) {
-    if (error instanceof Error) {
+    if ((error as DatabaseError).code !== undefined) {
       throw error;
     }
 
     console.error('Unexpected error updating user:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error updating user: ${details}`);
+    throw toDatabaseError('Unexpected error updating user', details);
   }
 }
 
