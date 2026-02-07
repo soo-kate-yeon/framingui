@@ -17,10 +17,13 @@ permissions:
 jobs:
   deploy:
     name: Deploy to Vercel
-    # Only deploy if Quality Gate succeeded
+    # Quality Gate 성공 시에만 배포
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout code
@@ -28,46 +31,18 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build workspace dependencies
-        run: |
-          echo "Building workspace dependencies in correct order..."
-          pnpm --filter @tekton/tokens build
-          pnpm --filter @tekton/core build
-          pnpm --filter @tekton/ui build
-          pnpm --filter @tekton/mcp-server build
-
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: packages/playground-web
 
-      - name: Build Project Artifacts
-        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        working-directory: packages/playground-web
-
-      - name: Deploy to Vercel
+      - name: Deploy to Vercel (remote build)
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          DEPLOYMENT_URL=$(vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
-          echo "✅ Deployed to: $DEPLOYMENT_URL"
-        working-directory: packages/playground-web
+          echo "Deployed to: $DEPLOYMENT_URL"
 
       - name: Comment deployment URL on PR
         if: github.event.workflow_run.event == 'pull_request'
@@ -75,32 +50,28 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr list --head ${{ github.event.workflow_run.head_branch }} --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --head "${{ github.event.workflow_run.head_branch }}" --json number --jq '.[0].number' 2>/dev/null)
 
-          if [ -n "$PR_NUMBER" ]; then
-            cat << EOF > pr_comment.txt
-          🚀 **Vercel Deployment Successful**
+          if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+            gh pr comment "$PR_NUMBER" --body "$(cat <<'EOF'
+          **Vercel Deployment Successful**
 
-          Your changes have been deployed to Vercel after passing all quality checks.
+          Deployed after passing all quality checks.
 
-          **Deployment URL**: ${{ steps.deploy.outputs.deployment_url }}
-
-          All quality gates passed:
-          - ✅ Lint
-          - ✅ Type Check
-          - ✅ Build
-          - ✅ Tests
+          **URL**: ${{ steps.deploy.outputs.deployment_url }}
           EOF
-
-            gh pr comment $PR_NUMBER --body-file pr_comment.txt
+          )"
           fi
 
       - name: Deployment summary
+        if: always()
         run: |
-          echo "## Vercel Deployment" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Successfully deployed to Vercel" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Deployment URL**: ${{ steps.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Quality Gate passed before deployment" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ steps.deploy.outputs.deployment_url }}" ]; then
+            echo "## Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Deployed: ${{ steps.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## Vercel Deployment Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check the deploy step logs for details." >> $GITHUB_STEP_SUMMARY
+          fi
