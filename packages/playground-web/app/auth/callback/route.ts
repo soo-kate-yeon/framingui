@@ -85,8 +85,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 6. 성공: 홈페이지로 리다이렉트
-    return NextResponse.redirect(new URL('/', requestUrl.origin));
+    // 6. 성공: 원래 페이지 또는 홈페이지로 리다이렉트
+    const returnUrl = requestUrl.searchParams.get('returnUrl') || '/';
+    console.log('[OAuth Callback] Redirecting to:', returnUrl);
+    return NextResponse.redirect(new URL(returnUrl, requestUrl.origin));
   } catch (error) {
     // 7. 예상치 못한 에러 처리
     console.error('[OAuth Callback] Unexpected error:', error);

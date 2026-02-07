@@ -4,6 +4,7 @@
  */
 
 import type { Config } from 'tailwindcss';
+import animate from 'tailwindcss-animate';
 
 const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', './.storybook/**/*.{js,ts,jsx,tsx}'],
@@ -13,7 +14,7 @@ const config: Config = {
       // arbitrary values로 var(--tekton-*) 사용
     },
   },
-  plugins: [],
+  plugins: [animate],
 };
 
 export default config;

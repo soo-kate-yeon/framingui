@@ -3,6 +3,8 @@ import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { info, error as logError } from './utils/logger.js';
+import { verifyApiKey } from './auth/verify.js';
+import { setAuthData } from './auth/state.js';
 import { generateBlueprintTool } from './tools/generate-blueprint.js';
 import { previewThemeTool } from './tools/preview-theme.js';
 import { listThemesTool } from './tools/list-themes.js';
@@ -225,11 +227,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- If dependencies.external is non-empty:\n' +
           '  * User provided package.json path? → Call validate-environment (Step 4/4)\n' +
           '  * Path unknown? → Show dependencies.installCommands to user\n' +
-          '- Display the list of required packages to user before delivering code\n\n' +
+          '- Display the list of required packages to user before delivering code\n' +
+          '- validate-environment also checks Tailwind CSS config — ensures @tekton/ui\n' +
+          '  content paths and tailwindcss-animate plugin are configured correctly\n\n' +
           'CRITICAL:\n' +
           '- This workflow prevents "Module not found" errors at runtime\n' +
-          '- Never deliver code without informing user about dependencies\n' +
-          '- Phase 2 will add validate-environment tool for automatic checking',
+          '- Tailwind validation prevents invisible/unstyled @tekton/ui components\n' +
+          '- Never deliver code without informing user about dependencies',
         inputSchema: {
           type: 'object',
           properties: {
@@ -492,19 +496,26 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-environment',
         description:
-          'Validate user environment by checking if required NPM packages are installed.\n\n' +
+          'Validate user environment: NPM packages + Tailwind CSS configuration for @tekton/ui.\n\n' +
           'WHEN TO CALL:\n' +
           '- After generate_screen returns dependencies.missing array\n' +
           '- When user wants to check if their project has required packages\n' +
-          '- Before running generated code to ensure all dependencies are available\n\n' +
+          '- Before running generated code to ensure all dependencies are available\n' +
+          '- To verify Tailwind CSS is configured correctly for @tekton/ui components\n\n' +
           'RETURNS:\n' +
           '- installed: Packages already in package.json with versions\n' +
           '- missing: Packages that need to be installed\n' +
-          '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n\n' +
+          '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n' +
+          '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n\n' +
+          'TAILWIND VALIDATION (checkTailwind=true by default):\n' +
+          '- Checks if tailwind.config.{ts,js,mjs,cjs} exists\n' +
+          '- Verifies @tekton/ui content paths are included (prevents missing styles)\n' +
+          '- Verifies tailwindcss-animate plugin is configured (required for Dialog, Popover animations)\n' +
+          '- Returns actionable issues[] and fixes[] for each problem found\n\n' +
           'EXAMPLE WORKFLOW:\n' +
           '1. Call generate_screen → get dependencies.external\n' +
           '2. Call validate-environment with projectPath + requiredPackages\n' +
-          '3. Show user the missing packages and install commands',
+          '3. Show user missing packages, install commands, AND any Tailwind config issues',
         inputSchema: {
           type: 'object',
           properties: {
@@ -517,6 +528,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description:
                 'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
               items: { type: 'string' },
+            },
+            checkTailwind: {
+              type: 'boolean',
+              description:
+                'Also validate Tailwind CSS configuration for @tekton/ui compatibility (default: true)',
             },
           },
           required: ['projectPath', 'requiredPackages'],
@@ -806,10 +822,52 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 // Server Initialization
 // ============================================================================
 
+info('Starting Tekton MCP Server v2.1.0...');
+
+// ============================================================================
+// Phase 4.1: API Key Authentication
+// ============================================================================
+
+// Check for TEKTON_API_KEY environment variable
+const apiKey = process.env.TEKTON_API_KEY;
+
+if (apiKey) {
+  info('TEKTON_API_KEY detected, verifying...');
+
+  try {
+    const authResult = await verifyApiKey(apiKey);
+
+    if (authResult.valid) {
+      setAuthData(authResult);
+      info(
+        `Authentication successful - User: ${authResult.user?.email || 'unknown'}, Plan: ${authResult.user?.plan || 'unknown'}`
+      );
+
+      const licensedCount = authResult.themes?.licensed?.length || 0;
+      const freeCount = authResult.themes?.free?.length || 0;
+      info(`Theme access: ${freeCount} free, ${licensedCount} licensed`);
+    } else {
+      logError(`Authentication failed: ${authResult.error || 'Unknown error'}`);
+      logError('Server will continue with free themes only');
+      setAuthData(null);
+    }
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    logError(`Failed to verify API key: ${errorMessage}`);
+    logError('Server will continue with free themes only');
+    setAuthData(null);
+  }
+} else {
+  info('No TEKTON_API_KEY provided, running with free themes only');
+  setAuthData(null);
+}
+
+// ============================================================================
+// Connect Server
+// ============================================================================
+
 // Connect via stdio
 const transport = new StdioServerTransport();
-
-info('Starting Tekton MCP Server v2.1.0...');
 
 await server.connect(transport);
 

@@ -27,10 +27,10 @@ const breadcrumbVariants = cva('flex items-center gap-[var(--tekton-spacing-2)]'
         size: 'default',
     },
 });
-const breadcrumbListVariants = cva('flex flex-wrap items-center gap-[var(--tekton-spacing-1.5)] break-words', {
+const breadcrumbListVariants = cva('flex flex-wrap items-center gap-1.5 break-words', {
     variants: {},
 });
-const breadcrumbItemVariants = cva('inline-flex items-center gap-[var(--tekton-spacing-1.5)]', {
+const breadcrumbItemVariants = cva('inline-flex items-center gap-1.5', {
     variants: {},
 });
 const breadcrumbLinkVariants = cva('transition-colors hover:text-[var(--tekton-bg-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 rounded-[var(--tekton-radius-sm)]', {
