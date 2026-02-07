@@ -1,4 +1,13 @@
 name: Deploy to Vercel
+# 아키텍처:
+#   1. Push → Quality Gate 실행
+#   2. QG 성공 → 이 워크플로우가 Deploy Hook 트리거
+#   3. Vercel 빌드 시작 → Ignored Build Step이 GitHub API로 QG 상태 재검증
+#   4. QG 통과 확인 → 빌드 진행
+#
+# Vercel Dashboard 설정 필수:
+#   - Ignored Build Step: 커스텀 스크립트 (GitHub API 검증)
+#   - 환경변수: GH_API_TOKEN (GitHub PAT, Actions read 권한)
 
 on:
   workflow_run:
