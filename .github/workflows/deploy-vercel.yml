@@ -21,57 +21,43 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (remote build)
+      - name: Trigger Vercel Deployment via Deploy Hook
         id: deploy
         run: |
-          DEPLOYMENT_URL=$(vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
-          echo "Deployed to: $DEPLOYMENT_URL"
+          echo "Triggering Vercel deployment for branch: ${{ github.event.workflow_run.head_branch }}"
 
-      - name: Comment deployment URL on PR
-        if: github.event.workflow_run.event == 'pull_request'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          PR_NUMBER=$(gh pr list --head "${{ github.event.workflow_run.head_branch }}" --json number --jq '.[0].number' 2>/dev/null)
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -1)
 
-          if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
-            gh pr comment "$PR_NUMBER" --body "$(cat <<'EOF'
-          **Vercel Deployment Successful**
+          echo "Response: $HTTP_CODE"
+          echo "Body: $BODY"
 
-          Deployed after passing all quality checks.
-
-          **URL**: ${{ steps.deploy.outputs.deployment_url }}
-          EOF
-          )"
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "Vercel deployment triggered successfully"
+            # Deploy Hook 응답에서 URL 추출 (가능한 경우)
+            DEPLOY_URL=$(echo "$BODY" | jq -r '.url // empty' 2>/dev/null || true)
+            if [ -n "$DEPLOY_URL" ]; then
+              echo "deployment_url=https://$DEPLOY_URL" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "::error::Failed to trigger Vercel deployment (HTTP $HTTP_CODE)"
+            exit 1
           fi
 
       - name: Deployment summary
         if: always()
         run: |
-          if [ -n "${{ steps.deploy.outputs.deployment_url }}" ]; then
-            echo "## Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "## Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "Vercel deployment triggered via Deploy Hook." >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Deployed: ${{ steps.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+            echo "Build is running on Vercel. Check the Vercel Dashboard for progress." >> $GITHUB_STEP_SUMMARY
           else
-            echo "## Vercel Deployment Failed" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Check the deploy step logs for details." >> $GITHUB_STEP_SUMMARY
+            echo "Failed to trigger deployment." >> $GITHUB_STEP_SUMMARY
           fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Quality Gate: ${{ github.event.workflow_run.html_url }}" >> $GITHUB_STEP_SUMMARY
