@@ -1,0 +1,100 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  e2e-tests:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers (chromium only)
+        run: pnpm exec playwright install --with-deps chromium
+        working-directory: packages/playground-web
+
+      - name: Build Next.js app
+        run: pnpm --filter @tekton/playground-web build
+
+      - name: Run E2E tests
+        run: pnpm --filter @tekton/playground-web test:e2e --project=chromium
+        env:
+          # Supabase 테스트 환경변수 (모킹)
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL || 'https://test.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY || 'test-anon-key' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.TEST_SUPABASE_SERVICE_ROLE_KEY || 'test-service-role-key' }}
+          # Feature flags (테스트 모드)
+          NEXT_PUBLIC_ENABLE_AUTH: false
+          NEXT_PUBLIC_ENABLE_PAYMENTS: false
+          NEXT_PUBLIC_ENABLE_MCP_EXPORT: true
+          # Playwright 설정
+          PLAYWRIGHT_HEADLESS: true
+          PLAYWRIGHT_TEST_BASE_URL: http://localhost:3001
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-e2e-report
+          path: packages/playground-web/playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            packages/playground-web/test-results/
+            packages/playground-web/playwright-report/
+          retention-days: 30
+
+      - name: Comment PR with E2E results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const reportPath = 'packages/playground-web/playwright-report/index.html';
+
+            let comment = '## E2E 테스트 결과 (Chromium)\n\n';
+
+            if (fs.existsSync(reportPath)) {
+              comment += '✅ E2E 테스트가 완료되었습니다.\n\n';
+              comment += '자세한 보고서는 아티팩트를 다운로드하여 확인하세요.\n';
+              comment += `- [Playwright E2E Report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})\n`;
+            } else {
+              comment += '❌ E2E 테스트 실행 중 오류가 발생했습니다.\n';
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

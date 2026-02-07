@@ -1,6 +1,6 @@
 {
   "name": "@tekton/mcp-server",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
@@ -16,7 +16,21 @@
     }
   },
   "bin": {
-    "tekton-mcp": "./dist/index.js"
+    "tekton-mcp": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soo-kate-yeon/tekton",
+    "directory": "packages/mcp-server"
   },
   "scripts": {
     "build": "tsc",
@@ -28,11 +42,12 @@
     "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
     "lint": "eslint src __tests__ --ext .ts",
     "typecheck": "tsc --noEmit",
-    "typecheck:tests": "tsc --project tsconfig.test.json --noEmit"
+    "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",
-    "@modelcontextprotocol/sdk": "^1.25.3",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "@tekton/core": "workspace:*",
     "@tekton/ui": "workspace:*",
     "zod": "^3.23.8"

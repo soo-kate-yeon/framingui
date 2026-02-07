@@ -39,10 +39,7 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
 
   return (
     <div
-      className={clsx(
-        'relative p-3 sm:p-4 bg-neutral-900 rounded-lg overflow-x-auto',
-        className
-      )}
+      className={clsx('relative p-3 sm:p-4 bg-neutral-900 rounded-lg overflow-x-auto', className)}
     >
       {/* Language Label */}
       {language && (

@@ -189,4 +189,168 @@ body {
   /* Elevation */
   --lm-elevation-card-default: 0 1px 4px rgba(0, 0, 0, 0.04);
   --lm-elevation-card-hover: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  /* ============================================
+   * Minimal Workspace v3 Theme
+   * Professional SaaS Dashboard with Zinc Palette
+   * ============================================ */
+
+  /* Atomic Colors - Brand (Neutral Zinc) */
+  --mw-brand-50: oklch(0.98 0 240);
+  --mw-brand-100: oklch(0.96 0.01 240);
+  --mw-brand-200: oklch(0.90 0.02 240);
+  --mw-brand-300: oklch(0.80 0.03 240);
+  --mw-brand-400: oklch(0.60 0.04 240);
+  --mw-brand-500: oklch(0.40 0.04 240);
+  --mw-brand-600: oklch(0.30 0.04 240);
+  --mw-brand-700: oklch(0.20 0.04 240);
+  --mw-brand-800: oklch(0.15 0.04 240);
+  --mw-brand-900: oklch(0.09 0.04 240);
+  --mw-brand-950: oklch(0.04 0.04 240);
+
+  /* Atomic Colors - Neutral (Zinc) */
+  --mw-neutral-white: oklch(1 0 0);
+  --mw-neutral-50: oklch(0.98 0.005 240);
+  --mw-neutral-100: oklch(0.96 0.01 240);
+  --mw-neutral-200: oklch(0.92 0.02 240);
+  --mw-neutral-300: oklch(0.87 0.03 240);
+  --mw-neutral-400: oklch(0.66 0.04 240);
+  --mw-neutral-500: oklch(0.45 0.04 240);
+  --mw-neutral-600: oklch(0.32 0.04 240);
+  --mw-neutral-700: oklch(0.25 0.04 240);
+  --mw-neutral-800: oklch(0.15 0.04 240);
+  --mw-neutral-900: oklch(0.09 0.04 240);
+  --mw-neutral-950: oklch(0.05 0.04 240);
+
+  /* Border Radius */
+  --mw-radius-sm: calc(0.5rem - 2px);
+  --mw-radius-md: calc(0.5rem - 2px);
+  --mw-radius-lg: 0.5rem;
+  --mw-radius-xl: 0.75rem;
+  --mw-radius-full: 9999px;
+
+  /* Spacing */
+  --mw-spacing-2: 0.5rem;
+  --mw-spacing-4: 1rem;
+  --mw-spacing-6: 1.5rem;
+  --mw-spacing-8: 2rem;
+  --mw-spacing-12: 3rem;
+}
+
+/* Minimal Workspace Component Styles */
+@layer components {
+  /* Canvas Background */
+  .mw-canvas {
+    background-color: var(--mw-neutral-white);
+  }
+
+  /* Card Component */
+  .mw-card {
+    @apply rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm;
+  }
+
+  .mw-card-header {
+    @apply flex flex-col space-y-1.5 p-6;
+  }
+
+  .mw-card-title {
+    @apply text-2xl font-semibold leading-none tracking-tight;
+  }
+
+  .mw-card-description {
+    @apply text-sm text-neutral-500;
+  }
+
+  .mw-card-content {
+    @apply p-6 pt-0;
+  }
+
+  /* Button Components */
+  .mw-button-primary {
+    @apply inline-flex items-center justify-center rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-50 shadow hover:bg-neutral-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-neutral-950 disabled:pointer-events-none disabled:opacity-50 transition-colors;
+  }
+
+  .mw-button-secondary {
+    @apply inline-flex items-center justify-center rounded-md bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-900 shadow-sm hover:bg-neutral-100/80 transition-colors;
+  }
+
+  .mw-button-outline {
+    @apply inline-flex items-center justify-center rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-neutral-100 hover:text-neutral-900 transition-colors;
+  }
+
+  .mw-button-ghost {
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium hover:bg-neutral-100 hover:text-neutral-900 transition-colors;
+  }
+
+  /* Input Component */
+  .mw-input {
+    @apply flex h-10 w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Badge Components */
+  .mw-badge {
+    @apply inline-flex items-center rounded-full border border-transparent bg-neutral-900 px-2.5 py-0.5 text-xs font-semibold text-neutral-50 shadow hover:bg-neutral-900/80 transition-colors;
+  }
+
+  .mw-badge-secondary {
+    @apply inline-flex items-center rounded-full border border-transparent bg-neutral-100 px-2.5 py-0.5 text-xs font-semibold text-neutral-900 hover:bg-neutral-100/80 transition-colors;
+  }
+
+  .mw-badge-outline {
+    @apply inline-flex items-center rounded-full border border-neutral-200 px-2.5 py-0.5 text-xs font-semibold text-neutral-950 transition-colors;
+  }
+
+  /* Typography */
+  .mw-heading-1 {
+    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+  }
+
+  .mw-heading-2 {
+    @apply scroll-m-20 border-b border-neutral-200 pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0;
+  }
+
+  .mw-heading-3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  .mw-heading-4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight;
+  }
+
+  .mw-text-primary {
+    @apply text-neutral-950;
+  }
+
+  .mw-text-secondary {
+    @apply text-neutral-500;
+  }
+
+  .mw-text-muted {
+    @apply text-neutral-400;
+  }
+
+  /* Table Components */
+  .mw-table-wrapper {
+    @apply relative w-full overflow-auto;
+  }
+
+  .mw-table {
+    @apply w-full caption-bottom text-sm;
+  }
+
+  .mw-table-header {
+    @apply [&_tr]:border-b;
+  }
+
+  .mw-table-row {
+    @apply border-b border-neutral-200 transition-colors hover:bg-neutral-100/50 data-[state=selected]:bg-neutral-100;
+  }
+
+  .mw-table-head {
+    @apply h-12 px-4 text-left align-middle font-medium text-neutral-500 [&:has([role=checkbox])]:pr-0;
+  }
+
+  .mw-table-cell {
+    @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;
+  }
 }

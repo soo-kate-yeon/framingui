@@ -96,16 +96,17 @@ export { Skeleton } from './components/skeleton';
 export { ScrollArea, ScrollBar } from './components/scroll-area';
 
 // Form
-export {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-} from './components/form';
+// Temporarily disabled due to react-hook-form import issues
+// export {
+//   useFormField,
+//   Form,
+//   FormItem,
+//   FormLabel,
+//   FormControl,
+//   FormDescription,
+//   FormMessage,
+//   FormField,
+// } from './components/form';
 
 // Select
 export {

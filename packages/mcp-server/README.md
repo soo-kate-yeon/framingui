@@ -28,6 +28,62 @@ MCP (Model Context Protocol) server enabling AI-driven blueprint generation, the
 pnpm install
 ```
 
+## Authentication (Phase 4.1)
+
+The MCP server supports optional API key authentication to enable access to premium themes.
+
+### Environment Variables
+
+```bash
+# Required for premium theme access
+TEKTON_API_KEY=tk_live_xxx...
+
+# Optional: API endpoint (defaults to https://tekton-ui.com)
+TEKTON_API_URL=https://tekton-ui.com  # or http://localhost:3000 for dev
+```
+
+### Theme Access Tiers
+
+**Free Themes** (No authentication required):
+
+- `next-tailwind-shadcn`
+- `vite-tailwind-shadcn`
+- `next-styled-components`
+- `next-tailwind-radix`
+- `saas-modern`
+- `tech-startup`
+
+**Premium Themes** (Requires valid API key and license):
+
+- `calm-wellness` - Serene wellness applications
+- `dynamic-fitness` - Energetic fitness tracking
+- `korean-fintech` - Professional financial services
+- `media-streaming` - Video/audio streaming platforms
+- `premium-editorial` - Sophisticated content platforms
+- `saas-dashboard` - Modern SaaS dashboards
+- `warm-humanist` - Warm and inviting experiences
+
+### Authentication Behavior
+
+**Without API Key**:
+
+- Server starts normally
+- Only free themes are accessible
+- Premium themes return authentication error
+
+**With Valid API Key**:
+
+- Server verifies key on startup (cached for 5 minutes)
+- Free themes always accessible
+- Licensed premium themes become accessible
+- Unlicensed premium themes return license error
+
+**With Invalid API Key**:
+
+- Server logs error but continues running
+- Falls back to free themes only
+- Does not crash the server
+
 ## Quick Start
 
 ### 1. Build the Server
@@ -56,11 +112,17 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
     "tekton": {
       "command": "node",
       "args": ["/absolute/path/to/tekton/packages/mcp-server/dist/index.js"],
-      "env": { "NODE_ENV": "production" }
+      "env": {
+        "NODE_ENV": "production",
+        "TEKTON_API_KEY": "tk_live_your_api_key_here",
+        "TEKTON_API_URL": "https://tekton-ui.com"
+      }
     }
   }
 }
 ```
+
+**Note**: Remove `TEKTON_API_KEY` from env to run with free themes only.
 
 ## MCP Tools
 

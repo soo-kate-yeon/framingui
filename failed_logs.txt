@@ -1,0 +1,496 @@
+Lint	Run ESLint	﻿2026-02-07T18:02:24.0401173Z ##[group]Run pnpm lint:all
+Lint	Run ESLint	2026-02-07T18:02:24.0401447Z [36;1mpnpm lint:all[0m
+Lint	Run ESLint	2026-02-07T18:02:24.0420867Z shell: /usr/bin/bash -e {0}
+Lint	Run ESLint	2026-02-07T18:02:24.0421112Z env:
+Lint	Run ESLint	2026-02-07T18:02:24.0421351Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+Lint	Run ESLint	2026-02-07T18:02:24.0421657Z ##[endgroup]
+Lint	Run ESLint	2026-02-07T18:02:24.4351175Z 
+Lint	Run ESLint	2026-02-07T18:02:24.4352636Z > tekton@0.1.0 lint:all /home/runner/work/tekton/tekton
+Lint	Run ESLint	2026-02-07T18:02:24.4355491Z > pnpm --filter "./packages/*" lint
+Lint	Run ESLint	2026-02-07T18:02:24.4356960Z 
+Lint	Run ESLint	2026-02-07T18:02:24.9107956Z Scope: 7 of 8 workspace projects
+Lint	Run ESLint	2026-02-07T18:02:24.9154522Z packages/core lint$ eslint src __tests__ --ext .ts,.js
+Lint	Run ESLint	2026-02-07T18:02:24.9167477Z packages/esbuild-plugin lint$ eslint src __tests__ --ext .ts
+Lint	Run ESLint	2026-02-07T18:02:24.9174381Z packages/tokens lint$ eslint src __tests__ --ext .ts
+Lint	Run ESLint	2026-02-07T18:02:27.6730635Z packages/tokens lint: Done
+Lint	Run ESLint	2026-02-07T18:02:28.5858379Z packages/esbuild-plugin lint: Done
+Lint	Run ESLint	2026-02-07T18:02:31.0917091Z packages/core lint: /home/runner/work/tekton/tekton/packages/core/src/icon-library.ts
+Lint	Run ESLint	2026-02-07T18:02:31.0928172Z packages/core lint:   133:7  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.0932990Z packages/core lint:   139:5  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.0957638Z packages/core lint: /home/runner/work/tekton/tekton/packages/core/src/layout-tokens/keyboard.ts
+Lint	Run ESLint	2026-02-07T18:02:31.0959180Z packages/core lint:    21:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:31.0960662Z packages/core lint:    36:33  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:31.0962112Z packages/core lint:   133:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:31.0997592Z packages/core lint:   146:7   warning  Unexpected console statement              no-console
+Lint	Run ESLint	2026-02-07T18:02:31.0999172Z packages/core lint:   319:35  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:31.1000533Z packages/core lint:   344:7   warning  Unexpected console statement              no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1001856Z packages/core lint: /home/runner/work/tekton/tekton/packages/core/src/layout-tokens/touch-target.ts
+Lint	Run ESLint	2026-02-07T18:02:31.1003088Z packages/core lint:   185:5  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1004421Z packages/core lint: /home/runner/work/tekton/tekton/packages/core/src/screen-generation/resolver/screen-resolver.ts
+Lint	Run ESLint	2026-02-07T18:02:31.1005699Z packages/core lint:   445:5  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1007888Z packages/core lint: /home/runner/work/tekton/tekton/packages/core/src/theme-v2.ts
+Lint	Run ESLint	2026-02-07T18:02:31.1012197Z packages/core lint:   304:7  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1015568Z packages/core lint:   310:5  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1020162Z packages/core lint: /home/runner/work/tekton/tekton/packages/core/src/theme.ts
+Lint	Run ESLint	2026-02-07T18:02:31.1057862Z packages/core lint:   116:3  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1059120Z packages/core lint:   125:3  warning  Unexpected console statement  no-console
+Lint	Run ESLint	2026-02-07T18:02:31.1060694Z packages/core lint: ✖ 14 problems (0 errors, 14 warnings)
+Lint	Run ESLint	2026-02-07T18:02:31.1181206Z packages/core lint: Done
+Lint	Run ESLint	2026-02-07T18:02:31.1187397Z packages/styled lint$ eslint src __tests__ --ext .ts
+Lint	Run ESLint	2026-02-07T18:02:31.1190959Z packages/ui lint$ eslint src --ext .ts,.tsx,.js,.jsx
+Lint	Run ESLint	2026-02-07T18:02:33.2628243Z packages/styled lint: /home/runner/work/tekton/tekton/packages/styled/src/styled.ts
+Lint	Run ESLint	2026-02-07T18:02:33.2629929Z packages/styled lint:   23:14  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2631507Z packages/styled lint:   33:25  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2633582Z packages/styled lint:   36:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2635044Z packages/styled lint:   49:46  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2636861Z packages/styled lint:   49:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2658410Z packages/styled lint: /home/runner/work/tekton/tekton/packages/styled/src/tokens.ts
+Lint	Run ESLint	2026-02-07T18:02:33.2669493Z packages/styled lint:   27:49  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2671140Z packages/styled lint: /home/runner/work/tekton/tekton/packages/styled/src/validation.ts
+Lint	Run ESLint	2026-02-07T18:02:33.2672628Z packages/styled lint:   12:82  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:33.2674092Z packages/styled lint: ✖ 7 problems (0 errors, 7 warnings)
+Lint	Run ESLint	2026-02-07T18:02:33.2978064Z packages/styled lint: Done
+Lint	Run ESLint	2026-02-07T18:02:36.9078488Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/alert-dialog.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9080348Z packages/ui lint:   7:10   warning  'AlertDialog' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9082657Z packages/ui lint:   7:23   warning  'AlertDialogTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9084439Z packages/ui lint:   7:43   warning  'AlertDialogContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9086110Z packages/ui lint:   7:63   warning  'AlertDialogHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9087813Z packages/ui lint:   7:82   warning  'AlertDialogTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9089610Z packages/ui lint:   7:100  warning  'AlertDialogDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9091307Z packages/ui lint:   7:124  warning  'AlertDialogAction' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9095669Z packages/ui lint:   7:143  warning  'AlertDialogCancel' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9098522Z packages/ui lint:   8:10   warning  'Button' is defined but never used. Allowed unused vars must match /^_/u                  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9100033Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/avatar.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9101485Z packages/ui lint:   8:10  warning  'Avatar' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9103186Z packages/ui lint:   8:18  warning  'AvatarImage' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9104937Z packages/ui lint:   8:31  warning  'AvatarFallback' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9106564Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/badge.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9107881Z packages/ui lint:   8:10  warning  'Badge' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9115766Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/button.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9160023Z packages/ui lint:   9:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9161788Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/card.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9166160Z packages/ui lint:   8:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9174312Z packages/ui lint:   8:16  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9175931Z packages/ui lint:   8:28  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9184644Z packages/ui lint:   8:39  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9186202Z packages/ui lint:   8:56  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9197994Z packages/ui lint:   8:69  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9199755Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/checkbox.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9201907Z packages/ui lint:   9:10  warning  'Checkbox' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9205751Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/dialog.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9208076Z packages/ui lint:   8:10   warning  'Dialog' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9209686Z packages/ui lint:   8:18   warning  'DialogTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9213034Z packages/ui lint:   8:33   warning  'DialogContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9214638Z packages/ui lint:   8:48   warning  'DialogHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9216217Z packages/ui lint:   8:62   warning  'DialogTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9218878Z packages/ui lint:   8:75   warning  'DialogDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9222575Z packages/ui lint:   8:94   warning  'DialogFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9228666Z packages/ui lint:   8:108  warning  'DialogClose' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9237772Z packages/ui lint:   9:10   warning  'Button' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9240171Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/dropdown-menu.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9242797Z packages/ui lint:   7:10   warning  'DropdownMenu' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9244676Z packages/ui lint:   7:24   warning  'DropdownMenuTrigger' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9247765Z packages/ui lint:   7:45   warning  'DropdownMenuContent' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9249620Z packages/ui lint:   7:66   warning  'DropdownMenuItem' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9252371Z packages/ui lint:   7:84   warning  'DropdownMenuSeparator' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9254044Z packages/ui lint:   7:107  warning  'DropdownMenuLabel' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9255711Z packages/ui lint:   8:10   warning  'Button' is defined but never used. Allowed unused vars must match /^_/u                 no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9267737Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/form.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9269410Z packages/ui lint:    9:10  warning  'Form' is defined but never used. Allowed unused vars must match /^_/u                    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9271080Z packages/ui lint:    9:16  warning  'FormField' is defined but never used. Allowed unused vars must match /^_/u               no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9272713Z packages/ui lint:    9:27  warning  'FormItem' is defined but never used. Allowed unused vars must match /^_/u                no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9274350Z packages/ui lint:    9:37  warning  'FormLabel' is defined but never used. Allowed unused vars must match /^_/u               no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9275933Z packages/ui lint:    9:48  warning  'FormControl' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9292178Z packages/ui lint:    9:61  warning  'FormDescription' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9293874Z packages/ui lint:    9:78  warning  'FormMessage' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9295731Z packages/ui lint:   10:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u                   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9307679Z packages/ui lint:   11:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u                  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9309331Z packages/ui lint:   13:11  warning  'TestForm' is assigned a value but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9310999Z packages/ui lint:   61:19  warning  'ValidatedForm' is assigned a value but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9312449Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/input.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9313835Z packages/ui lint:   9:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9315169Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/label.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9328843Z packages/ui lint:   8:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9330355Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/popover.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9331825Z packages/ui lint:   7:10  warning  'Popover' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9333367Z packages/ui lint:   7:19  warning  'PopoverTrigger' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9334928Z packages/ui lint:   7:35  warning  'PopoverContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9336759Z packages/ui lint:   8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9351236Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/progress.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9352712Z packages/ui lint:   8:10  warning  'Progress' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9354087Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/radio-group.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9355582Z packages/ui lint:    9:10  warning  'RadioGroup' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9369441Z packages/ui lint:    9:22  warning  'RadioGroupItem' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9371285Z packages/ui lint:   10:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9372759Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/scroll-area.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9374248Z packages/ui lint:   7:10  warning  'ScrollArea' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9375770Z packages/ui lint:   7:22  warning  'ScrollBar' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9387572Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/select.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9389049Z packages/ui lint:   8:10  warning  'Select' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9390598Z packages/ui lint:   8:18  warning  'SelectTrigger' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9392179Z packages/ui lint:   8:33  warning  'SelectContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9393943Z packages/ui lint:   8:48  warning  'SelectItem' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9395530Z packages/ui lint:   8:60  warning  'SelectValue' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9409500Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/separator.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9410995Z packages/ui lint:   8:10  warning  'Separator' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9412402Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/sheet.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9413869Z packages/ui lint:   7:10  warning  'Sheet' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9415458Z packages/ui lint:   7:17  warning  'SheetTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9427935Z packages/ui lint:   7:31  warning  'SheetContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9429727Z packages/ui lint:   7:45  warning  'SheetHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9431306Z packages/ui lint:   7:58  warning  'SheetTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9432891Z packages/ui lint:   7:70  warning  'SheetDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9434485Z packages/ui lint:   8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9435943Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/skeleton.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9437428Z packages/ui lint:   8:10  warning  'Skeleton' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9438746Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/switch.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9440144Z packages/ui lint:   9:10  warning  'Switch' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9441484Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/table.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9442919Z packages/ui lint:   7:10  warning  'Table' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9444474Z packages/ui lint:   7:17  warning  'TableHeader' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9446249Z packages/ui lint:   7:30  warning  'TableBody' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9447994Z packages/ui lint:   7:41  warning  'TableRow' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9449615Z packages/ui lint:   7:51  warning  'TableHead' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9451194Z packages/ui lint:   7:62  warning  'TableCell' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9452835Z packages/ui lint:   7:73  warning  'TableCaption' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9454264Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/tabs.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9455743Z packages/ui lint:   9:10  warning  'Tabs' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9457461Z packages/ui lint:   9:16  warning  'TabsList' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9459197Z packages/ui lint:   9:26  warning  'TabsTrigger' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9460760Z packages/ui lint:   9:39  warning  'TabsContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9462213Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/textarea.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9463668Z packages/ui lint:   9:10  warning  'Textarea' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9465019Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/toast.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9466586Z packages/ui lint:   7:10  warning  'Toast' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9468093Z packages/ui lint:   7:17  warning  'ToastTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9469753Z packages/ui lint:   7:29  warning  'ToastDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9471370Z packages/ui lint:   7:47  warning  'ToastProvider' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9473002Z packages/ui lint:   7:62  warning  'ToastViewport' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9474446Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/__tests__/tooltip.test.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9475957Z packages/ui lint:   7:10  warning  'Tooltip' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9477705Z packages/ui lint:   7:19  warning  'TooltipTrigger' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9479339Z packages/ui lint:   7:35  warning  'TooltipContent' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9480958Z packages/ui lint:   7:51  warning  'TooltipProvider' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9482523Z packages/ui lint:   8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9483954Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/alert-dialog.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9493228Z packages/ui lint:   7:23   warning  'AlertDialogAction' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9495377Z packages/ui lint:   7:42   warning  'AlertDialogCancel' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9508225Z packages/ui lint:   7:61   warning  'AlertDialogContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9510555Z packages/ui lint:   7:81   warning  'AlertDialogDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9513149Z packages/ui lint:   7:105  warning  'AlertDialogFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9514839Z packages/ui lint:   7:124  warning  'AlertDialogHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9535226Z packages/ui lint:   7:143  warning  'AlertDialogTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9538088Z packages/ui lint:   7:161  warning  'AlertDialogTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9583812Z packages/ui lint:   8:10   warning  'Button' is defined but never used. Allowed unused vars must match /^_/u                  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9585543Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/avatar.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9587212Z packages/ui lint:   7:18  warning  'AvatarFallback' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9588841Z packages/ui lint:   7:34  warning  'AvatarImage' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9590183Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/breadcrumb.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9591634Z packages/ui lint:   7:22   warning  'BreadcrumbList' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9593253Z packages/ui lint:   7:38   warning  'BreadcrumbItem' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9594969Z packages/ui lint:   7:54   warning  'BreadcrumbLink' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9596868Z packages/ui lint:   7:70   warning  'BreadcrumbPage' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9598669Z packages/ui lint:   7:86   warning  'BreadcrumbSeparator' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9600429Z packages/ui lint:   7:107  warning  'BreadcrumbEllipsis' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9601898Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/card.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9603455Z packages/ui lint:   7:16  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9605195Z packages/ui lint:   7:28  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9640278Z packages/ui lint:   7:40  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9642100Z packages/ui lint:   7:51  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9643847Z packages/ui lint:   7:68  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9645478Z packages/ui lint:   8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9647291Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/checkbox.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9648776Z packages/ui lint:   9:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9650236Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/command.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9651794Z packages/ui lint:   7:19   warning  'CommandDialog' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9653443Z packages/ui lint:   7:34   warning  'CommandEmpty' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9655066Z packages/ui lint:   7:48   warning  'CommandGroup' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9693891Z packages/ui lint:   7:62   warning  'CommandInput' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9697819Z packages/ui lint:   7:76   warning  'CommandItem' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9699530Z packages/ui lint:   7:89   warning  'CommandList' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9701457Z packages/ui lint:   7:102  warning  'CommandSeparator' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9703134Z packages/ui lint:   7:120  warning  'CommandShortcut' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9704570Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/dialog.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9706097Z packages/ui lint:    7:18  warning  'DialogContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9707955Z packages/ui lint:    7:33  warning  'DialogDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9709656Z packages/ui lint:    7:52  warning  'DialogFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9711325Z packages/ui lint:    7:66  warning  'DialogHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9712956Z packages/ui lint:    7:80  warning  'DialogTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9714627Z packages/ui lint:    7:93  warning  'DialogTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9716277Z packages/ui lint:    8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9717913Z packages/ui lint:    9:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u              no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9719521Z packages/ui lint:   10:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u              no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9720979Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/dropdown-menu.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9722578Z packages/ui lint:   8:24   warning  'DropdownMenuContent' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9724332Z packages/ui lint:   8:45   warning  'DropdownMenuItem' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9726072Z packages/ui lint:   8:63   warning  'DropdownMenuLabel' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9728033Z packages/ui lint:   8:82   warning  'DropdownMenuSeparator' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9729987Z packages/ui lint:   8:105  warning  'DropdownMenuTrigger' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9731727Z packages/ui lint:   8:126  warning  'DropdownMenuCheckboxItem' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9733395Z packages/ui lint:   8:152  warning  'DropdownMenuRadioGroup' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9734944Z packages/ui lint:   8:176  warning  'DropdownMenuRadioItem' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9764056Z packages/ui lint:   8:199  warning  'DropdownMenuShortcut' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9769616Z packages/ui lint:   8:221  warning  'DropdownMenuGroup' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9771403Z packages/ui lint:   8:240  warning  'DropdownMenuSub' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9773293Z packages/ui lint:   8:257  warning  'DropdownMenuSubContent' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9775423Z packages/ui lint:   8:281  warning  'DropdownMenuSubTrigger' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9777195Z packages/ui lint:   9:10   warning  'Button' is defined but never used. Allowed unused vars must match /^_/u                    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9778481Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/form.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9779816Z packages/ui lint:   10:16  warning  'FormControl' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9781395Z packages/ui lint:   10:29  warning  'FormDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9782986Z packages/ui lint:   10:46  warning  'FormField' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9784557Z packages/ui lint:   10:57  warning  'FormItem' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9786161Z packages/ui lint:   10:67  warning  'FormLabel' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9805427Z packages/ui lint:   10:78  warning  'FormMessage' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9807017Z packages/ui lint:   11:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9817402Z packages/ui lint:   12:10  warning  'Textarea' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9819046Z packages/ui lint:   13:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9820647Z packages/ui lint:   14:10  warning  'Checkbox' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9822230Z packages/ui lint:   15:10  warning  'Select' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9823814Z packages/ui lint:   15:18  warning  'SelectContent' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9825414Z packages/ui lint:   15:33  warning  'SelectItem' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9827175Z packages/ui lint:   15:45  warning  'SelectTrigger' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9828892Z packages/ui lint:   15:60  warning  'SelectValue' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9830491Z packages/ui lint:   16:10  warning  'RadioGroup' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9832021Z packages/ui lint:   16:22  warning  'RadioGroupItem' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9833549Z packages/ui lint:   17:10  warning  'Switch' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9834915Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/input.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9836192Z packages/ui lint:   8:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9840387Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/label.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9841629Z packages/ui lint:   8:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9843230Z packages/ui lint:   9:10  warning  'Checkbox' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9844646Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/navigation-menu.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9846181Z packages/ui lint:   7:26   warning  'NavigationMenuContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9848064Z packages/ui lint:   7:49   warning  'NavigationMenuItem' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9849795Z packages/ui lint:   7:69   warning  'NavigationMenuLink' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9851443Z packages/ui lint:   7:89   warning  'NavigationMenuList' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9853003Z packages/ui lint:   7:109  warning  'NavigationMenuTrigger' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9854250Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/popover.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9855584Z packages/ui lint:    7:19  warning  'PopoverContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9859252Z packages/ui lint:    7:35  warning  'PopoverTrigger' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9860864Z packages/ui lint:    8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9862404Z packages/ui lint:    9:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9863973Z packages/ui lint:   10:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9865392Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/progress.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9866869Z packages/ui lint:   9:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9868209Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/radio-group.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9869495Z packages/ui lint:   7:22  warning  'RadioGroupItem' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9871112Z packages/ui lint:   8:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9872713Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/scroll-area.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9873906Z packages/ui lint:   8:10  warning  'Separator' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9875012Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/select.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9876187Z packages/ui lint:   7:18  warning  'SelectContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9877657Z packages/ui lint:   7:33  warning  'SelectGroup' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9879125Z packages/ui lint:   7:46  warning  'SelectItem' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9880507Z packages/ui lint:   7:58  warning  'SelectLabel' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9881883Z packages/ui lint:   7:71  warning  'SelectTrigger' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9883258Z packages/ui lint:   7:86  warning  'SelectValue' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9884727Z packages/ui lint:   8:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u          no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9885827Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/sheet.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9887258Z packages/ui lint:    7:17  warning  'SheetContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9888758Z packages/ui lint:    7:31  warning  'SheetDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9890338Z packages/ui lint:    7:49  warning  'SheetHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9891806Z packages/ui lint:    7:62  warning  'SheetTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9893325Z packages/ui lint:    7:74  warning  'SheetTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9894858Z packages/ui lint:    7:88  warning  'SheetFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9896338Z packages/ui lint:    8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9897961Z packages/ui lint:    9:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9899417Z packages/ui lint:   10:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9900853Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/sidebar.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9902258Z packages/ui lint:   7:19  warning  'SidebarHeader' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9903800Z packages/ui lint:   7:34  warning  'SidebarContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9905214Z packages/ui lint:   7:50  warning  'SidebarItem' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9906929Z packages/ui lint:   7:63  warning  'SidebarSection' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9908459Z packages/ui lint:   7:79  warning  'SidebarFooter' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9909969Z packages/ui lint:   8:10  warning  'Badge' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9911470Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/switch.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9912716Z packages/ui lint:   9:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9914194Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/table.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9915551Z packages/ui lint:   7:17  warning  'TableBody' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9917207Z packages/ui lint:   7:28  warning  'TableCaption' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9918639Z packages/ui lint:   7:42  warning  'TableCell' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9920191Z packages/ui lint:   7:53  warning  'TableHead' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9921712Z packages/ui lint:   7:64  warning  'TableHeader' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9923410Z packages/ui lint:   7:77  warning  'TableRow' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9924909Z packages/ui lint:   7:87  warning  'TableFooter' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9926287Z packages/ui lint:   8:10  warning  'Badge' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9928023Z packages/ui lint:   9:10  warning  'Checkbox' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9929288Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/tabs.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9930669Z packages/ui lint:    7:16  warning  'TabsContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9932202Z packages/ui lint:    7:29  warning  'TabsList' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9933705Z packages/ui lint:    7:39  warning  'TabsTrigger' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9935250Z packages/ui lint:    8:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9937163Z packages/ui lint:    8:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9938791Z packages/ui lint:    8:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9940403Z packages/ui lint:    8:46  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9941865Z packages/ui lint:    8:58  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9943339Z packages/ui lint:    8:70  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9944881Z packages/ui lint:    9:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9946599Z packages/ui lint:   10:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9948169Z packages/ui lint:   11:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9949593Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/textarea.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9951194Z packages/ui lint:   9:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9952436Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/toast.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9953841Z packages/ui lint:   8:17  warning  'ToastProvider' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9955362Z packages/ui lint:   8:32  warning  'ToastViewport' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9957056Z packages/ui lint:   9:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9958435Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/components/tooltip.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9959774Z packages/ui lint:   7:19  warning  'TooltipContent' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9961359Z packages/ui lint:   7:35  warning  'TooltipProvider' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9963105Z packages/ui lint:   7:52  warning  'TooltipTrigger' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9965020Z packages/ui lint:   8:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9966241Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/lib/theme-loader.ts
+Lint	Run ESLint	2026-02-07T18:02:36.9967684Z packages/ui lint:   102:16  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:36.9969001Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/auth/forgot-password.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9970347Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9971795Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9973342Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9975015Z packages/ui lint:   19:46  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9976636Z packages/ui lint:   19:58  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9978210Z packages/ui lint:   19:70  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9979762Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9981168Z packages/ui lint:   21:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9982566Z packages/ui lint:   22:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9983802Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/auth/login.jsx
+Lint	Run ESLint	2026-02-07T18:02:36.9985179Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9986937Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9988616Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9990215Z packages/ui lint:   19:46  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9992186Z packages/ui lint:   19:58  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9993958Z packages/ui lint:   19:70  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9995525Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9998058Z packages/ui lint:   21:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:36.9999743Z packages/ui lint:   22:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0001457Z packages/ui lint:   23:10  warning  'Separator' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0002972Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/auth/login.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0004302Z packages/ui lint:    8:10  warning  'Checkbox' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0005896Z packages/ui lint:    9:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0007518Z packages/ui lint:   10:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0008755Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/auth/signup.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0010015Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0011378Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0013147Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0015049Z packages/ui lint:   19:46  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0017056Z packages/ui lint:   19:58  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0018925Z packages/ui lint:   19:70  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0020777Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0022187Z packages/ui lint:   21:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0023619Z packages/ui lint:   22:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0025154Z packages/ui lint:   23:10  warning  'Separator' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0026984Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/auth/signup.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0028402Z packages/ui lint:   8:10  warning  'Checkbox' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0029887Z packages/ui lint:   9:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u     no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0031351Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/auth/verification.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0032925Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0034856Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0036755Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0038467Z packages/ui lint:   19:46  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0040163Z packages/ui lint:   19:58  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0041795Z packages/ui lint:   19:70  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0043481Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0044926Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/core/landing.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0046270Z packages/ui lint:   19:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0048008Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/core/preferences.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0049491Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0050994Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0052800Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0054521Z packages/ui lint:   19:46  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0056291Z packages/ui lint:   19:58  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0058159Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0059646Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/core/profile.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0061192Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0062898Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0064687Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0066622Z packages/ui lint:   19:46  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0068352Z packages/ui lint:   19:58  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0069969Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0071722Z packages/ui lint:   21:10  warning  'Input' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0073494Z packages/ui lint:   22:10  warning  'Label' is defined but never used. Allowed unused vars must match /^_/u            no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0075062Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/dashboard/overview.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0076764Z packages/ui lint:   12:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0078616Z packages/ui lint:   12:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0080230Z packages/ui lint:   12:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0082011Z packages/ui lint:   12:46  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0083833Z packages/ui lint:   12:58  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0085306Z packages/ui lint:   13:10  warning  'Separator' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0087013Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/dashboard/overview.stories.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0088633Z packages/ui lint:    8:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u         no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0090745Z packages/ui lint:    8:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0092683Z packages/ui lint:    8:29  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u   no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0094387Z packages/ui lint:    8:41  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u    no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0096032Z packages/ui lint:    9:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0097850Z packages/ui lint:   10:10  warning  'Badge' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0099370Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/feedback/confirmation.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0101015Z packages/ui lint:   19:10  warning  'Card' is defined but never used. Allowed unused vars must match /^_/u             no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0102741Z packages/ui lint:   19:16  warning  'CardContent' is defined but never used. Allowed unused vars must match /^_/u      no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0104575Z packages/ui lint:   19:29  warning  'CardDescription' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0106333Z packages/ui lint:   19:46  warning  'CardFooter' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0108255Z packages/ui lint:   19:58  warning  'CardHeader' is defined but never used. Allowed unused vars must match /^_/u       no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0109970Z packages/ui lint:   19:70  warning  'CardTitle' is defined but never used. Allowed unused vars must match /^_/u        no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0111776Z packages/ui lint:   20:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u           no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0113267Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/feedback/empty.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0114797Z packages/ui lint:   19:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0116243Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/feedback/error.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0117836Z packages/ui lint:   19:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0119302Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/feedback/success.jsx
+Lint	Run ESLint	2026-02-07T18:02:37.0120760Z packages/ui lint:   19:10  warning  'Button' is defined but never used. Allowed unused vars must match /^_/u  no-unused-vars
+Lint	Run ESLint	2026-02-07T18:02:37.0122122Z packages/ui lint: /home/runner/work/tekton/tekton/packages/ui/src/templates/types.ts
+Lint	Run ESLint	2026-02-07T18:02:37.0123650Z packages/ui lint:   85:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:37.0125057Z packages/ui lint: ✖ 319 problems (0 errors, 319 warnings)
+Lint	Run ESLint	2026-02-07T18:02:37.0125675Z packages/ui lint: Done
+Lint	Run ESLint	2026-02-07T18:02:37.0126286Z packages/mcp-server lint$ eslint src __tests__ --ext .ts
+Lint	Run ESLint	2026-02-07T18:02:39.6901084Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/cli/login.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6905986Z packages/mcp-server lint:   102:9  error  'timeout' is never reassigned. Use 'const' instead  prefer-const
+Lint	Run ESLint	2026-02-07T18:02:39.6909751Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/data/recipe-resolver.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6913233Z packages/mcp-server lint:    50:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6916856Z packages/mcp-server lint:    50:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6920278Z packages/mcp-server lint:    79:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6924553Z packages/mcp-server lint:   157:38  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6928022Z packages/mcp-server lint:   163:50  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6931484Z packages/mcp-server lint:   210:36  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6934758Z packages/mcp-server lint:   239:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6938231Z packages/mcp-server lint:   252:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6941520Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/generators/llm-generator.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6944828Z packages/mcp-server lint:   248:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6948246Z packages/mcp-server lint:   248:81  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6951550Z packages/mcp-server lint:   270:57  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6954892Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/tools/get-screen-generation-context.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6967940Z packages/mcp-server lint:   142:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6969428Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/tools/list-screen-templates.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6971227Z packages/mcp-server lint:   38:21  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6973227Z packages/mcp-server lint:   46:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6974706Z packages/mcp-server lint:   47:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6976141Z packages/mcp-server lint:   48:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6977744Z packages/mcp-server lint:   49:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6979180Z packages/mcp-server lint:   50:41  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6980633Z packages/mcp-server lint:   54:45  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6982383Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/tools/preview-screen-template.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6983871Z packages/mcp-server lint:   39:68  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6985345Z packages/mcp-server lint:   50:52  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.6997294Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/tools/preview-theme.ts
+Lint	Run ESLint	2026-02-07T18:02:39.6998853Z packages/mcp-server lint:   63:37  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.7003663Z packages/mcp-server lint: /home/runner/work/tekton/tekton/packages/mcp-server/src/tools/validate-screen-definition.ts
+Lint	Run ESLint	2026-02-07T18:02:39.7005480Z packages/mcp-server lint:   327:42  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.7007485Z packages/mcp-server lint:   426:54  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.7009075Z packages/mcp-server lint:   451:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.7010983Z packages/mcp-server lint:   548:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Lint	Run ESLint	2026-02-07T18:02:39.7012534Z packages/mcp-server lint: ✖ 27 problems (1 error, 26 warnings)
+Lint	Run ESLint	2026-02-07T18:02:39.7167173Z packages/mcp-server lint: Failed
+Lint	Run ESLint	2026-02-07T18:02:39.7181667Z /home/runner/work/tekton/tekton/packages/mcp-server:
+Lint	Run ESLint	2026-02-07T18:02:39.7184691Z  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @tekton/mcp-server@0.2.0 lint: `eslint src __tests__ --ext .ts`
+Lint	Run ESLint	2026-02-07T18:02:39.7185180Z Exit status 1
+Lint	Run ESLint	2026-02-07T18:02:39.7320379Z  ELIFECYCLE  Command failed with exit code 1.
+Lint	Run ESLint	2026-02-07T18:02:39.7466872Z ##[error]Process completed with exit code 1.
+Quality Summary	Check all jobs status	﻿2026-02-07T18:04:30.2831735Z ##[group]Run if [ "failure" != "success" ] || \
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2833303Z [36;1mif [ "failure" != "success" ] || \[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2844960Z [36;1m   [ "success" != "success" ] || \[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2846143Z [36;1m   [ "success" != "success" ] || \[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2847499Z [36;1m   [ "success" != "success" ]; then[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2848753Z [36;1m  echo "::error::One or more quality gates failed"[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2850002Z [36;1m  exit 1[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2850804Z [36;1mfi[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.2851628Z [36;1mecho "✅ All quality gates passed"[0m
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.3760882Z shell: /usr/bin/bash -e {0}
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.3762547Z ##[endgroup]
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.4899010Z ##[error]One or more quality gates failed
+Quality Summary	Check all jobs status	2026-02-07T18:04:30.4946304Z ##[error]Process completed with exit code 1.

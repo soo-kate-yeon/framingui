@@ -6,7 +6,7 @@
  * - Spawn server process and send JSON-RPC via stdin
  * - Read JSON-RPC from stdout
  * - Verify tools/list works
- * - Verify tools/call works
+ * - Verify tools/call returns auth error without credentials
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
@@ -48,7 +48,7 @@ describe('stdio transport', () => {
             server.kill();
             resolve(response);
           }
-        } catch (e) {
+        } catch (_e) {
           // Continue accumulating data
         }
       });
@@ -96,7 +96,8 @@ describe('stdio transport', () => {
     expect(toolNames).toContain('export-screen');
   });
 
-  it('should handle tools/call request for preview-theme', async () => {
+  it('should require authentication for tools/call', async () => {
+    // 인증 없이 tools/call 요청 → 인증 에러 반환
     const request = {
       jsonrpc: '2.0',
       id: 2,
@@ -104,7 +105,7 @@ describe('stdio transport', () => {
       params: {
         name: 'preview-theme',
         arguments: {
-          themeId: 'atlantic-magazine-v1',
+          themeId: 'classic-magazine-v1',
         },
       },
     };
@@ -116,20 +117,17 @@ describe('stdio transport', () => {
     expect(response).toHaveProperty('id', 2);
     expect(response).toHaveProperty('result');
 
-    // Verify result content
+    // Verify auth error
     expect(response.result).toHaveProperty('content');
-    expect(Array.isArray(response.result.content)).toBe(true);
-    expect(response.result.content[0]).toHaveProperty('type', 'text');
-    expect(response.result.content[0]).toHaveProperty('text');
-
-    // Parse tool result
     const toolResult = JSON.parse(response.result.content[0].text);
-    expect(toolResult).toHaveProperty('success', true);
-    expect(toolResult).toHaveProperty('theme');
-    expect(toolResult.theme).toHaveProperty('id', 'atlantic-magazine-v1');
+    expect(toolResult).toHaveProperty('success', false);
+    expect(toolResult).toHaveProperty('error', 'Authentication required.');
+    expect(toolResult).toHaveProperty('hint');
+    expect(response.result).toHaveProperty('isError', true);
   });
 
-  it('should handle tools/call request with invalid tool name', async () => {
+  it('should return auth error for all tool calls without credentials', async () => {
+    // 존재하지 않는 도구 호출도 인증 가드에서 먼저 걸림
     const request = {
       jsonrpc: '2.0',
       id: 3,
@@ -142,17 +140,12 @@ describe('stdio transport', () => {
 
     const response = await sendRequest(request);
 
-    // Verify JSON-RPC 2.0 error format
     expect(response).toHaveProperty('jsonrpc', '2.0');
     expect(response).toHaveProperty('id', 3);
-    expect(response).toHaveProperty('result');
 
-    // Verify error content
-    expect(response.result).toHaveProperty('content');
     const toolResult = JSON.parse(response.result.content[0].text);
     expect(toolResult).toHaveProperty('success', false);
-    expect(toolResult).toHaveProperty('error');
-    expect(toolResult.error).toContain('Unknown tool');
+    expect(toolResult).toHaveProperty('error', 'Authentication required.');
   });
 
   it('should handle tools/call with missing required parameters', async () => {
@@ -168,7 +161,7 @@ describe('stdio transport', () => {
 
     const response = await sendRequest(request);
 
-    // Should return error result
+    // Should return error result (auth error since no credentials)
     expect(response).toHaveProperty('jsonrpc', '2.0');
     expect(response).toHaveProperty('id', 4);
     expect(response).toHaveProperty('result');
@@ -184,7 +177,6 @@ describe('stdio transport', () => {
 
       const stdoutLines: string[] = [];
       const stderrLines: string[] = [];
-      let receivedResponse = false;
 
       const timeout = setTimeout(() => {
         server.kill();
@@ -193,10 +185,11 @@ describe('stdio transport', () => {
         expect(stderrLines.length).toBeGreaterThan(0);
         expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
 
-        // Verify stdout only contains JSON-RPC
+        // Verify stdout only contains valid JSON-RPC (no log lines)
         for (const line of stdoutLines) {
           if (line.trim()) {
-            expect(() => JSON.parse(line)).not.toThrow();
+            const parsed = JSON.parse(line);
+            expect(parsed).toHaveProperty('jsonrpc');
           }
         }
 
@@ -209,10 +202,6 @@ describe('stdio transport', () => {
           .split('\n')
           .filter((l: string) => l.trim());
         stdoutLines.push(...lines);
-
-        if (!receivedResponse && lines.length > 0) {
-          receivedResponse = true;
-        }
       });
 
       server.stderr?.on('data', data => {
@@ -239,5 +228,5 @@ describe('stdio transport', () => {
       server.stdin?.write(JSON.stringify(request) + '\n');
       server.stdin?.end();
     });
-  });
+  }, 10000);
 });

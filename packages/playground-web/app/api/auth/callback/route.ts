@@ -37,18 +37,14 @@ export async function GET(request: NextRequest) {
       error,
       description: errorDescription,
     });
-    return NextResponse.redirect(
-      new URL(`/auth/login?error=${error}`, requestUrl.origin)
-    );
+    return NextResponse.redirect(new URL(`/auth/login?error=${error}`, requestUrl.origin));
   }
 
   // 2. Authorization code 검증
   // Note: Supabase uses PKCE for CSRF protection, so state parameter is optional
   if (!code) {
     console.error('[OAuth Callback] Missing authorization code');
-    return NextResponse.redirect(
-      new URL('/auth/login?error=missing_code', requestUrl.origin)
-    );
+    return NextResponse.redirect(new URL('/auth/login?error=missing_code', requestUrl.origin));
   }
 
   try {
@@ -67,22 +63,16 @@ export async function GET(request: NextRequest) {
 
       // 만료된 코드 또는 잘못된 코드 처리
       if (exchangeError.code === 'invalid_grant') {
-        return NextResponse.redirect(
-          new URL('/auth/login?error=code_expired', requestUrl.origin)
-        );
+        return NextResponse.redirect(new URL('/auth/login?error=code_expired', requestUrl.origin));
       }
 
-      return NextResponse.redirect(
-        new URL('/auth/login?error=exchange_failed', requestUrl.origin)
-      );
+      return NextResponse.redirect(new URL('/auth/login?error=exchange_failed', requestUrl.origin));
     }
 
     // 5. 세션 및 사용자 정보 검증
     if (!data.session || !data.user) {
       console.error('[OAuth Callback] Invalid session or user data after exchange');
-      return NextResponse.redirect(
-        new URL('/auth/login?error=invalid_session', requestUrl.origin)
-      );
+      return NextResponse.redirect(new URL('/auth/login?error=invalid_session', requestUrl.origin));
     }
 
     // 6. 사용자 레코드 생성 또는 업데이트
@@ -103,9 +93,7 @@ export async function GET(request: NextRequest) {
       });
     } catch (dbError) {
       console.error('[OAuth Callback] Database error during user creation:', dbError);
-      return NextResponse.redirect(
-        new URL('/auth/login?error=database_error', requestUrl.origin)
-      );
+      return NextResponse.redirect(new URL('/auth/login?error=database_error', requestUrl.origin));
     }
 
     // 7. 원래 요청된 페이지로 리다이렉트 (또는 홈페이지)
@@ -125,8 +113,6 @@ export async function GET(request: NextRequest) {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
     });
-    return NextResponse.redirect(
-      new URL('/auth/login?error=unexpected_error', requestUrl.origin)
-    );
+    return NextResponse.redirect(new URL('/auth/login?error=unexpected_error', requestUrl.origin));
   }
 }

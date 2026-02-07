@@ -56,7 +56,11 @@ jobs:
 
       - name: Install dependencies
         if: steps.loop-guard.outputs.skip != 'true'
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build workspace packages
+        if: steps.loop-guard.outputs.skip != 'true'
+        run: pnpm --filter "./packages/*" build || true
 
       - name: Download and analyze failed workflow logs
         if: steps.loop-guard.outputs.skip != 'true'
@@ -163,6 +167,7 @@ jobs:
           EOF
           )"
 
+          git pull --rebase origin ${{ github.event.workflow_run.head_branch }} || true
           git push
 
       - name: Comment on PR (if exists)

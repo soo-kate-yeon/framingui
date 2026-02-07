@@ -34,11 +34,5 @@ export default async function LegalPage({ params }: LegalPageProps) {
 
   const doc = getLegalDocument(slug as LegalSlug);
 
-  return (
-    <LegalPageLayout
-      title={doc.title}
-      content={doc.content}
-      toc={doc.toc}
-    />
-  );
+  return <LegalPageLayout title={doc.title} content={doc.content} toc={doc.toc} />;
 }

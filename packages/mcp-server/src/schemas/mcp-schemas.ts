@@ -1163,6 +1163,11 @@ export const ValidateEnvironmentInputSchema = z.object({
   requiredPackages: z
     .array(z.string())
     .describe('Packages to validate (from generate_screen.dependencies.external)'),
+  checkTailwind: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe('Also validate Tailwind CSS configuration for @tekton/ui compatibility'),
 });
 
 export type ValidateEnvironmentInput = z.infer<typeof ValidateEnvironmentInputSchema>;
@@ -1183,6 +1188,17 @@ export const ValidateEnvironmentOutputSchema = z.object({
     })
     .optional(),
   warnings: z.array(z.string()).optional().describe('Version conflicts or compatibility issues'),
+  tailwind: z
+    .object({
+      configFound: z.boolean(),
+      configPath: z.string().optional(),
+      hasUiContentPath: z.boolean(),
+      hasAnimatePlugin: z.boolean(),
+      issues: z.array(z.string()),
+      fixes: z.array(z.string()),
+    })
+    .optional()
+    .describe('Tailwind CSS configuration validation for @tekton/ui compatibility'),
   error: z.string().optional(),
 });
 

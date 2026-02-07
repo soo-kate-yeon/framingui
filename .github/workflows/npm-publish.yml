@@ -1,0 +1,129 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm --filter "./packages/*" build
+
+      - name: Verify version consistency
+        run: |
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          echo "Tag version: $TAG_VERSION"
+
+          # Check version for each package
+          for pkg in tokens core ui styled esbuild-plugin mcp-server; do
+            PKG_VERSION=$(node -p "require('./packages/$pkg/package.json').version")
+            echo "Package @tekton/$pkg version: $PKG_VERSION"
+
+            if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
+              echo "❌ Version mismatch for @tekton/$pkg: tag=$TAG_VERSION, package.json=$PKG_VERSION"
+              exit 1
+            fi
+          done
+
+          echo "✅ All package versions match tag version $TAG_VERSION"
+
+      # Publish packages in dependency order
+      # 1. Independent packages (no internal dependencies)
+
+      - name: Publish @tekton/tokens
+        run: |
+          cd packages/tokens
+          pnpm publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: false
+
+      - name: Publish @tekton/core
+        run: |
+          cd packages/core
+          pnpm publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: false
+
+      - name: Publish @tekton/esbuild-plugin
+        run: |
+          cd packages/esbuild-plugin
+          pnpm publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: false
+
+      # 2. Packages depending on tokens
+
+      - name: Publish @tekton/styled
+        run: |
+          cd packages/styled
+          pnpm publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: false
+
+      - name: Publish @tekton/ui
+        run: |
+          cd packages/ui
+          pnpm publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: false
+
+      # 3. Packages depending on core and ui
+
+      - name: Publish @tekton/mcp-server
+        run: |
+          cd packages/mcp-server
+          pnpm publish --no-git-checks --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: false
+
+      - name: Create release summary
+        if: success()
+        run: |
+          echo "## 🚀 Published Packages" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Package | Version | Registry |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|---------|----------|" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton/tokens | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/tokens) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton/core | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/core) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton/esbuild-plugin | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/esbuild-plugin) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton/styled | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/styled) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton/ui | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/ui) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton/mcp-server | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/mcp-server) |" >> $GITHUB_STEP_SUMMARY

@@ -31,13 +31,13 @@ const breadcrumbVariants = cva('flex items-center gap-[var(--tekton-spacing-2)]'
 });
 
 const breadcrumbListVariants = cva(
-  'flex flex-wrap items-center gap-[var(--tekton-spacing-1.5)] break-words',
+  'flex flex-wrap items-center gap-1.5 break-words',
   {
     variants: {},
   }
 );
 
-const breadcrumbItemVariants = cva('inline-flex items-center gap-[var(--tekton-spacing-1.5)]', {
+const breadcrumbItemVariants = cva('inline-flex items-center gap-1.5', {
   variants: {},
 });
 

@@ -20,6 +20,9 @@ import { ExternalLink } from 'lucide-react';
 import { ScrollReveal } from '../../../../components/studio/landing';
 import { CodeBlock } from '../../../../components/studio/landing/CodeBlock';
 import { getTemplateData, type TemplateData } from '../../../../data/templates';
+import { useAuth } from '../../../../contexts/AuthContext';
+import { usePaddle } from '../../../../hooks/usePaddle';
+import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
 
 interface TemplatePageProps {
   params: Promise<{ id: string }>;
@@ -27,6 +30,8 @@ interface TemplatePageProps {
 
 export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const router = useRouter();
+  const { user } = useAuth();
+  const { openCheckout, isReady: isPaddleReady } = usePaddle();
   const [templateId, setTemplateId] = useState<string>('');
   const [template, setTemplate] = useState<TemplateData | null>(null);
 
@@ -45,7 +50,22 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   };
 
   const handleBuyClick = () => {
-    // Navigate to purchase page
+    // Paddle 결제가 활성화되어 있고 사용자가 로그인된 경우 → Paddle Checkout Overlay
+    if (isPaddleReady && user) {
+      const priceTier = toPaddlePriceTier('single');
+      if (priceTier) {
+        const priceId = PADDLE_CONFIG.prices[priceTier];
+        openCheckout({
+          priceId,
+          userId: user.id,
+          userEmail: user.email ?? '',
+          themeId: templateId,
+          tier: priceTier,
+        });
+        return;
+      }
+    }
+    // Fallback: 기존 결제 페이지로 이동
     router.push(`/studio/checkout/${templateId}`);
   };
 
@@ -159,9 +179,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   <h3 className="text-base sm:text-lg font-bold text-neutral-900 mb-2 sm:mb-3">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed">
-                    {feature.description}
-                  </p>
+                  <p className="text-sm text-neutral-600 leading-relaxed">{feature.description}</p>
                 </div>
               </ScrollReveal>
             ))}

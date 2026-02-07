@@ -134,7 +134,6 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
       <div className="flex min-h-screen bg-white dark:bg-neutral-900 transition-colors">
         {/* Center Content */}
         <main className="flex-1 max-w-5xl mx-auto">
-
           {/* Documentation content */}
           <article className="px-4 sm:px-6 py-8 sm:py-12 text-neutral-900 dark:text-neutral-100">
             {/* Design Philosophy */}
@@ -142,7 +141,9 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
               <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400 mb-3 sm:mb-4 block">
                 Design System
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">Design Philosophy</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">
+                Design Philosophy
+              </h2>
 
               <p className="text-lg sm:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4 sm:mb-6 font-medium">
                 {data.philosophy.tagline}
@@ -176,7 +177,9 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
               <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400 mb-3 sm:mb-4 block">
                 Visual Language
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">Color Tokens</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">
+                Color Tokens
+              </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 {data.colorTokens.map((token, index) => (
@@ -184,10 +187,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
                     key={index}
                     className="border border-neutral-200 dark:border-neutral-700 rounded overflow-hidden"
                   >
-                    <div
-                      className="h-24 sm:h-32 w-full"
-                      style={{ backgroundColor: token.hex }}
-                    />
+                    <div className="h-24 sm:h-32 w-full" style={{ backgroundColor: token.hex }} />
                     <div className="p-3 sm:p-4 bg-white dark:bg-neutral-800">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-100">
@@ -211,7 +211,9 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
               <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400 mb-3 sm:mb-4 block">
                 Text Styles
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">Typography Tokens</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">
+                Typography Tokens
+              </h2>
 
               <div className="space-y-6 sm:space-y-8">
                 {data.typographyTokens.map((token, index) => (
@@ -251,7 +253,9 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
               <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 dark:text-neutral-400 mb-3 sm:mb-4 block">
                 Implementation
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">Design Details</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">
+                Design Details
+              </h2>
 
               <div className="space-y-4 sm:space-y-6">
                 {data.designDetails.map((detail, index) => (

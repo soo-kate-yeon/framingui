@@ -68,9 +68,7 @@ export async function getFreeTemplates(): Promise<FreeScreenTemplate[]> {
  * }
  * ```
  */
-export async function getTemplateById(
-  templateId: string
-): Promise<FreeScreenTemplate | null> {
+export async function getTemplateById(templateId: string): Promise<FreeScreenTemplate | null> {
   try {
     const supabase = await createClient();
 
@@ -232,10 +230,7 @@ export async function checkMultipleTemplates(
  * }
  * ```
  */
-export async function canAccessTemplate(
-  userId: string,
-  templateId: string
-): Promise<boolean> {
+export async function canAccessTemplate(userId: string, templateId: string): Promise<boolean> {
   try {
     // 1. 무료 템플릿 확인
     const isFree = await isFreeTemplate(templateId);

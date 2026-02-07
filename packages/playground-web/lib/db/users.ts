@@ -32,9 +32,7 @@ import { toDatabaseError } from './error';
  * }
  * ```
  */
-export async function createOrUpdateUser(
-  user: User
-): Promise<UserProfile | null> {
+export async function createOrUpdateUser(user: User): Promise<UserProfile | null> {
   try {
     // auth.users는 Supabase가 자동으로 관리하므로
     // 추가 프로필 정보가 필요한 경우 별도 테이블 사용
@@ -70,9 +68,7 @@ export async function createOrUpdateUser(
  * }
  * ```
  */
-export async function getUserById(
-  userId: string
-): Promise<UserProfile | null> {
+export async function getUserById(userId: string): Promise<UserProfile | null> {
   try {
     const supabase = await createClient();
 
@@ -131,13 +127,10 @@ export async function updateUser(
     const supabase = await createClient();
 
     // Supabase Admin API를 사용하여 사용자 정보 업데이트
-    const { data: updatedUser, error } = await supabase.auth.admin.updateUserById(
-      userId,
-      {
-        email: data.email,
-        user_metadata: data.metadata,
-      }
-    );
+    const { data: updatedUser, error } = await supabase.auth.admin.updateUserById(userId, {
+      email: data.email,
+      user_metadata: data.metadata,
+    });
 
     if (error) {
       console.error('Failed to update user:', error.message);

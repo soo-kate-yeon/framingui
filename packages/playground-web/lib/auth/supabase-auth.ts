@@ -58,10 +58,20 @@ export async function signInWithGoogle(): Promise<OAuthResult> {
   const supabase = createClient();
 
   try {
+    // Get returnUrl from current URL if present
+    const returnUrl = typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('returnUrl')
+      : null;
+
+    // Build callback URL with returnUrl if available
+    const callbackUrl = returnUrl
+      ? `${window.location.origin}/auth/callback?returnUrl=${encodeURIComponent(returnUrl)}`
+      : `${window.location.origin}/auth/callback`;
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -102,10 +112,20 @@ export async function signInWithGitHub(): Promise<OAuthResult> {
   const supabase = createClient();
 
   try {
+    // Get returnUrl from current URL if present
+    const returnUrl = typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search).get('returnUrl')
+      : null;
+
+    // Build callback URL with returnUrl if available
+    const callbackUrl = returnUrl
+      ? `${window.location.origin}/auth/callback?returnUrl=${encodeURIComponent(returnUrl)}`
+      : `${window.location.origin}/auth/callback`;
+
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl,
       },
     });
 

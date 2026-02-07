@@ -8,14 +8,7 @@
 
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import type { User, UserData, License } from '../lib/types/user';
 import type { UserLicense } from '../lib/db/types';
 import {
@@ -86,8 +79,7 @@ function convertUserLicenseToLicense(userLicense: UserLicense): License {
  */
 function convertSupabaseUserToUser(supabaseUser: SupabaseUser): User {
   // user_metadata에서 provider 정보 추출
-  const provider =
-    (supabaseUser.app_metadata.provider as 'google' | 'github') || 'google';
+  const provider = (supabaseUser.app_metadata.provider as 'google' | 'github') || 'google';
 
   return {
     id: supabaseUser.id,
@@ -241,8 +233,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(null);
 
     try {
-      const result =
-        provider === 'google' ? await signInWithGoogle() : await signInWithGitHub();
+      const result = provider === 'google' ? await signInWithGoogle() : await signInWithGitHub();
 
       if (result.error) {
         throw new Error(result.error.message);

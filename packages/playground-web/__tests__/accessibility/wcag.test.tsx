@@ -219,7 +219,7 @@ describe('WCAG 2.1 AA Accessibility', () => {
       expect(main).toBeInTheDocument();
     });
 
-    // Note: AuthProvider는 NextAuth SessionProvider에 의존하므로
+    // Note: AuthProvider는 Supabase Auth에 의존하므로
     // 통합 테스트에서 별도로 검증
   });
 

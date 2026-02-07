@@ -1,6 +1,6 @@
 {
   "name": "@tekton/tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TypeScript token type definitions with compile-time enforcement",
   "type": "module",
   "main": "./dist/index.js",
@@ -13,14 +13,25 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "package.json"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soo-kate-yeon/tekton",
+    "directory": "packages/tokens"
+  },
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src __tests__ --ext .ts"
+    "lint": "eslint src __tests__ --ext .ts",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {},
   "devDependencies": {

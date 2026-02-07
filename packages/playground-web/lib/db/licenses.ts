@@ -9,12 +9,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import type {
-  UserLicense,
-  CreateLicenseData,
-  UpdateLicenseData,
-  DatabaseError,
-} from './types';
+import type { UserLicense, CreateLicenseData, UpdateLicenseData, DatabaseError } from './types';
 import { toDatabaseError, createDatabaseError } from './error';
 
 /**
@@ -31,9 +26,7 @@ import { toDatabaseError, createDatabaseError } from './error';
  * console.log(`Active licenses: ${activeCount}`);
  * ```
  */
-export async function getUserLicenses(
-  userId: string
-): Promise<UserLicense[]> {
+export async function getUserLicenses(userId: string): Promise<UserLicense[]> {
   try {
     const supabase = await createClient();
 
@@ -50,7 +43,10 @@ export async function getUserLicenses(
 
     return (data as UserLicense[]) ?? [];
   } catch (error) {
-    if ((error as DatabaseError).code !== undefined || (error as DatabaseError).message?.startsWith('Failed to get')) {
+    if (
+      (error as DatabaseError).code !== undefined ||
+      (error as DatabaseError).message?.startsWith('Failed to get')
+    ) {
       throw error;
     }
 
@@ -77,9 +73,7 @@ export async function getUserLicenses(
  * });
  * ```
  */
-export async function createLicense(
-  license: CreateLicenseData
-): Promise<UserLicense> {
+export async function createLicense(license: CreateLicenseData): Promise<UserLicense> {
   try {
     const supabase = await createClient();
 
@@ -155,10 +149,7 @@ export async function createLicense(
  * }
  * ```
  */
-export async function checkLicense(
-  userId: string,
-  themeId: string
-): Promise<boolean> {
+export async function checkLicense(userId: string, themeId: string): Promise<boolean> {
   try {
     const supabase = await createClient();
 
@@ -334,7 +325,10 @@ export async function deactivateExpiredLicenses(): Promise<number> {
 
     return data?.length ?? 0;
   } catch (error) {
-    if ((error as DatabaseError).code !== undefined || (error as DatabaseError).message?.startsWith('Failed to deactivate')) {
+    if (
+      (error as DatabaseError).code !== undefined ||
+      (error as DatabaseError).message?.startsWith('Failed to deactivate')
+    ) {
       throw error;
     }
 

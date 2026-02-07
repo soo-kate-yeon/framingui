@@ -247,9 +247,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
                       {children}
                     </ol>
                   ),
-                  li: ({ children }) => (
-                    <li className="text-base leading-relaxed">{children}</li>
-                  ),
+                  li: ({ children }) => <li className="text-base leading-relaxed">{children}</li>,
                   blockquote: ({ children }) => (
                     <blockquote className="border-l-4 border-neutral-300 dark:border-neutral-600 pl-4 py-2 my-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-r">
                       {children}
@@ -257,15 +255,11 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
                   ),
                   table: ({ children }) => (
                     <div className="overflow-x-auto my-6">
-                      <table className="w-full text-sm border-collapse">
-                        {children}
-                      </table>
+                      <table className="w-full text-sm border-collapse">{children}</table>
                     </div>
                   ),
                   thead: ({ children }) => (
-                    <thead className="bg-neutral-50 dark:bg-neutral-800">
-                      {children}
-                    </thead>
+                    <thead className="bg-neutral-50 dark:bg-neutral-800">{children}</thead>
                   ),
                   th: ({ children }) => (
                     <th className="text-left px-4 py-3 font-semibold text-neutral-900 dark:text-neutral-100 border-b border-neutral-200 dark:border-neutral-700">

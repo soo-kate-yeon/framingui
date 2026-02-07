@@ -15,7 +15,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * 보호된 라우트 목록
  * 인증이 필요한 경로들
  */
-const PROTECTED_ROUTES = ['/dashboard'];
+const PROTECTED_ROUTES = ['/dashboard', '/settings', '/profile', '/studio/account'];
 
 /**
  * 공개 라우트 참고
@@ -74,9 +74,9 @@ export async function middleware(request: NextRequest) {
     // 5. 인증되지 않은 사용자는 로그인 페이지로 리다이렉트
     if (error || !user) {
       console.log('[Middleware] Unauthenticated access to protected route:', pathname);
-      return NextResponse.redirect(
-        new URL('/auth/login', request.url)
-      );
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('returnUrl', pathname);
+      return NextResponse.redirect(loginUrl);
     }
 
     console.log('[Middleware] Authenticated access granted:', {
