@@ -1,24 +1,11 @@
 /**
  * Theme access configuration
- * SPEC-DEPLOY-001 Phase 4.1: Theme Filtering
+ * SPEC-DEPLOY-001: 모든 테마 유료 - 인증 필수
  */
 
 /**
- * Free themes available to all users without authentication
- * These are the basic starter themes
- */
-export const FREE_THEMES = [
-  'next-tailwind-shadcn',
-  'vite-tailwind-shadcn',
-  'next-styled-components',
-  'next-tailwind-radix',
-  'saas-modern',
-  'tech-startup',
-];
-
-/**
- * Premium themes that require a valid license
- * These are advanced, branded, or specialized themes
+ * 모든 프리미엄 테마 목록
+ * 인증된 사용자만 라이선스 보유 테마에 접근 가능
  */
 export const PREMIUM_THEMES = [
   'calm-wellness',
@@ -28,22 +15,10 @@ export const PREMIUM_THEMES = [
   'premium-editorial',
   'saas-dashboard',
   'warm-humanist',
+  'next-tailwind-shadcn',
+  'vite-tailwind-shadcn',
+  'next-styled-components',
+  'next-tailwind-radix',
+  'saas-modern',
+  'tech-startup',
 ];
-
-/**
- * Check if a theme is free (no authentication required)
- * @param themeId - Theme ID to check
- * @returns true if theme is free
- */
-export function isFreeTheme(themeId: string): boolean {
-  return FREE_THEMES.includes(themeId);
-}
-
-/**
- * Check if a theme is premium (requires authentication)
- * @param themeId - Theme ID to check
- * @returns true if theme is premium
- */
-export function isPremiumTheme(themeId: string): boolean {
-  return PREMIUM_THEMES.includes(themeId);
-}

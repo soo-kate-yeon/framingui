@@ -1,31 +1,29 @@
 /**
  * List Themes MCP Tool (v2.1)
  * Lists all available themes from .moai/themes/generated/
- * SPEC-DEPLOY-001 Phase 4.1: Theme filtering based on authentication
+ * SPEC-DEPLOY-001: 인증된 사용자의 라이선스 보유 테마만 반환
  */
 
 import { listThemes } from '@tekton/core';
 import type { ListThemesOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 import { getAccessibleThemes } from '../auth/state.js';
-import { FREE_THEMES } from '../auth/theme-access.js';
 
 /**
  * List available themes based on authentication status
- * - Unauthenticated: Only free themes
- * - Authenticated: Free themes + licensed themes
+ * 인증된 사용자의 라이선스 보유 테마만 반환
  * @returns Array of accessible theme metadata from .moai/themes/generated/
  */
 export async function listThemesTool(): Promise<ListThemesOutput> {
   try {
-    // Get all themes from @tekton/core (v2.1 loader)
+    // @tekton/core에서 전체 테마 로드
     const allThemes = listThemes();
     const allThemeIds = allThemes.map(theme => theme.id);
 
-    // Get accessible themes based on authentication
-    const accessibleThemeIds = getAccessibleThemes(allThemeIds, FREE_THEMES);
+    // 인증 기반 접근 가능 테마 필터링
+    const accessibleThemeIds = getAccessibleThemes(allThemeIds);
 
-    // Filter themes to only include accessible ones
+    // 접근 가능한 테마만 반환
     const filteredThemes = allThemes.filter(theme => accessibleThemeIds.includes(theme.id));
 
     return {

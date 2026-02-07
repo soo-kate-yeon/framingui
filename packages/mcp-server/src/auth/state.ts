@@ -66,22 +66,22 @@ export function isAuthenticated(): boolean {
 
 /**
  * Get accessible theme IDs based on current authentication
+ * 인증된 사용자의 라이선스 보유 테마만 반환
  * @param allThemeIds - All available theme IDs
- * @param freeThemeIds - Free theme IDs (always accessible)
- * @returns Array of accessible theme IDs
+ * @returns Array of accessible theme IDs (licensed only)
  */
-export function getAccessibleThemes(allThemeIds: string[], freeThemeIds: string[]): string[] {
+export function getAccessibleThemes(allThemeIds: string[]): string[] {
   const authData = getAuthData();
 
-  // No authentication: only free themes
+  // 인증 없음: 접근 가능 테마 없음
   if (!authData || !authData.valid) {
-    return freeThemeIds;
+    return [];
   }
 
-  // Authenticated: free themes + licensed themes
+  // 인증됨: 라이선스 보유 테마만
   const licensedThemes = authData.themes?.licensed || [];
-  const accessibleThemes = new Set([...freeThemeIds, ...licensedThemes]);
+  const accessibleThemes = new Set(licensedThemes);
 
-  // Filter to only include themes that actually exist
+  // 실제 존재하는 테마만 필터링
   return allThemeIds.filter(id => accessibleThemes.has(id));
 }

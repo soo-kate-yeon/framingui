@@ -36,7 +36,6 @@ interface VerifySuccessResponse {
     expiresAt: string | null;
   }>;
   themes: {
-    free: string[];
     licensed: string[];
   };
 }
@@ -83,10 +82,7 @@ interface UserProfile {
   plan: string;
 }
 
-/**
- * 무료 테마 목록 (인증 없이 모든 사용자 접근 가능)
- */
-const FREE_THEMES = ['minimal-starter', 'basic-dashboard'];
+// 모든 테마 유료 - FREE_THEMES 제거됨 (SPEC-DEPLOY-001)
 
 /**
  * GET /api/mcp/verify
@@ -154,9 +150,9 @@ export async function GET(request: NextRequest) {
       return createRateLimitErrorResponse(rateLimitResult);
     }
 
-    // 3. API Key 형식 검증 (tk_live_ + 32자 hex = 40자)
+    // 3. API Key 형식 검증 (tk_live_ + 64자 hex = 72자)
     // SECURITY: 형식 검증으로 불필요한 DB 쿼리 방지
-    if (!apiKey.startsWith('tk_live_') || apiKey.length !== 40) {
+    if (!apiKey.startsWith('tk_live_') || apiKey.length !== 72) {
       return NextResponse.json<VerifyErrorResponse>(
         {
           valid: false,
@@ -328,7 +324,6 @@ export async function GET(request: NextRequest) {
         expiresAt: license.expires_at,
       })),
       themes: {
-        free: FREE_THEMES,
         licensed: licensedThemes,
       },
     };

@@ -19,8 +19,9 @@ export interface VerifyResponse {
     expiresAt: string | null;
   }>;
   themes?: {
-    free: string[];
     licensed: string[];
+    /** @deprecated free 테마 개념 제거됨 - 하위 호환용 */
+    free?: string[];
   };
   error?: string;
 }
@@ -82,47 +83,34 @@ export async function verifyApiKey(apiKey: string): Promise<VerifyResponse> {
 }
 
 /**
- * Extract free and licensed theme IDs from verification response
+ * Extract licensed theme IDs from verification response
  * @param verifyResponse - Verification response from verifyApiKey
- * @returns Object containing free and licensed theme ID arrays
+ * @returns Array of licensed theme IDs
  */
-export function extractThemeAccess(verifyResponse: VerifyResponse): {
-  free: string[];
-  licensed: string[];
-} {
+export function extractThemeAccess(verifyResponse: VerifyResponse): string[] {
   if (!verifyResponse.valid || !verifyResponse.themes) {
-    return { free: [], licensed: [] };
+    return [];
   }
 
-  return {
-    free: verifyResponse.themes.free || [],
-    licensed: verifyResponse.themes.licensed || [],
-  };
+  return verifyResponse.themes.licensed || [];
 }
 
 /**
  * Check if a theme is accessible for the current authentication state
  * @param themeId - Theme ID to check
  * @param verifyResponse - Verification response (null for unauthenticated)
- * @param freeThemes - Array of free theme IDs
- * @returns true if theme is accessible
+ * @returns true if theme is in user's licenses
  */
 export function isThemeAccessible(
   themeId: string,
   verifyResponse: VerifyResponse | null,
-  freeThemes: string[]
 ): boolean {
-  // Free themes are always accessible
-  if (freeThemes.includes(themeId)) {
-    return true;
-  }
-
-  // Premium themes require valid authentication
+  // 인증 필수
   if (!verifyResponse || !verifyResponse.valid) {
     return false;
   }
 
-  // Check if user has license for this theme
-  const themeAccess = extractThemeAccess(verifyResponse);
-  return themeAccess.licensed.includes(themeId);
+  // 라이선스 보유 테마만 접근 가능
+  const licensed = extractThemeAccess(verifyResponse);
+  return licensed.includes(themeId);
 }

@@ -16,7 +16,7 @@
     }
   },
   "bin": {
-    "tekton-mcp": "./dist/index.js"
+    "tekton-mcp": "./dist/cli/index.js"
   },
   "files": [
     "dist",

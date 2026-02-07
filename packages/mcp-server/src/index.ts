@@ -5,6 +5,8 @@ import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprot
 import { info, error as logError } from './utils/logger.js';
 import { verifyApiKey } from './auth/verify.js';
 import { setAuthData } from './auth/state.js';
+import { AuthRequiredError, requireAuth } from './auth/guard.js';
+import { loadCredentials } from './cli/credentials.js';
 import { generateBlueprintTool } from './tools/generate-blueprint.js';
 import { previewThemeTool } from './tools/preview-theme.js';
 import { listThemesTool } from './tools/list-themes.js';
@@ -551,6 +553,25 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 
   info(`CallTool request: ${name}`);
 
+  // 모든 도구 호출 전에 인증 가드 실행
+  try {
+    requireAuth();
+  } catch (e) {
+    if (e instanceof AuthRequiredError) {
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            success: false,
+            error: 'Authentication required.',
+            hint: 'Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
+          }),
+        }],
+        isError: true,
+      };
+    }
+  }
+
   try {
     switch (name) {
       case 'generate-blueprint': {
@@ -825,14 +846,30 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 info('Starting Tekton MCP Server v2.1.0...');
 
 // ============================================================================
-// Phase 4.1: API Key Authentication
+// Authentication: Credential Chain
+// 1. 환경변수 TEKTON_API_KEY (기존 방식 호환)
+// 2. ~/.tekton/credentials.json (CLI login 방식)
+// 3. 둘 다 없으면: 인증 없이 시작 (도구 호출 시 에러)
 // ============================================================================
 
-// Check for TEKTON_API_KEY environment variable
-const apiKey = process.env.TEKTON_API_KEY;
+// 크레덴셜 체인으로 API Key 결정
+let apiKey = process.env.TEKTON_API_KEY;
+let apiKeySource = 'TEKTON_API_KEY env';
+
+if (!apiKey) {
+  const creds = loadCredentials();
+  if (creds) {
+    apiKey = creds.api_key;
+    apiKeySource = '~/.tekton/credentials.json';
+    // 크레덴셜 파일의 API URL도 적용
+    if (creds.api_url && !process.env.TEKTON_API_URL) {
+      process.env.TEKTON_API_URL = creds.api_url;
+    }
+  }
+}
 
 if (apiKey) {
-  info('TEKTON_API_KEY detected, verifying...');
+  info(`API key detected from ${apiKeySource}, verifying...`);
 
   try {
     const authResult = await verifyApiKey(apiKey);
@@ -844,21 +881,20 @@ if (apiKey) {
       );
 
       const licensedCount = authResult.themes?.licensed?.length || 0;
-      const freeCount = authResult.themes?.free?.length || 0;
-      info(`Theme access: ${freeCount} free, ${licensedCount} licensed`);
+      info(`Theme access: ${licensedCount} licensed themes`);
     } else {
       logError(`Authentication failed: ${authResult.error || 'Unknown error'}`);
-      logError('Server will continue with free themes only');
+      logError('All tool calls will require re-authentication.');
       setAuthData(null);
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     logError(`Failed to verify API key: ${errorMessage}`);
-    logError('Server will continue with free themes only');
+    logError('All tool calls will require re-authentication.');
     setAuthData(null);
   }
 } else {
-  info('No TEKTON_API_KEY provided, running with free themes only');
+  info('No API key found. Run `tekton-mcp login` or set TEKTON_API_KEY to authenticate.');
   setAuthData(null);
 }
 
