@@ -1,10 +1,10 @@
 #!/bin/sh
 #
-# Pre-commit Hook
-# [TAG-Q-006] 코드 커밋 시 TAG 검증 스크립트 실행
+# Pre-commit Hook - Fast & Light
+# Local quick checks only. Heavy checks delegated to CI/CD.
 #
 
-# 1. TAG 검증
+# 1. TAG 검증 (빠름)
 echo "🏷️  Validating TAG annotations..."
 pnpm run validate:tags || {
   echo "❌ TAG validation failed. Please add TAG annotations."
@@ -12,24 +12,15 @@ pnpm run validate:tags || {
   exit 1
 }
 
-# 2. tsup + composite 호환성 검사
+# 2. tsup + composite 호환성 검사 (빠름)
 echo "🔍 Checking tsup + TypeScript composite compatibility..."
 pnpm check:tsup || exit 1
 
-# 2. 빌드 검증
-echo "🔨 Building all packages..."
-pnpm build:all || exit 1
-
-# 3. TypeScript 타입 체크 (CI와 동일)
-echo "🔍 Running TypeScript type check..."
-pnpm exec tsc --build 2>&1 | head -50 || {
-  echo "❌ TypeScript type check failed."
-  echo "💡 Run 'pnpm typecheck' to see all errors."
-  exit 1
-}
-
-# 4. Lint-staged (ESLint)
-echo "📝 Running lint-staged..."
+# 3. Lint-staged (ESLint + Prettier, 변경된 파일만)
+echo "📝 Running lint-staged (ESLint + Prettier)..."
 pnpm exec lint-staged || exit 1
 
 echo "✅ Pre-commit checks passed!"
+echo ""
+echo "💡 Full build, type-check, and tests will run in CI/CD"
+echo "   Run 'pnpm ci:local' to test locally before pushing"

@@ -20,6 +20,7 @@ interface Template {
   description: string;
   thumbnail?: string;
   category: string;
+  price?: number;
 }
 
 interface TemplateGalleryProps {
@@ -33,10 +34,7 @@ interface TemplateGalleryProps {
 // Component
 // ============================================================================
 
-export function TemplateGallery({
-  templates,
-  className = '',
-}: TemplateGalleryProps) {
+export function TemplateGallery({ templates, className = '' }: TemplateGalleryProps) {
   const router = useRouter();
 
   // Handle template card click - navigate to template detail page
@@ -78,6 +76,7 @@ export function TemplateGallery({
           description={template.description}
           thumbnail={template.thumbnail}
           category={template.category}
+          price={template.price}
           onClick={() => handleTemplateClick(template.id)}
         />
       ))}

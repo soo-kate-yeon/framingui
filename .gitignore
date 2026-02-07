@@ -291,3 +291,4 @@ dist-ssr/
 service-account.json
 .DS_Store
 # Legal documents are now tracked in git (public information)
+workflow_logs.txt
