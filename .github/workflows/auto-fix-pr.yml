@@ -58,62 +58,35 @@ jobs:
         run: |
           LOG_FILE="workflow_logs.txt"
 
-          # Initialize flags
-          echo "needs_lint_fix=false" >> $GITHUB_OUTPUT
-          echo "needs_format_fix=false" >> $GITHUB_OUTPUT
-          echo "needs_type_check=false" >> $GITHUB_OUTPUT
+          echo "needs_ai_fix=false" >> $GITHUB_OUTPUT
 
           if [ -f "$LOG_FILE" ]; then
-            # Check for lint errors
-            if grep -qi "eslint\|lint" "$LOG_FILE"; then
-              echo "needs_lint_fix=true" >> $GITHUB_OUTPUT
-              echo "🔍 Detected linting issues"
-            fi
-            
-            # Check for formatting errors
-            if grep -qi "prettier\|format" "$LOG_FILE"; then
-              echo "needs_format_fix=true" >> $GITHUB_OUTPUT
-              echo "🔍 Detected formatting issues"
-            fi
-            
-            # Check for type errors
-            if grep -qi "typescript\|tsc\|type error" "$LOG_FILE"; then
-              echo "needs_type_check=true" >> $GITHUB_OUTPUT
-              echo "🔍 Detected TypeScript issues"
+            # Check for errors that need AI-powered fixes
+            if grep -qi "typescript\|tsc\|type error\|build\|test.*fail" "$LOG_FILE"; then
+              echo "needs_ai_fix=true" >> $GITHUB_OUTPUT
+              echo "🔍 Detected complex errors requiring AI-powered fixes"
+              echo "   - TypeScript type errors"
+              echo "   - Build failures"
+              echo "   - Test failures"
             fi
           else
-            echo "⚠️ No log file found, will attempt common fixes"
-            echo "needs_lint_fix=true" >> $GITHUB_OUTPUT
-            echo "needs_format_fix=true" >> $GITHUB_OUTPUT
+            echo "⚠️ No log file found, will attempt AI-powered fixes"
+            echo "needs_ai_fix=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Run ESLint auto-fix
-        if: steps.analyze.outputs.needs_lint_fix == 'true'
-        continue-on-error: true
-        run: |
-          echo "🔧 Running ESLint auto-fix..."
-          pnpm --filter "./packages/*" exec eslint --fix "src/**/*.{ts,tsx}" "__tests__/**/*.{ts,tsx}" || true
-
-      - name: Run Prettier auto-fix
-        if: steps.analyze.outputs.needs_format_fix == 'true'
-        continue-on-error: true
-        run: |
-          echo "🎨 Running Prettier auto-fix..."
-          pnpm exec prettier --write "packages/*/src/**/*.{ts,tsx}" "packages/*/__tests__/**/*.{ts,tsx}" "*.{ts,js,json}" ".github/**/*.yml" || true
+          echo ""
+          echo "💡 Note: ESLint/Prettier are handled by pre-commit hook"
+          echo "   CI/CD Auto-fix focuses on complex errors only"
 
       - name: Install Claude Code CLI
-        if: |
-          steps.analyze.outputs.needs_type_check == 'true' ||
-          steps.analyze.outputs.needs_lint_fix == 'true'
+        if: steps.analyze.outputs.needs_ai_fix == 'true'
         continue-on-error: true
         run: |
           echo "📦 Installing Claude Code CLI..."
           npm install -g @anthropic-ai/claude-code || echo "⚠️ Claude Code installation failed, continuing with basic fixes"
 
       - name: Run MoAI Loop Auto-fix
-        if: |
-          steps.analyze.outputs.needs_type_check == 'true' ||
-          steps.analyze.outputs.needs_lint_fix == 'true'
+        if: steps.analyze.outputs.needs_ai_fix == 'true'
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -198,12 +171,15 @@ jobs:
           ATTEMPT_NUM=$(($(git log --since="24 hours ago" --grep="auto-fix CI/CD" --oneline | wc -l) + 1))
 
           cat << EOF > commit_message.txt
-          chore: auto-fix CI/CD failures with MoAI Loop (attempt $ATTEMPT_NUM/3)
+          fix(ci): auto-fix complex errors with MoAI Loop (attempt $ATTEMPT_NUM/3)
 
-          Auto-fixes applied by GitHub Actions:
-          - ESLint auto-fix
-          - Prettier formatting
-          - MoAI Loop intelligent error correction
+          AI-powered fixes applied by GitHub Actions:
+          - TypeScript type errors
+          - Build failures
+          - Test failures
+          - Dependency issues
+
+          Note: ESLint/Prettier are handled by pre-commit hook locally
 
           Triggered by failed workflow run: ${{ github.event.workflow_run.id }}
           Original workflow: ${{ github.event.workflow_run.html_url }}
@@ -225,17 +201,19 @@ jobs:
 
             if [ "${{ steps.retry-check.outputs.should_commit }}" == "true" ]; then
               cat << COMMENT_EOF > pr_comment.txt
-          🤖 **Auto-fix Applied with MoAI Loop** (Attempt $ATTEMPT_NUM/3)
+          🤖 **MoAI Loop Auto-fix Applied** (Attempt $ATTEMPT_NUM/3)
 
-          I've automatically fixed CI/CD failures using intelligent analysis:
-          - ✅ ESLint issues
-          - ✅ Prettier formatting
-          - 🧠 MoAI Loop intelligent error correction
-            - TypeScript type errors
-            - Build errors
-            - Test failures
+          I've automatically fixed complex CI/CD errors using AI:
+          - 🧠 TypeScript type errors
+          - 🔨 Build failures
+          - 🧪 Test failures
+          - 📦 Dependency issues
 
-          The checks will re-run automatically. MoAI Loop will continue fixing issues until all tests pass (max 3 attempts per 24h).
+          The checks will re-run automatically. MoAI Loop will continue until all tests pass (max 3 attempts per 24h).
+
+          ---
+          💡 **Note**: ESLint/Prettier are handled by pre-commit hook locally.
+          Run \`git commit\` again if you see lint/format errors.
           COMMENT_EOF
             else
               cat << COMMENT_EOF > pr_comment.txt
