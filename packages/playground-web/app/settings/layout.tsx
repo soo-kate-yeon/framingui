@@ -11,19 +11,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Key, User, Bell, Shield, CreditCard, Settings as SettingsIcon } from 'lucide-react';
+import { User, Bell, Shield, CreditCard, Settings as SettingsIcon } from 'lucide-react';
 
 interface SettingsLayoutProps {
   children: React.ReactNode;
 }
 
 const navigationItems = [
-  {
-    title: 'API Keys',
-    href: '/settings/api-keys',
-    icon: Key,
-    description: 'Manage your API keys for MCP server access',
-  },
   {
     title: 'Profile',
     href: '/settings/profile',

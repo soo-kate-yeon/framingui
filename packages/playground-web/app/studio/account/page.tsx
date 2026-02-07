@@ -3,7 +3,7 @@
  * [SPEC-UI-003][TAG-UI003-038]
  * [SPEC-DEPLOY-001][TAG-DEPLOY-001-U008]
  *
- * API Key 관리, 라이선스 관리, 좋아요 목록 페이지
+ * 라이선스 관리, 좋아요 목록 페이지
  * Theme: Square Minimalism
  * - Radius: 0
  * - Typography: Uppercase, Tracking Widest
@@ -15,8 +15,7 @@
 import { useState } from 'react';
 import { redirect } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
-import { Key, Heart, FileKey } from 'lucide-react';
-import { ApiKeyManagement } from '@/components/settings/ApiKeyManagement';
+import { Key, Heart } from 'lucide-react';
 
 // ============================================================================
 // Tab Component
@@ -47,7 +46,7 @@ function TabButton({ id, label, active, onClick }: TabButtonProps) {
 
 export default function AccountPage() {
   const { user, userData } = useAuth();
-  const [activeTab, setActiveTab] = useState('api-keys');
+  const [activeTab, setActiveTab] = useState('licenses');
 
   // [TAG-UI003-016] 로그인 필수
   if (!user) {
@@ -62,18 +61,12 @@ export default function AccountPage() {
           My Account
         </h1>
         <p className="text-2xl font-bold text-neutral-900 leading-tight">
-          Manage API keys, licenses, and saved templates
+          Manage licenses and saved templates
         </p>
       </header>
 
       {/* Tabs Navigation */}
       <div className="flex gap-8 border-b border-neutral-200 mb-12">
-        <TabButton
-          id="api-keys"
-          label="API Keys"
-          active={activeTab === 'api-keys'}
-          onClick={setActiveTab}
-        />
         <TabButton
           id="licenses"
           label="Licenses"
@@ -90,27 +83,6 @@ export default function AccountPage() {
 
       {/* Tab Content */}
       <div>
-        {/* API Keys Tab */}
-        {activeTab === 'api-keys' && (
-          <section>
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-3">
-                <FileKey size={20} aria-hidden="true" className="text-neutral-900" />
-                <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-900">
-                  API Keys
-                </h2>
-              </div>
-              <p className="text-xs text-neutral-500">
-                Create and manage API keys for MCP server authentication
-              </p>
-            </div>
-
-            <div className="bg-white border border-neutral-200 p-6">
-              <ApiKeyManagement />
-            </div>
-          </section>
-        )}
-
         {/* Licenses Tab */}
         {activeTab === 'licenses' && (
           <section>

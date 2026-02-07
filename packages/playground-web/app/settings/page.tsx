@@ -1,10 +1,10 @@
 /**
  * Settings Main Page
- * Redirects to API Keys page by default
+ * Redirects to Profile page by default
  */
 
 import { redirect } from 'next/navigation';
 
 export default function SettingsPage() {
-  redirect('/settings/api-keys');
+  redirect('/settings/profile');
 }
