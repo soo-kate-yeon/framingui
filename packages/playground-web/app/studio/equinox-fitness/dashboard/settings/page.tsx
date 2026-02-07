@@ -23,21 +23,18 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-black text-white">
       {/* Header Section */}
       <section className="px-6 py-24">
-        <div className="max-w-4xl mx-auto space-y-4">
-          <Badge
-            variant="default"
-            className="inline-flex items-center rounded-none border border-neutral-800 bg-neutral-900 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-400 tracking-wide"
-          >
-            SETTINGS
-          </Badge>
-
-          <h1 className="text-5xl font-bold uppercase tracking-tighter text-white leading-none">
-            ACCOUNT SETTINGS
-          </h1>
-
-          <p className="text-sm font-normal text-neutral-400 leading-relaxed">
-            Manage your account, subscription, and preferences.
-          </p>
+        <div className="max-w-4xl mx-auto">
+          <header className="space-y-4">
+            <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+              Tekton Studio
+            </span>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-6">
+              SETTINGS
+            </h1>
+            <p className="text-sm md:text-base text-neutral-400 max-w-2xl leading-relaxed">
+              Manage your account, subscription, and preferences
+            </p>
+          </header>
         </div>
       </section>
 

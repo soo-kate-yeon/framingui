@@ -13,17 +13,17 @@ export default function EquinoxDashboardPage() {
         <div className="p-8 max-w-[1600px] mx-auto">
 
             {/* Hero Section */}
-            <div className="mb-12">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2 block">
-                    Member Portal
+            <header className="mb-12">
+                <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+                    Tekton Studio
                 </span>
-                <h1 className="text-5xl font-bold uppercase tracking-tighter text-white leading-none">
-                    Your Performance
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-6">
+                    YOUR PERFORMANCE
                 </h1>
-                <p className="text-sm font-normal text-neutral-400 leading-relaxed mt-3">
-                    Track your progress. Push your limits. Achieve excellence.
+                <p className="text-sm md:text-base text-neutral-400 max-w-2xl leading-relaxed">
+                    Track your progress. Push your limits. Achieve excellence
                 </p>
-            </div>
+            </header>
 
             {/* Stats Grid - Glass Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">

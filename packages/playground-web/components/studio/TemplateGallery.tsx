@@ -20,6 +20,7 @@ interface Template {
   description: string;
   thumbnail?: string;
   category: string;
+  price?: number;
 }
 
 interface TemplateGalleryProps {
@@ -78,6 +79,7 @@ export function TemplateGallery({
           description={template.description}
           thumbnail={template.thumbnail}
           category={template.category}
+          price={template.price}
           onClick={() => handleTemplateClick(template.id)}
         />
       ))}

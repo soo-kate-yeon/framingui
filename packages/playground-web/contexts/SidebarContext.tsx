@@ -17,6 +17,9 @@ interface SidebarContextValue {
   /** 사이드바 접힌 상태 */
   isCollapsed: boolean;
 
+  /** 모바일 메뉴 열림 상태 */
+  isMobileOpen: boolean;
+
   /** 사이드바 토글 */
   toggleSidebar: () => void;
 
@@ -25,6 +28,12 @@ interface SidebarContextValue {
 
   /** 사이드바 펼치기 */
   expandSidebar: () => void;
+
+  /** 모바일 메뉴 토글 */
+  toggleMobileMenu: () => void;
+
+  /** 모바일 메뉴 닫기 */
+  closeMobileMenu: () => void;
 }
 
 // ============================================================================
@@ -45,6 +54,7 @@ interface SidebarProviderProps {
 
 export function SidebarProvider({ children, defaultCollapsed = false }: SidebarProviderProps) {
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const toggleSidebar = useCallback(() => {
     setIsCollapsed((prev) => !prev);
@@ -58,11 +68,22 @@ export function SidebarProvider({ children, defaultCollapsed = false }: SidebarP
     setIsCollapsed(false);
   }, []);
 
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileOpen((prev) => !prev);
+  }, []);
+
+  const closeMobileMenu = useCallback(() => {
+    setIsMobileOpen(false);
+  }, []);
+
   const value: SidebarContextValue = {
     isCollapsed,
+    isMobileOpen,
     toggleSidebar,
     collapseSidebar,
     expandSidebar,
+    toggleMobileMenu,
+    closeMobileMenu,
   };
 
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;

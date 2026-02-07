@@ -59,7 +59,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     name: 'Square Minimalism',
     tagline: 'Bold, geometric, high-contrast design system',
     description: '정사각형 모서리와 높은 대비를 특징으로 하는 미니멀리즘 디자인 시스템입니다. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 애플리케이션을 빠르게 구축할 수 있습니다.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('square-minimalism', 'hero.png'),
       getScreenshotUrl('square-minimalism', 'dashboard.png'),
@@ -135,7 +135,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     name: 'Equinox Fitness',
     tagline: 'Energetic, bold fitness & wellness design',
     description: '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스 및 웰니스 브랜드를 위한 디자인 시스템입니다.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('equinox-fitness', 'hero.png'),
       getScreenshotUrl('equinox-fitness', 'workouts.png'),
@@ -211,7 +211,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     name: 'Round Minimal',
     tagline: 'Soft, rounded, gentle user experience',
     description: '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 제공하는 미니멀 디자인 시스템입니다.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('round-minimal', 'hero.png'),
       getScreenshotUrl('round-minimal', 'features.png'),
@@ -287,7 +287,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     name: 'Classic Magazine',
     tagline: 'Editorial, content-rich, timeless typography',
     description: '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심의 웹사이트를 위한 디자인 시스템입니다. 가독성과 편집 디자인의 전통을 계승합니다.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('classic-magazine', 'hero.png'),
       getScreenshotUrl('classic-magazine', 'articles.png'),
