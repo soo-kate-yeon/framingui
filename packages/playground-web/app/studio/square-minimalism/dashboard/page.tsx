@@ -11,10 +11,17 @@ export default function SquareDashboardPage() {
     return (
         <div className="p-12 max-w-[1600px] mx-auto">
             {/* [Template] Section: Hero / Stats */}
-            <div className="mb-12">
-                <h1 className="text-4xl font-bold tracking-tight mb-2">Overview</h1>
-                <p className="text-neutral-500">Welcome back, here is what's happening today.</p>
-            </div>
+            <header className="mb-12">
+                <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+                    Tekton Studio
+                </span>
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-6">
+                    OVERVIEW
+                </h1>
+                <p className="text-sm md:text-base text-neutral-500 max-w-2xl leading-relaxed">
+                    Welcome back, here is what's happening today
+                </p>
+            </header>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-4 gap-6 mb-12">

@@ -13,7 +13,6 @@
 
 import { redirect } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
-import { Key, Heart } from 'lucide-react';
 
 // ============================================================================
 // Component
@@ -28,31 +27,33 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 md:p-12 max-w-[1000px] mx-auto">
       {/* Header */}
       <header className="mb-12">
-        <h1 className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">
-          My Account
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+          Tekton Studio
+        </span>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tighter text-neutral-900 mb-6">
+          MY ACCOUNT
         </h1>
-        <p className="text-2xl font-bold text-neutral-900 leading-tight">
-          Manage your licenses and saved templates
+        <p className="text-sm md:text-base text-neutral-500 max-w-2xl leading-relaxed">
+          Manage your API keys and saved templates
         </p>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Licenses Section */}
-        <section className="bg-white border border-neutral-200 p-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-neutral-100">
-            <Key size={20} aria-hidden="true" className="text-neutral-900" />
-            <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-900">
-              My Licenses
-            </h2>
+      {/* Content Area */}
+      <div className="space-y-16">
+        {/* API Keys Section */}
+        <section>
+          <div className="mb-8">
+            <h3 className="text-lg font-bold tracking-tight mb-1">API Keys</h3>
+            <p className="text-sm text-neutral-500">Manage your purchased template licenses.</p>
           </div>
 
-          {userData?.licenses && userData.licenses.length > 0 ? (
-            <ul className="space-y-3">
-              {userData.licenses.map((license) => (
-                <li
+          <div className="space-y-3">
+            {userData?.licenses && userData.licenses.length > 0 ? (
+              userData.licenses.map((license) => (
+                <div
                   key={license.id}
                   className="p-4 bg-neutral-50 border border-neutral-200 hover:border-neutral-900 transition-colors"
                 >
@@ -73,43 +74,41 @@ export default function AccountPage() {
                   <div className="text-[10px] uppercase tracking-wider text-neutral-400">
                     Purchased: {new Date(license.purchasedAt).toLocaleDateString()}
                   </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-xs uppercase tracking-wider text-neutral-400 text-center py-8">
-              No licenses yet
-            </p>
-          )}
+                </div>
+              ))
+            ) : (
+              <p className="text-xs uppercase tracking-wider text-neutral-400 text-center py-8">
+                No API keys yet
+              </p>
+            )}
+          </div>
         </section>
 
         {/* Liked Templates Section */}
-        <section className="bg-white border border-neutral-200 p-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b border-neutral-100">
-            <Heart size={20} aria-hidden="true" className="text-neutral-900" />
-            <h2 className="text-sm font-bold uppercase tracking-widest text-neutral-900">
-              Liked Templates
-            </h2>
+        <section>
+          <div className="mb-8 border-t border-neutral-100 pt-16">
+            <h3 className="text-lg font-bold tracking-tight mb-1">Liked Templates</h3>
+            <p className="text-sm text-neutral-500">Templates you've saved for later.</p>
           </div>
 
-          {userData?.likedTemplates && userData.likedTemplates.length > 0 ? (
-            <ul className="space-y-3">
-              {userData.likedTemplates.map((templateId) => (
-                <li
+          <div className="space-y-3">
+            {userData?.likedTemplates && userData.likedTemplates.length > 0 ? (
+              userData.likedTemplates.map((templateId) => (
+                <div
                   key={templateId}
                   className="p-4 bg-neutral-50 border border-neutral-200 hover:border-neutral-900 transition-colors"
                 >
                   <span className="text-xs font-bold uppercase tracking-wider text-neutral-900">
                     {templateId}
                   </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-xs uppercase tracking-wider text-neutral-400 text-center py-8">
-              No liked templates yet
-            </p>
-          )}
+                </div>
+              ))
+            ) : (
+              <p className="text-xs uppercase tracking-wider text-neutral-400 text-center py-8">
+                No liked templates yet
+              </p>
+            )}
+          </div>
         </section>
       </div>
     </div>

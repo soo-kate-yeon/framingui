@@ -14,10 +14,17 @@ export default function SettingsPage() {
     return (
         <div className="p-12 max-w-[1000px] mx-auto">
 
-            <div className="mb-12">
-                <h1 className="text-4xl font-bold tracking-tight mb-2">Settings</h1>
-                <p className="text-neutral-500">Manage your workspace preferences.</p>
-            </div>
+            <header className="mb-12">
+                <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+                    Tekton Studio
+                </span>
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-6">
+                    SETTINGS
+                </h1>
+                <p className="text-sm md:text-base text-neutral-500 max-w-2xl leading-relaxed">
+                    Manage your workspace preferences
+                </p>
+            </header>
 
             {/* [Recipe] Tabs */}
             <div className="flex gap-8 border-b border-neutral-200 mb-12">

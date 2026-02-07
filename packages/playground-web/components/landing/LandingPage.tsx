@@ -48,6 +48,12 @@ export function LandingPage() {
                             </div>
                             <div className="flex items-center gap-3">
                                 <Button
+                                    onClick={() => router.push('/pricing')}
+                                    className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
+                                >
+                                    Pricing
+                                </Button>
+                                <Button
                                     onClick={() => router.push('/studio/templates')}
                                     className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none"
                                 >
