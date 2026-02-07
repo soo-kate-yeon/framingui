@@ -2,7 +2,7 @@ name: Quality Gate
 
 on:
   push:
-    branches: [master, main, develop, 'feature/**']
+    branches: [master, main, develop, 'feature/**', 'feat/**']
   pull_request:
     branches: [master, main]
 

@@ -10,8 +10,9 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
-import type { UserProfile, UpdateUserData } from './types';
+import type { UserProfile, UpdateUserData, DatabaseError } from './types';
 import type { User } from '@supabase/supabase-js';
+import { toDatabaseError } from './error';
 
 /**
  * 사용자 생성 또는 업데이트
@@ -31,9 +32,7 @@ import type { User } from '@supabase/supabase-js';
  * }
  * ```
  */
-export async function createOrUpdateUser(
-  user: User
-): Promise<UserProfile | null> {
+export async function createOrUpdateUser(user: User): Promise<UserProfile | null> {
   try {
     // auth.users는 Supabase가 자동으로 관리하므로
     // 추가 프로필 정보가 필요한 경우 별도 테이블 사용
@@ -50,7 +49,7 @@ export async function createOrUpdateUser(
   } catch (error) {
     console.error('Failed to create or update user:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Failed to create or update user: ${details}`);
+    throw toDatabaseError('Failed to create or update user', details);
   }
 }
 
@@ -69,9 +68,7 @@ export async function createOrUpdateUser(
  * }
  * ```
  */
-export async function getUserById(
-  userId: string
-): Promise<UserProfile | null> {
+export async function getUserById(userId: string): Promise<UserProfile | null> {
   try {
     const supabase = await createClient();
 
@@ -80,7 +77,7 @@ export async function getUserById(
 
     if (error) {
       console.error('Failed to get user by ID:', error.message);
-      throw new Error(`Failed to get user by ID: ${error.message}`);
+      throw toDatabaseError('Failed to get user by ID', error.message, error.code);
     }
 
     if (!data.user) {
@@ -96,13 +93,13 @@ export async function getUserById(
 
     return profile;
   } catch (error) {
-    if (error instanceof Error) {
+    if ((error as DatabaseError).code !== undefined) {
       throw error;
     }
 
     console.error('Unexpected error getting user:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error getting user: ${details}`);
+    throw toDatabaseError('Unexpected error getting user', details);
   }
 }
 
@@ -130,17 +127,14 @@ export async function updateUser(
     const supabase = await createClient();
 
     // Supabase Admin API를 사용하여 사용자 정보 업데이트
-    const { data: updatedUser, error } = await supabase.auth.admin.updateUserById(
-      userId,
-      {
-        email: data.email,
-        user_metadata: data.metadata,
-      }
-    );
+    const { data: updatedUser, error } = await supabase.auth.admin.updateUserById(userId, {
+      email: data.email,
+      user_metadata: data.metadata,
+    });
 
     if (error) {
       console.error('Failed to update user:', error.message);
-      throw new Error(`Failed to update user: ${error.message}`);
+      throw toDatabaseError('Failed to update user', error.message, error.code);
     }
 
     if (!updatedUser.user) {
@@ -156,13 +150,13 @@ export async function updateUser(
 
     return profile;
   } catch (error) {
-    if (error instanceof Error) {
+    if ((error as DatabaseError).code !== undefined) {
       throw error;
     }
 
     console.error('Unexpected error updating user:', error);
     const details = error instanceof Error ? error.message : 'Unknown error';
-    throw new Error(`Unexpected error updating user: ${details}`);
+    throw toDatabaseError('Unexpected error updating user', details);
   }
 }
 

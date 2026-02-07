@@ -10,90 +10,146 @@
 import Link from 'next/link';
 import { Chrome, Github } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
 
-export default function LoginPage() {
-    const { login, isLoading, error } = useAuth();
+/**
+ * OAuth 에러 메시지 매핑
+ */
+const ERROR_MESSAGES: Record<string, string> = {
+  missing_code: 'Authentication failed: No authorization code received.',
+  code_expired: 'Authentication code has expired. Please try again.',
+  exchange_failed: 'Failed to exchange authorization code. Please try again.',
+  invalid_session: 'Invalid session. Please try logging in again.',
+  user_creation_failed: 'Failed to create user account. Please contact support.',
+  database_error: 'Database error occurred. Please try again later.',
+  unexpected_error: 'An unexpected error occurred. Please try again.',
+};
 
-    const handleGoogleLogin = async () => {
-        await login('google');
-        // OAuth 리다이렉트가 발생하므로 router.push 불필요
-    };
+/**
+ * Login Content Component with useSearchParams
+ * Wrapped in Suspense boundary for Next.js 16 compatibility
+ */
+function LoginContent() {
+  const { login, isLoading, error: authError } = useAuth();
+  const searchParams = useSearchParams();
+  const [displayError, setDisplayError] = useState<string | null>(null);
 
-    const handleGitHubLogin = async () => {
-        await login('github');
-        // OAuth 리다이렉트가 발생하므로 router.push 불필요
-    };
+  // URL 쿼리 파라미터에서 에러 처리
+  useEffect(() => {
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      const message = ERROR_MESSAGES[errorParam] || `Authentication error: ${errorParam}`;
+      setDisplayError(message);
+    }
+  }, [searchParams]);
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-[#F0F0F0] p-6">
-            <div className="w-full max-w-md bg-white border border-neutral-200 p-12 shadow-none">
+  // AuthContext 에러 처리
+  useEffect(() => {
+    if (authError) {
+      setDisplayError(authError);
+    }
+  }, [authError]);
 
-                {/* Header */}
-                <div className="mb-12 text-center">
-                    <Link href="/" className="mb-6 inline-block">
-                        <div className="text-2xl font-bold tracking-tighter">TEKTON</div>
-                    </Link>
-                    <h1 className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">
-                        Welcome Back
-                    </h1>
-                    <p className="text-xl font-bold text-neutral-900 leading-tight">
-                        Log in to your workspace.
-                    </p>
-                </div>
+  // 에러 메시지 결정
+  const error = displayError;
 
-                {/* Error Message */}
-                {error && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-xs">
-                        {error}
-                    </div>
-                )}
+  const handleGoogleLogin = async () => {
+    await login('google');
+    // OAuth 리다이렉트가 발생하므로 router.push 불필요
+  };
 
-                {/* Demo Account Info */}
-                <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200">
-                    <p className="text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-2">
-                        OAuth Login
-                    </p>
-                    <p className="text-xs text-neutral-600">
-                        Sign in with your Google or GitHub account to access TEKTON Studio.
-                    </p>
-                </div>
+  const handleGitHubLogin = async () => {
+    await login('github');
+    // OAuth 리다이렉트가 발생하므로 router.push 불필요
+  };
 
-                {/* OAuth Buttons */}
-                <div className="space-y-4">
-                    {/* Google Login Button */}
-                    <button
-                        type="button"
-                        onClick={handleGoogleLogin}
-                        disabled={isLoading}
-                        className="w-full bg-white text-neutral-900 border border-neutral-300 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:border-neutral-900 hover:bg-neutral-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <Chrome size={16} className="text-[#4285F4]" />
-                        <span>{isLoading ? 'Connecting...' : 'Sign in with Google'}</span>
-                    </button>
-
-                    {/* GitHub Login Button */}
-                    <button
-                        type="button"
-                        onClick={handleGitHubLogin}
-                        disabled={isLoading}
-                        className="w-full bg-neutral-900 text-white border border-neutral-900 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:bg-neutral-800 hover:border-neutral-800 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <Github size={16} />
-                        <span>{isLoading ? 'Connecting...' : 'Sign in with GitHub'}</span>
-                    </button>
-                </div>
-
-                {/* Footer */}
-                <div className="mt-8 pt-8 border-t border-neutral-100 text-center">
-                    <p className="text-xs text-neutral-500">
-                        Don't have an account?{' '}
-                        <Link href="/auth/signup" className="font-bold text-neutral-900 hover:underline">
-                            Create one
-                        </Link>
-                    </p>
-                </div>
-
-            </div>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F0F0F0] p-6">
+      <div className="w-full max-w-md bg-white border border-neutral-200 p-12 shadow-none">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <Link href="/" className="mb-6 inline-block">
+            <div className="text-2xl font-bold tracking-tighter">TEKTON</div>
+          </Link>
+          <h1 className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2">
+            Welcome Back
+          </h1>
+          <p className="text-xl font-bold text-neutral-900 leading-tight">
+            Log in to your workspace.
+          </p>
         </div>
-    );
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 text-xs">
+            {error}
+          </div>
+        )}
+
+        {/* OAuth Login Info */}
+        <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-2">
+            OAuth Login
+          </p>
+          <p className="text-xs text-neutral-600">
+            Sign in with your Google or GitHub account to access TEKTON Studio.
+          </p>
+        </div>
+
+        {/* OAuth Buttons */}
+        <div className="space-y-4">
+          {/* Google Login Button */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={isLoading}
+            className="w-full bg-white text-neutral-900 border border-neutral-300 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:border-neutral-900 hover:bg-neutral-50 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Chrome size={16} className="text-[#4285F4]" />
+            <span>{isLoading ? 'Connecting...' : 'Sign in with Google'}</span>
+          </button>
+
+          {/* GitHub Login Button */}
+          <button
+            type="button"
+            onClick={handleGitHubLogin}
+            disabled={isLoading}
+            className="w-full bg-neutral-900 text-white border border-neutral-900 rounded-none px-6 py-4 uppercase tracking-wider text-xs font-bold hover:bg-neutral-800 hover:border-neutral-800 transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Github size={16} />
+            <span>{isLoading ? 'Connecting...' : 'Sign in with GitHub'}</span>
+          </button>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 pt-8 border-t border-neutral-100 text-center">
+          <p className="text-xs text-neutral-500">
+            Don't have an account?{' '}
+            <Link href="/auth/signup" className="font-bold text-neutral-900 hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Login Page with Suspense Boundary
+ * Wraps LoginContent to satisfy Next.js 16 useSearchParams requirement
+ */
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-[#F0F0F0]">
+          <div className="text-neutral-500">Loading...</div>
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
+  );
 }

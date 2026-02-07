@@ -63,7 +63,7 @@ const NAV_ITEMS: NavItem[] = [
 export function Sidebar({ className = '' }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { isCollapsed, toggleSidebar } = useSidebar();
+  const { isCollapsed, isMobileOpen, toggleSidebar, closeMobileMenu } = useSidebar();
 
   // 로그인 상태에 따라 네비게이션 필터링
   const visibleNavItems = NAV_ITEMS.filter((item) => {
@@ -75,9 +75,12 @@ export function Sidebar({ className = '' }: SidebarProps) {
 
   return (
     <aside
-      className={`sidebar h-full bg-white border-r border-neutral-200 flex flex-col overflow-hidden z-10 transition-all duration-300 ${
-        isCollapsed ? 'w-[64px] min-w-[64px]' : 'w-[240px] min-w-[240px]'
-      } ${className}`}
+      className={`sidebar h-full bg-white border-r border-neutral-200 flex flex-col overflow-hidden transition-all duration-300
+        ${isCollapsed ? 'w-[64px] min-w-[64px]' : 'w-[240px] min-w-[240px]'}
+        md:relative md:translate-x-0 md:z-10
+        fixed left-0 top-0 h-screen z-50
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${className}`}
     >
       {/* Header */}
       <div className={`border-b border-neutral-100 ${isCollapsed ? 'p-4' : 'p-6'}`}>
@@ -126,12 +129,14 @@ export function Sidebar({ className = '' }: SidebarProps) {
               <li key={item.id}>
                 <Link
                   href={item.href}
+                  onClick={closeMobileMenu}
                   aria-current={isActive ? 'page' : undefined}
                   title={isCollapsed ? item.label : undefined}
                   className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3'} text-xs font-bold uppercase tracking-wider transition-all
-                    ${isActive
-                      ? 'bg-neutral-900 text-white'
-                      : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
+                    ${
+                      isActive
+                        ? 'bg-neutral-900 text-white'
+                        : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
                     }
                   `}
                 >
@@ -171,9 +176,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
                 <div className="text-sm font-bold text-neutral-900 truncate uppercase tracking-tight">
                   {user.name}
                 </div>
-                <div className="text-[10px] text-neutral-400 truncate font-mono">
-                  {user.email}
-                </div>
+                <div className="text-[10px] text-neutral-400 truncate font-mono">{user.email}</div>
               </div>
             )}
 
@@ -195,6 +198,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
         ) : (
           <Link
             href="/auth/login"
+            onClick={closeMobileMenu}
             title={isCollapsed ? 'Login' : undefined}
             className={`flex items-center justify-center bg-neutral-900 text-white text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition-colors ${
               isCollapsed ? 'p-3' : 'gap-2 w-full py-3'

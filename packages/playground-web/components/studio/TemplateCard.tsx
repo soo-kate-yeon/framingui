@@ -1,7 +1,7 @@
 /**
  * Template Card Component
  * [SPEC-UI-003][TAG-UI003-047]
- * 
+ *
  * Theme: Square Minimalism
  * - Radius: 0
  * - Border: 1px Solid Neutral-200
@@ -19,11 +19,11 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const DEMO_ROUTES: Record<string, string> = {
   'square-minimalism': '/studio/square-minimalism',
-  'equinox-fitness-v2': '/studio/equinox-fitness-v2',
-  'round-minimal-v1': '/studio/round-minimal',
-  'classic-magazine-v1': '/studio/classic-magazine',
-  'neutral-humanism-v1': '/studio/neutral-humanism',
-  'minimal-workspace-v3': '/studio/minimal-workspace',
+  'equinox-fitness': '/studio/equinox-fitness',
+  'round-minimal': '/studio/round-minimal',
+  'classic-magazine': '/studio/classic-magazine',
+  'neutral-humanism': '/studio/neutral-humanism',
+  'minimal-workspace': '/studio/minimal-workspace',
 };
 
 // ============================================================================
@@ -41,6 +41,8 @@ interface TemplateCardProps {
   thumbnail?: string;
   /** 카테고리 */
   category: string;
+  /** 가격 (선택적) */
+  price?: number;
   /** 클릭 콜백 */
   onClick?: () => void;
   /** 추가 className */
@@ -57,6 +59,7 @@ export function TemplateCard({
   description,
   thumbnail,
   category,
+  price,
   onClick,
   className = '',
 }: TemplateCardProps) {
@@ -96,9 +99,7 @@ export function TemplateCard({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-xs font-bold uppercase tracking-widest text-neutral-300 group-hover:text-neutral-900 transition-colors">
-              {id}
-            </span>
+            {/* Empty placeholder */}
           </div>
         )}
 
@@ -113,7 +114,7 @@ export function TemplateCard({
           >
             <Heart
               size={14}
-              className={isLiked ? "fill-red-500 stroke-red-500" : "stroke-neutral-500"}
+              className={isLiked ? 'fill-red-500 stroke-red-500' : 'stroke-neutral-500'}
             />
           </button>
         )}
@@ -139,18 +140,18 @@ export function TemplateCard({
           <h3 className="text-lg font-bold text-neutral-900 uppercase tracking-tight mb-1">
             {name}
           </h3>
-          <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
-            {description}
-          </p>
+          <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">{description}</p>
         </div>
 
         <div className="mt-auto pt-4 border-t border-neutral-100 flex justify-between items-center group-hover:border-neutral-900/10 transition-colors">
-          <span className="text-[10px] font-mono text-neutral-300 group-hover:text-neutral-900 transition-colors">
-            ID: {id}
-          </span>
+          {price && (
+            <span className="text-lg font-bold text-neutral-900 uppercase tracking-tight">
+              ${price}
+            </span>
+          )}
           <ArrowRight
             size={16}
-            className="text-neutral-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-neutral-900 transition-all duration-300"
+            className="text-neutral-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-neutral-900 transition-all duration-300 ml-auto"
           />
         </div>
       </div>

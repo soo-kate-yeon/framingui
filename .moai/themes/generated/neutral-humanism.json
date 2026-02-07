@@ -1,0 +1,212 @@
+{
+  "id": "neutral-humanism",
+  "name": "Neutral Humanism",
+  "schemaVersion": "2.1",
+  "brandTone": "professional",
+  "designDNA": {
+    "moodKeywords": [
+      "clean",
+      "accessible",
+      "subtle",
+      "organized",
+      "warm"
+    ],
+    "targetEmotion": "trust",
+    "visualAtmosphere": "modern productivity",
+    "principles": [
+      "Friendly but professional geometry (Radius 8-12px)",
+      "Warm neutral palette for eye comfort",
+      "Focus on content over decoration"
+    ]
+  },
+  "tokens": {
+    "atomic": {
+      "color": {
+        "brand": {
+          "100": {
+            "l": 0.88,
+            "c": 0.06,
+            "h": 32
+          },
+          "500": {
+            "l": 0.55,
+            "c": 0.18,
+            "h": 32
+          },
+          "700": {
+            "l": 0.42,
+            "c": 0.20,
+            "h": 32
+          },
+          "900": {
+            "l": 0.18,
+            "c": 0.06,
+            "h": 32
+          }
+        },
+        "neutral": {
+          "white": {
+            "l": 0.99,
+            "c": 0.01,
+            "h": 55
+          },
+          "50": {
+            "l": 0.97,
+            "c": 0.02,
+            "h": 55
+          },
+          "100": {
+            "l": 0.95,
+            "c": 0.03,
+            "h": 55
+          },
+          "200": {
+            "l": 0.91,
+            "c": 0.03,
+            "h": 55
+          },
+          "300": {
+            "l": 0.86,
+            "c": 0.03,
+            "h": 55
+          },
+          "400": {
+            "l": 0.72,
+            "c": 0.02,
+            "h": 55
+          },
+          "500": {
+            "l": 0.58,
+            "c": 0.02,
+            "h": 55
+          },
+          "600": {
+            "l": 0.42,
+            "c": 0.02,
+            "h": 55
+          },
+          "700": {
+            "l": 0.32,
+            "c": 0.02,
+            "h": 55
+          },
+          "800": {
+            "l": 0.18,
+            "c": 0.01,
+            "h": 55
+          },
+          "900": {
+            "l": 0.12,
+            "c": 0.01,
+            "h": 55
+          },
+          "950": {
+            "l": 0.06,
+            "c": 0.01,
+            "h": 55
+          }
+        }
+      },
+      "spacing": {
+        "0": "0",
+        "1": "4px",
+        "2": "8px",
+        "3": "12px",
+        "4": "16px",
+        "5": "20px",
+        "6": "24px",
+        "8": "32px",
+        "10": "40px",
+        "12": "48px",
+        "16": "64px",
+        "20": "80px",
+        "24": "96px"
+      },
+      "radius": {
+        "sm": "6px",
+        "md": "8px",
+        "lg": "12px",
+        "xl": "16px",
+        "none": "0",
+        "full": "9999px"
+      }
+    },
+    "semantic": {
+      "background": {
+        "canvas": "atomic.color.neutral.50",
+        "surface": {
+          "subtle": "atomic.color.neutral.100",
+          "default": "atomic.color.neutral.white",
+          "emphasis": "atomic.color.neutral.200"
+        },
+        "brand": {
+          "subtle": "atomic.color.brand.100",
+          "default": "atomic.color.brand.500",
+          "emphasis": "atomic.color.brand.700"
+        }
+      },
+      "border": {
+        "default": {
+          "subtle": "atomic.color.neutral.100",
+          "default": "atomic.color.neutral.200",
+          "emphasis": "atomic.color.neutral.300"
+        },
+        "focus": "atomic.color.neutral.800"
+      },
+      "text": {
+        "primary": "atomic.color.neutral.900",
+        "secondary": "atomic.color.neutral.600",
+        "tertiary": "atomic.color.neutral.400",
+        "inverted": "atomic.color.neutral.white",
+        "link": "atomic.color.brand.700"
+      }
+    },
+    "recipes": {
+      "card": {
+        "default": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-xl shadow-sm hover:shadow-md hover:border-[var(--tekton-border-emphasis)] transition-all",
+        "flat": "bg-[var(--tekton-bg-canvas)] rounded-xl",
+        "outlined": "bg-transparent border border-[var(--tekton-border-default)] rounded-xl",
+        "feature": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-bg-canvas)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
+      },
+      "button": {
+        "primary": "bg-[var(--tekton-text-primary)] text-[var(--tekton-bg-surface)] hover:bg-[var(--tekton-bg-canvas-950,#0a0a0a)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+        "secondary": "bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] border border-[var(--tekton-border-default)] hover:bg-[var(--tekton-bg-canvas)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+        "ghost": "text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] hover:text-[var(--tekton-text-primary)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+        "icon": "text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] rounded-md p-2 transition-colors"
+      },
+      "input": {
+        "default": "w-full bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-lg h-10 px-3 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] focus:border-[var(--tekton-text-primary)] transition-all",
+        "search": "w-full bg-[var(--tekton-bg-canvas)] border-none rounded-lg h-10 px-10 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-secondary)] focus:bg-[var(--tekton-bg-surface)] focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] transition-all"
+      },
+      "badge": {
+        "neutral": "inline-flex items-center rounded-md bg-[var(--tekton-bg-canvas)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-secondary)]",
+        "brand": "inline-flex items-center rounded-md bg-[var(--tekton-bg-brand-subtle)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-link)]"
+      },
+      "typography": {
+        "h1": "font-sans text-4xl font-bold tracking-tight text-[var(--tekton-text-primary)]",
+        "h2": "font-sans text-2xl font-semibold tracking-tight text-[var(--tekton-text-primary)]",
+        "h3": "font-sans text-lg font-medium text-[var(--tekton-text-primary)]",
+        "body": "font-sans text-base text-[var(--tekton-text-secondary)] leading-relaxed",
+        "caption": "font-sans text-sm text-[var(--tekton-text-tertiary)]"
+      },
+      "avatar": {
+        "root": "relative inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[var(--tekton-bg-canvas)]",
+        "fallback": "flex h-full w-full items-center justify-center rounded-full bg-[var(--tekton-bg-canvas)] text-sm font-medium text-[var(--tekton-text-secondary)]"
+      },
+      "menu": {
+        "item": "flex w-full items-center rounded-md px-2 py-2 text-sm text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] cursor-pointer"
+      },
+      "layout": {
+        "container": "max-w-5xl mx-auto px-6",
+        "sidebar": "w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-canvas)] h-screen p-4 flex flex-col"
+      }
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      "serif": "Merriweather, serif",
+      "mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+    }
+  }
+}

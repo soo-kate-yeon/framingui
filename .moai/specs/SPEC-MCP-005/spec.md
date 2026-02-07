@@ -1,323 +1,445 @@
----
-id: SPEC-MCP-005
-version: "1.0.0"
-status: draft
-created: "2026-02-03"
-updated: "2026-02-03"
-author: soo-kate-yeon
-priority: MEDIUM
-dependencies:
-  - SPEC-AUTH-001
-  - SPEC-PAYMENT-001
----
+# SPEC-MCP-005: Agent Workflow Integration and Dependency Management
 
-## HISTORY
+## Overview
 
-| 날짜 | 버전 | 변경 내용 |
-|------|------|----------|
-| 2026-02-03 | 1.0.0 | 초안 작성 |
+| Field | Value |
+|-------|-------|
+| **SPEC ID** | SPEC-MCP-005 |
+| **Title** | Agent Workflow Integration and Dependency Management |
+| **Status** | Planned |
+| **Priority** | High |
+| **Created** | 2026-02-04 |
+| **Author** | R2-D2 + soo-kate-yeon |
+| **Dependencies** | SPEC-MCP-004 (Phase 3.5, 4 Complete) |
 
 ---
 
-# SPEC-MCP-005: MCP Free Tier 라이선스 로직
+## Problem Statement
 
-## 개요
+SPEC-MCP-004 successfully implemented Phase 3.5 tools (`get-screen-generation-context`, `validate-screen-definition`) and Phase 4 (Recipe Resolver). However, external coding agents (Gemini Antigravity, Claude Code) still experience:
 
-MCP (Model Context Protocol) 서버에서 사용자 라이선스에 따른 템플릿 접근 제어를 구현합니다. 무료 템플릿은 모든 사용자에게 제공하고, 프리미엄 템플릿은 라이선스 보유자에게만 제공합니다.
+1. **Agent Discovery Gap**: Tools exist but agents don't know WHEN to use them
+2. **Workflow Ambiguity**: No clear guidance on the recommended tool sequence
+3. **Dependency Blindness**: Generated code includes external dependencies that agents don't validate
+4. **Error Recovery Failure**: "Module not found" errors require manual intervention
 
----
-
-## 요구사항 (EARS Format)
-
-### Ubiquitous Requirements (항상 활성)
-
-**[TAG-MCP-005-U001]** 시스템은 프리미엄 ScreenTemplate 제공 전 사용자 라이선스를 확인해야 한다.
-
-**[TAG-MCP-005-U002]** 무료 ScreenTemplate은 항상 모든 사용자에게 접근이 허용되어야 한다.
-- 무료 템플릿: LandingBasic, SignUp, Contact Form
-
-**[TAG-MCP-005-U003]** 접근 제한 시 코딩 에이전트(Cursor, Claude)가 이해할 수 있는 가이드 메시지를 반환해야 한다.
-
-### Event-Driven Requirements (이벤트 기반)
-
-**[TAG-MCP-005-E001]** WHEN 무료 사용자가 템플릿 목록 요청 THEN 무료 템플릿을 먼저 표시하고 프리미엄 템플릿은 잠금 상태로 표시한다.
-
-**[TAG-MCP-005-E002]** WHEN 무료 사용자가 프리미엄 템플릿 요청 THEN 접근을 거부하고 업그레이드 메시지를 반환한다.
-
-**[TAG-MCP-005-E003]** WHEN 라이선스 사용자가 템플릿 요청 THEN 라이선스를 검증하고 해당 티어에 맞는 템플릿 접근을 허용한다.
-
-### State-Driven Requirements (상태 기반)
-
-**[TAG-MCP-005-S001]** IF Creator Pass 보유 THEN 모든 테마의 모든 템플릿에 접근 가능해야 한다.
-
-**[TAG-MCP-005-S002]** IF Single/Double 라이선스 보유 THEN 구매한 테마의 템플릿만 접근 가능해야 한다.
-
-**[TAG-MCP-005-S003]** IF 라이선스가 만료됨 THEN 무료 사용자로 취급하고 갱신 프롬프트를 표시해야 한다.
+**Evidence from Gemini Agent UX Review (2026-02-03):**
+- 3 failed attempts with `generate-screen` due to invalid tokens
+- Only used `list-themes` and `generate-screen` (skipped validation tools)
+- No awareness of `get-screen-generation-context` or `validate-screen-definition`
+- Runtime 404 errors from uninstalled dependencies
 
 ---
 
-## 무료 템플릿 목록
+## Goals
 
-| Template ID | 이름 | 설명 | 테마 |
-|-------------|------|------|------|
-| `landing-basic` | Landing Basic | 기본 랜딩 페이지 | 공통 |
-| `signup` | Sign Up | 회원가입 페이지 | 공통 |
-| `contact-form` | Contact Form | 문의 양식 페이지 | 공통 |
+| # | Goal | Success Criteria |
+|---|------|------------------|
+| G1 | Agent Workflow Adoption | 90%+ agents follow recommended workflow |
+| G2 | Zero Runtime 404 Errors | Dependencies validated before code delivery |
+| G3 | Proactive Dependency Guidance | Install commands provided automatically |
+| G4 | Error Recovery Automation | "Module not found" triggers auto-resolution |
 
 ---
 
-## 라이선스 검증 플로우
+## EARS Requirements
 
-### 템플릿 접근 검증 플로우
+### Ubiquitous Requirements
+
+- **[U1]** The MCP server SHALL include workflow guidance in all tool descriptions
+- **[U2]** The `generate_screen` tool SHALL return dependency information in every response
+
+### Event-Driven Requirements
+
+- **[E1]** WHEN `generate_screen` returns dependencies THEN the response SHALL include pre-formatted install commands
+- **[E2]** WHEN an agent receives `generate_screen` response THEN it MUST check the `dependencies` field
+- **[E3]** WHEN user provides a target path THEN the agent SHALL call `validate-environment` before delivering code
+- **[E4]** WHEN user reports "Module not found" error THEN the agent SHALL trigger `validate-environment` automatically
+
+### State-Driven Requirements
+
+- **[S1]** IF dependencies are present AND target path is known THEN `validate-environment` SHALL be called
+- **[S2]** IF missing dependencies are detected THEN install commands SHALL be displayed to user
+
+### Unwanted Requirements
+
+- **[W1]** The system SHALL NOT deliver generated code without dependency validation when path is known
+- **[W2]** The system SHALL NOT require users to manually search for install commands
+
+### Optional Requirements
+
+- **[O1]** WHERE possible, the system SHOULD provide compatibility notes (React version requirements, peer dependencies)
+- **[O2]** WHERE possible, the system SHOULD detect package manager preference (npm/yarn/pnpm/bun)
+
+---
+
+## Technical Specification
+
+### 1. Agent Workflow Guidelines
+
+#### 1.1 Mandatory Workflow Checkpoints
 
 ```
-MCP Client              MCP Server              License Service         Database
-    |                       |                          |                    |
-    |-- get_template() ---->|                          |                    |
-    |                       |-- checkLicense() ------->|                    |
-    |                       |                          |-- query licenses ->|
-    |                       |                          |<-- license data ---|
-    |                       |<-- LicenseResult --------|                    |
-    |                       |                          |                    |
-    |                       |-- (허용/거부 결정)        |                    |
-    |<-- Response ----------|                          |                    |
+Checkpoint 1: After generate_screen call
+  - Check `dependencies` field in response
+  - If non-empty, proceed to Checkpoint 2
+
+Checkpoint 2: Before delivering code to user
+  - If target path provided, call `validate-environment`
+  - Display dependency status to user
+
+Checkpoint 3: On user error report
+  - If error matches "Module not found" pattern
+  - Trigger `validate-environment` automatically
 ```
 
-### 라이선스 검증 로직
+#### 1.2 Workflow Diagram
+
+```
+User Request
+    |
+    v
++------------------+
+| generate_screen  |
++------------------+
+    |
+    v
++------------------+     NO
+| Dependencies     |-----------> Deliver Code
+| Present?         |
++------------------+
+    | YES
+    v
++------------------+
+| Show Dependency  |
+| List to Agent    |
++------------------+
+    |
+    v
++------------------+     NO
+| Target Path      |-----------> Show Install Commands
+| Known?           |              (Manual Validation)
++------------------+
+    | YES
+    v
++--------------------+
+| validate-environment|
++--------------------+
+    |
+    v
++------------------+     NO
+| Missing Deps?    |-----------> Deliver Code
++------------------+
+    | YES
+    v
++------------------+
+| Show Install     |
+| Commands         |
++------------------+
+    |
+    v
+[User installs dependencies]
+    |
+    v
+Deliver Code
+```
+
+### 2. Enhanced Tool Descriptions
+
+#### 2.1 generate_screen (Updated)
 
 ```typescript
-interface LicenseCheckResult {
-  hasAccess: boolean;
-  tier: 'free' | 'single' | 'double' | 'creator' | null;
-  expiresAt: Date | null;
-  reason?: string;
-}
+{
+  name: "generate_screen",
+  description: `[WORKFLOW STEP 3/4] Generate React code from Screen Definition.
 
-async function checkTemplateAccess(
-  userId: string | null,
-  themeId: string,
-  templateId: string
-): Promise<LicenseCheckResult> {
-  // 1. 무료 템플릿 확인
-  if (isFreeTemplate(templateId)) {
-    return { hasAccess: true, tier: 'free', expiresAt: null };
+REQUIRED WORKFLOW:
+1. Call get-screen-generation-context (Step 1)
+2. Generate/validate Screen Definition (Step 2)
+3. Call generate_screen (THIS TOOL - Step 3)
+4. Call validate-environment if path known (Step 4)
+
+AFTER RECEIVING RESPONSE:
+- Always check the 'dependencies' field
+- If dependencies.external is non-empty:
+  - If user provided package.json path: call validate-environment
+  - Otherwise: show install commands from dependencies.installCommands
+
+CRITICAL: This ensures zero 404 errors at runtime.`,
+  inputSchema: { /* existing schema */ },
+  outputSchema: {
+    type: "object",
+    properties: {
+      code: { type: "string" },
+      dependencies: {
+        type: "object",
+        properties: {
+          external: {
+            type: "array",
+            items: { type: "string" },
+            description: "NPM packages required by generated code"
+          },
+          internal: {
+            type: "array",
+            items: { type: "string" },
+            description: "Internal @tekton packages"
+          },
+          installCommands: {
+            type: "object",
+            properties: {
+              npm: { type: "string" },
+              yarn: { type: "string" },
+              pnpm: { type: "string" },
+              bun: { type: "string" }
+            }
+          },
+          compatibility: {
+            type: "object",
+            properties: {
+              react: { type: "string" },
+              node: { type: "string" }
+            }
+          }
+        }
+      }
+    }
   }
-
-  // 2. 비인증 사용자
-  if (!userId) {
-    return {
-      hasAccess: false,
-      tier: null,
-      expiresAt: null,
-      reason: 'AUTHENTICATION_REQUIRED',
-    };
-  }
-
-  // 3. 라이선스 조회
-  const license = await getLicenseForUser(userId, themeId);
-
-  // 4. 라이선스 없음
-  if (!license) {
-    return {
-      hasAccess: false,
-      tier: null,
-      expiresAt: null,
-      reason: 'NO_LICENSE',
-    };
-  }
-
-  // 5. 라이선스 만료
-  if (license.expires_at < new Date()) {
-    return {
-      hasAccess: false,
-      tier: license.tier,
-      expiresAt: license.expires_at,
-      reason: 'LICENSE_EXPIRED',
-    };
-  }
-
-  // 6. Creator Pass - 모든 접근 허용
-  if (license.tier === 'creator') {
-    return {
-      hasAccess: true,
-      tier: 'creator',
-      expiresAt: license.expires_at,
-    };
-  }
-
-  // 7. Single/Double - 해당 테마만 접근
-  if (license.theme_id === themeId) {
-    return {
-      hasAccess: true,
-      tier: license.tier,
-      expiresAt: license.expires_at,
-    };
-  }
-
-  return {
-    hasAccess: false,
-    tier: license.tier,
-    expiresAt: license.expires_at,
-    reason: 'THEME_NOT_LICENSED',
-  };
-}
-```
-
----
-
-## MCP 응답 형식
-
-### 접근 허용 응답
-
-```typescript
-interface TemplateAccessGranted {
-  success: true;
-  template: {
-    id: string;
-    name: string;
-    code: string;
-    props: Record<string, unknown>;
-  };
-  license: {
-    tier: 'free' | 'single' | 'double' | 'creator';
-    expiresAt: string | null;
-  };
-}
-```
-
-### 접근 거부 응답
-
-```typescript
-interface TemplateAccessDenied {
-  success: false;
-  error: 'TEMPLATE_ACCESS_DENIED' | 'AUTHENTICATION_REQUIRED' | 'LICENSE_EXPIRED';
-  message: string;
-  freeAlternatives: string[];
-  upgradeUrl: string;
-  details?: {
-    requestedTemplate: string;
-    requiredTier: string;
-    currentTier: string | null;
-  };
-}
-```
-
-### 에러 코드별 메시지
-
-| 에러 코드 | 메시지 (한국어) | 메시지 (영어) |
-|----------|----------------|---------------|
-| `AUTHENTICATION_REQUIRED` | 이 템플릿을 사용하려면 로그인이 필요합니다. | Authentication required to access this template. |
-| `TEMPLATE_ACCESS_DENIED` | 이 템플릿은 라이선스가 필요합니다. | This template requires a license. |
-| `LICENSE_EXPIRED` | 라이선스가 만료되었습니다. 갱신하세요. | Your license has expired. Please renew. |
-| `THEME_NOT_LICENSED` | 이 테마의 라이선스가 없습니다. | You don't have a license for this theme. |
-
----
-
-## MCP 도구 수정
-
-### list_templates 도구
-
-```typescript
-// 수정 전: 모든 템플릿 반환
-// 수정 후: 라이선스에 따라 필터링/표시
-
-interface ListTemplatesResponse {
-  templates: Array<{
-    id: string;
-    name: string;
-    description: string;
-    isFree: boolean;
-    isLocked: boolean;
-    requiredTier?: string;
-  }>;
-  userTier: 'free' | 'single' | 'double' | 'creator';
 }
 ```
 
-### get_template 도구
+#### 2.2 validate-environment (New Tool)
 
 ```typescript
-// 수정 전: 템플릿 코드 직접 반환
-// 수정 후: 라이선스 확인 후 반환 또는 거부
+{
+  name: "validate-environment",
+  description: `[WORKFLOW STEP 4/4] Validate user's environment for generated code dependencies.
 
-async function getTemplate(
-  templateId: string,
-  themeId: string,
-  authToken?: string
-): Promise<TemplateAccessGranted | TemplateAccessDenied> {
-  const userId = authToken ? await verifyToken(authToken) : null;
-  const accessResult = await checkTemplateAccess(userId, themeId, templateId);
+WHEN TO CALL:
+- After generate_screen if target path is known
+- When user reports "Module not found" or "Cannot find module" errors
+- Before finalizing code delivery
 
-  if (!accessResult.hasAccess) {
-    return {
-      success: false,
-      error: mapReasonToError(accessResult.reason),
-      message: getErrorMessage(accessResult.reason),
-      freeAlternatives: ['landing-basic', 'signup', 'contact-form'],
-      upgradeUrl: `/studio/template/${themeId}#pricing`,
-      details: {
-        requestedTemplate: templateId,
-        requiredTier: 'single',
-        currentTier: accessResult.tier,
+INPUT:
+- projectPath: Path to package.json or project root
+- requiredPackages: Array of package names (from generate_screen.dependencies.external)
+
+OUTPUT:
+- installed: Packages already installed with versions
+- missing: Packages that need to be installed
+- installCommands: Pre-formatted commands for each package manager
+- warnings: Version conflicts or compatibility issues`,
+  inputSchema: {
+    type: "object",
+    required: ["projectPath", "requiredPackages"],
+    properties: {
+      projectPath: {
+        type: "string",
+        description: "Path to package.json or project root"
       },
-    };
+      requiredPackages: {
+        type: "array",
+        items: { type: "string" },
+        description: "Packages to validate (from generate_screen.dependencies.external)"
+      }
+    }
   }
-
-  const template = await fetchTemplate(templateId, themeId);
-  return {
-    success: true,
-    template,
-    license: {
-      tier: accessResult.tier,
-      expiresAt: accessResult.expiresAt?.toISOString() ?? null,
-    },
-  };
 }
 ```
 
----
+#### 2.3 get-screen-generation-context (Updated)
 
-## AI 에이전트 친화적 응답
+```typescript
+{
+  name: "get-screen-generation-context",
+  description: `[WORKFLOW STEP 1/4] Get all context needed to generate a Screen Definition.
 
-MCP 응답은 Cursor, Claude 등의 코딩 에이전트가 이해하고 사용자에게 적절히 안내할 수 있도록 설계됩니다.
+THIS IS THE FIRST STEP in the screen generation workflow:
+1. Call THIS TOOL with user's description
+2. Use returned context to generate/validate Screen Definition
+3. Call generate_screen with the definition
+4. Call validate-environment if path known
 
-### 거부 응답 예시
+Returns: Components, schema, templates, examples, theme recipes, and contextual hints.`,
+  // ... existing schema
+}
+```
+
+### 3. Proactive Dependency Guidance
+
+#### 3.1 Enhanced generate_screen Response
 
 ```json
 {
-  "success": false,
-  "error": "TEMPLATE_ACCESS_DENIED",
-  "message": "이 템플릿은 라이선스가 필요합니다. 무료 대안을 사용하거나 라이선스를 구매하세요.",
-  "freeAlternatives": ["landing-basic", "signup", "contact-form"],
-  "upgradeUrl": "/studio/template/neutral-theme#pricing",
-  "details": {
-    "requestedTemplate": "dashboard-analytics",
-    "requiredTier": "single",
-    "currentTier": null
+  "code": "import { Card } from '@tekton/ui';\nimport { motion } from 'framer-motion';\n...",
+
+  "dependencies": {
+    "external": [
+      "framer-motion",
+      "@radix-ui/react-slot",
+      "lucide-react"
+    ],
+    "internal": [
+      "@tekton/ui",
+      "@tekton/tokens"
+    ],
+    "installCommands": {
+      "npm": "npm install framer-motion @radix-ui/react-slot lucide-react",
+      "yarn": "yarn add framer-motion @radix-ui/react-slot lucide-react",
+      "pnpm": "pnpm add framer-motion @radix-ui/react-slot lucide-react",
+      "bun": "bun add framer-motion @radix-ui/react-slot lucide-react"
+    },
+    "compatibility": {
+      "react": "^18.0.0 || ^19.0.0",
+      "node": ">=18.0.0"
+    },
+    "notes": [
+      "framer-motion requires React 18+ for concurrent features",
+      "@radix-ui/react-slot is a peer dependency of @tekton/ui"
+    ]
   }
 }
 ```
 
-### AI 에이전트 행동 가이드
+#### 3.2 Dependency Detection Logic
 
-거부 응답을 받은 AI 에이전트는:
-1. 사용자에게 라이선스 요구사항을 설명
-2. 무료 대안 템플릿 제안
-3. 라이선스 구매 링크 제공
-4. 필요시 무료 템플릿으로 대체하여 작업 계속
+```typescript
+function extractDependencies(generatedCode: string): Dependencies {
+  const imports = parseImports(generatedCode);
+
+  const external: string[] = [];
+  const internal: string[] = [];
+
+  for (const { source } of imports) {
+    if (source.startsWith('@tekton/')) {
+      internal.push(source);
+    } else if (!source.startsWith('.') && !isBuiltIn(source)) {
+      external.push(source);
+    }
+  }
+
+  return {
+    external: [...new Set(external)],
+    internal: [...new Set(internal)],
+    installCommands: generateInstallCommands(external),
+    compatibility: getCompatibilityRequirements(external)
+  };
+}
+```
+
+### 4. Error Recovery Workflow
+
+#### 4.1 Error Pattern Detection
+
+```typescript
+const MODULE_ERROR_PATTERNS = [
+  /Cannot find module '([^']+)'/,
+  /Module not found: Error: Can't resolve '([^']+)'/,
+  /Error: Cannot find module '([^']+)'/,
+  /ModuleNotFoundError: No module named '([^']+)'/
+];
+
+function detectModuleError(errorMessage: string): string | null {
+  for (const pattern of MODULE_ERROR_PATTERNS) {
+    const match = errorMessage.match(pattern);
+    if (match) {
+      return match[1]; // Return the missing module name
+    }
+  }
+  return null;
+}
+```
+
+#### 4.2 Auto-Recovery Workflow
+
+```
+User reports: "Module not found: framer-motion"
+    |
+    v
++------------------------+
+| detectModuleError()    |
+| -> "framer-motion"     |
++------------------------+
+    |
+    v
++------------------------+
+| validate-environment   |
+| projectPath: user's    |
+| requiredPackages:      |
+|   ["framer-motion"]    |
++------------------------+
+    |
+    v
++------------------------+
+| Output to User:        |
+| "framer-motion is      |
+|  missing. Install:"    |
+| npm i framer-motion    |
++------------------------+
+```
+
+### 5. Agent Training Documentation
+
+Create `.moai/docs/mcp-workflow-guide.md`:
+
+```markdown
+# MCP Screen Generation Workflow Guide
+
+## For AI Coding Agents
+
+This guide ensures successful screen generation with zero runtime errors.
+
+### Mandatory 4-Step Workflow
+
+**Step 1: Get Context**
+```
+Tool: get-screen-generation-context
+Input: { description: "user's request", themeId: "optional" }
+Output: Components, schema, examples, hints
+```
+
+**Step 2: Validate Definition**
+```
+Tool: validate-screen-definition
+Input: { definition: generatedScreenDef }
+Output: { valid: boolean, errors: [], suggestions: [] }
+```
+
+**Step 3: Generate Code**
+```
+Tool: generate_screen
+Input: { screenDefinition: validatedDef, themeId: "..." }
+Output: { code: "...", dependencies: { external: [...] } }
+
+CRITICAL: Check dependencies.external in response!
+```
+
+**Step 4: Validate Environment (If Path Known)**
+```
+Tool: validate-environment
+Input: { projectPath: "/path/to/package.json", requiredPackages: dependencies.external }
+Output: { missing: [...], installCommands: { npm: "..." } }
+```
+
+### Dependency Handling Checklist
+
+- [ ] After generate_screen, check `dependencies.external`
+- [ ] If non-empty, inform user about required packages
+- [ ] If projectPath known, call validate-environment
+- [ ] Show install commands for missing packages
+- [ ] Wait for user confirmation before delivering code
+
+### Error Recovery
+
+When user reports "Module not found" or similar:
+1. Parse error message for module name
+2. Call validate-environment with that module
+3. Provide install command
+```
 
 ---
 
-## 기술 제약사항
+## References
 
-- **인증**: Supabase Auth JWT 토큰
-- **캐싱**: 라이선스 상태 5분 캐시 (Redis 또는 인메모리)
-- **타임아웃**: 라이선스 검증 500ms 이내
-- **폴백**: 검증 실패 시 접근 거부 (fail-closed)
-
----
-
-## 관련 SPEC
-
-- SPEC-AUTH-001: 사용자 인증 및 MCP 토큰 발급
-- SPEC-PAYMENT-001: 라이선스 생성 및 만료 관리
+- SPEC-MCP-004: Tekton MCP Workflow Optimization
+- SPEC-MCP-003: Component & Template Discovery Tools
+- Gemini Agent UX Review (2026-02-03)

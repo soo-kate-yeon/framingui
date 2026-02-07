@@ -1,5 +1,6 @@
 {
-  "*.{ts,js}": ["eslint --fix"],
-  "packages/*/src/**/*.{ts,js}": ["eslint --fix"],
-  "packages/*/__tests__/**/*.{ts,js}": ["eslint --fix"]
+  "*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,yml,yaml}": ["prettier --write"],
+  "packages/*/src/**/*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"],
+  "packages/*/__tests__/**/*.{ts,tsx,js,jsx}": ["eslint --fix", "prettier --write"]
 }

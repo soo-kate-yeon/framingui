@@ -7,6 +7,7 @@
  */
 
 import { listThemes } from '@tekton/core';
+import { getTemplateData } from '../../data/templates';
 import { TemplateGallery } from '../../components/studio/TemplateGallery';
 import type { Metadata } from 'next';
 
@@ -21,6 +22,7 @@ interface GalleryItem {
   description: string;
   category: string;
   thumbnail?: string;
+  price?: number;
 }
 
 export default function ExplorePage() {
@@ -31,32 +33,36 @@ export default function ExplorePage() {
   try {
     themes = listThemes();
 
-    // Map themes to TemplateGallery format
-    galleryItems = themes.map(theme => ({
-      id: theme.id,
-      name: theme.name,
-      description: theme.description || `A ${theme.brandTone || 'Modern'} design system.`,
-      category: 'Design System',
-      thumbnail: undefined
-    }));
+    // Map themes to TemplateGallery format with price data
+    galleryItems = themes.map((theme) => {
+      const templateData = getTemplateData(theme.id);
+      return {
+        id: theme.id,
+        name: theme.name,
+        description: theme.description || `A ${theme.brandTone || 'Modern'} design system.`,
+        category: 'Design System',
+        thumbnail: undefined,
+        price: templateData?.price,
+      };
+    });
   } catch (error) {
     console.error('[Studio Page] Error loading themes:', error);
     galleryItems = [];
   }
 
   return (
-    <div className="p-12 max-w-[1600px] mx-auto">
+    <div className="p-6 md:p-12 max-w-7xl mx-auto">
       {/* Header */}
-      <header className="mb-24">
+      <header className="mb-12">
         <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
           Tekton Studio
         </span>
-        <h1 className="text-6xl font-bold tracking-tighter text-neutral-900 mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tighter text-neutral-900 mb-6">
           SELECT THEME
         </h1>
-        <p className="text-xl text-neutral-500 max-w-2xl leading-relaxed">
-          Choose a design system to activate the Agentic Styling engine.
-          Every theme is loaded directly from the MCP knowledge base.
+        <p className="text-sm md:text-base text-neutral-500 max-w-2xl leading-relaxed">
+          Choose a design system to activate the Agentic Styling engine. Every theme is loaded
+          directly from the MCP knowledge base.
         </p>
       </header>
 
@@ -67,7 +73,9 @@ export default function ExplorePage() {
         ) : (
           <div className="text-center py-12">
             <p className="text-neutral-500 mb-4">No themes found or error loading themes</p>
-            <p className="text-xs text-neutral-400">Check browser console and server terminal for errors</p>
+            <p className="text-xs text-neutral-400">
+              Check browser console and server terminal for errors
+            </p>
           </div>
         )}
       </div>

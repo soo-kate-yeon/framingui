@@ -1,256 +1,234 @@
----
-id: SPEC-MCP-005
-type: acceptance
-version: "1.0.0"
-created: "2026-02-03"
-updated: "2026-02-03"
----
+# SPEC-MCP-005 Acceptance Criteria
 
-# SPEC-MCP-005: 인수 기준
+## Overview
 
-## Traceability Tags
-
-- [TAG-MCP-005-U001] ~ [TAG-MCP-005-U003]: Ubiquitous Requirements
-- [TAG-MCP-005-E001] ~ [TAG-MCP-005-E003]: Event-Driven Requirements
-- [TAG-MCP-005-S001] ~ [TAG-MCP-005-S003]: State-Driven Requirements
+| Field | Value |
+|-------|-------|
+| **SPEC ID** | SPEC-MCP-005 |
+| **Title** | Agent Workflow Integration and Dependency Management |
+| **Version** | 1.0 |
+| **Last Updated** | 2026-02-04 |
 
 ---
 
-## 테스트 시나리오
+## Test Scenarios
 
-### Scenario 1: 무료 사용자 접근 테스트
+### Scenario 1: Agent Workflow Adoption
 
-**관련 태그**: [TAG-MCP-005-U002], [TAG-MCP-005-E001], [TAG-MCP-005-E002]
+**Given** a coding agent (Claude Code or Gemini)
+**When** the agent receives a screen generation request
+**Then** the agent should follow the 4-step workflow:
+  1. Call `get-screen-generation-context`
+  2. Call `validate-screen-definition`
+  3. Call `generate_screen`
+  4. Call `validate-environment` (if path known)
+
+#### Test Cases
+
+| # | Test Case | Expected Result | Status |
+|---|-----------|-----------------|--------|
+| 1.1 | Claude Code reads tool descriptions | Identifies workflow steps from `[WORKFLOW STEP X/4]` prefix | Pending |
+| 1.2 | Gemini Agent reads tool descriptions | Identifies workflow steps from `[WORKFLOW STEP X/4]` prefix | Pending |
+| 1.3 | Agent skips step 1 | Generation still works but with suboptimal results | Pending |
+| 1.4 | Agent skips step 4 | Code delivered but dependencies may be missing | Pending |
+
+---
+
+### Scenario 2: Dependency Extraction
+
+**Given** generated code with external dependencies
+**When** `generate_screen` is called
+**Then** the response should include:
+  - `dependencies.external`: Array of npm package names
+  - `dependencies.internal`: Array of @tekton/* packages
+  - `dependencies.installCommands`: Commands for npm/yarn/pnpm/bun
+  - `dependencies.compatibility`: React and Node version requirements
+
+#### Test Cases
+
+| # | Test Case | Input | Expected Output | Status |
+|---|-----------|-------|-----------------|--------|
+| 2.1 | Code with framer-motion | `import { motion } from 'framer-motion'` | `external: ["framer-motion"]` | Pending |
+| 2.2 | Code with @radix-ui | `import { Slot } from '@radix-ui/react-slot'` | `external: ["@radix-ui/react-slot"]` | Pending |
+| 2.3 | Code with @tekton/ui | `import { Card } from '@tekton/ui'` | `internal: ["@tekton/ui"]` | Pending |
+| 2.4 | Code with multiple deps | Multiple imports | All deps extracted | Pending |
+| 2.5 | Code without external deps | Only @tekton imports | `external: []` | Pending |
+| 2.6 | Install commands generated | 3 external deps | All 4 package managers covered | Pending |
+
+---
+
+### Scenario 3: Environment Validation
+
+**Given** a project path with package.json
+**When** `validate-environment` is called with required packages
+**Then** the response should identify:
+  - `installed`: Packages already in package.json with versions
+  - `missing`: Packages not found in package.json
+  - `installCommands`: Commands to install missing packages
+  - `warnings`: Version conflicts or compatibility issues
+
+#### Test Cases
+
+| # | Test Case | package.json | Required | Expected | Status |
+|---|-----------|--------------|----------|----------|--------|
+| 3.1 | All deps installed | `{"dependencies": {"framer-motion": "^10.0.0"}}` | `["framer-motion"]` | `missing: []` | Pending |
+| 3.2 | Missing deps | `{"dependencies": {}}` | `["framer-motion"]` | `missing: ["framer-motion"]` | Pending |
+| 3.3 | Partial match | `{"dependencies": {"react": "^18.0.0"}}` | `["react", "framer-motion"]` | `missing: ["framer-motion"]` | Pending |
+| 3.4 | devDependencies check | `{"devDependencies": {"vitest": "^1.0.0"}}` | `["vitest"]` | `missing: []` | Pending |
+| 3.5 | Install commands | - | `["pkg-a", "pkg-b"]` | `npm install pkg-a pkg-b` | Pending |
+| 3.6 | Invalid path | `/nonexistent/package.json` | Any | Error with guidance | Pending |
+
+---
+
+### Scenario 4: Proactive Dependency Guidance
+
+**Given** a `generate_screen` response with dependencies
+**When** the agent processes the response
+**Then** the agent should:
+  - Check `dependencies.external` field
+  - If non-empty and path known, call `validate-environment`
+  - Show install commands for missing packages
+  - Include compatibility notes if relevant
+
+#### Test Cases
+
+| # | Test Case | Expected Behavior | Status |
+|---|-----------|-------------------|--------|
+| 4.1 | Empty dependencies | No additional action required | Pending |
+| 4.2 | Has dependencies, no path | Show install commands from response | Pending |
+| 4.3 | Has dependencies, path known | Call validate-environment | Pending |
+| 4.4 | Missing deps detected | Show npm/yarn/pnpm/bun commands | Pending |
+| 4.5 | Compatibility notes | Show React version requirements | Pending |
+
+---
+
+### Scenario 5: Error Recovery
+
+**Given** a user reports "Module not found" error
+**When** the error message is analyzed
+**Then** the system should:
+  - Detect the missing module name
+  - Suggest `validate-environment` call
+  - Provide install command for the specific module
+
+#### Test Cases
+
+| # | Error Message | Expected Module | Expected Command | Status |
+|---|---------------|-----------------|------------------|--------|
+| 5.1 | `Cannot find module 'framer-motion'` | framer-motion | `npm install framer-motion` | Pending |
+| 5.2 | `Module not found: Error: Can't resolve '@radix-ui/react-slot'` | @radix-ui/react-slot | `npm install @radix-ui/react-slot` | Pending |
+| 5.3 | `Error: Cannot find module 'lucide-react'` | lucide-react | `npm install lucide-react` | Pending |
+| 5.4 | No module error (other error) | null | No action | Pending |
+| 5.5 | Multiple module errors | First module | Install first, then retry | Pending |
+
+---
+
+### Scenario 6: Tool Description Quality
+
+**Given** MCP tool definitions
+**When** an agent reads the tool descriptions
+**Then** each tool should include:
+  - `[WORKFLOW STEP X/4]` prefix
+  - Clear "WHEN TO CALL" section
+  - "NEXT STEP" or "AFTER RECEIVING RESPONSE" guidance
+
+#### Test Cases
+
+| # | Tool | Required Elements | Status |
+|---|------|-------------------|--------|
+| 6.1 | get-screen-generation-context | Step 1/4, returns context, next step is validate | Pending |
+| 6.2 | validate-screen-definition | Step 2/4, when to call, returns validation | Pending |
+| 6.3 | generate_screen | Step 3/4, check dependencies, next is validate-env | Pending |
+| 6.4 | validate-environment | Step 4/4, when to call, returns missing list | Pending |
+
+---
+
+## Integration Tests
+
+### Test 1: Claude Code Full Workflow
 
 ```gherkin
-Feature: 무료 사용자 템플릿 접근
-  As a 무료 사용자
-  I want to 무료 템플릿에 접근할 수 있다
-  So that 기본 기능을 체험할 수 있다
-
-  Scenario: 무료 템플릿 목록 조회
-    Given 사용자가 인증되지 않았다
-    When list_templates를 호출한다
-    Then 무료 템플릿이 목록 상단에 표시된다
-    And 무료 템플릿의 isLocked가 false이다
-    And 프리미엄 템플릿의 isLocked가 true이다
-    And userTier가 "free"이다
-
-  Scenario: 무료 템플릿 코드 조회
-    Given 사용자가 인증되지 않았다
-    When get_template("landing-basic", "neutral-theme")를 호출한다
-    Then success가 true이다
-    And template.code가 반환된다
-    And license.tier가 "free"이다
-
-  Scenario: 프리미엄 템플릿 접근 거부
-    Given 사용자가 인증되지 않았다
-    When get_template("dashboard-analytics", "neutral-theme")를 호출한다
-    Then success가 false이다
-    And error가 "TEMPLATE_ACCESS_DENIED"이다
-    And freeAlternatives에 ["landing-basic", "signup", "contact-form"]가 포함된다
-    And upgradeUrl이 반환된다
-
-  Scenario: 인증되지 않은 사용자 프리미엄 요청
-    Given 사용자가 인증 토큰이 없다
-    When get_template("premium-template", "neutral-theme")를 호출한다
-    Then error가 "AUTHENTICATION_REQUIRED"이다
-    And message에 로그인 안내가 포함된다
+Given Claude Code receives "Create a fitness dashboard"
+When the agent executes the workflow
+Then the following tools should be called in order:
+  | Order | Tool | Purpose |
+  | 1 | get-screen-generation-context | Get context |
+  | 2 | validate-screen-definition | Validate definition |
+  | 3 | generate_screen | Generate code |
+  | 4 | validate-environment | Check dependencies |
+And the final output should include:
+  - Valid React code
+  - List of installed dependencies
+  - List of missing dependencies (if any)
+  - Install commands for missing deps
 ```
 
-### Scenario 2: 라이선스 사용자 접근 테스트
-
-**관련 태그**: [TAG-MCP-005-U001], [TAG-MCP-005-E003], [TAG-MCP-005-S002]
+### Test 2: Gemini Agent Full Workflow
 
 ```gherkin
-Feature: 라이선스 사용자 템플릿 접근
-  As a 라이선스 보유 사용자
-  I want to 구매한 템플릿에 접근할 수 있다
-  So that 프리미엄 기능을 사용할 수 있다
-
-  Scenario: Single 라이선스 - 해당 테마 접근
-    Given 사용자가 "neutral-theme" Single 라이선스를 보유하고 있다
-    When get_template("dashboard-analytics", "neutral-theme")를 호출한다
-    Then success가 true이다
-    And template.code가 반환된다
-    And license.tier가 "single"이다
-    And license.expiresAt이 1년 후 날짜이다
-
-  Scenario: Single 라이선스 - 다른 테마 접근 거부
-    Given 사용자가 "neutral-theme" Single 라이선스를 보유하고 있다
-    When get_template("dashboard-analytics", "round-theme")를 호출한다
-    Then success가 false이다
-    And error가 "THEME_NOT_LICENSED"이다
-    And details.currentTier가 "single"이다
-
-  Scenario: Double 라이선스 - 2개 테마 접근
-    Given 사용자가 Double 라이선스를 보유하고 있다
-    And 라이선스가 "neutral-theme"과 "round-theme"에 적용되어 있다
-    When get_template("any-template", "neutral-theme")를 호출한다
-    Then success가 true이다
-    When get_template("any-template", "round-theme")를 호출한다
-    Then success가 true이다
+Given Gemini Agent receives "Create a login page with social auth"
+When the agent executes the workflow
+Then the agent should NOT:
+  - Call generate_screen without context
+  - Skip validate-screen-definition
+  - Ignore dependencies in response
+And the agent SHOULD:
+  - Follow 4-step workflow
+  - Report dependency status
+  - Provide install commands if needed
 ```
 
-### Scenario 3: Creator Pass 접근 테스트
-
-**관련 태그**: [TAG-MCP-005-S001]
+### Test 3: Error Recovery Flow
 
 ```gherkin
-Feature: Creator Pass 전체 접근
-  As a Creator Pass 구독자
-  I want to 모든 템플릿에 접근할 수 있다
-  So that 모든 프리미엄 기능을 사용할 수 있다
-
-  Scenario: 모든 테마 접근 가능
-    Given 사용자가 Creator Pass를 구독 중이다
-    When get_template("any-template", "any-theme")를 호출한다
-    Then success가 true이다
-    And license.tier가 "creator"이다
-
-  Scenario: 신규 테마 자동 접근
-    Given 사용자가 Creator Pass를 구독 중이다
-    And 새로운 "new-theme"이 추가되었다
-    When get_template("any-template", "new-theme")를 호출한다
-    Then success가 true이다
-
-  Scenario: Creator Pass 템플릿 목록
-    Given 사용자가 Creator Pass를 구독 중이다
-    When list_templates("any-theme")를 호출한다
-    Then 모든 템플릿의 isLocked가 false이다
-    And userTier가 "creator"이다
-```
-
-### Scenario 4: 만료 처리 테스트
-
-**관련 태그**: [TAG-MCP-005-S003]
-
-```gherkin
-Feature: 라이선스 만료 처리
-  As a 라이선스가 만료된 사용자
-  I want to 만료 안내를 받는다
-  So that 라이선스를 갱신할 수 있다
-
-  Scenario: 만료된 Single 라이선스
-    Given 사용자의 Single 라이선스가 어제 만료되었다
-    When get_template("dashboard-analytics", "neutral-theme")를 호출한다
-    Then success가 false이다
-    And error가 "LICENSE_EXPIRED"이다
-    And message에 갱신 안내가 포함된다
-    And details.currentTier가 "single"이다
-
-  Scenario: 만료 후 무료 템플릿은 접근 가능
-    Given 사용자의 라이선스가 만료되었다
-    When get_template("landing-basic", "neutral-theme")를 호출한다
-    Then success가 true이다
-    And license.tier가 "free"이다
-
-  Scenario: 만료된 Creator Pass
-    Given 사용자의 Creator Pass가 만료되었다
-    When list_templates("neutral-theme")를 호출한다
-    Then 프리미엄 템플릿의 isLocked가 true이다
-    And userTier가 "free"이다
-```
-
-### Scenario 5: AI 에이전트 친화적 응답 테스트
-
-**관련 태그**: [TAG-MCP-005-U003]
-
-```gherkin
-Feature: AI 에이전트 친화적 에러 응답
-  As a AI 코딩 에이전트 (Cursor/Claude)
-  I want to 구조화된 에러 응답을 받는다
-  So that 사용자에게 적절히 안내할 수 있다
-
-  Scenario: 접근 거부 응답 구조
-    Given 무료 사용자가 프리미엄 템플릿을 요청한다
-    When MCP 응답이 반환된다
-    Then 응답에 다음 필드가 포함된다:
-      | 필드              | 설명                           |
-      | success          | false                          |
-      | error            | 에러 코드                       |
-      | message          | 사람이 읽을 수 있는 메시지         |
-      | freeAlternatives | 무료 대안 템플릿 목록             |
-      | upgradeUrl       | 라이선스 구매 페이지 URL          |
-      | details          | 상세 정보 (요청 템플릿, 필요 티어) |
-
-  Scenario: 에러 메시지 다국어 지원
-    Given 사용자 언어 설정이 "ko"이다
-    When 접근 거부 응답이 반환된다
-    Then message가 한국어로 반환된다
-
-  Scenario: AI 에이전트 대안 제안 동작
-    Given AI 에이전트가 접근 거부 응답을 받았다
-    Then AI는 freeAlternatives 목록을 사용자에게 제안할 수 있다
-    And AI는 upgradeUrl을 사용자에게 안내할 수 있다
-```
-
-### Scenario 6: 캐싱 동작 테스트
-
-```gherkin
-Feature: 라이선스 캐싱
-  As a 시스템
-  I want to 라이선스를 캐싱한다
-  So that 응답 시간을 단축할 수 있다
-
-  Scenario: 라이선스 캐시 적중
-    Given 사용자의 라이선스가 캐시되어 있다
-    When get_template를 호출한다
-    Then 데이터베이스 쿼리 없이 응답이 반환된다
-    And 응답 시간이 50ms 이내이다
-
-  Scenario: 캐시 만료 후 갱신
-    Given 사용자의 라이선스 캐시가 5분 전에 생성되었다
-    When get_template를 호출한다
-    Then 데이터베이스에서 새로 조회한다
-    And 캐시가 갱신된다
-
-  Scenario: 결제 후 캐시 무효화
-    Given 사용자가 라이선스를 구매했다
-    When 결제 웹훅이 처리된다
-    Then 해당 사용자의 라이선스 캐시가 무효화된다
-    When 사용자가 템플릿을 요청한다
-    Then 새로운 라이선스 정보가 반환된다
+Given a user reports "Error: Cannot find module 'framer-motion'"
+When the agent analyzes the error
+Then the agent should:
+  - Detect "framer-motion" as missing module
+  - Suggest running validate-environment
+  - Provide: "npm install framer-motion"
+  - Advise restart after installation
 ```
 
 ---
 
-## 품질 게이트 기준
+## Quality Gates
 
-### 기능 완료 기준
+### Gate 1: Tool Description Compliance
 
-- [ ] 모든 Ubiquitous Requirements 충족
-- [ ] 모든 Event-Driven Requirements 충족
-- [ ] 모든 State-Driven Requirements 충족
-- [ ] 4가지 티어별 접근 제어 완료
+- [ ] All tools include `[WORKFLOW STEP X/4]` prefix
+- [ ] All tools include "WHEN TO CALL" section
+- [ ] Code generation tools include "AFTER RECEIVING RESPONSE" section
+- [ ] No tool description exceeds 500 characters main description
 
-### 성능 기준
+### Gate 2: Dependency System Accuracy
 
-- [ ] 라이선스 검증 응답 시간 < 100ms (캐시 적중)
-- [ ] 라이선스 검증 응답 시간 < 500ms (DB 조회)
-- [ ] 캐시 적중률 > 80%
+- [ ] External dependencies extracted with 100% accuracy
+- [ ] Internal @tekton packages identified separately
+- [ ] Install commands generated for all 4 package managers
+- [ ] Compatibility notes provided for known packages
 
-### 테스트 커버리지
+### Gate 3: Agent Adoption Rate
 
-- [ ] Unit Test 커버리지 85% 이상
-- [ ] 모든 티어 조합 테스트 완료
-- [ ] 에러 응답 구조 검증 완료
-- [ ] AI 에이전트 통합 테스트 완료
+- [ ] Claude Code follows workflow in 90%+ of test cases
+- [ ] Gemini Agent follows workflow in 90%+ of test cases
+- [ ] Zero "Module not found" errors when workflow followed
 
-### 보안 기준
+### Gate 4: Error Recovery Effectiveness
 
-- [ ] 토큰 검증 fail-closed 정책
-- [ ] 라이선스 위조 방지
-- [ ] 민감 정보 로깅 금지
+- [ ] Module error pattern detection covers 95%+ of common patterns
+- [ ] Recovery guidance is actionable (copy-paste install command)
+- [ ] Restart advice included after installation
 
 ---
 
 ## Definition of Done
 
-1. 무료 템플릿 항상 접근 가능
-2. 라이선스별 접근 제어 작동
-3. 만료 라이선스 처리 완료
-4. AI 친화적 에러 응답 구현
-5. 캐싱 구현 및 성능 검증
-6. 단위/통합 테스트 완료
-7. MCP 문서 업데이트 완료
+- [ ] Phase 1: All tool descriptions updated with workflow guidance
+- [ ] Phase 2: Dependency extraction and validation system implemented
+- [ ] Phase 3: Error recovery and documentation complete
+- [ ] All unit tests passing (coverage >= 85%)
+- [ ] Integration tests with Claude Code successful
+- [ ] Integration tests with Gemini Agent successful
+- [ ] mcp-workflow-guide.md created and reviewed
+- [ ] SPEC-MCP-005 marked as Complete in overview

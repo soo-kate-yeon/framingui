@@ -39,14 +39,11 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
 
   return (
     <div
-      className={clsx(
-        'relative p-4 bg-neutral-900 rounded-lg overflow-x-auto',
-        className
-      )}
+      className={clsx('relative p-3 sm:p-4 bg-neutral-900 rounded-lg overflow-x-auto', className)}
     >
       {/* Language Label */}
       {language && (
-        <div className="absolute top-2 left-4 text-xs uppercase tracking-wider text-neutral-400">
+        <div className="absolute top-2 left-3 sm:left-4 text-xs uppercase tracking-wider text-neutral-400">
           {language}
         </div>
       )}
@@ -56,14 +53,16 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
         type="button"
         onClick={handleCopy}
         aria-label={copied ? 'Copied!' : 'Copy code to clipboard'}
-        className="absolute top-2 right-2 p-2 text-neutral-400 hover:text-white transition-colors rounded"
+        className="absolute top-2 right-2 p-1.5 sm:p-2 text-neutral-400 hover:text-white transition-colors rounded"
       >
-        {copied ? <Check size={18} /> : <Copy size={18} />}
+        {copied ? <Check size={16} /> : <Copy size={16} />}
       </button>
 
-      {/* Code Content */}
-      <pre className="mt-6">
-        <code className="font-mono text-sm text-neutral-100">{code}</code>
+      {/* Code Content - Mobile Optimized */}
+      <pre className="mt-6 overflow-x-auto">
+        <code className="font-mono text-xs sm:text-sm text-neutral-100 break-all sm:break-normal">
+          {code}
+        </code>
       </pre>
     </div>
   );
