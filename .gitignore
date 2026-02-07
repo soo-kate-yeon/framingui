@@ -290,9 +290,4 @@ dist-ssr/
 .nuxt/
 service-account.json
 .DS_Store
-docs/legal/en/privacy-policy.md
-docs/legal/en/refund-policy.md
-docs/legal/en/terms-of-service.md
-docs/legal/ko/privacy-policy.md
-docs/legal/ko/refund-policy.md
-docs/legal/ko/terms-of-service.md
+# Legal documents are now tracked in git (public information)

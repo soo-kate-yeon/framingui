@@ -191,3 +191,113 @@ jobs:
             exit 1
           fi
           echo "✅ All quality gates passed"
+
+  auto-fix:
+    name: Auto-fix on Failure
+    runs-on: ubuntu-latest
+    needs: [quality-summary]
+    # Run only on feature branches when quality-summary fails
+    if: failure() && github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main'
+    permissions:
+      contents: write
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check retry count
+        id: retry-check
+        run: |
+          AUTO_FIX_COUNT=$(git log --since="24 hours ago" --grep="auto-fix CI/CD" --oneline | wc -l)
+          echo "auto_fix_count=$AUTO_FIX_COUNT" >> $GITHUB_OUTPUT
+
+          if [ $AUTO_FIX_COUNT -ge 3 ]; then
+            echo "⚠️ Maximum retry attempts (3) reached in last 24 hours"
+            echo "should_fix=false" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "✅ Retry count: $AUTO_FIX_COUNT/3"
+            echo "should_fix=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run simple auto-fixes
+        id: simple-fixes
+        continue-on-error: true
+        run: |
+          echo "🔧 Running ESLint auto-fix..."
+          pnpm lint:all --fix || true
+
+          echo "🎨 Running Prettier auto-format..."
+          pnpm exec prettier --write "packages/*/src/**/*.{ts,tsx}" "packages/*/__tests__/**/*.{ts,tsx}" || true
+
+      - name: Check for changes after simple fixes
+        id: check-simple-changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "📝 Simple fixes applied:"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No simple fixes available"
+          fi
+
+      - name: Commit and push simple fixes
+        if: steps.check-simple-changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+
+          ATTEMPT_NUM=$(($(git log --since="24 hours ago" --grep="auto-fix CI/CD" --oneline | wc -l) + 1))
+
+          cat << EOF > commit_message.txt
+          chore: auto-fix CI/CD failures (attempt $ATTEMPT_NUM/3)
+
+          Automated fixes applied:
+          - ESLint --fix
+          - Prettier --write
+
+          Workflow run: ${{ github.run_id }}
+          EOF
+
+          git commit -F commit_message.txt
+          git push
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Auto-fix Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.check-simple-changes.outputs.has_changes }}" == "true" ]; then
+            echo "✅ Simple fixes were applied and committed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Quality Gate will re-run automatically" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No automatic fixes were available" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Manual intervention required" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Retry count: ${{ steps.retry-check.outputs.auto_fix_count }}/3" >> $GITHUB_STEP_SUMMARY
