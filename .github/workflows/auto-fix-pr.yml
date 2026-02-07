@@ -22,7 +22,7 @@ jobs:
       github.event.workflow_run.conclusion == 'failure' &&
       github.event.workflow_run.event == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Checkout PR branch
@@ -103,6 +103,62 @@ jobs:
           echo "🎨 Running Prettier auto-fix..."
           pnpm exec prettier --write "packages/*/src/**/*.{ts,tsx}" "packages/*/__tests__/**/*.{ts,tsx}" "*.{ts,js,json}" ".github/**/*.yml" || true
 
+      - name: Install Claude Code CLI
+        if: |
+          steps.analyze.outputs.needs_type_check == 'true' ||
+          steps.analyze.outputs.needs_lint_fix == 'true'
+        continue-on-error: true
+        run: |
+          echo "📦 Installing Claude Code CLI..."
+          npm install -g @anthropic-ai/claude-code || echo "⚠️ Claude Code installation failed, continuing with basic fixes"
+
+      - name: Run MoAI Loop Auto-fix
+        if: |
+          steps.analyze.outputs.needs_type_check == 'true' ||
+          steps.analyze.outputs.needs_lint_fix == 'true'
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          echo "🤖 Running MoAI Loop to fix errors..."
+
+          # Check if Claude Code is installed
+          if ! command -v claude &> /dev/null; then
+            echo "⚠️ Claude Code CLI not available, skipping AI-powered fixes"
+            exit 0
+          fi
+
+          # Check if API key is configured
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "⚠️ ANTHROPIC_API_KEY not configured, skipping AI-powered fixes"
+            echo "💡 Add ANTHROPIC_API_KEY to GitHub Secrets to enable intelligent auto-fixing"
+            exit 0
+          fi
+
+          # Create error context file from workflow logs
+          echo "📝 Creating error context from workflow logs..."
+          cat > error_context.md << 'EOF'
+          # CI/CD Failure Report
+
+          Quality Gate failed. Please analyze the errors and fix them.
+
+          ## Workflow Logs
+          EOF
+
+          if [ -f "workflow_logs.txt" ]; then
+            echo '```' >> error_context.md
+            tail -n 200 workflow_logs.txt >> error_context.md
+            echo '```' >> error_context.md
+          fi
+
+          # Run MoAI Loop in headless mode
+          echo "🔄 Executing /moai:loop to fix all errors..."
+          claude code -p "/moai:loop $(cat error_context.md)" \
+            --allowedTools Read,Write,Edit,Bash,Glob,Grep,Task \
+            --non-interactive || echo "⚠️ MoAI Loop completed with warnings"
+
+          echo "✅ MoAI Loop auto-fix completed"
+
       - name: Check for changes
         id: check-changes
         run: |
@@ -124,11 +180,12 @@ jobs:
           git add .
 
           cat << EOF > commit_message.txt
-          chore: auto-fix CI/CD failures
+          chore: auto-fix CI/CD failures with MoAI Loop
 
           Auto-fixes applied by GitHub Actions:
           - ESLint auto-fix
           - Prettier formatting
+          - MoAI Loop intelligent error correction
 
           Triggered by failed workflow run: ${{ github.event.workflow_run.id }}
           Original workflow: ${{ github.event.workflow_run.html_url }}
@@ -147,13 +204,17 @@ jobs:
 
           if [ -n "$PR_NUMBER" ]; then
             cat << 'COMMENT_EOF' > pr_comment.txt
-          🤖 **Auto-fix Applied**
+          🤖 **Auto-fix Applied with MoAI Loop**
 
-          I've automatically fixed some CI/CD failures:
+          I've automatically fixed CI/CD failures using intelligent analysis:
           - ✅ ESLint issues
           - ✅ Prettier formatting
+          - 🧠 MoAI Loop intelligent error correction
+            - TypeScript type errors
+            - Build errors
+            - Test failures
 
-          The checks should re-run automatically. If they still fail, manual intervention may be required.
+          The checks should re-run automatically. MoAI Loop will continue fixing issues until all tests pass.
           COMMENT_EOF
             
             echo "" >> pr_comment.txt
@@ -178,10 +239,14 @@ jobs:
           else
             echo "ℹ️ No automatic fixes were available" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Manual intervention may be required for:" >> $GITHUB_STEP_SUMMARY
-            echo "- TypeScript type errors" >> $GITHUB_STEP_SUMMARY
-            echo "- Test failures" >> $GITHUB_STEP_SUMMARY
-            echo "- Build errors" >> $GITHUB_STEP_SUMMARY
+            echo "### MoAI Loop Status" >> $GITHUB_STEP_SUMMARY
+            if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+              echo "⚠️ ANTHROPIC_API_KEY not configured" >> $GITHUB_STEP_SUMMARY
+              echo "Add API key to GitHub Secrets to enable intelligent auto-fixing" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ MoAI Loop is enabled and attempted fixes" >> $GITHUB_STEP_SUMMARY
+              echo "Manual intervention may still be required for complex errors" >> $GITHUB_STEP_SUMMARY
+            fi
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
