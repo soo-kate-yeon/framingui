@@ -17,7 +17,8 @@ export interface LegalDocument {
   toc: { en: TocItem[]; ko: TocItem[] };
 }
 
-const LEGAL_DOCS_DIR = path.join(process.cwd(), '../../docs/legal');
+// packages/playground-web에서 모노레포 루트까지 올라간 후 docs/legal로 이동
+const LEGAL_DOCS_DIR = path.join(process.cwd(), '..', '..', 'docs', 'legal');
 
 const LEGAL_META: Record<LegalSlug, { en: string; ko: string }> = {
   'terms-of-service': { en: 'Terms of Service', ko: '이용약관' },
@@ -25,11 +26,7 @@ const LEGAL_META: Record<LegalSlug, { en: string; ko: string }> = {
   'refund-policy': { en: 'Refund Policy', ko: '환불정책' },
 };
 
-export const LEGAL_SLUGS: LegalSlug[] = [
-  'terms-of-service',
-  'privacy-policy',
-  'refund-policy',
-];
+export const LEGAL_SLUGS: LegalSlug[] = ['terms-of-service', 'privacy-policy', 'refund-policy'];
 
 /**
  * 마크다운에서 ## 레벨 헤딩을 추출하여 TOC 생성
