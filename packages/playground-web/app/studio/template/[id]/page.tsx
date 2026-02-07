@@ -18,6 +18,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../../contexts/AuthContext';
+import { usePaddle } from '../../../../hooks/usePaddle';
+import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
 import {
   LandingTopNav,
   HeroSection,
@@ -49,7 +51,8 @@ interface TemplatePageProps {
 
 export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const router = useRouter();
-  const { hasLicense } = useAuth();
+  const { user, hasLicense } = useAuth();
+  const { openCheckout, isReady: isPaddleReady } = usePaddle();
   const [templateId, setTemplateId] = useState<string>('');
   const [ownedLicenses, setOwnedLicenses] = useState<string[]>([]);
 
@@ -79,7 +82,23 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   };
 
   const handlePurchase = (tier: string) => {
-    // Navigate to checkout with selected tier
+    // Paddle 결제가 활성화되어 있고 사용자가 로그인된 경우 → Paddle Checkout Overlay
+    if (isPaddleReady && user) {
+      const priceTier = toPaddlePriceTier(tier);
+      if (priceTier) {
+        const priceId = PADDLE_CONFIG.prices[priceTier];
+        openCheckout({
+          priceId,
+          userId: user.id,
+          userEmail: user.email ?? '',
+          themeId: templateId,
+          tier: priceTier,
+        });
+        return;
+      }
+    }
+
+    // Fallback: 기존 결제 페이지로 이동
     router.push(`/studio/checkout/${templateId}?tier=${tier.toLowerCase().replace(' ', '-')}`);
   };
 

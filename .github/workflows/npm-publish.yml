@@ -63,7 +63,7 @@ jobs:
       - name: Publish @tekton/tokens
         run: |
           cd packages/tokens
-          pnpm publish --no-git-checks --access public
+          pnpm publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: false
@@ -71,7 +71,7 @@ jobs:
       - name: Publish @tekton/core
         run: |
           cd packages/core
-          pnpm publish --no-git-checks --access public
+          pnpm publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: false
@@ -79,7 +79,7 @@ jobs:
       - name: Publish @tekton/esbuild-plugin
         run: |
           cd packages/esbuild-plugin
-          pnpm publish --no-git-checks --access public
+          pnpm publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: false
@@ -89,7 +89,7 @@ jobs:
       - name: Publish @tekton/styled
         run: |
           cd packages/styled
-          pnpm publish --no-git-checks --access public
+          pnpm publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: false
@@ -97,7 +97,7 @@ jobs:
       - name: Publish @tekton/ui
         run: |
           cd packages/ui
-          pnpm publish --no-git-checks --access public
+          pnpm publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: false
@@ -107,7 +107,7 @@ jobs:
       - name: Publish @tekton/mcp-server
         run: |
           cd packages/mcp-server
-          pnpm publish --no-git-checks --access public
+          pnpm publish --no-git-checks --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: false

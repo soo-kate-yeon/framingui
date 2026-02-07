@@ -42,7 +42,8 @@
     "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
     "lint": "eslint src __tests__ --ext .ts",
     "typecheck": "tsc --noEmit",
-    "typecheck:tests": "tsc --project tsconfig.test.json --noEmit"
+    "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",

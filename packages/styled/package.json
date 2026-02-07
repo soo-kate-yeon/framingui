@@ -30,7 +30,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint src __tests__ --ext .ts"
+    "lint": "eslint src __tests__ --ext .ts",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
     "@tekton/tokens": "workspace:*",

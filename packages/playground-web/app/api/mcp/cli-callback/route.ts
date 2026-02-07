@@ -8,7 +8,6 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { generateApiKey } from '@/lib/db/api-keys';
 
 /**
  * GET /api/mcp/cli-callback
@@ -48,8 +47,6 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
 
-    // OAuth 시작 - 콜백 URL에 port와 state를 포함
-    const callbackUrl = new URL('/api/mcp/cli-callback', request.nextUrl.origin);
     // OAuth 완료 후 돌아올 때 사용할 파라미터를 리다이렉트 URL에 포함
     const redirectTo = `${request.nextUrl.origin}/api/auth/callback?next=${encodeURIComponent(
       `/api/mcp/cli-callback/complete?callback_port=${callbackPort}&state=${state}`
