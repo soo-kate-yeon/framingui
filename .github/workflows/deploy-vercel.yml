@@ -1,0 +1,95 @@
+name: Deploy to Vercel
+
+on:
+  workflow_run:
+    workflows: ['Quality Gate']
+    types:
+      - completed
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    # Only deploy if Quality Gate succeeded
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: packages/playground-web
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: packages/playground-web
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "✅ Deployed to: $DEPLOYMENT_URL"
+        working-directory: packages/playground-web
+
+      - name: Comment deployment URL on PR
+        if: github.event.workflow_run.event == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head ${{ github.event.workflow_run.head_branch }} --json number --jq '.[0].number')
+
+          if [ -n "$PR_NUMBER" ]; then
+            cat << EOF > pr_comment.txt
+          🚀 **Vercel Deployment Successful**
+
+          Your changes have been deployed to Vercel after passing all quality checks.
+
+          **Deployment URL**: ${{ steps.deploy.outputs.deployment_url }}
+
+          All quality gates passed:
+          - ✅ Lint
+          - ✅ Type Check
+          - ✅ Build
+          - ✅ Tests
+          EOF
+
+            gh pr comment $PR_NUMBER --body-file pr_comment.txt
+          fi
+
+      - name: Deployment summary
+        run: |
+          echo "## Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Successfully deployed to Vercel" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployment URL**: ${{ steps.deploy.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Quality Gate passed before deployment" >> $GITHUB_STEP_SUMMARY
