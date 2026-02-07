@@ -1,160 +1,127 @@
-/**
- * Settings Page - Equinox Fitness V2
- * SPEC-MCP-004 Phase 1-4 Integration Test
- *
- * Phase 3: Template Matcher → core.preferences
- * Phase 4: Recipe Resolver → equinox-fitness recipes applied
- */
-
 'use client';
 
-import { Badge, Button, Card, Separator } from '@tekton/ui';
+import {
+  User,
+  CreditCard,
+  ShieldCheck,
+  Bell,
+  Globe,
+  LogOut,
+  ChevronRight,
+  Smartphone,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+/**
+ * Settings Page - Equinox Fitness V2
+ * Redesigned as a standard sectioned list interface for elite member preferences.
+ */
 export default function SettingsPage() {
   const router = useRouter();
 
   const handleLogout = () => {
-    // 실제 로그아웃 로직
     router.push('/studio/equinox-fitness');
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Header Section */}
-      <section className="px-6 py-24">
-        <div className="max-w-4xl mx-auto">
-          <header className="space-y-4">
-            <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
-              Tekton Studio
+    <div className="min-h-screen bg-black text-white p-12 max-w-4xl mx-auto">
+      <header className="mb-16">
+        <h1 className="text-4xl font-black uppercase tracking-tighter mb-2 italic">Settings</h1>
+        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-400">
+          Manage your Elite Performance profile
+        </p>
+      </header>
+
+      <div className="space-y-12">
+        {/* Account Section */}
+        <SettingSection title="Account & Profile">
+          <SettingItem
+            icon={<User size={18} />}
+            label="Member Information"
+            value="member@equinox.com"
+          />
+          <SettingItem
+            icon={<CreditCard size={18} />}
+            label="Elite Membership"
+            value="Active • $250/mo"
+          />
+          <SettingItem icon={<Smartphone size={18} />} label="Connected Devices" value="3 Active" />
+        </SettingSection>
+
+        {/* Preferences Section */}
+        <SettingSection title="Preferences">
+          <SettingItem icon={<Bell size={18} />} label="Notifications" value="Email & Push" />
+          <SettingItem icon={<Globe size={18} />} label="Language" value="English (US)" />
+          <SettingItem icon={<ShieldCheck size={18} />} label="Privacy & Security" />
+        </SettingSection>
+
+        {/* Footer Actions */}
+        <div className="pt-12 border-t border-neutral-900">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-4 text-neutral-500 hover:text-white transition-colors group"
+          >
+            <div className="w-10 h-10 border border-neutral-800 flex items-center justify-center transition-colors group-hover:border-white">
+              <LogOut size={18} />
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest">
+              Sign Out of All Devices
             </span>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-6">
-              SETTINGS
-            </h1>
-            <p className="text-sm md:text-base text-neutral-400 max-w-2xl leading-relaxed">
-              Manage your account, subscription, and preferences
-            </p>
-          </header>
-        </div>
-      </section>
+          </button>
 
-      {/* Account Information Section */}
-      <section className="px-6 py-12">
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-transparent border border-neutral-800 p-6">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2 block">
-              ACCOUNT INFORMATION
-            </p>
-
-            <Separator className="my-6 bg-neutral-800" />
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  EMAIL
-                </span>
-                <span className="text-sm font-normal text-neutral-400 leading-relaxed">
-                  member@equinox.com
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  MEMBER ID
-                </span>
-                <span className="text-sm font-normal text-neutral-400 leading-relaxed">
-                  EQX-2024-7812
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  MEMBER SINCE
-                </span>
-                <span className="text-sm font-normal text-neutral-400 leading-relaxed">
-                  January 2024
-                </span>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      {/* Subscription Plan Section */}
-      <section className="px-6 py-12">
-        <div className="max-w-4xl mx-auto">
-          <Card className="bg-neutral-900/50 backdrop-blur-md border-b border-white/10 p-6">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2 block">
-              SUBSCRIPTION PLAN
-            </p>
-
-            <Separator className="my-6 bg-neutral-800" />
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  CURRENT PLAN
-                </span>
-                <Badge
-                  variant="default"
-                  className="inline-flex items-center rounded-none bg-white text-black px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide"
-                >
-                  ELITE MEMBERSHIP
-                </Badge>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  BILLING CYCLE
-                </span>
-                <span className="text-sm font-normal text-neutral-400 leading-relaxed">
-                  Monthly - $250/mo
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  NEXT BILLING DATE
-                </span>
-                <span className="text-sm font-normal text-neutral-400 leading-relaxed">
-                  March 1, 2026
-                </span>
-              </div>
-
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                  BENEFITS
-                </span>
-                <span className="text-sm font-normal text-neutral-400 leading-relaxed">
-                  Unlimited Classes · Personal Training · Spa Access
-                </span>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      {/* Actions Section */}
-      <section className="px-6 py-12">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex gap-4">
-            <Button
-              variant="outline"
-              className="bg-transparent border border-white/30 text-white h-12 px-8 uppercase tracking-widest text-xs font-bold hover:bg-white/10 transition-colors rounded-none"
-            >
-              CHANGE PASSWORD
-            </Button>
-
-            <Button
-              variant="ghost"
-              onClick={handleLogout}
-              className="bg-transparent text-neutral-400 h-10 px-4 uppercase tracking-widest text-[10px] font-bold hover:text-white transition-colors rounded-none"
-            >
-              LOG OUT
-            </Button>
+          <div className="mt-12 text-[8px] font-bold uppercase tracking-[0.4em] text-neutral-700">
+            Equinox Elite Platform v2.2.0 • Tekton Engine
           </div>
         </div>
-      </section>
+      </div>
     </div>
+  );
+}
+
+function SettingSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-500 mb-6">
+        {title}
+      </h2>
+      <div className="border border-neutral-900 bg-neutral-900/10 divide-y divide-neutral-900">
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function SettingItem({
+  icon,
+  label,
+  value,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center justify-between p-6 hover:bg-neutral-900/50 transition-all group text-left"
+    >
+      <div className="flex items-center gap-6">
+        <div className="text-neutral-500 group-hover:text-white transition-colors">{icon}</div>
+        <div>
+          <div className="text-xs font-black uppercase tracking-widest text-white">{label}</div>
+          {value && (
+            <div className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">
+              {value}
+            </div>
+          )}
+        </div>
+      </div>
+      <ChevronRight
+        size={16}
+        className="text-neutral-700 group-hover:text-white transition-colors"
+      />
+    </button>
   );
 }

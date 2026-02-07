@@ -24,86 +24,86 @@
       "color": {
         "brand": {
           "100": {
-            "l": 0.85,
-            "c": 0.08,
-            "h": 28
+            "l": 0.88,
+            "c": 0.06,
+            "h": 32
           },
           "500": {
-            "l": 0.58,
-            "c": 0.17,
-            "h": 28
+            "l": 0.55,
+            "c": 0.18,
+            "h": 32
           },
           "700": {
-            "l": 0.45,
-            "c": 0.18,
-            "h": 28
+            "l": 0.42,
+            "c": 0.20,
+            "h": 32
           },
           "900": {
-            "l": 0.20,
-            "c": 0.05,
-            "h": 28
+            "l": 0.18,
+            "c": 0.06,
+            "h": 32
           }
         },
         "neutral": {
           "white": {
-            "l": 1,
-            "c": 0,
-            "h": 0
+            "l": 0.99,
+            "c": 0.01,
+            "h": 55
           },
           "50": {
-            "l": 0.98,
-            "c": 0.01,
-            "h": 40
+            "l": 0.97,
+            "c": 0.02,
+            "h": 55
           },
           "100": {
-            "l": 0.96,
-            "c": 0.01,
-            "h": 40
+            "l": 0.95,
+            "c": 0.03,
+            "h": 55
           },
           "200": {
-            "l": 0.92,
-            "c": 0.01,
-            "h": 40
+            "l": 0.91,
+            "c": 0.03,
+            "h": 55
           },
           "300": {
-            "l": 0.88,
-            "c": 0.01,
-            "h": 40
+            "l": 0.86,
+            "c": 0.03,
+            "h": 55
           },
           "400": {
-            "l": 0.75,
-            "c": 0.01,
-            "h": 40
+            "l": 0.72,
+            "c": 0.02,
+            "h": 55
           },
           "500": {
-            "l": 0.60,
-            "c": 0.01,
-            "h": 40
+            "l": 0.58,
+            "c": 0.02,
+            "h": 55
           },
           "600": {
-            "l": 0.45,
+            "l": 0.42,
             "c": 0.02,
-            "h": 40
+            "h": 55
           },
           "700": {
-            "l": 0.35,
+            "l": 0.32,
             "c": 0.02,
-            "h": 40
+            "h": 55
           },
           "800": {
-            "l": 0.20,
-            "c": 0.02,
-            "h": 40
+            "l": 0.18,
+            "c": 0.01,
+            "h": 55
           },
           "900": {
-            "l": 0.10,
-            "c": 0.02,
-            "h": 40
+            "l": 0.12,
+            "c": 0.01,
+            "h": 55
           },
           "950": {
-            "l": 0.05,
-            "c": 0.02,
-            "h": 40
+            "l": 0.06,
+            "c": 0.01,
+            "h": 55
           }
         }
       },
@@ -163,42 +163,42 @@
     },
     "recipes": {
       "card": {
-        "default": "bg-white border border-neutral-200 rounded-xl shadow-sm hover:shadow-md transition-shadow",
-        "flat": "bg-neutral-100 rounded-xl",
-        "outlined": "bg-transparent border border-neutral-200 rounded-xl",
-        "feature": "bg-white border border-neutral-100 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
+        "default": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-xl shadow-sm hover:shadow-md hover:border-[var(--tekton-border-emphasis)] transition-all",
+        "flat": "bg-[var(--tekton-bg-canvas)] rounded-xl",
+        "outlined": "bg-transparent border border-[var(--tekton-border-default)] rounded-xl",
+        "feature": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-bg-canvas)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
       },
       "button": {
-        "primary": "bg-neutral-900 text-white hover:bg-neutral-800 rounded-lg h-10 px-4 text-sm font-medium transition-colors",
-        "secondary": "bg-white text-neutral-900 border border-neutral-200 hover:bg-neutral-50 rounded-lg h-10 px-4 text-sm font-medium transition-colors",
-        "ghost": "text-neutral-600 hover:bg-neutral-100 rounded-lg h-10 px-4 text-sm font-medium transition-colors",
-        "icon": "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 rounded-md p-2 transition-colors"
+        "primary": "bg-[var(--tekton-text-primary)] text-[var(--tekton-bg-surface)] hover:bg-[var(--tekton-bg-canvas-950,#0a0a0a)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+        "secondary": "bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] border border-[var(--tekton-border-default)] hover:bg-[var(--tekton-bg-canvas)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+        "ghost": "text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] hover:text-[var(--tekton-text-primary)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+        "icon": "text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] rounded-md p-2 transition-colors"
       },
       "input": {
-        "default": "w-full bg-white border border-neutral-200 rounded-lg h-10 px-3 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-200 focus:border-neutral-900 transition-all",
-        "search": "w-full bg-neutral-100 border-none rounded-lg h-10 px-10 text-neutral-900 placeholder:text-neutral-500 focus:bg-white focus:ring-2 focus:ring-neutral-200 transition-all"
+        "default": "w-full bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-lg h-10 px-3 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] focus:border-[var(--tekton-text-primary)] transition-all",
+        "search": "w-full bg-[var(--tekton-bg-canvas)] border-none rounded-lg h-10 px-10 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-secondary)] focus:bg-[var(--tekton-bg-surface)] focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] transition-all"
       },
       "badge": {
-        "neutral": "inline-flex items-center rounded-md bg-neutral-100 px-2 py-1 text-xs font-medium text-neutral-600",
-        "brand": "inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-xs font-medium text-orange-700"
+        "neutral": "inline-flex items-center rounded-md bg-[var(--tekton-bg-canvas)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-secondary)]",
+        "brand": "inline-flex items-center rounded-md bg-[var(--tekton-bg-brand-subtle)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-link)]"
       },
       "typography": {
-        "h1": "font-sans text-4xl font-bold tracking-tight text-neutral-900",
-        "h2": "font-sans text-2xl font-semibold tracking-tight text-neutral-900",
-        "h3": "font-sans text-lg font-medium text-neutral-900",
-        "body": "font-sans text-base text-neutral-600 leading-relaxed",
-        "caption": "font-sans text-sm text-neutral-500"
+        "h1": "font-sans text-4xl font-bold tracking-tight text-[var(--tekton-text-primary)]",
+        "h2": "font-sans text-2xl font-semibold tracking-tight text-[var(--tekton-text-primary)]",
+        "h3": "font-sans text-lg font-medium text-[var(--tekton-text-primary)]",
+        "body": "font-sans text-base text-[var(--tekton-text-secondary)] leading-relaxed",
+        "caption": "font-sans text-sm text-[var(--tekton-text-tertiary)]"
       },
       "avatar": {
-        "root": "relative inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-neutral-100",
-        "fallback": "flex h-full w-full items-center justify-center rounded-full bg-neutral-100 text-sm font-medium text-neutral-600"
+        "root": "relative inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[var(--tekton-bg-canvas)]",
+        "fallback": "flex h-full w-full items-center justify-center rounded-full bg-[var(--tekton-bg-canvas)] text-sm font-medium text-[var(--tekton-text-secondary)]"
       },
       "menu": {
-        "item": "flex w-full items-center rounded-md px-2 py-2 text-sm text-neutral-700 hover:bg-neutral-100 cursor-pointer"
+        "item": "flex w-full items-center rounded-md px-2 py-2 text-sm text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] cursor-pointer"
       },
       "layout": {
         "container": "max-w-5xl mx-auto px-6",
-        "sidebar": "w-64 border-r border-neutral-200 bg-neutral-50 h-screen p-4 flex flex-col"
+        "sidebar": "w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-canvas)] h-screen p-4 flex flex-col"
       }
     }
   },

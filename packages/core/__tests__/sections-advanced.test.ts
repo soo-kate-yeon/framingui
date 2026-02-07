@@ -1,13 +1,22 @@
 /**
  * @tekton/core - Advanced Section Pattern Token Tests
- * Comprehensive tests for 4 HIGH priority advanced section tokens
- * [SPEC-LAYOUT-005] [PHASE-1]
+ * 10개 고급 섹션 토큰에 대한 포괄적 테스트
+ * [SPEC-LAYOUT-005] [PHASE-1, PHASE-2, PHASE-3]
  *
- * Tests cover:
- * 1. section.masonry - Pinterest-style waterfall grid
- * 2. section.sticky-header - Sticky header with shadow
- * 3. section.sticky-footer - Sticky footer
- * 4. section.collapsible-sidebar - Collapsible sidebar
+ * 테스트 범위:
+ * Phase 1 (4개 기존):
+ * 1. section.masonry - Pinterest 스타일 워터폴 그리드
+ * 2. section.sticky-header - 스크롤 시 고정 헤더
+ * 3. section.sticky-footer - 스크롤 시 고정 푸터
+ * 4. section.collapsible-sidebar - 접을 수 있는 사이드바
+ *
+ * Phase 2/3 (6개 신규):
+ * 5. section.scroll-collapse-header - 스크롤 시 축소 헤더
+ * 6. section.scroll-reveal-footer - 스크롤 시 노출 푸터
+ * 7. section.multipane-master-detail - 마스터-디테일 2패널
+ * 8. section.multipane-three-pane - 3패널 레이아웃
+ * 9. section.foldable-split - 폴더블 분할
+ * 10. section.foldable-span - 폴더블 스팬
  */
 
 import { describe, it, expect, test } from 'vitest';
@@ -16,6 +25,12 @@ import {
   SECTION_STICKY_HEADER,
   SECTION_STICKY_FOOTER,
   SECTION_COLLAPSIBLE_SIDEBAR,
+  SECTION_SCROLL_COLLAPSE_HEADER,
+  SECTION_SCROLL_REVEAL_FOOTER,
+  SECTION_MULTIPANE_MASTER_DETAIL,
+  SECTION_MULTIPANE_THREE_PANE,
+  SECTION_FOLDABLE_SPLIT,
+  SECTION_FOLDABLE_SPAN,
   getAdvancedSectionPatternToken,
   getAllAdvancedSectionPatternTokens,
   getAdvancedSectionsByType,
@@ -34,7 +49,7 @@ import type {
 } from '../src/layout-tokens/types.js';
 
 // ============================================================================
-// Token Definition Tests - All 4 Advanced Tokens
+// Token Definition Tests - All 10 Advanced Tokens
 // ============================================================================
 
 describe('Advanced Section Pattern Tokens - Token Definitions', () => {
@@ -43,6 +58,12 @@ describe('Advanced Section Pattern Tokens - Token Definitions', () => {
     'section.sticky-header',
     'section.sticky-footer',
     'section.collapsible-sidebar',
+    'section.scroll-collapse-header',
+    'section.scroll-reveal-footer',
+    'section.multipane-master-detail',
+    'section.multipane-three-pane',
+    'section.foldable-split',
+    'section.foldable-span',
   ];
 
   test.each(advancedPatternIds)('token %s exists and has correct structure', patternId => {
@@ -63,7 +84,9 @@ describe('Advanced Section Pattern Tokens - Token Definitions', () => {
 
   test.each(advancedPatternIds)('token %s has valid type', patternId => {
     const pattern = getAdvancedSectionPatternToken(patternId);
-    expect(['masonry', 'sticky', 'collapsible']).toContain(pattern!.type);
+    expect(['masonry', 'sticky', 'collapsible', 'scroll', 'multipane', 'foldable']).toContain(
+      pattern!.type
+    );
   });
 
   test.each(advancedPatternIds)('token %s has css property with required fields', patternId => {
@@ -379,6 +402,255 @@ describe('SECTION_COLLAPSIBLE_SIDEBAR', () => {
 });
 
 // ============================================================================
+// SECTION_SCROLL_COLLAPSE_HEADER Tests
+// ============================================================================
+
+describe('SECTION_SCROLL_COLLAPSE_HEADER', () => {
+  it('should have correct id and type', () => {
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.id).toBe('section.scroll-collapse-header');
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.type).toBe('scroll');
+  });
+
+  it('should have sticky positioning for collapse behavior', () => {
+    const css = SECTION_SCROLL_COLLAPSE_HEADER.css as any;
+    expect(css.position).toBe('sticky');
+    expect(css.top).toBe('atomic.spacing.0');
+    expect(css.zIndex).toBe(100);
+  });
+
+  it('should have height and minHeight for collapse', () => {
+    const css = SECTION_SCROLL_COLLAPSE_HEADER.css as any;
+    expect(css.height).toBe('atomic.spacing.20');
+    expect(css.minHeight).toBe('atomic.spacing.14');
+  });
+
+  it('should have transition for smooth collapse', () => {
+    const css = SECTION_SCROLL_COLLAPSE_HEADER.css as any;
+    expect(css.transition).toContain('height');
+    expect(css.transition).toContain('200ms');
+  });
+
+  it('should have overflow hidden for collapse', () => {
+    const css = SECTION_SCROLL_COLLAPSE_HEADER.css as any;
+    expect(css.overflow).toBe('hidden');
+  });
+
+  it('should have collapsed state', () => {
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.states?.collapsed).toBeDefined();
+    const collapsed = SECTION_SCROLL_COLLAPSE_HEADER.states!.collapsed as any;
+    expect(collapsed.height).toBe('atomic.spacing.14');
+  });
+
+  it('should have default state', () => {
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.states?.default).toBeDefined();
+    const defaultState = SECTION_SCROLL_COLLAPSE_HEADER.states!.default as any;
+    expect(defaultState.height).toBe('atomic.spacing.20');
+  });
+
+  it('should have all 6 breakpoints', () => {
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.responsive.default).toBeDefined();
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.responsive.md).toBeDefined();
+    expect(SECTION_SCROLL_COLLAPSE_HEADER.responsive.lg).toBeDefined();
+  });
+
+  it('should have relevant tokenBindings', () => {
+    const bindings = SECTION_SCROLL_COLLAPSE_HEADER.tokenBindings;
+    expect(bindings.expandedHeight).toBeDefined();
+    expect(bindings.collapsedHeight).toBeDefined();
+    expect(bindings.collapseThreshold).toBeDefined();
+    expect(bindings.transitionDuration).toBeDefined();
+  });
+});
+
+// ============================================================================
+// SECTION_SCROLL_REVEAL_FOOTER Tests
+// ============================================================================
+
+describe('SECTION_SCROLL_REVEAL_FOOTER', () => {
+  it('should have correct id and type', () => {
+    expect(SECTION_SCROLL_REVEAL_FOOTER.id).toBe('section.scroll-reveal-footer');
+    expect(SECTION_SCROLL_REVEAL_FOOTER.type).toBe('scroll');
+  });
+
+  it('should use fixed positioning', () => {
+    const css = SECTION_SCROLL_REVEAL_FOOTER.css as any;
+    expect(css.position).toBe('fixed');
+    expect(css.bottom).toBe('atomic.spacing.0');
+    expect(css.zIndex).toBe(100);
+  });
+
+  it('should be initially hidden with transform', () => {
+    const css = SECTION_SCROLL_REVEAL_FOOTER.css as any;
+    expect(css.transform).toBe('translateY(100%)');
+  });
+
+  it('should have transition for smooth reveal', () => {
+    const css = SECTION_SCROLL_REVEAL_FOOTER.css as any;
+    expect(css.transition).toContain('transform');
+    expect(css.transition).toContain('200ms');
+  });
+
+  it('should have revealed state', () => {
+    expect(SECTION_SCROLL_REVEAL_FOOTER.states?.revealed).toBeDefined();
+    const revealed = SECTION_SCROLL_REVEAL_FOOTER.states!.revealed as any;
+    expect(revealed.transform).toBe('translateY(0)');
+  });
+
+  it('should have relevant tokenBindings', () => {
+    const bindings = SECTION_SCROLL_REVEAL_FOOTER.tokenBindings;
+    expect(bindings.height).toBeDefined();
+    expect(bindings.revealThreshold).toBeDefined();
+    expect(bindings.revealDirection).toBeDefined();
+  });
+});
+
+// ============================================================================
+// SECTION_MULTIPANE_MASTER_DETAIL Tests
+// ============================================================================
+
+describe('SECTION_MULTIPANE_MASTER_DETAIL', () => {
+  it('should have correct id and type', () => {
+    expect(SECTION_MULTIPANE_MASTER_DETAIL.id).toBe('section.multipane-master-detail');
+    expect(SECTION_MULTIPANE_MASTER_DETAIL.type).toBe('multipane');
+  });
+
+  it('should use grid layout', () => {
+    const css = SECTION_MULTIPANE_MASTER_DETAIL.css as any;
+    expect(css.display).toBe('grid');
+    expect(css.height).toBe('100%');
+    expect(css.overflow).toBe('hidden');
+  });
+
+  it('should be stacked on mobile (flex column)', () => {
+    const defaultResp = SECTION_MULTIPANE_MASTER_DETAIL.responsive.default as any;
+    expect(defaultResp.display).toBe('flex');
+    expect(defaultResp.flexDirection).toBe('column');
+  });
+
+  it('should be side-by-side on md+ with grid', () => {
+    const mdResp = SECTION_MULTIPANE_MASTER_DETAIL.responsive.md as any;
+    expect(mdResp.display).toBe('grid');
+    expect(mdResp.gridTemplateColumns).toContain('320px');
+    expect(mdResp.gridTemplateColumns).toContain('1fr');
+  });
+
+  it('should have wider master on lg', () => {
+    const lgResp = SECTION_MULTIPANE_MASTER_DETAIL.responsive.lg as any;
+    expect(lgResp.gridTemplateColumns).toContain('384px');
+  });
+
+  it('should have relevant tokenBindings', () => {
+    const bindings = SECTION_MULTIPANE_MASTER_DETAIL.tokenBindings;
+    expect(bindings.masterWidth).toBeDefined();
+    expect(bindings.detailWidth).toBeDefined();
+    expect(bindings.dividerWidth).toBeDefined();
+    expect(bindings.dividerColor).toBeDefined();
+  });
+});
+
+// ============================================================================
+// SECTION_MULTIPANE_THREE_PANE Tests
+// ============================================================================
+
+describe('SECTION_MULTIPANE_THREE_PANE', () => {
+  it('should have correct id and type', () => {
+    expect(SECTION_MULTIPANE_THREE_PANE.id).toBe('section.multipane-three-pane');
+    expect(SECTION_MULTIPANE_THREE_PANE.type).toBe('multipane');
+  });
+
+  it('should be stacked on mobile', () => {
+    const defaultResp = SECTION_MULTIPANE_THREE_PANE.responsive.default as any;
+    expect(defaultResp.display).toBe('flex');
+    expect(defaultResp.flexDirection).toBe('column');
+  });
+
+  it('should show 2 panes on md', () => {
+    const mdResp = SECTION_MULTIPANE_THREE_PANE.responsive.md as any;
+    expect(mdResp.display).toBe('grid');
+    expect(mdResp.gridTemplateColumns).toContain('320px');
+  });
+
+  it('should show full 3 panes on lg', () => {
+    const lgResp = SECTION_MULTIPANE_THREE_PANE.responsive.lg as any;
+    expect(lgResp.display).toBe('grid');
+    expect(lgResp.gridTemplateColumns).toContain('256px');
+    expect(lgResp.gridTemplateColumns).toContain('320px');
+    expect(lgResp.gridTemplateColumns).toContain('1fr');
+  });
+
+  it('should have relevant tokenBindings', () => {
+    const bindings = SECTION_MULTIPANE_THREE_PANE.tokenBindings;
+    expect(bindings.navWidth).toBeDefined();
+    expect(bindings.listWidth).toBeDefined();
+    expect(bindings.contentWidth).toBeDefined();
+  });
+});
+
+// ============================================================================
+// SECTION_FOLDABLE_SPLIT Tests
+// ============================================================================
+
+describe('SECTION_FOLDABLE_SPLIT', () => {
+  it('should have correct id and type', () => {
+    expect(SECTION_FOLDABLE_SPLIT.id).toBe('section.foldable-split');
+    expect(SECTION_FOLDABLE_SPLIT.type).toBe('foldable');
+  });
+
+  it('should use 2-column grid', () => {
+    const css = SECTION_FOLDABLE_SPLIT.css as any;
+    expect(css.display).toBe('grid');
+    expect(css.gridTemplateColumns).toBe('1fr 1fr');
+  });
+
+  it('should be stacked on mobile', () => {
+    const defaultResp = SECTION_FOLDABLE_SPLIT.responsive.default as any;
+    expect(defaultResp.display).toBe('flex');
+    expect(defaultResp.flexDirection).toBe('column');
+  });
+
+  it('should have split state for foldable devices', () => {
+    expect(SECTION_FOLDABLE_SPLIT.states?.split).toBeDefined();
+    const split = SECTION_FOLDABLE_SPLIT.states!.split as any;
+    expect(split.gridTemplateColumns).toContain('env(fold-width');
+  });
+
+  it('should have relevant tokenBindings', () => {
+    const bindings = SECTION_FOLDABLE_SPLIT.tokenBindings;
+    expect(bindings.hingeDetection).toBeDefined();
+    expect(bindings.hingeGap).toBeDefined();
+    expect(bindings.fallbackBehavior).toBeDefined();
+  });
+});
+
+// ============================================================================
+// SECTION_FOLDABLE_SPAN Tests
+// ============================================================================
+
+describe('SECTION_FOLDABLE_SPAN', () => {
+  it('should have correct id and type', () => {
+    expect(SECTION_FOLDABLE_SPAN.id).toBe('section.foldable-span');
+    expect(SECTION_FOLDABLE_SPAN.type).toBe('foldable');
+  });
+
+  it('should use single column grid', () => {
+    const css = SECTION_FOLDABLE_SPAN.css as any;
+    expect(css.display).toBe('grid');
+    expect(css.gridTemplateColumns).toBe('1fr');
+  });
+
+  it('should be flex on mobile', () => {
+    const defaultResp = SECTION_FOLDABLE_SPAN.responsive.default as any;
+    expect(defaultResp.display).toBe('flex');
+  });
+
+  it('should have relevant tokenBindings', () => {
+    const bindings = SECTION_FOLDABLE_SPAN.tokenBindings;
+    expect(bindings.spanContent).toBeDefined();
+    expect(bindings.hingeOverlay).toBeDefined();
+  });
+});
+
+// ============================================================================
 // Utility Functions Tests
 // ============================================================================
 
@@ -411,6 +683,12 @@ describe('Utility Functions', () => {
         'section.sticky-header',
         'section.sticky-footer',
         'section.collapsible-sidebar',
+        'section.scroll-collapse-header',
+        'section.scroll-reveal-footer',
+        'section.multipane-master-detail',
+        'section.multipane-three-pane',
+        'section.foldable-split',
+        'section.foldable-span',
       ];
 
       ids.forEach(id => {
@@ -422,9 +700,9 @@ describe('Utility Functions', () => {
   });
 
   describe('getAllAdvancedSectionPatternTokens', () => {
-    it('should return all 4 tokens', () => {
+    it('should return all 10 tokens', () => {
       const tokens = getAllAdvancedSectionPatternTokens();
-      expect(tokens).toHaveLength(4);
+      expect(tokens).toHaveLength(10);
     });
 
     it('should return array of AdvancedSectionPatternToken', () => {
@@ -447,6 +725,12 @@ describe('Utility Functions', () => {
       expect(ids).toContain('section.sticky-header');
       expect(ids).toContain('section.sticky-footer');
       expect(ids).toContain('section.collapsible-sidebar');
+      expect(ids).toContain('section.scroll-collapse-header');
+      expect(ids).toContain('section.scroll-reveal-footer');
+      expect(ids).toContain('section.multipane-master-detail');
+      expect(ids).toContain('section.multipane-three-pane');
+      expect(ids).toContain('section.foldable-split');
+      expect(ids).toContain('section.foldable-span');
     });
   });
 
@@ -472,6 +756,33 @@ describe('Utility Functions', () => {
       expect(collapsible[0].id).toBe('section.collapsible-sidebar');
     });
 
+    it('should filter by type - scroll', () => {
+      const scroll = getAdvancedSectionsByType('scroll');
+      expect(scroll).toHaveLength(2);
+
+      scroll.forEach(token => {
+        expect(token.type).toBe('scroll');
+      });
+    });
+
+    it('should filter by type - multipane', () => {
+      const multipane = getAdvancedSectionsByType('multipane');
+      expect(multipane).toHaveLength(2);
+
+      multipane.forEach(token => {
+        expect(token.type).toBe('multipane');
+      });
+    });
+
+    it('should filter by type - foldable', () => {
+      const foldable = getAdvancedSectionsByType('foldable');
+      expect(foldable).toHaveLength(2);
+
+      foldable.forEach(token => {
+        expect(token.type).toBe('foldable');
+      });
+    });
+
     it('should return empty array for non-existent type', () => {
       // @ts-expect-error Testing invalid type
       const result = getAdvancedSectionsByType('invalid');
@@ -485,6 +796,12 @@ describe('Utility Functions', () => {
       expect(isAdvancedSectionPattern('section.sticky-header')).toBe(true);
       expect(isAdvancedSectionPattern('section.sticky-footer')).toBe(true);
       expect(isAdvancedSectionPattern('section.collapsible-sidebar')).toBe(true);
+      expect(isAdvancedSectionPattern('section.scroll-collapse-header')).toBe(true);
+      expect(isAdvancedSectionPattern('section.scroll-reveal-footer')).toBe(true);
+      expect(isAdvancedSectionPattern('section.multipane-master-detail')).toBe(true);
+      expect(isAdvancedSectionPattern('section.multipane-three-pane')).toBe(true);
+      expect(isAdvancedSectionPattern('section.foldable-split')).toBe(true);
+      expect(isAdvancedSectionPattern('section.foldable-span')).toBe(true);
     });
 
     it('should return false for base patterns', () => {
@@ -501,9 +818,9 @@ describe('Utility Functions', () => {
   });
 
   describe('getAdvancedSectionPatternIds', () => {
-    it('should return array of 4 IDs', () => {
+    it('should return array of 10 IDs', () => {
       const ids = getAdvancedSectionPatternIds();
-      expect(ids).toHaveLength(4);
+      expect(ids).toHaveLength(10);
     });
 
     it('should return all advanced pattern IDs', () => {
@@ -512,6 +829,12 @@ describe('Utility Functions', () => {
       expect(ids).toContain('section.sticky-header');
       expect(ids).toContain('section.sticky-footer');
       expect(ids).toContain('section.collapsible-sidebar');
+      expect(ids).toContain('section.scroll-collapse-header');
+      expect(ids).toContain('section.scroll-reveal-footer');
+      expect(ids).toContain('section.multipane-master-detail');
+      expect(ids).toContain('section.multipane-three-pane');
+      expect(ids).toContain('section.foldable-split');
+      expect(ids).toContain('section.foldable-span');
     });
 
     it('should return unique IDs', () => {
@@ -598,8 +921,8 @@ describe('Utility Functions', () => {
       const baseSections = getAllSectionPatternTokens();
       const combined = combineWithBaseSections(baseSections);
 
-      // Base: 13, Advanced: 4
-      expect(combined.length).toBe(baseSections.length + 4);
+      // Base: 13, Advanced: 10
+      expect(combined.length).toBe(baseSections.length + 10);
     });
 
     it('should include all base section IDs', () => {
@@ -621,11 +944,17 @@ describe('Utility Functions', () => {
       expect(ids).toContain('section.sticky-header');
       expect(ids).toContain('section.sticky-footer');
       expect(ids).toContain('section.collapsible-sidebar');
+      expect(ids).toContain('section.scroll-collapse-header');
+      expect(ids).toContain('section.scroll-reveal-footer');
+      expect(ids).toContain('section.multipane-master-detail');
+      expect(ids).toContain('section.multipane-three-pane');
+      expect(ids).toContain('section.foldable-split');
+      expect(ids).toContain('section.foldable-span');
     });
 
     it('should work with empty base sections array', () => {
       const combined = combineWithBaseSections([]);
-      expect(combined).toHaveLength(4);
+      expect(combined).toHaveLength(10);
     });
   });
 });
@@ -657,8 +986,25 @@ describe('Responsive Configurations', () => {
 
   it('all tokens use valid token reference format in bindings (where applicable)', () => {
     const tokenReferencePattern = /^[a-z]+\.[a-z-]+(\.[a-z0-9-]+)*$/;
-    // CSS literal values that are not token references
-    const cssLiteralValues = ['responsive', 'sticky', '100', '200ms', 'ease-in-out'];
+    // CSS 리터럴 값 (토큰 참조가 아닌 설정 값들)
+    const cssLiteralValues = [
+      'responsive',
+      'sticky',
+      '100',
+      '200ms',
+      'ease-in-out',
+      '50',
+      'up',
+      'md',
+      'lg',
+      'css-env',
+      'equal',
+      'side-by-side',
+      'true',
+      'image,video,map',
+      'shadow',
+      'env(fold-width, 0px)',
+    ];
 
     allTokens.forEach(token => {
       Object.entries(token.tokenBindings).forEach(([key, value]) => {
@@ -700,9 +1046,36 @@ describe('States Configuration', () => {
     });
   });
 
+  describe('Scroll patterns should have states', () => {
+    it('scroll-collapse-header has default and collapsed states', () => {
+      expect(SECTION_SCROLL_COLLAPSE_HEADER.states).toBeDefined();
+      expect(SECTION_SCROLL_COLLAPSE_HEADER.states?.default).toBeDefined();
+      expect(SECTION_SCROLL_COLLAPSE_HEADER.states?.collapsed).toBeDefined();
+    });
+
+    it('scroll-reveal-footer has default and revealed states', () => {
+      expect(SECTION_SCROLL_REVEAL_FOOTER.states).toBeDefined();
+      expect(SECTION_SCROLL_REVEAL_FOOTER.states?.default).toBeDefined();
+      expect(SECTION_SCROLL_REVEAL_FOOTER.states?.revealed).toBeDefined();
+    });
+  });
+
+  describe('Foldable patterns should have states', () => {
+    it('foldable-split has default and split states', () => {
+      expect(SECTION_FOLDABLE_SPLIT.states).toBeDefined();
+      expect(SECTION_FOLDABLE_SPLIT.states?.default).toBeDefined();
+      expect(SECTION_FOLDABLE_SPLIT.states?.split).toBeDefined();
+    });
+
+    it('foldable-span has default state', () => {
+      expect(SECTION_FOLDABLE_SPAN.states).toBeDefined();
+      expect(SECTION_FOLDABLE_SPAN.states?.default).toBeDefined();
+    });
+  });
+
   describe('Masonry should not have states', () => {
     it('masonry does not have states property', () => {
-      // Masonry is a static layout, no states needed
+      // Masonry는 정적 레이아웃으로 상태가 불필요
       expect(SECTION_MASONRY.states).toBeUndefined();
     });
   });
@@ -719,11 +1092,19 @@ describe('Advanced Section Type Distribution', () => {
     const masonryCount = allSections.filter(s => s.type === 'masonry').length;
     const stickyCount = allSections.filter(s => s.type === 'sticky').length;
     const collapsibleCount = allSections.filter(s => s.type === 'collapsible').length;
+    const scrollCount = allSections.filter(s => s.type === 'scroll').length;
+    const multipaneCount = allSections.filter(s => s.type === 'multipane').length;
+    const foldableCount = allSections.filter(s => s.type === 'foldable').length;
 
     expect(masonryCount).toBe(1);
-    expect(stickyCount).toBe(2); // header and footer
+    expect(stickyCount).toBe(2); // header, footer
     expect(collapsibleCount).toBe(1);
-    expect(masonryCount + stickyCount + collapsibleCount).toBe(4);
+    expect(scrollCount).toBe(2); // scroll-collapse-header, scroll-reveal-footer
+    expect(multipaneCount).toBe(2); // master-detail, three-pane
+    expect(foldableCount).toBe(2); // split, span
+    expect(
+      masonryCount + stickyCount + collapsibleCount + scrollCount + multipaneCount + foldableCount
+    ).toBe(10);
   });
 
   it('all sticky sections have position: sticky', () => {
@@ -760,6 +1141,36 @@ describe('Advanced Section Type Distribution', () => {
     masonrySections.forEach(section => {
       const css = section.css as MasonrySectionCSS;
       expect(css.columnCount).toBeDefined();
+    });
+  });
+
+  it('scroll sections have transition property', () => {
+    const scrollSections = getAdvancedSectionsByType('scroll');
+
+    scrollSections.forEach(section => {
+      const css = section.css as any;
+      expect(css.transition).toBeDefined();
+      expect(css.transition).toContain('200ms');
+    });
+  });
+
+  it('multipane sections use grid display', () => {
+    const multipaneSections = getAdvancedSectionsByType('multipane');
+
+    multipaneSections.forEach(section => {
+      const css = section.css as any;
+      expect(css.display).toBe('grid');
+      expect(css.height).toBe('100%');
+    });
+  });
+
+  it('foldable sections use grid display', () => {
+    const foldableSections = getAdvancedSectionsByType('foldable');
+
+    foldableSections.forEach(section => {
+      const css = section.css as any;
+      expect(css.display).toBe('grid');
+      expect(css.height).toBe('100%');
     });
   });
 });

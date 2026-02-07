@@ -1,9 +1,9 @@
 ---
 id: SPEC-LAYOUT-005
-version: "1.1.0"
+version: "2.0.0"
 status: "completed"
 created: "2026-01-29"
-updated: "2026-02-03"
+updated: "2026-02-07"
 author: "soo-kate-yeon"
 priority: "medium"
 ---
