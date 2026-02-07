@@ -138,10 +138,12 @@ jobs:
         if: steps.loop-guard.outputs.skip != 'true'
         id: check-changes
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
+          # 임시 파일 제외하고 소스 변경만 확인
+          rm -f failed_logs.txt tsc_errors.txt
+          if [ -n "$(git diff --name-only -- packages/ .github/)" ]; then
             echo "has_changes=true" >> $GITHUB_OUTPUT
             echo "Changes detected:"
-            git status --short
+            git diff --name-only -- packages/ .github/
           else
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No auto-fixable changes found"
@@ -153,7 +155,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add .
+          # 임시 파일 제거 (rebase 충돌 방지)
+          rm -f failed_logs.txt tsc_errors.txt
+          git add -u -- packages/ .github/
 
           git commit -m "$(cat <<'EOF'
           chore: auto-fix CI failures
@@ -167,7 +171,7 @@ jobs:
           EOF
           )"
 
-          git pull --rebase origin ${{ github.event.workflow_run.head_branch }} || true
+          git pull --rebase origin ${{ github.event.workflow_run.head_branch }} || git rebase --abort
           git push
 
       - name: Comment on PR (if exists)

@@ -160,10 +160,7 @@ export type SectionType =
   | 'container'
   | 'masonry'
   | 'sticky'
-  | 'collapsible'
-  | 'scroll'
-  | 'multipane'
-  | 'foldable';
+  | 'collapsible';
 
 /**
  * Section CSS Configuration
@@ -273,99 +270,6 @@ export interface CollapsibleSectionCSS extends SectionCSS {
 }
 
 /**
- * Scroll Section CSS Configuration
- * 스크롤 시 축소/노출되는 헤더/푸터 패턴을 위한 CSS 속성
- *
- * @extends SectionCSS
- */
-export interface ScrollSectionCSS extends SectionCSS {
-  /** 확장 상태의 높이 (토큰 참조) */
-  height?: TokenReference;
-
-  /** 축소 상태의 최소 높이 (토큰 참조) */
-  minHeight?: TokenReference;
-
-  /** CSS position 속성 */
-  position?: 'sticky' | 'fixed' | 'relative';
-
-  /** 뷰포트 상단으로부터의 거리 */
-  top?: TokenReference;
-
-  /** 뷰포트 하단으로부터의 거리 */
-  bottom?: TokenReference;
-
-  /** 쌓임 맥락 z-index */
-  zIndex?: number;
-
-  /** 부드러운 애니메이션을 위한 CSS transition */
-  transition?: string;
-
-  /** 노출/숨김을 위한 CSS transform */
-  transform?: string;
-
-  /** 시각적 깊이감을 위한 box-shadow */
-  boxShadow?: TokenReference;
-
-  /** 배경 색상 */
-  backgroundColor?: TokenReference;
-
-  /** 오버플로우 처리 */
-  overflow?: 'hidden' | 'visible' | 'auto';
-}
-
-/**
- * Multi-Pane Section CSS Configuration
- * 마스터-디테일 및 3패널 레이아웃을 위한 CSS 속성
- *
- * @extends SectionCSS
- */
-export interface MultiPaneSectionCSS extends SectionCSS {
-  /** 그리드 템플릿 열 정의 */
-  gridTemplateColumns?: string;
-
-  /** 그리드 템플릿 행 정의 */
-  gridTemplateRows?: string;
-
-  /** 마스터/네비게이션 패널 너비 */
-  masterWidth?: TokenReference;
-
-  /** 디테일/콘텐츠 패널 너비 */
-  detailWidth?: TokenReference;
-
-  /** 네비게이션 패널 너비 (3패널) */
-  navWidth?: TokenReference;
-
-  /** 리스트 패널 너비 (3패널) */
-  listWidth?: TokenReference;
-
-  /** 컨테이너 높이 */
-  height?: string;
-
-  /** 오버플로우 처리 */
-  overflow?: 'hidden' | 'visible' | 'auto';
-}
-
-/**
- * Foldable Section CSS Configuration
- * 폴더블 디바이스의 분할/스팬 레이아웃을 위한 CSS 속성
- *
- * @extends SectionCSS
- */
-export interface FoldableSectionCSS extends SectionCSS {
-  /** 폴더블 레이아웃용 그리드 템플릿 열 */
-  gridTemplateColumns?: string;
-
-  /** 폴드/힌지 간격 */
-  columnGap?: string;
-
-  /** 컨테이너 높이 */
-  height?: string;
-
-  /** 오버플로우 처리 */
-  overflow?: 'hidden' | 'visible' | 'auto';
-}
-
-/**
  * Advanced Section Pattern Token - Extended token for advanced patterns
  * Extends SectionPatternToken with additional advanced CSS properties
  *
@@ -375,49 +279,22 @@ export interface AdvancedSectionPatternToken extends Omit<
   SectionPatternToken,
   'css' | 'responsive'
 > {
-  /** CSS 속성 (고급 패턴 전용 속성 포함) */
-  css:
-    | SectionCSS
-    | MasonrySectionCSS
-    | StickySectionCSS
-    | CollapsibleSectionCSS
-    | ScrollSectionCSS
-    | MultiPaneSectionCSS
-    | FoldableSectionCSS;
+  /** CSS properties (may include advanced properties) */
+  css: SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS;
 
-  /** 반응형 오버라이드 (고급 CSS 포함) */
+  /** Responsive overrides with advanced CSS */
   responsive: ResponsiveConfig<
-    | SectionCSS
-    | MasonrySectionCSS
-    | StickySectionCSS
-    | CollapsibleSectionCSS
-    | ScrollSectionCSS
-    | MultiPaneSectionCSS
-    | FoldableSectionCSS
+    SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS
   >;
 
-  /** 인터랙티브 패턴의 상태 설정 (예: 축소/확장) */
+  /** State configurations for interactive patterns (e.g., collapsed/expanded) */
   states?: {
-    /** 기본 상태 설정 */
-    default?: Partial<
-      | SectionCSS
-      | MasonrySectionCSS
-      | StickySectionCSS
-      | CollapsibleSectionCSS
-      | ScrollSectionCSS
-      | MultiPaneSectionCSS
-      | FoldableSectionCSS
-    >;
-    /** 축소 상태 (collapsible, scroll 패턴용) */
-    collapsed?: Partial<CollapsibleSectionCSS | ScrollSectionCSS>;
-    /** 고정 상태 (sticky 패턴용) */
+    /** Default state configuration */
+    default?: Partial<SectionCSS | MasonrySectionCSS | StickySectionCSS | CollapsibleSectionCSS>;
+    /** Collapsed state configuration (for collapsible patterns) */
+    collapsed?: Partial<CollapsibleSectionCSS>;
+    /** Stuck state configuration (for sticky patterns) */
     stuck?: Partial<StickySectionCSS>;
-    /** 노출 상태 (scroll-reveal 패턴용) */
-    revealed?: Partial<ScrollSectionCSS>;
-    /** 확장 상태 (scroll 패턴용) */
-    expanded?: Partial<ScrollSectionCSS>;
-    /** 분할 상태 (foldable 패턴용) */
-    split?: Partial<FoldableSectionCSS>;
   };
 }
 
