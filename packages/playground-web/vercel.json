@@ -1,6 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../.. && pnpm --filter @tekton/tokens build && pnpm --filter @tekton/core build && pnpm --filter @tekton/ui build && pnpm --filter @tekton/mcp-server build && pnpm --filter @tekton/playground-web build",
   "headers": [
     {
       "source": "/(.*)",
