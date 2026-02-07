@@ -38,7 +38,9 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   // 다크모드 persistence
   useEffect(() => {
     const saved = localStorage.getItem('darkMode');
-    if (saved) setDarkMode(saved === 'true');
+    if (saved) {
+      setDarkMode(saved === 'true');
+    }
   }, []);
 
   useEffect(() => {
@@ -53,7 +55,9 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   // 언어 설정 persistence
   useEffect(() => {
     const saved = localStorage.getItem('legalLocale');
-    if (saved === 'en' || saved === 'ko') setLocale(saved);
+    if (saved === 'en' || saved === 'ko') {
+      setLocale(saved);
+    }
   }, []);
 
   useEffect(() => {
@@ -77,7 +81,9 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
     const timer = setTimeout(() => {
       currentToc.forEach(({ id }) => {
         const element = document.getElementById(id);
-        if (element) observer.observe(element);
+        if (element) {
+          observer.observe(element);
+        }
       });
     }, 100);
 

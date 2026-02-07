@@ -14,7 +14,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: LegalPageProps) {
   const { slug } = await params;
-  if (!VALID_SLUGS.has(slug)) return {};
+  if (!VALID_SLUGS.has(slug)) {
+    return {};
+  }
 
   const doc = getLegalDocument(slug as LegalSlug);
   return {
