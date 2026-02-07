@@ -17,10 +17,8 @@ permissions:
 jobs:
   auto-fix:
     name: Auto-fix Failed Checks
-    # Only run on PR branches when quality gate fails
-    if: |
-      github.event.workflow_run.conclusion == 'failure' &&
-      github.event.workflow_run.event == 'pull_request'
+    # Run when quality gate fails (both push and pull_request events)
+    if: github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -171,16 +169,36 @@ jobs:
             echo "ℹ️ No changes to commit"
           fi
 
-      - name: Commit and push fixes
+      - name: Check retry count
+        id: retry-check
         if: steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          # Count recent auto-fix commits in last 24 hours
+          AUTO_FIX_COUNT=$(git log --since="24 hours ago" --grep="auto-fix CI/CD" --oneline | wc -l)
+          echo "auto_fix_count=$AUTO_FIX_COUNT" >> $GITHUB_OUTPUT
+
+          if [ $AUTO_FIX_COUNT -ge 3 ]; then
+            echo "⚠️ Maximum retry attempts (3) reached in last 24 hours"
+            echo "should_commit=false" >> $GITHUB_OUTPUT
+          else
+            echo "✅ Retry count: $AUTO_FIX_COUNT/3"
+            echo "should_commit=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push fixes
+        if: |
+          steps.check-changes.outputs.has_changes == 'true' &&
+          steps.retry-check.outputs.should_commit == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add .
 
+          ATTEMPT_NUM=$(($(git log --since="24 hours ago" --grep="auto-fix CI/CD" --oneline | wc -l) + 1))
+
           cat << EOF > commit_message.txt
-          chore: auto-fix CI/CD failures with MoAI Loop
+          chore: auto-fix CI/CD failures with MoAI Loop (attempt $ATTEMPT_NUM/3)
 
           Auto-fixes applied by GitHub Actions:
           - ESLint auto-fix
@@ -203,8 +221,11 @@ jobs:
           PR_NUMBER=$(gh pr list --head ${{ github.event.workflow_run.head_branch }} --json number --jq '.[0].number')
 
           if [ -n "$PR_NUMBER" ]; then
-            cat << 'COMMENT_EOF' > pr_comment.txt
-          🤖 **Auto-fix Applied with MoAI Loop**
+            ATTEMPT_NUM=$(($(git log --since="24 hours ago" --grep="auto-fix CI/CD" --oneline | wc -l) + 1))
+
+            if [ "${{ steps.retry-check.outputs.should_commit }}" == "true" ]; then
+              cat << COMMENT_EOF > pr_comment.txt
+          🤖 **Auto-fix Applied with MoAI Loop** (Attempt $ATTEMPT_NUM/3)
 
           I've automatically fixed CI/CD failures using intelligent analysis:
           - ✅ ESLint issues
@@ -214,12 +235,24 @@ jobs:
             - Build errors
             - Test failures
 
-          The checks should re-run automatically. MoAI Loop will continue fixing issues until all tests pass.
+          The checks will re-run automatically. MoAI Loop will continue fixing issues until all tests pass (max 3 attempts per 24h).
           COMMENT_EOF
-            
+            else
+              cat << COMMENT_EOF > pr_comment.txt
+          ⚠️ **Auto-fix Retry Limit Reached**
+
+          Maximum retry attempts (3) reached in the last 24 hours.
+
+          Auto-fix has attempted to fix the issues but couldn't resolve all errors automatically.
+          Manual intervention is now required.
+
+          Please review the errors and fix them manually.
+          COMMENT_EOF
+            fi
+
             echo "" >> pr_comment.txt
             echo "Workflow run: ${{ github.event.workflow_run.html_url }}" >> pr_comment.txt
-            
+
             gh pr comment $PR_NUMBER --body-file pr_comment.txt
           fi
 
