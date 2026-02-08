@@ -11,7 +11,6 @@ jobs:
 
     permissions:
       contents: read
-      id-token: write # OIDC 인증에 필수
 
     steps:
       - name: Checkout code
@@ -28,9 +27,6 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
-
-      - name: Upgrade npm for OIDC support
-        run: npm install -g npm@^11
 
       - name: Extract version from tag
         id: version
@@ -59,8 +55,8 @@ jobs:
 
           echo "All package versions match tag version $TAG_VERSION"
 
-      # 인증: NPM_TOKEN(Granular Access Token)으로 인증
-      # Trusted Publisher(OIDC) 전환 후에는 NPM_TOKEN 없이도 --provenance로 배포 가능
+      # 인증: NPM_TOKEN(Granular Access Token)
+      # 저장소를 public으로 전환 후 --provenance 추가 가능
       # pnpm pack으로 workspace:* 프로토콜을 실제 버전으로 해결한 후 npm publish
       # 이미 배포된 버전은 자동으로 skip
 
@@ -75,7 +71,7 @@ jobs:
             echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
           else
             pnpm pack
-            npm publish *.tgz --provenance --access public
+            npm publish *.tgz --access public
           fi
         working-directory: packages/tokens
 
@@ -89,7 +85,7 @@ jobs:
             echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
           else
             pnpm pack
-            npm publish *.tgz --provenance --access public
+            npm publish *.tgz --access public
           fi
         working-directory: packages/core
 
@@ -103,7 +99,7 @@ jobs:
             echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
           else
             pnpm pack
-            npm publish *.tgz --provenance --access public
+            npm publish *.tgz --access public
           fi
         working-directory: packages/esbuild-plugin
 
@@ -118,7 +114,7 @@ jobs:
             echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
           else
             pnpm pack
-            npm publish *.tgz --provenance --access public
+            npm publish *.tgz --access public
           fi
         working-directory: packages/styled
 
@@ -132,7 +128,7 @@ jobs:
             echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
           else
             pnpm pack
-            npm publish *.tgz --provenance --access public
+            npm publish *.tgz --access public
           fi
         working-directory: packages/ui
 
@@ -147,7 +143,7 @@ jobs:
             echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
           else
             pnpm pack
-            npm publish *.tgz --provenance --access public
+            npm publish *.tgz --access public
           fi
         working-directory: packages/mcp-server
 
@@ -157,7 +153,7 @@ jobs:
           echo "## Published Packages" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
-          echo "Auth: **OIDC (Trusted Publisher)**" >> $GITHUB_STEP_SUMMARY
+          echo "Auth: **NPM Granular Access Token**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Package | Version | Registry |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|---------|----------|" >> $GITHUB_STEP_SUMMARY
