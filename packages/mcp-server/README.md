@@ -10,8 +10,8 @@ MCP (Model Context Protocol) server enabling AI-driven blueprint generation, the
 
 ## Features
 
-- **🤖 stdio MCP Protocol**: Claude Code native tool registration via JSON-RPC 2.0 (13 tools)
-- **🎨 Theme Preview**: 13 built-in OKLCH-based themes with CSS variable generation
+- **🤖 stdio MCP Protocol**: Claude Code native tool registration via JSON-RPC 2.0 (16 tools)
+- **🎨 Theme Preview**: 6 built-in OKLCH-based themes with CSS variable generation
 - **📋 Blueprint Generation**: Natural language → Blueprint JSON with validation
 - **💾 Data-Only Output**: No file system writes, Claude Code handles file operations
 - **🚀 Production Export**: JSX, TSX, Vue code generation
@@ -42,46 +42,37 @@ TEKTON_API_KEY=tk_live_xxx...
 TEKTON_API_URL=https://tekton-ui.com  # or http://localhost:3000 for dev
 ```
 
-### Theme Access Tiers
+### Theme Access
 
-**Free Themes** (No authentication required):
+**All Themes** (Requires valid API key and license):
 
-- `next-tailwind-shadcn`
-- `vite-tailwind-shadcn`
-- `next-styled-components`
-- `next-tailwind-radix`
-- `saas-modern`
-- `tech-startup`
+- `classic-magazine` - Classic magazine style
+- `equinox-fitness` - Fitness & wellness
+- `minimal-workspace` - Minimal workspace
+- `neutral-humanism` - Neutral humanism
+- `round-minimal` - Round minimal
+- `square-minimalism` - Square minimalism
 
-**Premium Themes** (Requires valid API key and license):
-
-- `calm-wellness` - Serene wellness applications
-- `dynamic-fitness` - Energetic fitness tracking
-- `korean-fintech` - Professional financial services
-- `media-streaming` - Video/audio streaming platforms
-- `premium-editorial` - Sophisticated content platforms
-- `saas-dashboard` - Modern SaaS dashboards
-- `warm-humanist` - Warm and inviting experiences
+**Note:** All 6 themes require authentication. No free themes are available.
 
 ### Authentication Behavior
 
 **Without API Key**:
 
 - Server starts normally
-- Only free themes are accessible
-- Premium themes return authentication error
+- All theme access attempts return authentication error
+- Tools function but theme-related operations require auth
 
 **With Valid API Key**:
 
 - Server verifies key on startup (cached for 5 minutes)
-- Free themes always accessible
-- Licensed premium themes become accessible
-- Unlicensed premium themes return license error
+- Licensed themes become accessible
+- Unlicensed themes return license error
 
 **With Invalid API Key**:
 
 - Server logs error but continues running
-- Falls back to free themes only
+- Falls back to no theme access
 - Does not crash the server
 
 ## Quick Start: `init` Command
@@ -100,6 +91,8 @@ npx @tekton-ui/mcp-server init
 4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
 5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
 6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
+7. **AI 에이전트 가이드** - `CLAUDE.md` 및 `AGENTS.md`에 Tekton 워크플로우 섹션 추가
+8. **완료 안내** - 인증 필요성 및 다음 단계 안내
 
 설정 완료 후 Claude Code를 재시작하면, AI에게 "로그인 화면 만들어줘"와 같이 자연어로 화면 생성을 요청할 수 있습니다.
 
@@ -607,6 +600,42 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 
 **Total Templates**: 13
 
+## MCP Prompts (Universal Guidance)
+
+The MCP server provides 2 built-in prompts that work across all MCP clients:
+
+### 1. getting-started
+
+**Purpose**: Complete onboarding guide for Tekton UI
+
+**Content**:
+
+- Authentication setup (tekton-mcp login)
+- Theme exploration workflow
+- Component availability checking
+- 4-step screen generation workflow
+- Common mistakes and troubleshooting
+
+**When to use**: First-time users, onboarding, workflow overview
+
+### 2. screen-workflow
+
+**Purpose**: Detailed 4-step production workflow
+
+**Content**:
+
+- Step 1/4: get-screen-generation-context
+- Step 2/4: validate-screen-definition
+- Step 3/4: generate_screen
+- Step 4/4: validate-environment
+- Complete examples and troubleshooting
+
+**When to use**: Production screen generation, workflow clarification
+
+**Note**: These prompts are platform-agnostic and work with Claude Code, OpenAI Codex, Cursor, Windsurf, and any MCP-compatible client.
+
+**Total Prompts**: 2
+
 ### 11. Preview Screen Template
 
 **Tool**: `preview-screen-template`
@@ -829,23 +858,18 @@ packages/mcp-server/
 - ❌ HTTP endpoints removed (moved to SPEC-PLAYGROUND-001)
 - ❌ previewUrl/filePath removed from outputs
 
-## Built-in Themes (13 Total)
+## Built-in Themes (6 Total)
 
-1. `calm-wellness` - Serene wellness applications
-2. `dynamic-fitness` - Energetic fitness tracking
-3. `korean-fintech` - Professional financial services
-4. `media-streaming` - Video/audio streaming platforms
-5. `next-styled-components` - Next.js with styled-components
-6. `next-tailwind-radix` - Next.js + Tailwind + Radix UI
-7. `next-tailwind-shadcn` - Next.js + Tailwind + shadcn/ui
-8. `premium-editorial` - Sophisticated content platforms
-9. `saas-dashboard` - Modern SaaS dashboards
-10. `saas-modern` - Clean SaaS applications
-11. `tech-startup` - Tech startup vibes
-12. `vite-tailwind-shadcn` - Vite + Tailwind + shadcn/ui
-13. `warm-humanist` - Warm and inviting experiences
+1. `classic-magazine` - Classic magazine style
+2. `equinox-fitness` - Fitness & wellness
+3. `minimal-workspace` - Minimal workspace
+4. `neutral-humanism` - Neutral humanism
+5. `round-minimal` - Round minimal
+6. `square-minimalism` - Square minimalism
 
 **CSS Format**: All color values use OKLCH format for perceptual uniformity
+
+**Authentication**: All themes require valid API key and license
 
 ## Quality Metrics (SPEC-MCP-002 v2.0.0)
 

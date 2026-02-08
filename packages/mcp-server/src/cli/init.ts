@@ -8,6 +8,7 @@ import path from 'node:path';
 import { execSync } from 'node:child_process';
 import readline from 'node:readline';
 import { generateGuide, type Framework } from './guide-template.js';
+import { generateClaudeMdSection, generateAgentsMdSection } from './agent-md-templates.js';
 
 // ─── 상수 ──────────────────────────────────────────────
 
@@ -240,7 +241,45 @@ function setupGuide(cwd: string, framework: Framework): void {
   logDetail('TEKTON-GUIDE.md 생성 완료');
 }
 
-// ─── Step 7: 완료 메시지 ────────────────────────────────
+// ─── Step 7: CLAUDE.md / AGENTS.md 설정 ────────────────
+
+function setupAgentMd(cwd: string, framework: Framework): void {
+  // CLAUDE.md 섹션 추가 (기존 파일이 있으면 append, 없으면 생성)
+  const claudeMdPath = path.join(cwd, 'CLAUDE.md');
+  const claudeSection = generateClaudeMdSection(framework);
+
+  if (fileExists(claudeMdPath)) {
+    const existingContent = fs.readFileSync(claudeMdPath, 'utf-8');
+    if (existingContent.includes('## Tekton UI Workflow')) {
+      logDetail('CLAUDE.md (이미 Tekton 섹션 존재, skip)');
+    } else {
+      fs.appendFileSync(claudeMdPath, `\n${claudeSection}`, 'utf-8');
+      logDetail('CLAUDE.md에 Tekton 섹션 추가 완료');
+    }
+  } else {
+    fs.writeFileSync(claudeMdPath, `# Project Instructions\n${claudeSection}`, 'utf-8');
+    logDetail('CLAUDE.md 생성 완료');
+  }
+
+  // AGENTS.md 섹션 추가 (기존 파일이 있으면 append, 없으면 생성)
+  const agentsMdPath = path.join(cwd, 'AGENTS.md');
+  const agentsSection = generateAgentsMdSection(framework);
+
+  if (fileExists(agentsMdPath)) {
+    const existingContent = fs.readFileSync(agentsMdPath, 'utf-8');
+    if (existingContent.includes('## Tekton UI Workflow')) {
+      logDetail('AGENTS.md (이미 Tekton 섹션 존재, skip)');
+    } else {
+      fs.appendFileSync(agentsMdPath, `\n${agentsSection}`, 'utf-8');
+      logDetail('AGENTS.md에 Tekton 섹션 추가 완료');
+    }
+  } else {
+    fs.writeFileSync(agentsMdPath, `# AI Agent Instructions\n${agentsSection}`, 'utf-8');
+    logDetail('AGENTS.md 생성 완료');
+  }
+}
+
+// ─── Step 8: 완료 메시지 (인증 안내 강화) ─────────────────
 
 function printSuccess(): void {
   console.log(`
@@ -249,9 +288,12 @@ function printSuccess(): void {
   Tekton UI 설정 완료!
 
   다음 단계:
-  1. Claude Code를 재시작하세요
-  2. AI에게 요청하세요: "로그인 화면 만들어줘"
-  3. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
+  1. 먼저 인증하세요: tekton-mcp login
+  2. Claude Code를 재시작하세요
+  3. AI에게 요청하세요: "로그인 화면 만들어줘"
+  4. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
+
+  중요: 모든 6개 테마는 인증이 필요합니다
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 }
@@ -260,7 +302,7 @@ function printSuccess(): void {
 
 export async function initCommand(): Promise<void> {
   const cwd = process.cwd();
-  const totalSteps = 6;
+  const totalSteps = 8;
 
   console.log('\n@tekton-ui/mcp-server init\n');
 
@@ -329,6 +371,15 @@ export async function initCommand(): Promise<void> {
     console.error('가이드 문서 생성에 실패했습니다.');
   }
 
-  // 완료 메시지
+  // Step 7: CLAUDE.md / AGENTS.md 설정
+  log(7, totalSteps, 'AI 에이전트 가이드 설정 중...');
+  try {
+    setupAgentMd(cwd, framework);
+  } catch {
+    console.error('AI 에이전트 가이드 설정에 실패했습니다.');
+  }
+
+  // Step 8: 완료 메시지
+  log(8, totalSteps, '설정 완료');
   printSuccess();
 }

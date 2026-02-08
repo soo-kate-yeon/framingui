@@ -4,21 +4,14 @@
  */
 
 /**
- * 모든 프리미엄 테마 목록
+ * 모든 프리미엄 테마 목록 (실제 존재하는 6개 테마만)
  * 인증된 사용자만 라이선스 보유 테마에 접근 가능
  */
 export const PREMIUM_THEMES = [
-  'calm-wellness',
-  'dynamic-fitness',
-  'korean-fintech',
-  'media-streaming',
-  'premium-editorial',
-  'saas-dashboard',
-  'warm-humanist',
-  'next-tailwind-shadcn',
-  'vite-tailwind-shadcn',
-  'next-styled-components',
-  'next-tailwind-radix',
-  'saas-modern',
-  'tech-startup',
+  'classic-magazine',
+  'equinox-fitness',
+  'minimal-workspace',
+  'neutral-humanism',
+  'round-minimal',
+  'square-minimalism',
 ];

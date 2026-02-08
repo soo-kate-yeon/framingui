@@ -1,6 +1,6 @@
 {
   "name": "@tekton-ui/tokens",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "TypeScript token type definitions with compile-time enforcement",
   "type": "module",
   "main": "./dist/index.js",
