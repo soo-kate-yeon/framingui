@@ -1,6 +1,6 @@
 {
   "name": "@tekton-ui/core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Core design system pipeline: Theme -> Blueprint -> Screen (~800 LOC)",
   "type": "module",
   "main": "./dist/index.js",

@@ -33,6 +33,12 @@ switch (command) {
     break;
   }
 
+  case 'init': {
+    const { initCommand } = await import('./init.js');
+    await initCommand();
+    break;
+  }
+
   default: {
     // 서브커맨드 없음 → MCP stdio 서버 시작 (기존 동작 유지)
     await import('../index.js');

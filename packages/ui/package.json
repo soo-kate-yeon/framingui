@@ -1,6 +1,6 @@
 {
   "name": "@tekton-ui/ui",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Tekton UI Reference Component Library",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
