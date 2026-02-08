@@ -21,6 +21,60 @@ tekton-mcp
 
 ---
 
+## Quick Start: `init` 명령어
+
+프로젝트에 Tekton UI를 한 줄로 설정합니다.
+
+```bash
+npx @tekton-ui/mcp-server init
+```
+
+이 명령어는 다음을 자동으로 수행합니다:
+
+1. **프로젝트 감지** - Next.js / Vite 자동 인식
+2. **패키지 설치** - `@tekton-ui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지)
+3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
+4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
+5. **MCP 연결** - `.claude/mcp.json`에 tekton 서버 등록
+6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
+
+```
+@tekton-ui/mcp-server init
+
+[1/6] 프로젝트 감지 중...
+      Next.js 프로젝트
+
+[2/6] 패키지 설치 중...
+      pnpm add @tekton-ui/ui tailwindcss-animate
+
+[3/6] Tailwind CSS 설정 중...
+      tailwind.config.ts 업데이트 완료
+
+[4/6] CSS 토큰 임포트 추가 중...
+      app/globals.css 업데이트 완료
+
+[5/6] Claude Code MCP 설정 중...
+      .claude/mcp.json 생성 완료
+
+[6/6] 가이드 문서 생성 중...
+      TEKTON-GUIDE.md 생성 완료
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Tekton UI 설정 완료!
+
+  다음 단계:
+  1. Claude Code를 재시작하세요
+  2. AI에게 요청하세요: "로그인 화면 만들어줘"
+  3. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+설정 완료 후 Claude Code를 재시작하면, AI에게 자연어로 화면 생성을 요청할 수 있습니다.
+
+---
+
 ## 핵심 역할
 
 `@tekton-ui/mcp-server`는 **MCP Protocol (JSON-RPC 2.0)**을 통해 Claude Code에 16개의 디자인 시스템 도구를 제공합니다.

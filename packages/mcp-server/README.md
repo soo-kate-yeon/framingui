@@ -84,7 +84,36 @@ TEKTON_API_URL=https://tekton-ui.com  # or http://localhost:3000 for dev
 - Falls back to free themes only
 - Does not crash the server
 
-## Quick Start
+## Quick Start: `init` Command
+
+프로젝트에 Tekton UI를 한 줄로 설정합니다.
+
+```bash
+npx @tekton-ui/mcp-server init
+```
+
+자동으로 수행되는 작업:
+
+1. **프로젝트 감지** - Next.js / Vite 자동 인식
+2. **패키지 설치** - `@tekton-ui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지: pnpm/yarn/bun/npm)
+3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
+4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
+5. **MCP 연결** - `.claude/mcp.json`에 tekton 서버 등록
+6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
+
+설정 완료 후 Claude Code를 재시작하면, AI에게 "로그인 화면 만들어줘"와 같이 자연어로 화면 생성을 요청할 수 있습니다.
+
+### CLI Commands
+
+| Command                          | Description           |
+| -------------------------------- | --------------------- |
+| `npx @tekton-ui/mcp-server`      | MCP stdio 서버 시작   |
+| `npx @tekton-ui/mcp-server init` | 프로젝트 초기 설정    |
+| `tekton-mcp login`               | 브라우저 OAuth 로그인 |
+| `tekton-mcp logout`              | 로그아웃              |
+| `tekton-mcp status`              | 인증 상태 확인        |
+
+## Development Quick Start
 
 ### 1. Build the Server
 
