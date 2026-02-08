@@ -139,13 +139,8 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 {
   "mcpServers": {
     "tekton": {
-      "command": "node",
-      "args": ["/absolute/path/to/tekton/packages/mcp-server/dist/index.js"],
-      "env": {
-        "NODE_ENV": "production",
-        "TEKTON_API_KEY": "tk_live_your_api_key_here",
-        "TEKTON_API_URL": "https://tekton-ui.com"
-      }
+      "command": "npx",
+      "args": ["-y", "@tekton-ui/mcp-server"]
     }
   }
 }

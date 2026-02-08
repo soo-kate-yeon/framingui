@@ -192,7 +192,7 @@ function setupMCP(cwd: string): void {
 
   const tektonServer = {
     command: 'npx',
-    args: ['@tekton-ui/mcp-server'],
+    args: ['-y', '@tekton-ui/mcp-server'],
   };
 
   if (fileExists(mcpPath)) {

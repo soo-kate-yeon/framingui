@@ -98,7 +98,7 @@ AI 에이전트가 이 서버를 통해 다음 작업을 수행할 수 있습니
   "mcpServers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton-ui/mcp-server"]
+      "args": ["-y", "@tekton-ui/mcp-server"]
     }
   }
 }
