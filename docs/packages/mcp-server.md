@@ -37,36 +37,47 @@ npx @tekton-ui/mcp-server init
 4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
 5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
 6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
+7. **AI 에이전트 가이드** - `CLAUDE.md` 및 `AGENTS.md`에 Tekton 워크플로우 섹션 추가
+8. **완료 안내** - 인증 필요성 및 다음 단계 안내
 
 ```
 @tekton-ui/mcp-server init
 
-[1/6] 프로젝트 감지 중...
+[1/8] 프로젝트 감지 중...
       Next.js 프로젝트
 
-[2/6] 패키지 설치 중...
+[2/8] 패키지 설치 중...
       pnpm add @tekton-ui/ui tailwindcss-animate
 
-[3/6] Tailwind CSS 설정 중...
+[3/8] Tailwind CSS 설정 중...
       tailwind.config.ts 업데이트 완료
 
-[4/6] CSS 토큰 임포트 추가 중...
+[4/8] CSS 토큰 임포트 추가 중...
       app/globals.css 업데이트 완료
 
-[5/6] Claude Code MCP 설정 중...
+[5/8] Claude Code MCP 설정 중...
       .mcp.json 생성 완료
 
-[6/6] 가이드 문서 생성 중...
+[6/8] 가이드 문서 생성 중...
       TEKTON-GUIDE.md 생성 완료
+
+[7/8] AI 에이전트 가이드 설정 중...
+      CLAUDE.md 생성 완료
+      AGENTS.md 생성 완료
+
+[8/8] 설정 완료
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Tekton UI 설정 완료!
 
   다음 단계:
-  1. Claude Code를 재시작하세요
-  2. AI에게 요청하세요: "로그인 화면 만들어줘"
-  3. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
+  1. 먼저 인증하세요: tekton-mcp login
+  2. Claude Code를 재시작하세요
+  3. AI에게 요청하세요: "로그인 화면 만들어줘"
+  4. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
+
+  중요: 모든 6개 테마는 인증이 필요합니다
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
@@ -77,7 +88,7 @@ npx @tekton-ui/mcp-server init
 
 ## 핵심 역할
 
-`@tekton-ui/mcp-server`는 **MCP Protocol (JSON-RPC 2.0)**을 통해 Claude Code에 16개의 디자인 시스템 도구를 제공합니다.
+`@tekton-ui/mcp-server`는 **MCP Protocol (JSON-RPC 2.0)**을 통해 Claude Code에 16개의 디자인 시스템 도구와 2개의 MCP Prompts를 제공합니다.
 
 AI 에이전트가 이 서버를 통해 다음 작업을 수행할 수 있습니다:
 
@@ -217,6 +228,44 @@ AI 에이전트가 프로덕션 레디 스크린을 생성하는 전체 흐름�
 | `neutral-humanism`  | 뉴트럴 휴머니즘      |
 | `round-minimal`     | 라운드 미니멀        |
 | `square-minimalism` | 스퀘어 미니멀리즘    |
+
+**중요:** 모든 6개 테마는 인증이 필요합니다. 무료 테마는 없습니다.
+
+---
+
+## MCP Prompts (범용 가이드)
+
+MCP 서버는 모든 MCP 클라이언트에서 사용 가능한 2개의 내장 프롬프트를 제공합니다:
+
+### 1. getting-started
+
+**목적:** Tekton UI 온보딩 완전 가이드
+
+**내용:**
+
+- 인증 설정 (tekton-mcp login)
+- 테마 탐색 워크플로우
+- 컴포넌트 가용성 확인
+- 4단계 스크린 생성 워크플로우
+- 일반적인 실수 및 문제 해결
+
+**사용 시점:** 신규 사용자, 온보딩, 워크플로우 개요 필요 시
+
+### 2. screen-workflow
+
+**목적:** 상세한 4단계 프로덕션 워크플로우
+
+**내용:**
+
+- Step 1/4: get-screen-generation-context
+- Step 2/4: validate-screen-definition
+- Step 3/4: generate_screen
+- Step 4/4: validate-environment
+- 완전한 예시 및 문제 해결
+
+**사용 시점:** 프로덕션 스크린 생성, 워크플로우 명확화 필요 시
+
+**참고:** 이 프롬프트들은 플랫폼 독립적이며 Claude Code, OpenAI Codex, Cursor, Windsurf 등 모든 MCP 호환 클라이언트에서 작동합니다.
 
 ---
 

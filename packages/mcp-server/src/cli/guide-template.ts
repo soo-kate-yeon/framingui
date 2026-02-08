@@ -50,6 +50,65 @@ export default App;`;
 
 ---
 
+## Authentication
+
+Before generating screens, authenticate with your Tekton account:
+
+\`\`\`bash
+tekton-mcp login
+\`\`\`
+
+This opens your browser for OAuth authentication. Your credentials are stored in \`~/.tekton/credentials.json\`.
+
+**Why authentication is required:**
+- All 6 themes require valid licenses
+- No free themes are available
+- Authentication verifies your license status
+
+**Check your authentication status:**
+
+\`\`\`bash
+tekton-mcp status
+\`\`\`
+
+---
+
+## Screen Generation Workflow
+
+Tekton provides a **4-step workflow** for production-ready screen generation:
+
+### Step 1/4: Get Context
+
+Claude Code calls \`get-screen-generation-context\` with your screen description:
+
+\`\`\`
+"Create a user dashboard with profile card and recent activity"
+\`\`\`
+
+Returns: Template matches, component suggestions, Screen Definition schema
+
+### Step 2/4: Validate Definition
+
+Claude Code generates a Screen Definition JSON and calls \`validate-screen-definition\`:
+
+Returns: Validation results, errors (if any), improvement suggestions
+
+### Step 3/4: Generate Code
+
+Claude Code calls \`generate_screen\` with the validated definition:
+
+Returns: Production React code, CSS variables, dependencies list
+
+### Step 4/4: Validate Environment
+
+Claude Code calls \`validate-environment\` to check your project:
+
+Returns: Missing packages, install commands, Tailwind CSS config validation
+
+**Important:** Always check the dependencies and Tailwind configuration before running generated code.
+
+---
+
 ## Quick Start
 
 ### Using Components
