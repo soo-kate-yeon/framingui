@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Pipeline Integration Tests
+ * @tekton-ui/core - Pipeline Integration Tests
  * Tests the complete flow: Theme -> Blueprint -> Screen
  */
 

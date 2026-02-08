@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - ScrollArea Component Tests
+ * @tekton-ui/ui - ScrollArea Component Tests
  */
 
 import { render } from '@testing-library/react';

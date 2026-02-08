@@ -8,8 +8,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { previewScreenTemplateTool } from '../../src/tools/preview-screen-template.js';
 
-// Mock @tekton/ui templateRegistry
-vi.mock('@tekton/ui', () => ({
+// Mock @tekton-ui/ui templateRegistry
+vi.mock('@tekton-ui/ui', () => ({
   templateRegistry: {
     get: vi.fn((id: string) => {
       const templates: Record<string, any> = {
@@ -214,7 +214,7 @@ describe('previewScreenTemplateTool', () => {
       // Assert
       expect(result.success).toBe(true);
       expect(result.template?.importStatement).toBeDefined();
-      expect(result.template?.importStatement).toContain('@tekton/ui');
+      expect(result.template?.importStatement).toContain('@tekton-ui/ui');
       expect(result.template?.importStatement).toContain('Template');
     });
 

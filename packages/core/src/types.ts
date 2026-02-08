@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Essential Types
+ * @tekton-ui/core - Essential Types
  * Minimal type definitions for the design system pipeline
  * Target: 80 LOC
  */

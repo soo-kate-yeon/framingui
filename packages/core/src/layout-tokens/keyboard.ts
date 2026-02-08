@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Keyboard Utilities
+ * @tekton-ui/core - Keyboard Utilities
  * Keyboard handling and avoidance utilities for mobile and web platforms
  * [SPEC-LAYOUT-004] [MILESTONE-4]
  */

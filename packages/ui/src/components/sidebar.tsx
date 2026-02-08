@@ -7,7 +7,7 @@
  * WHY: Dashboard navigation with collapsible sections
  * IMPACT: Improves navigation UX for complex applications
  *
- * @tekton/ui - Sidebar Component
+ * @tekton-ui/ui - Sidebar Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * Pattern: Radix UI + CVA + Tekton tokens

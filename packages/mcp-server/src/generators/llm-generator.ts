@@ -8,7 +8,7 @@
  * - 최대 3회 재시도 로직
  */
 
-import { getComponentSchema, type ComponentSchema } from '@tekton/core';
+import { getComponentSchema, type ComponentSchema } from '@tekton-ui/core';
 import { TIER1_COMPONENTS, getTier1Example } from './core-resolver.js';
 
 /**
@@ -78,7 +78,7 @@ export function buildLLMContext(
     .filter(Boolean)
     .join('\n\n');
 
-  let prompt = `Generate a React component following @tekton/ui conventions.
+  let prompt = `Generate a React component following @tekton-ui/ui conventions.
 
 ## Component Name
 ${componentName}
@@ -89,12 +89,12 @@ ${description || `A ${componentName} component`}
 ## Requirements
 1. Use TypeScript with proper type definitions
 2. Use CSS Variables for theming (var(--component-property))
-3. Use @tekton/ui imports where applicable
+3. Use @tekton-ui/ui imports where applicable
 4. Follow WCAG 2.1 AA accessibility guidelines
 5. Include proper aria attributes
 6. Export the component as named export
 
-## Reference Examples (from @tekton/ui)
+## Reference Examples (from @tekton-ui/ui)
 ${referenceExamples}
 
 `;
@@ -317,7 +317,7 @@ export function generateMockComponent(
   description?: string
 ): LLMGenerationResult {
   const mockCode = `import * as React from 'react';
-import { cn } from '@tekton/ui';
+import { cn } from '@tekton-ui/ui';
 
 export interface ${componentName}Props extends React.HTMLAttributes<HTMLDivElement> {
   /** 컴포넌트 설명: ${description || componentName} */

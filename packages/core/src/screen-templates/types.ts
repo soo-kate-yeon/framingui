@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Screen Template Types
+ * @tekton-ui/core - Screen Template Types
  * AI-Native ScreenTemplate interface system for 12 P0 Screen Templates
  * [SPEC-UI-002] [TAG-UI002-001]
  */

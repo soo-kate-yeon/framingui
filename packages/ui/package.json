@@ -1,6 +1,6 @@
 {
-  "name": "@tekton/ui",
-  "version": "0.2.0",
+  "name": "@tekton-ui/ui",
+  "version": "0.3.0",
   "description": "Tekton UI Reference Component Library",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -67,7 +67,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.0.7",
-    "@tekton/tokens": "workspace:*",
+    "@tekton-ui/tokens": "workspace:*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^1.1.1",

@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Shell Token Definitions
+ * @tekton-ui/core - Shell Token Definitions
  * Concrete Shell Token implementations for web applications
  * [SPEC-LAYOUT-001] [PHASE-3]
  */

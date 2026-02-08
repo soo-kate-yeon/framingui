@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Empty State Screen Template
+ * @tekton-ui/core - Empty State Screen Template
  * [SPEC-UI-002] [TAG-UI002-033] feedback.empty
  */
 

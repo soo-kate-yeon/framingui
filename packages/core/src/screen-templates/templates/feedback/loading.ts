@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Loading Screen Template
+ * @tekton-ui/core - Loading Screen Template
  * [SPEC-UI-002] [TAG-UI002-031] feedback.loading
  */
 

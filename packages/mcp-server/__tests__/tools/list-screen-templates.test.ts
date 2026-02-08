@@ -7,8 +7,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { listScreenTemplatesTool } from '../../src/tools/list-screen-templates.js';
 
-// Mock @tekton/ui templateRegistry
-vi.mock('@tekton/ui', () => ({
+// Mock @tekton-ui/ui templateRegistry
+vi.mock('@tekton-ui/ui', () => ({
   templateRegistry: {
     getAll: vi.fn(() => [
       {

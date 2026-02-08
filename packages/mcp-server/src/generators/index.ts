@@ -4,7 +4,7 @@
  *
  * 3계층 Export 시스템:
  * - CSS Generator: 테마에서 CSS Variables 생성
- * - Core Resolver (Tier 1): @tekton/ui에서 컴포넌트 가져오기
+ * - Core Resolver (Tier 1): @tekton-ui/ui에서 컴포넌트 가져오기
  * - LLM Generator (Tier 2): Claude API로 커스텀 컴포넌트 생성
  */
 

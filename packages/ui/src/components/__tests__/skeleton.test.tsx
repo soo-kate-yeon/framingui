@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Skeleton Component Tests
+ * @tekton-ui/ui - Skeleton Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Skeleton component
  */
 

@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Schema Validation Utilities
+ * @tekton-ui/core - Schema Validation Utilities
  * Zod-based runtime validation for component schemas
  * [SPEC-COMPONENT-001-B] [TAG-004]
  */

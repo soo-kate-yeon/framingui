@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Output Generators Module
+ * @tekton-ui/core - Output Generators Module
  * Barrel export for code generation from resolved screens
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

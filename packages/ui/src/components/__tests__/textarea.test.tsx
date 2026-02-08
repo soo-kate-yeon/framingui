@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Textarea Component Tests
+ * @tekton-ui/ui - Textarea Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Textarea component
  */
 

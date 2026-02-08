@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Accordion } from './Accordion';
-import { Button } from '@tekton/ui';
+import { Button } from '@tekton-ui/ui';
 import { Footer } from '../shared/Footer';
 
 function FadeIn({

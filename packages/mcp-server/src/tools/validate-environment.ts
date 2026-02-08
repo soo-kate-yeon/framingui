@@ -17,7 +17,7 @@ import { extractErrorMessage } from '../utils/error-handler.js';
  *
  * Compares required packages against installed packages in package.json
  * and provides installation commands for missing packages.
- * Optionally validates Tailwind CSS configuration for @tekton/ui compatibility.
+ * Optionally validates Tailwind CSS configuration for @tekton-ui/ui compatibility.
  *
  * @param input - Project path and required packages to validate
  * @returns Validation result with installed/missing packages and install commands
@@ -98,12 +98,12 @@ export async function validateEnvironmentTool(
       } else {
         if (!tailwindResult.hasUiContentPath) {
           issues.push(
-            'tailwind.config content paths do not include @tekton/ui — ' +
+            'tailwind.config content paths do not include @tekton-ui/ui — ' +
               'component styles (Dialog, AlertDialog, Popover, etc.) will not be compiled'
           );
           fixes.push(
             "Add '../../packages/ui/src/**/*.{ts,tsx}' (monorepo) or " +
-              "'node_modules/@tekton/ui/dist/**/*.{js,ts,jsx,tsx}' (standalone) " +
+              "'node_modules/@tekton-ui/ui/dist/**/*.{js,ts,jsx,tsx}' (standalone) " +
               'to the content array in your tailwind.config'
           );
         }
@@ -114,7 +114,7 @@ export async function validateEnvironmentTool(
               'Radix UI component animations (Dialog open/close, Popover, Tooltip) will not work'
           );
           fixes.push(
-            "Install tailwindcss-animate (npm install tailwindcss-animate) and add it to plugins array: " +
+            'Install tailwindcss-animate (npm install tailwindcss-animate) and add it to plugins array: ' +
               "import animate from 'tailwindcss-animate'; plugins: [animate]"
           );
         }

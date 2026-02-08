@@ -3,8 +3,8 @@
  * SPEC-MCP-004 Phase 3.5: Provides complete context for AI agents to generate screen definitions
  */
 
-import { loadTheme } from '@tekton/core';
-import { templateRegistry } from '@tekton/ui';
+import { loadTheme } from '@tekton-ui/core';
+import { templateRegistry } from '@tekton-ui/ui';
 import type {
   GetScreenGenerationContextInput,
   GetScreenGenerationContextOutput,
@@ -126,7 +126,7 @@ function getComponentInfo(componentIds: string[]): ContextComponentInfo[] {
         name: component.name,
         category: component.category as 'core' | 'complex' | 'advanced',
         description: component.description,
-        importStatement: `import { ${component.name} } from '@tekton/ui';`,
+        importStatement: `import { ${component.name} } from '@tekton-ui/ui';`,
         props: [], // Props are detailed in preview-component tool
         variants: undefined, // Variants are detailed in preview-component tool
       });
@@ -330,7 +330,7 @@ export async function getScreenGenerationContextTool(
         },
       ],
       notes: [
-        'Use components from the "components" field - they are available in @tekton/ui',
+        'Use components from the "components" field - they are available in @tekton-ui/ui',
         'Apply theme recipes by setting variant props on components',
         'If themeId is provided, recipes will be auto-applied during code generation',
         'Check hints for layout and component recommendations',

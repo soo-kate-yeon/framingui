@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Progress Component Tests
+ * @tekton-ui/ui - Progress Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Progress component
  */
 

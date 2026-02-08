@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Component Library Index
+ * @tekton-ui/ui - Component Library Index
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

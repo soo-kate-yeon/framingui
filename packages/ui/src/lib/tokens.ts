@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Tekton Token CSS Variable Mappings
+ * @tekton-ui/ui - Tekton Token CSS Variable Mappings
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
@@ -13,7 +13,7 @@
  * All values use `var(--tekton-*)` pattern for theme consistency.
  */
 
-import type { TokenReference } from '@tekton/tokens';
+import type { TokenReference } from '@tekton-ui/tokens';
 
 /**
  * Tekton Token CSS Variables

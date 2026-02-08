@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Screen Resolver Integration Tests
+ * @tekton-ui/core - Screen Resolver Integration Tests
  * End-to-end tests for complete screen resolution workflow
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

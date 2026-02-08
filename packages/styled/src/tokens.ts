@@ -1,11 +1,11 @@
 /**
- * @tekton/styled - Token Accessor
+ * @tekton-ui/styled - Token Accessor
  * [SPEC-STYLED-001] [TAG-003]
  * Proxy-based token accessor that returns CSS variable references
  * REQ-STY-010: Return CSS variable references for token access
  */
 
-import type { TektonTokens } from '@tekton/tokens';
+import type { TektonTokens } from '@tekton-ui/tokens';
 
 /**
  * Token accessor that returns CSS variable references

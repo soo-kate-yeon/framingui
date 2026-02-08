@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - AlertDialog Component Tests
+ * @tekton-ui/ui - AlertDialog Component Tests
  */
 
 import { render, screen, waitFor } from '@testing-library/react';

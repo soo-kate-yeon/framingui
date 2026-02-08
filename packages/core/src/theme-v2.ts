@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Theme Module v2.1
+ * @tekton-ui/core - Theme Module v2.1
  * Load and manage v2.1 theme definitions from .moai/themes/generated/
  * [SPEC-LAYOUT-002] [THEME-V2]
  */

@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Mobile Integration Tests
+ * @tekton-ui/core - Mobile Integration Tests
  * Integration tests combining SafeArea, Keyboard, TouchTarget, and Mobile Shells
  * [SPEC-LAYOUT-004] [MILESTONE-7]
  */

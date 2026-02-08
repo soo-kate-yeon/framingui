@@ -8,7 +8,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { templateRegistry } from '@tekton/ui';
+import { templateRegistry } from '@tekton-ui/ui';
 import type {
   ListScreenTemplatesInput,
   ListScreenTemplatesOutput,

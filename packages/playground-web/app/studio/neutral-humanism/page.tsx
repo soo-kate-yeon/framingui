@@ -17,7 +17,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@tekton/ui';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@tekton-ui/ui';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 
 const NEUTRAL_HUMANISM_FALLBACK: Record<string, string> = {

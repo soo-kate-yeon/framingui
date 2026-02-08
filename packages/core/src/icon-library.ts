@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Icon Library Module
+ * @tekton-ui/core - Icon Library Module
  * Load and manage icon library definitions from .moai/icon-libraries/generated/
  * [SPEC-ICON-001]
  */

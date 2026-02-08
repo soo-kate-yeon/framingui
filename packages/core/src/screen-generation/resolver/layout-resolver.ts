@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Screen Layout Resolver
+ * @tekton-ui/core - Screen Layout Resolver
  * Wrapper for layout resolution with screen-specific context
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

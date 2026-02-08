@@ -1,6 +1,6 @@
 {
-  "name": "@tekton/esbuild-plugin",
-  "version": "0.2.0",
+  "name": "@tekton-ui/esbuild-plugin",
+  "version": "0.3.0",
   "description": "esbuild plugin for build-time token compliance validation",
   "type": "module",
   "main": "./dist/src/index.js",

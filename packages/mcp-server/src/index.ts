@@ -230,11 +230,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '  * User provided package.json path? → Call validate-environment (Step 4/4)\n' +
           '  * Path unknown? → Show dependencies.installCommands to user\n' +
           '- Display the list of required packages to user before delivering code\n' +
-          '- validate-environment also checks Tailwind CSS config — ensures @tekton/ui\n' +
+          '- validate-environment also checks Tailwind CSS config — ensures @tekton-ui/ui\n' +
           '  content paths and tailwindcss-animate plugin are configured correctly\n\n' +
           'CRITICAL:\n' +
           '- This workflow prevents "Module not found" errors at runtime\n' +
-          '- Tailwind validation prevents invisible/unstyled @tekton/ui components\n' +
+          '- Tailwind validation prevents invisible/unstyled @tekton-ui/ui components\n' +
           '- Never deliver code without informing user about dependencies',
         inputSchema: {
           type: 'object',
@@ -317,7 +317,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'list-components',
         description:
-          'List all available UI components from @tekton/ui with metadata.\n\n' +
+          'List all available UI components from @tekton-ui/ui with metadata.\n\n' +
           'WHEN TO CALL:\n' +
           '- When user asks which components are available\n' +
           '- Before calling preview-component to select a component\n' +
@@ -498,12 +498,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-environment',
         description:
-          'Validate user environment: NPM packages + Tailwind CSS configuration for @tekton/ui.\n\n' +
+          'Validate user environment: NPM packages + Tailwind CSS configuration for @tekton-ui/ui.\n\n' +
           'WHEN TO CALL:\n' +
           '- After generate_screen returns dependencies.missing array\n' +
           '- When user wants to check if their project has required packages\n' +
           '- Before running generated code to ensure all dependencies are available\n' +
-          '- To verify Tailwind CSS is configured correctly for @tekton/ui components\n\n' +
+          '- To verify Tailwind CSS is configured correctly for @tekton-ui/ui components\n\n' +
           'RETURNS:\n' +
           '- installed: Packages already in package.json with versions\n' +
           '- missing: Packages that need to be installed\n' +
@@ -511,7 +511,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n\n' +
           'TAILWIND VALIDATION (checkTailwind=true by default):\n' +
           '- Checks if tailwind.config.{ts,js,mjs,cjs} exists\n' +
-          '- Verifies @tekton/ui content paths are included (prevents missing styles)\n' +
+          '- Verifies @tekton-ui/ui content paths are included (prevents missing styles)\n' +
           '- Verifies tailwindcss-animate plugin is configured (required for Dialog, Popover animations)\n' +
           '- Returns actionable issues[] and fixes[] for each problem found\n\n' +
           'EXAMPLE WORKFLOW:\n' +
@@ -534,7 +534,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             checkTailwind: {
               type: 'boolean',
               description:
-                'Also validate Tailwind CSS configuration for @tekton/ui compatibility (default: true)',
+                'Also validate Tailwind CSS configuration for @tekton-ui/ui compatibility (default: true)',
             },
           },
           required: ['projectPath', 'requiredPackages'],
@@ -559,14 +559,16 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
   } catch (e) {
     if (e instanceof AuthRequiredError) {
       return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            success: false,
-            error: 'Authentication required.',
-            hint: 'Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
-          }),
-        }],
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: false,
+              error: 'Authentication required.',
+              hint: 'Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
+            }),
+          },
+        ],
         isError: true,
       };
     }

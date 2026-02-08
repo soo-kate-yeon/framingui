@@ -1,5 +1,5 @@
 /**
- * @tekton/core - TemplateRegistry Tests
+ * @tekton-ui/core - TemplateRegistry Tests
  * [SPEC-UI-002] [TAG-UI002-004] Template Registry Testing
  */
 

@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Token Type Definitions
+ * @tekton-ui/core - Token Type Definitions
  * 3-Layer Token Architecture: Atomic → Semantic → Component
  * [SPEC-COMPONENT-001-A] [TOKEN-TYPES]
  *

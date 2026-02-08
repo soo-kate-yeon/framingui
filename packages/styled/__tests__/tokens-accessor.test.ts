@@ -1,5 +1,5 @@
 /**
- * @tekton/styled - Token Accessor Tests (TAG-003)
+ * @tekton-ui/styled - Token Accessor Tests (TAG-003)
  * Specification tests for Proxy-based token accessor
  * [SPEC-STYLED-001] [REQ-STY-010]
  */

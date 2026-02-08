@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Mobile Shell Token Tests
+ * @tekton-ui/core - Mobile Shell Token Tests
  * Comprehensive tests for all 6 mobile shell tokens and utility functions
  * [SPEC-LAYOUT-004] [MILESTONE-7]
  */

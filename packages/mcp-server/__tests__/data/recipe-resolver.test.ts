@@ -11,7 +11,7 @@ import {
   countAppliedRecipes,
   getAllRecipes,
 } from '../../src/data/recipe-resolver.js';
-import type { ComponentNode } from '@tekton/core';
+import type { ComponentNode } from '@tekton-ui/core';
 
 describe('Recipe Resolver', () => {
   describe('resolveRecipe', () => {

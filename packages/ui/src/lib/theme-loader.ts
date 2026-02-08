@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Theme Loader
+ * @tekton-ui/ui - Theme Loader
  * SPEC-UI-001: linear-minimal-v1.json → CSS Variables Converter
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
@@ -14,7 +14,7 @@
  */
 
 /**
- * Theme Definition (mirrors @tekton/core ThemeDefinition)
+ * Theme Definition (mirrors @tekton-ui/core ThemeDefinition)
  */
 export interface ThemeDefinition {
   id: string;
@@ -192,7 +192,7 @@ export function themeToCSS(theme: ThemeDefinition): string {
  *
  * ```tsx
  * import theme from '@/.moai/themes/generated/linear-minimal-v1.json';
- * import { injectThemeCSS } from '@tekton/ui/lib/theme-loader';
+ * import { injectThemeCSS } from '@tekton-ui/ui/lib/theme-loader';
  *
  * // In layout or app component
  * useEffect(() => {

@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Tabs Component Tests
+ * @tekton-ui/ui - Tabs Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Tabs component
  */
 

@@ -17,7 +17,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@tekton/ui';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@tekton-ui/ui';
 /**
  * Minimal Workspace Landing Page
  * Theme: Modern SaaS Dashboard

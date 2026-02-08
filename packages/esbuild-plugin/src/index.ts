@@ -1,5 +1,5 @@
 /**
- * @tekton/esbuild-plugin - Build-time Token Validation Plugin
+ * @tekton-ui/esbuild-plugin - Build-time Token Validation Plugin
  * [SPEC-STYLED-001] [TAG-006]
  * esbuild plugin for token compliance validation
  * REQ-STY-007, REQ-STY-009, REQ-STY-012
@@ -117,7 +117,7 @@ export function tektonPlugin(options: TektonPluginOptions = {}): Plugin {
             result.errors.push({
               id: 'tekton-token-compliance',
               text: `[Tekton] Token compliance ${compliance}% is below threshold ${threshold}%`,
-              detail: `Found ${violations.length} violation(s). Use @tekton/styled tokens for all design values.`,
+              detail: `Found ${violations.length} violation(s). Use @tekton-ui/styled tokens for all design values.`,
               location: null,
               notes: [],
               pluginName: 'tekton-token-validator',

@@ -3,10 +3,10 @@
  * [SPEC-UI-003][TAG-UI003-037]
  *
  * Theme: Square Minimalism
- * Function: Lists ACTUAL themes from .moai/themes/generated via @tekton/core
+ * Function: Lists ACTUAL themes from .moai/themes/generated via @tekton-ui/core
  */
 
-import { listThemes } from '@tekton/core';
+import { listThemes } from '@tekton-ui/core';
 import { getTemplateData } from '../../data/templates';
 import { TemplateGallery } from '../../components/studio/TemplateGallery';
 import type { Metadata } from 'next';

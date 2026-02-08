@@ -2,13 +2,13 @@
  * ThemeProvider - Server Component
  * SPEC-PLAYGROUND-001 Milestone 3: Theme Integration
  *
- * Injects CSS Variables into document head using @tekton/core's generateThemeCSS
+ * Injects CSS Variables into document head using @tekton-ui/core's generateThemeCSS
  */
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { generateThemeCSS } from '@tekton/core';
-import type { Theme, ThemeWithTokens } from '@tekton/core';
+import { generateThemeCSS } from '@tekton-ui/core';
+import type { Theme, ThemeWithTokens } from '@tekton-ui/core';
 
 export interface ThemeProviderProps {
   theme: Theme | ThemeWithTokens | null;

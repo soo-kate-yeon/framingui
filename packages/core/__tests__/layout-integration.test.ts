@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Layout Tokens Integration Tests
+ * @tekton-ui/core - Layout Tokens Integration Tests
  * End-to-end testing of layout token system
  * [SPEC-LAYOUT-001] [PHASE-10]
  */

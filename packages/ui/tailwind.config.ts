@@ -1,5 +1,5 @@
 /**
- * Tailwind CSS Configuration for @tekton/ui
+ * Tailwind CSS Configuration for @tekton-ui/ui
  * [SPEC-UI-001] shadcn-ui Fork & Token Integration
  */
 

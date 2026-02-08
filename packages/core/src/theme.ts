@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Theme Module
+ * @tekton-ui/core - Theme Module
  * v2.1 Theme System - Load themes from .moai/themes/generated/
  *
  * MIGRATION NOTICE:

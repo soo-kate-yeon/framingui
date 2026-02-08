@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Component Resolver
+ * @tekton-ui/core - Component Resolver
  * Resolves component definitions to complete component structures with token bindings
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

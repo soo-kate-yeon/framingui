@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Layout CSS Generator Tests
+ * @tekton-ui/core - Layout CSS Generator Tests
  * Test suite for CSS generation from layout tokens
  * [SPEC-LAYOUT-001] [PHASE-8]
  */

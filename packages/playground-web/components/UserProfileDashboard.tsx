@@ -11,7 +11,7 @@ import {
   AvatarImage,
   AvatarFallback,
   Button,
-} from '@tekton/ui';
+} from '@tekton-ui/ui';
 
 export default function UserProfileDashboard() {
   return (

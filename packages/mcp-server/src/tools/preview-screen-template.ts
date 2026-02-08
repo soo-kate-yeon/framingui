@@ -12,7 +12,7 @@
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import { templateRegistry } from '@tekton/ui';
+import { templateRegistry } from '@tekton-ui/ui';
 import type {
   PreviewScreenTemplateInput,
   PreviewScreenTemplateOutput,
@@ -88,7 +88,7 @@ export async function previewScreenTemplateTool(
     };
 
     // Build import statement
-    const importStatement = `import { ${template.name}Template } from '@tekton/ui';`;
+    const importStatement = `import { ${template.name}Template } from '@tekton-ui/ui';`;
 
     return {
       success: true,

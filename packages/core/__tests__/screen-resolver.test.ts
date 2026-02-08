@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Screen Resolver Tests
+ * @tekton-ui/core - Screen Resolver Tests
  * Unit tests for screen resolution pipeline
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

@@ -4,7 +4,7 @@
  * [SPEC-ICON-001]
  */
 
-import { listIconLibraries } from '@tekton/core';
+import { listIconLibraries } from '@tekton-ui/core';
 import type { ListIconLibrariesOutput } from '../schemas/mcp-schemas.js';
 import { info, error as logError } from '../utils/logger.js';
 

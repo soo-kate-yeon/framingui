@@ -1,5 +1,5 @@
 /**
- * @tekton/esbuild-plugin - Integration Tests
+ * @tekton-ui/esbuild-plugin - Integration Tests
  * [SPEC-STYLED-001] Tests for TAG-006: esbuild Plugin Core
  * REQ-STY-012: Development vs production mode
  */

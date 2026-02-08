@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Token Resolution Engine
+ * @tekton-ui/core - Token Resolution Engine
  * Resolves token references to final values with fallback chain support
  * [SPEC-COMPONENT-001-A] [TOKEN-RESOLUTION]
  */

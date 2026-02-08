@@ -5,7 +5,7 @@
  *
  * WHY: 코드 품질 및 추적성을 보장
  * IMPACT: TAG 누락 시 요구사항 추적 불가
- * @tekton/ui - Tooltip Component
+ * @tekton-ui/ui - Tooltip Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  */
 

@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { rmSync } from 'fs';
 import { exportScreenTool } from '../../src/tools/export-screen.js';
 import { generateBlueprintTool } from '../../src/tools/generate-blueprint.js';
-import type { Blueprint } from '@tekton/core';
+import type { Blueprint } from '@tekton-ui/core';
 
 describe('exportScreenTool', () => {
   const testStorageDir = '.tekton-test/blueprints';

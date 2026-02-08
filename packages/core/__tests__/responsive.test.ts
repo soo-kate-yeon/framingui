@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Responsive Token Tests
+ * @tekton-ui/core - Responsive Token Tests
  * Tests for concrete Responsive Token definitions
  * [SPEC-LAYOUT-001] [PHASE-6]
  */

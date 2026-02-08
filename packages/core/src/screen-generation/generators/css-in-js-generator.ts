@@ -1,5 +1,5 @@
 /**
- * @tekton/core - CSS-in-JS Generator
+ * @tekton-ui/core - CSS-in-JS Generator
  * Generates styled-components or Emotion code from ResolvedScreen
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

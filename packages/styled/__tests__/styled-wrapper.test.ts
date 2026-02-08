@@ -1,5 +1,5 @@
 /**
- * @tekton/styled - Styled Wrapper Tests (TAG-004, TAG-005)
+ * @tekton-ui/styled - Styled Wrapper Tests (TAG-004, TAG-005)
  * Specification tests for token-enforced styled function
  * [SPEC-STYLED-001] [REQ-STY-001, REQ-STY-002, REQ-STY-015, REQ-STY-016, REQ-STY-017]
  */

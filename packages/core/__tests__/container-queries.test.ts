@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Container Query Types Tests
+ * @tekton-ui/core - Container Query Types Tests
  * Tests for Container Query type definitions
  * [SPEC-LAYOUT-003] [PHASE-2]
  */

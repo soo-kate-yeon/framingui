@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Mobile Shell Token Definitions
+ * @tekton-ui/core - Mobile Shell Token Definitions
  * Concrete Mobile Shell Token implementations for mobile applications
  * [SPEC-LAYOUT-004] [MILESTONE-2]
  */

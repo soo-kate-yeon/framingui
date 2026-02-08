@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Separator Component Tests
+ * @tekton-ui/ui - Separator Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Separator component
  */
 

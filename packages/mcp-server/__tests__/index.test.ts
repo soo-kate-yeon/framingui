@@ -17,7 +17,7 @@ describe('MCP Server Module', () => {
   it('should have valid package.json', async () => {
     const pkg = await import('../package.json');
 
-    expect(pkg.name).toBe('@tekton/mcp-server');
+    expect(pkg.name).toBe('@tekton-ui/mcp-server');
     expect(pkg.version).toBeDefined();
     expect(pkg.type).toBe('module');
     expect(pkg.main).toBe('./dist/index.js');

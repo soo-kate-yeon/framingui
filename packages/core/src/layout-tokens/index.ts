@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Layout Tokens Module
+ * @tekton-ui/core - Layout Tokens Module
  * 4-Layer Layout Token Architecture
  * [SPEC-LAYOUT-001]
  */

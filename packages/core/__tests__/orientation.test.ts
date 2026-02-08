@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Orientation Configuration Tests
+ * @tekton-ui/core - Orientation Configuration Tests
  * Tests for Orientation type definitions
  * [SPEC-LAYOUT-003] [PHASE-2]
  */

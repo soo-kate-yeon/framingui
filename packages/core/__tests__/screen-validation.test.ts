@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Screen Definition Validation Tests
+ * @tekton-ui/core - Screen Definition Validation Tests
  * Tests for screen definition validation with Zod schemas
  * [SPEC-LAYOUT-002] [PHASE-1]
  */

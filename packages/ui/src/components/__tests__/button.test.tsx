@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Button Component Tests
+ * @tekton-ui/ui - Button Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Button component
  */
 

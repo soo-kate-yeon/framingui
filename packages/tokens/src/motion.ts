@@ -1,5 +1,5 @@
 /**
- * @tekton/tokens - Motion Token Definitions
+ * @tekton-ui/tokens - Motion Token Definitions
  * [SPEC-UI-001] [TAG-018]
  * Animation and transition tokens for Framer Motion integration
  *

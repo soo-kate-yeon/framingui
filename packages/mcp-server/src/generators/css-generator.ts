@@ -5,7 +5,7 @@
  * Generates CSS Variables from ThemeV2 (v2.1 theme schema)
  */
 
-import { loadTheme, oklchToCSS, type ThemeV2 } from '@tekton/core';
+import { loadTheme, oklchToCSS, type ThemeV2 } from '@tekton-ui/core';
 
 /**
  * CSS 생성 결과 타입

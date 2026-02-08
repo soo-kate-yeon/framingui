@@ -5,8 +5,8 @@
  * 테마에서 레시피를 조회하고 컴포넌트 className에 적용합니다.
  */
 
-import { loadTheme } from '@tekton/core';
-import type { ComponentNode } from '@tekton/core';
+import { loadTheme } from '@tekton-ui/core';
+import type { ComponentNode } from '@tekton-ui/core';
 
 /**
  * 컴포넌트 타입과 variant에서 레시피 경로 생성

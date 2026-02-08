@@ -4,7 +4,7 @@
  * SPEC-DEPLOY-001: 인증된 사용자의 라이선스 보유 테마만 접근 가능
  */
 
-import { loadTheme, listThemes } from '@tekton/core';
+import { loadTheme, listThemes } from '@tekton-ui/core';
 import type { PreviewThemeInput, PreviewThemeOutput } from '../schemas/mcp-schemas.js';
 import { createThemeNotFoundError, extractErrorMessage } from '../utils/error-handler.js';
 import { getAuthData } from '../auth/state.js';
@@ -38,7 +38,7 @@ export async function previewThemeTool(input: PreviewThemeInput): Promise<Previe
       };
     }
 
-    // @tekton/core에서 테마 로드
+    // @tekton-ui/core에서 테마 로드
     const theme = loadTheme(themeId);
 
     if (!theme) {

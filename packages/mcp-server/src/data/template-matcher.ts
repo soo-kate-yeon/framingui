@@ -5,7 +5,7 @@
  * 자연어 설명에서 최적의 Screen Template을 매칭합니다.
  */
 
-import { templateRegistry } from '@tekton/ui';
+import { templateRegistry } from '@tekton-ui/ui';
 
 /**
  * 키워드-템플릿 매핑 정의

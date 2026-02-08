@@ -74,7 +74,7 @@ const COMPONENT_DETAILS: Record<
     examples: [
       {
         title: 'Basic Usage',
-        code: `import { Button } from '@tekton/ui';\n\n<Button variant="default">Click me</Button>`,
+        code: `import { Button } from '@tekton-ui/ui';\n\n<Button variant="default">Click me</Button>`,
         description: 'Simple button with default variant',
       },
       {
@@ -102,7 +102,7 @@ const COMPONENT_DETAILS: Record<
     examples: [
       {
         title: 'Basic Card',
-        code: `import { Card, CardHeader, CardTitle, CardContent } from '@tekton/ui';\n\n<Card>\n  <CardHeader>\n    <CardTitle>Card Title</CardTitle>\n  </CardHeader>\n  <CardContent>Card content here</CardContent>\n</Card>`,
+        code: `import { Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';\n\n<Card>\n  <CardHeader>\n    <CardTitle>Card Title</CardTitle>\n  </CardHeader>\n  <CardContent>Card content here</CardContent>\n</Card>`,
         description: 'Card with header and content',
       },
     ],
@@ -139,7 +139,7 @@ const COMPONENT_DETAILS: Record<
     examples: [
       {
         title: 'Basic Dialog',
-        code: `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@tekton/ui';\n\n<Dialog>\n  <DialogTrigger asChild>\n    <Button>Open</Button>\n  </DialogTrigger>\n  <DialogContent>\n    <DialogHeader>\n      <DialogTitle>Dialog Title</DialogTitle>\n    </DialogHeader>\n  </DialogContent>\n</Dialog>`,
+        code: `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@tekton-ui/ui';\n\n<Dialog>\n  <DialogTrigger asChild>\n    <Button>Open</Button>\n  </DialogTrigger>\n  <DialogContent>\n    <DialogHeader>\n      <DialogTitle>Dialog Title</DialogTitle>\n    </DialogHeader>\n  </DialogContent>\n</Dialog>`,
         description: 'Modal dialog with trigger button',
       },
     ],
@@ -183,8 +183,8 @@ export async function previewComponentTool(
       variants: includeExamples && details?.variants ? details.variants : undefined,
       subComponents: details?.subComponents,
       importStatement: details?.subComponents
-        ? `import { ${componentMeta.name}, ${details.subComponents.join(', ')} } from '@tekton/ui';`
-        : `import { ${componentMeta.name} } from '@tekton/ui';`,
+        ? `import { ${componentMeta.name}, ${details.subComponents.join(', ')} } from '@tekton-ui/ui';`
+        : `import { ${componentMeta.name} } from '@tekton-ui/ui';`,
       dependencies: includeDependencies ? details?.dependencies : undefined,
       examples: includeExamples && details?.examples ? details.examples : undefined,
       accessibility: details?.accessibility,

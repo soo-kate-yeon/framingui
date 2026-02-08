@@ -1,6 +1,6 @@
 {
-  "name": "@tekton/styled",
-  "version": "0.2.0",
+  "name": "@tekton-ui/styled",
+  "version": "0.3.0",
   "description": "Token-enforced styled-components wrapper with compile-time and runtime validation",
   "type": "module",
   "main": "./dist/index.js",
@@ -34,7 +34,7 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@tekton/tokens": "workspace:*",
+    "@tekton-ui/tokens": "workspace:*",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {

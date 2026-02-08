@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Utility Functions
+ * @tekton-ui/ui - Utility Functions
  * [SPEC-COMPONENT-001-C]
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Keyboard Utilities Tests
+ * @tekton-ui/core - Keyboard Utilities Tests
  * Comprehensive tests for keyboard handling and avoidance utilities
  * [SPEC-LAYOUT-004] [MILESTONE-7]
  */

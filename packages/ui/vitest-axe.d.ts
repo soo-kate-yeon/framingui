@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - vitest-axe Type Declarations
+ * @tekton-ui/ui - vitest-axe Type Declarations
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
  * [TAG-Q-015] 타입 오류 @ts-ignore로 회피 금지
  *

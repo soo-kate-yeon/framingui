@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Generator Utilities
+ * @tekton-ui/core - Generator Utilities
  * Common utility functions for code generators
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

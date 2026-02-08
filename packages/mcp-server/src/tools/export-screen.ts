@@ -5,8 +5,8 @@
  * SPEC-MCP-004 Phase 4: Theme Recipes Auto-Application
  */
 
-import { render, loadTheme } from '@tekton/core';
-import type { Blueprint } from '@tekton/core';
+import { render, loadTheme } from '@tekton-ui/core';
+import type { Blueprint } from '@tekton-ui/core';
 import type {
   ExportScreenInput,
   ExportScreenOutput,
@@ -124,7 +124,7 @@ export async function exportScreenTool(input: ExportScreenInput): Promise<Export
       };
     }
 
-    // SPEC: U-003 @tekton/core Integration - Use render from @tekton/core
+    // SPEC: U-003 @tekton-ui/core Integration - Use render from @tekton-ui/core
     // Note: render() returns complete JSX component code with imports and function wrapper
     const renderResult = render(blueprint);
 

@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Blueprint Module
+ * @tekton-ui/core - Blueprint Module
  * Define and validate screen blueprints
  * Target: 150 LOC
  */

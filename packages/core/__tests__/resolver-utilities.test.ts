@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Resolver Utility Functions Tests
+ * @tekton-ui/core - Resolver Utility Functions Tests
  * Phase B: Utility function tests for coverage improvement
  * [SPEC-LAYOUT-002] [PHASE-2]
  *

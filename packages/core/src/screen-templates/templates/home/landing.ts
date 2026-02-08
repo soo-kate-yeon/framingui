@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Landing/Home Screen Template
+ * @tekton-ui/core - Landing/Home Screen Template
  * [SPEC-UI-002] [TAG-UI002-028] home.landing
  *
  * Design Reference: Claude.ai Main Dashboard

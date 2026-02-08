@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Layout Token Type Definitions
+ * @tekton-ui/core - Layout Token Type Definitions
  * 4-Layer Layout Token Architecture: Shell → Page → Section → Responsive
  * [SPEC-LAYOUT-001] [PHASE-1]
  */

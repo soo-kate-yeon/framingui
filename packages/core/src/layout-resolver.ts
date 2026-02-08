@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Layout Resolver
+ * @tekton-ui/core - Layout Resolver
  * Resolves layout IDs to complete layout configurations with CSS variables
  * [SPEC-LAYOUT-001] [PHASE-7]
  */

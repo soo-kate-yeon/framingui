@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Feedback Templates Export
+ * @tekton-ui/core - Feedback Templates Export
  * [SPEC-UI-002] Feedback Screen Templates (5)
  */
 

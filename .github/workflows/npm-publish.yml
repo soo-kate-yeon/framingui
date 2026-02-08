@@ -11,7 +11,7 @@ jobs:
 
     permissions:
       contents: read
-      id-token: write
+      id-token: write # OIDC 인증에 필수
 
     steps:
       - name: Checkout code
@@ -29,6 +29,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
 
+      - name: Upgrade npm for OIDC support
+        run: npm install -g npm@^11
+
       - name: Extract version from tag
         id: version
         run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
@@ -44,86 +47,123 @@ jobs:
           TAG_VERSION="${{ steps.version.outputs.version }}"
           echo "Tag version: $TAG_VERSION"
 
-          # Check version for each package
           for pkg in tokens core ui styled esbuild-plugin mcp-server; do
             PKG_VERSION=$(node -p "require('./packages/$pkg/package.json').version")
-            echo "Package @tekton/$pkg version: $PKG_VERSION"
+            echo "Package @tekton-ui/$pkg version: $PKG_VERSION"
 
             if [ "$PKG_VERSION" != "$TAG_VERSION" ]; then
-              echo "❌ Version mismatch for @tekton/$pkg: tag=$TAG_VERSION, package.json=$PKG_VERSION"
+              echo "::error::Version mismatch for @tekton-ui/$pkg: tag=$TAG_VERSION, package.json=$PKG_VERSION"
               exit 1
             fi
           done
 
-          echo "✅ All package versions match tag version $TAG_VERSION"
+          echo "All package versions match tag version $TAG_VERSION"
 
-      # Publish packages in dependency order
-      # 1. Independent packages (no internal dependencies)
+      # 인증: NPM_TOKEN(Granular Access Token)으로 인증
+      # Trusted Publisher(OIDC) 전환 후에는 NPM_TOKEN 없이도 --provenance로 배포 가능
+      # pnpm pack으로 workspace:* 프로토콜을 실제 버전으로 해결한 후 npm publish
+      # 이미 배포된 버전은 자동으로 skip
 
-      - name: Publish @tekton/tokens
-        run: |
-          cd packages/tokens
-          pnpm publish --no-git-checks --access public --provenance
+      # 1. 독립 패키지
+      - name: Publish @tekton-ui/tokens
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: false
-
-      - name: Publish @tekton/core
         run: |
-          cd packages/core
-          pnpm publish --no-git-checks --access public --provenance
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+            echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
+          else
+            pnpm pack
+            npm publish *.tgz --provenance --access public
+          fi
+        working-directory: packages/tokens
+
+      - name: Publish @tekton-ui/core
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: false
-
-      - name: Publish @tekton/esbuild-plugin
         run: |
-          cd packages/esbuild-plugin
-          pnpm publish --no-git-checks --access public --provenance
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+            echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
+          else
+            pnpm pack
+            npm publish *.tgz --provenance --access public
+          fi
+        working-directory: packages/core
+
+      - name: Publish @tekton-ui/esbuild-plugin
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: false
-
-      # 2. Packages depending on tokens
-
-      - name: Publish @tekton/styled
         run: |
-          cd packages/styled
-          pnpm publish --no-git-checks --access public --provenance
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+            echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
+          else
+            pnpm pack
+            npm publish *.tgz --provenance --access public
+          fi
+        working-directory: packages/esbuild-plugin
+
+      # 2. tokens 의존 패키지
+      - name: Publish @tekton-ui/styled
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: false
-
-      - name: Publish @tekton/ui
         run: |
-          cd packages/ui
-          pnpm publish --no-git-checks --access public --provenance
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+            echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
+          else
+            pnpm pack
+            npm publish *.tgz --provenance --access public
+          fi
+        working-directory: packages/styled
+
+      - name: Publish @tekton-ui/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: false
-
-      # 3. Packages depending on core and ui
-
-      - name: Publish @tekton/mcp-server
         run: |
-          cd packages/mcp-server
-          pnpm publish --no-git-checks --access public --provenance
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+            echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
+          else
+            pnpm pack
+            npm publish *.tgz --provenance --access public
+          fi
+        working-directory: packages/ui
+
+      # 3. core + ui 의존 패키지
+      - name: Publish @tekton-ui/mcp-server
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        continue-on-error: false
+        run: |
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "${PKG_NAME}@${PKG_VERSION}" version 2>/dev/null; then
+            echo "::notice::${PKG_NAME}@${PKG_VERSION} already published, skipping"
+          else
+            pnpm pack
+            npm publish *.tgz --provenance --access public
+          fi
+        working-directory: packages/mcp-server
 
       - name: Create release summary
         if: success()
         run: |
-          echo "## 🚀 Published Packages" >> $GITHUB_STEP_SUMMARY
+          echo "## Published Packages" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+          echo "Auth: **OIDC (Trusted Publisher)**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Package | Version | Registry |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|---------|----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| @tekton/tokens | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/tokens) |" >> $GITHUB_STEP_SUMMARY
-          echo "| @tekton/core | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/core) |" >> $GITHUB_STEP_SUMMARY
-          echo "| @tekton/esbuild-plugin | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/esbuild-plugin) |" >> $GITHUB_STEP_SUMMARY
-          echo "| @tekton/styled | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/styled) |" >> $GITHUB_STEP_SUMMARY
-          echo "| @tekton/ui | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/ui) |" >> $GITHUB_STEP_SUMMARY
-          echo "| @tekton/mcp-server | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton/mcp-server) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton-ui/tokens | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton-ui/tokens) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton-ui/core | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton-ui/core) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton-ui/esbuild-plugin | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton-ui/esbuild-plugin) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton-ui/styled | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton-ui/styled) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton-ui/ui | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton-ui/ui) |" >> $GITHUB_STEP_SUMMARY
+          echo "| @tekton-ui/mcp-server | ${{ steps.version.outputs.version }} | [npm](https://www.npmjs.com/package/@tekton-ui/mcp-server) |" >> $GITHUB_STEP_SUMMARY

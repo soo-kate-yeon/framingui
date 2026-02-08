@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Responsive Token Definitions
+ * @tekton-ui/core - Responsive Token Definitions
  * Concrete Responsive Token implementations for viewport breakpoints
  * [SPEC-LAYOUT-001] [PHASE-6]
  */

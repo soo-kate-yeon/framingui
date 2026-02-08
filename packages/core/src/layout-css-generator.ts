@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Layout CSS Generator
+ * @tekton-ui/core - Layout CSS Generator
  * Generates CSS from layout tokens (shells, pages, sections)
  * [SPEC-LAYOUT-001] [PHASE-8]
  */

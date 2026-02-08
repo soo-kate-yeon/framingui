@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Screen Templates Tests
+ * @tekton-ui/core - Screen Templates Tests
  * [SPEC-UI-002] Validate all 12 P0 templates
  */
 

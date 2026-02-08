@@ -2,7 +2,7 @@
  * ComponentResolver
  * SPEC-PLAYGROUND-001 Milestone 5: Blueprint Renderer
  *
- * Maps component type strings to actual React components from @tekton/ui
+ * Maps component type strings to actual React components from @tekton-ui/ui
  */
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
@@ -61,11 +61,11 @@ import {
   TableRow,
   TableCell,
   TableCaption,
-} from '@tekton/ui';
+} from '@tekton-ui/ui';
 
 /**
  * Component Map: String type -> React Component
- * Total: 20+ components from @tekton/ui
+ * Total: 20+ components from @tekton-ui/ui
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const COMPONENT_MAP: Record<string, ComponentType<any>> = {

@@ -3,7 +3,7 @@
  * SPEC-LAYOUT-002 Phase 4: Generate production code from JSON screen definition
  */
 
-import type { ScreenDefinition } from '@tekton/core';
+import type { ScreenDefinition } from '@tekton-ui/core';
 import type { GenerateScreenInput, GenerateScreenOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 import { extractDependencies } from '../utils/dependency-extractor.js';
@@ -21,7 +21,7 @@ export async function generateScreenTool(
     const { screenDefinition, outputFormat, options } = input;
 
     // Step 1: Validate screen definition
-    const { validateScreenDefinition } = await import('@tekton/core');
+    const { validateScreenDefinition } = await import('@tekton-ui/core');
     const validation = validateScreenDefinition(screenDefinition);
 
     if (!validation.valid) {
@@ -33,7 +33,7 @@ export async function generateScreenTool(
     }
 
     // Step 2: Resolve screen with layout and components
-    const { resolveScreen } = await import('@tekton/core');
+    const { resolveScreen } = await import('@tekton-ui/core');
     const resolvedScreen = await resolveScreen(screenDefinition as ScreenDefinition);
 
     // Step 3: Prepare generator options
@@ -50,7 +50,7 @@ export async function generateScreenTool(
 
     switch (outputFormat) {
       case 'css-in-js': {
-        const { generateStyledComponents } = await import('@tekton/core');
+        const { generateStyledComponents } = await import('@tekton-ui/core');
         const cssFramework =
           (options?.cssFramework as 'styled-components' | 'emotion') || 'styled-components';
         const result = generateStyledComponents(resolvedScreen, cssFramework, generatorOptions);
@@ -59,14 +59,14 @@ export async function generateScreenTool(
       }
 
       case 'tailwind': {
-        const { generateTailwindClasses } = await import('@tekton/core');
+        const { generateTailwindClasses } = await import('@tekton-ui/core');
         const result = generateTailwindClasses(resolvedScreen, generatorOptions);
         code = result.code;
         break;
       }
 
       case 'react': {
-        const { generateReactComponent } = await import('@tekton/core');
+        const { generateReactComponent } = await import('@tekton-ui/core');
         const result = generateReactComponent(resolvedScreen, generatorOptions);
         code = result.code;
         break;

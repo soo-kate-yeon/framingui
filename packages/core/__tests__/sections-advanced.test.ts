@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Advanced Section Pattern Token Tests
+ * @tekton-ui/core - Advanced Section Pattern Token Tests
  * Comprehensive tests for 4 HIGH priority advanced section tokens
  * [SPEC-LAYOUT-005] [PHASE-1]
  *

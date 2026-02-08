@@ -1,5 +1,5 @@
 /**
- * @tekton/core
+ * @tekton-ui/core
  * Minimal design system pipeline: Theme -> Blueprint -> Screen
  *
  * 80% LOC reduction from original codebase

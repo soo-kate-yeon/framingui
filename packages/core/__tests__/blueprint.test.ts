@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Blueprint Tests
+ * @tekton-ui/core - Blueprint Tests
  * Test suite for blueprint creation and validation with layout token support
  * [SPEC-LAYOUT-001] [PHASE-9]
  */

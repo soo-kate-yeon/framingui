@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Confirmation Dialog Template
+ * @tekton-ui/core - Confirmation Dialog Template
  * [SPEC-UI-002] [TAG-UI002-034] feedback.confirmation
  */
 

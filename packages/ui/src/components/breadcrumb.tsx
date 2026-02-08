@@ -7,7 +7,7 @@
  * WHY: Provides hierarchical navigation context for users
  * IMPACT: Improves navigation UX and site structure understanding
  *
- * @tekton/ui - Breadcrumb Component
+ * @tekton-ui/ui - Breadcrumb Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * Pattern: Semantic HTML + CVA + Tekton tokens
@@ -30,12 +30,9 @@ const breadcrumbVariants = cva('flex items-center gap-[var(--tekton-spacing-2)]'
   },
 });
 
-const breadcrumbListVariants = cva(
-  'flex flex-wrap items-center gap-1.5 break-words',
-  {
-    variants: {},
-  }
-);
+const breadcrumbListVariants = cva('flex flex-wrap items-center gap-1.5 break-words', {
+  variants: {},
+});
 
 const breadcrumbItemVariants = cva('inline-flex items-center gap-1.5', {
   variants: {},

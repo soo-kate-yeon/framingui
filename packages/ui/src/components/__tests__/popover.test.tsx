@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Popover Component Tests
+ * @tekton-ui/ui - Popover Component Tests
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
