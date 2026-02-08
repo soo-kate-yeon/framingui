@@ -35,7 +35,7 @@ npx @tekton-ui/mcp-server init
 2. **패키지 설치** - `@tekton-ui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지)
 3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
 4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
-5. **MCP 연결** - `.claude/mcp.json`에 tekton 서버 등록
+5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
 6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
 
 ```
@@ -54,7 +54,7 @@ npx @tekton-ui/mcp-server init
       app/globals.css 업데이트 완료
 
 [5/6] Claude Code MCP 설정 중...
-      .claude/mcp.json 생성 완료
+      .mcp.json 생성 완료
 
 [6/6] 가이드 문서 생성 중...
       TEKTON-GUIDE.md 생성 완료
@@ -91,12 +91,13 @@ AI 에이전트가 이 서버를 통해 다음 작업을 수행할 수 있습니
 
 ## Claude Code 설정 방법
 
-프로젝트의 `.claude/mcp.json` 파일에 다음 설정을 추가합니다.
+프로젝트 루트에 `.mcp.json` 파일을 생성합니다 (버전 관리에 포함 가능).
 
 ```json
 {
   "mcpServers": {
     "tekton": {
+      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@tekton-ui/mcp-server"]
     }

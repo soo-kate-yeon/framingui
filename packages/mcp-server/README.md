@@ -98,7 +98,7 @@ npx @tekton-ui/mcp-server init
 2. **패키지 설치** - `@tekton-ui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지: pnpm/yarn/bun/npm)
 3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
 4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
-5. **MCP 연결** - `.claude/mcp.json`에 tekton 서버 등록
+5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
 6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
 
 설정 완료 후 Claude Code를 재시작하면, AI에게 "로그인 화면 만들어줘"와 같이 자연어로 화면 생성을 요청할 수 있습니다.
@@ -133,20 +133,19 @@ pnpm inspect
 
 See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-INTEGRATION.md) for complete setup instructions.
 
-**Quick Config** (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+**Quick Config** (프로젝트 루트 `.mcp.json`):
 
 ```json
 {
   "mcpServers": {
     "tekton": {
+      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@tekton-ui/mcp-server"]
     }
   }
 }
 ```
-
-**Note**: Remove `TEKTON_API_KEY` from env to run with free themes only.
 
 ## MCP Tools
 

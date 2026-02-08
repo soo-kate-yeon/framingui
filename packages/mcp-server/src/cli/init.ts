@@ -187,10 +187,10 @@ interface McpConfig {
 }
 
 function setupMCP(cwd: string): void {
-  const claudeDir = path.join(cwd, '.claude');
-  const mcpPath = path.join(claudeDir, 'mcp.json');
+  const mcpPath = path.join(cwd, '.mcp.json');
 
   const tektonServer = {
+    type: 'stdio' as const,
     command: 'npx',
     args: ['-y', '@tekton-ui/mcp-server'],
   };
@@ -205,19 +205,15 @@ function setupMCP(cwd: string): void {
     }
 
     if ('tekton' in config.mcpServers) {
-      logDetail('.claude/mcp.json (이미 설정됨, skip)');
+      logDetail('.mcp.json (이미 설정됨, skip)');
       return;
     }
 
     config.mcpServers['tekton'] = tektonServer;
     fs.writeFileSync(mcpPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
-    logDetail('.claude/mcp.json 업데이트 완료');
+    logDetail('.mcp.json 업데이트 완료');
   } else {
     // 새 파일 생성
-    if (!fileExists(claudeDir)) {
-      fs.mkdirSync(claudeDir, { recursive: true });
-    }
-
     const config = {
       mcpServers: {
         tekton: tektonServer,
@@ -225,7 +221,7 @@ function setupMCP(cwd: string): void {
     };
 
     fs.writeFileSync(mcpPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
-    logDetail('.claude/mcp.json 생성 완료');
+    logDetail('.mcp.json 생성 완료');
   }
 }
 
@@ -322,7 +318,7 @@ export async function initCommand(): Promise<void> {
   try {
     setupMCP(cwd);
   } catch {
-    console.error('MCP 설정에 실패했습니다. 수동으로 .claude/mcp.json을 생성해 주세요.');
+    console.error('MCP 설정에 실패했습니다. 수동으로 .mcp.json을 생성해 주세요.');
   }
 
   // Step 6: 가이드 문서 생성
