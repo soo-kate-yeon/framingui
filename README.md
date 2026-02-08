@@ -5,13 +5,23 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.2-blue)](./CHANGELOG.md)
 
 OKLCH-based design token generator with WCAG AA compliance for modern design systems.
 
-## 🎉 v0.1.0 Release Status
+## 🎉 v0.3.2 Release Status
 
-**Status**: ✅ **Production Ready** (2026-01-20)
+**Status**: ✅ **Production Ready** (2026-02-09)
+
+**Latest Updates (v0.3.2):**
+
+- ✅ MCP Prompts capability (3-Layer 크로스 플랫폼 전략)
+- ✅ init 워크플로우 개선 (6단계 → 8단계)
+- ✅ CLAUDE.md, AGENTS.md 자동 생성
+- ✅ 테마 데이터 정비 (13개 → 6개 정확한 데이터)
+- ✅ 인증 우선 온보딩 플로우
+
+**v0.1.0 Features:**
 
 - ✅ All 3 Layer 3 MCP tools operational (100%)
 - ✅ 13/13 automated tests passing

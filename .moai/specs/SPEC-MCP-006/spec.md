@@ -1,7 +1,7 @@
 ---
 id: SPEC-MCP-006
-version: "1.0.0"
-status: "draft"
+version: "1.0.1"
+status: "implemented"
 created: "2026-02-09"
 updated: "2026-02-09"
 author: "soo-kate-yeon"
@@ -10,9 +10,10 @@ priority: "HIGH"
 
 ## HISTORY
 
-| 버전  | 날짜       | 작성자        | 변경 내용           |
-| ----- | ---------- | ------------- | ------------------- |
-| 1.0.0 | 2026-02-09 | soo-kate-yeon | 초안 작성 (draft)   |
+| 버전  | 날짜       | 작성자        | 변경 내용                    |
+| ----- | ---------- | ------------- | ---------------------------- |
+| 1.0.0 | 2026-02-09 | soo-kate-yeon | 초안 작성 (draft)            |
+| 1.0.1 | 2026-02-09 | soo-kate-yeon | 구현 완료 (implemented)      |
 
 ---
 
