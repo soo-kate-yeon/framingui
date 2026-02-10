@@ -65,14 +65,17 @@ const rateLimitStore = new Map<string, RateLimitStore>();
  *
  * PERFORMANCE: 메모리 누수 방지
  */
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of rateLimitStore.entries()) {
-    if (value.resetAt < now) {
-      rateLimitStore.delete(key);
+setInterval(
+  () => {
+    const now = Date.now();
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (value.resetAt < now) {
+        rateLimitStore.delete(key);
+      }
     }
-  }
-}, 60 * 60 * 1000); // 1시간
+  },
+  60 * 60 * 1000
+); // 1시간
 
 /**
  * IP 주소 기반 Rate Limiting
@@ -148,9 +151,7 @@ export async function rateLimit(
  * @param identifier 식별자 (API Key 또는 IP)
  * @returns Rate Limit 결과
  */
-export async function rateLimitMcpVerify(
-  identifier: string
-): Promise<RateLimitResult> {
+export async function rateLimitMcpVerify(identifier: string): Promise<RateLimitResult> {
   return rateLimit(
     identifier,
     RATE_LIMIT_CONFIG.MCP_VERIFY.maxRequests,
@@ -164,9 +165,7 @@ export async function rateLimitMcpVerify(
  * @param identifier 식별자 (User ID 또는 IP)
  * @returns Rate Limit 결과
  */
-export async function rateLimitApiKeys(
-  identifier: string
-): Promise<RateLimitResult> {
+export async function rateLimitApiKeys(identifier: string): Promise<RateLimitResult> {
   return rateLimit(
     identifier,
     RATE_LIMIT_CONFIG.API_KEYS.maxRequests,
@@ -180,9 +179,7 @@ export async function rateLimitApiKeys(
  * @param identifier 식별자 (IP 주소)
  * @returns Rate Limit 결과
  */
-export async function rateLimitWebhooks(
-  identifier: string
-): Promise<RateLimitResult> {
+export async function rateLimitWebhooks(identifier: string): Promise<RateLimitResult> {
   return rateLimit(
     identifier,
     RATE_LIMIT_CONFIG.WEBHOOKS.maxRequests,

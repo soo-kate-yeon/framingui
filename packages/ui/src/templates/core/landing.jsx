@@ -21,22 +21,27 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Landing Template Component
  */
-export function LandingTemplateComponent({ children, className = '', slots = {}, texts = {}, }) {
-    const title = texts.title || 'Welcome Back';
-    const subtitle = texts.subtitle || 'Start a new conversation or continue where you left off';
-    const ctaLabel = texts.cta_label || 'New Conversation';
-    return (<div className={`min-h-screen flex ${className}`}>
+export function LandingTemplateComponent({ children, className = '', slots = {}, texts = {} }) {
+  const title = texts.title || 'Welcome Back';
+  const subtitle = texts.subtitle || 'Start a new conversation or continue where you left off';
+  const ctaLabel = texts.cta_label || 'New Conversation';
+  return (
+    <div className={`min-h-screen flex ${className}`}>
       {/* Sidebar */}
-      {slots.sidebar && (<aside className="w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-muted)]">
+      {slots.sidebar && (
+        <aside className="w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-muted)]">
           {slots.sidebar}
-        </aside>)}
+        </aside>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col">
         {/* Header */}
-        {slots.header && (<header className="border-b border-[var(--tekton-border-default)] p-[var(--tekton-spacing-4)]">
+        {slots.header && (
+          <header className="border-b border-[var(--tekton-border-default)] p-[var(--tekton-spacing-4)]">
             {slots.header}
-          </header>)}
+          </header>
+        )}
 
         {/* Content Area */}
         <div className="flex-1 flex flex-col items-center justify-center p-[var(--tekton-spacing-8)]">
@@ -53,51 +58,56 @@ export function LandingTemplateComponent({ children, className = '', slots = {},
             </div>
 
             {/* Recent Activity */}
-            {slots.recentActivity && (<div className="mt-[var(--tekton-spacing-8)]">{slots.recentActivity}</div>)}
+            {slots.recentActivity && (
+              <div className="mt-[var(--tekton-spacing-8)]">{slots.recentActivity}</div>
+            )}
 
             {/* Suggestions */}
-            {slots.suggestions && (<div className="mt-[var(--tekton-spacing-6)]">{slots.suggestions}</div>)}
+            {slots.suggestions && (
+              <div className="mt-[var(--tekton-spacing-6)]">{slots.suggestions}</div>
+            )}
           </div>
         </div>
       </main>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Landing Template Definition
  */
 export const LandingTemplate = {
-    id: 'core.landing',
-    name: 'Landing',
-    category: 'marketing',
-    description: 'Main dashboard landing page with sidebar and CTA',
-    skeleton: {
-        shell: 'sidebar-layout',
-        page: 'main-page',
-        sections: [
-            {
-                id: 'landing-content',
-                name: 'Landing Content',
-                slot: 'main',
-                required: true,
-                Component: LandingTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'sidebar',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'subtitle', 'cta_label'],
-        optional: [],
-        slots: ['sidebar', 'header', 'recentActivity', 'suggestions'],
-    },
-    requiredComponents: ['Button'],
-    Component: LandingTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['core', 'landing', 'dashboard', 'home'],
+  id: 'core.landing',
+  name: 'Landing',
+  category: 'marketing',
+  description: 'Main dashboard landing page with sidebar and CTA',
+  skeleton: {
+    shell: 'sidebar-layout',
+    page: 'main-page',
+    sections: [
+      {
+        id: 'landing-content',
+        name: 'Landing Content',
+        slot: 'main',
+        required: true,
+        Component: LandingTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'sidebar',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'subtitle', 'cta_label'],
+    optional: [],
+    slots: ['sidebar', 'header', 'recentActivity', 'suggestions'],
+  },
+  requiredComponents: ['Button'],
+  Component: LandingTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['core', 'landing', 'dashboard', 'home'],
 };
 //# sourceMappingURL=landing.js.map

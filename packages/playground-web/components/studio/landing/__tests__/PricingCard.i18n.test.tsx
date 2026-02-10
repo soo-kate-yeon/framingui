@@ -105,9 +105,7 @@ describe('PricingCardI18n', () => {
     it('should call onPurchase when buy button is clicked', async () => {
       const user = userEvent.setup();
       const onPurchase = vi.fn();
-      renderWithIntl(
-        <PricingCardI18n tier="Single" price={59} onPurchase={onPurchase} />
-      );
+      renderWithIntl(<PricingCardI18n tier="Single" price={59} onPurchase={onPurchase} />);
 
       await user.click(screen.getByText('Buy Now'));
       expect(onPurchase).toHaveBeenCalledWith('Single');

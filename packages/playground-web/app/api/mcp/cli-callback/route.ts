@@ -24,17 +24,11 @@ export async function GET(request: NextRequest) {
 
   // 파라미터 검증
   if (!callbackPort || !/^\d+$/.test(callbackPort)) {
-    return NextResponse.json(
-      { error: 'Invalid callback_port parameter' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Invalid callback_port parameter' }, { status: 400 });
   }
 
   if (!state || state.length < 32) {
-    return NextResponse.json(
-      { error: 'Invalid state parameter' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Invalid state parameter' }, { status: 400 });
   }
 
   if (!provider || !['google', 'github'].includes(provider)) {
@@ -62,19 +56,13 @@ export async function GET(request: NextRequest) {
 
     if (error || !data.url) {
       console.error('[MCP CLI Callback] OAuth URL generation failed:', error);
-      return NextResponse.json(
-        { error: 'Failed to start OAuth flow' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to start OAuth flow' }, { status: 500 });
     }
 
     // OAuth URL로 리다이렉트
     return NextResponse.redirect(data.url);
   } catch (err) {
     console.error('[MCP CLI Callback] Unexpected error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

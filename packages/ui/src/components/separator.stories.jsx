@@ -6,23 +6,23 @@
  */
 import { Separator } from './separator';
 const meta = {
-    title: 'Components/Separator',
-    component: Separator,
-    parameters: {
-        layout: 'centered',
+  title: 'Components/Separator',
+  component: Separator,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    orientation: {
+      control: 'select',
+      options: ['horizontal', 'vertical'],
+      description: 'Separator orientation',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        orientation: {
-            control: 'select',
-            options: ['horizontal', 'vertical'],
-            description: 'Separator orientation',
-        },
-        decorative: {
-            control: 'boolean',
-            description: 'Whether the separator is decorative',
-        },
+    decorative: {
+      control: 'boolean',
+      description: 'Whether the separator is decorative',
     },
+  },
 };
 export default meta;
 /**
@@ -30,68 +30,77 @@ export default meta;
  * Accessibility: Decorative separators are hidden from screen readers
  */
 export const Default = {
-    render: () => (<div className="w-[300px]">
+  render: () => (
+    <div className="w-[300px]">
       <div className="space-y-1">
         <h4 className="text-sm font-medium leading-none">Radix Primitives</h4>
         <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
           An open-source UI component library.
         </p>
       </div>
-      <Separator className="my-4"/>
+      <Separator className="my-4" />
       <div className="flex h-5 items-center space-x-4 text-sm">
         <div>Blog</div>
-        <Separator orientation="vertical"/>
+        <Separator orientation="vertical" />
         <div>Docs</div>
-        <Separator orientation="vertical"/>
+        <Separator orientation="vertical" />
         <div>Source</div>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Horizontal separator
  */
 export const Horizontal = {
-    render: () => (<div className="w-[300px] space-y-4">
+  render: () => (
+    <div className="w-[300px] space-y-4">
       <div>Content above</div>
       <Separator />
       <div>Content below</div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Vertical separator
  */
 export const Vertical = {
-    render: () => (<div className="flex h-20 items-center space-x-4">
+  render: () => (
+    <div className="flex h-20 items-center space-x-4">
       <div>Left</div>
-      <Separator orientation="vertical"/>
+      <Separator orientation="vertical" />
       <div>Middle</div>
-      <Separator orientation="vertical"/>
+      <Separator orientation="vertical" />
       <div>Right</div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * In navigation menu
  */
 export const Navigation = {
-    render: () => (<div className="flex items-center space-x-4 text-sm">
+  render: () => (
+    <div className="flex items-center space-x-4 text-sm">
       <a href="#" className="hover:underline">
         Home
       </a>
-      <Separator orientation="vertical" className="h-4"/>
+      <Separator orientation="vertical" className="h-4" />
       <a href="#" className="hover:underline">
         About
       </a>
-      <Separator orientation="vertical" className="h-4"/>
+      <Separator orientation="vertical" className="h-4" />
       <a href="#" className="hover:underline">
         Contact
       </a>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Section divider
  */
 export const SectionDivider = {
-    render: () => (<div className="w-[400px] space-y-4">
+  render: () => (
+    <div className="w-[400px] space-y-4">
       <div>
         <h3 className="text-lg font-semibold">Section 1</h3>
         <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
@@ -112,25 +121,28 @@ export const SectionDivider = {
           Content for the third section
         </p>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Custom thickness
  */
 export const CustomThickness = {
-    render: () => (<div className="w-[300px] space-y-4">
+  render: () => (
+    <div className="w-[300px] space-y-4">
       <div>
         <p className="text-sm">Thin separator (default)</p>
-        <Separator className="my-2"/>
+        <Separator className="my-2" />
       </div>
       <div>
         <p className="text-sm">Medium separator</p>
-        <Separator className="my-2 h-[2px]"/>
+        <Separator className="my-2 h-[2px]" />
       </div>
       <div>
         <p className="text-sm">Thick separator</p>
-        <Separator className="my-2 h-[4px]"/>
+        <Separator className="my-2 h-[4px]" />
       </div>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=separator.stories.js.map

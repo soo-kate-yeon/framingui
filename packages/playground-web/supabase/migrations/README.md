@@ -9,17 +9,20 @@ SPEC-DEPLOY-001에 정의된 데이터베이스 스키마 마이그레이션 가
 **목적**: SPEC-DEPLOY-001 Phase 1.1 - 통합된 프로덕션 배포 스키마
 
 **테이블**:
+
 1. `user_profiles` - 사용자 프로필 정보
 2. `api_keys` - MCP 서버 인증용 API 키
 3. `user_licenses` - 테마 라이선스 구매 (Enhanced)
 4. `free_screen_templates` - 무료 스크린 템플릿 카탈로그
 
 **통합 완료**: 이 파일은 다음 3개 마이그레이션을 통합했습니다:
+
 - `20260204_initial_auth_schema.sql` (아카이브됨)
 - `20260205000000_init_auth_schema.sql` (아카이브됨)
 - `20260206151505_deploy_001_schema.sql` (현재 파일)
 
 **특징**:
+
 - ✅ Idempotent 작업 (DROP IF EXISTS, CREATE IF NOT EXISTS)
 - ✅ 충돌 방지를 위한 CASCADE 처리
 - ✅ 모든 테이블에 Row-Level Security 활성화
@@ -49,6 +52,7 @@ SPEC-DEPLOY-001에 정의된 데이터베이스 스키마 마이그레이션 가
 ### Method 1: Supabase Dashboard (GUI) - 권장
 
 1. **Supabase Dashboard 접속**
+
    ```
    https://supabase.com/dashboard/project/[YOUR_PROJECT_ID]
    ```
@@ -58,6 +62,7 @@ SPEC-DEPLOY-001에 정의된 데이터베이스 스키마 마이그레이션 가
    - `New query` 버튼 클릭
 
 3. **마이그레이션 SQL 복사**
+
    ```bash
    cat supabase/migrations/20260206151505_deploy_001_schema.sql
    ```
@@ -73,6 +78,7 @@ SPEC-DEPLOY-001에 정의된 데이터베이스 스키마 마이그레이션 가
 ### Method 2: Supabase CLI
 
 #### Prerequisites
+
 ```bash
 # Supabase CLI 설치
 npm install -g supabase
@@ -101,6 +107,7 @@ supabase migration list
 ```
 
 #### Rollback (필요시)
+
 ```bash
 # 마이그레이션 되돌리기
 supabase db reset
@@ -132,6 +139,7 @@ psql "postgresql://postgres:[password]@db.[project-ref].supabase.co:5432/postgre
 마이그레이션 실행 후 다음 항목들을 확인하세요:
 
 ### 1. Tables Created
+
 ```sql
 SELECT table_name
 FROM information_schema.tables
@@ -140,6 +148,7 @@ WHERE table_schema = 'public'
 ```
 
 **Expected Result:**
+
 ```
  table_name
 ------------------------
@@ -150,6 +159,7 @@ WHERE table_schema = 'public'
 ```
 
 ### 2. Indexes Created
+
 ```sql
 SELECT indexname, tablename
 FROM pg_indexes
@@ -158,6 +168,7 @@ WHERE schemaname = 'public'
 ```
 
 ### 3. RLS Policies Enabled
+
 ```sql
 SELECT schemaname, tablename, rowsecurity
 FROM pg_tables
@@ -168,6 +179,7 @@ WHERE schemaname = 'public'
 **Expected Result:** All `rowsecurity` should be `true`
 
 ### 4. RLS Policies Created
+
 ```sql
 SELECT tablename, policyname
 FROM pg_policies
@@ -177,6 +189,7 @@ ORDER BY tablename, policyname;
 ```
 
 **Expected Count:**
+
 - `user_profiles`: 3 policies
 - `api_keys`: 4 policies
 - `user_licenses`: 2 policies
@@ -187,6 +200,7 @@ ORDER BY tablename, policyname;
 ## 🧪 Testing RLS Policies
 
 ### Test User Profile Access
+
 ```sql
 -- As authenticated user
 SET request.jwt.claims.sub = '[user-uuid]';
@@ -199,6 +213,7 @@ SELECT * FROM public.user_profiles WHERE id != '[user-uuid]';
 ```
 
 ### Test API Keys Access
+
 ```sql
 -- As authenticated user
 SET request.jwt.claims.sub = '[user-uuid]';
@@ -213,6 +228,7 @@ VALUES ('[other-user-uuid]', 'hash456', 'tk_live_', 'Malicious Key');
 ```
 
 ### Test Free Templates Access
+
 ```sql
 -- Anyone can read active templates (no authentication required)
 SELECT * FROM public.free_screen_templates WHERE is_active = true;
@@ -264,21 +280,27 @@ SELECT * FROM public.free_screen_templates WHERE is_active = true;
 ## 🐛 Troubleshooting
 
 ### Error: "relation already exists"
+
 ```
 ERROR:  relation "user_licenses" already exists
 ```
+
 **Solution:** 마이그레이션 파일이 이미 `DROP TABLE IF EXISTS`를 포함하므로, 정상적으로는 발생하지 않습니다. 수동으로 DROP 후 재실행하세요.
 
 ### Error: "permission denied for schema public"
+
 ```
 ERROR:  permission denied for schema public
 ```
+
 **Solution:** Service role key 사용 확인. Dashboard에서는 자동으로 service role 권한 사용
 
 ### Error: "relation does not exist"
+
 ```
 ERROR:  relation "auth.users" does not exist
 ```
+
 **Solution:** Supabase Auth가 활성화되지 않음. Dashboard > Authentication에서 활성화
 
 ---

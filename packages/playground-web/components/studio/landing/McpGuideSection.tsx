@@ -17,19 +17,12 @@ export function McpGuideSection() {
 
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-              Installation
-            </h3>
-            <CodeBlock
-              code="npx @claude/mcp-client install @studio/templates"
-              language="bash"
-            />
+            <h3 className="text-xl font-semibold text-neutral-900 mb-3">Installation</h3>
+            <CodeBlock code="npx @claude/mcp-client install @studio/templates" language="bash" />
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-              Usage
-            </h3>
+            <h3 className="text-xl font-semibold text-neutral-900 mb-3">Usage</h3>
             <p className="text-neutral-600 leading-relaxed">
               Once installed, the template will be available in your Claude Desktop MCP settings.
               Configure your preferred theme and start building.

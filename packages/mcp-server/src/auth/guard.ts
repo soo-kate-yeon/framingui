@@ -7,7 +7,9 @@ import { isAuthenticated } from './state.js';
 
 export class AuthRequiredError extends Error {
   constructor() {
-    super('Authentication required. Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.');
+    super(
+      'Authentication required. Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.'
+    );
     this.name = 'AuthRequiredError';
   }
 }

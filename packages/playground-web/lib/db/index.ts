@@ -23,12 +23,7 @@ export type {
 } from './types';
 
 // User operations
-export {
-  createOrUpdateUser,
-  getUserById,
-  updateUser,
-  getCurrentUser,
-} from './users';
+export { createOrUpdateUser, getUserById, updateUser, getCurrentUser } from './users';
 
 // License operations
 export {

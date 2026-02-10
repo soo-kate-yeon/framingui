@@ -101,10 +101,7 @@ export function extractThemeAccess(verifyResponse: VerifyResponse): string[] {
  * @param verifyResponse - Verification response (null for unauthenticated)
  * @returns true if theme is in user's licenses
  */
-export function isThemeAccessible(
-  themeId: string,
-  verifyResponse: VerifyResponse | null,
-): boolean {
+export function isThemeAccessible(themeId: string, verifyResponse: VerifyResponse | null): boolean {
   // 인증 필수
   if (!verifyResponse || !verifyResponse.valid) {
     return false;

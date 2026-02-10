@@ -7,7 +7,15 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, } from './form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from './form';
 import { Input } from './input';
 import { Textarea } from './textarea';
 import { Button } from './button';
@@ -16,12 +24,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { Switch } from './switch';
 const meta = {
-    title: 'Components/Form',
-    component: Form,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Form',
+  component: Form,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -29,116 +37,149 @@ export default meta;
  * Accessibility: Proper ARIA labels and error messages for screen readers
  */
 export const Simple = {
-    render: () => {
-        const formSchema = z.object({
-            username: z.string().min(2, {
-                message: 'Username must be at least 2 characters.',
-            }),
-        });
-        const form = useForm({
-            resolver: zodResolver(formSchema),
-            defaultValues: {
-                username: '',
-            },
-        });
-        function onSubmit(values) {
-            console.log(values);
-        }
-        return (<Form {...form}>
+  render: () => {
+    const formSchema = z.object({
+      username: z.string().min(2, {
+        message: 'Username must be at least 2 characters.',
+      }),
+    });
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        username: '',
+      },
+    });
+    function onSubmit(values) {
+      console.log(values);
+    }
+    return (
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[350px] space-y-6">
-          <FormField control={form.control} name="username" render={({ field }) => (<FormItem>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field}/>
+                  <Input placeholder="shadcn" {...field} />
                 </FormControl>
                 <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
-              </FormItem>)}/>
+              </FormItem>
+            )}
+          />
           <Button type="submit">Submit</Button>
         </form>
-      </Form>);
-    },
+      </Form>
+    );
+  },
 };
 /**
  * Complete profile form
  */
 export const ProfileForm = {
-    render: () => {
-        const formSchema = z.object({
-            username: z.string().min(2).max(30),
-            email: z.string().email(),
-            bio: z.string().max(160).optional(),
-        });
-        const form = useForm({
-            resolver: zodResolver(formSchema),
-            defaultValues: {
-                username: '',
-                email: '',
-                bio: '',
-            },
-        });
-        function onSubmit(values) {
-            console.log(values);
-        }
-        return (<Form {...form}>
+  render: () => {
+    const formSchema = z.object({
+      username: z.string().min(2).max(30),
+      email: z.string().email(),
+      bio: z.string().max(160).optional(),
+    });
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        username: '',
+        email: '',
+        bio: '',
+      },
+    });
+    function onSubmit(values) {
+      console.log(values);
+    }
+    return (
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[400px] space-y-6">
-          <FormField control={form.control} name="username" render={({ field }) => (<FormItem>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input placeholder="johndoe" {...field}/>
+                  <Input placeholder="johndoe" {...field} />
                 </FormControl>
                 <FormDescription>
                   This is your public display name. It can be your real name or a pseudonym.
                 </FormDescription>
                 <FormMessage />
-              </FormItem>)}/>
-          <FormField control={form.control} name="email" render={({ field }) => (<FormItem>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="john@example.com" {...field}/>
+                  <Input type="email" placeholder="john@example.com" {...field} />
                 </FormControl>
                 <FormDescription>We'll never share your email with anyone.</FormDescription>
                 <FormMessage />
-              </FormItem>)}/>
-          <FormField control={form.control} name="bio" render={({ field }) => (<FormItem>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Tell us about yourself" {...field}/>
+                  <Textarea placeholder="Tell us about yourself" {...field} />
                 </FormControl>
                 <FormDescription>
                   Brief description for your profile. Max 160 characters.
                 </FormDescription>
                 <FormMessage />
-              </FormItem>)}/>
+              </FormItem>
+            )}
+          />
           <Button type="submit">Update profile</Button>
         </form>
-      </Form>);
-    },
+      </Form>
+    );
+  },
 };
 /**
  * Form with select
  */
 export const WithSelect = {
-    render: () => {
-        const formSchema = z.object({
-            country: z.string({
-                required_error: 'Please select a country.',
-            }),
-        });
-        const form = useForm({
-            resolver: zodResolver(formSchema),
-        });
-        function onSubmit(values) {
-            console.log(values);
-        }
-        return (<Form {...form}>
+  render: () => {
+    const formSchema = z.object({
+      country: z.string({
+        required_error: 'Please select a country.',
+      }),
+    });
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+    });
+    function onSubmit(values) {
+      console.log(values);
+    }
+    return (
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[350px] space-y-6">
-          <FormField control={form.control} name="country" render={({ field }) => (<FormItem>
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
                 <FormLabel>Country</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a country"/>
+                      <SelectValue placeholder="Select a country" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -150,36 +191,44 @@ export const WithSelect = {
                 </Select>
                 <FormDescription>Select your country of residence.</FormDescription>
                 <FormMessage />
-              </FormItem>)}/>
+              </FormItem>
+            )}
+          />
           <Button type="submit">Submit</Button>
         </form>
-      </Form>);
-    },
+      </Form>
+    );
+  },
 };
 /**
  * Form with checkbox
  */
 export const WithCheckbox = {
-    render: () => {
-        const formSchema = z.object({
-            terms: z.boolean().refine(val => val === true, {
-                message: 'You must accept the terms and conditions',
-            }),
-        });
-        const form = useForm({
-            resolver: zodResolver(formSchema),
-            defaultValues: {
-                terms: false,
-            },
-        });
-        function onSubmit(values) {
-            console.log(values);
-        }
-        return (<Form {...form}>
+  render: () => {
+    const formSchema = z.object({
+      terms: z.boolean().refine(val => val === true, {
+        message: 'You must accept the terms and conditions',
+      }),
+    });
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        terms: false,
+      },
+    });
+    function onSubmit(values) {
+      console.log(values);
+    }
+    return (
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[350px] space-y-6">
-          <FormField control={form.control} name="terms" render={({ field }) => (<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+          <FormField
+            control={form.control}
+            name="terms"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                 <FormControl>
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange}/>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel>Accept terms and conditions</FormLabel>
@@ -187,44 +236,56 @@ export const WithCheckbox = {
                     You agree to our Terms of Service and Privacy Policy.
                   </FormDescription>
                 </div>
-              </FormItem>)}/>
+              </FormItem>
+            )}
+          />
           <FormMessage />
           <Button type="submit">Submit</Button>
         </form>
-      </Form>);
-    },
+      </Form>
+    );
+  },
 };
 /**
  * Form with radio group
  */
 export const WithRadioGroup = {
-    render: () => {
-        const formSchema = z.object({
-            type: z.enum(['all', 'mentions', 'none'], {
-                required_error: 'You need to select a notification type.',
-            }),
-        });
-        const form = useForm({
-            resolver: zodResolver(formSchema),
-        });
-        function onSubmit(values) {
-            console.log(values);
-        }
-        return (<Form {...form}>
+  render: () => {
+    const formSchema = z.object({
+      type: z.enum(['all', 'mentions', 'none'], {
+        required_error: 'You need to select a notification type.',
+      }),
+    });
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+    });
+    function onSubmit(values) {
+      console.log(values);
+    }
+    return (
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-[350px] space-y-6">
-          <FormField control={form.control} name="type" render={({ field }) => (<FormItem className="space-y-3">
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
                 <FormLabel>Notify me about...</FormLabel>
                 <FormControl>
-                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex flex-col space-y-1"
+                  >
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>
-                        <RadioGroupItem value="all"/>
+                        <RadioGroupItem value="all" />
                       </FormControl>
                       <FormLabel className="font-normal cursor-pointer">All new messages</FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>
-                        <RadioGroupItem value="mentions"/>
+                        <RadioGroupItem value="mentions" />
                       </FormControl>
                       <FormLabel className="font-normal cursor-pointer">
                         Direct messages and mentions
@@ -232,42 +293,50 @@ export const WithRadioGroup = {
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
                       <FormControl>
-                        <RadioGroupItem value="none"/>
+                        <RadioGroupItem value="none" />
                       </FormControl>
                       <FormLabel className="font-normal cursor-pointer">Nothing</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />
-              </FormItem>)}/>
+              </FormItem>
+            )}
+          />
           <Button type="submit">Submit</Button>
         </form>
-      </Form>);
-    },
+      </Form>
+    );
+  },
 };
 /**
  * Form with switch
  */
 export const WithSwitch = {
-    render: () => {
-        const formSchema = z.object({
-            marketing_emails: z.boolean().default(false),
-            security_emails: z.boolean(),
-        });
-        const form = useForm({
-            resolver: zodResolver(formSchema),
-            defaultValues: {
-                marketing_emails: false,
-                security_emails: true,
-            },
-        });
-        function onSubmit(values) {
-            console.log(values);
-        }
-        return (<Form {...form}>
+  render: () => {
+    const formSchema = z.object({
+      marketing_emails: z.boolean().default(false),
+      security_emails: z.boolean(),
+    });
+    const form = useForm({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        marketing_emails: false,
+        security_emails: true,
+      },
+    });
+    function onSubmit(values) {
+      console.log(values);
+    }
+    return (
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-sm space-y-6">
           <div className="space-y-4">
-            <FormField control={form.control} name="marketing_emails" render={({ field }) => (<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+            <FormField
+              control={form.control}
+              name="marketing_emails"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Marketing emails</FormLabel>
                     <FormDescription>
@@ -275,22 +344,31 @@ export const WithSwitch = {
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange}/>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
-                </FormItem>)}/>
-            <FormField control={form.control} name="security_emails" render={({ field }) => (<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="security_emails"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">Security emails</FormLabel>
                     <FormDescription>Receive emails about your account security.</FormDescription>
                   </div>
                   <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange}/>
+                    <Switch checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
-                </FormItem>)}/>
+                </FormItem>
+              )}
+            />
           </div>
           <Button type="submit">Submit</Button>
         </form>
-      </Form>);
-    },
+      </Form>
+    );
+  },
 };
 //# sourceMappingURL=form.stories.js.map

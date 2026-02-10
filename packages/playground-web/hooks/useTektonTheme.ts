@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { previewTheme } from "@/lib/mcp-client";
+import { useEffect, useState } from 'react';
+import { previewTheme } from '@/lib/mcp-client';
 
 interface UseTektonThemeOptions {
   /** MCP 서버 연결 실패 시 적용할 폴백 CSS 변수 */
@@ -30,7 +30,7 @@ interface UseTektonThemeResult {
  */
 export function useTektonTheme(
   themeId: string,
-  options?: UseTektonThemeOptions,
+  options?: UseTektonThemeOptions
 ): UseTektonThemeResult {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,9 @@ export function useTektonTheme(
       try {
         const response = await previewTheme(themeId);
 
-        if (cancelled) {return;}
+        if (cancelled) {
+          return;
+        }
 
         if (response.result?.success && response.result.theme) {
           const { tokens } = response.result.theme;
@@ -54,18 +56,20 @@ export function useTektonTheme(
           };
 
           Object.entries(allTokens).forEach(([key, value]) => {
-            if (typeof value === "string") {
+            if (typeof value === 'string') {
               root.style.setProperty(key, value);
             }
           });
         } else {
           applyFallback();
-          setError(response.result?.error ?? response.error?.message ?? "테마 로드 실패");
+          setError(response.result?.error ?? response.error?.message ?? '테마 로드 실패');
         }
       } catch (e) {
-        if (cancelled) {return;}
+        if (cancelled) {
+          return;
+        }
         applyFallback();
-        setError(e instanceof Error ? e.message : "테마 로드 실패");
+        setError(e instanceof Error ? e.message : '테마 로드 실패');
       } finally {
         if (!cancelled) {
           setLoaded(true);
@@ -74,7 +78,9 @@ export function useTektonTheme(
     }
 
     function applyFallback() {
-      if (!options?.fallback) {return;}
+      if (!options?.fallback) {
+        return;
+      }
       const root = document.documentElement;
       Object.entries(options.fallback).forEach(([key, value]) => {
         root.style.setProperty(key, value);

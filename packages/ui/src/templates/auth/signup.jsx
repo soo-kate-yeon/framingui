@@ -16,7 +16,14 @@
  * WHY: 회원가입 템플릿이 사용자 온보딩 UX를 보장
  * IMPACT: 템플릿 오류 시 사용자 가입 불가
  */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from '../../components/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../components/card';
 import { Button } from '../../components/button';
 import { Input } from '../../components/input';
 import { Label } from '../../components/label';
@@ -25,12 +32,21 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Signup Template Component
  */
-export function SignupTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'Create Account';
-    const subtitle = texts.subtitle || 'Sign up to get started';
-    const buttonLabel = texts.button_label || 'Sign Up';
-    const showSocialSignup = options.social_signup ?? false;
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function SignupTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'Create Account';
+  const subtitle = texts.subtitle || 'Sign up to get started';
+  const buttonLabel = texts.button_label || 'Sign Up';
+  const showSocialSignup = options.social_signup ?? false;
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <Card className="w-full max-w-md">
         <CardHeader>
           {slots.logo && <div className="mb-[var(--tekton-spacing-4)]">{slots.logo}</div>}
@@ -42,37 +58,40 @@ export function SignupTemplateComponent({ children, className = '', slots = {}, 
           {/* Name Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
             <Label htmlFor="name">Name</Label>
-            <Input id="name" type="text" placeholder="Enter your name"/>
+            <Input id="name" type="text" placeholder="Enter your name" />
           </div>
 
           {/* Email Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Enter your email"/>
+            <Input id="email" type="email" placeholder="Enter your email" />
           </div>
 
           {/* Password Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="Enter your password"/>
+            <Input id="password" type="password" placeholder="Enter your password" />
           </div>
 
           {/* Password Confirm Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
             <Label htmlFor="password-confirm">Confirm Password</Label>
-            <Input id="password-confirm" type="password" placeholder="Confirm your password"/>
+            <Input id="password-confirm" type="password" placeholder="Confirm your password" />
           </div>
 
           {/* Terms Checkbox */}
-          {slots.termsCheckbox && (<div className="flex items-start space-x-[var(--tekton-spacing-2)]">
+          {slots.termsCheckbox && (
+            <div className="flex items-start space-x-[var(--tekton-spacing-2)]">
               {slots.termsCheckbox}
-            </div>)}
+            </div>
+          )}
 
           {/* Sign Up Button */}
           <Button className="w-full">{buttonLabel}</Button>
 
           {/* Social Signup */}
-          {showSocialSignup && slots.socialSignup && (<>
+          {showSocialSignup && slots.socialSignup && (
+            <>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <Separator />
@@ -86,56 +105,60 @@ export function SignupTemplateComponent({ children, className = '', slots = {}, 
               <div className="grid grid-cols-2 gap-[var(--tekton-spacing-4)]">
                 {slots.socialSignup}
               </div>
-            </>)}
+            </>
+          )}
         </CardContent>
 
         <CardFooter>
-          {slots.footer || (<p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
+          {slots.footer || (
+            <p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
               Already have an account?{' '}
               <a href="#" className="text-[var(--tekton-text-primary)] hover:underline">
                 Sign in
               </a>
-            </p>)}
+            </p>
+          )}
         </CardFooter>
       </Card>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Signup Template Definition
  */
 export const SignupTemplate = {
-    id: 'auth.signup',
-    name: 'Signup',
-    category: 'auth',
-    description: 'Standard signup screen with name, email, and password',
-    skeleton: {
-        shell: 'centered-card',
-        page: 'auth-page',
-        sections: [
-            {
-                id: 'signup-form',
-                name: 'Signup Form',
-                slot: 'main',
-                required: true,
-                Component: SignupTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'subtitle', 'button_label'],
-        optional: ['social_signup'],
-        slots: ['logo', 'termsCheckbox', 'socialSignup', 'footer'],
-    },
-    requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label', 'Checkbox'],
-    Component: SignupTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['auth', 'signup', 'registration', 'form'],
+  id: 'auth.signup',
+  name: 'Signup',
+  category: 'auth',
+  description: 'Standard signup screen with name, email, and password',
+  skeleton: {
+    shell: 'centered-card',
+    page: 'auth-page',
+    sections: [
+      {
+        id: 'signup-form',
+        name: 'Signup Form',
+        slot: 'main',
+        required: true,
+        Component: SignupTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'subtitle', 'button_label'],
+    optional: ['social_signup'],
+    slots: ['logo', 'termsCheckbox', 'socialSignup', 'footer'],
+  },
+  requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label', 'Checkbox'],
+  Component: SignupTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['auth', 'signup', 'registration', 'form'],
 };
 //# sourceMappingURL=signup.js.map

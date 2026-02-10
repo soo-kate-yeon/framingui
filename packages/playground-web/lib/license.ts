@@ -13,10 +13,7 @@ import type { License } from './types/user';
  * @param templateId - 템플릿 ID
  * @returns 유효한 라이선스 보유 여부
  */
-export async function hasValidLicense(
-  userId: string,
-  templateId: string,
-): Promise<boolean> {
+export async function hasValidLicense(userId: string, templateId: string): Promise<boolean> {
   // TODO: 실제 데이터베이스 쿼리 또는 API 호출 구현
   // 현재는 임시 구현
 
@@ -56,7 +53,7 @@ export async function hasValidLicense(
  */
 export async function getLicenseStatus(
   _userId: string,
-  _templateId: string,
+  _templateId: string
 ): Promise<License | null> {
   // TODO: 실제 데이터베이스 쿼리 구현
   // 예시:
@@ -146,7 +143,7 @@ export interface LicenseVerificationResult {
  */
 export async function verifyLicense(
   userId: string,
-  templateId: string,
+  templateId: string
 ): Promise<LicenseVerificationResult> {
   try {
     const license = await getLicenseStatus(userId, templateId);
@@ -173,8 +170,7 @@ export async function verifyLicense(
   } catch (error) {
     return {
       valid: false,
-      error:
-        error instanceof Error ? error.message : 'License verification failed',
+      error: error instanceof Error ? error.message : 'License verification failed',
     };
   }
 }

@@ -38,9 +38,7 @@ export async function middleware(request: NextRequest) {
   const response = await updateSession(request);
 
   // 2. 보호된 라우트 접근 제어
-  const isProtectedRoute = PROTECTED_ROUTES.some((route) =>
-    pathname.startsWith(route)
-  );
+  const isProtectedRoute = PROTECTED_ROUTES.some((route) => pathname.startsWith(route));
 
   if (isProtectedRoute) {
     // 3. 사용자 인증 상태 확인

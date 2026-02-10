@@ -391,9 +391,7 @@ export function getPresetById(id: string): ThemePreset | undefined {
 /**
  * 카테고리별 프리셋 검색
  */
-export function getPresetsByCategory(
-  category: 'color' | 'typography' | 'spacing',
-): ThemePreset[] {
+export function getPresetsByCategory(category: 'color' | 'typography' | 'spacing'): ThemePreset[] {
   switch (category) {
     case 'color':
       return colorPresets;

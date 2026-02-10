@@ -33,9 +33,10 @@ function getPaddleClient(): Paddle | null {
     return null;
   }
 
-  const environment = process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT === 'production'
-    ? Environment.production
-    : Environment.sandbox;
+  const environment =
+    process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT === 'production'
+      ? Environment.production
+      : Environment.sandbox;
 
   return new Paddle(apiKey, { environment });
 }
@@ -62,9 +63,15 @@ function resolveTier(priceId: string): LicenseTier {
   const priceDouble = process.env.NEXT_PUBLIC_PADDLE_PRICE_DOUBLE;
   const priceCreator = process.env.NEXT_PUBLIC_PADDLE_PRICE_CREATOR;
 
-  if (priceId === priceSingle) {return 'single';}
-  if (priceId === priceDouble) {return 'double';}
-  if (priceId === priceCreator) {return 'creator';}
+  if (priceId === priceSingle) {
+    return 'single';
+  }
+  if (priceId === priceDouble) {
+    return 'double';
+  }
+  if (priceId === priceCreator) {
+    return 'creator';
+  }
 
   console.warn(`[Paddle Webhook] 알 수 없는 Price ID: ${priceId}, 기본값 'single' 사용`);
   return 'single';
@@ -80,11 +87,15 @@ interface PaddleCustomData {
 }
 
 function parseCustomData(customData: unknown): PaddleCustomData | null {
-  if (!customData || typeof customData !== 'object') {return null;}
+  if (!customData || typeof customData !== 'object') {
+    return null;
+  }
 
   const data = customData as Record<string, unknown>;
   const userId = data.user_id;
-  if (typeof userId !== 'string' || !userId) {return null;}
+  if (typeof userId !== 'string' || !userId) {
+    return null;
+  }
 
   return {
     user_id: userId,
@@ -104,28 +115,19 @@ export async function POST(request: NextRequest) {
   // Paddle 클라이언트 확인
   const paddle = getPaddleClient();
   if (!paddle) {
-    return NextResponse.json(
-      { error: 'server_configuration_error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'server_configuration_error' }, { status: 500 });
   }
 
   // 웹훅 서명 검증
   const webhookSecret = process.env.PADDLE_WEBHOOK_SECRET;
   if (!webhookSecret) {
     console.error('[Paddle Webhook] PADDLE_WEBHOOK_SECRET이 설정되지 않았습니다');
-    return NextResponse.json(
-      { error: 'server_configuration_error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'server_configuration_error' }, { status: 500 });
   }
 
   const signature = request.headers.get('paddle-signature');
   if (!signature) {
-    return NextResponse.json(
-      { error: 'missing_signature' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'missing_signature' }, { status: 401 });
   }
 
   const rawBody = await request.text();
@@ -135,17 +137,11 @@ export async function POST(request: NextRequest) {
     event = await paddle.webhooks.unmarshal(rawBody, webhookSecret, signature);
   } catch (err) {
     console.error('[Paddle Webhook] 서명 검증 실패:', err);
-    return NextResponse.json(
-      { error: 'invalid_signature' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'invalid_signature' }, { status: 401 });
   }
 
   if (!event) {
-    return NextResponse.json(
-      { error: 'invalid_event' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'invalid_event' }, { status: 400 });
   }
 
   console.log(`[Paddle Webhook] 이벤트 수신: ${event.eventType}`);
@@ -191,25 +187,22 @@ export async function POST(request: NextRequest) {
         }
 
         // 라이선스 생성
-        const { error: insertError } = await adminClient
-          .from('user_licenses')
-          .insert({
-            user_id: customData.user_id,
-            theme_id: themeId,
-            tier,
-            paddle_subscription_id: transactionId,
-            is_active: true,
-          });
+        const { error: insertError } = await adminClient.from('user_licenses').insert({
+          user_id: customData.user_id,
+          theme_id: themeId,
+          tier,
+          paddle_subscription_id: transactionId,
+          is_active: true,
+        });
 
         if (insertError) {
           console.error('[Paddle Webhook] 라이선스 생성 실패:', insertError);
-          return NextResponse.json(
-            { error: 'license_creation_failed' },
-            { status: 500 }
-          );
+          return NextResponse.json({ error: 'license_creation_failed' }, { status: 500 });
         }
 
-        console.log(`[Paddle Webhook] 라이선스 생성 완료: user=${customData.user_id}, tier=${tier}`);
+        console.log(
+          `[Paddle Webhook] 라이선스 생성 완료: user=${customData.user_id}, tier=${tier}`
+        );
         break;
       }
 
@@ -219,7 +212,9 @@ export async function POST(request: NextRequest) {
         const customData = parseCustomData(subscription.customData);
 
         if (customData) {
-          console.log(`[Paddle Webhook] 구독 활성화: user=${customData.user_id}, sub=${subscription.id}`);
+          console.log(
+            `[Paddle Webhook] 구독 활성화: user=${customData.user_id}, sub=${subscription.id}`
+          );
         }
         break;
       }
@@ -236,10 +231,7 @@ export async function POST(request: NextRequest) {
 
         if (updateError) {
           console.error('[Paddle Webhook] 라이선스 비활성화 실패:', updateError);
-          return NextResponse.json(
-            { error: 'license_update_failed' },
-            { status: 500 }
-          );
+          return NextResponse.json({ error: 'license_update_failed' }, { status: 500 });
         }
 
         console.log(`[Paddle Webhook] 구독 취소 처리 완료: sub=${subscriptionId}`);
@@ -270,10 +262,7 @@ export async function POST(request: NextRequest) {
 
             if (updateError) {
               console.error('[Paddle Webhook] 환불 처리 실패:', updateError);
-              return NextResponse.json(
-                { error: 'refund_processing_failed' },
-                { status: 500 }
-              );
+              return NextResponse.json({ error: 'refund_processing_failed' }, { status: 500 });
             }
 
             console.log(`[Paddle Webhook] 환불 처리 완료: txn=${transactionId}, action=${action}`);
@@ -289,9 +278,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ status: 'ok' });
   } catch (err) {
     console.error('[Paddle Webhook] 처리 중 오류:', err);
-    return NextResponse.json(
-      { error: 'internal_error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
   }
 }

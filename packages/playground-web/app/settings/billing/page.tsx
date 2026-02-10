@@ -56,9 +56,7 @@ export default function BillingPage() {
         <div className="mw-card">
           <div className="mw-card-header">
             <h3 className="mw-card-title">Subscription & Billing</h3>
-            <p className="mw-card-description">
-              Payment features are not currently enabled.
-            </p>
+            <p className="mw-card-description">Payment features are not currently enabled.</p>
           </div>
         </div>
       </div>
@@ -70,9 +68,7 @@ export default function BillingPage() {
       <div className="space-y-6">
         <div>
           <h2 className="mw-heading-3">Billing</h2>
-          <p className="mw-text-secondary mt-2">
-            Please sign in to view your billing information.
-          </p>
+          <p className="mw-text-secondary mt-2">Please sign in to view your billing information.</p>
         </div>
       </div>
     );
@@ -82,18 +78,14 @@ export default function BillingPage() {
     <div className="space-y-6">
       <div>
         <h2 className="mw-heading-3">Billing</h2>
-        <p className="mw-text-secondary mt-2">
-          View your subscription details and payment history
-        </p>
+        <p className="mw-text-secondary mt-2">View your subscription details and payment history</p>
       </div>
 
       {/* 활성 라이선스 */}
       <div className="mw-card">
         <div className="mw-card-header">
           <h3 className="mw-card-title">Active Licenses</h3>
-          <p className="mw-card-description">
-            Your current active licenses and subscriptions
-          </p>
+          <p className="mw-card-description">Your current active licenses and subscriptions</p>
         </div>
         <div className="mw-card-content">
           {isLoading ? (
@@ -153,9 +145,7 @@ function LicenseRow({ license }: { license: UserLicense }) {
     <div className="flex items-center justify-between p-4 border border-neutral-200 rounded-lg">
       <div className="flex-1">
         <div className="flex items-center gap-3">
-          <span className="font-medium text-neutral-900">
-            {license.theme_id}
-          </span>
+          <span className="font-medium text-neutral-900">{license.theme_id}</span>
           <span className="px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-neutral-100 text-neutral-600 rounded">
             {tierLabels[license.tier] ?? license.tier}
           </span>

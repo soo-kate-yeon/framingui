@@ -8,12 +8,12 @@ import { SignupTemplateComponent } from './signup';
 import { Checkbox } from '../../components/checkbox';
 import { Label } from '../../components/label';
 const meta = {
-    title: 'Templates/Auth/Signup',
-    component: SignupTemplateComponent,
-    parameters: {
-        layout: 'fullscreen',
-    },
-    tags: ['autodocs'],
+  title: 'Templates/Auth/Signup',
+  component: SignupTemplateComponent,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -21,10 +21,11 @@ export default meta;
  * Accessibility: Fully accessible form with proper labels and ARIA attributes
  */
 export const Default = {
-    args: {
-        slots: {
-            termsCheckbox: (<>
-          <Checkbox id="terms"/>
+  args: {
+    slots: {
+      termsCheckbox: (
+        <>
+          <Checkbox id="terms" />
           <Label htmlFor="terms" className="text-sm cursor-pointer">
             I agree to the{' '}
             <a href="#" className="text-[var(--tekton-text-primary)] hover:underline">
@@ -35,8 +36,9 @@ export const Default = {
               Privacy Policy
             </a>
           </Label>
-        </>),
-        },
+        </>
+      ),
     },
+  },
 };
 //# sourceMappingURL=signup.stories.js.map

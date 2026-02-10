@@ -34,12 +34,7 @@ export function HeroSection({
   className,
 }: HeroSectionProps) {
   return (
-    <section
-      className={clsx(
-        'py-12 px-6 md:py-16 lg:py-20 bg-white',
-        className
-      )}
-    >
+    <section className={clsx('py-12 px-6 md:py-16 lg:py-20 bg-white', className)}>
       <div className="max-w-4xl mx-auto text-center">
         {/* Title */}
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-wider text-neutral-900 mb-4">
@@ -47,9 +42,7 @@ export function HeroSection({
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg md:text-xl text-neutral-600 mb-8">
-          {subtitle}
-        </p>
+        <p className="text-lg md:text-xl text-neutral-600 mb-8">{subtitle}</p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

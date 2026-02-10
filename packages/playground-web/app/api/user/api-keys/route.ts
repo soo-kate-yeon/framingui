@@ -13,11 +13,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import {
-  createApiKey,
-  getApiKeysByUserId,
-  generateApiKey,
-} from '@/lib/db/api-keys';
+import { createApiKey, getApiKeysByUserId, generateApiKey } from '@/lib/db/api-keys';
 import type { ApiKeyWithPlaintext, ApiKeyListItem } from '@/lib/db/types';
 import {
   rateLimitApiKeys,

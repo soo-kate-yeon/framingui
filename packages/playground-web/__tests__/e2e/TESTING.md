@@ -64,6 +64,7 @@ pnpm test:e2e api-keys/mcp-verify.spec.ts
 ```
 
 **예상 결과**:
+
 - ✅ API Key가 `tk_live_` 형식으로 생성됨
 - ✅ MCP 검증 엔드포인트에서 유효한 응답 반환
 - ✅ user, licenses, themes 정보 확인
@@ -76,6 +77,7 @@ pnpm test:e2e api-keys/revoke-api-key.spec.ts
 ```
 
 **예상 결과**:
+
 - ✅ API Key 목록에 생성된 키 표시 (prefix만)
 - ✅ 삭제 후 목록에서 제거
 - ✅ Revoked 키로 MCP 검증 시 401 에러
@@ -87,6 +89,7 @@ pnpm test:e2e api-keys/security.spec.ts
 ```
 
 **예상 결과**:
+
 - ✅ 인증 없이 API 호출 시 401 에러
 - ✅ Rate Limiting 동작 (10/min, 60/min)
 - ✅ SQL Injection, XSS 방어 확인
@@ -102,6 +105,7 @@ Error: Missing Supabase environment variables
 ```
 
 **해결**:
+
 1. `.env.local` 파일이 `packages/playground-web/` 디렉토리에 있는지 확인
 2. 환경변수가 올바르게 설정되었는지 확인
 3. 개발 서버 재시작

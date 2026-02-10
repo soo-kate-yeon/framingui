@@ -33,7 +33,10 @@ export async function GET(request: NextRequest) {
   try {
     // 현재 로그인한 사용자 확인
     const supabase = await createClient();
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError || !user || !user.email) {
       return new NextResponse(
@@ -60,14 +63,12 @@ export async function GET(request: NextRequest) {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    const { error: insertError } = await adminClient
-      .from('api_keys')
-      .insert({
-        user_id: user.id,
-        key_hash: hash,
-        key_prefix: prefix,
-        name: 'MCP CLI Login',
-      });
+    const { error: insertError } = await adminClient.from('api_keys').insert({
+      user_id: user.id,
+      key_hash: hash,
+      key_prefix: prefix,
+      name: 'MCP CLI Login',
+    });
 
     if (insertError) {
       console.error('[MCP CLI Complete] Failed to store API key:', insertError);

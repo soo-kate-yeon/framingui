@@ -7,19 +7,20 @@
 import { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card';
 import { Button } from './button';
 const meta = {
-    title: 'Components/Card',
-    component: Card,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Card',
+  component: Card,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
  * Default card with all sections
  */
 export const Default = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Card Title</CardTitle>
         <CardDescription>Card description goes here.</CardDescription>
@@ -30,34 +31,40 @@ export const Default = {
       <CardFooter>
         <Button>Action</Button>
       </CardFooter>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Simple card with only content
  */
 export const Simple = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardContent className="pt-6">
         <p>A simple card with just content.</p>
       </CardContent>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Card with header only
  */
 export const HeaderOnly = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Notifications</CardTitle>
         <CardDescription>You have 3 unread messages.</CardDescription>
       </CardHeader>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Card with actions in footer
  */
 export const WithActions = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Confirm Action</CardTitle>
         <CardDescription>Are you sure you want to continue?</CardDescription>
@@ -66,13 +73,15 @@ export const WithActions = {
         <Button variant="outline">Cancel</Button>
         <Button>Confirm</Button>
       </CardFooter>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Card with form example
  */
 export const WithForm = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Create Account</CardTitle>
         <CardDescription>Enter your email below to create your account.</CardDescription>
@@ -84,13 +93,22 @@ export const WithForm = {
               <label htmlFor="name" className="text-sm font-medium">
                 Name
               </label>
-              <input id="name" placeholder="Enter your name" className="flex h-10 w-full rounded-md border border-[var(--tekton-border-input)] bg-transparent px-3 py-2 text-sm"/>
+              <input
+                id="name"
+                placeholder="Enter your name"
+                className="flex h-10 w-full rounded-md border border-[var(--tekton-border-input)] bg-transparent px-3 py-2 text-sm"
+              />
             </div>
             <div className="flex flex-col space-y-1.5">
               <label htmlFor="email" className="text-sm font-medium">
                 Email
               </label>
-              <input id="email" type="email" placeholder="Enter your email" className="flex h-10 w-full rounded-md border border-[var(--tekton-border-input)] bg-transparent px-3 py-2 text-sm"/>
+              <input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                className="flex h-10 w-full rounded-md border border-[var(--tekton-border-input)] bg-transparent px-3 py-2 text-sm"
+              />
             </div>
           </div>
         </form>
@@ -99,13 +117,15 @@ export const WithForm = {
         <Button variant="outline">Cancel</Button>
         <Button>Create</Button>
       </CardFooter>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Dashboard card example
  */
 export const Dashboard = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
         <span className="text-2xl">💰</span>
@@ -114,13 +134,15 @@ export const Dashboard = {
         <div className="text-2xl font-bold">$45,231.89</div>
         <p className="text-xs text-[var(--tekton-bg-muted-foreground)]">+20.1% from last month</p>
       </CardContent>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Notification card example
  */
 export const Notification = {
-    render: () => (<Card className="w-[350px]">
+  render: () => (
+    <Card className="w-[350px]">
       <CardHeader>
         <CardTitle>Notifications</CardTitle>
         <CardDescription>You have 3 unread messages.</CardDescription>
@@ -146,13 +168,15 @@ export const Notification = {
       <CardFooter>
         <Button className="w-full">Mark all as read</Button>
       </CardFooter>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Interactive card hover effect
  */
 export const Interactive = {
-    render: () => (<Card className="w-[350px] cursor-pointer transition-all hover:shadow-lg hover:scale-105">
+  render: () => (
+    <Card className="w-[350px] cursor-pointer transition-all hover:shadow-lg hover:scale-105">
       <CardHeader>
         <CardTitle>Interactive Card</CardTitle>
         <CardDescription>Hover to see the effect</CardDescription>
@@ -160,13 +184,15 @@ export const Interactive = {
       <CardContent>
         <p>This card has hover effects and is clickable.</p>
       </CardContent>
-    </Card>),
+    </Card>
+  ),
 };
 /**
  * Multiple cards in grid
  */
 export const Grid = {
-    render: () => (<div className="grid grid-cols-2 gap-4">
+  render: () => (
+    <div className="grid grid-cols-2 gap-4">
       <Card>
         <CardHeader>
           <CardTitle>Card 1</CardTitle>
@@ -191,6 +217,7 @@ export const Grid = {
           <CardDescription>Fourth card</CardDescription>
         </CardHeader>
       </Card>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=card.stories.js.map

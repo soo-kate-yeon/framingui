@@ -1,77 +1,72 @@
 {
-    "id": "square-minimalism",
-    "name": "Square Minimalism",
-    "schemaVersion": "2.1",
-    "brandTone": "architectural",
-    "designDNA": {
-        "moodKeywords": [
-            "architectural",
-            "sharp",
-            "spacious",
-            "unapologetic"
-        ],
-        "targetEmotion": "clarity",
-        "visualAtmosphere": "modern art gallery",
-        "principles": [
-            "No rounded corners (Radius 0 defines the character)",
-            "Whitespace as a divider",
-            "Typography as a graphical element"
-        ]
+  "id": "square-minimalism",
+  "name": "Square Minimalism",
+  "schemaVersion": "2.1",
+  "brandTone": "architectural",
+  "designDNA": {
+    "moodKeywords": ["architectural", "sharp", "spacious", "unapologetic"],
+    "targetEmotion": "clarity",
+    "visualAtmosphere": "modern art gallery",
+    "principles": [
+      "No rounded corners (Radius 0 defines the character)",
+      "Whitespace as a divider",
+      "Typography as a graphical element"
+    ]
+  },
+  "tokens": {
+    "atomic": {
+      "radius": {
+        "none": "0px",
+        "sm": "0px",
+        "md": "0px",
+        "lg": "0px",
+        "full": "0px",
+        "circle": "50%"
+      }
     },
-    "tokens": {
-        "atomic": {
-            "radius": {
-                "none": "0px",
-                "sm": "0px",
-                "md": "0px",
-                "lg": "0px",
-                "full": "0px",
-                "circle": "50%"
-            }
-        },
-        "recipes": {
-            "card": {
-                "glass": "bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.04)]",
-                "outlined": "bg-transparent border border-neutral-200",
-                "minimal": "bg-neutral-50 border-none"
-            },
-            "button": {
-                "primary": "bg-neutral-900 text-white rounded-none px-6 py-3 uppercase tracking-wider text-xs font-semibold hover:bg-neutral-800 transition-colors",
-                "secondary": "bg-white text-neutral-900 border border-neutral-200 rounded-none px-6 py-3 uppercase tracking-wider text-xs font-semibold hover:bg-neutral-50 transition-colors",
-                "ghost": "bg-transparent text-neutral-600 rounded-none px-4 py-2 uppercase tracking-wider text-xs font-medium hover:text-neutral-900"
-            },
-            "input": {
-                "architectural": "w-full bg-transparent border-b border-neutral-200 p-0 py-2 text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none rounded-none transition-colors"
-            },
-            "table": {
-                "root": "w-full text-left border-collapse",
-                "header": "border-b border-neutral-900 pb-3 text-[10px] uppercase tracking-widest font-bold text-neutral-500",
-                "row": "border-b border-neutral-100 hover:bg-neutral-50 transition-colors group",
-                "cell": "py-4 pl-4 text-sm text-neutral-600 font-medium group-hover:text-neutral-900 align-middle"
-            },
-            "badge": {
-                "neutral": "inline-flex items-center rounded-none border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-600 tracking-wide",
-                "success": "inline-flex items-center rounded-none border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] uppercase font-bold text-green-700 tracking-wide"
-            },
-            "toggle": {
-                "label": "relative inline-flex items-center cursor-pointer",
-                "input": "sr-only peer",
-                "wrapper": "w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-none peer dark:bg-neutral-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-none after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900"
-            },
-            "tabs": {
-                "list": "flex gap-8 border-b border-neutral-200 mb-12",
-                "trigger": "pb-4 text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-900 border-b-2 border-transparent data-[state=active]:border-neutral-900 data-[state=active]:text-neutral-900 transition-colors"
-            },
-            "typography": {
-                "hero": "text-5xl font-bold tracking-tight text-neutral-900 leading-tight",
-                "eyebrow": "text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2 block",
-                "body": "text-base font-normal text-neutral-600 leading-relaxed",
-                "label": "text-xs font-medium text-neutral-500 uppercase tracking-wide"
-            },
-            "layout": {
-                "section": "py-24 px-6 max-w-7xl mx-auto",
-                "grid": "grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-12"
-            }
-        }
+    "recipes": {
+      "card": {
+        "glass": "bg-white/80 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.04)]",
+        "outlined": "bg-transparent border border-neutral-200",
+        "minimal": "bg-neutral-50 border-none"
+      },
+      "button": {
+        "primary": "bg-neutral-900 text-white rounded-none px-6 py-3 uppercase tracking-wider text-xs font-semibold hover:bg-neutral-800 transition-colors",
+        "secondary": "bg-white text-neutral-900 border border-neutral-200 rounded-none px-6 py-3 uppercase tracking-wider text-xs font-semibold hover:bg-neutral-50 transition-colors",
+        "ghost": "bg-transparent text-neutral-600 rounded-none px-4 py-2 uppercase tracking-wider text-xs font-medium hover:text-neutral-900"
+      },
+      "input": {
+        "architectural": "w-full bg-transparent border-b border-neutral-200 p-0 py-2 text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none rounded-none transition-colors"
+      },
+      "table": {
+        "root": "w-full text-left border-collapse",
+        "header": "border-b border-neutral-900 pb-3 text-[10px] uppercase tracking-widest font-bold text-neutral-500",
+        "row": "border-b border-neutral-100 hover:bg-neutral-50 transition-colors group",
+        "cell": "py-4 pl-4 text-sm text-neutral-600 font-medium group-hover:text-neutral-900 align-middle"
+      },
+      "badge": {
+        "neutral": "inline-flex items-center rounded-none border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-600 tracking-wide",
+        "success": "inline-flex items-center rounded-none border border-green-200 bg-green-50 px-2 py-0.5 text-[10px] uppercase font-bold text-green-700 tracking-wide"
+      },
+      "toggle": {
+        "label": "relative inline-flex items-center cursor-pointer",
+        "input": "sr-only peer",
+        "wrapper": "w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-none peer dark:bg-neutral-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-none after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-neutral-900"
+      },
+      "tabs": {
+        "list": "flex gap-8 border-b border-neutral-200 mb-12",
+        "trigger": "pb-4 text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-900 border-b-2 border-transparent data-[state=active]:border-neutral-900 data-[state=active]:text-neutral-900 transition-colors"
+      },
+      "typography": {
+        "hero": "text-5xl font-bold tracking-tight text-neutral-900 leading-tight",
+        "eyebrow": "text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-2 block",
+        "body": "text-base font-normal text-neutral-600 leading-relaxed",
+        "label": "text-xs font-medium text-neutral-500 uppercase tracking-wide"
+      },
+      "layout": {
+        "section": "py-24 px-6 max-w-7xl mx-auto",
+        "grid": "grid grid-cols-1 md:grid-cols-12 gap-x-8 gap-y-12"
+      }
     }
+  }
 }

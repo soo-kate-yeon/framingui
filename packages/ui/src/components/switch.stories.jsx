@@ -8,22 +8,22 @@ import * as React from 'react';
 import { Switch } from './switch';
 import { Label } from './label';
 const meta = {
-    title: 'Components/Switch',
-    component: Switch,
-    parameters: {
-        layout: 'centered',
+  title: 'Components/Switch',
+  component: Switch,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    checked: {
+      control: 'boolean',
+      description: 'Checked state',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        checked: {
-            control: 'boolean',
-            description: 'Checked state',
-        },
-        disabled: {
-            control: 'boolean',
-            description: 'Disable switch interaction',
-        },
+    disabled: {
+      control: 'boolean',
+      description: 'Disable switch interaction',
     },
+  },
 };
 export default meta;
 /**
@@ -31,49 +31,56 @@ export default meta;
  * Accessibility: Always pair with a label for screen readers
  */
 export const Default = {
-    render: () => (<div className="flex items-center space-x-2">
-      <Switch id="airplane-mode"/>
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Switch id="airplane-mode" />
       <Label htmlFor="airplane-mode" className="cursor-pointer">
         Airplane Mode
       </Label>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Checked state
  */
 export const Checked = {
-    render: () => (<div className="flex items-center space-x-2">
-      <Switch id="notifications" defaultChecked/>
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Switch id="notifications" defaultChecked />
       <Label htmlFor="notifications" className="cursor-pointer">
         Enable Notifications
       </Label>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Disabled states
  * Accessibility: Disabled switches are not keyboard accessible
  */
 export const Disabled = {
-    render: () => (<div className="space-y-3">
+  render: () => (
+    <div className="space-y-3">
       <div className="flex items-center space-x-2">
-        <Switch id="disabled-off" disabled/>
+        <Switch id="disabled-off" disabled />
         <Label htmlFor="disabled-off" className="cursor-not-allowed opacity-70">
           Disabled (Off)
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <Switch id="disabled-on" disabled defaultChecked/>
+        <Switch id="disabled-on" disabled defaultChecked />
         <Label htmlFor="disabled-on" className="cursor-not-allowed opacity-70">
           Disabled (On)
         </Label>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Settings form example
  */
 export const SettingsForm = {
-    render: () => (<div className="w-full max-w-sm space-y-4">
+  render: () => (
+    <div className="w-full max-w-sm space-y-4">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
@@ -84,7 +91,7 @@ export const SettingsForm = {
               Receive emails about new products and features.
             </p>
           </div>
-          <Switch id="marketing-emails"/>
+          <Switch id="marketing-emails" />
         </div>
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
@@ -95,7 +102,7 @@ export const SettingsForm = {
               Receive emails about your account security.
             </p>
           </div>
-          <Switch id="security-emails" defaultChecked/>
+          <Switch id="security-emails" defaultChecked />
         </div>
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
@@ -106,16 +113,18 @@ export const SettingsForm = {
               Receive our weekly newsletter.
             </p>
           </div>
-          <Switch id="newsletter"/>
+          <Switch id="newsletter" />
         </div>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Privacy settings
  */
 export const PrivacySettings = {
-    render: () => (<div className="w-full max-w-sm space-y-4 rounded-lg border p-4">
+  render: () => (
+    <div className="w-full max-w-sm space-y-4 rounded-lg border p-4">
       <div>
         <h3 className="text-lg font-semibold">Privacy Settings</h3>
         <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
@@ -127,32 +136,34 @@ export const PrivacySettings = {
           <Label htmlFor="public-profile" className="cursor-pointer">
             Public profile
           </Label>
-          <Switch id="public-profile" defaultChecked/>
+          <Switch id="public-profile" defaultChecked />
         </div>
         <div className="flex items-center justify-between">
           <Label htmlFor="show-email" className="cursor-pointer">
             Show email address
           </Label>
-          <Switch id="show-email"/>
+          <Switch id="show-email" />
         </div>
         <div className="flex items-center justify-between">
           <Label htmlFor="activity-status" className="cursor-pointer">
             Show activity status
           </Label>
-          <Switch id="activity-status" defaultChecked/>
+          <Switch id="activity-status" defaultChecked />
         </div>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Controlled switch with state
  */
 export const Controlled = {
-    render: () => {
-        const [checked, setChecked] = React.useState(false);
-        return (<div className="space-y-4">
+  render: () => {
+    const [checked, setChecked] = React.useState(false);
+    return (
+      <div className="space-y-4">
         <div className="flex items-center space-x-2">
-          <Switch id="controlled" checked={checked} onCheckedChange={setChecked}/>
+          <Switch id="controlled" checked={checked} onCheckedChange={setChecked} />
           <Label htmlFor="controlled" className="cursor-pointer">
             {checked ? 'Enabled' : 'Disabled'}
           </Label>
@@ -160,32 +171,35 @@ export const Controlled = {
         <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
           Current state: {checked ? 'ON' : 'OFF'}
         </p>
-      </div>);
-    },
+      </div>
+    );
+  },
 };
 /**
  * Multiple switches
  */
 export const Multiple = {
-    render: () => (<div className="space-y-3">
+  render: () => (
+    <div className="space-y-3">
       <div className="flex items-center space-x-2">
-        <Switch id="wifi" defaultChecked/>
+        <Switch id="wifi" defaultChecked />
         <Label htmlFor="wifi" className="cursor-pointer">
           Wi-Fi
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <Switch id="bluetooth"/>
+        <Switch id="bluetooth" />
         <Label htmlFor="bluetooth" className="cursor-pointer">
           Bluetooth
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <Switch id="location" defaultChecked/>
+        <Switch id="location" defaultChecked />
         <Label htmlFor="location" className="cursor-pointer">
           Location Services
         </Label>
       </div>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=switch.stories.js.map

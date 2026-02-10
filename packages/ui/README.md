@@ -693,7 +693,7 @@ import {
   LoginTemplate,
   SignupTemplate,
   ForgotPasswordTemplate,
-  VerificationTemplate
+  VerificationTemplate,
 } from '@tekton/ui/templates/auth';
 ```
 
@@ -705,11 +705,7 @@ import {
 #### Core Templates (3)
 
 ```tsx
-import {
-  LandingTemplate,
-  PreferencesTemplate,
-  ProfileTemplate
-} from '@tekton/ui/templates/core';
+import { LandingTemplate, PreferencesTemplate, ProfileTemplate } from '@tekton/ui/templates/core';
 ```
 
 - **LandingTemplate** (`home.landing`) - Full-width landing page with CTA
@@ -724,7 +720,7 @@ import {
   ErrorTemplate,
   EmptyTemplate,
   ConfirmationTemplate,
-  SuccessTemplate
+  SuccessTemplate,
 } from '@tekton/ui/templates/feedback';
 ```
 

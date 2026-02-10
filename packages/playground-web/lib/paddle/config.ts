@@ -7,7 +7,9 @@
  */
 
 export const PADDLE_CONFIG = {
-  environment: (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT ?? 'sandbox') as 'sandbox' | 'production',
+  environment: (process.env.NEXT_PUBLIC_PADDLE_ENVIRONMENT ?? 'sandbox') as
+    | 'sandbox'
+    | 'production',
   clientToken: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!,
   prices: {
     single: process.env.NEXT_PUBLIC_PADDLE_PRICE_SINGLE!,
@@ -23,8 +25,8 @@ export type PaddlePriceTier = keyof typeof PADDLE_CONFIG.prices;
  */
 export function toPaddlePriceTier(tier: string): PaddlePriceTier | null {
   const mapping: Record<string, PaddlePriceTier> = {
-    'Single': 'single',
-    'Double': 'double',
+    Single: 'single',
+    Double: 'double',
     'Creator Pass': 'creator',
   };
   return mapping[tier] ?? null;

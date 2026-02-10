@@ -193,10 +193,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
     return NextResponse.json({
@@ -205,10 +202,7 @@ export async function POST(request: NextRequest) {
       expires_in: 600, // 10분
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 ```
@@ -222,10 +216,12 @@ export async function POST(request: NextRequest) {
 OAuth 콜백을 처리하고 세션을 생성합니다.
 
 **Query Parameters**:
+
 - `code` (string, required): OAuth authorization code
 - `state` (string, optional): CSRF protection state
 
 **Response**:
+
 - 성공 시: 홈페이지로 리다이렉트
 - 실패 시: `/auth/error?message=...`로 리다이렉트
 
@@ -241,9 +237,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
 
   if (!code) {
-    return NextResponse.redirect(
-      new URL('/auth/error?message=No code provided', request.url)
-    );
+    return NextResponse.redirect(new URL('/auth/error?message=No code provided', request.url));
   }
 
   const supabase = createClient();
@@ -252,9 +246,7 @@ export async function GET(request: NextRequest) {
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    return NextResponse.redirect(
-      new URL(`/auth/error?message=${error.message}`, request.url)
-    );
+    return NextResponse.redirect(new URL(`/auth/error?message=${error.message}`, request.url));
   }
 
   // 성공 - 홈페이지로 리다이렉트
@@ -267,6 +259,7 @@ export async function GET(request: NextRequest) {
 MCP 클라이언트 인증을 시작합니다.
 
 **Request Body**:
+
 ```typescript
 {
   client_id: string;
@@ -276,15 +269,17 @@ MCP 클라이언트 인증을 시작합니다.
 ```
 
 **Response**:
+
 ```typescript
 {
-  auth_url: string;      // OAuth 인증 URL
-  state: string;         // CSRF state
-  expires_in: number;    // URL 만료 시간 (초)
+  auth_url: string; // OAuth 인증 URL
+  state: string; // CSRF state
+  expires_in: number; // URL 만료 시간 (초)
 }
 ```
 
 **Error Codes**:
+
 - `400`: Invalid request parameters
 - `500`: Internal server error
 
@@ -316,6 +311,7 @@ CREATE INDEX idx_user_licenses_is_active ON user_licenses(is_active);
 ```
 
 **필드 설명**:
+
 - `user_id`: Supabase Auth 사용자 ID
 - `theme_id`: 템플릿 식별자
 - `tier`: 라이선스 등급 (single, double, creator)
@@ -526,6 +522,7 @@ describe('OAuth Callback API', () => {
 **원인**: Supabase Dashboard에 리다이렉트 URL이 등록되지 않음
 
 **해결**:
+
 1. Supabase Dashboard → Authentication → URL Configuration
 2. Redirect URLs에 다음 추가:
    ```
@@ -538,6 +535,7 @@ describe('OAuth Callback API', () => {
 **원인**: 세션 쿠키가 제대로 설정되지 않음
 
 **해결**:
+
 1. HTTPS를 사용하는지 확인 (프로덕션)
 2. `SameSite=Lax` 쿠키 설정 확인
 3. 브라우저 쿠키 설정 확인
@@ -547,6 +545,7 @@ describe('OAuth Callback API', () => {
 **원인**: 잘못된 리다이렉트 설정
 
 **해결**:
+
 ```typescript
 // middleware.ts에서 콜백 경로 제외
 export const config = {
@@ -559,6 +558,7 @@ export const config = {
 **원인**: RLS 정책이 사용자 데이터 접근을 차단
 
 **해결**:
+
 1. Supabase Dashboard → Database → Policies 확인
 2. Service Role Key를 사용하는 서버 측 코드 확인
 3. RLS 정책이 올바르게 설정되었는지 확인
@@ -596,6 +596,7 @@ console.log('Expires at:', session?.expires_at);
 #### 네트워크 요청 모니터링
 
 브라우저 DevTools → Network 탭에서 다음 확인:
+
 - `/api/auth/callback` 응답 상태
 - Supabase API 요청/응답
 - 쿠키 설정 여부
@@ -649,7 +650,9 @@ export async function middleware(request: NextRequest) {
   const supabase = createServerClient(/* ... */);
 
   // 세션 갱신
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (session) {
     await supabase.auth.refreshSession();

@@ -15,10 +15,12 @@
 **원본 목적**: SPEC-AUTH-001 초기 인증 스키마
 
 **포함 테이블**:
+
 - `user_licenses` (기본 버전)
 - `free_screen_templates`
 
 **아카이브 사유**:
+
 - 스키마가 불완전함 (Paddle 통합 미포함)
 - `user_licenses` 테이블 정의가 이후 버전과 충돌
 
@@ -31,12 +33,14 @@
 **원본 목적**: SPEC-AUTH-001 인증 스키마 (개선 버전)
 
 **포함 테이블**:
+
 - `user_licenses` (Paddle 통합 버전)
   - `paddle_subscription_id VARCHAR(100)` 추가
   - `paddle_transaction_id VARCHAR(100)` 추가
 - `free_screen_templates`
 
 **아카이브 사유**:
+
 - 최신 스키마와 컬럼 타입 불일치 (VARCHAR vs TEXT)
 - SPEC-DEPLOY-001의 `user_profiles`, `api_keys` 테이블 누락
 - 통합 마이그레이션으로 대체 필요
@@ -48,6 +52,7 @@
 ## 🔄 Schema Evolution Timeline
 
 ### Phase 1: Initial Schema (20260204)
+
 ```sql
 user_licenses:
   - id, user_id, theme_id, tier, purchased_at, expires_at, is_active
@@ -57,6 +62,7 @@ free_screen_templates:
 ```
 
 ### Phase 2: Paddle Integration (20260205)
+
 ```sql
 user_licenses:
   + paddle_subscription_id VARCHAR(100)
@@ -64,6 +70,7 @@ user_licenses:
 ```
 
 ### Phase 3: SPEC-DEPLOY-001 Consolidation (20260206) ✅
+
 ```sql
 user_licenses:
   - All columns from Phase 2
@@ -86,19 +93,19 @@ free_screen_templates:
 
 ### `user_licenses` Table Evolution
 
-| Column | Phase 1 (20260204) | Phase 2 (20260205) | Phase 3 (20260206) ✅ |
-|--------|-------------------|-------------------|---------------------|
-| `id` | UUID | UUID | UUID |
-| `user_id` | UUID | UUID | UUID |
-| `theme_id` | VARCHAR(50) | VARCHAR(50) | **TEXT** |
-| `tier` | TEXT | TEXT | TEXT |
-| `paddle_subscription_id` | ❌ | VARCHAR(100) | **TEXT** |
-| `paddle_transaction_id` | ❌ | VARCHAR(100) | **TEXT** |
-| `purchased_at` | TIMESTAMPTZ | TIMESTAMPTZ | TIMESTAMPTZ |
-| `expires_at` | TIMESTAMPTZ | TIMESTAMPTZ | TIMESTAMPTZ |
-| `is_active` | BOOLEAN | BOOLEAN | BOOLEAN |
-| `created_at` | ❌ | ❌ | **TIMESTAMPTZ** |
-| `updated_at` | ❌ | ❌ | **TIMESTAMPTZ** |
+| Column                   | Phase 1 (20260204) | Phase 2 (20260205) | Phase 3 (20260206) ✅ |
+| ------------------------ | ------------------ | ------------------ | --------------------- |
+| `id`                     | UUID               | UUID               | UUID                  |
+| `user_id`                | UUID               | UUID               | UUID                  |
+| `theme_id`               | VARCHAR(50)        | VARCHAR(50)        | **TEXT**              |
+| `tier`                   | TEXT               | TEXT               | TEXT                  |
+| `paddle_subscription_id` | ❌                 | VARCHAR(100)       | **TEXT**              |
+| `paddle_transaction_id`  | ❌                 | VARCHAR(100)       | **TEXT**              |
+| `purchased_at`           | TIMESTAMPTZ        | TIMESTAMPTZ        | TIMESTAMPTZ           |
+| `expires_at`             | TIMESTAMPTZ        | TIMESTAMPTZ        | TIMESTAMPTZ           |
+| `is_active`              | BOOLEAN            | BOOLEAN            | BOOLEAN               |
+| `created_at`             | ❌                 | ❌                 | **TIMESTAMPTZ**       |
+| `updated_at`             | ❌                 | ❌                 | **TIMESTAMPTZ**       |
 
 ### Key Changes in Phase 3
 
@@ -137,12 +144,14 @@ free_screen_templates:
 ### Migration Path Forward
 
 ✅ **Correct Approach**:
+
 ```bash
 # Use the consolidated migration
 psql < supabase/migrations/20260206151505_deploy_001_schema.sql
 ```
 
 ❌ **Incorrect Approach**:
+
 ```bash
 # DO NOT run archived files
 psql < _archive_old_migrations/20260204_initial_auth_schema.sql  # ❌

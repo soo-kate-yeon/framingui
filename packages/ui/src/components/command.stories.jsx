@@ -4,14 +4,24 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut, } from './command';
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from './command';
 const meta = {
-    title: 'Components/Command',
-    component: Command,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Command',
+  component: Command,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -19,8 +29,9 @@ export default meta;
  * Accessibility: Fully keyboard navigable with arrow keys
  */
 export const Default = {
-    render: () => (<Command className="w-[450px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
-      <CommandInput placeholder="Type a command or search..."/>
+  render: () => (
+    <Command className="w-[450px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
+      <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
@@ -35,15 +46,17 @@ export const Default = {
           <CommandItem>⚙️ Settings</CommandItem>
         </CommandGroup>
       </CommandList>
-    </Command>),
+    </Command>
+  ),
 };
 /**
  * Command palette with keyboard shortcuts
  * Accessibility: Shows visual keyboard shortcuts for better UX
  */
 export const WithShortcuts = {
-    render: () => (<Command className="w-[450px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
-      <CommandInput placeholder="Search commands..."/>
+  render: () => (
+    <Command className="w-[450px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
+      <CommandInput placeholder="Search commands..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Actions">
@@ -76,14 +89,16 @@ export const WithShortcuts = {
           </CommandItem>
         </CommandGroup>
       </CommandList>
-    </Command>),
+    </Command>
+  ),
 };
 /**
  * Command palette with icons and groups
  */
 export const WithGroupsAndIcons = {
-    render: () => (<Command className="w-[450px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
-      <CommandInput placeholder="Search..."/>
+  render: () => (
+    <Command className="w-[450px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
+      <CommandInput placeholder="Search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Files">
@@ -119,26 +134,28 @@ export const WithGroupsAndIcons = {
           </CommandItem>
         </CommandGroup>
       </CommandList>
-    </Command>),
+    </Command>
+  ),
 };
 /**
  * Dialog variant for modal command palette
  * Accessibility: Traps focus and closes on Escape
  */
 export const Dialog = {
-    render: () => {
-        const [open, setOpen] = React.useState(false);
-        React.useEffect(() => {
-            const down = (e) => {
-                if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-                    e.preventDefault();
-                    setOpen(open => !open);
-                }
-            };
-            document.addEventListener('keydown', down);
-            return () => document.removeEventListener('keydown', down);
-        }, []);
-        return (<>
+  render: () => {
+    const [open, setOpen] = React.useState(false);
+    React.useEffect(() => {
+      const down = e => {
+        if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          setOpen(open => !open);
+        }
+      };
+      document.addEventListener('keydown', down);
+      return () => document.removeEventListener('keydown', down);
+    }, []);
+    return (
+      <>
         <div className="text-center">
           <p className="text-sm text-[var(--tekton-text-muted-foreground)]">
             Press{' '}
@@ -147,12 +164,15 @@ export const Dialog = {
             </kbd>{' '}
             to open the command palette
           </p>
-          <button onClick={() => setOpen(true)} className="mt-4 rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-primary)] px-4 py-2 text-sm text-[var(--tekton-bg-primary-foreground)] hover:bg-[var(--tekton-bg-primary)]/90">
+          <button
+            onClick={() => setOpen(true)}
+            className="mt-4 rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-primary)] px-4 py-2 text-sm text-[var(--tekton-bg-primary-foreground)] hover:bg-[var(--tekton-bg-primary)]/90"
+          >
             Open Command Palette
           </button>
         </div>
         <CommandDialog open={open} onOpenChange={setOpen}>
-          <CommandInput placeholder="Type a command or search..."/>
+          <CommandInput placeholder="Type a command or search..." />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Suggestions">
@@ -168,15 +188,17 @@ export const Dialog = {
             </CommandGroup>
           </CommandList>
         </CommandDialog>
-      </>);
-    },
+      </>
+    );
+  },
 };
 /**
  * Compact command palette
  */
 export const Compact = {
-    render: () => (<Command className="w-[350px] rounded-lg border border-[var(--tekton-border-border)]">
-      <CommandInput placeholder="Quick search..."/>
+  render: () => (
+    <Command className="w-[350px] rounded-lg border border-[var(--tekton-border-border)]">
+      <CommandInput placeholder="Quick search..." />
       <CommandList className="max-h-[200px]">
         <CommandEmpty>No results.</CommandEmpty>
         <CommandGroup>
@@ -185,14 +207,16 @@ export const Compact = {
           <CommandItem>Settings</CommandItem>
         </CommandGroup>
       </CommandList>
-    </Command>),
+    </Command>
+  ),
 };
 /**
  * Search with multiple result groups
  */
 export const MultipleGroups = {
-    render: () => (<Command className="w-[500px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
-      <CommandInput placeholder="Search everything..."/>
+  render: () => (
+    <Command className="w-[500px] rounded-lg border border-[var(--tekton-border-border)] shadow-md">
+      <CommandInput placeholder="Search everything..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Pages">
@@ -213,7 +237,8 @@ export const MultipleGroups = {
           <CommandItem>🎨 Appearance</CommandItem>
         </CommandGroup>
       </CommandList>
-    </Command>),
+    </Command>
+  ),
 };
 /**
  * Import React for useState and useEffect

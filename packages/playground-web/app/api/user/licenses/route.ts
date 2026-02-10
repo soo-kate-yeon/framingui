@@ -13,13 +13,13 @@ import { getUserLicenses } from '@/lib/db/licenses';
 export async function GET() {
   try {
     const supabase = await createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
     if (error || !user) {
-      return NextResponse.json(
-        { error: 'unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     }
 
     const licenses = await getUserLicenses(user.id);
@@ -27,9 +27,6 @@ export async function GET() {
     return NextResponse.json({ licenses });
   } catch (err) {
     console.error('[Licenses API] 오류:', err);
-    return NextResponse.json(
-      { error: 'internal_error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
   }
 }

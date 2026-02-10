@@ -79,9 +79,7 @@ test.describe('Google OAuth Login E2E', () => {
     await page.goto('/auth/login');
 
     // 2. "Google로 로그인" 버튼 확인
-    const googleButton = page.locator(
-      'button:has-text("Google"), button:has-text("구글")'
-    );
+    const googleButton = page.locator('button:has-text("Google"), button:has-text("구글")');
 
     await expect(googleButton.first()).toBeVisible({ timeout: TIMEOUTS.PAGE_LOAD });
 

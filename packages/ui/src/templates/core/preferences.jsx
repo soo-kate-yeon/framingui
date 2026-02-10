@@ -22,15 +22,18 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Preferences Template Component
  */
-export function PreferencesTemplateComponent({ children, className = '', slots = {}, texts = {}, }) {
-    const title = texts.title || 'Preferences';
-    const subtitle = texts.subtitle || 'Manage your account settings and preferences';
-    const saveLabel = texts.save_label || 'Save Changes';
-    return (<div className={`min-h-screen flex ${className}`}>
+export function PreferencesTemplateComponent({ children, className = '', slots = {}, texts = {} }) {
+  const title = texts.title || 'Preferences';
+  const subtitle = texts.subtitle || 'Manage your account settings and preferences';
+  const saveLabel = texts.save_label || 'Save Changes';
+  return (
+    <div className={`min-h-screen flex ${className}`}>
       {/* Settings Navigation */}
-      {slots.settingsNav && (<aside className="w-64 border-r border-[var(--tekton-border-default)] p-[var(--tekton-spacing-4)] bg-[var(--tekton-bg-muted)]">
+      {slots.settingsNav && (
+        <aside className="w-64 border-r border-[var(--tekton-border-default)] p-[var(--tekton-spacing-4)] bg-[var(--tekton-bg-muted)]">
           {slots.settingsNav}
-        </aside>)}
+        </aside>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 p-[var(--tekton-spacing-8)]">
@@ -44,31 +47,37 @@ export function PreferencesTemplateComponent({ children, className = '', slots =
           {/* Settings Sections */}
           <div className="space-y-[var(--tekton-spacing-6)]">
             {/* General Settings */}
-            {slots.generalSettings && (<Card>
+            {slots.generalSettings && (
+              <Card>
                 <CardHeader>
                   <CardTitle>General</CardTitle>
                   <CardDescription>Manage your general preferences</CardDescription>
                 </CardHeader>
                 <CardContent>{slots.generalSettings}</CardContent>
-              </Card>)}
+              </Card>
+            )}
 
             {/* Appearance Settings */}
-            {slots.appearanceSettings && (<Card>
+            {slots.appearanceSettings && (
+              <Card>
                 <CardHeader>
                   <CardTitle>Appearance</CardTitle>
                   <CardDescription>Customize the look and feel</CardDescription>
                 </CardHeader>
                 <CardContent>{slots.appearanceSettings}</CardContent>
-              </Card>)}
+              </Card>
+            )}
 
             {/* Notifications Settings */}
-            {slots.notificationsSettings && (<Card>
+            {slots.notificationsSettings && (
+              <Card>
                 <CardHeader>
                   <CardTitle>Notifications</CardTitle>
                   <CardDescription>Manage notification preferences</CardDescription>
                 </CardHeader>
                 <CardContent>{slots.notificationsSettings}</CardContent>
-              </Card>)}
+              </Card>
+            )}
 
             {/* Additional Settings */}
             {slots.additionalSettings && slots.additionalSettings}
@@ -82,49 +91,50 @@ export function PreferencesTemplateComponent({ children, className = '', slots =
         </div>
       </main>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Preferences Template Definition
  */
 export const PreferencesTemplate = {
-    id: 'core.preferences',
-    name: 'Preferences',
-    category: 'form',
-    description: 'Settings and preferences page with categorized options',
-    skeleton: {
-        shell: 'sidebar-layout',
-        page: 'settings-page',
-        sections: [
-            {
-                id: 'preferences-content',
-                name: 'Preferences Content',
-                slot: 'main',
-                required: true,
-                Component: PreferencesTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'sidebar',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'subtitle', 'save_label'],
-        optional: [],
-        slots: [
-            'settingsNav',
-            'generalSettings',
-            'appearanceSettings',
-            'notificationsSettings',
-            'additionalSettings',
-        ],
-    },
-    requiredComponents: ['Button', 'Card', 'Switch', 'Select'],
-    Component: PreferencesTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['core', 'settings', 'preferences', 'configuration'],
+  id: 'core.preferences',
+  name: 'Preferences',
+  category: 'form',
+  description: 'Settings and preferences page with categorized options',
+  skeleton: {
+    shell: 'sidebar-layout',
+    page: 'settings-page',
+    sections: [
+      {
+        id: 'preferences-content',
+        name: 'Preferences Content',
+        slot: 'main',
+        required: true,
+        Component: PreferencesTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'sidebar',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'subtitle', 'save_label'],
+    optional: [],
+    slots: [
+      'settingsNav',
+      'generalSettings',
+      'appearanceSettings',
+      'notificationsSettings',
+      'additionalSettings',
+    ],
+  },
+  requiredComponents: ['Button', 'Card', 'Switch', 'Select'],
+  Component: PreferencesTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['core', 'settings', 'preferences', 'configuration'],
 };
 //# sourceMappingURL=preferences.js.map

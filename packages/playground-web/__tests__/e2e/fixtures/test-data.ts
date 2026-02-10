@@ -11,11 +11,7 @@ export const FREE_THEMES = ['minimal-starter', 'basic-dashboard'];
 /**
  * 유료 테마 목록
  */
-export const PREMIUM_THEMES = [
-  'equinox-fitness-v2',
-  'square-minimalism',
-  'nature-inspired',
-];
+export const PREMIUM_THEMES = ['equinox-fitness-v2', 'square-minimalism', 'nature-inspired'];
 
 /**
  * 테스트용 API Key 이름
@@ -39,8 +35,7 @@ export const API_KEY_PREFIX_PATTERN = /^tk_live_[a-f0-9]{4}$/;
 /**
  * UUID 형식 정규식
  */
-export const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Rate Limit 설정

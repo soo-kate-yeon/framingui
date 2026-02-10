@@ -10,7 +10,15 @@
  */
 import { cn } from '../lib/utils';
 function Skeleton({ className, ...props }) {
-    return (<div className={cn('animate-pulse rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-muted)]', className)} {...props}/>);
+  return (
+    <div
+      className={cn(
+        'animate-pulse rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-muted)]',
+        className
+      )}
+      {...props}
+    />
+  );
 }
 export { Skeleton };
 //# sourceMappingURL=skeleton.js.map

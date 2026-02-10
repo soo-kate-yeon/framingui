@@ -88,9 +88,7 @@ export async function generateApiKey(): Promise<GeneratedApiKey> {
  *   console.log("User ID:", result.userId);
  * }
  */
-export async function verifyApiKey(
-  plainKey: string
-): Promise<ApiKeyVerification> {
+export async function verifyApiKey(plainKey: string): Promise<ApiKeyVerification> {
   try {
     // 1. 입력 검증
     if (!plainKey || typeof plainKey !== 'string') {
@@ -167,7 +165,9 @@ export async function verifyApiKey(
               .from('api_keys')
               .update({ last_used_at: new Date().toISOString() })
               .eq('id', apiKey.id);
-            if (error) {throw error;}
+            if (error) {
+              throw error;
+            }
             console.log('[API Key] Updated last_used_at for key:', apiKey.id);
           } catch (error) {
             console.warn('[API Key] Failed to update last_used_at:', error);

@@ -8,12 +8,12 @@ import * as React from 'react';
 import { Toast, ToastProvider, ToastViewport } from './toast';
 import { Button } from './button';
 const meta = {
-    title: 'Components/Toast',
-    component: Toast,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Toast',
+  component: Toast,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -22,9 +22,10 @@ export default meta;
  * Note: Toast typically uses a hook/context pattern for implementation
  */
 export const Default = {
-    render: () => {
-        const [open, setOpen] = React.useState(false);
-        return (<ToastProvider>
+  render: () => {
+    const [open, setOpen] = React.useState(false);
+    return (
+      <ToastProvider>
         <Button onClick={() => setOpen(true)}>Show Toast</Button>
         <Toast open={open} onOpenChange={setOpen}>
           <div className="grid gap-1">
@@ -33,16 +34,18 @@ export const Default = {
           </div>
         </Toast>
         <ToastViewport />
-      </ToastProvider>);
-    },
+      </ToastProvider>
+    );
+  },
 };
 /**
  * Destructive variant
  */
 export const Destructive = {
-    render: () => {
-        const [open, setOpen] = React.useState(false);
-        return (<ToastProvider>
+  render: () => {
+    const [open, setOpen] = React.useState(false);
+    return (
+      <ToastProvider>
         <Button variant="destructive" onClick={() => setOpen(true)}>
           Show Error
         </Button>
@@ -53,16 +56,18 @@ export const Destructive = {
           </div>
         </Toast>
         <ToastViewport />
-      </ToastProvider>);
-    },
+      </ToastProvider>
+    );
+  },
 };
 /**
  * With action button
  */
 export const WithAction = {
-    render: () => {
-        const [open, setOpen] = React.useState(false);
-        return (<ToastProvider>
+  render: () => {
+    const [open, setOpen] = React.useState(false);
+    return (
+      <ToastProvider>
         <Button onClick={() => setOpen(true)}>Schedule Meeting</Button>
         <Toast open={open} onOpenChange={setOpen}>
           <div className="grid gap-1">
@@ -74,7 +79,8 @@ export const WithAction = {
           </Button>
         </Toast>
         <ToastViewport />
-      </ToastProvider>);
-    },
+      </ToastProvider>
+    );
+  },
 };
 //# sourceMappingURL=toast.stories.js.map

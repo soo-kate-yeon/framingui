@@ -4,22 +4,31 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle, } from './navigation-menu';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from './navigation-menu';
 import { cn } from '../lib/utils';
 const meta = {
-    title: 'Components/NavigationMenu',
-    component: NavigationMenu,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/NavigationMenu',
+  component: NavigationMenu,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
  * Default navigation menu with simple links
  */
 export const Default = {
-    render: () => (<NavigationMenu>
+  render: () => (
+    <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>Home</NavigationMenuLink>
@@ -31,14 +40,16 @@ export const Default = {
           <NavigationMenuLink className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
-    </NavigationMenu>),
+    </NavigationMenu>
+  ),
 };
 /**
  * Navigation with dropdown menus
  * Accessibility: Supports keyboard navigation with arrow keys
  */
 export const WithDropdowns = {
-    render: () => (<NavigationMenu>
+  render: () => (
+    <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Products</NavigationMenuTrigger>
@@ -46,7 +57,10 @@ export const WithDropdowns = {
             <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
-                  <a className="flex h-full w-full select-none flex-col justify-end rounded-[var(--tekton-radius-md)] bg-gradient-to-b from-[var(--tekton-bg-muted)]/50 to-[var(--tekton-bg-muted)] p-6 no-underline outline-none focus:shadow-md" href="/">
+                  <a
+                    className="flex h-full w-full select-none flex-col justify-end rounded-[var(--tekton-radius-md)] bg-gradient-to-b from-[var(--tekton-bg-muted)]/50 to-[var(--tekton-bg-muted)] p-6 no-underline outline-none focus:shadow-md"
+                    href="/"
+                  >
                     <div className="mb-2 mt-4 text-lg font-medium">Featured Product</div>
                     <p className="text-sm leading-tight text-[var(--tekton-text-muted-foreground)]">
                       Beautifully designed components built with Radix UI and Tailwind CSS.
@@ -93,13 +107,15 @@ export const WithDropdowns = {
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
-    </NavigationMenu>),
+    </NavigationMenu>
+  ),
 };
 /**
  * Multi-level navigation example
  */
 export const MultiLevel = {
-    render: () => (<NavigationMenu>
+  render: () => (
+    <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
@@ -141,13 +157,15 @@ export const MultiLevel = {
           </NavigationMenuContent>
         </NavigationMenuItem>
       </NavigationMenuList>
-    </NavigationMenu>),
+    </NavigationMenu>
+  ),
 };
 /**
  * Compact navigation for mobile
  */
 export const Compact = {
-    render: () => (<NavigationMenu>
+  render: () => (
+    <NavigationMenu>
       <NavigationMenuList className="gap-0">
         <NavigationMenuItem>
           <NavigationMenuLink className={cn(navigationMenuTriggerStyle(), 'px-3 py-2 text-xs')}>
@@ -165,22 +183,32 @@ export const Compact = {
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>
-    </NavigationMenu>),
+    </NavigationMenu>
+  ),
 };
 /**
  * ListItem component for dropdown content
  */
 const ListItem = React.forwardRef(({ className, title, children, ...props }, ref) => {
-    return (<li>
+  return (
+    <li>
       <NavigationMenuLink asChild>
-        <a ref={ref} className={cn('block select-none space-y-1 rounded-[var(--tekton-radius-md)] p-3 leading-none no-underline outline-none transition-colors hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)] focus:bg-[var(--tekton-bg-accent)] focus:text-[var(--tekton-bg-accent-foreground)]', className)} {...props}>
+        <a
+          ref={ref}
+          className={cn(
+            'block select-none space-y-1 rounded-[var(--tekton-radius-md)] p-3 leading-none no-underline outline-none transition-colors hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)] focus:bg-[var(--tekton-bg-accent)] focus:text-[var(--tekton-bg-accent-foreground)]',
+            className
+          )}
+          {...props}
+        >
           <div className="text-sm font-medium leading-none">{title}</div>
           <p className="line-clamp-2 text-sm leading-snug text-[var(--tekton-text-muted-foreground)]">
             {children}
           </p>
         </a>
       </NavigationMenuLink>
-    </li>);
+    </li>
+  );
 });
 ListItem.displayName = 'ListItem';
 /**

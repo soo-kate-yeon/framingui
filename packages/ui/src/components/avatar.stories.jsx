@@ -6,12 +6,12 @@
  */
 import { Avatar, AvatarFallback, AvatarImage } from './avatar';
 const meta = {
-    title: 'Components/Avatar',
-    component: Avatar,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Avatar',
+  component: Avatar,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -19,59 +19,68 @@ export default meta;
  * Accessibility: Images should have alt text via AvatarImage
  */
 export const Default = {
-    render: () => (<Avatar>
-      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn"/>
+  render: () => (
+    <Avatar>
+      <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
       <AvatarFallback>CN</AvatarFallback>
-    </Avatar>),
+    </Avatar>
+  ),
 };
 /**
  * Avatar with fallback
  * Accessibility: Fallback text provides alternative when image fails
  */
 export const Fallback = {
-    render: () => (<Avatar>
-      <AvatarImage src="https://invalid-url.com/image.jpg" alt="User"/>
+  render: () => (
+    <Avatar>
+      <AvatarImage src="https://invalid-url.com/image.jpg" alt="User" />
       <AvatarFallback>JD</AvatarFallback>
-    </Avatar>),
+    </Avatar>
+  ),
 };
 /**
  * Avatar with initials only
  */
 export const InitialsOnly = {
-    render: () => (<Avatar>
+  render: () => (
+    <Avatar>
       <AvatarFallback>AB</AvatarFallback>
-    </Avatar>),
+    </Avatar>
+  ),
 };
 /**
  * Different sizes
  */
 export const Sizes = {
-    render: () => (<div className="flex gap-4 items-center">
+  render: () => (
+    <div className="flex gap-4 items-center">
       <Avatar className="h-8 w-8">
-        <AvatarImage src="https://github.com/shadcn.png" alt="Small"/>
+        <AvatarImage src="https://github.com/shadcn.png" alt="Small" />
         <AvatarFallback>SM</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarImage src="https://github.com/shadcn.png" alt="Default"/>
+        <AvatarImage src="https://github.com/shadcn.png" alt="Default" />
         <AvatarFallback>MD</AvatarFallback>
       </Avatar>
       <Avatar className="h-16 w-16">
-        <AvatarImage src="https://github.com/shadcn.png" alt="Large"/>
+        <AvatarImage src="https://github.com/shadcn.png" alt="Large" />
         <AvatarFallback>LG</AvatarFallback>
       </Avatar>
       <Avatar className="h-24 w-24">
-        <AvatarImage src="https://github.com/shadcn.png" alt="Extra Large"/>
+        <AvatarImage src="https://github.com/shadcn.png" alt="Extra Large" />
         <AvatarFallback>XL</AvatarFallback>
       </Avatar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Avatar group
  */
 export const Group = {
-    render: () => (<div className="flex -space-x-4">
+  render: () => (
+    <div className="flex -space-x-4">
       <Avatar className="border-2 border-[var(--tekton-bg-background)]">
-        <AvatarImage src="https://github.com/shadcn.png" alt="User 1"/>
+        <AvatarImage src="https://github.com/shadcn.png" alt="User 1" />
         <AvatarFallback>U1</AvatarFallback>
       </Avatar>
       <Avatar className="border-2 border-[var(--tekton-bg-background)]">
@@ -86,13 +95,15 @@ export const Group = {
       <Avatar className="border-2 border-[var(--tekton-bg-background)]">
         <AvatarFallback>+5</AvatarFallback>
       </Avatar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * With custom colors
  */
 export const CustomColors = {
-    render: () => (<div className="flex gap-4">
+  render: () => (
+    <div className="flex gap-4">
       <Avatar>
         <AvatarFallback className="bg-red-500 text-white">AB</AvatarFallback>
       </Avatar>
@@ -105,32 +116,35 @@ export const CustomColors = {
       <Avatar>
         <AvatarFallback className="bg-purple-500 text-white">GH</AvatarFallback>
       </Avatar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * With status indicator
  */
 export const WithStatus = {
-    render: () => (<div className="flex gap-4">
+  render: () => (
+    <div className="flex gap-4">
       <div className="relative">
         <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="Online"/>
+          <AvatarImage src="https://github.com/shadcn.png" alt="Online" />
           <AvatarFallback>ON</AvatarFallback>
         </Avatar>
-        <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 ring-2 ring-[var(--tekton-bg-background)]"/>
+        <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-green-500 ring-2 ring-[var(--tekton-bg-background)]" />
       </div>
       <div className="relative">
         <Avatar>
           <AvatarFallback>AW</AvatarFallback>
         </Avatar>
-        <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-yellow-500 ring-2 ring-[var(--tekton-bg-background)]"/>
+        <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-yellow-500 ring-2 ring-[var(--tekton-bg-background)]" />
       </div>
       <div className="relative">
         <Avatar>
           <AvatarFallback>OF</AvatarFallback>
         </Avatar>
-        <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-gray-400 ring-2 ring-[var(--tekton-bg-background)]"/>
+        <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-gray-400 ring-2 ring-[var(--tekton-bg-background)]" />
       </div>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=avatar.stories.js.map

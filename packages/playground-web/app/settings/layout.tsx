@@ -56,9 +56,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
             <SettingsIcon className="h-8 w-8 mw-text-primary" />
             <h1 className="mw-heading-1">Settings</h1>
           </div>
-          <p className="mw-text-secondary">
-            Manage your account settings and preferences
-          </p>
+          <p className="mw-text-secondary">Manage your account settings and preferences</p>
         </div>
 
         {/* Layout: Sidebar + Content */}
@@ -84,14 +82,18 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                       <Icon
                         className={cn(
                           'h-5 w-5 mt-0.5 flex-shrink-0',
-                          isActive ? 'text-neutral-50' : 'text-neutral-500 group-hover:text-neutral-900'
+                          isActive
+                            ? 'text-neutral-50'
+                            : 'text-neutral-500 group-hover:text-neutral-900'
                         )}
                       />
                       <div className="flex-1 min-w-0">
                         <div
                           className={cn(
                             'font-medium text-sm',
-                            isActive ? 'text-neutral-50' : 'text-neutral-950 group-hover:text-neutral-900'
+                            isActive
+                              ? 'text-neutral-50'
+                              : 'text-neutral-950 group-hover:text-neutral-900'
                           )}
                         >
                           {item.title}

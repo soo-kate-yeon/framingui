@@ -16,19 +16,35 @@
  * WHY: 이메일 인증 템플릿이 계정 보안 UX를 보장
  * IMPACT: 템플릿 오류 시 사용자 인증 프로세스 중단
  */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from '../../components/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../components/card';
 import { Button } from '../../components/button';
 import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Verification Template Component
  */
-export function VerificationTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'Verify Your Email';
-    const subtitle = texts.subtitle || "We've sent a verification link to your email address";
-    const buttonLabel = texts.button_label || 'Continue';
-    const showResend = options.show_resend ?? true;
-    const userEmail = options.user_email || 'user@example.com';
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function VerificationTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'Verify Your Email';
+  const subtitle = texts.subtitle || "We've sent a verification link to your email address";
+  const buttonLabel = texts.button_label || 'Continue';
+  const showResend = options.show_resend ?? true;
+  const userEmail = options.user_email || 'user@example.com';
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <Card className="w-full max-w-md">
         <CardHeader>
           {slots.icon && <div className="mb-[var(--tekton-spacing-4)]">{slots.icon}</div>}
@@ -46,63 +62,68 @@ export function VerificationTemplateComponent({ children, className = '', slots 
           <Button className="w-full">{buttonLabel}</Button>
 
           {/* Resend Link */}
-          {showResend && (<div className="text-center">
+          {showResend && (
+            <div className="text-center">
               <p className="text-sm text-[var(--tekton-text-muted-foreground)]">
                 Didn&apos;t receive the email?{' '}
                 <button className="text-[var(--tekton-text-primary)] hover:underline">
                   Resend
                 </button>
               </p>
-            </div>)}
+            </div>
+          )}
         </CardContent>
 
         <CardFooter>
-          {slots.footer || (<p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
+          {slots.footer || (
+            <p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
               Wrong email?{' '}
               <a href="#" className="text-[var(--tekton-text-primary)] hover:underline">
                 Change email address
               </a>
-            </p>)}
+            </p>
+          )}
         </CardFooter>
       </Card>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Verification Template Definition
  */
 export const VerificationTemplate = {
-    id: 'auth.verification',
-    name: 'Email Verification',
-    category: 'auth',
-    description: 'Email verification screen with resend option',
-    skeleton: {
-        shell: 'centered-card',
-        page: 'auth-page',
-        sections: [
-            {
-                id: 'verification-message',
-                name: 'Verification Message',
-                slot: 'main',
-                required: true,
-                Component: VerificationTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'subtitle', 'button_label'],
-        optional: ['show_resend', 'user_email'],
-        slots: ['icon', 'footer'],
-    },
-    requiredComponents: ['Button', 'Card'],
-    Component: VerificationTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['auth', 'verification', 'email', 'confirm'],
+  id: 'auth.verification',
+  name: 'Email Verification',
+  category: 'auth',
+  description: 'Email verification screen with resend option',
+  skeleton: {
+    shell: 'centered-card',
+    page: 'auth-page',
+    sections: [
+      {
+        id: 'verification-message',
+        name: 'Verification Message',
+        slot: 'main',
+        required: true,
+        Component: VerificationTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'subtitle', 'button_label'],
+    optional: ['show_resend', 'user_email'],
+    slots: ['icon', 'footer'],
+  },
+  requiredComponents: ['Button', 'Card'],
+  Component: VerificationTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['auth', 'verification', 'email', 'confirm'],
 };
 //# sourceMappingURL=verification.js.map

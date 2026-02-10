@@ -5,15 +5,30 @@
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
 import * as React from 'react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuCheckboxItem, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuShortcut, DropdownMenuGroup, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, } from './dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuShortcut,
+  DropdownMenuGroup,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from './dropdown-menu';
 import { Button } from './button';
 const meta = {
-    title: 'Components/DropdownMenu',
-    component: DropdownMenu,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/DropdownMenu',
+  component: DropdownMenu,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -21,7 +36,8 @@ export default meta;
  * Accessibility: Keyboard navigable with proper ARIA attributes
  */
 export const Default = {
-    render: () => (<DropdownMenu>
+  render: () => (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">Open</Button>
       </DropdownMenuTrigger>
@@ -34,13 +50,15 @@ export const Default = {
         <DropdownMenuSeparator />
         <DropdownMenuItem>Logout</DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>),
+    </DropdownMenu>
+  ),
 };
 /**
  * With keyboard shortcuts
  */
 export const WithShortcuts = {
-    render: () => (<DropdownMenu>
+  render: () => (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">Edit</Button>
       </DropdownMenuTrigger>
@@ -69,17 +87,19 @@ export const WithShortcuts = {
           <DropdownMenuShortcut>⌘V</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
-    </DropdownMenu>),
+    </DropdownMenu>
+  ),
 };
 /**
  * With checkboxes
  */
 export const WithCheckboxes = {
-    render: () => {
-        const [showStatusBar, setShowStatusBar] = React.useState(true);
-        const [showActivityBar, setShowActivityBar] = React.useState(false);
-        const [showPanel, setShowPanel] = React.useState(false);
-        return (<DropdownMenu>
+  render: () => {
+    const [showStatusBar, setShowStatusBar] = React.useState(true);
+    const [showActivityBar, setShowActivityBar] = React.useState(false);
+    const [showPanel, setShowPanel] = React.useState(false);
+    return (
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline">View</Button>
         </DropdownMenuTrigger>
@@ -96,16 +116,18 @@ export const WithCheckboxes = {
             Panel
           </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
-      </DropdownMenu>);
-    },
+      </DropdownMenu>
+    );
+  },
 };
 /**
  * With radio group
  */
 export const WithRadioGroup = {
-    render: () => {
-        const [position, setPosition] = React.useState('bottom');
-        return (<DropdownMenu>
+  render: () => {
+    const [position, setPosition] = React.useState('bottom');
+    return (
+      <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline">Panel Position</Button>
         </DropdownMenuTrigger>
@@ -118,14 +140,16 @@ export const WithRadioGroup = {
             <DropdownMenuRadioItem value="right">Right</DropdownMenuRadioItem>
           </DropdownMenuRadioGroup>
         </DropdownMenuContent>
-      </DropdownMenu>);
-    },
+      </DropdownMenu>
+    );
+  },
 };
 /**
  * With submenu
  */
 export const WithSubmenu = {
-    render: () => (<DropdownMenu>
+  render: () => (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">More Options</Button>
       </DropdownMenuTrigger>
@@ -148,6 +172,7 @@ export const WithSubmenu = {
           </DropdownMenuSub>
         </DropdownMenuGroup>
       </DropdownMenuContent>
-    </DropdownMenu>),
+    </DropdownMenu>
+  ),
 };
 //# sourceMappingURL=dropdown-menu.stories.js.map

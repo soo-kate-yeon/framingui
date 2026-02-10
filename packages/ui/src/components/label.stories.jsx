@@ -8,12 +8,12 @@ import { Label } from './label';
 import { Input } from './input';
 import { Checkbox } from './checkbox';
 const meta = {
-    title: 'Components/Label',
-    component: Label,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Label',
+  component: Label,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -21,71 +21,81 @@ export default meta;
  * Accessibility: Labels provide accessible names for form controls
  */
 export const Default = {
-    render: () => <Label>Label</Label>,
+  render: () => <Label>Label</Label>,
 };
 /**
  * Label with input
  * Accessibility: Proper htmlFor association enables click-to-focus
  */
 export const WithInput = {
-    render: () => (<div className="grid gap-2">
+  render: () => (
+    <div className="grid gap-2">
       <Label htmlFor="email">Email address</Label>
-      <Input type="email" id="email" placeholder="email@example.com"/>
-    </div>),
+      <Input type="email" id="email" placeholder="email@example.com" />
+    </div>
+  ),
 };
 /**
  * Required field indicator
  */
 export const Required = {
-    render: () => (<div className="grid gap-2">
+  render: () => (
+    <div className="grid gap-2">
       <Label htmlFor="username">
         Username <span className="text-[var(--tekton-bg-destructive)]">*</span>
       </Label>
-      <Input id="username" placeholder="Enter username" required/>
-    </div>),
+      <Input id="username" placeholder="Enter username" required />
+    </div>
+  ),
 };
 /**
  * Label with checkbox
  */
 export const WithCheckbox = {
-    render: () => (<div className="flex items-center space-x-2">
-      <Checkbox id="terms"/>
+  render: () => (
+    <div className="flex items-center space-x-2">
+      <Checkbox id="terms" />
       <Label htmlFor="terms" className="cursor-pointer">
         Accept terms and conditions
       </Label>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Disabled state
  * Accessibility: Disabled labels indicate non-interactive controls
  */
 export const Disabled = {
-    render: () => (<div className="grid gap-2">
+  render: () => (
+    <div className="grid gap-2">
       <Label htmlFor="disabled" className="opacity-70">
         Disabled field
       </Label>
-      <Input id="disabled" placeholder="Cannot edit" disabled/>
-    </div>),
+      <Input id="disabled" placeholder="Cannot edit" disabled />
+    </div>
+  ),
 };
 /**
  * Form example with multiple labels
  */
 export const FormExample = {
-    render: () => (<div className="grid w-full max-w-sm gap-4">
+  render: () => (
+    <div className="grid w-full max-w-sm gap-4">
       <div className="grid gap-2">
         <Label htmlFor="firstname">First name</Label>
-        <Input id="firstname" placeholder="John"/>
+        <Input id="firstname" placeholder="John" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="lastname">Last name</Label>
-        <Input id="lastname" placeholder="Doe"/>
+        <Input id="lastname" placeholder="Doe" />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="email-form">
           Email <span className="text-[var(--tekton-bg-destructive)]">*</span>
         </Label>
-        <Input id="email-form" type="email" placeholder="john@example.com" required/>
+        <Input id="email-form" type="email" placeholder="john@example.com" required />
       </div>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=label.stories.js.map
