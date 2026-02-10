@@ -1,6 +1,6 @@
 {
   "name": "@tekton-ui/ui",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Tekton UI Reference Component Library",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -80,8 +80,8 @@
     "zod": "^3.22.4"
   },
   "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@axe-core/react": "^4.8.0",

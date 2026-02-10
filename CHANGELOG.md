@@ -5,6 +5,17 @@ All notable changes to the Tekton project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.3] - 2026-02-10
+
+### Fixed
+
+- **@tekton-ui/mcp-server**: @babel/parser와 @babel/traverse를 dependencies로 이동하여 런타임 오류 해결
+  - dependency-extractor가 런타임에 이 패키지들을 사용하므로 devDependencies에서 dependencies로 이동
+  - "Cannot find package '@babel/parser'" 오류 해결
+- **@tekton-ui/ui**: React 19 지원 추가
+  - peerDependencies를 `^18.0.0 || ^19.0.0`으로 확장
+  - React 버전 충돌 경고 해결
+
 ## [0.3.2] - 2026-02-09
 
 ### Added
