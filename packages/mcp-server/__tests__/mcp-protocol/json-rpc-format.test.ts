@@ -165,7 +165,7 @@ describe('JSON-RPC format validation', () => {
         method: 'tools/call',
         params: {
           name: 'preview-theme',
-          arguments: { themeId: 'atlantic-magazine-v1' },
+          arguments: { themeId: 'classic-magazine' },
         },
       };
 
@@ -183,7 +183,7 @@ describe('JSON-RPC format validation', () => {
         method: 'tools/call',
         params: {
           name: 'preview-theme',
-          arguments: { themeId: 'atlantic-magazine-v1' },
+          arguments: { themeId: 'classic-magazine' },
         },
       };
 
@@ -266,7 +266,7 @@ describe('JSON-RPC format validation', () => {
           jsonrpc: '2.0',
           id: 2,
           method: 'tools/call',
-          params: { name: 'preview-theme', arguments: { themeId: 'atlantic-magazine-v1' } },
+          params: { name: 'preview-theme', arguments: { themeId: 'classic-magazine' } },
         },
       ];
 

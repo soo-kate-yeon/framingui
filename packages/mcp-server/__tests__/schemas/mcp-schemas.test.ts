@@ -14,7 +14,7 @@ import {
 describe('MCP Schemas', () => {
   describe('ThemeIdSchema', () => {
     it('should accept valid theme IDs', () => {
-      expect(ThemeIdSchema.safeParse('atlantic-magazine-v1').success).toBe(true);
+      expect(ThemeIdSchema.safeParse('classic-magazine').success).toBe(true);
       expect(ThemeIdSchema.safeParse('hims-v1').success).toBe(true);
       expect(ThemeIdSchema.safeParse('korean-fintech').success).toBe(true);
     });
@@ -37,7 +37,7 @@ describe('MCP Schemas', () => {
       const input = {
         description: 'User dashboard with profile card',
         layout: 'sidebar-left',
-        themeId: 'atlantic-magazine-v1',
+        themeId: 'classic-magazine',
         componentHints: ['Card', 'Avatar'],
       };
       expect(GenerateBlueprintInputSchema.safeParse(input).success).toBe(true);
@@ -47,7 +47,7 @@ describe('MCP Schemas', () => {
       const input = {
         description: 'Short',
         layout: 'sidebar-left',
-        themeId: 'atlantic-magazine-v1',
+        themeId: 'classic-magazine',
       };
       const result = GenerateBlueprintInputSchema.safeParse(input);
       expect(result.success).toBe(false);
@@ -60,7 +60,7 @@ describe('MCP Schemas', () => {
       const input = {
         description: 'A'.repeat(501),
         layout: 'sidebar-left',
-        themeId: 'atlantic-magazine-v1',
+        themeId: 'classic-magazine',
       };
       const result = GenerateBlueprintInputSchema.safeParse(input);
       expect(result.success).toBe(false);
@@ -73,7 +73,7 @@ describe('MCP Schemas', () => {
       const input = {
         description: 'Test dashboard',
         layout: 'invalid-layout',
-        themeId: 'atlantic-magazine-v1',
+        themeId: 'classic-magazine',
       };
       expect(GenerateBlueprintInputSchema.safeParse(input).success).toBe(false);
     });
@@ -81,9 +81,7 @@ describe('MCP Schemas', () => {
 
   describe('PreviewThemeInputSchema', () => {
     it('should accept valid theme ID', () => {
-      expect(PreviewThemeInputSchema.safeParse({ themeId: 'atlantic-magazine-v1' }).success).toBe(
-        true
-      );
+      expect(PreviewThemeInputSchema.safeParse({ themeId: 'classic-magazine' }).success).toBe(true);
     });
 
     it('should reject invalid theme ID format', () => {

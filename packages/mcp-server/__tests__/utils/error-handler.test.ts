@@ -26,7 +26,7 @@ describe('Error Handler', () => {
   describe('createThemeNotFoundError', () => {
     it('should create theme not found error with available themes', () => {
       const result = createThemeNotFoundError('invalid-theme', [
-        'atlantic-magazine-v1',
+        'classic-magazine',
         'dynamic-fitness',
         'hims-v1',
       ]);
@@ -34,7 +34,7 @@ describe('Error Handler', () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain('Theme not found: invalid-theme');
       expect(result.error).toContain('Available themes:');
-      expect(result.error).toContain('atlantic-magazine-v1');
+      expect(result.error).toContain('classic-magazine');
       expect(result.error).toContain('dynamic-fitness');
     });
   });

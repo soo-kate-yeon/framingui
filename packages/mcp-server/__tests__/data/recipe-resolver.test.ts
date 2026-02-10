@@ -21,34 +21,34 @@ describe('Recipe Resolver', () => {
     });
 
     it('레시피가 없는 variant는 fallback 시도', () => {
-      const recipe = resolveRecipe('equinox-fitness-v2', 'Card', 'non-existent-variant');
+      const recipe = resolveRecipe('equinox-fitness', 'Card', 'non-existent-variant');
       // Fallback to default or base if available, otherwise undefined
       // Card 컴포넌트에 기본 레시피가 있으면 string, 없으면 undefined
       expect(recipe === undefined || typeof recipe === 'string').toBe(true);
     });
 
     it('card.glass 레시피 조회 성공', () => {
-      const recipe = resolveRecipe('equinox-fitness-v2', 'Card', 'glass');
+      const recipe = resolveRecipe('equinox-fitness', 'Card', 'glass');
       expect(recipe).toBeDefined();
       expect(typeof recipe).toBe('string');
       expect(recipe).toContain('bg-');
     });
 
     it('button.primary 레시피 조회 성공', () => {
-      const recipe = resolveRecipe('equinox-fitness-v2', 'Button', 'primary');
+      const recipe = resolveRecipe('equinox-fitness', 'Button', 'primary');
       expect(recipe).toBeDefined();
       expect(typeof recipe).toBe('string');
     });
 
     it('Typography 특수 처리 (Text.hero)', () => {
-      const recipe = resolveRecipe('equinox-fitness-v2', 'Text', 'hero');
+      const recipe = resolveRecipe('equinox-fitness', 'Text', 'hero');
       // recipes.typography.hero로 조회
       expect(recipe).toBeDefined();
     });
 
     it('대소문자 무관하게 조회', () => {
-      const recipe1 = resolveRecipe('equinox-fitness-v2', 'Card', 'glass');
-      const recipe2 = resolveRecipe('equinox-fitness-v2', 'card', 'glass');
+      const recipe1 = resolveRecipe('equinox-fitness', 'Card', 'glass');
+      const recipe2 = resolveRecipe('equinox-fitness', 'card', 'glass');
       expect(recipe1).toBe(recipe2);
     });
   });
@@ -61,7 +61,7 @@ describe('Recipe Resolver', () => {
         children: [],
       };
 
-      const result = applyRecipeToNode(node, 'equinox-fitness-v2');
+      const result = applyRecipeToNode(node, 'equinox-fitness');
 
       expect(result.props).toBeDefined();
       expect((result.props as any).className).toBeDefined();
@@ -78,7 +78,7 @@ describe('Recipe Resolver', () => {
         children: [],
       };
 
-      const result = applyRecipeToNode(node, 'equinox-fitness-v2');
+      const result = applyRecipeToNode(node, 'equinox-fitness');
 
       const className = (result.props as any).className;
       expect(className).toContain('p-4');
@@ -93,7 +93,7 @@ describe('Recipe Resolver', () => {
         children: [],
       };
 
-      const result = applyRecipeToNode(node, 'equinox-fitness-v2');
+      const result = applyRecipeToNode(node, 'equinox-fitness');
 
       // 기본 레시피가 있으면 적용될 수 있음
       expect(result.props).toBeDefined();
@@ -112,7 +112,7 @@ describe('Recipe Resolver', () => {
         ],
       };
 
-      const result = applyRecipeToNode(node, 'equinox-fitness-v2');
+      const result = applyRecipeToNode(node, 'equinox-fitness');
 
       expect((result.props as any).className).toBeDefined();
       expect(Array.isArray(result.children)).toBe(true);
@@ -129,7 +129,7 @@ describe('Recipe Resolver', () => {
       };
 
       const originalProps = original.props;
-      const result = applyRecipeToNode(original, 'equinox-fitness-v2');
+      const result = applyRecipeToNode(original, 'equinox-fitness');
 
       // props 객체가 새로운 참조여야 함
       expect(result.props).not.toBe(originalProps);
@@ -146,7 +146,7 @@ describe('Recipe Resolver', () => {
         { type: 'Badge', props: { variant: 'neutral' }, children: [] },
       ];
 
-      const result = applyRecipesToBlueprint(components, 'equinox-fitness-v2');
+      const result = applyRecipesToBlueprint(components, 'equinox-fitness');
 
       expect(result).toHaveLength(3);
       result.forEach(component => {
@@ -155,7 +155,7 @@ describe('Recipe Resolver', () => {
     });
 
     it('빈 배열 처리', () => {
-      const result = applyRecipesToBlueprint([], 'equinox-fitness-v2');
+      const result = applyRecipesToBlueprint([], 'equinox-fitness');
       expect(result).toHaveLength(0);
     });
   });
@@ -168,7 +168,7 @@ describe('Recipe Resolver', () => {
         { type: 'Text', children: ['No variant'] }, // variant 없음
       ];
 
-      const count = countAppliedRecipes(components, 'equinox-fitness-v2');
+      const count = countAppliedRecipes(components, 'equinox-fitness');
 
       // Card.glass + Button.primary = 2
       // Text는 variant 없어서 제외 (기본 레시피 있으면 카운트될 수 있음)
@@ -190,21 +190,21 @@ describe('Recipe Resolver', () => {
         },
       ];
 
-      const count = countAppliedRecipes(components, 'equinox-fitness-v2');
+      const count = countAppliedRecipes(components, 'equinox-fitness');
 
       // Card.glass + Button.primary = 2
       expect(count).toBeGreaterThanOrEqual(2);
     });
 
     it('빈 배열은 0 반환', () => {
-      const count = countAppliedRecipes([], 'equinox-fitness-v2');
+      const count = countAppliedRecipes([], 'equinox-fitness');
       expect(count).toBe(0);
     });
   });
 
   describe('getAllRecipes', () => {
     it('테마의 모든 레시피 조회', () => {
-      const recipes = getAllRecipes('equinox-fitness-v2');
+      const recipes = getAllRecipes('equinox-fitness');
 
       expect(Object.keys(recipes).length).toBeGreaterThan(0);
 
@@ -221,7 +221,7 @@ describe('Recipe Resolver', () => {
     });
 
     it('카테고리별 레시피 포함', () => {
-      const recipes = getAllRecipes('equinox-fitness-v2');
+      const recipes = getAllRecipes('equinox-fitness');
 
       // 주요 카테고리 레시피 확인
       const paths = Object.keys(recipes);
@@ -258,8 +258,8 @@ describe('Recipe Resolver', () => {
         },
       ];
 
-      const result = applyRecipesToBlueprint(components, 'equinox-fitness-v2');
-      const count = countAppliedRecipes(result, 'equinox-fitness-v2');
+      const result = applyRecipesToBlueprint(components, 'equinox-fitness');
+      const count = countAppliedRecipes(result, 'equinox-fitness');
 
       // Card에 레시피 적용됨
       const card = result[0]!;
