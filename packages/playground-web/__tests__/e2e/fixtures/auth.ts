@@ -123,11 +123,7 @@ export async function loginWithEmailPassword(
  *
  * OAuth 테스트를 건너뛰고 인증된 상태로 시작
  */
-export async function setAuthSession(
-  page: Page,
-  email: string,
-  password: string
-): Promise<string> {
+export async function setAuthSession(page: Page, email: string, password: string): Promise<string> {
   const supabase = getSupabaseTestClient();
 
   // 사용자 로그인하여 세션 토큰 가져오기
@@ -192,7 +188,9 @@ export async function logout(page: Page): Promise<void> {
  */
 export async function verifyApiKey(apiKey: string): Promise<boolean> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) {return false;}
+  if (!supabaseUrl) {
+    return false;
+  }
 
   const baseUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
 

@@ -4,16 +4,25 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, TableFooter, } from './table';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableFooter,
+} from './table';
 import { Badge } from './badge';
 import { Checkbox } from './checkbox';
 const meta = {
-    title: 'Components/Table',
-    component: Table,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Table',
+  component: Table,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -21,7 +30,8 @@ export default meta;
  * Accessibility: Proper semantic HTML with caption for screen readers
  */
 export const Default = {
-    render: () => (<Table>
+  render: () => (
+    <Table>
       <TableCaption>A list of recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>
@@ -51,13 +61,15 @@ export const Default = {
           <TableCell className="text-right">$350.00</TableCell>
         </TableRow>
       </TableBody>
-    </Table>),
+    </Table>
+  ),
 };
 /**
  * With badges for status
  */
 export const WithBadges = {
-    render: () => (<Table>
+  render: () => (
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
@@ -92,13 +104,15 @@ export const WithBadges = {
           <TableCell>User</TableCell>
         </TableRow>
       </TableBody>
-    </Table>),
+    </Table>
+  ),
 };
 /**
  * With selectable rows
  */
 export const Selectable = {
-    render: () => (<Table>
+  render: () => (
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[50px]">
@@ -135,13 +149,15 @@ export const Selectable = {
           <TableCell>Inactive</TableCell>
         </TableRow>
       </TableBody>
-    </Table>),
+    </Table>
+  ),
 };
 /**
  * With footer
  */
 export const WithFooter = {
-    render: () => (<Table>
+  render: () => (
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Description</TableHead>
@@ -168,6 +184,7 @@ export const WithFooter = {
           <TableCell className="text-right">$600.00</TableCell>
         </TableRow>
       </TableFooter>
-    </Table>),
+    </Table>
+  ),
 };
 //# sourceMappingURL=table.stories.js.map

@@ -8,11 +8,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import bcrypt from 'bcryptjs';
-import type {
-  ApiKey,
-  CreateApiKeyData,
-  ApiKeyListItem,
-} from './types';
+import type { ApiKey, CreateApiKeyData, ApiKeyListItem } from './types';
 
 /**
  * API Key 생성 (bcrypt 해시 사용)
@@ -31,9 +27,7 @@ import type {
  * });
  * ```
  */
-export async function createApiKey(
-  data: CreateApiKeyData
-): Promise<ApiKey | null> {
+export async function createApiKey(data: CreateApiKeyData): Promise<ApiKey | null> {
   try {
     const supabase = await createClient();
 
@@ -77,9 +71,7 @@ export async function createApiKey(
  * console.log('Total keys:', keys.length);
  * ```
  */
-export async function getApiKeysByUserId(
-  userId: string
-): Promise<ApiKeyListItem[]> {
+export async function getApiKeysByUserId(userId: string): Promise<ApiKeyListItem[]> {
   try {
     const supabase = await createClient();
 
@@ -122,10 +114,7 @@ export async function getApiKeysByUserId(
  * }
  * ```
  */
-export async function revokeApiKey(
-  keyId: string,
-  userId: string
-): Promise<boolean> {
+export async function revokeApiKey(keyId: string, userId: string): Promise<boolean> {
   try {
     const supabase = await createClient();
 
@@ -203,10 +192,7 @@ export async function generateApiKey(): Promise<{
  * }
  * ```
  */
-export async function verifyApiKey(
-  plainKey: string,
-  hashedKey: string
-): Promise<boolean> {
+export async function verifyApiKey(plainKey: string, hashedKey: string): Promise<boolean> {
   try {
     return await bcrypt.compare(plainKey, hashedKey);
   } catch (error) {

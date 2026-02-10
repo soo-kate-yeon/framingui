@@ -4,38 +4,46 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Sidebar, SidebarHeader, SidebarContent, SidebarItem, SidebarSection, SidebarFooter, } from './sidebar';
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarItem,
+  SidebarSection,
+  SidebarFooter,
+} from './sidebar';
 import { Badge } from './badge';
 const meta = {
-    title: 'Components/Sidebar',
-    component: Sidebar,
-    parameters: {
-        layout: 'fullscreen',
+  title: 'Components/Sidebar',
+  component: Sidebar,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'compact'],
+      description: 'Sidebar visual style variant',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        variant: {
-            control: 'select',
-            options: ['default', 'compact'],
-            description: 'Sidebar visual style variant',
-        },
-        size: {
-            control: 'select',
-            options: ['default', 'compact', 'expanded'],
-            description: 'Sidebar width size',
-        },
-        collapsed: {
-            control: 'boolean',
-            description: 'Whether the sidebar is collapsed',
-        },
+    size: {
+      control: 'select',
+      options: ['default', 'compact', 'expanded'],
+      description: 'Sidebar width size',
     },
+    collapsed: {
+      control: 'boolean',
+      description: 'Whether the sidebar is collapsed',
+    },
+  },
 };
 export default meta;
 /**
  * Default sidebar with navigation items
  */
 export const Default = {
-    render: () => (<div className="h-screen">
+  render: () => (
+    <div className="h-screen">
       <Sidebar>
         <SidebarHeader>
           <span className="text-xl font-bold">Logo</span>
@@ -49,14 +57,16 @@ export const Default = {
           <SidebarItem icon="⚙️">Settings</SidebarItem>
         </SidebarContent>
       </Sidebar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Dashboard example with collapsible sections
  * Accessibility: Sections have aria-expanded attribute
  */
 export const DashboardExample = {
-    render: () => (<div className="h-screen">
+  render: () => (
+    <div className="h-screen">
       <Sidebar>
         <SidebarHeader>
           <span className="text-xl font-bold text-[var(--tekton-bg-primary)]">Tekton</span>
@@ -92,32 +102,36 @@ export const DashboardExample = {
           <SidebarItem icon="👤">Profile</SidebarItem>
         </SidebarFooter>
       </Sidebar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Collapsed sidebar for mobile responsive design
  * Accessibility: Maintains keyboard navigation when collapsed
  */
 export const Collapsed = {
-    render: () => (<div className="h-screen">
+  render: () => (
+    <div className="h-screen">
       <Sidebar collapsed>
         <SidebarHeader>
           <span className="text-xl">T</span>
         </SidebarHeader>
         <SidebarContent>
-          <SidebarItem icon="🏠" aria-label="Dashboard"/>
-          <SidebarItem icon="📊" aria-label="Analytics"/>
-          <SidebarItem icon="👥" aria-label="Users"/>
-          <SidebarItem icon="⚙️" aria-label="Settings"/>
+          <SidebarItem icon="🏠" aria-label="Dashboard" />
+          <SidebarItem icon="📊" aria-label="Analytics" />
+          <SidebarItem icon="👥" aria-label="Users" />
+          <SidebarItem icon="⚙️" aria-label="Settings" />
         </SidebarContent>
       </Sidebar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Compact variant with minimal styling
  */
 export const Compact = {
-    render: () => (<div className="h-screen">
+  render: () => (
+    <div className="h-screen">
       <Sidebar variant="compact">
         <SidebarHeader>
           <span className="font-semibold">App</span>
@@ -128,13 +142,15 @@ export const Compact = {
           <SidebarItem icon="⭐">Favorites</SidebarItem>
         </SidebarContent>
       </Sidebar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Expanded sidebar for desktop
  */
 export const Expanded = {
-    render: () => (<div className="h-screen">
+  render: () => (
+    <div className="h-screen">
       <Sidebar size="expanded">
         <SidebarHeader>
           <span className="text-2xl font-bold">Application</span>
@@ -149,15 +165,17 @@ export const Expanded = {
           </SidebarItem>
         </SidebarContent>
       </Sidebar>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Interactive toggle example
  */
 export const WithToggle = {
-    render: () => {
-        const [collapsed, setCollapsed] = React.useState(false);
-        return (<div className="h-screen flex">
+  render: () => {
+    const [collapsed, setCollapsed] = React.useState(false);
+    return (
+      <div className="h-screen flex">
         <Sidebar collapsed={collapsed}>
           <SidebarHeader>
             <span className={collapsed ? 'text-sm' : 'text-xl font-bold'}>
@@ -165,7 +183,11 @@ export const WithToggle = {
             </span>
           </SidebarHeader>
           <SidebarContent>
-            <SidebarItem icon="☰" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+            <SidebarItem
+              icon="☰"
+              onClick={() => setCollapsed(!collapsed)}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
               {!collapsed && 'Toggle'}
             </SidebarItem>
             <SidebarItem icon="🏠" aria-label="Dashboard">
@@ -182,8 +204,9 @@ export const WithToggle = {
             Toggle the sidebar using the button
           </p>
         </main>
-      </div>);
-    },
+      </div>
+    );
+  },
 };
 /**
  * Import React for useState

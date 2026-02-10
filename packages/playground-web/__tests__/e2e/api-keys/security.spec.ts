@@ -116,10 +116,7 @@ test.describe('Security Tests E2E', () => {
 
   test('should enforce rate limiting on MCP verify endpoint', async () => {
     // 1. 테스트용 API Key 생성
-    const { id: apiKeyId, key: apiKey } = await createTestApiKey(
-      userId,
-      'Rate Limit MCP Test'
-    );
+    const { id: apiKeyId, key: apiKey } = await createTestApiKey(userId, 'Rate Limit MCP Test');
 
     try {
       // 2. Rate Limit 초과할 때까지 요청 (분당 60회)
@@ -257,10 +254,7 @@ test.describe('Security Tests E2E', () => {
 
   test('should prevent timing attacks on API key verification', async () => {
     // 1. 유효한 API Key 생성
-    const { id: validKeyId, key: validKey } = await createTestApiKey(
-      userId,
-      'Timing Attack Test'
-    );
+    const { id: validKeyId, key: validKey } = await createTestApiKey(userId, 'Timing Attack Test');
 
     try {
       // 2. 유효한 키와 무효한 키의 응답 시간 측정

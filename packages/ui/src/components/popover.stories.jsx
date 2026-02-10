@@ -9,12 +9,12 @@ import { Button } from './button';
 import { Input } from './input';
 import { Label } from './label';
 const meta = {
-    title: 'Components/Popover',
-    component: Popover,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Popover',
+  component: Popover,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -22,7 +22,8 @@ export default meta;
  * Accessibility: Focus management and keyboard navigation
  */
 export const Default = {
-    render: () => (<Popover>
+  render: () => (
+    <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">Open popover</Button>
       </PopoverTrigger>
@@ -34,13 +35,15 @@ export const Default = {
           </p>
         </div>
       </PopoverContent>
-    </Popover>),
+    </Popover>
+  ),
 };
 /**
  * With form
  */
 export const WithForm = {
-    render: () => (<Popover>
+  render: () => (
+    <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">Open Settings</Button>
       </PopoverTrigger>
@@ -55,26 +58,28 @@ export const WithForm = {
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="width">Width</Label>
-              <Input id="width" defaultValue="100%" className="col-span-2 h-8"/>
+              <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="maxWidth">Max. width</Label>
-              <Input id="maxWidth" defaultValue="300px" className="col-span-2 h-8"/>
+              <Input id="maxWidth" defaultValue="300px" className="col-span-2 h-8" />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="height">Height</Label>
-              <Input id="height" defaultValue="25px" className="col-span-2 h-8"/>
+              <Input id="height" defaultValue="25px" className="col-span-2 h-8" />
             </div>
           </div>
         </div>
       </PopoverContent>
-    </Popover>),
+    </Popover>
+  ),
 };
 /**
  * Different alignments
  */
 export const Alignments = {
-    render: () => (<div className="flex gap-4">
+  render: () => (
+    <div className="flex gap-4">
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline">Align Start</Button>
@@ -101,6 +106,7 @@ export const Alignments = {
           <p>Aligned to end</p>
         </PopoverContent>
       </Popover>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=popover.stories.js.map

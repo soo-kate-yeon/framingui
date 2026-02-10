@@ -18,9 +18,7 @@ export default function ProfilePage() {
       <div className="mw-card">
         <div className="mw-card-header">
           <h3 className="mw-card-title">Personal Information</h3>
-          <p className="mw-card-description">
-            Update your profile details and preferences
-          </p>
+          <p className="mw-card-description">Update your profile details and preferences</p>
         </div>
         <div className="mw-card-content">
           <p className="mw-text-secondary">Profile settings coming soon...</p>

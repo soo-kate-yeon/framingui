@@ -59,9 +59,10 @@ export async function signInWithGoogle(): Promise<OAuthResult> {
 
   try {
     // Get returnUrl from current URL if present
-    const returnUrl = typeof window !== 'undefined'
-      ? new URLSearchParams(window.location.search).get('returnUrl')
-      : null;
+    const returnUrl =
+      typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('returnUrl')
+        : null;
 
     // Build callback URL with returnUrl if available
     const callbackUrl = returnUrl
@@ -113,9 +114,10 @@ export async function signInWithGitHub(): Promise<OAuthResult> {
 
   try {
     // Get returnUrl from current URL if present
-    const returnUrl = typeof window !== 'undefined'
-      ? new URLSearchParams(window.location.search).get('returnUrl')
-      : null;
+    const returnUrl =
+      typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('returnUrl')
+        : null;
 
     // Build callback URL with returnUrl if available
     const callbackUrl = returnUrl

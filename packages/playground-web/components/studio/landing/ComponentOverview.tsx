@@ -48,9 +48,7 @@ export function ComponentOverview({ components, className }: ComponentOverviewPr
           >
             {/* Component Preview Placeholder */}
             <div className="aspect-video bg-neutral-100 rounded mb-4 flex items-center justify-center">
-              <span className="text-xs uppercase tracking-wider text-neutral-400">
-                Preview
-              </span>
+              <span className="text-xs uppercase tracking-wider text-neutral-400">Preview</span>
             </div>
 
             {/* Component Info */}

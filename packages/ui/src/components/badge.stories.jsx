@@ -6,83 +6,88 @@
  */
 import { Badge } from './badge';
 const meta = {
-    title: 'Components/Badge',
-    component: Badge,
-    parameters: {
-        layout: 'centered',
+  title: 'Components/Badge',
+  component: Badge,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'secondary', 'destructive', 'outline'],
+      description: 'Badge visual style variant',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        variant: {
-            control: 'select',
-            options: ['default', 'secondary', 'destructive', 'outline'],
-            description: 'Badge visual style variant',
-        },
-    },
+  },
 };
 export default meta;
 /**
  * Default badge with primary styling
  */
 export const Default = {
-    args: {
-        children: 'Badge',
-    },
+  args: {
+    children: 'Badge',
+  },
 };
 /**
  * Secondary variant
  */
 export const Secondary = {
-    args: {
-        variant: 'secondary',
-        children: 'Secondary',
-    },
+  args: {
+    variant: 'secondary',
+    children: 'Secondary',
+  },
 };
 /**
  * Destructive variant for warnings
  */
 export const Destructive = {
-    args: {
-        variant: 'destructive',
-        children: 'Destructive',
-    },
+  args: {
+    variant: 'destructive',
+    children: 'Destructive',
+  },
 };
 /**
  * Outline variant
  */
 export const Outline = {
-    args: {
-        variant: 'outline',
-        children: 'Outline',
-    },
+  args: {
+    variant: 'outline',
+    children: 'Outline',
+  },
 };
 /**
  * All variants showcase
  */
 export const AllVariants = {
-    render: () => (<div className="flex gap-2 items-center">
+  render: () => (
+    <div className="flex gap-2 items-center">
       <Badge>Default</Badge>
       <Badge variant="secondary">Secondary</Badge>
       <Badge variant="destructive">Destructive</Badge>
       <Badge variant="outline">Outline</Badge>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Status badges
  */
 export const StatusBadges = {
-    render: () => (<div className="flex gap-2 items-center">
+  render: () => (
+    <div className="flex gap-2 items-center">
       <Badge>Active</Badge>
       <Badge variant="secondary">Pending</Badge>
       <Badge variant="destructive">Inactive</Badge>
       <Badge variant="outline">Draft</Badge>
-    </div>),
+    </div>
+  ),
 };
 /**
  * With icons
  */
 export const WithIcons = {
-    render: () => (<div className="flex gap-2 items-center">
+  render: () => (
+    <div className="flex gap-2 items-center">
       <Badge>
         <span className="mr-1">✓</span>
         Verified
@@ -95,38 +100,45 @@ export const WithIcons = {
         <span className="mr-1">✗</span>
         Failed
       </Badge>
-    </div>),
+    </div>
+  ),
 };
 /**
  * With counts
  */
 export const WithCounts = {
-    render: () => (<div className="flex gap-2 items-center">
+  render: () => (
+    <div className="flex gap-2 items-center">
       <Badge>New 12</Badge>
       <Badge variant="secondary">Messages 5</Badge>
       <Badge variant="destructive">Errors 3</Badge>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Large badges
  */
 export const Large = {
-    render: () => (<div className="flex gap-2 items-center">
+  render: () => (
+    <div className="flex gap-2 items-center">
       <Badge className="px-4 py-2 text-sm">Large Badge</Badge>
       <Badge variant="secondary" className="px-4 py-2 text-sm">
         Large Secondary
       </Badge>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Small badges
  */
 export const Small = {
-    render: () => (<div className="flex gap-2 items-center">
+  render: () => (
+    <div className="flex gap-2 items-center">
       <Badge className="px-2 py-0.5 text-[10px]">Tiny</Badge>
       <Badge variant="secondary" className="px-2 py-0.5 text-[10px]">
         Small
       </Badge>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=badge.stories.js.map

@@ -21,21 +21,43 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Empty Template Component
  */
-export function EmptyTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'No Items Found';
-    const message = texts.message || 'Get started by creating your first item';
-    const ctaLabel = texts.cta_label || 'Create New';
-    const showCta = options.show_cta ?? true;
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function EmptyTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'No Items Found';
+  const message = texts.message || 'Get started by creating your first item';
+  const ctaLabel = texts.cta_label || 'Create New';
+  const showCta = options.show_cta ?? true;
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <div className="max-w-md text-center space-y-[var(--tekton-spacing-6)]">
         {/* Empty Icon/Illustration */}
-        {slots.illustration || (<div className="flex justify-center">
+        {slots.illustration || (
+          <div className="flex justify-center">
             <div className="rounded-full bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-8)]">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-[var(--tekton-text-muted-foreground)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-[var(--tekton-text-muted-foreground)]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                />
               </svg>
             </div>
-          </div>)}
+          </div>
+        )}
 
         {/* Empty Message */}
         <div className="space-y-[var(--tekton-spacing-2)]">
@@ -44,51 +66,56 @@ export function EmptyTemplateComponent({ children, className = '', slots = {}, t
         </div>
 
         {/* CTA Button */}
-        {showCta && (<div>
+        {showCta && (
+          <div>
             <Button size="lg">{ctaLabel}</Button>
-          </div>)}
+          </div>
+        )}
 
         {/* Help Text */}
-        {slots.helpText && (<div className="text-sm text-[var(--tekton-text-muted-foreground)]">{slots.helpText}</div>)}
+        {slots.helpText && (
+          <div className="text-sm text-[var(--tekton-text-muted-foreground)]">{slots.helpText}</div>
+        )}
       </div>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Empty Template Definition
  */
 export const EmptyTemplate = {
-    id: 'feedback.empty',
-    name: 'Empty',
-    category: 'feedback',
-    description: 'Empty state screen with call-to-action',
-    skeleton: {
-        shell: 'centered',
-        page: 'feedback-page',
-        sections: [
-            {
-                id: 'empty-state',
-                name: 'Empty State',
-                slot: 'main',
-                required: true,
-                Component: EmptyTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'message', 'cta_label'],
-        optional: ['show_cta'],
-        slots: ['illustration', 'helpText'],
-    },
-    requiredComponents: ['Button'],
-    Component: EmptyTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['feedback', 'empty', 'state', 'no-data'],
+  id: 'feedback.empty',
+  name: 'Empty',
+  category: 'feedback',
+  description: 'Empty state screen with call-to-action',
+  skeleton: {
+    shell: 'centered',
+    page: 'feedback-page',
+    sections: [
+      {
+        id: 'empty-state',
+        name: 'Empty State',
+        slot: 'main',
+        required: true,
+        Component: EmptyTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'message', 'cta_label'],
+    optional: ['show_cta'],
+    slots: ['illustration', 'helpText'],
+  },
+  requiredComponents: ['Button'],
+  Component: EmptyTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['feedback', 'empty', 'state', 'no-data'],
 };
 //# sourceMappingURL=empty.js.map

@@ -4,17 +4,25 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger, SheetFooter, } from './sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetFooter,
+} from './sheet';
 import { Button } from './button';
 import { Input } from './input';
 import { Label } from './label';
 const meta = {
-    title: 'Components/Sheet',
-    component: Sheet,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Sheet',
+  component: Sheet,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -22,7 +30,8 @@ export default meta;
  * Accessibility: Modal dialog with focus management
  */
 export const Default = {
-    render: () => (<Sheet>
+  render: () => (
+    <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline">Open Sheet</Button>
       </SheetTrigger>
@@ -38,26 +47,28 @@ export const Default = {
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
-            <Input id="name" value="Pedro Duarte" className="col-span-3"/>
+            <Input id="name" value="Pedro Duarte" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
               Username
             </Label>
-            <Input id="username" value="@peduarte" className="col-span-3"/>
+            <Input id="username" value="@peduarte" className="col-span-3" />
           </div>
         </div>
         <SheetFooter>
           <Button type="submit">Save changes</Button>
         </SheetFooter>
       </SheetContent>
-    </Sheet>),
+    </Sheet>
+  ),
 };
 /**
  * Different sides
  */
 export const Sides = {
-    render: () => (<div className="flex gap-4 flex-wrap">
+  render: () => (
+    <div className="flex gap-4 flex-wrap">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline">From Top</Button>
@@ -105,6 +116,7 @@ export const Sides = {
           </SheetHeader>
         </SheetContent>
       </Sheet>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=sheet.stories.js.map

@@ -16,32 +16,52 @@
  * WHY: 확인 템플릿이 중요한 액션 방지 UX를 보장
  * IMPACT: 템플릿 오류 시 사용자 의도치 않은 삭제/변경 실행
  */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from '../../components/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../components/card';
 import { Button } from '../../components/button';
 import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Confirmation Template Component
  */
-export function ConfirmationTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'Are You Sure?';
-    const message = texts.message || 'This action cannot be undone.';
-    const confirmLabel = texts.confirm_label || 'Confirm';
-    const cancelLabel = texts.cancel_label || 'Cancel';
-    const isDestructive = options.is_destructive ?? false;
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function ConfirmationTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'Are You Sure?';
+  const message = texts.message || 'This action cannot be undone.';
+  const confirmLabel = texts.confirm_label || 'Confirm';
+  const cancelLabel = texts.cancel_label || 'Cancel';
+  const isDestructive = options.is_destructive ?? false;
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <Card className="w-full max-w-md">
         <CardHeader>
           {/* Warning Icon (for destructive actions) */}
-          {isDestructive && slots.warningIcon && (<div className="mb-[var(--tekton-spacing-2)]">{slots.warningIcon}</div>)}
+          {isDestructive && slots.warningIcon && (
+            <div className="mb-[var(--tekton-spacing-2)]">{slots.warningIcon}</div>
+          )}
           <CardTitle>{title}</CardTitle>
           <CardDescription>{message}</CardDescription>
         </CardHeader>
 
         <CardContent>
           {/* Additional Details */}
-          {slots.details && (<div className="bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-4)] rounded-[var(--tekton-radius-md)] text-sm">
+          {slots.details && (
+            <div className="bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-4)] rounded-[var(--tekton-radius-md)] text-sm">
               {slots.details}
-            </div>)}
+            </div>
+          )}
         </CardContent>
 
         <CardFooter className="flex justify-end gap-[var(--tekton-spacing-3)]">
@@ -50,43 +70,44 @@ export function ConfirmationTemplateComponent({ children, className = '', slots 
         </CardFooter>
       </Card>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Confirmation Template Definition
  */
 export const ConfirmationTemplate = {
-    id: 'feedback.confirmation',
-    name: 'Confirmation',
-    category: 'feedback',
-    description: 'Confirmation dialog for important actions',
-    skeleton: {
-        shell: 'centered-card',
-        page: 'feedback-page',
-        sections: [
-            {
-                id: 'confirmation-dialog',
-                name: 'Confirmation Dialog',
-                slot: 'main',
-                required: true,
-                Component: ConfirmationTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'message', 'confirm_label', 'cancel_label'],
-        optional: ['is_destructive'],
-        slots: ['warningIcon', 'details'],
-    },
-    requiredComponents: ['Button', 'Card'],
-    Component: ConfirmationTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['feedback', 'confirmation', 'dialog', 'warning'],
+  id: 'feedback.confirmation',
+  name: 'Confirmation',
+  category: 'feedback',
+  description: 'Confirmation dialog for important actions',
+  skeleton: {
+    shell: 'centered-card',
+    page: 'feedback-page',
+    sections: [
+      {
+        id: 'confirmation-dialog',
+        name: 'Confirmation Dialog',
+        slot: 'main',
+        required: true,
+        Component: ConfirmationTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'message', 'confirm_label', 'cancel_label'],
+    optional: ['is_destructive'],
+    slots: ['warningIcon', 'details'],
+  },
+  requiredComponents: ['Button', 'Card'],
+  Component: ConfirmationTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['feedback', 'confirmation', 'dialog', 'warning'],
 };
 //# sourceMappingURL=confirmation.js.map

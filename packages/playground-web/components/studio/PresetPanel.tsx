@@ -8,11 +8,7 @@
 'use client';
 
 import { useTheme } from '../../contexts/ThemeContext';
-import {
-  colorPresets,
-  typographyPresets,
-  spacingPresets,
-} from '../../lib/presets';
+import { colorPresets, typographyPresets, spacingPresets } from '../../lib/presets';
 import type { ThemePreset } from '../../lib/types/theme';
 
 // ============================================================================
@@ -73,9 +69,7 @@ function PresetSection({ title, presets, selectedId, onSelect }: PresetSectionPr
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: 'var(--tekton-spacing-sm, 8px) var(--tekton-spacing-md, 12px)',
-                backgroundColor: isSelected
-                  ? 'var(--tekton-bg-accent, #f3f4f6)'
-                  : 'transparent',
+                backgroundColor: isSelected ? 'var(--tekton-bg-accent, #f3f4f6)' : 'transparent',
                 border: '1px solid',
                 borderColor: isSelected
                   ? 'var(--tekton-bg-primary, #3b82f6)'
@@ -132,12 +126,7 @@ function PresetSection({ title, presets, selectedId, onSelect }: PresetSectionPr
 // ============================================================================
 
 export function PresetPanel({ className = '' }: PresetPanelProps) {
-  const {
-    theme,
-    setColorPreset,
-    setTypographyPreset,
-    setSpacingPreset,
-  } = useTheme();
+  const { theme, setColorPreset, setTypographyPreset, setSpacingPreset } = useTheme();
 
   return (
     <div

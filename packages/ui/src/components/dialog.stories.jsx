@@ -4,17 +4,25 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from './dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './dialog';
 import { Button } from './button';
 import { Input } from './input';
 import { Label } from './label';
 const meta = {
-    title: 'Components/Dialog',
-    component: Dialog,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Dialog',
+  component: Dialog,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -22,7 +30,8 @@ export default meta;
  * Accessibility: Includes proper ARIA labels and focus management
  */
 export const Default = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline">Open Dialog</Button>
       </DialogTrigger>
@@ -38,13 +47,15 @@ export const Default = {
           <Button type="submit">Confirm</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 /**
  * Dialog with form
  */
 export const WithForm = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button>Edit Profile</Button>
       </DialogTrigger>
@@ -60,26 +71,28 @@ export const WithForm = {
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
-            <Input id="name" defaultValue="Pedro Duarte" className="col-span-3"/>
+            <Input id="name" defaultValue="Pedro Duarte" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="username" className="text-right">
               Username
             </Label>
-            <Input id="username" defaultValue="@peduarte" className="col-span-3"/>
+            <Input id="username" defaultValue="@peduarte" className="col-span-3" />
           </div>
         </div>
         <DialogFooter>
           <Button type="submit">Save changes</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 /**
  * Confirmation dialog
  */
 export const Confirmation = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button variant="destructive">Delete Account</Button>
       </DialogTrigger>
@@ -95,13 +108,15 @@ export const Confirmation = {
           <Button variant="destructive">Delete</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 /**
  * Simple notification dialog
  */
 export const Notification = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button>Show Notification</Button>
       </DialogTrigger>
@@ -114,13 +129,15 @@ export const Notification = {
           <Button>OK</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 /**
  * Dialog with custom content
  */
 export const CustomContent = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button>View Details</Button>
       </DialogTrigger>
@@ -156,13 +173,15 @@ export const CustomContent = {
           <Button>Learn More</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 /**
  * Dialog without description
  */
 export const NoDescription = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button>Simple Dialog</Button>
       </DialogTrigger>
@@ -175,13 +194,15 @@ export const NoDescription = {
           <Button>Close</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 /**
  * Dialog with scrollable content
  */
 export const Scrollable = {
-    render: () => (<Dialog>
+  render: () => (
+    <Dialog>
       <DialogTrigger asChild>
         <Button>Terms and Conditions</Button>
       </DialogTrigger>
@@ -191,17 +212,20 @@ export const Scrollable = {
           <DialogDescription>Please read our terms and conditions carefully.</DialogDescription>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[400px] pr-4">
-          {Array.from({ length: 10 }).map((_, i) => (<p key={i} className="mb-4 text-sm">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <p key={i} className="mb-4 text-sm">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
               exercitation ullamco laboris.
-            </p>))}
+            </p>
+          ))}
         </div>
         <DialogFooter>
           <Button variant="outline">Decline</Button>
           <Button>Accept</Button>
         </DialogFooter>
       </DialogContent>
-    </Dialog>),
+    </Dialog>
+  ),
 };
 //# sourceMappingURL=dialog.stories.js.map

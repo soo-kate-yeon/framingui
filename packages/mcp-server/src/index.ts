@@ -1,7 +1,12 @@
 #!/usr/bin/env node
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import {
+  ListToolsRequestSchema,
+  CallToolRequestSchema,
+  ListPromptsRequestSchema,
+  GetPromptRequestSchema,
+} from '@modelcontextprotocol/sdk/types.js';
 import { info, error as logError } from './utils/logger.js';
 import { verifyApiKey } from './auth/verify.js';
 import { setAuthData } from './auth/state.js';
@@ -23,6 +28,8 @@ import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
 import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
 import { validateEnvironmentTool } from './tools/validate-environment.js';
+import { getGettingStartedPrompt } from './prompts/getting-started.js';
+import { getScreenWorkflowPrompt } from './prompts/screen-workflow.js';
 import {
   GenerateBlueprintInputSchema,
   PreviewThemeInputSchema,
@@ -50,9 +57,56 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      prompts: {},
     },
   }
 );
+
+// ============================================================================
+// MCP Prompts: ListPromptsRequestSchema Handler
+// ============================================================================
+
+server.setRequestHandler(ListPromptsRequestSchema, async () => {
+  info('ListPrompts request received');
+
+  return {
+    prompts: [
+      {
+        name: 'getting-started',
+        description:
+          'Complete getting started guide for Tekton UI including authentication, theme exploration, and screen generation workflow',
+        arguments: [],
+      },
+      {
+        name: 'screen-workflow',
+        description:
+          'Detailed 4-step screen generation workflow: get-screen-generation-context → validate-screen-definition → generate_screen → validate-environment',
+        arguments: [],
+      },
+    ],
+  };
+});
+
+// ============================================================================
+// MCP Prompts: GetPromptRequestSchema Handler
+// ============================================================================
+
+server.setRequestHandler(GetPromptRequestSchema, async request => {
+  const { name } = request.params;
+
+  info(`GetPrompt request: ${name}`);
+
+  switch (name) {
+    case 'getting-started':
+      return getGettingStartedPrompt();
+
+    case 'screen-workflow':
+      return getScreenWorkflowPrompt();
+
+    default:
+      throw new Error(`Unknown prompt: ${name}`);
+  }
+});
 
 // ============================================================================
 // Task #9: ListToolsRequestSchema Handler

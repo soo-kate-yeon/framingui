@@ -73,7 +73,6 @@ interface UserLicense {
   expires_at: string | null;
 }
 
-
 /**
  * Database: user_profiles 테이블 타입
  */
@@ -303,7 +302,9 @@ export async function GET(request: NextRequest) {
 
     // 9. 라이선스 필터링 (만료되지 않은 것만)
     const activeLicenses = (licenses || []).filter((license) => {
-      if (!license.expires_at) {return true;} // 영구 라이선스
+      if (!license.expires_at) {
+        return true;
+      } // 영구 라이선스
       return new Date(license.expires_at) > new Date();
     });
 

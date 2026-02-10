@@ -4,15 +4,23 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue, } from './select';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 import { Label } from './label';
 const meta = {
-    title: 'Components/Select',
-    component: Select,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Select',
+  component: Select,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -20,9 +28,10 @@ export default meta;
  * Accessibility: Keyboard navigable with proper ARIA attributes
  */
 export const Default = {
-    render: () => (<Select>
+  render: () => (
+    <Select>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="apple">Apple</SelectItem>
@@ -31,18 +40,20 @@ export const Default = {
         <SelectItem value="grape">Grape</SelectItem>
         <SelectItem value="mango">Mango</SelectItem>
       </SelectContent>
-    </Select>),
+    </Select>
+  ),
 };
 /**
  * Select with label
  * Accessibility: Properly associated label for screen readers
  */
 export const WithLabel = {
-    render: () => (<div className="grid gap-2">
+  render: () => (
+    <div className="grid gap-2">
       <Label htmlFor="fruit-select">Favorite Fruit</Label>
       <Select>
         <SelectTrigger id="fruit-select" className="w-[180px]">
-          <SelectValue placeholder="Select a fruit"/>
+          <SelectValue placeholder="Select a fruit" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="apple">Apple</SelectItem>
@@ -50,15 +61,17 @@ export const WithLabel = {
           <SelectItem value="orange">Orange</SelectItem>
         </SelectContent>
       </Select>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Select with groups
  */
 export const WithGroups = {
-    render: () => (<Select>
+  render: () => (
+    <Select>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a food"/>
+        <SelectValue placeholder="Select a food" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
@@ -74,16 +87,18 @@ export const WithGroups = {
           <SelectItem value="tomato">Tomato</SelectItem>
         </SelectGroup>
       </SelectContent>
-    </Select>),
+    </Select>
+  ),
 };
 /**
  * Select with disabled items
  * Accessibility: Disabled items are properly marked
  */
 export const WithDisabledItems = {
-    render: () => (<Select>
+  render: () => (
+    <Select>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="apple">Apple</SelectItem>
@@ -96,18 +111,20 @@ export const WithDisabledItems = {
         </SelectItem>
         <SelectItem value="mango">Mango</SelectItem>
       </SelectContent>
-    </Select>),
+    </Select>
+  ),
 };
 /**
  * Form select example
  */
 export const FormExample = {
-    render: () => (<div className="grid w-full max-w-sm gap-4">
+  render: () => (
+    <div className="grid w-full max-w-sm gap-4">
       <div className="grid gap-2">
         <Label htmlFor="country">Country</Label>
         <Select>
           <SelectTrigger id="country">
-            <SelectValue placeholder="Select a country"/>
+            <SelectValue placeholder="Select a country" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="us">United States</SelectItem>
@@ -123,7 +140,7 @@ export const FormExample = {
         <Label htmlFor="language">Language</Label>
         <Select>
           <SelectTrigger id="language">
-            <SelectValue placeholder="Select a language"/>
+            <SelectValue placeholder="Select a language" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="en">English</SelectItem>
@@ -134,49 +151,57 @@ export const FormExample = {
           </SelectContent>
         </Select>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Select with long list
  */
 export const LongList = {
-    render: () => (<Select>
+  render: () => (
+    <Select>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a number"/>
+        <SelectValue placeholder="Select a number" />
       </SelectTrigger>
       <SelectContent>
-        {Array.from({ length: 50 }, (_, i) => (<SelectItem key={i} value={`item-${i}`}>
+        {Array.from({ length: 50 }, (_, i) => (
+          <SelectItem key={i} value={`item-${i}`}>
             Item {i + 1}
-          </SelectItem>))}
+          </SelectItem>
+        ))}
       </SelectContent>
-    </Select>),
+    </Select>
+  ),
 };
 /**
  * Disabled select
  * Accessibility: Disabled state is properly communicated
  */
 export const Disabled = {
-    render: () => (<Select disabled>
+  render: () => (
+    <Select disabled>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a fruit"/>
+        <SelectValue placeholder="Select a fruit" />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="apple">Apple</SelectItem>
         <SelectItem value="banana">Banana</SelectItem>
         <SelectItem value="orange">Orange</SelectItem>
       </SelectContent>
-    </Select>),
+    </Select>
+  ),
 };
 /**
  * Multiple selects in form
  */
 export const MultipleSelects = {
-    render: () => (<div className="grid w-full max-w-sm gap-4">
+  render: () => (
+    <div className="grid w-full max-w-sm gap-4">
       <div className="grid gap-2">
         <Label>Theme</Label>
         <Select>
           <SelectTrigger>
-            <SelectValue placeholder="Select theme"/>
+            <SelectValue placeholder="Select theme" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="light">Light</SelectItem>
@@ -189,7 +214,7 @@ export const MultipleSelects = {
         <Label>Font Size</Label>
         <Select>
           <SelectTrigger>
-            <SelectValue placeholder="Select size"/>
+            <SelectValue placeholder="Select size" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="sm">Small</SelectItem>
@@ -203,7 +228,7 @@ export const MultipleSelects = {
         <Label>Layout</Label>
         <Select>
           <SelectTrigger>
-            <SelectValue placeholder="Select layout"/>
+            <SelectValue placeholder="Select layout" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="compact">Compact</SelectItem>
@@ -212,6 +237,7 @@ export const MultipleSelects = {
           </SelectContent>
         </Select>
       </div>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=select.stories.js.map

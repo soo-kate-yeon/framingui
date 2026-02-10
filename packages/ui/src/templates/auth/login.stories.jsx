@@ -9,12 +9,12 @@ import { Checkbox } from '../../components/checkbox';
 import { Label } from '../../components/label';
 import { Button } from '../../components/button';
 const meta = {
-    title: 'Templates/Auth/Login',
-    component: LoginTemplateComponent,
-    parameters: {
-        layout: 'fullscreen',
-    },
-    tags: ['autodocs'],
+  title: 'Templates/Auth/Login',
+  component: LoginTemplateComponent,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -22,65 +22,72 @@ export default meta;
  * Accessibility: Fully accessible form with proper labels and ARIA attributes
  */
 export const Default = {
-    args: {},
+  args: {},
 };
 /**
  * Custom branding and text
  */
 export const CustomBranding = {
-    args: {
-        texts: {
-            title: 'Sign In to Tekton',
-            subtitle: 'Access your account',
-            button_label: 'Continue',
-        },
-        slots: {
-            logo: (<div className="flex justify-center">
-          <div className="text-4xl font-bold text-[var(--tekton-bg-primary)]">T</div>
-        </div>),
-        },
+  args: {
+    texts: {
+      title: 'Sign In to Tekton',
+      subtitle: 'Access your account',
+      button_label: 'Continue',
     },
+    slots: {
+      logo: (
+        <div className="flex justify-center">
+          <div className="text-4xl font-bold text-[var(--tekton-bg-primary)]">T</div>
+        </div>
+      ),
+    },
+  },
 };
 /**
  * With forgot password link
  */
 export const WithForgotPassword = {
-    args: {
-        slots: {
-            forgotPassword: (<a href="#" className="text-sm text-[var(--tekton-bg-primary)] hover:underline">
+  args: {
+    slots: {
+      forgotPassword: (
+        <a href="#" className="text-sm text-[var(--tekton-bg-primary)] hover:underline">
           Forgot password?
-        </a>),
-        },
+        </a>
+      ),
     },
+  },
 };
 /**
  * With remember me checkbox
  */
 export const WithRememberMe = {
-    args: {
-        options: {
-            remember_me: true,
-        },
-        slots: {
-            rememberMe: (<>
-          <Checkbox id="remember"/>
+  args: {
+    options: {
+      remember_me: true,
+    },
+    slots: {
+      rememberMe: (
+        <>
+          <Checkbox id="remember" />
           <Label htmlFor="remember" className="text-sm cursor-pointer">
             Remember me
           </Label>
-        </>),
-        },
+        </>
+      ),
     },
+  },
 };
 /**
  * With social login options
  */
 export const WithSocialLogin = {
-    args: {
-        options: {
-            social_login: true,
-        },
-        slots: {
-            socialLogin: (<>
+  args: {
+    options: {
+      social_login: true,
+    },
+    slots: {
+      socialLogin: (
+        <>
           <Button variant="outline" className="w-full">
             <span className="mr-2">🔍</span>
             Google
@@ -89,38 +96,46 @@ export const WithSocialLogin = {
             <span className="mr-2">📘</span>
             GitHub
           </Button>
-        </>),
-        },
+        </>
+      ),
     },
+  },
 };
 /**
  * Complete login form with all features
  */
 export const Complete = {
-    args: {
-        texts: {
-            title: 'Welcome Back',
-            subtitle: 'Sign in to continue to Tekton',
-            button_label: 'Sign In',
-        },
-        options: {
-            remember_me: true,
-            social_login: true,
-        },
-        slots: {
-            logo: (<div className="flex justify-center mb-4">
+  args: {
+    texts: {
+      title: 'Welcome Back',
+      subtitle: 'Sign in to continue to Tekton',
+      button_label: 'Sign In',
+    },
+    options: {
+      remember_me: true,
+      social_login: true,
+    },
+    slots: {
+      logo: (
+        <div className="flex justify-center mb-4">
           <div className="text-4xl font-bold text-[var(--tekton-bg-primary)]">T</div>
-        </div>),
-            forgotPassword: (<a href="#" className="text-sm text-[var(--tekton-bg-primary)] hover:underline">
+        </div>
+      ),
+      forgotPassword: (
+        <a href="#" className="text-sm text-[var(--tekton-bg-primary)] hover:underline">
           Forgot?
-        </a>),
-            rememberMe: (<>
-          <Checkbox id="remember-complete"/>
+        </a>
+      ),
+      rememberMe: (
+        <>
+          <Checkbox id="remember-complete" />
           <Label htmlFor="remember-complete" className="text-sm cursor-pointer">
             Keep me signed in
           </Label>
-        </>),
-            socialLogin: (<>
+        </>
+      ),
+      socialLogin: (
+        <>
           <Button variant="outline" className="w-full">
             <span className="mr-2">🔍</span>
             Google
@@ -129,8 +144,10 @@ export const Complete = {
             <span className="mr-2">📘</span>
             GitHub
           </Button>
-        </>),
-            footer: (<div className="text-sm text-center w-full space-y-2">
+        </>
+      ),
+      footer: (
+        <div className="text-sm text-center w-full space-y-2">
           <p className="text-[var(--tekton-bg-muted-foreground)]">
             Don&apos;t have an account?{' '}
             <a href="#" className="text-[var(--tekton-bg-primary)] hover:underline">
@@ -147,8 +164,9 @@ export const Complete = {
               Privacy Policy
             </a>
           </p>
-        </div>),
-        },
+        </div>
+      ),
     },
+  },
 };
 //# sourceMappingURL=login.stories.js.map

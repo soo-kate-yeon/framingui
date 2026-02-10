@@ -16,7 +16,14 @@
  * WHY: 비밀번호 재설정 템플릿이 계정 복구 UX를 보장
  * IMPACT: 템플릿 오류 시 사용자 계정 복구 불가
  */
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from '../../components/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '../../components/card';
 import { Button } from '../../components/button';
 import { Input } from '../../components/input';
 import { Label } from '../../components/label';
@@ -24,11 +31,19 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Forgot Password Template Component
  */
-export function ForgotPasswordTemplateComponent({ children, className = '', slots = {}, texts = {}, }) {
-    const title = texts.title || 'Forgot Password?';
-    const subtitle = texts.subtitle || "Enter your email address and we'll send you a reset link";
-    const buttonLabel = texts.button_label || 'Send Reset Link';
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function ForgotPasswordTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+}) {
+  const title = texts.title || 'Forgot Password?';
+  const subtitle = texts.subtitle || "Enter your email address and we'll send you a reset link";
+  const buttonLabel = texts.button_label || 'Send Reset Link';
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <Card className="w-full max-w-md">
         <CardHeader>
           {slots.logo && <div className="mb-[var(--tekton-spacing-4)]">{slots.logo}</div>}
@@ -40,7 +55,7 @@ export function ForgotPasswordTemplateComponent({ children, className = '', slot
           {/* Email Input */}
           <div className="space-y-[var(--tekton-spacing-2)]">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="Enter your email"/>
+            <Input id="email" type="email" placeholder="Enter your email" />
           </div>
 
           {/* Send Reset Link Button */}
@@ -48,52 +63,55 @@ export function ForgotPasswordTemplateComponent({ children, className = '', slot
         </CardContent>
 
         <CardFooter>
-          {slots.footer || (<p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
+          {slots.footer || (
+            <p className="text-sm text-center w-full text-[var(--tekton-text-muted-foreground)]">
               Remember your password?{' '}
               <a href="#" className="text-[var(--tekton-text-primary)] hover:underline">
                 Back to login
               </a>
-            </p>)}
+            </p>
+          )}
         </CardFooter>
       </Card>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Forgot Password Template Definition
  */
 export const ForgotPasswordTemplate = {
-    id: 'auth.forgot-password',
-    name: 'Forgot Password',
-    category: 'auth',
-    description: 'Password reset screen with email input',
-    skeleton: {
-        shell: 'centered-card',
-        page: 'auth-page',
-        sections: [
-            {
-                id: 'forgot-password-form',
-                name: 'Forgot Password Form',
-                slot: 'main',
-                required: true,
-                Component: ForgotPasswordTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'subtitle', 'button_label'],
-        optional: [],
-        slots: ['logo', 'footer'],
-    },
-    requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label'],
-    Component: ForgotPasswordTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['auth', 'password', 'reset', 'forgot'],
+  id: 'auth.forgot-password',
+  name: 'Forgot Password',
+  category: 'auth',
+  description: 'Password reset screen with email input',
+  skeleton: {
+    shell: 'centered-card',
+    page: 'auth-page',
+    sections: [
+      {
+        id: 'forgot-password-form',
+        name: 'Forgot Password Form',
+        slot: 'main',
+        required: true,
+        Component: ForgotPasswordTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'subtitle', 'button_label'],
+    optional: [],
+    slots: ['logo', 'footer'],
+  },
+  requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label'],
+  Component: ForgotPasswordTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['auth', 'password', 'reset', 'forgot'],
 };
 //# sourceMappingURL=forgot-password.js.map

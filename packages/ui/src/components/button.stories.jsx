@@ -6,132 +6,133 @@
  */
 import { Button } from './button';
 const meta = {
-    title: 'Components/Button',
-    component: Button,
-    parameters: {
-        layout: 'centered',
+  title: 'Components/Button',
+  component: Button,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'],
+      description: 'Button visual style variant',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        variant: {
-            control: 'select',
-            options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'],
-            description: 'Button visual style variant',
-        },
-        size: {
-            control: 'select',
-            options: ['default', 'sm', 'lg', 'icon'],
-            description: 'Button size variant',
-        },
-        asChild: {
-            control: 'boolean',
-            description: 'Render as child component using Radix Slot',
-        },
-        disabled: {
-            control: 'boolean',
-            description: 'Disable button interaction',
-        },
+    size: {
+      control: 'select',
+      options: ['default', 'sm', 'lg', 'icon'],
+      description: 'Button size variant',
     },
+    asChild: {
+      control: 'boolean',
+      description: 'Render as child component using Radix Slot',
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'Disable button interaction',
+    },
+  },
 };
 export default meta;
 /**
  * Default button with primary styling
  */
 export const Default = {
-    args: {
-        children: 'Button',
-    },
+  args: {
+    children: 'Button',
+  },
 };
 /**
  * Destructive variant for dangerous actions
  * Accessibility: Uses semantic color for destructive actions
  */
 export const Destructive = {
-    args: {
-        variant: 'destructive',
-        children: 'Delete',
-    },
+  args: {
+    variant: 'destructive',
+    children: 'Delete',
+  },
 };
 /**
  * Outline variant with border styling
  */
 export const Outline = {
-    args: {
-        variant: 'outline',
-        children: 'Outline',
-    },
+  args: {
+    variant: 'outline',
+    children: 'Outline',
+  },
 };
 /**
  * Secondary variant for less prominent actions
  */
 export const Secondary = {
-    args: {
-        variant: 'secondary',
-        children: 'Secondary',
-    },
+  args: {
+    variant: 'secondary',
+    children: 'Secondary',
+  },
 };
 /**
  * Ghost variant with minimal styling
  */
 export const Ghost = {
-    args: {
-        variant: 'ghost',
-        children: 'Ghost',
-    },
+  args: {
+    variant: 'ghost',
+    children: 'Ghost',
+  },
 };
 /**
  * Link variant styled as a link
  */
 export const Link = {
-    args: {
-        variant: 'link',
-        children: 'Link',
-    },
+  args: {
+    variant: 'link',
+    children: 'Link',
+  },
 };
 /**
  * Small size variant
  */
 export const Small = {
-    args: {
-        size: 'sm',
-        children: 'Small',
-    },
+  args: {
+    size: 'sm',
+    children: 'Small',
+  },
 };
 /**
  * Large size variant
  */
 export const Large = {
-    args: {
-        size: 'lg',
-        children: 'Large',
-    },
+  args: {
+    size: 'lg',
+    children: 'Large',
+  },
 };
 /**
  * Icon-only button
  * Accessibility: Should include aria-label when used
  */
 export const Icon = {
-    args: {
-        size: 'icon',
-        children: '🔍',
-        'aria-label': 'Search',
-    },
+  args: {
+    size: 'icon',
+    children: '🔍',
+    'aria-label': 'Search',
+  },
 };
 /**
  * Disabled state
  * Accessibility: Disabled buttons are not keyboard accessible
  */
 export const Disabled = {
-    args: {
-        disabled: true,
-        children: 'Disabled',
-    },
+  args: {
+    disabled: true,
+    children: 'Disabled',
+  },
 };
 /**
  * Interactive example with all variants
  */
 export const AllVariants = {
-    render: () => (<div className="flex flex-col gap-4">
+  render: () => (
+    <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         <Button variant="default">Default</Button>
         <Button variant="destructive">Destructive</Button>
@@ -148,22 +149,26 @@ export const AllVariants = {
           🔍
         </Button>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Loading state example
  */
 export const Loading = {
-    render: () => (<Button disabled>
+  render: () => (
+    <Button disabled>
       <span className="mr-2">⏳</span>
       Loading...
-    </Button>),
+    </Button>
+  ),
 };
 /**
  * With icon example
  */
 export const WithIcon = {
-    render: () => (<div className="flex gap-2">
+  render: () => (
+    <div className="flex gap-2">
       <Button>
         <span className="mr-2">📧</span>
         Email
@@ -172,6 +177,7 @@ export const WithIcon = {
         <span className="mr-2">📥</span>
         Download
       </Button>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=button.stories.js.map

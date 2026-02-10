@@ -9,12 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/card'
 import { Button } from '../../components/button';
 import { Badge } from '../../components/badge';
 const meta = {
-    title: 'Templates/Dashboard/Overview',
-    component: DashboardTemplateComponent,
-    parameters: {
-        layout: 'fullscreen',
-    },
-    tags: ['autodocs'],
+  title: 'Templates/Dashboard/Overview',
+  component: DashboardTemplateComponent,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -22,15 +22,16 @@ export default meta;
  * Accessibility: Semantic HTML structure with proper landmarks
  */
 export const Default = {
-    args: {},
+  args: {},
 };
 /**
  * With sidebar navigation
  */
 export const WithSidebar = {
-    args: {
-        slots: {
-            sidebar: (<div className="p-4 space-y-4">
+  args: {
+    slots: {
+      sidebar: (
+        <div className="p-4 space-y-4">
           <div className="font-bold text-lg mb-4">Tekton</div>
           <nav className="space-y-2">
             <a href="#" className="block px-3 py-2 rounded hover:bg-[var(--tekton-bg-accent)]">
@@ -46,17 +47,19 @@ export const WithSidebar = {
               Settings
             </a>
           </nav>
-        </div>),
-        },
+        </div>
+      ),
     },
+  },
 };
 /**
  * With metric cards
  */
 export const WithMetrics = {
-    args: {
-        slots: {
-            metrics: (<>
+  args: {
+    slots: {
+      metrics: (
+        <>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -105,25 +108,27 @@ export const WithMetrics = {
               </p>
             </CardContent>
           </Card>
-        </>),
-        },
+        </>
+      ),
     },
+  },
 };
 /**
  * Complete dashboard with all features
  */
 export const Complete = {
-    args: {
-        texts: {
-            title: 'Analytics Dashboard',
-            subtitle: 'Your business overview at a glance',
-            primary_title: 'Recent Sales',
-            primary_description: 'Latest transactions and revenue',
-            secondary_title: 'Activity Feed',
-            secondary_description: 'Recent system events',
-        },
-        slots: {
-            sidebar: (<div className="p-4 space-y-4">
+  args: {
+    texts: {
+      title: 'Analytics Dashboard',
+      subtitle: 'Your business overview at a glance',
+      primary_title: 'Recent Sales',
+      primary_description: 'Latest transactions and revenue',
+      secondary_title: 'Activity Feed',
+      secondary_description: 'Recent system events',
+    },
+    slots: {
+      sidebar: (
+        <div className="p-4 space-y-4">
           <div className="font-bold text-lg mb-4">Tekton</div>
           <nav className="space-y-2">
             <a href="#" className="block px-3 py-2 rounded bg-[var(--tekton-bg-accent)]">
@@ -139,12 +144,16 @@ export const Complete = {
               Settings
             </a>
           </nav>
-        </div>),
-            headerActions: (<div className="flex gap-2">
+        </div>
+      ),
+      headerActions: (
+        <div className="flex gap-2">
           <Button variant="outline">Export</Button>
           <Button>Create Report</Button>
-        </div>),
-            metrics: (<>
+        </div>
+      ),
+      metrics: (
+        <>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
@@ -193,11 +202,14 @@ export const Complete = {
               </p>
             </CardContent>
           </Card>
-        </>),
-            primaryContent: (<div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (<div key={i} className="flex items-center justify-between">
+        </>
+      ),
+      primaryContent: (
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-[var(--tekton-bg-muted)]"/>
+                <div className="h-10 w-10 rounded-full bg-[var(--tekton-bg-muted)]" />
                 <div>
                   <p className="font-medium">Customer #{i + 1}</p>
                   <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
@@ -209,18 +221,24 @@ export const Complete = {
                 <p className="font-medium">${(Math.random() * 1000).toFixed(2)}</p>
                 <Badge variant="secondary">Completed</Badge>
               </div>
-            </div>))}
-        </div>),
-            secondaryContent: (<div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (<div key={i} className="flex gap-3">
-              <div className="mt-1 h-2 w-2 rounded-full bg-[var(--tekton-bg-primary)]"/>
+            </div>
+          ))}
+        </div>
+      ),
+      secondaryContent: (
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex gap-3">
+              <div className="mt-1 h-2 w-2 rounded-full bg-[var(--tekton-bg-primary)]" />
               <div className="flex-1">
                 <p className="text-sm font-medium">Activity {i + 1}</p>
                 <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">{i} minutes ago</p>
               </div>
-            </div>))}
-        </div>),
-        },
+            </div>
+          ))}
+        </div>
+      ),
     },
+  },
 };
 //# sourceMappingURL=overview.stories.js.map

@@ -10,12 +10,12 @@ import { Button } from './button';
 import { Input } from './input';
 import { Label } from './label';
 const meta = {
-    title: 'Components/Tabs',
-    component: Tabs,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Tabs',
+  component: Tabs,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -23,7 +23,8 @@ export default meta;
  * Accessibility: Keyboard navigable with arrow keys
  */
 export const Default = {
-    render: () => (<Tabs defaultValue="account" className="w-[400px]">
+  render: () => (
+    <Tabs defaultValue="account" className="w-[400px]">
       <TabsList>
         <TabsTrigger value="account">Account</TabsTrigger>
         <TabsTrigger value="password">Password</TabsTrigger>
@@ -38,13 +39,15 @@ export const Default = {
           Change your password here.
         </p>
       </TabsContent>
-    </Tabs>),
+    </Tabs>
+  ),
 };
 /**
  * With cards
  */
 export const WithCards = {
-    render: () => (<Tabs defaultValue="account" className="w-[400px]">
+  render: () => (
+    <Tabs defaultValue="account" className="w-[400px]">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="account">Account</TabsTrigger>
         <TabsTrigger value="password">Password</TabsTrigger>
@@ -58,11 +61,11 @@ export const WithCards = {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" defaultValue="Pedro Duarte"/>
+              <Input id="name" defaultValue="Pedro Duarte" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" defaultValue="@peduarte"/>
+              <Input id="username" defaultValue="@peduarte" />
             </div>
           </CardContent>
           <CardFooter>
@@ -79,11 +82,11 @@ export const WithCards = {
           <CardContent className="space-y-2">
             <div className="space-y-1">
               <Label htmlFor="current">Current password</Label>
-              <Input id="current" type="password"/>
+              <Input id="current" type="password" />
             </div>
             <div className="space-y-1">
               <Label htmlFor="new">New password</Label>
-              <Input id="new" type="password"/>
+              <Input id="new" type="password" />
             </div>
           </CardContent>
           <CardFooter>
@@ -91,13 +94,15 @@ export const WithCards = {
           </CardFooter>
         </Card>
       </TabsContent>
-    </Tabs>),
+    </Tabs>
+  ),
 };
 /**
  * Multiple tabs
  */
 export const Multiple = {
-    render: () => (<Tabs defaultValue="overview" className="w-[500px]">
+  render: () => (
+    <Tabs defaultValue="overview" className="w-[500px]">
       <TabsList>
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -128,6 +133,7 @@ export const Multiple = {
           Manage your notification preferences.
         </p>
       </TabsContent>
-    </Tabs>),
+    </Tabs>
+  ),
 };
 //# sourceMappingURL=tabs.stories.js.map

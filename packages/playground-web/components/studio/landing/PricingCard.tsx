@@ -41,16 +41,12 @@ export function PricingCard({
       )}
     >
       {/* Tier Name */}
-      <h3 className="text-xl font-bold uppercase tracking-wider text-neutral-900 mb-2">
-        {tier}
-      </h3>
+      <h3 className="text-xl font-bold uppercase tracking-wider text-neutral-900 mb-2">{tier}</h3>
 
       {/* Price */}
       <div className="mb-6">
         <span className="text-4xl font-bold text-neutral-900">${price}</span>
-        {tier === 'Creator Pass' && (
-          <span className="text-neutral-600">/year</span>
-        )}
+        {tier === 'Creator Pass' && <span className="text-neutral-600">/year</span>}
       </div>
 
       {/* Features */}

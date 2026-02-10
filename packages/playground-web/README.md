@@ -81,6 +81,7 @@ npx supabase migration up
 ```
 
 다음 항목이 생성됩니다:
+
 - `user_licenses` 테이블 - 사용자 템플릿 라이선스
 - `free_screen_templates` 테이블 - 무료 템플릿
 - Row Level Security 정책

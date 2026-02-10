@@ -21,9 +21,7 @@ export function McpGuideSectionI18n() {
         </h2>
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-              {t('installation')}
-            </h3>
+            <h3 className="text-xl font-semibold text-neutral-900 mb-3">{t('installation')}</h3>
             <CodeBlockI18n
               code="npx @claude/mcp-client install @studio/templates"
               language="bash"
@@ -31,9 +29,7 @@ export function McpGuideSectionI18n() {
           </div>
           <div>
             <h3 className="text-xl font-semibold text-neutral-900 mb-3">{t('usage')}</h3>
-            <p className="text-neutral-600 leading-relaxed">
-              {t('usageDescription')}
-            </p>
+            <p className="text-neutral-600 leading-relaxed">{t('usageDescription')}</p>
           </div>
         </div>
       </div>

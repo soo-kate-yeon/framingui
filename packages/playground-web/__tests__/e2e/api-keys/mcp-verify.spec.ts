@@ -50,10 +50,7 @@ test.describe('MCP Verify Endpoint E2E', () => {
 
   test('should verify valid API key and return user info', async () => {
     // 1. 테스트용 API Key 생성
-    const { id: apiKeyId, key: apiKey } = await createTestApiKey(
-      userId,
-      'MCP Verify Test Key'
-    );
+    const { id: apiKeyId, key: apiKey } = await createTestApiKey(userId, 'MCP Verify Test Key');
 
     try {
       // 2. /api/mcp/verify 호출
@@ -194,10 +191,7 @@ test.describe('MCP Verify Endpoint E2E', () => {
 
   test('should return 401 for revoked API key', async () => {
     // 1. 테스트용 API Key 생성
-    const { id: apiKeyId, key: apiKey } = await createTestApiKey(
-      userId,
-      'Revoked Key Test'
-    );
+    const { id: apiKeyId, key: apiKey } = await createTestApiKey(userId, 'Revoked Key Test');
 
     try {
       // 2. API Key를 revoke (soft delete)
@@ -285,10 +279,7 @@ test.describe('MCP Verify Endpoint E2E', () => {
 
   test('should include Rate-Limit headers in response', async () => {
     // 1. 테스트용 API Key 생성
-    const { id: apiKeyId, key: apiKey } = await createTestApiKey(
-      userId,
-      'Rate Limit Test Key'
-    );
+    const { id: apiKeyId, key: apiKey } = await createTestApiKey(userId, 'Rate Limit Test Key');
 
     try {
       // 2. /api/mcp/verify 호출

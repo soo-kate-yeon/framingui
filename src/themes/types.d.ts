@@ -16,13 +16,13 @@ export declare const StackSchema: z.ZodObject<{
     styling: z.ZodLiteral<"tailwindcss">;
     components: z.ZodLiteral<"shadcn-ui">;
 }, "strip", z.ZodTypeAny, {
-    framework: "nextjs" | "vite" | "remix";
-    styling: "tailwindcss";
     components: "shadcn-ui";
+    styling: "tailwindcss";
+    framework: "nextjs" | "vite" | "remix";
 }, {
-    framework: "nextjs" | "vite" | "remix";
-    styling: "tailwindcss";
     components: "shadcn-ui";
+    styling: "tailwindcss";
+    framework: "nextjs" | "vite" | "remix";
 }>;
 /**
  * Theme metadata schema
@@ -87,13 +87,13 @@ export declare const ThemeSchema: z.ZodObject<{
         styling: z.ZodLiteral<"tailwindcss">;
         components: z.ZodLiteral<"shadcn-ui">;
     }, "strip", z.ZodTypeAny, {
-        framework: "nextjs" | "vite" | "remix";
-        styling: "tailwindcss";
         components: "shadcn-ui";
+        styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     }, {
-        framework: "nextjs" | "vite" | "remix";
-        styling: "tailwindcss";
         components: "shadcn-ui";
+        styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     }>;
     questionnaire: z.ZodObject<{
         brandTone: z.ZodEnum<["professional", "playful", "elegant", "bold", "minimal"]>;
@@ -156,12 +156,12 @@ export declare const ThemeSchema: z.ZodObject<{
 }, "strip", z.ZodTypeAny, {
     id: string;
     name: string;
-    version: string;
     description: string;
+    version: string;
     stack: {
-        framework: "nextjs" | "vite" | "remix";
-        styling: "tailwindcss";
         components: "shadcn-ui";
+        styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     };
     questionnaire: {
         brandTone: "professional" | "playful" | "elegant" | "bold" | "minimal";
@@ -184,12 +184,12 @@ export declare const ThemeSchema: z.ZodObject<{
 }, {
     id: string;
     name: string;
-    version: string;
     description: string;
+    version: string;
     stack: {
-        framework: "nextjs" | "vite" | "remix";
-        styling: "tailwindcss";
         components: "shadcn-ui";
+        styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     };
     questionnaire: {
         brandTone: "professional" | "playful" | "elegant" | "bold" | "minimal";

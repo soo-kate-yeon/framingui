@@ -4,21 +4,29 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis, } from './breadcrumb';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+} from './breadcrumb';
 const meta = {
-    title: 'Components/Breadcrumb',
-    component: Breadcrumb,
-    parameters: {
-        layout: 'centered',
+  title: 'Components/Breadcrumb',
+  component: Breadcrumb,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'default', 'lg'],
+      description: 'Breadcrumb text size',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        size: {
-            control: 'select',
-            options: ['sm', 'default', 'lg'],
-            description: 'Breadcrumb text size',
-        },
-    },
+  },
 };
 export default meta;
 /**
@@ -26,7 +34,8 @@ export default meta;
  * Accessibility: Uses semantic HTML nav and ol elements
  */
 export const Default = {
-    render: () => (<Breadcrumb>
+  render: () => (
+    <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -40,13 +49,15 @@ export const Default = {
           <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
-    </Breadcrumb>),
+    </Breadcrumb>
+  ),
 };
 /**
  * Simple path navigation
  */
 export const SimplePath = {
-    render: () => (<Breadcrumb>
+  render: () => (
+    <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -56,14 +67,16 @@ export const SimplePath = {
           <BreadcrumbPage>Current Page</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
-    </Breadcrumb>),
+    </Breadcrumb>
+  ),
 };
 /**
  * Long path with ellipsis for truncation
  * Accessibility: Ellipsis has sr-only text for screen readers
  */
 export const WithEllipsis = {
-    render: () => (<Breadcrumb>
+  render: () => (
+    <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -81,13 +94,15 @@ export const WithEllipsis = {
           <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
-    </Breadcrumb>),
+    </Breadcrumb>
+  ),
 };
 /**
  * Custom separator example
  */
 export const CustomSeparator = {
-    render: () => (<Breadcrumb>
+  render: () => (
+    <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -101,13 +116,15 @@ export const CustomSeparator = {
           <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
-    </Breadcrumb>),
+    </Breadcrumb>
+  ),
 };
 /**
  * Different separator styles
  */
 export const DifferentSeparators = {
-    render: () => (<div className="space-y-4">
+  render: () => (
+    <div className="space-y-4">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -143,13 +160,15 @@ export const DifferentSeparators = {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Different sizes
  */
 export const Sizes = {
-    render: () => (<div className="space-y-4">
+  render: () => (
+    <div className="space-y-4">
       <Breadcrumb size="sm">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -185,13 +204,15 @@ export const Sizes = {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Deep navigation example
  */
 export const DeepNavigation = {
-    render: () => (<Breadcrumb>
+  render: () => (
+    <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -213,23 +234,25 @@ export const DeepNavigation = {
           <BreadcrumbPage>MacBook Pro</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
-    </Breadcrumb>),
+    </Breadcrumb>
+  ),
 };
 /**
  * Responsive breadcrumb with truncation on mobile
  */
 export const Responsive = {
-    render: () => (<div className="max-w-md">
+  render: () => (
+    <div className="max-w-md">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
             <BreadcrumbLink href="/">Home</BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator className="hidden md:block"/>
+          <BreadcrumbSeparator className="hidden md:block" />
           <BreadcrumbItem className="hidden md:block">
             <BreadcrumbEllipsis />
           </BreadcrumbItem>
-          <BreadcrumbSeparator className="hidden md:block"/>
+          <BreadcrumbSeparator className="hidden md:block" />
           <BreadcrumbItem>
             <BreadcrumbLink href="/components">Components</BreadcrumbLink>
           </BreadcrumbItem>
@@ -239,6 +262,7 @@ export const Responsive = {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=breadcrumb.stories.js.map

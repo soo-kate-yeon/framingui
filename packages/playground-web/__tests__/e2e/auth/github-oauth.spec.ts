@@ -75,9 +75,7 @@ test.describe('GitHub OAuth Login E2E', () => {
     await page.goto('/auth/login');
 
     // 2. "GitHub로 로그인" 버튼 확인
-    const githubButton = page.locator(
-      'button:has-text("GitHub"), button:has-text("깃허브")'
-    );
+    const githubButton = page.locator('button:has-text("GitHub"), button:has-text("깃허브")');
 
     await expect(githubButton.first()).toBeVisible({ timeout: TIMEOUTS.PAGE_LOAD });
 
@@ -119,9 +117,7 @@ test.describe('GitHub OAuth Login E2E', () => {
       'button:has-text("Logout"), button:has-text("로그아웃"), button:has-text("Sign out")'
     );
 
-    const isLogoutVisible = await logoutButton
-      .isVisible({ timeout: 5000 })
-      .catch(() => false);
+    const isLogoutVisible = await logoutButton.isVisible({ timeout: 5000 }).catch(() => false);
 
     if (isLogoutVisible) {
       console.log('[E2E] Logout button is visible');
@@ -141,8 +137,7 @@ test.describe('GitHub OAuth Login E2E', () => {
       await page.waitForTimeout(2000);
 
       const afterLogoutUrl = page.url();
-      const isRedirectedToLogin =
-        afterLogoutUrl.includes('/auth/login') || afterLogoutUrl === '/';
+      const isRedirectedToLogin = afterLogoutUrl.includes('/auth/login') || afterLogoutUrl === '/';
 
       expect(isRedirectedToLogin).toBe(true);
 

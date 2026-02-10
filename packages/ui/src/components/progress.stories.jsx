@@ -8,18 +8,18 @@ import * as React from 'react';
 import { Progress } from './progress';
 import { Button } from './button';
 const meta = {
-    title: 'Components/Progress',
-    component: Progress,
-    parameters: {
-        layout: 'centered',
+  title: 'Components/Progress',
+  component: Progress,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    value: {
+      control: { type: 'range', min: 0, max: 100, step: 1 },
+      description: 'Progress value (0-100)',
     },
-    tags: ['autodocs'],
-    argTypes: {
-        value: {
-            control: { type: 'range', min: 0, max: 100, step: 1 },
-            description: 'Progress value (0-100)',
-        },
-    },
+  },
 };
 export default meta;
 /**
@@ -27,114 +27,122 @@ export default meta;
  * Accessibility: Includes proper ARIA attributes for screen readers
  */
 export const Default = {
-    args: {
-        value: 33,
-        className: 'w-[60%]',
-    },
+  args: {
+    value: 33,
+    className: 'w-[60%]',
+  },
 };
 /**
  * Different values
  */
 export const Values = {
-    render: () => (<div className="w-[400px] space-y-4">
+  render: () => (
+    <div className="w-[400px] space-y-4">
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
           <span>Progress</span>
           <span>25%</span>
         </div>
-        <Progress value={25}/>
+        <Progress value={25} />
       </div>
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
           <span>Progress</span>
           <span>50%</span>
         </div>
-        <Progress value={50}/>
+        <Progress value={50} />
       </div>
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
           <span>Progress</span>
           <span>75%</span>
         </div>
-        <Progress value={75}/>
+        <Progress value={75} />
       </div>
       <div className="space-y-2">
         <div className="flex justify-between text-sm">
           <span>Progress</span>
           <span>100%</span>
         </div>
-        <Progress value={100}/>
+        <Progress value={100} />
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Animated progress
  */
 export const Animated = {
-    render: () => {
-        const [progress, setProgress] = React.useState(0);
-        React.useEffect(() => {
-            const timer = setTimeout(() => setProgress(66), 500);
-            return () => clearTimeout(timer);
-        }, []);
-        return (<div className="w-[400px] space-y-4">
-        <Progress value={progress}/>
+  render: () => {
+    const [progress, setProgress] = React.useState(0);
+    React.useEffect(() => {
+      const timer = setTimeout(() => setProgress(66), 500);
+      return () => clearTimeout(timer);
+    }, []);
+    return (
+      <div className="w-[400px] space-y-4">
+        <Progress value={progress} />
         <Button onClick={() => setProgress(0)}>Reset</Button>
-      </div>);
-    },
+      </div>
+    );
+  },
 };
 /**
  * File upload progress
  */
 export const FileUpload = {
-    render: () => {
-        const [uploading, setUploading] = React.useState(false);
-        const [progress, setProgress] = React.useState(0);
-        const startUpload = () => {
-            setUploading(true);
-            setProgress(0);
-            const interval = setInterval(() => {
-                setProgress(prev => {
-                    if (prev >= 100) {
-                        clearInterval(interval);
-                        setUploading(false);
-                        return 100;
-                    }
-                    return prev + 10;
-                });
-            }, 500);
-        };
-        return (<div className="w-[400px] space-y-4">
+  render: () => {
+    const [uploading, setUploading] = React.useState(false);
+    const [progress, setProgress] = React.useState(0);
+    const startUpload = () => {
+      setUploading(true);
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setUploading(false);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 500);
+    };
+    return (
+      <div className="w-[400px] space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Uploading document.pdf</span>
             <span>{progress}%</span>
           </div>
-          <Progress value={progress}/>
+          <Progress value={progress} />
         </div>
         <Button onClick={startUpload} disabled={uploading}>
           {uploading ? 'Uploading...' : 'Start Upload'}
         </Button>
-      </div>);
-    },
+      </div>
+    );
+  },
 };
 /**
  * Different sizes
  */
 export const Sizes = {
-    render: () => (<div className="w-[400px] space-y-4">
+  render: () => (
+    <div className="w-[400px] space-y-4">
       <div className="space-y-2">
         <p className="text-sm">Small</p>
-        <Progress value={60} className="h-2"/>
+        <Progress value={60} className="h-2" />
       </div>
       <div className="space-y-2">
         <p className="text-sm">Default</p>
-        <Progress value={60}/>
+        <Progress value={60} />
       </div>
       <div className="space-y-2">
         <p className="text-sm">Large</p>
-        <Progress value={60} className="h-6"/>
+        <Progress value={60} className="h-6" />
       </div>
-    </div>),
+    </div>
+  ),
 };
 //# sourceMappingURL=progress.stories.js.map

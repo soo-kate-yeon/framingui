@@ -7,12 +7,12 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
 import { Button } from './button';
 const meta = {
-    title: 'Components/Tooltip',
-    component: Tooltip,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/Tooltip',
+  component: Tooltip,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -20,7 +20,8 @@ export default meta;
  * Accessibility: Provides additional context for screen readers
  */
 export const Default = {
-    render: () => (<TooltipProvider>
+  render: () => (
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="outline">Hover me</Button>
@@ -29,13 +30,15 @@ export const Default = {
           <p>Add to library</p>
         </TooltipContent>
       </Tooltip>
-    </TooltipProvider>),
+    </TooltipProvider>
+  ),
 };
 /**
  * Different positions
  */
 export const Positions = {
-    render: () => (<TooltipProvider>
+  render: () => (
+    <TooltipProvider>
       <div className="flex gap-4">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -73,13 +76,15 @@ export const Positions = {
           </TooltipContent>
         </Tooltip>
       </div>
-    </TooltipProvider>),
+    </TooltipProvider>
+  ),
 };
 /**
  * With rich content
  */
 export const RichContent = {
-    render: () => (<TooltipProvider>
+  render: () => (
+    <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <Button variant="outline">More Info</Button>
@@ -93,13 +98,15 @@ export const RichContent = {
           </div>
         </TooltipContent>
       </Tooltip>
-    </TooltipProvider>),
+    </TooltipProvider>
+  ),
 };
 /**
  * Icon button with tooltip
  */
 export const IconButton = {
-    render: () => (<TooltipProvider>
+  render: () => (
+    <TooltipProvider>
       <div className="flex gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
@@ -134,6 +141,7 @@ export const IconButton = {
           </TooltipContent>
         </Tooltip>
       </div>
-    </TooltipProvider>),
+    </TooltipProvider>
+  ),
 };
 //# sourceMappingURL=tooltip.stories.js.map

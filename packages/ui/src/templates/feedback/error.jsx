@@ -21,21 +21,43 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Error Template Component
  */
-export function ErrorTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'Something Went Wrong';
-    const message = texts.message || 'An error occurred. Please try again.';
-    const retryLabel = texts.retry_label || 'Try Again';
-    const showRetry = options.show_retry ?? true;
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function ErrorTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'Something Went Wrong';
+  const message = texts.message || 'An error occurred. Please try again.';
+  const retryLabel = texts.retry_label || 'Try Again';
+  const showRetry = options.show_retry ?? true;
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <div className="max-w-md text-center space-y-[var(--tekton-spacing-6)]">
         {/* Error Icon */}
-        {slots.icon || (<div className="flex justify-center">
+        {slots.icon || (
+          <div className="flex justify-center">
             <div className="rounded-full bg-[var(--tekton-bg-destructive)] bg-opacity-10 p-[var(--tekton-spacing-4)]">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[var(--tekton-text-destructive)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-[var(--tekton-text-destructive)]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
             </div>
-          </div>)}
+          </div>
+        )}
 
         {/* Error Message */}
         <div className="space-y-[var(--tekton-spacing-2)]">
@@ -44,9 +66,11 @@ export function ErrorTemplateComponent({ children, className = '', slots = {}, t
         </div>
 
         {/* Error Details */}
-        {slots.errorDetails && (<div className="text-left bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-4)] rounded-[var(--tekton-radius-md)] text-sm">
+        {slots.errorDetails && (
+          <div className="text-left bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-4)] rounded-[var(--tekton-radius-md)] text-sm">
             {slots.errorDetails}
-          </div>)}
+          </div>
+        )}
 
         {/* Actions */}
         <div className="flex flex-col gap-[var(--tekton-spacing-3)]">
@@ -55,43 +79,44 @@ export function ErrorTemplateComponent({ children, className = '', slots = {}, t
         </div>
       </div>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Error Template Definition
  */
 export const ErrorTemplate = {
-    id: 'feedback.error',
-    name: 'Error',
-    category: 'feedback',
-    description: 'Error state screen with message and retry option',
-    skeleton: {
-        shell: 'centered',
-        page: 'feedback-page',
-        sections: [
-            {
-                id: 'error-message',
-                name: 'Error Message',
-                slot: 'main',
-                required: true,
-                Component: ErrorTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'message', 'retry_label'],
-        optional: ['show_retry'],
-        slots: ['icon', 'errorDetails', 'additionalActions'],
-    },
-    requiredComponents: ['Button'],
-    Component: ErrorTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['feedback', 'error', 'failure', 'state'],
+  id: 'feedback.error',
+  name: 'Error',
+  category: 'feedback',
+  description: 'Error state screen with message and retry option',
+  skeleton: {
+    shell: 'centered',
+    page: 'feedback-page',
+    sections: [
+      {
+        id: 'error-message',
+        name: 'Error Message',
+        slot: 'main',
+        required: true,
+        Component: ErrorTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'message', 'retry_label'],
+    optional: ['show_retry'],
+    slots: ['icon', 'errorDetails', 'additionalActions'],
+  },
+  requiredComponents: ['Button'],
+  Component: ErrorTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['feedback', 'error', 'failure', 'state'],
 };
 //# sourceMappingURL=error.js.map

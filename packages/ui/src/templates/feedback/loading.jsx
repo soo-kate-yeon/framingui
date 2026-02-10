@@ -19,55 +19,69 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Loading Template Component
  */
-export function LoadingTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const message = texts.message || 'Loading...';
-    const showMessage = options.show_message ?? true;
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function LoadingTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const message = texts.message || 'Loading...';
+  const showMessage = options.show_message ?? true;
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <div className="flex flex-col items-center gap-[var(--tekton-spacing-4)]">
         {/* Loading Spinner */}
-        {slots.spinner || (<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--tekton-border-primary)]"/>)}
+        {slots.spinner || (
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--tekton-border-primary)]" />
+        )}
 
         {/* Loading Message */}
-        {showMessage && (<p className="text-sm text-[var(--tekton-text-muted-foreground)]">{message}</p>)}
+        {showMessage && (
+          <p className="text-sm text-[var(--tekton-text-muted-foreground)]">{message}</p>
+        )}
       </div>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Loading Template Definition
  */
 export const LoadingTemplate = {
-    id: 'feedback.loading',
-    name: 'Loading',
-    category: 'feedback',
-    description: 'Loading state screen with spinner and optional message',
-    skeleton: {
-        shell: 'centered',
-        page: 'feedback-page',
-        sections: [
-            {
-                id: 'loading-indicator',
-                name: 'Loading Indicator',
-                slot: 'main',
-                required: true,
-                Component: LoadingTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['message'],
-        optional: ['show_message'],
-        slots: ['spinner'],
-    },
-    requiredComponents: [],
-    Component: LoadingTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['feedback', 'loading', 'spinner', 'state'],
+  id: 'feedback.loading',
+  name: 'Loading',
+  category: 'feedback',
+  description: 'Loading state screen with spinner and optional message',
+  skeleton: {
+    shell: 'centered',
+    page: 'feedback-page',
+    sections: [
+      {
+        id: 'loading-indicator',
+        name: 'Loading Indicator',
+        slot: 'main',
+        required: true,
+        Component: LoadingTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['message'],
+    optional: ['show_message'],
+    slots: ['spinner'],
+  },
+  requiredComponents: [],
+  Component: LoadingTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['feedback', 'loading', 'spinner', 'state'],
 };
 //# sourceMappingURL=loading.js.map

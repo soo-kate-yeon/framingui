@@ -26,7 +26,7 @@ function openBrowser(url: string): void {
     cmd = `xdg-open "${url}"`;
   }
 
-  exec(cmd, (err) => {
+  exec(cmd, err => {
     if (err) {
       console.error(`\nCould not open browser automatically.`);
       console.error(`Please open this URL manually:\n  ${url}\n`);
@@ -60,14 +60,18 @@ export async function loginCommand(): Promise<void> {
       // CSRF state 검증
       if (returnedState !== state) {
         res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end('<html><body><h1>Authentication failed</h1><p>Invalid state parameter. Please try again.</p></body></html>');
+        res.end(
+          '<html><body><h1>Authentication failed</h1><p>Invalid state parameter. Please try again.</p></body></html>'
+        );
         cleanup('State mismatch. Authentication aborted.');
         return;
       }
 
       if (!key || !email) {
         res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end('<html><body><h1>Authentication failed</h1><p>Missing credentials. Please try again.</p></body></html>');
+        res.end(
+          '<html><body><h1>Authentication failed</h1><p>Missing credentials. Please try again.</p></body></html>'
+        );
         cleanup('Missing key or email in callback.');
         return;
       }
@@ -84,9 +88,9 @@ export async function loginCommand(): Promise<void> {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         res.end(
           '<html><body style="font-family:system-ui;text-align:center;padding:60px">' +
-          '<h1>Authentication successful!</h1>' +
-          '<p>You can close this tab and return to the terminal.</p>' +
-          '</body></html>'
+            '<h1>Authentication successful!</h1>' +
+            '<p>You can close this tab and return to the terminal.</p>' +
+            '</body></html>'
         );
 
         console.log(`\nAuthenticated as ${email}`);
@@ -99,6 +103,7 @@ export async function loginCommand(): Promise<void> {
       }
     });
 
+    // eslint-disable-next-line prefer-const
     let timeout: ReturnType<typeof setTimeout>;
 
     function cleanup(errorMsg?: string): void {

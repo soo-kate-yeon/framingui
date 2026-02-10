@@ -21,21 +21,43 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Success Template Component
  */
-export function SuccessTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'Success!';
-    const message = texts.message || 'Your action was completed successfully';
-    const ctaLabel = texts.cta_label || 'Continue';
-    const showCta = options.show_cta ?? true;
-    return (<div className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}>
+export function SuccessTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'Success!';
+  const message = texts.message || 'Your action was completed successfully';
+  const ctaLabel = texts.cta_label || 'Continue';
+  const showCta = options.show_cta ?? true;
+  return (
+    <div
+      className={`min-h-screen flex items-center justify-center p-[var(--tekton-spacing-4)] ${className}`}
+    >
       <div className="max-w-md text-center space-y-[var(--tekton-spacing-6)]">
         {/* Success Icon */}
-        {slots.icon || (<div className="flex justify-center">
+        {slots.icon || (
+          <div className="flex justify-center">
             <div className="rounded-full bg-[var(--tekton-bg-success)] bg-opacity-10 p-[var(--tekton-spacing-4)]">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-[var(--tekton-text-success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-[var(--tekton-text-success)]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
             </div>
-          </div>)}
+          </div>
+        )}
 
         {/* Success Message */}
         <div className="space-y-[var(--tekton-spacing-2)]">
@@ -44,60 +66,67 @@ export function SuccessTemplateComponent({ children, className = '', slots = {},
         </div>
 
         {/* Success Details */}
-        {slots.details && (<div className="text-left bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-4)] rounded-[var(--tekton-radius-md)] text-sm">
+        {slots.details && (
+          <div className="text-left bg-[var(--tekton-bg-muted)] p-[var(--tekton-spacing-4)] rounded-[var(--tekton-radius-md)] text-sm">
             {slots.details}
-          </div>)}
+          </div>
+        )}
 
         {/* CTA Button */}
-        {showCta && (<div>
+        {showCta && (
+          <div>
             <Button className="w-full" size="lg">
               {ctaLabel}
             </Button>
-          </div>)}
+          </div>
+        )}
 
         {/* Additional Actions */}
-        {slots.additionalActions && (<div className="flex flex-col gap-[var(--tekton-spacing-3)]">
+        {slots.additionalActions && (
+          <div className="flex flex-col gap-[var(--tekton-spacing-3)]">
             {slots.additionalActions}
-          </div>)}
+          </div>
+        )}
       </div>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Success Template Definition
  */
 export const SuccessTemplate = {
-    id: 'feedback.success',
-    name: 'Success',
-    category: 'feedback',
-    description: 'Success state screen with confirmation message',
-    skeleton: {
-        shell: 'centered',
-        page: 'feedback-page',
-        sections: [
-            {
-                id: 'success-message',
-                name: 'Success Message',
-                slot: 'main',
-                required: true,
-                Component: SuccessTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'message', 'cta_label'],
-        optional: ['show_cta'],
-        slots: ['icon', 'details', 'additionalActions'],
-    },
-    requiredComponents: ['Button'],
-    Component: SuccessTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['feedback', 'success', 'confirmation', 'state'],
+  id: 'feedback.success',
+  name: 'Success',
+  category: 'feedback',
+  description: 'Success state screen with confirmation message',
+  skeleton: {
+    shell: 'centered',
+    page: 'feedback-page',
+    sections: [
+      {
+        id: 'success-message',
+        name: 'Success Message',
+        slot: 'main',
+        required: true,
+        Component: SuccessTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'message', 'cta_label'],
+    optional: ['show_cta'],
+    slots: ['icon', 'details', 'additionalActions'],
+  },
+  requiredComponents: ['Button'],
+  Component: SuccessTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['feedback', 'success', 'confirmation', 'state'],
 };
 //# sourceMappingURL=success.js.map

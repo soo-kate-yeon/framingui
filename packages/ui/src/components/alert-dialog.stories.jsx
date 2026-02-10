@@ -4,15 +4,25 @@
  * [TAG-Q-004] TRUST 5 Framework 5개 Pillar 준수
  * [TAG-Q-019] Storybook 문서화 및 접근성 테스트
  */
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from './alert-dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './alert-dialog';
 import { Button } from './button';
 const meta = {
-    title: 'Components/AlertDialog',
-    component: AlertDialog,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/AlertDialog',
+  component: AlertDialog,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -20,7 +30,8 @@ export default meta;
  * Accessibility: Modal with proper focus management and keyboard support
  */
 export const Default = {
-    render: () => (<AlertDialog>
+  render: () => (
+    <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="outline">Show Dialog</Button>
       </AlertDialogTrigger>
@@ -37,13 +48,15 @@ export const Default = {
           <AlertDialogAction>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
-    </AlertDialog>),
+    </AlertDialog>
+  ),
 };
 /**
  * Destructive action
  */
 export const Destructive = {
-    render: () => (<AlertDialog>
+  render: () => (
+    <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive">Delete Account</Button>
       </AlertDialogTrigger>
@@ -62,13 +75,15 @@ export const Destructive = {
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
-    </AlertDialog>),
+    </AlertDialog>
+  ),
 };
 /**
  * Confirmation dialog
  */
 export const Confirmation = {
-    render: () => (<AlertDialog>
+  render: () => (
+    <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button>Save Changes</Button>
       </AlertDialogTrigger>
@@ -84,6 +99,7 @@ export const Confirmation = {
           <AlertDialogAction>Save</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
-    </AlertDialog>),
+    </AlertDialog>
+  ),
 };
 //# sourceMappingURL=alert-dialog.stories.js.map

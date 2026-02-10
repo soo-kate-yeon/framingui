@@ -44,10 +44,7 @@ test.describe('API Key List E2E', () => {
 
   test('should display API key list with correct information', async ({ page }) => {
     // 1. 테스트용 API Key 생성 (DB에 직접 삽입)
-    const { id: apiKeyId, prefix } = await createTestApiKey(
-      userId,
-      'Test Key for List Display'
-    );
+    const { id: apiKeyId, prefix } = await createTestApiKey(userId, 'Test Key for List Display');
 
     try {
       // 2. 인증된 세션 설정
@@ -117,10 +114,7 @@ test.describe('API Key List E2E', () => {
 
   test('should display last_used_at when API key is used', async ({ page }) => {
     // 1. 테스트용 API Key 생성
-    const { id: apiKeyId, key: apiKey } = await createTestApiKey(
-      userId,
-      'Test Key for Last Used'
-    );
+    const { id: apiKeyId, key: apiKey } = await createTestApiKey(userId, 'Test Key for Last Used');
 
     try {
       // 2. API Key를 사용하여 /api/mcp/verify 호출
@@ -146,9 +140,7 @@ test.describe('API Key List E2E', () => {
 
       await page.reload(); // 최신 데이터 로드
 
-      const lastUsedDisplay = page.locator(
-        'text=/Last used|마지막 사용|ago|전/'
-      );
+      const lastUsedDisplay = page.locator('text=/Last used|마지막 사용|ago|전/');
 
       // last_used_at이 표시되거나, "Never used" 표시
       const isVisible = await lastUsedDisplay.first().isVisible();

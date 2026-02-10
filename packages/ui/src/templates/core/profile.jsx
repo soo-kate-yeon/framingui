@@ -24,13 +24,20 @@ import { DEFAULT_RESPONSIVE_LAYOUT } from '../types';
 /**
  * Profile Template Component
  */
-export function ProfileTemplateComponent({ children, className = '', slots = {}, texts = {}, options = {}, }) {
-    const title = texts.title || 'Profile';
-    const subtitle = texts.subtitle || 'Manage your profile information';
-    const saveLabel = texts.save_label || 'Save Changes';
-    const userName = String(options.user_name || 'John Doe');
-    const userEmail = String(options.user_email || 'john@example.com');
-    return (<div className={`min-h-screen p-[var(--tekton-spacing-8)] ${className}`}>
+export function ProfileTemplateComponent({
+  children,
+  className = '',
+  slots = {},
+  texts = {},
+  options = {},
+}) {
+  const title = texts.title || 'Profile';
+  const subtitle = texts.subtitle || 'Manage your profile information';
+  const saveLabel = texts.save_label || 'Save Changes';
+  const userName = String(options.user_name || 'John Doe');
+  const userEmail = String(options.user_email || 'john@example.com');
+  return (
+    <div className={`min-h-screen p-[var(--tekton-spacing-8)] ${className}`}>
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-[var(--tekton-spacing-8)]">
@@ -46,7 +53,8 @@ export function ProfileTemplateComponent({ children, className = '', slots = {},
           </CardHeader>
           <CardContent className="space-y-[var(--tekton-spacing-6)]">
             {/* Avatar Section */}
-            {slots.avatar && (<div className="flex items-center gap-[var(--tekton-spacing-4)]">
+            {slots.avatar && (
+              <div className="flex items-center gap-[var(--tekton-spacing-4)]">
                 <div>{slots.avatar}</div>
                 <div>
                   <Button variant="outline" size="sm">
@@ -56,25 +64,28 @@ export function ProfileTemplateComponent({ children, className = '', slots = {},
                     JPG, PNG. Max 2MB
                   </p>
                 </div>
-              </div>)}
+              </div>
+            )}
 
             {/* Name Input */}
             <div className="space-y-[var(--tekton-spacing-2)]">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" type="text" defaultValue={userName}/>
+              <Input id="name" type="text" defaultValue={userName} />
             </div>
 
             {/* Email Input */}
             <div className="space-y-[var(--tekton-spacing-2)]">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" defaultValue={userEmail} disabled/>
+              <Input id="email" type="email" defaultValue={userEmail} disabled />
               <p className="text-xs text-[var(--tekton-text-muted-foreground)]">
                 Contact support to change your email address
               </p>
             </div>
 
             {/* Bio/Description */}
-            {slots.bioField && (<div className="space-y-[var(--tekton-spacing-2)]">{slots.bioField}</div>)}
+            {slots.bioField && (
+              <div className="space-y-[var(--tekton-spacing-2)]">{slots.bioField}</div>
+            )}
 
             {/* Additional Fields */}
             {slots.additionalFields && slots.additionalFields}
@@ -82,7 +93,9 @@ export function ProfileTemplateComponent({ children, className = '', slots = {},
         </Card>
 
         {/* Additional Sections */}
-        {slots.additionalSections && (<div className="mt-[var(--tekton-spacing-6)]">{slots.additionalSections}</div>)}
+        {slots.additionalSections && (
+          <div className="mt-[var(--tekton-spacing-6)]">{slots.additionalSections}</div>
+        )}
 
         {/* Action Buttons */}
         <div className="mt-[var(--tekton-spacing-8)] flex justify-end gap-[var(--tekton-spacing-4)]">
@@ -91,43 +104,44 @@ export function ProfileTemplateComponent({ children, className = '', slots = {},
         </div>
       </div>
       {children}
-    </div>);
+    </div>
+  );
 }
 /**
  * Profile Template Definition
  */
 export const ProfileTemplate = {
-    id: 'core.profile',
-    name: 'Profile',
-    category: 'form',
-    description: 'User profile page with editable information',
-    skeleton: {
-        shell: 'centered-layout',
-        page: 'profile-page',
-        sections: [
-            {
-                id: 'profile-content',
-                name: 'Profile Content',
-                slot: 'main',
-                required: true,
-                Component: ProfileTemplateComponent,
-            },
-        ],
-    },
-    layout: {
-        type: 'centered',
-        responsive: DEFAULT_RESPONSIVE_LAYOUT,
-    },
-    customizable: {
-        texts: ['title', 'subtitle', 'save_label'],
-        optional: ['user_name', 'user_email'],
-        slots: ['avatar', 'bioField', 'additionalFields', 'additionalSections'],
-    },
-    requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label', 'Avatar'],
-    Component: ProfileTemplateComponent,
-    version: '1.0.0',
-    created: '2026-02-01',
-    updated: '2026-02-01',
-    tags: ['core', 'profile', 'account', 'user'],
+  id: 'core.profile',
+  name: 'Profile',
+  category: 'form',
+  description: 'User profile page with editable information',
+  skeleton: {
+    shell: 'centered-layout',
+    page: 'profile-page',
+    sections: [
+      {
+        id: 'profile-content',
+        name: 'Profile Content',
+        slot: 'main',
+        required: true,
+        Component: ProfileTemplateComponent,
+      },
+    ],
+  },
+  layout: {
+    type: 'centered',
+    responsive: DEFAULT_RESPONSIVE_LAYOUT,
+  },
+  customizable: {
+    texts: ['title', 'subtitle', 'save_label'],
+    optional: ['user_name', 'user_email'],
+    slots: ['avatar', 'bioField', 'additionalFields', 'additionalSections'],
+  },
+  requiredComponents: ['Button', 'Input', 'Form', 'Card', 'Label', 'Avatar'],
+  Component: ProfileTemplateComponent,
+  version: '1.0.0',
+  created: '2026-02-01',
+  updated: '2026-02-01',
+  tags: ['core', 'profile', 'account', 'user'],
 };
 //# sourceMappingURL=profile.js.map

@@ -6,14 +6,7 @@
 
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useEffect,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
 import {
   colorPresets,
   typographyPresets,
@@ -144,13 +137,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
    * [TAG-UI003-007] WHEN 프리셋이 선택되면 THEN CSS Variables가 즉시 업데이트
    */
   const applyTheme = useCallback(() => {
-    if (typeof window === 'undefined') {return;}
+    if (typeof window === 'undefined') {
+      return;
+    }
 
     const root = document.documentElement;
 
     // 각 카테고리별 프리셋 값 가져오기
-    const colorPresetValues =
-      colorPresets.find((p) => p.id === theme.colorPreset)?.values || {};
+    const colorPresetValues = colorPresets.find((p) => p.id === theme.colorPreset)?.values || {};
     const typographyPresetValues =
       typographyPresets.find((p) => p.id === theme.typographyPreset)?.values || {};
     const spacingPresetValues =

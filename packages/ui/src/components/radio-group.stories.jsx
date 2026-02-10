@@ -7,12 +7,12 @@
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { Label } from './label';
 const meta = {
-    title: 'Components/RadioGroup',
-    component: RadioGroup,
-    parameters: {
-        layout: 'centered',
-    },
-    tags: ['autodocs'],
+  title: 'Components/RadioGroup',
+  component: RadioGroup,
+  parameters: {
+    layout: 'centered',
+  },
+  tags: ['autodocs'],
 };
 export default meta;
 /**
@@ -20,34 +20,37 @@ export default meta;
  * Accessibility: RadioGroup provides proper ARIA attributes and keyboard navigation
  */
 export const Default = {
-    render: () => (<RadioGroup defaultValue="option-one">
+  render: () => (
+    <RadioGroup defaultValue="option-one">
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-one" id="option-one"/>
+        <RadioGroupItem value="option-one" id="option-one" />
         <Label htmlFor="option-one" className="cursor-pointer">
           Option One
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-two" id="option-two"/>
+        <RadioGroupItem value="option-two" id="option-two" />
         <Label htmlFor="option-two" className="cursor-pointer">
           Option Two
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-three" id="option-three"/>
+        <RadioGroupItem value="option-three" id="option-three" />
         <Label htmlFor="option-three" className="cursor-pointer">
           Option Three
         </Label>
       </div>
-    </RadioGroup>),
+    </RadioGroup>
+  ),
 };
 /**
  * With labels and descriptions
  */
 export const WithDescriptions = {
-    render: () => (<RadioGroup defaultValue="comfortable">
+  render: () => (
+    <RadioGroup defaultValue="comfortable">
       <div className="flex items-start space-x-2">
-        <RadioGroupItem value="default" id="r1" className="mt-1"/>
+        <RadioGroupItem value="default" id="r1" className="mt-1" />
         <div className="grid gap-1.5 leading-none">
           <Label htmlFor="r1" className="cursor-pointer">
             Default
@@ -58,7 +61,7 @@ export const WithDescriptions = {
         </div>
       </div>
       <div className="flex items-start space-x-2">
-        <RadioGroupItem value="comfortable" id="r2" className="mt-1"/>
+        <RadioGroupItem value="comfortable" id="r2" className="mt-1" />
         <div className="grid gap-1.5 leading-none">
           <Label htmlFor="r2" className="cursor-pointer">
             Comfortable
@@ -69,7 +72,7 @@ export const WithDescriptions = {
         </div>
       </div>
       <div className="flex items-start space-x-2">
-        <RadioGroupItem value="compact" id="r3" className="mt-1"/>
+        <RadioGroupItem value="compact" id="r3" className="mt-1" />
         <div className="grid gap-1.5 leading-none">
           <Label htmlFor="r3" className="cursor-pointer">
             Compact
@@ -79,71 +82,77 @@ export const WithDescriptions = {
           </p>
         </div>
       </div>
-    </RadioGroup>),
+    </RadioGroup>
+  ),
 };
 /**
  * Disabled options
  * Accessibility: Disabled items are properly marked for assistive technologies
  */
 export const DisabledOptions = {
-    render: () => (<RadioGroup defaultValue="enabled">
+  render: () => (
+    <RadioGroup defaultValue="enabled">
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="enabled" id="enabled"/>
+        <RadioGroupItem value="enabled" id="enabled" />
         <Label htmlFor="enabled" className="cursor-pointer">
           Enabled option
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="disabled" id="disabled" disabled/>
+        <RadioGroupItem value="disabled" id="disabled" disabled />
         <Label htmlFor="disabled" className="cursor-not-allowed opacity-70">
           Disabled option
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="another" id="another"/>
+        <RadioGroupItem value="another" id="another" />
         <Label htmlFor="another" className="cursor-pointer">
           Another option
         </Label>
       </div>
-    </RadioGroup>),
+    </RadioGroup>
+  ),
 };
 /**
  * Form example
  */
 export const FormExample = {
-    render: () => (<div className="w-full max-w-sm space-y-4">
+  render: () => (
+    <div className="w-full max-w-sm space-y-4">
       <div>
         <h3 className="mb-2 text-sm font-medium">Notification preferences</h3>
         <RadioGroup defaultValue="all">
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="all" id="all"/>
+            <RadioGroupItem value="all" id="all" />
             <Label htmlFor="all" className="cursor-pointer">
               All new messages
             </Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="mentions" id="mentions"/>
+            <RadioGroupItem value="mentions" id="mentions" />
             <Label htmlFor="mentions" className="cursor-pointer">
               Direct messages and mentions
             </Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="none" id="none"/>
+            <RadioGroupItem value="none" id="none" />
             <Label htmlFor="none" className="cursor-pointer">
               Nothing
             </Label>
           </div>
         </RadioGroup>
       </div>
-    </div>),
+    </div>
+  ),
 };
 /**
  * Payment method selection
  */
 export const PaymentMethod = {
-    render: () => (<RadioGroup defaultValue="card">
+  render: () => (
+    <RadioGroup defaultValue="card">
       <div className="flex items-start space-x-2 rounded-lg border p-4">
-        <RadioGroupItem value="card" id="card" className="mt-1"/>
+        <RadioGroupItem value="card" id="card" className="mt-1" />
         <div className="grid gap-1.5 leading-none flex-1">
           <Label htmlFor="card" className="cursor-pointer font-medium">
             Credit Card
@@ -154,7 +163,7 @@ export const PaymentMethod = {
         </div>
       </div>
       <div className="flex items-start space-x-2 rounded-lg border p-4">
-        <RadioGroupItem value="paypal" id="paypal" className="mt-1"/>
+        <RadioGroupItem value="paypal" id="paypal" className="mt-1" />
         <div className="grid gap-1.5 leading-none flex-1">
           <Label htmlFor="paypal" className="cursor-pointer font-medium">
             PayPal
@@ -165,7 +174,7 @@ export const PaymentMethod = {
         </div>
       </div>
       <div className="flex items-start space-x-2 rounded-lg border p-4">
-        <RadioGroupItem value="bank" id="bank" className="mt-1"/>
+        <RadioGroupItem value="bank" id="bank" className="mt-1" />
         <div className="grid gap-1.5 leading-none flex-1">
           <Label htmlFor="bank" className="cursor-pointer font-medium">
             Bank Transfer
@@ -173,31 +182,34 @@ export const PaymentMethod = {
           <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">Pay via bank transfer</p>
         </div>
       </div>
-    </RadioGroup>),
+    </RadioGroup>
+  ),
 };
 /**
  * Horizontal layout
  */
 export const Horizontal = {
-    render: () => (<RadioGroup defaultValue="option-one" className="flex space-x-4">
+  render: () => (
+    <RadioGroup defaultValue="option-one" className="flex space-x-4">
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-one" id="h1"/>
+        <RadioGroupItem value="option-one" id="h1" />
         <Label htmlFor="h1" className="cursor-pointer">
           Option 1
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-two" id="h2"/>
+        <RadioGroupItem value="option-two" id="h2" />
         <Label htmlFor="h2" className="cursor-pointer">
           Option 2
         </Label>
       </div>
       <div className="flex items-center space-x-2">
-        <RadioGroupItem value="option-three" id="h3"/>
+        <RadioGroupItem value="option-three" id="h3" />
         <Label htmlFor="h3" className="cursor-pointer">
           Option 3
         </Label>
       </div>
-    </RadioGroup>),
+    </RadioGroup>
+  ),
 };
 //# sourceMappingURL=radio-group.stories.js.map
