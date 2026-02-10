@@ -10,7 +10,7 @@
  */
 
 import type { WhoamiOutput } from '../schemas/mcp-schemas.js';
-import { getAuthData, setWhoamiCompleted } from '../auth/state.js';
+import { getAuthData, setAuthData, setWhoamiCompleted } from '../auth/state.js';
 import { isMasterAccount, PREMIUM_THEMES } from '../auth/theme-access.js';
 
 /**
@@ -33,6 +33,15 @@ export async function whoamiTool(): Promise<WhoamiOutput> {
 
   // 마스터 계정: 모든 테마 접근 가능
   const licensedThemes = isMaster ? [...PREMIUM_THEMES] : authData.themes?.licensed || [];
+
+  // 마스터 계정이면 인증 캐시를 갱신하여 이후 도구들이 최신 상태 참조
+  if (isMaster) {
+    setAuthData({
+      ...authData,
+      user: { ...authData.user!, plan: 'master' },
+      themes: { ...authData.themes, licensed: [...PREMIUM_THEMES] },
+    });
+  }
 
   // MCP 지원 기간 계산 (라이선스 중 가장 늦은 만료일 기준)
   let latestExpiry: string | null = null;
