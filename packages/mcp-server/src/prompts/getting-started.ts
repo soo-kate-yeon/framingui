@@ -31,17 +31,34 @@ This opens your browser for OAuth authentication. Your credentials are stored in
 - No free themes are available
 - Authentication verifies your license status
 
-## Step 2: Explore Available Themes
+## Step 2: Call whoami (Mandatory - Server Enforced)
+
+**You MUST call the \`whoami\` tool before using any other tool.**
+All other tools will return an error until whoami is called.
+
+\`\`\`
+Call whoami (no parameters needed)
+\`\`\`
+
+**What it returns:**
+- Your subscription plan (free/pro/enterprise/master)
+- List of licensed themes you can access
+- MCP tool support period and renewal status
+
+**IMPORTANT:** Only use themes listed in \`licensedThemes\` from the whoami response.
+Attempting to use unlicensed themes will fail.
+
+## Step 3: Explore Available Themes
 
 Use MCP tools to discover themes:
 
 \`\`\`
-1. Call list-themes to see all 6 available themes
+1. Call list-themes to see your licensed themes
 2. Call preview-theme with a themeId to see design tokens
 3. Choose a theme for your project
 \`\`\`
 
-**Available themes (all require authentication):**
+**Available themes (all require license):**
 - classic-magazine - Classic magazine style
 - equinox-fitness - Fitness & wellness
 - minimal-workspace - Minimal workspace
@@ -49,7 +66,7 @@ Use MCP tools to discover themes:
 - round-minimal - Round minimal
 - square-minimalism - Square minimalism
 
-## Step 3: Check Component Availability
+## Step 4: Check Component Availability
 
 Before creating screen definitions:
 
@@ -59,7 +76,7 @@ Before creating screen definitions:
 3. Identify components needed for your screen
 \`\`\`
 
-## Step 4: Generate Your First Screen
+## Step 5: Generate Your First Screen
 
 Follow the 4-step workflow:
 
@@ -78,9 +95,11 @@ Follow the 4-step workflow:
 ## Common Mistakes to Avoid
 
 1. ❌ Skipping authentication - All themes require licenses
-2. ❌ Using non-existent theme IDs - Only 6 themes exist
-3. ❌ Skipping validate-screen-definition - Always validate before generating
-4. ❌ Ignoring dependencies warnings - Check required packages before running code
+2. ❌ Skipping whoami - All tools are blocked until whoami is called
+3. ❌ Using non-existent theme IDs - Only 6 themes exist
+4. ❌ Skipping validate-screen-definition - Always validate before generating
+5. ❌ Ignoring dependencies warnings - Check required packages before running code
+6. ❌ Using unlicensed themes - Only use themes from whoami licensedThemes list
 
 ## Need Help?
 

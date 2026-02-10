@@ -6,6 +6,7 @@
 import type { VerifyResponse } from './verify.js';
 import { MemoryCache } from './cache.js';
 import { info } from '../utils/logger.js';
+import { isMasterAccount } from './theme-access.js';
 
 // Cache TTL: 5 minutes (300,000 milliseconds)
 const CACHE_TTL_MS = 5 * 60 * 1000;
@@ -15,6 +16,9 @@ const authCache = new MemoryCache<VerifyResponse>();
 
 // Current authentication state
 let currentAuthData: VerifyResponse | null = null;
+
+// whoami 도구 호출 완료 여부 (서버 사이드 게이트)
+let whoamiCompleted = false;
 
 /**
  * Set authentication data and cache it
@@ -51,8 +55,25 @@ export function getAuthData(): VerifyResponse | null {
  */
 export function clearAuthData(): void {
   currentAuthData = null;
+  whoamiCompleted = false;
   authCache.clear();
   info('Authentication data cleared');
+}
+
+/**
+ * whoami 도구 호출 완료 표시
+ */
+export function setWhoamiCompleted(): void {
+  whoamiCompleted = true;
+  info('whoami completed - all tools unlocked');
+}
+
+/**
+ * whoami 도구 호출 여부 확인
+ * @returns whoami가 호출되었으면 true
+ */
+export function isWhoamiCompleted(): boolean {
+  return whoamiCompleted;
 }
 
 /**
@@ -66,9 +87,10 @@ export function isAuthenticated(): boolean {
 
 /**
  * Get accessible theme IDs based on current authentication
- * 인증된 사용자의 라이선스 보유 테마만 반환
+ * 마스터 계정: 모든 테마 접근 가능
+ * 일반 사용자: 라이선스 보유 테마만 반환
  * @param allThemeIds - All available theme IDs
- * @returns Array of accessible theme IDs (licensed only)
+ * @returns Array of accessible theme IDs
  */
 export function getAccessibleThemes(allThemeIds: string[]): string[] {
   const authData = getAuthData();
@@ -78,7 +100,13 @@ export function getAccessibleThemes(allThemeIds: string[]): string[] {
     return [];
   }
 
-  // 인증됨: 라이선스 보유 테마만
+  // 마스터 계정: 모든 테마 접근 가능
+  const email = authData.user?.email;
+  if (email && isMasterAccount(email)) {
+    return [...allThemeIds];
+  }
+
+  // 일반 사용자: 라이선스 보유 테마만
   const licensedThemes = authData.themes?.licensed || [];
   const accessibleThemes = new Set(licensedThemes);
 

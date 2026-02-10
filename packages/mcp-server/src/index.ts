@@ -10,7 +10,12 @@ import {
 import { info, error as logError } from './utils/logger.js';
 import { verifyApiKey } from './auth/verify.js';
 import { setAuthData } from './auth/state.js';
-import { AuthRequiredError, requireAuth } from './auth/guard.js';
+import {
+  AuthRequiredError,
+  WhoamiRequiredError,
+  requireAuth,
+  requireWhoami,
+} from './auth/guard.js';
 import { loadCredentials } from './cli/credentials.js';
 import { generateBlueprintTool } from './tools/generate-blueprint.js';
 import { previewThemeTool } from './tools/preview-theme.js';
@@ -28,9 +33,11 @@ import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
 import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
 import { validateEnvironmentTool } from './tools/validate-environment.js';
+import { whoamiTool } from './tools/whoami.js';
 import { getGettingStartedPrompt } from './prompts/getting-started.js';
 import { getScreenWorkflowPrompt } from './prompts/screen-workflow.js';
 import {
+  WhoamiInputSchema,
   GenerateBlueprintInputSchema,
   PreviewThemeInputSchema,
   ListThemesInputSchema,
@@ -117,6 +124,28 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
   return {
     tools: [
+      {
+        name: 'whoami',
+        description:
+          '[MANDATORY FIRST STEP] Verify your account, license status, and accessible themes.\n\n' +
+          'YOU MUST CALL THIS TOOL BEFORE ANY OTHER TOOL.\n' +
+          'All other tools will reject requests until whoami is called.\n\n' +
+          'RETURNS:\n' +
+          '- plan: Your subscription tier (free/pro/enterprise/master)\n' +
+          '- isMaster: Whether this is a master account with full access\n' +
+          '- licensedThemes: Array of theme IDs you can access\n' +
+          '- totalThemes: Total number of available themes\n' +
+          '- mcpSupport: MCP tool support period and renewal status\n\n' +
+          'IMPORTANT:\n' +
+          '- Only themes listed in licensedThemes are accessible to you\n' +
+          '- Do not attempt to use themes outside your license\n' +
+          '- MCP tool support is included for 1 year from purchase; renewal available after expiry',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+          required: [],
+        },
+      },
       {
         name: 'generate-blueprint',
         description:
@@ -628,8 +657,45 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
     }
   }
 
+  // whoami 이외의 도구는 whoami 호출 후에만 사용 가능 (서버 사이드 강제)
+  if (name !== 'whoami') {
+    try {
+      requireWhoami();
+    } catch (e) {
+      if (e instanceof WhoamiRequiredError) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: false,
+                error: 'whoami required.',
+                hint: 'Please call the "whoami" tool first to verify your account and license status.',
+              }),
+            },
+          ],
+          isError: true,
+        };
+      }
+    }
+  }
+
   try {
     switch (name) {
+      case 'whoami': {
+        WhoamiInputSchema.parse(args);
+        const result = await whoamiTool();
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       case 'generate-blueprint': {
         // Validate input
         const validatedInput = GenerateBlueprintInputSchema.parse(args);
@@ -965,5 +1031,5 @@ await server.connect(transport);
 
 info('Tekton MCP Server connected via stdio transport');
 info(
-  '16 MCP tools registered: generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
+  '17 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
 );

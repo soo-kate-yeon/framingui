@@ -15,3 +15,18 @@ export const PREMIUM_THEMES = [
   'round-minimal',
   'square-minimalism',
 ];
+
+/**
+ * 마스터 계정 이메일 목록
+ * 마스터 계정은 모든 테마에 무제한 접근 가능
+ */
+export const MASTER_EMAILS = ['soo.kate.yeon@gmail.com'];
+
+/**
+ * 마스터 계정 여부 확인
+ * @param email - 사용자 이메일
+ * @returns 마스터 계정이면 true
+ */
+export function isMasterAccount(email: string): boolean {
+  return MASTER_EMAILS.includes(email.toLowerCase());
+}

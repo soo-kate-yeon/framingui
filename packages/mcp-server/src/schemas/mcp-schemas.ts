@@ -6,6 +6,39 @@
 import { z } from 'zod';
 
 // ============================================================================
+// Whoami Tool Schemas
+// ============================================================================
+
+/**
+ * Whoami Input Schema
+ * 입력 파라미터 없음
+ */
+export const WhoamiInputSchema = z.object({});
+
+export type WhoamiInput = z.infer<typeof WhoamiInputSchema>;
+
+/**
+ * Whoami Output Schema
+ * 유저 tier, 라이선스 정보, MCP 지원 기간 반환
+ */
+export const WhoamiOutputSchema = z.object({
+  success: z.boolean(),
+  plan: z.enum(['free', 'pro', 'enterprise', 'master']).optional(),
+  isMaster: z.boolean().optional(),
+  licensedThemes: z.array(z.string()).optional(),
+  totalThemes: z.number().optional(),
+  mcpSupport: z
+    .object({
+      expiresAt: z.string().nullable(),
+      renewable: z.boolean(),
+    })
+    .optional(),
+  error: z.string().optional(),
+});
+
+export type WhoamiOutput = z.infer<typeof WhoamiOutputSchema>;
+
+// ============================================================================
 // Generate Blueprint Tool Schemas
 // ============================================================================
 
