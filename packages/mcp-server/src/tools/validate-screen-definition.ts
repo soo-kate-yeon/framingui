@@ -10,9 +10,11 @@ import type {
   ValidationError,
   ValidationWarning,
   ImprovementSuggestion,
+  JsonPatchOperation,
 } from '../schemas/mcp-schemas.js';
 import { ScreenDefinitionSchema } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
+import { getComponentPropsData } from '../data/component-props.js';
 
 /**
  * Valid shell tokens from SPEC-LAYOUT-001 and SPEC-LAYOUT-004
@@ -140,6 +142,10 @@ function validateShell(
         similar.length > 0
           ? `Did you mean: ${similar.join(', ')}?`
           : `Valid shells: ${VALID_SHELLS.join(', ')}`,
+      autoFix:
+        similar.length > 0
+          ? [{ op: 'replace' as const, path: `/${path}`, value: similar[0] }]
+          : undefined,
     });
   }
 
@@ -180,6 +186,10 @@ function validatePage(
         similar.length > 0
           ? `Did you mean: ${similar.join(', ')}?`
           : `Valid pages: ${VALID_PAGES.join(', ')}`,
+      autoFix:
+        similar.length > 0
+          ? [{ op: 'replace' as const, path: `/${path}`, value: similar[0] }]
+          : undefined,
     });
   }
 
@@ -294,6 +304,81 @@ function validateComponentType(
 }
 
 /**
+ * Validate component props against known prop definitions
+ */
+function validateComponentProps(
+  component: any,
+  path: string
+): { errors: ValidationError[]; warnings: ValidationWarning[] } {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  if (!component.type) {
+    return { errors, warnings };
+  }
+
+  // props 데이터가 없는 컴포넌트는 스킵 (하위 호환성)
+  const propsData = getComponentPropsData(component.type.toLowerCase());
+  if (!propsData) {
+    return { errors, warnings };
+  }
+
+  const componentProps = component.props || {};
+
+  // 1. 필수 props 존재 여부 검증
+  for (const propDef of propsData.props) {
+    if (propDef.required && !(propDef.name in componentProps)) {
+      errors.push({
+        path: `${path}.props.${propDef.name}`,
+        code: 'MISSING_REQUIRED_PROP',
+        message: `Required prop "${propDef.name}" is missing on ${component.type}`,
+        expected: propDef.type,
+        suggestion: propDef.defaultValue
+          ? `Add "${propDef.name}" prop (default: ${propDef.defaultValue})`
+          : `Add "${propDef.name}" prop of type ${propDef.type}`,
+        autoFix: propDef.defaultValue
+          ? [
+              {
+                op: 'add' as const,
+                path: `/${path.replace(/\./g, '/')}/props/${propDef.name}`,
+                value: propDef.defaultValue,
+              },
+            ]
+          : undefined,
+      });
+    }
+  }
+
+  // 2. variant 값 유효성 검증
+  if (propsData.variants && propsData.variants.length > 0) {
+    // variant prop 그룹별로 체크
+    const variantGroups = new Map<string, string[]>();
+    for (const v of propsData.variants) {
+      if (!variantGroups.has(v.name)) {
+        variantGroups.set(v.name, []);
+      }
+      variantGroups.get(v.name)!.push(v.value);
+    }
+
+    for (const [variantName, validValues] of variantGroups) {
+      const propValue = componentProps[variantName];
+      if (propValue !== undefined && typeof propValue === 'string') {
+        if (!validValues.includes(propValue)) {
+          warnings.push({
+            path: `${path}.props.${variantName}`,
+            code: 'INVALID_VARIANT',
+            message: `Invalid ${variantName} value "${propValue}" on ${component.type}`,
+            recommendation: `Valid values: ${validValues.join(', ')}`,
+          });
+        }
+      }
+    }
+  }
+
+  return { errors, warnings };
+}
+
+/**
  * Validate slot value
  */
 function validateSlot(
@@ -334,11 +419,17 @@ function generateSuggestions(definition: any): ImprovementSuggestion[] {
 
   // Check for missing name/description
   if (!definition.name) {
+    const autoFixName = definition.id
+      ? definition.id.replace(/[-_]/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())
+      : undefined;
     suggestions.push({
       category: 'maintainability',
       message: 'Consider adding a human-readable name for better documentation',
       affectedPath: 'name',
       suggestedChange: 'Add a descriptive name property',
+      autoFix: autoFixName
+        ? [{ op: 'add' as const, path: '/name', value: autoFixName }]
+        : undefined,
     });
   }
 
@@ -515,6 +606,16 @@ export async function validateScreenDefinitionTool(
                 );
                 errors.push(...typeResult.errors);
                 warnings.push(...typeResult.warnings);
+
+                // Props 검증 (타입이 유효한 경우에만)
+                if (typeResult.errors.length === 0) {
+                  const propsResult = validateComponentProps(
+                    component,
+                    `sections[${i}].components[${j}]`
+                  );
+                  errors.push(...propsResult.errors);
+                  warnings.push(...propsResult.warnings);
+                }
               }
             }
           }
@@ -525,6 +626,19 @@ export async function validateScreenDefinitionTool(
     // 3. Generate improvement suggestions
     const suggestions = generateSuggestions(definition);
 
+    // 4. Aggregate all auto-fix patches
+    const allPatches: JsonPatchOperation[] = [];
+    for (const err of errors) {
+      if (err.autoFix) {
+        allPatches.push(...err.autoFix);
+      }
+    }
+    for (const sug of suggestions) {
+      if (sug.autoFix) {
+        allPatches.push(...sug.autoFix);
+      }
+    }
+
     const isValid = errors.length === 0;
 
     return {
@@ -533,6 +647,7 @@ export async function validateScreenDefinitionTool(
       errors: errors.length > 0 ? errors : undefined,
       warnings: warnings.length > 0 ? warnings : undefined,
       suggestions: suggestions.length > 0 ? suggestions : undefined,
+      autoFixPatches: allPatches.length > 0 ? allPatches : undefined,
     };
   } catch (error) {
     return {

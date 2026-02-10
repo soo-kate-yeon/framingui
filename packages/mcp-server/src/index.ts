@@ -21,7 +21,7 @@ import { generateBlueprintTool } from './tools/generate-blueprint.js';
 import { previewThemeTool } from './tools/preview-theme.js';
 import { listThemesTool } from './tools/list-themes.js';
 import { exportScreenTool } from './tools/export-screen.js';
-import { generateScreenTool } from './tools/generate-screen.js';
+
 import { validateScreenTool } from './tools/validate-screen.js';
 import { listTokensTool } from './tools/list-tokens.js';
 import { listIconLibrariesTool } from './tools/list-icon-libraries.js';
@@ -42,7 +42,6 @@ import {
   PreviewThemeInputSchema,
   ListThemesInputSchema,
   ExportScreenInputSchema,
-  GenerateScreenInputSchema,
   ValidateScreenInputSchema,
   ListTokensInputSchema,
   ListIconLibrariesInputSchema,
@@ -87,7 +86,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
       {
         name: 'screen-workflow',
         description:
-          'Detailed 4-step screen generation workflow: get-screen-generation-context → validate-screen-definition → generate_screen → validate-environment',
+          'Detailed 3-step screen generation workflow: get-screen-generation-context → validate-screen-definition → validate-environment',
         arguments: [],
       },
     ],
@@ -154,8 +153,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- For rapid prototyping and design exploration\n' +
           '- When user wants a quick visual structure without full Screen Definition\n' +
           '- As an alternative lightweight workflow to get-screen-generation-context\n\n' +
-          'NOTE: For production-ready code generation, use the main workflow:\n' +
-          'get-screen-generation-context → validate-screen-definition → generate_screen\n\n' +
+          'NOTE: For production-ready code, use the main workflow:\n' +
+          'get-screen-generation-context → validate-screen-definition → write code directly\n\n' +
           'RETURNS: Simplified blueprint object with layout structure and component suggestions',
         inputSchema: {
           type: 'object',
@@ -280,7 +279,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- When user wants code in JSX/TSX/Vue format\n' +
           '- For lightweight prototyping without full Screen Definition workflow\n\n' +
           'NOTE: For production-ready code with full validation, use:\n' +
-          'get-screen-generation-context → validate-screen-definition → generate_screen\n\n' +
+          'get-screen-generation-context → validate-screen-definition → write code directly\n\n' +
           'RETURNS: Exported code in requested format',
         inputSchema: {
           type: 'object',
@@ -299,62 +298,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: 'generate_screen',
-        description:
-          '[WORKFLOW STEP 3/4] Generate production-ready React code from validated Screen Definition.\n\n' +
-          'REQUIRED WORKFLOW:\n' +
-          '1. Call get-screen-generation-context (Step 1/4)\n' +
-          '2. Generate/validate Screen Definition (Step 2/4)\n' +
-          '3. Call THIS TOOL (Step 3/4)\n' +
-          '4. Call validate-environment if path known (Step 4/4)\n\n' +
-          'AFTER RECEIVING RESPONSE:\n' +
-          '- ALWAYS check the "dependencies" field in the response\n' +
-          '- If dependencies.external is non-empty:\n' +
-          '  * User provided package.json path? → Call validate-environment (Step 4/4)\n' +
-          '  * Path unknown? → Show dependencies.installCommands to user\n' +
-          '- Display the list of required packages to user before delivering code\n' +
-          '- validate-environment also checks Tailwind CSS config — ensures @tekton-ui/ui\n' +
-          '  content paths and tailwindcss-animate plugin are configured correctly\n\n' +
-          'CRITICAL:\n' +
-          '- This workflow prevents "Module not found" errors at runtime\n' +
-          '- Tailwind validation prevents invisible/unstyled @tekton-ui/ui components\n' +
-          '- Never deliver code without informing user about dependencies',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            screenDefinition: {
-              type: 'object',
-              description: 'JSON screen definition with id, shell, page, sections',
-            },
-            outputFormat: {
-              type: 'string',
-              description: 'Code output format',
-              enum: ['css-in-js', 'tailwind', 'react'],
-            },
-            options: {
-              type: 'object',
-              description: 'Optional generation options',
-              properties: {
-                cssFramework: {
-                  type: 'string',
-                  enum: ['styled-components', 'emotion'],
-                },
-                typescript: { type: 'boolean' },
-                prettier: { type: 'boolean' },
-              },
-            },
-          },
-          required: ['screenDefinition', 'outputFormat'],
-        },
-      },
-      {
         name: 'validate_screen',
         description:
           'Validate JSON screen definition with helpful feedback.\n\n' +
           'WHEN TO CALL:\n' +
           '- To validate a screen definition structure\n' +
-          '- Before passing definition to generate_screen\n\n' +
-          'NOTE: For the recommended workflow, use validate-screen-definition (Step 2/4) instead,\n' +
+          '- Before writing React code based on this definition\n\n' +
+          'NOTE: For the recommended workflow, use validate-screen-definition (Step 2/3) instead,\n' +
           'which provides more detailed validation, suggestions, and improvement recommendations.\n\n' +
           'RETURNS: Validation result with errors and warnings',
         inputSchema: {
@@ -506,12 +456,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'get-screen-generation-context',
         description:
-          '[WORKFLOW STEP 1/4] Get complete context for AI agents to generate screen definitions from natural language.\n\n' +
+          '[WORKFLOW STEP 1/3] Get complete context for AI agents to generate screen definitions from natural language.\n\n' +
           'THIS IS THE FIRST STEP in the screen generation workflow:\n' +
-          "1. Call THIS TOOL with user's description (Step 1/4)\n" +
-          '2. Use returned context to generate/validate Screen Definition (Step 2/4)\n' +
-          '3. Call generate_screen with the definition (Step 3/4)\n' +
-          '4. Call validate-environment if path known (Step 4/4 - Phase 2)\n\n' +
+          "1. Call THIS TOOL with user's description (Step 1/3)\n" +
+          '2. Write Screen Definition JSON, then validate with validate-screen-definition (Step 2/3)\n' +
+          '3. Call validate-environment if path known (Step 3/3)\n\n' +
+          'IMPORTANT: After validation passes, the AI agent writes React code DIRECTLY\n' +
+          'using the components and props provided in the context response.\n\n' +
           'WHEN TO CALL:\n' +
           '- When user requests a new screen/page/component\n' +
           '- Before attempting to generate a Screen Definition JSON\n' +
@@ -548,20 +499,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-screen-definition',
         description:
-          '[WORKFLOW STEP 2/4] Validate a screen definition JSON with detailed error messages, suggestions, and improvement recommendations.\n\n' +
+          '[WORKFLOW STEP 2/3] Validate a screen definition JSON with detailed error messages, suggestions, auto-fix patches, and improvement recommendations.\n\n' +
           'WHEN TO CALL:\n' +
           '- After creating a Screen Definition JSON (from Step 1 context)\n' +
-          '- Before calling generate_screen (Step 3)\n' +
+          '- Before writing React code\n' +
           '- When user reports validation errors in generated code\n' +
           '- To get improvement suggestions for an existing definition\n\n' +
           'RETURNS:\n' +
           '- valid: boolean indicating if definition is valid\n' +
-          '- errors: Array of validation errors with suggestions\n' +
+          '- errors: Array of validation errors with suggestions and autoFix patches\n' +
           '- warnings: Array of potential issues\n' +
-          '- suggestions: Improvement recommendations\n\n' +
+          '- suggestions: Improvement recommendations with autoFix patches\n' +
+          '- autoFixPatches: Aggregated JSON Patch operations to fix all issues\n\n' +
           'NEXT STEP:\n' +
-          '- If valid: true, proceed to generate_screen (Step 3/4)\n' +
-          '- If valid: false, fix errors in definition and re-validate',
+          '- If valid: true, write React code directly using components from Step 1 context\n' +
+          '- If valid: false, apply autoFixPatches or manually fix errors and re-validate',
         inputSchema: {
           type: 'object',
           properties: {
@@ -581,9 +533,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-environment',
         description:
-          'Validate user environment: NPM packages + Tailwind CSS configuration for @tekton-ui/ui.\n\n' +
+          '[WORKFLOW STEP 3/3 - Optional] Validate user environment: NPM packages + Tailwind CSS configuration for @tekton-ui/ui.\n\n' +
           'WHEN TO CALL:\n' +
-          '- After generate_screen returns dependencies.missing array\n' +
+          '- After writing React code, to verify required packages are installed\n' +
           '- When user wants to check if their project has required packages\n' +
           '- Before running generated code to ensure all dependencies are available\n' +
           '- To verify Tailwind CSS is configured correctly for @tekton-ui/ui components\n\n' +
@@ -598,9 +550,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- Verifies tailwindcss-animate plugin is configured (required for Dialog, Popover animations)\n' +
           '- Returns actionable issues[] and fixes[] for each problem found\n\n' +
           'EXAMPLE WORKFLOW:\n' +
-          '1. Call generate_screen → get dependencies.external\n' +
-          '2. Call validate-environment with projectPath + requiredPackages\n' +
-          '3. Show user missing packages, install commands, AND any Tailwind config issues',
+          '1. get-screen-generation-context → get component info and context\n' +
+          '2. validate-screen-definition → validate Screen Definition JSON\n' +
+          '3. Write React code using components from context\n' +
+          '4. Call THIS TOOL with projectPath + requiredPackages\n' +
+          '5. Show user missing packages, install commands, AND any Tailwind config issues',
         inputSchema: {
           type: 'object',
           properties: {
@@ -775,21 +729,6 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         // Validate input
         const validatedInput = ExportScreenInputSchema.parse(args);
         const result = await exportScreenTool(validatedInput);
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-        };
-      }
-
-      case 'generate_screen': {
-        // Validate input
-        const validatedInput = GenerateScreenInputSchema.parse(args);
-        const result = await generateScreenTool(validatedInput);
 
         return {
           content: [
@@ -1031,5 +970,5 @@ await server.connect(transport);
 
 info('Tekton MCP Server connected via stdio transport');
 info(
-  '17 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, generate_screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
+  '16 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
 );

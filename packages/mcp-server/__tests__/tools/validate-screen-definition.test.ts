@@ -527,6 +527,284 @@ describe('validate-screen-definition Tool', () => {
     });
   });
 
+  describe('Props Validation', () => {
+    it('should detect missing required props (MISSING_REQUIRED_PROP)', async () => {
+      const missingProps = {
+        id: 'test',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'section1',
+            pattern: 'section.container',
+            components: [
+              {
+                type: 'Form',
+                props: {}, // 'control' prop is required for Form
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: missingProps,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+      const missingPropError = result.errors?.find(e => e.code === 'MISSING_REQUIRED_PROP');
+      expect(missingPropError).toBeDefined();
+      expect(missingPropError?.message).toContain('Form');
+    });
+
+    it('should detect invalid variant values (INVALID_VARIANT)', async () => {
+      const invalidVariant = {
+        id: 'test',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'section1',
+            pattern: 'section.container',
+            components: [
+              {
+                type: 'Button',
+                props: { variant: 'nonexistent-variant', children: 'Click' },
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: invalidVariant,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+      const variantWarning = result.warnings?.find(w => w.code === 'INVALID_VARIANT');
+      expect(variantWarning).toBeDefined();
+      expect(variantWarning?.message).toContain('variant');
+      expect(variantWarning?.recommendation).toContain('Valid values');
+    });
+
+    it('should skip props validation for unknown components', async () => {
+      const unknownComp = {
+        id: 'test',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'section1',
+            pattern: 'section.container',
+            components: [
+              {
+                type: 'MyCustomComponent',
+                props: { anything: true },
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: unknownComp,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+      // Props validation should not run for unknown components
+      const propsError = result.errors?.find(e => e.code === 'MISSING_REQUIRED_PROP');
+      expect(propsError).toBeUndefined();
+    });
+
+    it('should accept valid variant values without warnings', async () => {
+      const validVariant = {
+        id: 'test',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'section1',
+            pattern: 'section.container',
+            components: [
+              {
+                type: 'Button',
+                props: { variant: 'default', size: 'lg', children: 'Click' },
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: validVariant,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+      const variantWarning = result.warnings?.find(w => w.code === 'INVALID_VARIANT');
+      expect(variantWarning).toBeUndefined();
+    });
+  });
+
+  describe('Auto-Fix Patches', () => {
+    it('should provide autoFix for typo shell tokens', async () => {
+      const typoShell = {
+        id: 'test',
+        shell: 'shell.web.dashbord', // typo
+        page: 'page.dashboard',
+        sections: [],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: typoShell,
+        strict: true,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.autoFixPatches).toBeDefined();
+      expect(result.autoFixPatches!.length).toBeGreaterThan(0);
+
+      const shellPatch = result.autoFixPatches!.find(p => p.path.includes('shell'));
+      expect(shellPatch).toBeDefined();
+      expect(shellPatch?.op).toBe('replace');
+      expect(shellPatch?.value).toBe('shell.web.dashboard');
+    });
+
+    it('should provide autoFix for typo page tokens', async () => {
+      const typoPage = {
+        id: 'test',
+        shell: 'shell.web.app',
+        page: 'page.dashbord', // typo
+        sections: [],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: typoPage,
+        strict: true,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.autoFixPatches).toBeDefined();
+
+      const pagePatch = result.autoFixPatches!.find(p => p.path.includes('page'));
+      expect(pagePatch).toBeDefined();
+      expect(pagePatch?.op).toBe('replace');
+      expect(pagePatch?.value).toBe('page.dashboard');
+    });
+
+    it('should provide autoFix for missing name from id', async () => {
+      const noName = {
+        id: 'user-dashboard',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'main',
+            pattern: 'section.container',
+            components: [{ type: 'Text', props: {} }],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: noName,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.suggestions).toBeDefined();
+
+      const nameSuggestion = result.suggestions!.find(s => s.affectedPath === 'name');
+      expect(nameSuggestion).toBeDefined();
+      expect(nameSuggestion?.autoFix).toBeDefined();
+      expect(nameSuggestion?.autoFix![0]?.op).toBe('add');
+      expect(nameSuggestion?.autoFix![0]?.path).toBe('/name');
+      expect(nameSuggestion?.autoFix![0]?.value).toBe('User Dashboard');
+    });
+
+    it('should provide autoFix for missing required props with default values', async () => {
+      const missingDefaults = {
+        id: 'test',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'section1',
+            pattern: 'section.container',
+            components: [
+              {
+                type: 'Input',
+                props: {}, // missing required 'type' prop which has default 'text'
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: missingDefaults,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+
+      const propError = result.errors?.find(e => e.code === 'MISSING_REQUIRED_PROP' && e.autoFix);
+      if (propError) {
+        expect(propError.autoFix![0]?.op).toBe('add');
+      }
+    });
+
+    it('should aggregate all patches in autoFixPatches', async () => {
+      const multipleIssues = {
+        id: 'my-screen',
+        shell: 'shell.web.dashbord', // typo → autoFix
+        page: 'page.dashbord', // typo → autoFix
+        sections: [],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: multipleIssues,
+        strict: true,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.autoFixPatches).toBeDefined();
+      // Should have at least: shell fix, page fix, name suggestion fix
+      expect(result.autoFixPatches!.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should not include autoFixPatches when there are no fixes', async () => {
+      const validScreen = {
+        id: 'test-screen',
+        name: 'Test Screen',
+        description: 'A valid screen',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        themeId: 'minimal-workspace',
+        sections: [
+          {
+            id: 'main',
+            pattern: 'section.container',
+            slot: 'main',
+            components: [{ type: 'Text', props: { children: 'Hello' } }],
+          },
+        ],
+      };
+
+      const result = await validateScreenDefinitionTool({
+        definition: validScreen,
+        strict: false,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.valid).toBe(true);
+      expect(result.autoFixPatches).toBeUndefined();
+    });
+  });
+
   describe('Strict vs Non-Strict Mode', () => {
     it('should be more lenient in non-strict mode', async () => {
       const customScreen = {

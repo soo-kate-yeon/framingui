@@ -255,8 +255,10 @@ describe('get-screen-generation-context Tool', () => {
         s => s.tool === 'validate-screen-definition'
       );
       expect(validateStep).toBeDefined();
-      const generateStep = result.workflow?.steps.find(s => s.tool === 'generate_screen');
-      expect(generateStep).toBeDefined();
+      // generate_screen was removed; agents write code directly after validation
+      // validate-environment is referenced in notes, not as a dedicated tool step
+      const writeStep = result.workflow?.steps.find(s => s.action === 'Write React Code');
+      expect(writeStep).toBeDefined();
     });
 
     it('should include notes for agents', async () => {

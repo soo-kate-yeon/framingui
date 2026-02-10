@@ -352,45 +352,8 @@ export const ErrorResponseSchema = z.object({
 export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
 
 // ============================================================================
-// Generate Screen Tool Schemas (SPEC-LAYOUT-002 Phase 4)
+// Dependencies Schema (used by dependency-extractor)
 // ============================================================================
-
-/**
- * Output format for code generation
- */
-export const OutputFormatSchema = z.enum(['css-in-js', 'tailwind', 'react']);
-
-export type OutputFormat = z.infer<typeof OutputFormatSchema>;
-
-/**
- * CSS Framework options for CSS-in-JS format
- */
-export const CSSFrameworkSchema = z.enum(['styled-components', 'emotion']);
-
-export type CSSFramework = z.infer<typeof CSSFrameworkSchema>;
-
-/**
- * Generation options for generate_screen tool
- */
-export const GenerationOptionsSchema = z.object({
-  cssFramework: CSSFrameworkSchema.optional(),
-  typescript: z.boolean().optional().default(true),
-  prettier: z.boolean().optional().default(false),
-});
-
-export type GenerationOptions = z.infer<typeof GenerationOptionsSchema>;
-
-/**
- * Generate Screen Input Schema
- * SPEC-LAYOUT-002: Generate production code from screen definition
- */
-export const GenerateScreenInputSchema = z.object({
-  screenDefinition: z.unknown(), // Accept any object - will be validated by @tekton-ui/core
-  outputFormat: OutputFormatSchema,
-  options: GenerationOptionsSchema.optional(),
-});
-
-export type GenerateScreenInput = z.infer<typeof GenerateScreenInputSchema>;
 
 /**
  * Dependencies structure for generated code
@@ -415,20 +378,6 @@ export const DependenciesSchema = z.object({
 });
 
 export type Dependencies = z.infer<typeof DependenciesSchema>;
-
-/**
- * Generate Screen Output Schema
- */
-export const GenerateScreenOutputSchema = z.object({
-  success: z.boolean(),
-  code: z.string().optional(),
-  cssVariables: z.string().optional(),
-  dependencies: DependenciesSchema.optional(),
-  errors: z.array(z.string()).optional(),
-  error: z.string().optional(),
-});
-
-export type GenerateScreenOutput = z.infer<typeof GenerateScreenOutputSchema>;
 
 // ============================================================================
 // Validate Screen Tool Schemas (SPEC-LAYOUT-002 Phase 4)
@@ -1132,6 +1081,18 @@ export const ValidateScreenDefinitionInputSchema = z.object({
 export type ValidateScreenDefinitionInput = z.infer<typeof ValidateScreenDefinitionInputSchema>;
 
 /**
+ * JSON Patch Operation Schema (RFC 6902 subset)
+ * Auto-fix 패치를 위한 스키마
+ */
+export const JsonPatchOperationSchema = z.object({
+  op: z.enum(['replace', 'add', 'remove']),
+  path: z.string(),
+  value: z.unknown().optional(),
+});
+
+export type JsonPatchOperation = z.infer<typeof JsonPatchOperationSchema>;
+
+/**
  * Validation error with path and suggestion
  */
 export const ValidationErrorSchema = z.object({
@@ -1141,6 +1102,7 @@ export const ValidationErrorSchema = z.object({
   expected: z.string().optional(),
   received: z.string().optional(),
   suggestion: z.string().optional(),
+  autoFix: z.array(JsonPatchOperationSchema).optional(),
 });
 
 export type ValidationError = z.infer<typeof ValidationErrorSchema>;
@@ -1165,6 +1127,7 @@ export const ImprovementSuggestionSchema = z.object({
   message: z.string(),
   affectedPath: z.string().optional(),
   suggestedChange: z.string().optional(),
+  autoFix: z.array(JsonPatchOperationSchema).optional(),
 });
 
 export type ImprovementSuggestion = z.infer<typeof ImprovementSuggestionSchema>;
@@ -1178,6 +1141,7 @@ export const ValidateScreenDefinitionOutputSchema = z.object({
   errors: z.array(ValidationErrorSchema).optional(),
   warnings: z.array(ValidationWarningSchema).optional(),
   suggestions: z.array(ImprovementSuggestionSchema).optional(),
+  autoFixPatches: z.array(JsonPatchOperationSchema).optional(),
   error: z.string().optional(),
 });
 
@@ -1193,9 +1157,7 @@ export type ValidateScreenDefinitionOutput = z.infer<typeof ValidateScreenDefini
  */
 export const ValidateEnvironmentInputSchema = z.object({
   projectPath: z.string().describe('Path to package.json or project root'),
-  requiredPackages: z
-    .array(z.string())
-    .describe('Packages to validate (from generate_screen.dependencies.external)'),
+  requiredPackages: z.array(z.string()).describe('Packages required by the screen components'),
   checkTailwind: z
     .boolean()
     .optional()

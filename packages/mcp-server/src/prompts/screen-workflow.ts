@@ -1,10 +1,10 @@
 /**
  * MCP Prompts: Screen Generation Workflow
- * Step-by-step guide for the 4-step screen generation process
+ * Step-by-step guide for the 3-step screen generation process
  */
 
 /**
- * Screen Workflow prompt with detailed 4-step process
+ * Screen Workflow prompt with detailed 3-step process
  */
 export function getScreenWorkflowPrompt() {
   return {
@@ -19,13 +19,13 @@ This is the **recommended production workflow** for generating screens with Tekt
 
 ## Overview
 
-The 4-step workflow ensures:
-- ✅ Correct component usage
-- ✅ Validated screen structure
+The 3-step workflow ensures:
+- ✅ Correct component usage with inline props/variants
+- ✅ Validated screen structure with auto-fix patches
 - ✅ All dependencies installed
 - ✅ Tailwind CSS properly configured
 
-## Step 1/4: Get Screen Generation Context
+## Step 1/3: Get Screen Generation Context
 
 **Tool:** \`get-screen-generation-context\`
 
@@ -42,7 +42,7 @@ The 4-step workflow ensures:
 
 **Output:**
 - Matching screen templates
-- Available components with props
+- Available components with **inline props and variants**
 - Screen Definition JSON schema
 - Example definitions
 - Theme recipes
@@ -54,11 +54,11 @@ The 4-step workflow ensures:
 
 ---
 
-## Step 2/4: Validate Screen Definition
+## Step 2/3: Validate Screen Definition
 
 **Tool:** \`validate-screen-definition\`
 
-**Purpose:** Ensure your Screen Definition JSON is correct before generating code
+**Purpose:** Ensure your Screen Definition JSON is correct before writing code
 
 **Input:**
 \`\`\`json
@@ -70,7 +70,7 @@ The 4-step workflow ensures:
     "sections": [
       {
         "id": "header",
-        "token": "section.container",
+        "pattern": "section.container",
         "components": [...]
       }
     ]
@@ -81,56 +81,57 @@ The 4-step workflow ensures:
 
 **Output:**
 - \`valid\`: true/false
-- \`errors\`: Array of validation errors with suggestions
+- \`errors\`: Array of validation errors with suggestions and **autoFix patches**
 - \`warnings\`: Potential issues
-- \`suggestions\`: Improvement recommendations
+- \`suggestions\`: Improvement recommendations with **autoFix patches**
+- \`autoFixPatches\`: Aggregated JSON Patch operations to fix all issues
 
 **When to use:**
-- Always before Step 3
-- When fixing validation errors
+- Always before writing React code
+- When fixing validation errors (apply autoFixPatches)
 - When exploring screen structure improvements
 
 ---
 
-## Step 3/4: Generate Screen Code
+## After Validation: Write React Code Directly
 
-**Tool:** \`generate_screen\`
+**No tool needed** - The AI agent writes production-ready React code directly.
 
-**Purpose:** Generate production-ready React code from validated Screen Definition
+**How:**
+1. Use the components and import statements from Step 1 context
+2. Apply component props and variants as documented in the context
+3. Follow the template skeleton structure if available
+4. Apply theme recipes via variant props
 
-**Input:**
-\`\`\`json
-{
-  "screenDefinition": { /* validated definition from Step 2 */ },
-  "outputFormat": "tailwind",
-  "options": {
-    "typescript": true,
-    "prettier": true
-  }
+**Example:**
+\`\`\`tsx
+import { Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+import { Button } from '@tekton-ui/ui';
+import { Avatar, AvatarImage, AvatarFallback } from '@tekton-ui/ui';
+
+export default function UserDashboard() {
+  return (
+    <div className="container mx-auto p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>User Dashboard</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Avatar>
+            <AvatarImage src="/avatar.jpg" alt="User" />
+            <AvatarFallback>U</AvatarFallback>
+          </Avatar>
+          <Button variant="default">Edit Profile</Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 \`\`\`
 
-**Output:**
-- \`code\`: Production React component
-- \`cssVariables\`: CSS variables for theme
-- \`dependencies\`: Object with:
-  - \`external\`: Required npm packages
-  - \`internal\`: @tekton-ui/* packages
-  - \`missing\`: Packages not in project
-  - \`installCommands\`: Ready-to-use install commands
-
-**Output Formats:**
-- \`tailwind\`: Tailwind CSS classes (recommended)
-- \`css-in-js\`: Styled-components or Emotion
-- \`react\`: Pure React with CSS variables
-
-**Critical:**
-- ALWAYS check the \`dependencies.external\` field
-- If non-empty, proceed to Step 4 or show install commands to user
-
 ---
 
-## Step 4/4: Validate Environment (Optional but Recommended)
+## Step 3/3: Validate Environment (Optional but Recommended)
 
 **Tool:** \`validate-environment\`
 
@@ -140,7 +141,7 @@ The 4-step workflow ensures:
 \`\`\`json
 {
   "projectPath": "/path/to/package.json",
-  "requiredPackages": ["framer-motion", "@radix-ui/react-slot"],
+  "requiredPackages": ["@radix-ui/react-slot", "@radix-ui/react-avatar"],
   "checkTailwind": true
 }
 \`\`\`
@@ -159,7 +160,7 @@ The 4-step workflow ensures:
 - ✅ tailwindcss-animate plugin configured
 
 **When to use:**
-- After Step 3 when dependencies.external is non-empty
+- After writing code, to verify all packages are installed
 - Before delivering code to user
 - When user reports missing styles or animations
 
@@ -171,14 +172,14 @@ The 4-step workflow ensures:
 User: "Create a login page with email/password fields"
 
 1. Call get-screen-generation-context({ description: "login page..." })
-   → Receive template matches, components, schema
+   → Receive template matches, components with inline props, schema
 
 2. Generate Screen Definition JSON based on context
    → Call validate-screen-definition({ definition: {...} })
-   → Fix errors if any, re-validate
+   → Apply autoFixPatches if any, re-validate if needed
 
-3. Call generate_screen({ screenDefinition: {...}, outputFormat: "tailwind" })
-   → Receive code + dependencies
+3. Write React code directly using components from Step 1 context
+   → Use import statements and props from context response
 
 4. Call validate-environment({ projectPath: "...", requiredPackages: [...] })
    → Show user missing packages and install commands
@@ -190,12 +191,13 @@ User: "Create a login page with email/password fields"
 ## Troubleshooting
 
 **Validation fails in Step 2:**
-- Read error messages carefully - they include suggestions
+- Read error messages carefully - they include suggestions and autoFix patches
+- Apply autoFixPatches to auto-correct common issues
 - Check token names match SPEC-LAYOUT-001
 - Verify component IDs exist (use list-components)
 
-**Missing dependencies in Step 3:**
-- Always run Step 4 to verify environment
+**Missing dependencies:**
+- Always run Step 3 to verify environment
 - Show install commands to user
 - Check Tailwind config includes @tekton-ui/ui paths
 
@@ -208,11 +210,12 @@ User: "Create a login page with email/password fields"
 
 ## Best Practices
 
-1. ✅ Always follow all 4 steps in order
-2. ✅ Validate before generating (Step 2 before Step 3)
-3. ✅ Check environment before delivering code (Step 4)
+1. ✅ Always follow all 3 steps in order
+2. ✅ Validate before writing code (Step 2)
+3. ✅ Check environment before delivering code (Step 3)
 4. ✅ Use strict validation mode for production
 5. ✅ Include theme recipes for visual consistency
+6. ✅ Use inline props from context instead of guessing
 
 ## Alternative Workflows
 
@@ -220,7 +223,7 @@ User: "Create a login page with email/password fields"
 - \`generate-blueprint\` → \`export-screen\` (skips validation)
 
 **Production (recommended):**
-- Follow complete 4-step workflow above`,
+- Follow complete 3-step workflow above`,
         },
       },
     ],

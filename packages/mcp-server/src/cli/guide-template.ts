@@ -75,9 +75,9 @@ tekton-mcp status
 
 ## Screen Generation Workflow
 
-Tekton provides a **4-step workflow** for production-ready screen generation:
+Tekton provides a **3-step workflow** for production-ready screen generation:
 
-### Step 1/4: Get Context
+### Step 1/3: Get Context
 
 Claude Code calls \`get-screen-generation-context\` with your screen description:
 
@@ -85,21 +85,19 @@ Claude Code calls \`get-screen-generation-context\` with your screen description
 "Create a user dashboard with profile card and recent activity"
 \`\`\`
 
-Returns: Template matches, component suggestions, Screen Definition schema
+Returns: Template matches, component suggestions with inline props/variants, Screen Definition schema
 
-### Step 2/4: Validate Definition
+### Step 2/3: Validate Definition
 
 Claude Code generates a Screen Definition JSON and calls \`validate-screen-definition\`:
 
-Returns: Validation results, errors (if any), improvement suggestions
+Returns: Validation results, errors with auto-fix patches (if any), improvement suggestions
 
-### Step 3/4: Generate Code
+### After Validation: Write Code
 
-Claude Code calls \`generate_screen\` with the validated definition:
+Claude Code writes React code directly using the components and props from Step 1 context.
 
-Returns: Production React code, CSS variables, dependencies list
-
-### Step 4/4: Validate Environment
+### Step 3/3: Validate Environment (Optional)
 
 Claude Code calls \`validate-environment\` to check your project:
 

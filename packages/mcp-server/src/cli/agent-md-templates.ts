@@ -17,7 +17,7 @@ export function generateClaudeMdSection(framework: Framework): string {
 
 ### MCP Server Connection
 
-Tekton MCP server is configured in \`.mcp.json\`. Claude Code automatically loads 16 tools for screen generation.
+Tekton MCP server is configured in \`.mcp.json\`. Claude Code automatically loads 15 tools for screen generation.
 
 ### Authentication (Step 1)
 
@@ -29,23 +29,22 @@ tekton-mcp login
 
 **Important:** All 6 themes require authentication. No free themes are available.
 
-### Screen Generation Workflow (4 Steps)
+### Screen Generation Workflow (3 Steps)
 
-**Step 1/4:** Gather Context
+**Step 1/3:** Gather Context
 - Call \`get-screen-generation-context\` with user's screen description
-- Receive template matches, component suggestions, and schema
+- Receive template matches, component suggestions with inline props/variants, and schema
 
-**Step 2/4:** Validate Definition
+**Step 2/3:** Validate Definition
 - Generate Screen Definition JSON based on context
 - Call \`validate-screen-definition\` to verify structure
-- Fix any errors before proceeding
+- Apply autoFixPatches or fix any errors before proceeding
 
-**Step 3/4:** Generate Code
-- Call \`generate_screen\` with validated definition
-- Receive production React code and dependencies list
-- Check \`dependencies.external\` field
+**After Validation:** Write React Code Directly
+- Use components and import statements from Step 1 context
+- Apply theme recipes via variant props
 
-**Step 4/4:** Validate Environment
+**Step 3/3:** Validate Environment (Optional)
 - Call \`validate-environment\` with project path and required packages
 - Verify Tailwind CSS configuration
 - Show user install commands for missing packages
@@ -80,11 +79,10 @@ export default function Page() {
 - \`list-screen-templates\` - List 13 screen templates
 - \`preview-screen-template\` - Get template structure
 
-**Screen Generation (4 tools):**
-- \`get-screen-generation-context\` - Step 1/4
-- \`validate-screen-definition\` - Step 2/4
-- \`generate_screen\` - Step 3/4
-- \`validate-environment\` - Step 4/4
+**Screen Generation (3 tools):**
+- \`get-screen-generation-context\` - Step 1/3
+- \`validate-screen-definition\` - Step 2/3
+- \`validate-environment\` - Step 3/3 (Optional)
 
 **Quick Prototyping (3 tools):**
 - \`generate-blueprint\` - Quick UI structure
@@ -103,7 +101,7 @@ export default function Page() {
 Claude Code can access built-in prompts for guidance:
 
 - \`getting-started\` - Authentication → Theme → Components → Screen generation
-- \`screen-workflow\` - Detailed 4-step workflow with troubleshooting
+- \`screen-workflow\` - Detailed 3-step workflow with troubleshooting
 
 These prompts work across all MCP clients, not just Claude Code.
 
@@ -112,8 +110,7 @@ These prompts work across all MCP clients, not just Claude Code.
 1. ❌ Skipping authentication before generating screens
 2. ❌ Using non-existent theme IDs (only 6 exist)
 3. ❌ Skipping validate-screen-definition step
-4. ❌ Not checking dependencies.external field
-5. ❌ Delivering code without verifying Tailwind config
+4. ❌ Delivering code without verifying Tailwind config
 
 ### Troubleshooting
 
@@ -144,7 +141,7 @@ export function generateAgentsMdSection(framework: Framework): string {
 
 ### Overview
 
-Tekton MCP server provides 16 tools for screen generation via Model Context Protocol (MCP). This guide is for AI agents on platforms like OpenAI Codex, Cursor, Windsurf, and other MCP-compatible clients.
+Tekton MCP server provides 15 tools for screen generation via Model Context Protocol (MCP). This guide is for AI agents on platforms like OpenAI Codex, Cursor, Windsurf, and other MCP-compatible clients.
 
 ### Prerequisites
 
@@ -166,11 +163,11 @@ tekton-mcp login
 
 **Important:** All 6 themes require valid licenses. There are no free themes available.
 
-### Screen Generation Workflow (4 Steps)
+### Screen Generation Workflow (3 Steps)
 
 Follow this exact sequence for production-ready screens:
 
-#### Step 1/4: Gather Context
+#### Step 1/3: Gather Context
 
 **Tool:** \`get-screen-generation-context\`
 
@@ -185,9 +182,9 @@ Follow this exact sequence for production-ready screens:
 }
 \`\`\`
 
-**Output:** Template matches, component suggestions, schema, examples
+**Output:** Template matches, component suggestions with inline props/variants, schema, examples
 
-#### Step 2/4: Validate Definition
+#### Step 2/3: Validate Definition
 
 **Tool:** \`validate-screen-definition\`
 
@@ -206,33 +203,17 @@ Follow this exact sequence for production-ready screens:
 }
 \`\`\`
 
-**Output:** Validation results with errors, warnings, suggestions
+**Output:** Validation results with errors, warnings, suggestions, and autoFix patches
 
-**Critical:** Always validate before Step 3. Fix all errors before proceeding.
+**Critical:** Always validate before writing code. Apply autoFixPatches or fix all errors.
 
-#### Step 3/4: Generate Code
+#### After Validation: Write React Code Directly
 
-**Tool:** \`generate_screen\`
+**No tool needed** - Write production-ready React code using components from Step 1 context.
 
-**Purpose:** Generate production React code
+Use the import statements and props provided in the context response.
 
-**Input:**
-\`\`\`json
-{
-  "screenDefinition": { /* from Step 2 */ },
-  "outputFormat": "tailwind",
-  "options": {
-    "typescript": true,
-    "prettier": true
-  }
-}
-\`\`\`
-
-**Output:** React code + dependencies
-
-**Critical:** Check \`dependencies.external\` field. If non-empty, proceed to Step 4.
-
-#### Step 4/4: Validate Environment
+#### Step 3/3: Validate Environment (Optional)
 
 **Tool:** \`validate-environment\`
 
@@ -242,7 +223,7 @@ Follow this exact sequence for production-ready screens:
 \`\`\`json
 {
   "projectPath": "/path/to/package.json",
-  "requiredPackages": ["framer-motion", "@radix-ui/react-slot"],
+  "requiredPackages": ["@radix-ui/react-slot", "@radix-ui/react-avatar"],
   "checkTailwind": true
 }
 \`\`\`
@@ -292,7 +273,7 @@ export default function Page() {
 Your MCP client may support prompts. If available:
 
 - \`getting-started\` - Complete onboarding guide
-- \`screen-workflow\` - Detailed 4-step workflow
+- \`screen-workflow\` - Detailed 3-step workflow
 
 These provide context to help you guide users effectively.
 
@@ -319,16 +300,16 @@ These provide context to help you guide users effectively.
 ### Best Practices
 
 1. ✅ Always authenticate before generating screens
-2. ✅ Follow all 4 workflow steps in order
-3. ✅ Validate before generating (Step 2 before Step 3)
-4. ✅ Check environment before delivering code (Step 4)
+2. ✅ Follow all 3 workflow steps in order
+3. ✅ Validate before writing code (Step 2)
+4. ✅ Check environment before delivering code (Step 3)
 5. ✅ Inform user about missing dependencies and Tailwind issues
 6. ✅ Use \`strict: true\` for production validation
 
-### Quick Reference: All 16 Tools
+### Quick Reference: All 15 Tools
 
 **Discovery:** list-themes, preview-theme, list-components, preview-component, list-screen-templates, preview-screen-template
-**Workflow:** get-screen-generation-context, validate-screen-definition, generate_screen, validate-environment
+**Workflow:** get-screen-generation-context, validate-screen-definition, validate-environment
 **Quick:** generate-blueprint, export-screen, validate_screen, list_tokens
 **Icons:** list-icon-libraries, preview-icon-library
 `;

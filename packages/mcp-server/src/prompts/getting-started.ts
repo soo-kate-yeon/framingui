@@ -78,18 +78,17 @@ Before creating screen definitions:
 
 ## Step 5: Generate Your First Screen
 
-Follow the 4-step workflow:
+Follow the 3-step workflow:
 
-**Step 1/4:** Call \`get-screen-generation-context\` with your screen description
-- Returns: Template matches, component suggestions, schema
+**Step 1/3:** Call \`get-screen-generation-context\` with your screen description
+- Returns: Template matches, component suggestions with inline props, schema
 
-**Step 2/4:** Create Screen Definition JSON, then call \`validate-screen-definition\`
-- Returns: Validation results, errors, suggestions
+**Step 2/3:** Create Screen Definition JSON, then call \`validate-screen-definition\`
+- Returns: Validation results, errors with auto-fix patches, suggestions
 
-**Step 3/4:** Call \`generate_screen\` with validated definition
-- Returns: Production React code, dependencies list
+**After validation passes:** Write React code directly using the components and props from Step 1
 
-**Step 4/4:** Call \`validate-environment\` with project path
+**Step 3/3 (Optional):** Call \`validate-environment\` with project path
 - Returns: Missing packages, install commands, Tailwind config status
 
 ## Common Mistakes to Avoid
@@ -97,7 +96,7 @@ Follow the 4-step workflow:
 1. ❌ Skipping authentication - All themes require licenses
 2. ❌ Skipping whoami - All tools are blocked until whoami is called
 3. ❌ Using non-existent theme IDs - Only 6 themes exist
-4. ❌ Skipping validate-screen-definition - Always validate before generating
+4. ❌ Skipping validate-screen-definition - Always validate before writing code
 5. ❌ Ignoring dependencies warnings - Check required packages before running code
 6. ❌ Using unlicensed themes - Only use themes from whoami licensedThemes list
 

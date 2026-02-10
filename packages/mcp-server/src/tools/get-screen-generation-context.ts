@@ -20,6 +20,7 @@ import { getMatchingExamples } from '../data/examples/screen-examples.js';
 import { generateHints } from '../data/hint-generator.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 import { getComponentById } from '../data/component-registry.js';
+import { getComponentPropsData } from '../data/component-props.js';
 
 /**
  * Screen Definition JSON Schema for reference
@@ -121,14 +122,24 @@ function getComponentInfo(componentIds: string[]): ContextComponentInfo[] {
   for (const id of componentIds) {
     const component = getComponentById(id.toLowerCase());
     if (component) {
+      const propsData = getComponentPropsData(id.toLowerCase());
+
+      // subComponents가 있으면 import에 함께 포함
+      let importStatement: string;
+      if (propsData?.subComponents && propsData.subComponents.length > 0) {
+        importStatement = `import { ${component.name}, ${propsData.subComponents.join(', ')} } from '@tekton-ui/ui';`;
+      } else {
+        importStatement = `import { ${component.name} } from '@tekton-ui/ui';`;
+      }
+
       components.push({
         id: component.id,
         name: component.name,
         category: component.category as 'core' | 'complex' | 'advanced',
         description: component.description,
-        importStatement: `import { ${component.name} } from '@tekton-ui/ui';`,
-        props: [], // Props are detailed in preview-component tool
-        variants: undefined, // Variants are detailed in preview-component tool
+        importStatement,
+        props: propsData?.props ?? [],
+        variants: propsData?.variants,
       });
     }
   }
@@ -283,7 +294,7 @@ export async function getScreenGenerationContextTool(
           step: 1,
           action: 'Review Context',
           description:
-            'Review the templateMatch, components, schema, examples, and hints provided in this response',
+            'Review the templateMatch, components (with inline props/variants), schema, examples, and hints provided in this response',
         },
         {
           step: 2,
@@ -307,33 +318,33 @@ export async function getScreenGenerationContextTool(
           action: 'Validate Definition',
           tool: 'validate-screen-definition',
           description:
-            'Call validate-screen-definition with your generated definition to check for errors',
+            'Call validate-screen-definition with your generated definition to check for errors. Apply autoFixPatches if provided.',
           example: '{ "definition": <your-screen-definition>, "strict": true }',
         },
         {
           step: 4,
           action: 'Fix Validation Errors',
           description:
-            'If validation fails, review the errors and suggestions, then fix and re-validate',
+            'If validation fails, apply autoFixPatches or manually fix errors and re-validate',
         },
         {
           step: 5,
-          action: 'Generate Code',
-          tool: 'generate_screen',
-          description: 'Once validation passes, call generate_screen to produce React code',
-          example: '{ "screenDefinition": <validated-definition>, "outputFormat": "react" }',
+          action: 'Write React Code',
+          description:
+            'Write production-ready React code DIRECTLY using the components and props from this context. Use the import statements provided in the components field.',
         },
         {
           step: 6,
           action: 'Save File',
-          description: 'Write the generated code to the target file path (e.g., app/page.tsx)',
+          description: 'Write the code to the target file path (e.g., app/page.tsx)',
         },
       ],
       notes: [
-        'Use components from the "components" field - they are available in @tekton-ui/ui',
+        'Use components from the "components" field - they include inline props and variants',
         'Apply theme recipes by setting variant props on components',
-        'If themeId is provided, recipes will be auto-applied during code generation',
+        'Write React code directly using the components and context provided',
         'Check hints for layout and component recommendations',
+        'Use validate-environment to verify project dependencies before delivering code',
       ],
     };
 
