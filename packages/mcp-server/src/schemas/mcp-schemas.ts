@@ -379,6 +379,20 @@ export const DependenciesSchema = z.object({
 
 export type Dependencies = z.infer<typeof DependenciesSchema>;
 
+/**
+ * Generate Screen Output Schema
+ */
+export const GenerateScreenOutputSchema = z.object({
+  success: z.boolean(),
+  code: z.string().optional(),
+  cssVariables: z.string().optional(),
+  dependencies: DependenciesSchema.optional(),
+  errors: z.array(z.string()).optional(),
+  error: z.string().optional(),
+});
+
+export type GenerateScreenOutput = z.infer<typeof GenerateScreenOutputSchema>;
+
 // ============================================================================
 // Validate Screen Tool Schemas (SPEC-LAYOUT-002 Phase 4)
 // ============================================================================
@@ -1064,6 +1078,50 @@ export const GetScreenGenerationContextOutputSchema = z.object({
 export type GetScreenGenerationContextOutput = z.infer<
   typeof GetScreenGenerationContextOutputSchema
 >;
+
+// ============================================================================
+// Generate Screen Tool Schemas (SPEC-LAYOUT-002 Phase 4)
+// ============================================================================
+
+/**
+ * Output format for code generation
+ */
+export const OutputFormatSchema = z.enum(['css-in-js', 'tailwind', 'react']);
+
+export type OutputFormat = z.infer<typeof OutputFormatSchema>;
+
+/**
+ * CSS Framework options for CSS-in-JS format
+ */
+export const CSSFrameworkSchema = z.enum(['styled-components', 'emotion']);
+
+export type CSSFramework = z.infer<typeof CSSFrameworkSchema>;
+
+/**
+ * Generation options for generate_screen tool
+ */
+export const GenerationOptionsSchema = z.object({
+  cssFramework: CSSFrameworkSchema.optional(),
+  typescript: z.boolean().optional().default(true),
+  prettier: z.boolean().optional().default(false),
+});
+
+export type GenerationOptions = z.infer<typeof GenerationOptionsSchema>;
+
+/**
+ * Generate Screen Input Schema
+ * SPEC-LAYOUT-002: Generate production code from screen definition
+ */
+export const GenerateScreenInputSchema = z.object({
+  screenDefinition: z.unknown(), // Accept any object - will be validated by @tekton-ui/core
+  outputFormat: OutputFormatSchema,
+  options: GenerationOptionsSchema.optional(),
+});
+
+export type GenerateScreenInput = z.infer<typeof GenerateScreenInputSchema>;
+
+// Note: DependenciesSchema and GenerateScreenOutputSchema are defined later in this file
+// (see lines 1113-1145) to avoid circular dependencies
 
 // ============================================================================
 // Validate Screen Definition Tool Schemas (SPEC-MCP-004 Phase 3.5)

@@ -21,6 +21,7 @@ import { generateBlueprintTool } from './tools/generate-blueprint.js';
 import { previewThemeTool } from './tools/preview-theme.js';
 import { listThemesTool } from './tools/list-themes.js';
 import { exportScreenTool } from './tools/export-screen.js';
+import { generateScreenTool } from './tools/generate-screen.js';
 
 import { validateScreenTool } from './tools/validate-screen.js';
 import { listTokensTool } from './tools/list-tokens.js';
@@ -52,6 +53,7 @@ import {
   PreviewScreenTemplateInputSchema,
   GetScreenGenerationContextInputSchema,
   ValidateScreenDefinitionInputSchema,
+  GenerateScreenInputSchema,
   ValidateEnvironmentInputSchema,
 } from './schemas/mcp-schemas.js';
 
@@ -531,6 +533,58 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: 'generate_screen',
+        description:
+          '[WORKFLOW STEP 3/4] Generate production-ready React code with theme applied from validated Screen Definition.\n\n' +
+          'REQUIRED WORKFLOW:\n' +
+          '1. Call get-screen-generation-context (Step 1/4)\n' +
+          '2. Call validate-screen-definition (Step 2/4)\n' +
+          '3. Call THIS TOOL (Step 3/4) - Theme engine applies styling\n' +
+          '4. Call validate-environment if path known (Step 4/4)\n\n' +
+          'WHY THIS TOOL IS ESSENTIAL:\n' +
+          '- Applies theme recipes to components (minimal-workspace, classic-magazine, etc.)\n' +
+          '- Converts Screen Definition → Production-ready code with correct Tailwind classes\n' +
+          '- Without this tool, theme styling will not be applied!\n\n' +
+          'AFTER RECEIVING RESPONSE:\n' +
+          '- ALWAYS check the "dependencies" field in the response\n' +
+          '- If dependencies.external is non-empty:\n' +
+          '  * User provided package.json path? → Call validate-environment (Step 4/4)\n' +
+          '  * Path unknown? → Show dependencies.installCommands to user\n' +
+          '- Display the list of required packages to user before delivering code\n' +
+          '- validate-environment also checks Tailwind CSS config\n\n' +
+          'CRITICAL:\n' +
+          '- This workflow prevents "Module not found" errors at runtime\n' +
+          '- Tailwind validation prevents invisible/unstyled @tekton-ui/ui components\n' +
+          '- Never deliver code without informing user about dependencies',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            screenDefinition: {
+              type: 'object',
+              description: 'JSON screen definition with id, shell, page, sections',
+            },
+            outputFormat: {
+              type: 'string',
+              description: 'Code output format',
+              enum: ['css-in-js', 'tailwind', 'react'],
+            },
+            options: {
+              type: 'object',
+              description: 'Optional generation options',
+              properties: {
+                cssFramework: {
+                  type: 'string',
+                  enum: ['styled-components', 'emotion'],
+                },
+                typescript: { type: 'boolean' },
+                prettier: { type: 'boolean' },
+              },
+            },
+          },
+          required: ['screenDefinition', 'outputFormat'],
+        },
+      },
+      {
         name: 'validate-environment',
         description:
           '[WORKFLOW STEP 3/3 - Optional] Validate user environment: NPM packages + Tailwind CSS configuration for @tekton-ui/ui.\n\n' +
@@ -849,6 +903,21 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         // Validate input
         const validatedInput = ValidateScreenDefinitionInputSchema.parse(args);
         const result = await validateScreenDefinitionTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'generate_screen': {
+        // Validate input
+        const validatedInput = GenerateScreenInputSchema.parse(args);
+        const result = await generateScreenTool(validatedInput);
 
         return {
           content: [
