@@ -437,15 +437,11 @@ Built for professional design systems:
 ## Installation
 
 ```bash
-npm install tekton
+pnpm add tekton
 ```
 
 ```bash
 yarn add tekton
-```
-
-```bash
-pnpm add tekton
 ```
 
 ## Quick Start
@@ -1361,22 +1357,22 @@ We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md)
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests in watch mode
-npm run test:watch
+pnpm test:watch
 
 # Generate coverage report
-npm run test:coverage
+pnpm test:coverage
 
 # Build the project
-npm run build
+pnpm build
 
 # Lint code
-npm run lint
+pnpm lint
 
 # Format code
-npm run format
+pnpm format
 ```
 
 ## License

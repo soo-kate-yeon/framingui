@@ -18,8 +18,6 @@ Tekton UI Reference Component Library - High-quality, accessible React component
 ```bash
 pnpm add @tekton/ui
 # or
-npm install @tekton/ui
-# or
 yarn add @tekton/ui
 ```
 

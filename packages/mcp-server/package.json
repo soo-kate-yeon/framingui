@@ -1,6 +1,6 @@
 {
   "name": "@tekton-ui/mcp-server",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
@@ -25,7 +25,8 @@
   ],
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "linkWorkspace": false
   },
   "repository": {
     "type": "git",
