@@ -1,6 +1,6 @@
 {
   "name": "@tekton-ui/mcp-server",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
