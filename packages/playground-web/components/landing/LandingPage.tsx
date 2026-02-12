@@ -99,8 +99,9 @@ export function LandingPage() {
 
         <FadeIn delay={0.3}>
           <p className="text-lg md:text-2xl text-neutral-600 mb-10 md:mb-12 max-w-2xl mx-auto leading-relaxed">
-            Tekton is the most advanced design system for building agentic interfaces. Generate,
-            preview, and deploy production-ready UI with AI.
+            TEKTON is the first design system AI agents can actually understand. Structured tokens
+            and layout logic let agents generate professional, production-ready UI—directly in your
+            codebase. No Figma. No guesswork.
           </p>
         </FadeIn>
 
@@ -144,23 +145,23 @@ export function LandingPage() {
             </div>
           </FadeIn>
           <FadeIn className="order-1 md:order-2" delay={0.2}>
-            <h2 className="text-3xl font-bold mb-8">AI-Driven UI Generation</h2>
+            <h2 className="text-3xl font-bold mb-8">High-Quality Themes. Zero Design Effort.</h2>
             <Accordion
               items={[
                 {
-                  title: 'Natural Language to UI',
+                  title: 'Precision OKLCH Token System',
                   content:
-                    'Describe your interface in plain English and let Tekton generate production-ready React code instantly. No more starting from scratch.',
+                    'Every theme ships with a complete OKLCH-based token architecture — atomic colors, semantic layers, typography, spacing, elevation, motion, density, state layers, and dark mode. All WCAG AA compliant out of the box.',
                 },
                 {
-                  title: 'Context-Aware Components',
+                  title: 'Fully Responsive Layout Tokens',
                   content:
-                    'The AI understands your project context and selects the most appropriate components from the Tekton design system.',
+                    'Go beyond basic grids. TEKTON defines structured tokens for Shells (app frames), Pages (content layouts), and Sections (content blocks) that auto-adapt across Mobile, Tablet, and Desktop breakpoints. Your agent knows exactly how to scale.',
                 },
                 {
-                  title: 'Smart Layouts',
+                  title: 'Built on 30+ shadcn/ui Components',
                   content:
-                    'Automatically handles responsive layouts, spacing, and alignment based on best practices and design tokens.',
+                    'From Buttons and Cards to Dialogs, Tables, Sidebars, and Calendars — built on battle-tested shadcn/ui primitives organized into 3 tiers. Stable, consistent, and ready to ship.',
                 },
               ]}
             />
@@ -172,23 +173,23 @@ export function LandingPage() {
       <section className="container mx-auto px-6 md:px-8 mb-20 md:mb-32">
         <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
           <FadeIn className="order-1">
-            <h2 className="text-3xl font-bold mb-8">Production-Grade Code</h2>
+            <h2 className="text-3xl font-bold mb-8">From Chat to Production. Instantly.</h2>
             <Accordion
               items={[
                 {
-                  title: 'Clean React & TypeScript',
+                  title: 'Works Everywhere MCP Runs',
                   content:
-                    'Generated code is clean, semantic, and fully typed. It looks and behaves exactly like code written by a senior engineer.',
+                    'Not locked to one platform. Claude Code, Cursor, Windsurf, OpenAI Codex — if it supports MCP, TEKTON works. One npx command and your agent has full design capabilities.',
                 },
                 {
-                  title: 'Tailwind CSS Styling',
+                  title: 'Import a System, Not Just a Screen',
                   content:
-                    'Uses utility-first styling with Tailwind CSS, making it easy to customize and maintain without complex CSS files.',
+                    "Don't just generate one UI — import an entire design language. With tekton init, your agent sets up theme tokens, component libraries, and layout logic to design every flow in your product consistently.",
                 },
                 {
-                  title: 'Accessibility Built-in',
+                  title: 'Production-Ready TypeScript Output',
                   content:
-                    'All components follow WAI-ARIA standards, ensuring your application is accessible to all users by default.',
+                    'Generated code is clean, fully typed, and uses Tailwind CSS with design tokens. It looks and behaves exactly like code written by a senior engineer — because the system enforces it.',
                 },
               ]}
             />
@@ -210,23 +211,23 @@ export function LandingPage() {
             </div>
           </FadeIn>
           <FadeIn className="order-1 md:order-2" delay={0.2}>
-            <h2 className="text-3xl font-bold mb-8">Seamless Integration</h2>
+            <h2 className="text-3xl font-bold mb-8">Deterministic UI. No Hallucinations.</h2>
             <Accordion
               items={[
                 {
-                  title: 'MCP Protocol Support',
+                  title: 'Reliable Code, Every Single Time',
                   content:
-                    'Connects directly to your AI agents via the Model Context Protocol, enabling real-time UI generation and modification.',
+                    'Raw LLMs guess at styles and layouts — TEKTON eliminates that. A semantic scoring algorithm places components using weighted rules, producing code that follows strict design constraints instead of hallucinating CSS.',
                 },
                 {
-                  title: 'Themeable Architecture',
+                  title: '6 Curated Themes, Ready Now',
                   content:
-                    'Switch between different themes (OKLCH-based) instantly. Create your own brand identity with a comprehensive token system.',
+                    'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism — each handcrafted with 200+ tokens. Pick one, and your agent handles the rest.',
                 },
                 {
-                  title: 'Developer Tools',
+                  title: 'Safety Protocols Built In',
                   content:
-                    'Includes a powerful CLI and VS Code extension to streamline your workflow and boost productivity.',
+                    'Multi-layer validation — threshold checks, hallucination detection, constraint enforcement, and automatic fallbacks — ensures your agent never ships broken UI.',
                 },
               ]}
             />
@@ -246,24 +247,24 @@ export function LandingPage() {
               <Accordion
                 items={[
                   {
-                    title: 'What is Tekton?',
+                    title: 'Is TEKTON free?',
                     content:
-                      'Tekton is a comprehensive design system and AI-powered toolset for building modern web applications with speed and precision.',
+                      'TEKTON requires a paid license. You need to purchase at least one theme to unlock MCP server access and start generating production UI with your agent.',
                   },
                   {
-                    title: 'Is it free to use?',
+                    title: 'Can I use it for app development?',
                     content:
-                      'Tekton Core is open source. The AI features and hosted studio have a free tier for individual developers.',
+                      'Currently, TEKTON supports the React ecosystem — including Next.js and Vite projects. The init CLI auto-detects both frameworks. Native mobile design system support is coming soon.',
                   },
                   {
-                    title: 'Can I use it with Next.js?',
+                    title: 'Can I apply it to an existing project?',
                     content:
-                      'Yes, Tekton is optimized for Next.js and the React ecosystem, offering seamless integration with App Router.',
+                      'Yes! Run npx @tekton-ui/mcp-server init in your project root. It auto-detects your framework, installs dependencies, and configures everything — without breaking your existing code.',
                   },
                   {
-                    title: 'How does the AI generation work?',
+                    title: 'Is there a Figma import feature?',
                     content:
-                      'We use advanced LLMs and the Model Context Protocol to understand your requirements and generate code using our component library.',
+                      "Not yet. We're building a Figma-to-Tekton bridge that will convert your custom designs into AI-native tokens. Stay tuned for updates.",
                   },
                 ]}
                 allowMultiple
