@@ -88,7 +88,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
       {
         name: 'screen-workflow',
         description:
-          'Detailed 3-step screen generation workflow: get-screen-generation-context → validate-screen-definition → validate-environment',
+          'Detailed 4-step screen generation workflow: get-screen-generation-context → validate-screen-definition → generate_screen → validate-environment',
         arguments: [],
       },
     ],
@@ -663,6 +663,21 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         isError: true,
       };
     }
+    // 예상치 못한 예외는 로깅 후 에러 반환 (silent swallow 방지)
+    logError(`Unexpected error in requireAuth: ${e}`);
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify({
+            success: false,
+            error: 'Authentication check failed unexpectedly.',
+            detail: e instanceof Error ? e.message : String(e),
+          }),
+        },
+      ],
+      isError: true,
+    };
   }
 
   // whoami 이외의 도구는 whoami 호출 후에만 사용 가능 (서버 사이드 강제)
@@ -685,6 +700,21 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
           isError: true,
         };
       }
+      // 예상치 못한 예외는 로깅 후 에러 반환 (silent swallow 방지)
+      logError(`Unexpected error in requireWhoami: ${e}`);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({
+              success: false,
+              error: 'Whoami check failed unexpectedly.',
+              detail: e instanceof Error ? e.message : String(e),
+            }),
+          },
+        ],
+        isError: true,
+      };
     }
   }
 
@@ -1033,11 +1063,16 @@ if (apiKey) {
 // ============================================================================
 
 // Connect via stdio
-const transport = new StdioServerTransport();
+try {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  info('Tekton MCP Server connected via stdio transport');
+} catch (err) {
+  const errorMessage = err instanceof Error ? err.message : String(err);
+  logError(`Failed to connect to stdio transport: ${errorMessage}`);
+  process.exit(1);
+}
 
-await server.connect(transport);
-
-info('Tekton MCP Server connected via stdio transport');
 info(
-  '16 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, validate-environment'
+  '17 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, generate_screen, validate-environment'
 );

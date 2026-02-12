@@ -295,7 +295,7 @@ describe('exportScreenTool', () => {
     const genResult = await generateBlueprintTool({
       description: 'Data preservation test',
       layout: 'single-column',
-      themeId: 'hims-v1',
+      themeId: 'classic-magazine',
     });
 
     const originalBlueprint = genResult.blueprint!;

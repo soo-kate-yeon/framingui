@@ -1,10 +1,10 @@
 /**
  * MCP Prompts: Screen Generation Workflow
- * Step-by-step guide for the 3-step screen generation process
+ * Step-by-step guide for the 4-step screen generation process
  */
 
 /**
- * Screen Workflow prompt with detailed 3-step process
+ * Screen Workflow prompt with detailed 4-step process
  */
 export function getScreenWorkflowPrompt() {
   return {
@@ -19,13 +19,14 @@ This is the **recommended production workflow** for generating screens with Tekt
 
 ## Overview
 
-The 3-step workflow ensures:
+The 4-step workflow ensures:
 - ✅ Correct component usage with inline props/variants
 - ✅ Validated screen structure with auto-fix patches
+- ✅ Theme recipes applied via the theme engine (generate_screen)
 - ✅ All dependencies installed
 - ✅ Tailwind CSS properly configured
 
-## Step 1/3: Get Screen Generation Context
+## Step 1/4: Get Screen Generation Context
 
 **Tool:** \`get-screen-generation-context\`
 
@@ -54,11 +55,11 @@ The 3-step workflow ensures:
 
 ---
 
-## Step 2/3: Validate Screen Definition
+## Step 2/4: Validate Screen Definition
 
 **Tool:** \`validate-screen-definition\`
 
-**Purpose:** Ensure your Screen Definition JSON is correct before writing code
+**Purpose:** Ensure your Screen Definition JSON is correct before generating code
 
 **Input:**
 \`\`\`json
@@ -87,51 +88,58 @@ The 3-step workflow ensures:
 - \`autoFixPatches\`: Aggregated JSON Patch operations to fix all issues
 
 **When to use:**
-- Always before writing React code
+- Always before generating code (Step 3)
 - When fixing validation errors (apply autoFixPatches)
 - When exploring screen structure improvements
 
 ---
 
-## After Validation: Write React Code Directly
+## Step 3/4: Generate Screen Code (Theme Engine)
 
-**No tool needed** - The AI agent writes production-ready React code directly.
+**Tool:** \`generate_screen\`
 
-**How:**
-1. Use the components and import statements from Step 1 context
-2. Apply component props and variants as documented in the context
-3. Follow the template skeleton structure if available
-4. Apply theme recipes via variant props
+**Purpose:** Generate production-ready React code with theme styling applied
 
-**Example:**
-\`\`\`tsx
-import { Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
-import { Button } from '@tekton-ui/ui';
-import { Avatar, AvatarImage, AvatarFallback } from '@tekton-ui/ui';
+**CRITICAL:** This tool is the **theme application engine**. It:
+- Applies theme recipes to components (minimal-workspace, classic-magazine, etc.)
+- Converts Screen Definition → Production-ready code with correct Tailwind classes
+- Without this tool, theme styling will NOT be applied!
 
-export default function UserDashboard() {
-  return (
-    <div className="container mx-auto p-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>User Dashboard</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Avatar>
-            <AvatarImage src="/avatar.jpg" alt="User" />
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-          <Button variant="default">Edit Profile</Button>
-        </CardContent>
-      </Card>
-    </div>
-  );
+**Input:**
+\`\`\`json
+{
+  "screenDefinition": { /* validated Screen Definition from Step 2 */ },
+  "outputFormat": "tailwind",
+  "options": {
+    "typescript": true,
+    "prettier": false
+  }
 }
 \`\`\`
 
+**Output:**
+- \`success\`: true/false
+- \`code\`: Generated production-ready React code with theme applied
+- \`cssVariables\`: CSS variable definitions (if applicable)
+- \`dependencies\`: Required packages and install commands
+
+**Output Formats:**
+- \`tailwind\`: React + Tailwind CSS classes (recommended)
+- \`css-in-js\`: React + styled-components or emotion
+- \`react\`: Plain React component
+
+**AFTER RECEIVING RESPONSE:**
+- ALWAYS check the \`dependencies\` field
+- If \`dependencies.external\` is non-empty → proceed to Step 4
+- Display required packages to user before delivering code
+
+**When to use:**
+- Always after successful validation (Step 2)
+- This is the core code generation step - do NOT skip it
+
 ---
 
-## Step 3/3: Validate Environment (Optional but Recommended)
+## Step 4/4: Validate Environment (Optional but Recommended)
 
 **Tool:** \`validate-environment\`
 
@@ -160,7 +168,7 @@ export default function UserDashboard() {
 - ✅ tailwindcss-animate plugin configured
 
 **When to use:**
-- After writing code, to verify all packages are installed
+- After generating code (Step 3), when user's package.json path is known
 - Before delivering code to user
 - When user reports missing styles or animations
 
@@ -178,8 +186,9 @@ User: "Create a login page with email/password fields"
    → Call validate-screen-definition({ definition: {...} })
    → Apply autoFixPatches if any, re-validate if needed
 
-3. Write React code directly using components from Step 1 context
-   → Use import statements and props from context response
+3. Call generate_screen({ screenDefinition: {...}, outputFormat: "tailwind" })
+   → Receive production-ready code WITH theme styling applied
+   → Check dependencies field for required packages
 
 4. Call validate-environment({ projectPath: "...", requiredPackages: [...] })
    → Show user missing packages and install commands
@@ -196,8 +205,13 @@ User: "Create a login page with email/password fields"
 - Check token names match SPEC-LAYOUT-001
 - Verify component IDs exist (use list-components)
 
+**Code generation fails in Step 3:**
+- Ensure Screen Definition passed validation in Step 2
+- Check that the outputFormat is one of: tailwind, css-in-js, react
+- Verify @tekton-ui/core is properly installed
+
 **Missing dependencies:**
-- Always run Step 3 to verify environment
+- Always run Step 4 to verify environment
 - Show install commands to user
 - Check Tailwind config includes @tekton-ui/ui paths
 
@@ -210,20 +224,21 @@ User: "Create a login page with email/password fields"
 
 ## Best Practices
 
-1. ✅ Always follow all 3 steps in order
-2. ✅ Validate before writing code (Step 2)
-3. ✅ Check environment before delivering code (Step 3)
-4. ✅ Use strict validation mode for production
-5. ✅ Include theme recipes for visual consistency
-6. ✅ Use inline props from context instead of guessing
+1. ✅ Always follow all 4 steps in order
+2. ✅ Validate before generating code (Step 2)
+3. ✅ Use generate_screen for theme application (Step 3) - do NOT write code manually
+4. ✅ Check environment before delivering code (Step 4)
+5. ✅ Use strict validation mode for production
+6. ✅ Include theme recipes for visual consistency
+7. ✅ Use inline props from context instead of guessing
 
 ## Alternative Workflows
 
 **Quick Prototyping (not production):**
-- \`generate-blueprint\` → \`export-screen\` (skips validation)
+- \`generate-blueprint\` → \`export-screen\` (skips validation and theme engine)
 
 **Production (recommended):**
-- Follow complete 3-step workflow above`,
+- Follow complete 4-step workflow above`,
         },
       },
     ],

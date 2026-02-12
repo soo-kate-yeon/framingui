@@ -23,14 +23,14 @@ describe('previewThemeTool', () => {
   });
 
   it('should generate preview for valid theme', async () => {
-    setupAuth(['classic-magazine-v1']);
+    setupAuth(['classic-magazine']);
     const result = await previewThemeTool({
-      themeId: 'classic-magazine-v1',
+      themeId: 'classic-magazine',
     });
 
     expect(result.success).toBe(true);
     expect(result.theme).toBeDefined();
-    expect(result.theme?.id).toBe('classic-magazine-v1');
+    expect(result.theme?.id).toBe('classic-magazine');
     expect(result.theme?.name).toBeDefined();
     // Note: description is optional in v2.1 theme schema
     // v2.1 schema uses tokens instead of cssVariables
@@ -62,8 +62,8 @@ describe('previewThemeTool', () => {
   });
 
   it('should return theme without custom base URL', async () => {
-    setupAuth(['classic-magazine-v1']);
-    const result = await previewThemeTool({ themeId: 'classic-magazine-v1' });
+    setupAuth(['classic-magazine']);
+    const result = await previewThemeTool({ themeId: 'classic-magazine' });
 
     expect(result.success).toBe(true);
     expect(result.theme).toBeDefined();
@@ -72,7 +72,7 @@ describe('previewThemeTool', () => {
   it('should require authentication', async () => {
     // 인증 없이 호출
     setAuthData(null);
-    const result = await previewThemeTool({ themeId: 'classic-magazine-v1' });
+    const result = await previewThemeTool({ themeId: 'classic-magazine' });
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('Authentication required');
@@ -81,7 +81,7 @@ describe('previewThemeTool', () => {
   it('should require license for theme', async () => {
     // 다른 테마 라이선스만 보유
     setupAuth(['other-theme']);
-    const result = await previewThemeTool({ themeId: 'classic-magazine-v1' });
+    const result = await previewThemeTool({ themeId: 'classic-magazine' });
 
     expect(result.success).toBe(false);
     expect(result.error).toContain('not included in your license');
