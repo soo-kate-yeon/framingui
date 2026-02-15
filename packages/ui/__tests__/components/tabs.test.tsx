@@ -157,8 +157,8 @@ describe('Tabs', () => {
         </Tabs>
       );
 
-      expect(screen.getByTestId('list')).toHaveClass('bg-[var(--tabs-list-background)]');
-      expect(screen.getByTestId('list')).toHaveClass('text-[var(--tabs-list-foreground)]');
+      expect(screen.getByTestId('list')).toHaveClass('bg-[var(--tekton-bg-muted)]');
+      expect(screen.getByTestId('list')).toHaveClass('text-[var(--tekton-bg-muted-foreground)]');
     });
   });
 

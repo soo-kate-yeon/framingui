@@ -34,7 +34,8 @@ import {
   CardContent,
   CardFooter,
 } from '../src/components/card';
-import { Form, FormField, FormLabel, FormControl, FormMessage } from '../src/components/form';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '../src/components/form';
+import { useForm } from 'react-hook-form';
 import {
   Modal,
   ModalTrigger,
@@ -58,6 +59,19 @@ import {
   TableCell,
   TableCaption,
 } from '../src/components/table';
+
+/**
+ * react-hook-form FormProvider 래퍼
+ * Form = FormProvider이므로 useForm() 초기화 필요
+ */
+function TestForm({ children }: { children: React.ReactNode }) {
+  const methods = useForm({ defaultValues: {} });
+  return (
+    <Form {...methods}>
+      <form>{children}</form>
+    </Form>
+  );
+}
 
 describe('Accessibility Compliance (WCAG 2.1 AA)', () => {
   describe('Primitive Components', () => {
@@ -285,23 +299,31 @@ describe('Accessibility Compliance (WCAG 2.1 AA)', () => {
 
     it('Form: has no accessibility violations', async () => {
       const { container } = render(
-        <Form>
-          <FormField name="username">
-            <FormLabel htmlFor="username">Username</FormLabel>
-            <FormControl>
-              <Input id="username" />
-            </FormControl>
-          </FormField>
-          <FormField name="email">
-            <FormLabel htmlFor="email">Email</FormLabel>
-            <FormControl>
-              <Input id="email" type="email" error aria-describedby="email-error" />
-            </FormControl>
-            <FormMessage name="email" id="email-error">
-              Invalid email address
-            </FormMessage>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" {...field} />
+                </FormControl>
+                <FormMessage>Invalid email address</FormMessage>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
       const results = await axe(container);
       expect(results.violations).toHaveLength(0);
@@ -398,61 +420,58 @@ describe('Accessibility Compliance (WCAG 2.1 AA)', () => {
   describe('Complex Scenarios', () => {
     it('Form with all input types: has no accessibility violations', async () => {
       const { container } = render(
-        <Form>
-          <FormField name="text">
-            <FormLabel htmlFor="text-input">Text Input</FormLabel>
-            <FormControl>
-              <Input id="text-input" type="text" />
-            </FormControl>
-          </FormField>
+        <TestForm>
+          <FormField
+            name="text"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Text Input</FormLabel>
+                <FormControl>
+                  <Input type="text" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
-          <FormField name="checkbox">
-            <FormControl>
-              <label htmlFor="checkbox-input">
-                <Checkbox id="checkbox-input" />
-                Accept terms
-              </label>
-            </FormControl>
-          </FormField>
+          <div>
+            <label htmlFor="checkbox-input">
+              <Checkbox id="checkbox-input" />
+              Accept terms
+            </label>
+          </div>
 
-          <FormField name="radio">
-            <FormLabel>Choose option</FormLabel>
-            <FormControl>
-              <RadioGroup defaultValue="opt1">
-                <div>
-                  <RadioGroupItem value="opt1" id="opt1" />
-                  <label htmlFor="opt1">Option 1</label>
-                </div>
-                <div>
-                  <RadioGroupItem value="opt2" id="opt2" />
-                  <label htmlFor="opt2">Option 2</label>
-                </div>
-              </RadioGroup>
-            </FormControl>
-          </FormField>
+          <fieldset>
+            <legend>Choose option</legend>
+            <RadioGroup defaultValue="opt1">
+              <div>
+                <RadioGroupItem value="opt1" id="opt1" />
+                <label htmlFor="opt1">Option 1</label>
+              </div>
+              <div>
+                <RadioGroupItem value="opt2" id="opt2" />
+                <label htmlFor="opt2">Option 2</label>
+              </div>
+            </RadioGroup>
+          </fieldset>
 
-          <FormField name="switch">
-            <FormControl>
-              <label htmlFor="switch-input">
-                <Switch id="switch-input" />
-                Enable feature
-              </label>
-            </FormControl>
-          </FormField>
+          <div>
+            <label htmlFor="switch-input">
+              <Switch id="switch-input" />
+              Enable feature
+            </label>
+          </div>
 
-          <FormField name="slider">
-            <FormLabel htmlFor="slider-input" id="slider-label-complex">
+          <div>
+            <label htmlFor="slider-input" id="slider-label-complex">
               Volume
-            </FormLabel>
-            <FormControl>
-              <Slider
-                id="slider-input"
-                defaultValue={[50]}
-                aria-labelledby="slider-label-complex"
-              />
-            </FormControl>
-          </FormField>
-        </Form>
+            </label>
+            <Slider
+              id="slider-input"
+              defaultValue={[50]}
+              aria-labelledby="slider-label-complex"
+            />
+          </div>
+        </TestForm>
       );
       const results = await axe(container, {
         rules: {
@@ -470,14 +489,19 @@ describe('Accessibility Compliance (WCAG 2.1 AA)', () => {
             <CardDescription>A card with various interactive elements</CardDescription>
           </CardHeader>
           <CardContent>
-            <Form>
-              <FormField name="name">
-                <FormLabel htmlFor="name-input">Name</FormLabel>
-                <FormControl>
-                  <Input id="name-input" placeholder="Enter your name" />
-                </FormControl>
-              </FormField>
-            </Form>
+            <TestForm>
+              <FormField
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your name" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </TestForm>
           </CardContent>
           <CardFooter>
             <Button>Submit</Button>

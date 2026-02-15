@@ -7,74 +7,128 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
-import { Form, FormField, FormLabel, FormControl, FormMessage } from '../../src/components/form';
+import { useForm } from 'react-hook-form';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '../../src/components/form';
 import { Input } from '../../src/primitives/input';
+
+/**
+ * react-hook-form FormProvider 래퍼
+ * Form = FormProvider이므로 useForm() 초기화 필요
+ */
+function TestForm({
+  children,
+  onSubmit,
+  defaultValues = {},
+  ...formProps
+}: {
+  children: React.ReactNode;
+  onSubmit?: (data: Record<string, unknown>) => void;
+  defaultValues?: Record<string, unknown>;
+  [key: string]: unknown;
+}) {
+  const methods = useForm({ defaultValues });
+  return (
+    <Form {...methods}>
+      <form onSubmit={methods.handleSubmit(onSubmit || (() => {}))} {...formProps}>
+        {children}
+      </form>
+    </Form>
+  );
+}
 
 describe('Form', () => {
   describe('Rendering', () => {
     it('renders successfully', () => {
       render(
-        <Form data-testid="form">
-          <FormField name="test">
-            <FormLabel>Test Label</FormLabel>
-            <FormControl>
-              <Input />
-            </FormControl>
-          </FormField>
-        </Form>
+        <TestForm data-testid="form">
+          <FormField
+            name="test"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Test Label</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
       expect(screen.getByTestId('form')).toBeInTheDocument();
     });
 
     it('renders all form sub-components', () => {
       render(
-        <Form>
-          <FormField name="email">
-            <FormLabel data-testid="label">Email</FormLabel>
-            <FormControl data-testid="control">
-              <Input type="email" />
-            </FormControl>
-            <FormMessage name="email" data-testid="message">
-              Error message
-            </FormMessage>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel data-testid="label">Email</FormLabel>
+                <FormControl data-testid="control">
+                  <Input type="email" {...field} />
+                </FormControl>
+                <FormMessage>Error message</FormMessage>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
 
       expect(screen.getByTestId('label')).toBeInTheDocument();
       expect(screen.getByTestId('control')).toBeInTheDocument();
-      expect(screen.getByTestId('message')).toBeInTheDocument();
+      expect(screen.getByText('Error message')).toBeInTheDocument();
     });
   });
 
   describe('Form Field Structure', () => {
-    it('associates label with input using htmlFor', () => {
+    it('associates label with input via auto-generated id', () => {
       render(
-        <Form>
-          <FormField name="username">
-            <FormLabel htmlFor="username-input">Username</FormLabel>
-            <FormControl>
-              <Input id="username-input" />
-            </FormControl>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
 
       const label = screen.getByText('Username');
-      expect(label).toHaveAttribute('for', 'username-input');
+      const htmlFor = label.getAttribute('for');
+      expect(htmlFor).toBeTruthy();
+      const input = screen.getByRole('textbox');
+      expect(input.getAttribute('id')).toBe(htmlFor);
     });
 
-    it('renders error messages', () => {
+    it('renders message text', () => {
       render(
-        <Form>
-          <FormField name="email">
-            <FormLabel>Email</FormLabel>
-            <FormControl>
-              <Input error />
-            </FormControl>
-            <FormMessage name="email">Invalid email address</FormMessage>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage>Invalid email address</FormMessage>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
 
       expect(screen.getByText('Invalid email address')).toBeInTheDocument();
@@ -82,20 +136,30 @@ describe('Form', () => {
 
     it('supports multiple form fields', () => {
       render(
-        <Form>
-          <FormField name="firstName">
-            <FormLabel>First Name</FormLabel>
-            <FormControl>
-              <Input />
-            </FormControl>
-          </FormField>
-          <FormField name="lastName">
-            <FormLabel>Last Name</FormLabel>
-            <FormControl>
-              <Input />
-            </FormControl>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
 
       expect(screen.getByText('First Name')).toBeInTheDocument();
@@ -106,18 +170,23 @@ describe('Form', () => {
   describe('Form Submission', () => {
     it('handles form submit event', async () => {
       const user = userEvent.setup();
-      const handleSubmit = vi.fn(e => e.preventDefault());
+      const handleSubmit = vi.fn();
 
       render(
-        <Form onSubmit={handleSubmit} data-testid="form">
-          <FormField name="test">
-            <FormLabel>Test</FormLabel>
-            <FormControl>
-              <Input />
-            </FormControl>
-          </FormField>
+        <TestForm onSubmit={handleSubmit} data-testid="form">
+          <FormField
+            name="test"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Test</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <button type="submit">Submit</button>
-        </Form>
+        </TestForm>
       );
 
       await user.click(screen.getByRole('button', { name: 'Submit' }));
@@ -128,22 +197,25 @@ describe('Form', () => {
   describe('CSS Variables', () => {
     it('uses CSS Variables for theming', () => {
       render(
-        <Form>
-          <FormField name="test">
-            <FormLabel data-testid="label">Label</FormLabel>
-            <FormControl>
-              <Input />
-            </FormControl>
-            <FormMessage name="test" data-testid="message">
-              Message
-            </FormMessage>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="test"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel data-testid="label">Label</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage data-testid="message">Message</FormMessage>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
 
-      expect(screen.getByTestId('label')).toHaveClass('text-[var(--form-label-foreground)]');
+      // FormMessage는 tekton destructive 토큰 사용
       expect(screen.getByTestId('message')).toHaveClass(
-        'text-[var(--form-message-error-foreground)]'
+        'text-[var(--tekton-bg-destructive)]'
       );
     });
   });
@@ -151,53 +223,72 @@ describe('Form', () => {
   describe('Accessibility', () => {
     it('has no axe violations', async () => {
       const { container } = render(
-        <Form>
-          <FormField name="username">
-            <FormLabel htmlFor="username">Username</FormLabel>
-            <FormControl>
-              <Input id="username" />
-            </FormControl>
-          </FormField>
-          <FormField name="email">
-            <FormLabel htmlFor="email">Email</FormLabel>
-            <FormControl>
-              <Input id="email" type="email" />
-            </FormControl>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input type="email" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
       const results = await axe(container);
       expect(results.violations).toHaveLength(0);
     });
 
-    it('associates error messages with inputs using aria-describedby', () => {
+    it('auto-sets aria-describedby on form controls', () => {
       render(
-        <Form>
-          <FormField name="email">
-            <FormLabel htmlFor="email-input">Email</FormLabel>
-            <FormControl>
-              <Input id="email-input" error aria-describedby="email-error" />
-            </FormControl>
-            <FormMessage name="email" id="email-error">
-              Invalid email
-            </FormMessage>
-          </FormField>
-        </Form>
+        <TestForm>
+          <FormField
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage>Invalid email</FormMessage>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
 
-      expect(screen.getByLabelText('Email')).toHaveAttribute('aria-describedby', 'email-error');
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('aria-describedby');
     });
 
     it('supports custom className', () => {
       render(
-        <Form className="custom-form" data-testid="form">
-          <FormField name="test">
-            <FormLabel>Test</FormLabel>
-            <FormControl>
-              <Input />
-            </FormControl>
-          </FormField>
-        </Form>
+        <TestForm className="custom-form" data-testid="form">
+          <FormField
+            name="test"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Test</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </TestForm>
       );
       expect(screen.getByTestId('form')).toHaveClass('custom-form');
     });
