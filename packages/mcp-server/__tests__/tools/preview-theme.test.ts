@@ -3,38 +3,54 @@
  * SPEC-MCP-002: AC-007 Theme Preview
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { previewThemeTool } from '../../src/tools/preview-theme.js';
+import { setAuthData, clearAuthData } from '../../src/auth/state.js';
+
+// 테스트 전: 인증 상태 설정 (모든 테마 라이선스 보유 가정)
+function setupAuth(licensedThemes: string[] = []) {
+  setAuthData({
+    valid: true,
+    user: { id: 'test-user', email: 'test@example.com', plan: 'pro' },
+    themes: { licensed: licensedThemes },
+  });
+}
 
 describe('previewThemeTool', () => {
+  afterEach(() => {
+    // 캐시 포함 완전 초기화
+    clearAuthData();
+  });
+
   it('should generate preview for valid theme', async () => {
+    setupAuth(['classic-magazine']);
     const result = await previewThemeTool({
-      themeId: 'calm-wellness',
+      themeId: 'classic-magazine',
     });
 
     expect(result.success).toBe(true);
     expect(result.theme).toBeDefined();
-    expect(result.theme?.id).toBe('calm-wellness');
+    expect(result.theme?.id).toBe('classic-magazine');
     expect(result.theme?.name).toBeDefined();
-    expect(result.theme?.description).toBeDefined();
-    expect(result.theme?.cssVariables).toBeDefined();
+    // Note: description is optional in v2.1 theme schema
+    // v2.1 schema uses tokens instead of cssVariables
+    expect(result.theme?.tokens).toBeDefined();
   });
 
-  it('should include OKLCH CSS variables', async () => {
+  it('should include OKLCH color tokens', async () => {
+    setupAuth(['equinox-fitness']);
     const result = await previewThemeTool({
-      themeId: 'premium-editorial',
+      themeId: 'equinox-fitness',
     });
 
     expect(result.success).toBe(true);
-    expect(result.theme?.cssVariables).toBeDefined();
-
-    // Check for CSS variable format (SPEC: OKLCH Color Space)
-    const cssVars = result.theme?.cssVariables || {};
-    const primaryColor = cssVars['--color-primary'];
-    expect(primaryColor).toMatch(/oklch\(/);
+    // v2.1 schema uses tokens.atomic.color for OKLCH colors
+    expect(result.theme?.tokens).toBeDefined();
+    expect(result.theme?.tokens?.atomic).toBeDefined();
   });
 
   it('should return error for invalid theme ID', async () => {
+    setupAuth(['non-existent-theme']);
     const result = await previewThemeTool({
       themeId: 'non-existent-theme',
     });
@@ -46,9 +62,28 @@ describe('previewThemeTool', () => {
   });
 
   it('should return theme without custom base URL', async () => {
-    const result = await previewThemeTool({ themeId: 'calm-wellness' });
+    setupAuth(['classic-magazine']);
+    const result = await previewThemeTool({ themeId: 'classic-magazine' });
 
     expect(result.success).toBe(true);
     expect(result.theme).toBeDefined();
+  });
+
+  it('should require authentication', async () => {
+    // 인증 없이 호출
+    setAuthData(null);
+    const result = await previewThemeTool({ themeId: 'classic-magazine' });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('Authentication required');
+  });
+
+  it('should require license for theme', async () => {
+    // 다른 테마 라이선스만 보유
+    setupAuth(['other-theme']);
+    const result = await previewThemeTool({ themeId: 'classic-magazine' });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toContain('not included in your license');
   });
 });

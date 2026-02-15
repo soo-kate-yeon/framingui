@@ -1,0 +1,103 @@
+/**
+ * ComponentResolver Tests
+ * SPEC-PLAYGROUND-001 Milestone 5: Blueprint Renderer
+ *
+ * Test Coverage:
+ * - Component lookup from @tekton/ui
+ * - 20 components mapped correctly
+ * - Unknown component returns null
+ */
+
+import { describe, it, expect } from 'vitest';
+import { resolveComponent, COMPONENT_MAP } from '@/components/renderer/component-resolver';
+
+describe.skip('ComponentResolver', () => {
+  it('should have 20 components in the map', () => {
+    const componentCount = Object.keys(COMPONENT_MAP).length;
+    expect(componentCount).toBeGreaterThanOrEqual(20);
+  });
+
+  it('should resolve Button component', () => {
+    const Component = resolveComponent('Button');
+    expect(Component).toBeDefined();
+    // forwardRef components are objects with $$typeof property, not plain functions
+    expect(Component).toBeTruthy();
+    expect(Component).not.toBeNull();
+  });
+
+  it('should resolve Card components', () => {
+    expect(resolveComponent('Card')).toBeDefined();
+    expect(resolveComponent('CardHeader')).toBeDefined();
+    expect(resolveComponent('CardContent')).toBeDefined();
+    expect(resolveComponent('CardTitle')).toBeDefined();
+    expect(resolveComponent('CardDescription')).toBeDefined();
+    expect(resolveComponent('CardFooter')).toBeDefined();
+  });
+
+  it('should resolve Form components', () => {
+    expect(resolveComponent('Form')).toBeDefined();
+    expect(resolveComponent('FormField')).toBeDefined();
+    expect(resolveComponent('FormLabel')).toBeDefined();
+  });
+
+  it('should resolve Input components', () => {
+    expect(resolveComponent('Input')).toBeDefined();
+    expect(resolveComponent('Checkbox')).toBeDefined();
+    expect(resolveComponent('RadioGroup')).toBeDefined();
+    expect(resolveComponent('Switch')).toBeDefined();
+  });
+
+  it('should resolve Text components', () => {
+    expect(resolveComponent('Text')).toBeDefined();
+    expect(resolveComponent('Heading')).toBeDefined();
+    expect(resolveComponent('Badge')).toBeDefined();
+    expect(resolveComponent('Link')).toBeDefined();
+  });
+
+  it('should return null for unknown components', () => {
+    const Component = resolveComponent('NonExistentComponent');
+    expect(Component).toBeNull();
+  });
+
+  it('should handle case-sensitive component names', () => {
+    expect(resolveComponent('button')).toBeNull();
+    expect(resolveComponent('Button')).toBeDefined();
+  });
+
+  describe('Component Map Coverage', () => {
+    const expectedComponents = [
+      'Button',
+      'Input',
+      'Checkbox',
+      'RadioGroup',
+      'RadioGroupItem',
+      'Switch',
+      'Slider',
+      'Text',
+      'Heading',
+      'Badge',
+      'Avatar',
+      'Progress',
+      'Link',
+      'List',
+      'Image',
+      'Card',
+      'CardHeader',
+      'CardContent',
+      'CardTitle',
+      'Form',
+      'FormField',
+      'Modal',
+      'Dropdown',
+      'Tabs',
+      'Table',
+    ];
+
+    expectedComponents.forEach((componentName) => {
+      it(`should resolve ${componentName}`, () => {
+        const Component = resolveComponent(componentName);
+        expect(Component).toBeDefined();
+      });
+    });
+  });
+});

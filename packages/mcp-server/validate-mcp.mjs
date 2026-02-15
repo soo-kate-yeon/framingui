@@ -31,14 +31,14 @@ function createRequest(method, params = {}) {
     jsonrpc: '2.0',
     id: messageId++,
     method,
-    params
+    params,
   };
 }
 
 function createToolCallRequest(toolName, args) {
   return createRequest('tools/call', {
     name: toolName,
-    arguments: args
+    arguments: args,
   });
 }
 
@@ -58,14 +58,14 @@ class MCPServerTester {
 
     this.server = spawn('node', [SERVER_PATH], {
       stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env, NODE_ENV: 'test' }
+      env: { ...process.env, NODE_ENV: 'test' },
     });
 
-    this.server.stdout.on('data', (data) => {
+    this.server.stdout.on('data', data => {
       this.handleStdout(data);
     });
 
-    this.server.stderr.on('data', (data) => {
+    this.server.stderr.on('data', data => {
       // stderr is for logging - we expect this
       const logMessage = data.toString().trim();
       if (logMessage) {
@@ -73,7 +73,7 @@ class MCPServerTester {
       }
     });
 
-    this.server.on('error', (err) => {
+    this.server.on('error', err => {
       console.error('[ERROR] Server process error:', err);
     });
 
@@ -116,11 +116,11 @@ class MCPServerTester {
       }, TIMEOUT);
 
       this.pendingRequests.set(request.id, {
-        resolve: (response) => {
+        resolve: response => {
           clearTimeout(timeout);
           resolve(response);
         },
-        reject
+        reject,
       });
 
       const message = JSON.stringify(request) + '\n';
@@ -144,7 +144,7 @@ class MCPServerTester {
 const validationResults = {
   passed: [],
   failed: [],
-  warnings: []
+  warnings: [],
 };
 
 function logTest(testName) {
@@ -222,7 +222,7 @@ async function testGenerateBlueprint(tester) {
     description: 'User profile dashboard with avatar, bio, and settings link',
     layout: 'sidebar-left',
     themeId: 'calm-wellness',
-    componentHints: ['Card', 'Avatar', 'Button']
+    componentHints: ['Card', 'Avatar', 'Button'],
   });
 
   const response = await tester.sendRequest(request);
@@ -300,7 +300,7 @@ async function testPreviewTheme(tester) {
   logTest('AC-008: Theme Data Retrieval (No Preview URL)');
 
   const request = createToolCallRequest('preview-theme', {
-    themeId: 'premium-editorial'
+    themeId: 'premium-editorial',
   });
 
   const response = await tester.sendRequest(request);
@@ -345,12 +345,13 @@ async function testPreviewTheme(tester) {
         logPass('Theme has cssVariables object');
 
         // Check for oklch() format
-        const colorVars = Object.entries(theme.cssVariables)
-          .filter(([key]) => key.includes('color'));
+        const colorVars = Object.entries(theme.cssVariables).filter(([key]) =>
+          key.includes('color')
+        );
 
         if (colorVars.length > 0) {
-          const hasOklch = colorVars.some(([, value]) =>
-            typeof value === 'string' && value.includes('oklch')
+          const hasOklch = colorVars.some(
+            ([, value]) => typeof value === 'string' && value.includes('oklch')
           );
 
           if (hasOklch) {
@@ -387,9 +388,9 @@ async function testExportScreen(tester) {
       themeId: 'calm-wellness',
       layout: 'sidebar-left',
       components: [],
-      timestamp: 1738123456789
+      timestamp: 1738123456789,
     },
-    format: 'tsx'
+    format: 'tsx',
   });
 
   const response = await tester.sendRequest(request);
@@ -446,7 +447,7 @@ async function testErrorHandling(tester) {
   logTest('AC-012: Theme Availability Check (Error Handling)');
 
   const request = createToolCallRequest('preview-theme', {
-    themeId: 'invalid-theme'
+    themeId: 'invalid-theme',
   });
 
   const response = await tester.sendRequest(request);
@@ -462,9 +463,11 @@ async function testErrorHandling(tester) {
         logPass(`Error message returned: ${result.error}`);
 
         // Check if error includes available themes list
-        if (result.error.includes('Available themes:') ||
-            result.error.includes('calm-wellness') ||
-            result.availableThemes) {
+        if (
+          result.error.includes('Available themes:') ||
+          result.error.includes('calm-wellness') ||
+          result.availableThemes
+        ) {
           logPass('Error message includes available themes list');
         } else {
           logWarning('Error message does not include available themes list');
@@ -512,7 +515,6 @@ async function runValidation() {
     await testPreviewTheme(tester);
     await testExportScreen(tester);
     await testErrorHandling(tester);
-
   } catch (error) {
     console.error('\n[FATAL ERROR]', error);
     validationResults.failed.push(`Fatal error: ${error.message}`);

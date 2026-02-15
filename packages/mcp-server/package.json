@@ -1,6 +1,6 @@
 {
-  "name": "@tekton/mcp-server",
-  "version": "0.1.0",
+  "name": "@tekton-ui/mcp-server",
+  "version": "0.4.5",
   "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
@@ -9,10 +9,29 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./schemas": {
+      "import": "./dist/schemas/mcp-schemas.js",
+      "types": "./dist/schemas/mcp-schemas.d.ts"
     }
   },
   "bin": {
-    "tekton-mcp": "./dist/index.js"
+    "tekton-mcp": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "linkWorkspace": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/soo-kate-yeon/tekton",
+    "directory": "packages/mcp-server"
   },
   "scripts": {
     "build": "tsc",
@@ -22,14 +41,23 @@
     "test:coverage": "vitest run --coverage",
     "start": "node dist/index.js",
     "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
-    "lint": "eslint src __tests__ --ext .ts"
+    "lint": "eslint src __tests__ --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.3",
-    "@tekton/core": "workspace:*",
+    "@anthropic-ai/sdk": "^0.40.0",
+    "@babel/parser": "^7.28.6",
+    "@babel/traverse": "^7.28.6",
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "@tekton-ui/core": "^0.3.3",
+    "@tekton-ui/ui": "^0.3.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@babel/types": "^7.28.6",
+    "@types/babel__traverse": "^7.28.0",
     "@types/node": "^22.10.5",
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",

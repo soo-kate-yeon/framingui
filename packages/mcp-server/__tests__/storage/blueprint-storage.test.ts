@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { rmSync, existsSync } from 'fs';
 import { BlueprintStorage } from '../../src/storage/blueprint-storage.js';
-import type { Blueprint } from '@tekton/core';
+import type { Blueprint } from '@tekton-ui/core';
 
 describe('BlueprintStorage', () => {
   const testStorageDir = '.tekton-test/storage';
@@ -35,14 +35,15 @@ describe('BlueprintStorage', () => {
       const blueprint: Blueprint = {
         id: 'test-bp',
         name: 'Test Blueprint',
-        themeId: 'calm-wellness',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       };
 
       const blueprintId = await storage.saveBlueprint(blueprint);
       expect(blueprintId).toBeDefined();
-      expect(blueprintId).toMatch(/^\d+(-[a-z0-9]+)?$/);
+      // Format: bp-{timestamp}-{suffix}
+      expect(blueprintId).toMatch(/^bp-\d+-[a-f0-9]+$/);
 
       // Verify blueprint file exists
       const blueprintDir = storage.getBlueprintDir(blueprintId);
@@ -54,7 +55,7 @@ describe('BlueprintStorage', () => {
       const blueprint: Blueprint = {
         id: 'test-bp',
         name: 'Test Blueprint',
-        themeId: 'calm-wellness',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       };
@@ -82,7 +83,7 @@ describe('BlueprintStorage', () => {
       const blueprint: Blueprint = {
         id: 'test-bp',
         name: 'Test Blueprint',
-        themeId: 'calm-wellness',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       };
@@ -92,7 +93,7 @@ describe('BlueprintStorage', () => {
 
       expect(loaded).toBeDefined();
       expect(loaded?.name).toBe('Test Blueprint');
-      expect(loaded?.themeId).toBe('calm-wellness');
+      expect(loaded?.themeId).toBe('classic-magazine');
     });
 
     it('should return null for non-existent blueprint', async () => {
@@ -111,7 +112,7 @@ describe('BlueprintStorage', () => {
       const blueprint: Blueprint = {
         id: 'test-bp',
         name: 'Test Blueprint',
-        themeId: 'calm-wellness',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       };
@@ -121,7 +122,7 @@ describe('BlueprintStorage', () => {
 
       expect(metadata).toBeDefined();
       expect(metadata?.timestamp).toBe(blueprintId);
-      expect(metadata?.themeId).toBe('calm-wellness');
+      expect(metadata?.themeId).toBe('classic-magazine');
       expect(metadata?.createdAt).toBeDefined();
       expect(metadata?.ttl).toBeDefined();
     });
@@ -137,7 +138,7 @@ describe('BlueprintStorage', () => {
       const blueprint: Blueprint = {
         id: 'test-bp',
         name: 'Test Blueprint',
-        themeId: 'calm-wellness',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       };
@@ -170,7 +171,7 @@ describe('BlueprintStorage', () => {
       const blueprint: Blueprint = {
         id: 'test-bp',
         name: 'Test Blueprint',
-        themeId: 'calm-wellness',
+        themeId: 'classic-magazine',
         layout: 'single-column',
         components: [],
       };

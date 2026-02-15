@@ -4,6 +4,7 @@
  */
 
 import { BlueprintSchema, type Blueprint } from './schemas';
+import type { PreviewThemeOutput, ListThemesOutput } from '@tekton-ui/mcp-server/schemas';
 
 const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'http://localhost:3000';
 
@@ -46,6 +47,25 @@ export async function sendMcpRequest<T>(request: McpRequest): Promise<McpRespons
       },
     };
   }
+}
+
+/**
+ * 사용 가능한 테마 목록을 조회합니다
+ */
+export async function listThemes() {
+  return sendMcpRequest<ListThemesOutput>({
+    method: 'list-themes',
+  });
+}
+
+/**
+ * 테마 ID로 테마 데이터를 조회합니다
+ */
+export async function previewTheme(themeId: string) {
+  return sendMcpRequest<PreviewThemeOutput>({
+    method: 'preview-theme',
+    params: { themeId },
+  });
 }
 
 /**

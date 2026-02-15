@@ -1,0 +1,174 @@
+{
+  "$schema": "../screen-definition.schema.json",
+  "_comment": "Full dashboard example - matches @tekton/core ScreenDefinitionSchema",
+
+  "id": "analytics-dashboard",
+  "name": "Analytics Dashboard",
+  "description": "Main analytics dashboard with key metrics and recent activity",
+  "shell": "shell.web.dashboard",
+  "page": "page.dashboard",
+  "themeId": "default",
+
+  "sections": [
+    {
+      "id": "header",
+      "pattern": "section.container",
+      "components": [
+        {
+          "type": "Heading",
+          "props": { "level": 1, "children": "Analytics Overview" }
+        },
+        {
+          "type": "Text",
+          "props": { "children": "Track your key metrics and performance indicators." }
+        }
+      ]
+    },
+
+    {
+      "id": "stats",
+      "pattern": "section.grid-4",
+      "components": [
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "label", "children": "Total Revenue" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "$48,290" }
+            },
+            {
+              "type": "Badge",
+              "props": { "variant": "success", "children": "+12.5%" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "label", "children": "Active Users" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "2,490" }
+            },
+            {
+              "type": "Badge",
+              "props": { "variant": "success", "children": "+5.2%" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "label", "children": "Bounce Rate" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "12%" }
+            },
+            {
+              "type": "Badge",
+              "props": { "variant": "warning", "children": "-2.1%" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "children": [
+            {
+              "type": "Text",
+              "props": { "variant": "label", "children": "Avg. Session" }
+            },
+            {
+              "type": "Heading",
+              "props": { "level": 2, "children": "4m 32s" }
+            },
+            {
+              "type": "Badge",
+              "props": { "variant": "success", "children": "+0.8%" }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "main-content",
+      "pattern": "section.split-70-30",
+      "components": [
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "slot": "main",
+          "children": [
+            {
+              "type": "Heading",
+              "props": { "level": 3, "children": "Revenue Overview" }
+            },
+            {
+              "type": "Text",
+              "props": { "children": "Chart placeholder - integrate with chart library" }
+            }
+          ]
+        },
+        {
+          "type": "Card",
+          "props": { "variant": "outlined" },
+          "slot": "sidebar",
+          "children": [
+            {
+              "type": "Heading",
+              "props": { "level": 3, "children": "Recent Activity" }
+            },
+            {
+              "type": "List",
+              "props": {
+                "items": [
+                  "Sarah M. uploaded a file - 2m ago",
+                  "Alex K. commented - 15m ago",
+                  "James R. completed task - 1h ago"
+                ]
+              }
+            },
+            {
+              "type": "Button",
+              "props": { "variant": "ghost", "children": "View All Activity" }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "actions",
+      "pattern": "section.container",
+      "components": [
+        {
+          "type": "Button",
+          "props": { "variant": "primary", "children": "Generate Report" }
+        },
+        {
+          "type": "Button",
+          "props": { "variant": "secondary", "children": "Export Data" }
+        }
+      ]
+    }
+  ],
+
+  "meta": {
+    "version": "1.0.0",
+    "tags": ["dashboard", "analytics", "metrics"]
+  }
+}

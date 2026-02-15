@@ -1,0 +1,222 @@
+name: Auto-fix CI Failures
+
+on:
+  workflow_run:
+    workflows: ['Quality Gate']
+    types:
+      - completed
+    branches-ignore:
+      - main
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  auto-fix:
+    name: Auto-fix Failed Checks
+    # 실패 시 실행, bot 커밋은 무한루프 방지를 위해 스킵
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Check for infinite loop
+        id: loop-guard
+        run: |
+          LAST_AUTHOR=$(git log -1 --format='%an')
+          if [ "$LAST_AUTHOR" = "github-actions[bot]" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "::warning::Last commit was by bot. Skipping to prevent infinite loop."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup pnpm
+        if: steps.loop-guard.outputs.skip != 'true'
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        if: steps.loop-guard.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        if: steps.loop-guard.outputs.skip != 'true'
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build workspace packages
+        if: steps.loop-guard.outputs.skip != 'true'
+        run: pnpm --filter "./packages/*" build || true
+
+      - name: Download and analyze failed workflow logs
+        if: steps.loop-guard.outputs.skip != 'true'
+        id: analyze
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # 로그 다운로드
+          gh run view ${{ github.event.workflow_run.id }} --log-failed > failed_logs.txt 2>/dev/null || true
+
+          # 플래그 초기화
+          NEEDS_LINT=false
+          NEEDS_FORMAT=false
+          NEEDS_TYPE=false
+
+          if [ -s "failed_logs.txt" ]; then
+            # 실패한 job 로그에서 구체적 패턴 매칭
+            if grep -q "Run ESLint" failed_logs.txt && grep -qi "error" failed_logs.txt; then
+              NEEDS_LINT=true
+              echo "Detected: ESLint errors"
+            fi
+
+            if grep -q "Check code formatting" failed_logs.txt || grep -q "prettier" failed_logs.txt; then
+              NEEDS_FORMAT=true
+              echo "Detected: Formatting errors"
+            fi
+
+            if grep -q "Run TypeScript compiler" failed_logs.txt || grep -qi "TS[0-9]\{4\}" failed_logs.txt; then
+              NEEDS_TYPE=true
+              echo "Detected: TypeScript errors"
+            fi
+          else
+            echo "Could not download logs, attempting common fixes"
+            NEEDS_LINT=true
+            NEEDS_FORMAT=true
+          fi
+
+          echo "needs_lint_fix=$NEEDS_LINT" >> $GITHUB_OUTPUT
+          echo "needs_format_fix=$NEEDS_FORMAT" >> $GITHUB_OUTPUT
+          echo "needs_type_fix=$NEEDS_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Run ESLint auto-fix
+        if: steps.loop-guard.outputs.skip != 'true' && steps.analyze.outputs.needs_lint_fix == 'true'
+        continue-on-error: true
+        run: |
+          echo "Running ESLint auto-fix..."
+          pnpm --filter "./packages/*" exec eslint --fix "src/**/*.{ts,tsx}" "__tests__/**/*.{ts,tsx}" || true
+
+      - name: Run Prettier auto-fix
+        if: steps.loop-guard.outputs.skip != 'true' && steps.analyze.outputs.needs_format_fix == 'true'
+        continue-on-error: true
+        run: |
+          echo "Running Prettier auto-fix..."
+          pnpm exec prettier --write "packages/*/src/**/*.{ts,tsx}" "packages/*/__tests__/**/*.{ts,tsx}" "*.{ts,js,json}" ".github/**/*.yml" || true
+
+      - name: Build dependencies and attempt TypeScript fix
+        if: steps.loop-guard.outputs.skip != 'true' && steps.analyze.outputs.needs_type_fix == 'true'
+        continue-on-error: true
+        run: |
+          echo "Building workspace dependencies for type resolution..."
+          pnpm --filter @tekton/tokens build || true
+          pnpm --filter @tekton/core build || true
+          pnpm --filter @tekton/ui build || true
+
+          echo "Running TypeScript compiler to check for auto-fixable issues..."
+          # tsc --build는 incremental build로 의존성 순서를 자동 해결
+          pnpm exec tsc --build packages/core packages/tokens packages/styled packages/esbuild-plugin --force 2> tsc_errors.txt || true
+
+          if [ -s "tsc_errors.txt" ]; then
+            echo "TypeScript errors found (may require manual fix):"
+            head -20 tsc_errors.txt
+          fi
+
+      - name: Check for changes
+        if: steps.loop-guard.outputs.skip != 'true'
+        id: check-changes
+        run: |
+          # 임시 파일 제외하고 소스 변경만 확인
+          rm -f failed_logs.txt tsc_errors.txt
+          if [ -n "$(git diff --name-only -- packages/ .github/)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git diff --name-only -- packages/ .github/
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "No auto-fixable changes found"
+          fi
+
+      - name: Commit and push fixes
+        if: steps.loop-guard.outputs.skip != 'true' && steps.check-changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # 임시 파일 제거 (rebase 충돌 방지)
+          rm -f failed_logs.txt tsc_errors.txt
+          git add -u -- packages/ .github/
+
+          git commit -m "$(cat <<'EOF'
+          chore: auto-fix CI failures
+
+          Auto-fixes applied:
+          - ESLint auto-fix: ${{ steps.analyze.outputs.needs_lint_fix }}
+          - Prettier formatting: ${{ steps.analyze.outputs.needs_format_fix }}
+          - TypeScript build: ${{ steps.analyze.outputs.needs_type_fix }}
+
+          Triggered by: ${{ github.event.workflow_run.html_url }}
+          EOF
+          )"
+
+          git pull --rebase origin ${{ github.event.workflow_run.head_branch }} || git rebase --abort
+          git push
+
+      - name: Comment on PR (if exists)
+        if: steps.loop-guard.outputs.skip != 'true' && steps.check-changes.outputs.has_changes == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head "${{ github.event.workflow_run.head_branch }}" --json number --jq '.[0].number' 2>/dev/null)
+
+          if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+            gh pr comment "$PR_NUMBER" --body "$(cat <<'COMMENT_EOF'
+          **Auto-fix applied**
+
+          CI failures were automatically fixed:
+          - ESLint: ${{ steps.analyze.outputs.needs_lint_fix }}
+          - Prettier: ${{ steps.analyze.outputs.needs_format_fix }}
+          - TypeScript: ${{ steps.analyze.outputs.needs_type_fix }}
+
+          Quality Gate will re-run automatically. Manual intervention needed if it fails again.
+          COMMENT_EOF
+          )"
+          else
+            echo "No open PR found for branch. Fix committed directly."
+          fi
+
+      - name: Summary
+        if: always() && steps.loop-guard.outputs.skip != 'true'
+        run: |
+          echo "## Auto-fix Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.check-changes.outputs.has_changes }}" == "true" ]; then
+            echo "Fixes applied and committed." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Changes:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            git diff HEAD~1 --stat >> $GITHUB_STEP_SUMMARY || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No automatic fixes available. Manual intervention required for:" >> $GITHUB_STEP_SUMMARY
+            echo "- TypeScript type errors" >> $GITHUB_STEP_SUMMARY
+            echo "- Test failures" >> $GITHUB_STEP_SUMMARY
+            echo "- Build errors" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Triggered by: ${{ github.event.workflow_run.html_url }}" >> $GITHUB_STEP_SUMMARY

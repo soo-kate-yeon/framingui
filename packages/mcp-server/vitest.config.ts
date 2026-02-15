@@ -1,6 +1,13 @@
 import { defineConfig } from 'vitest/config';
+import { resolve } from 'path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@tekton-ui/ui': resolve(__dirname, '../ui/src/index.ts'),
+      '@tekton-ui/core': resolve(__dirname, '../core/src/index.ts'),
+    },
+  },
   test: {
     globals: true,
     environment: 'node',

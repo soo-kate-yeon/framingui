@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Token Validation Tests
+ * @tekton-ui/core - Token Validation Tests
  * Test-First: Define expected behavior for runtime token validation
  * [SPEC-COMPONENT-001-A] [TOKEN-VALIDATION]
  */

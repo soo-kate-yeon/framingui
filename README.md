@@ -5,13 +5,23 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
 [![Node](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/version-0.1.0-blue)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.2-blue)](./CHANGELOG.md)
 
 OKLCH-based design token generator with WCAG AA compliance for modern design systems.
 
-## 🎉 v0.1.0 Release Status
+## 🎉 v0.3.2 Release Status
 
-**Status**: ✅ **Production Ready** (2026-01-20)
+**Status**: ✅ **Production Ready** (2026-02-09)
+
+**Latest Updates (v0.3.2):**
+
+- ✅ MCP Prompts capability (3-Layer 크로스 플랫폼 전략)
+- ✅ init 워크플로우 개선 (6단계 → 8단계)
+- ✅ CLAUDE.md, AGENTS.md 자동 생성
+- ✅ 테마 데이터 정비 (13개 → 6개 정확한 데이터)
+- ✅ 인증 우선 온보딩 플로우
+
+**v0.1.0 Features:**
 
 - ✅ All 3 Layer 3 MCP tools operational (100%)
 - ✅ 13/13 automated tests passing
@@ -427,15 +437,11 @@ Built for professional design systems:
 ## Installation
 
 ```bash
-npm install tekton
+pnpm add tekton
 ```
 
 ```bash
 yarn add tekton
-```
-
-```bash
-pnpm add tekton
 ```
 
 ## Quick Start
@@ -503,6 +509,43 @@ console.log(button.states.hover); // { l: 0.45, c: 0.15, h: 220 }
 
 // Generate all 8 component presets
 const allPresets = generateComponentPresets(primaryColor);
+```
+
+### Token-Enforced Styling
+
+```typescript
+import { styled, tokens } from '@tekton/styled';
+
+// ✅ Valid: Using design tokens (enforced by TypeScript)
+const Card = styled.div`
+  background: ${tokens.bg.surface.elevated};
+  color: ${tokens.fg.primary};
+  padding: ${tokens.spacing[6]};
+  border-radius: ${tokens.radius.lg};
+  box-shadow: ${tokens.shadow.md};
+
+  /* Non-token properties work normally */
+  display: flex;
+  flex-direction: column;
+`;
+
+// ❌ Invalid: Hardcoded values produce TypeScript errors
+const BadCard = styled.div`
+  background: #ffffff; // TypeScript Error!
+  padding: 16px; // TypeScript Error!
+`;
+
+// Build-time validation with esbuild plugin
+import { tektonPlugin } from '@tekton/esbuild-plugin';
+
+export default {
+  esbuildPlugins: [
+    tektonPlugin({
+      strict: process.env.NODE_ENV === 'production',
+      threshold: 100, // Require 100% token compliance
+    }),
+  ],
+};
 ```
 
 ### Using Presets
@@ -749,7 +792,9 @@ The Tekton Worktree Management System is fully implemented:
 
 ## Architecture Overview
 
-Tekton is organized into specialized modules, each handling a specific aspect of design token generation:
+Tekton is organized into specialized modules, each handling a specific aspect of design token generation and enforcement:
+
+### Core Token Generation
 
 ```
 ┌─────────────────────────────────────────┐
@@ -781,6 +826,40 @@ Tekton is organized into specialized modules, each handling a specific aspect of
 └─────────┘  └──────────┘
 ```
 
+### 3-Layer Token Enforcement (SPEC-STYLED-001)
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                   Developer Writes Code                   │
+│            import { styled, tokens } from '@tekton/styled'│
+└─────────────────────────┬────────────────────────────────┘
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+        ▼                 ▼                 ▼
+┌───────────────┐ ┌───────────────┐ ┌───────────────┐
+│   Layer 1:    │ │   Layer 2:    │ │   Layer 3:    │
+│  Compile-Time │ │   Runtime     │ │  Build-Time   │
+│   TypeScript  │ │  Validation   │ │   esbuild     │
+├───────────────┤ ├───────────────┤ ├───────────────┤
+│ @tekton/      │ │ @tekton/      │ │ @tekton/      │
+│ tokens        │ │ styled        │ │ esbuild-plugin│
+│               │ │               │ │               │
+│ • Type Defs   │ │ • Regex Check │ │ • AST Scan    │
+│ • IDE Support │ │ • Error Msgs  │ │ • Violations  │
+│ • Autocomplete│ │ • Suggestions │ │ • Fail Build  │
+└───────┬───────┘ └───────┬───────┘ └───────┬───────┘
+        │                 │                 │
+        └─────────────────┼─────────────────┘
+                          │
+                          ▼
+                ┌──────────────────┐
+                │  100% Token      │
+                │  Compliance      │
+                │  Guaranteed      │
+                └──────────────────┘
+```
+
 ### Module Dependency Graph
 
 ```
@@ -793,6 +872,44 @@ scale-generator.ts ← wcag-validator.ts
 token-generator.ts ←  component-presets.ts
     ↓
 index.ts (Public API)
+```
+
+### Package Architecture (Token Enforcement)
+
+```
+@tekton/
+├── core                    # Token generation, theme loading
+├── tokens                  # NEW: TypeScript token type definitions
+│   ├── types.ts           #   - BgTokens, FgTokens, SpacingTokens
+│   └── index.ts           #   - Complete TektonTokens interface
+│
+├── styled                  # NEW: Token-enforced styled-components wrapper
+│   ├── styled.ts          #   - Proxy-wrapped styled function
+│   ├── tokens.ts          #   - Token accessor (returns CSS vars)
+│   ├── validation.ts      #   - Runtime hardcoded value detection
+│   └── index.ts
+│
+├── esbuild-plugin          # NEW: Build-time validation
+│   ├── index.ts           #   - esbuild plugin interface
+│   ├── analyzer.ts        #   - AST analysis (Babel parser)
+│   └── reporter.ts        #   - Violation reporting
+│
+├── ui                      # Existing: Primitive components
+└── mcp-server             # Existing: AI integration
+```
+
+**Enforcement Flow:**
+
+```
+Developer Code
+    ↓
+@tekton/tokens (Compile-Time Types)
+    ↓
+@tekton/styled (Runtime Validation)
+    ↓
+@tekton/esbuild-plugin (Build-Time Scan)
+    ↓
+100% Token Compliance
 ```
 
 ### Screen Contract Architecture
@@ -1029,7 +1146,7 @@ For complete API documentation with usage examples, see [API Reference](./docs/a
 - ✅ M4: TypeScript type definitions for 9 design token categories
 - ✅ M5: Preset library system (3 default presets)
 - ✅ M6: Comprehensive test coverage (112 tests, 98.88% coverage)
-- ✅ M7: Public API with complete documentation
+- ✅ M7: Public API with complete documentation (including preset management)
 
 **Quality Gates** (Phase D):
 
@@ -1114,25 +1231,75 @@ For detailed implementation status, see:
 - ✅ **@tekton/ui Package**: 19개 React 컴포넌트 구현
   - Primitives (14개): Avatar, Badge, Button, Checkbox, Heading, Image, Input, Link, List, Progress, Radio, Slider, Switch, Text
   - Components (5개): Dropdown, Form, Modal, Table, Tabs
-  - WCAG 2.1 AA 접근성 준수
-  - TypeScript 타입 정의 완료
-  - 테스트 커버리지: 100% (모든 테스트 통과)
+  - 테스트 커버리지: 98.93%, WCAG 2.1 AA 준수
 
-- 🚧 **SPEC-LAYOUT-001**: Layout Token System (Planned)
+- ✅ **Screen Template System** (SPEC-UI-002): 13개 화면 템플릿 구현
+  - Auth 템플릿 (4개): Login, Signup, Forgot Password, Verification
+  - Core 템플릿 (3개): Landing, Preferences, Profile
+  - Feedback 템플릿 (5개): Loading, Error, Empty, Confirmation, Success
+  - Dashboard 템플릿 (1개): Overview
+  - ScreenTemplate 인터페이스 및 TemplateRegistry 시스템
+  - Storybook 스토리 13개 포함
+  - 레퍼런스: Claude.ai 디자인 철학
+  - 테스트 커버리지: 17.26% (개선 진행 중)
+  - 📄 상세 구현: [SPEC-UI-002](.moai/specs/SPEC-UI-002/spec.md)
+
+- ✅ **@tekton/playground-web** (SPEC-PLAYGROUND-001): Next.js 16 React Playground
+  - 동적 라우팅 시스템 (`/preview/[timestamp]/[themeId]`)
+  - ThemeProvider CSS Variable 주입 시스템
+  - Blueprint Renderer 컴포넌트 (재귀적 컴포넌트 트리 렌더링)
+  - MCP Client 통합 (blueprint 및 theme 데이터 fetch)
+  - 프로덕션 레이아웃 컴포넌트 (Dashboard, Landing 등)
+  - 실시간 테마 전환 (HMR 호환)
+  - 타임스탬프 기반 불변 히스토리 관리
+  - 테스트 커버리지: 99.39% (120/120 테스트 통과)
+  - Quality Status: ⚠️ WARNING (5건 경고, Critical 이슈 없음)
+
+- ✅ **SPEC-LAYOUT-001**: Layout Token System (Completed 2026-01-27)
   - 4-Layer Layout Architecture: Shell → Page → Section → Responsive
-  - 6개 Shell 토큰 (app, marketing, auth, dashboard, admin, minimal)
-  - 8개 Page Layout 토큰 (job, resource, dashboard, settings, detail, empty, wizard, onboarding)
-  - 12개 Section Pattern 토큰 (grid-_, split-_, stack-_, sidebar-_, container)
-  - 5개 Responsive Breakpoints (sm, md, lg, xl, 2xl)
-  - resolveLayout() 및 generateLayoutCSS() 함수
+  - 32 Layout Tokens: 6 shells + 8 pages + 13 sections + 5 breakpoints
+  - Performance: 0.001ms layout resolution (5000x faster than 5ms target)
+  - Map-based caching with O(1) lookup performance
+  - CSS Generator: CSS variables, utility classes, media queries (7KB output)
+  - Blueprint Integration: Optional layoutToken with backward compatibility
+  - Test Coverage: 490 tests across 9 files (98.21% overall coverage)
+  - Files: 22 new files (+9,597 lines), comprehensive documentation
+  - Quality: TypeScript strict mode ✓, ESLint ✓, All tests passing ✓
 
-- 🔜 **SPEC-LAYOUT-002**: Screen Generation Pipeline (Planned)
-  - JSON Schema 기반 화면 정의 (LLM 최적화)
-  - Screen Resolver Pipeline
-  - CSS-in-JS 출력 (styled-components/emotion)
-  - Tailwind CSS 출력
-  - MCP 서버 통합 (Claude 연동)
-  - **의존성**: SPEC-LAYOUT-001 완료 필요
+- ✅ **SPEC-LAYOUT-002**: Screen Generation Pipeline (Completed 2026-01-28)
+  - JSON Schema-based screen definitions with TypeScript + Zod validation
+  - Token resolver pipeline: Shell/Page/Section layout integration
+  - Multi-format code generators: CSS-in-JS (styled-components, Emotion) + Tailwind + React
+  - 20 supported component types from SPEC-COMPONENT-001-B
+  - 3 MCP tools: generate_screen, validate_screen, list_tokens
+  - Performance: Resolver 90.16%, Validators 92.88%, Generators 91.17% coverage
+  - Files: 4 phases + API docs + integration guide + MCP tools guide
+  - Quality: 85%+ overall coverage ✓, TRUST 5 compliant ✓, All tests passing ✓
+  - Documentation: [Screen Generation README](./packages/core/src/screen-generation/README.md)
+
+- ✅ **SPEC-LAYOUT-003**: Responsive Web Enhancement (Completed 2026-01-29)
+  - Extended responsive breakpoints: xl (1280px), 2xl (1536px) activated
+  - Container Queries system: Component-level responsiveness with @container
+  - Orientation support: Portrait/Landscape media queries for tablets
+  - 27 layout tokens updated: All shells, pages, sections with xl/2xl
+  - Browser compatibility: Chrome 105+, Safari 16+, Firefox 110+ with @supports fallback
+  - Test coverage: 84 new tests added, 1041/1041 passing (100%)
+  - Quality score: 97/100 (TRUST 5 framework compliant)
+  - Files: 13 modified (6 shells, 8 pages, 13 sections, 4 test files, 2 type files, 1 CSS generator)
+  - Documentation: Responsive design guide, browser compatibility matrix, API updates
+
+- ✅ **SPEC-STYLED-001**: Token-Enforced Styling System (Completed 2026-01-29)
+  - **3-Layer Enforcement Architecture**: Compile-time (TypeScript) + Runtime (Validation) + Build-time (esbuild Plugin)
+  - **@tekton/tokens**: Complete TypeScript token type definitions with IDE autocomplete
+  - **@tekton/styled**: styled-components wrapper that enforces token-only usage
+  - **@tekton/esbuild-plugin**: Build-time validation ensuring 100% token compliance
+  - **Token Enforcement**: Prevents hardcoded colors (#fff), spacing (16px), and design values
+  - **AI Compliance**: Makes it impossible for AI agents to bypass design system
+  - **Test Coverage**: 197 new tests added (1821 total), 85%+ coverage maintained
+  - **Requirements**: 18/20 met (90%), all critical enforcement requirements satisfied
+  - **Quality**: TRUST 5 compliant, all tests passing, production-ready
+  - **Documentation**: Complete READMEs, usage guides, migration patterns
+  - **Commits**: de31f9d, 8f0abdd, 3e5de4b, abcf584
 
 **Phase G (Future) - Figma Integration:**
 
@@ -1190,22 +1357,22 @@ We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md)
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests in watch mode
-npm run test:watch
+pnpm test:watch
 
 # Generate coverage report
-npm run test:coverage
+pnpm test:coverage
 
 # Build the project
-npm run build
+pnpm build
 
 # Lint code
-npm run lint
+pnpm lint
 
 # Format code
-npm run format
+pnpm format
 ```
 
 ## License

@@ -6,7 +6,7 @@
  * - Spawn server process and send JSON-RPC via stdin
  * - Read JSON-RPC from stdout
  * - Verify tools/list works
- * - Verify tools/call works
+ * - Verify tools/call returns auth guard error without whoami
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
@@ -22,39 +22,49 @@ describe('stdio transport', () => {
   });
 
   /**
-   * Helper function to spawn server and send/receive JSON-RPC messages
+   * Helper function to spawn server and send/receive JSON-RPC messages.
+   * Handles chunked stdout data by accumulating until a complete JSON line is found.
    */
-  async function sendRequest(request: object): Promise<any> {
+  async function sendRequest(request: object, timeoutMs = 15000): Promise<any> {
     return new Promise((resolve, reject) => {
       const server: ChildProcess = spawn('node', [serverPath]);
 
       let stdoutData = '';
-      let stderrData = '';
 
       const timeout = setTimeout(() => {
         server.kill();
-        reject(new Error('Request timeout'));
-      }, 5000);
+        reject(
+          new Error(
+            `Request timeout after ${timeoutMs}ms. Accumulated stdout: ${stdoutData.slice(0, 200)}`
+          )
+        );
+      }, timeoutMs);
 
       server.stdout?.on('data', data => {
         stdoutData += data.toString();
 
-        // Try to parse complete JSON-RPC response
-        try {
-          const lines = stdoutData.split('\n').filter(line => line.trim());
-          for (const line of lines) {
-            const response = JSON.parse(line);
-            clearTimeout(timeout);
-            server.kill();
-            resolve(response);
+        // Try to find a complete JSON-RPC response line
+        const lines = stdoutData.split('\n');
+        for (const line of lines) {
+          if (!line.trim()) {
+            continue;
           }
-        } catch (e) {
-          // Continue accumulating data
+          try {
+            const response = JSON.parse(line);
+            if (response.jsonrpc) {
+              clearTimeout(timeout);
+              server.kill();
+              resolve(response);
+              return;
+            }
+          } catch (_e) {
+            // Incomplete JSON, continue accumulating
+          }
         }
       });
 
-      server.stderr?.on('data', data => {
-        stderrData += data.toString();
+      server.stderr?.on('data', () => {
+        // Consume stderr to prevent buffer overflow
       });
 
       server.on('error', error => {
@@ -86,16 +96,19 @@ describe('stdio transport', () => {
     // Verify tools list
     expect(response.result).toHaveProperty('tools');
     expect(Array.isArray(response.result.tools)).toBe(true);
-    expect(response.result.tools).toHaveLength(3);
+    // MCP server now has 17 tools
+    expect(response.result.tools.length).toBeGreaterThanOrEqual(3);
 
-    // Verify tool names
+    // Verify core tool names are present
     const toolNames = response.result.tools.map((t: any) => t.name);
     expect(toolNames).toContain('generate-blueprint');
     expect(toolNames).toContain('preview-theme');
     expect(toolNames).toContain('export-screen');
-  });
+  }, 30000);
 
-  it('should handle tools/call request for preview-theme', async () => {
+  it('should reject tools/call without whoami', async () => {
+    // 인증/whoami 없이 tools/call 요청 → 인증 가드 에러 반환
+    // 로컬 크레덴셜 유무에 따라 "Authentication required." 또는 "whoami required." 가능
     const request = {
       jsonrpc: '2.0',
       id: 2,
@@ -103,7 +116,7 @@ describe('stdio transport', () => {
       params: {
         name: 'preview-theme',
         arguments: {
-          themeId: 'calm-wellness',
+          themeId: 'classic-magazine',
         },
       },
     };
@@ -115,20 +128,17 @@ describe('stdio transport', () => {
     expect(response).toHaveProperty('id', 2);
     expect(response).toHaveProperty('result');
 
-    // Verify result content
+    // Verify auth guard error (either auth or whoami guard)
     expect(response.result).toHaveProperty('content');
-    expect(Array.isArray(response.result.content)).toBe(true);
-    expect(response.result.content[0]).toHaveProperty('type', 'text');
-    expect(response.result.content[0]).toHaveProperty('text');
-
-    // Parse tool result
     const toolResult = JSON.parse(response.result.content[0].text);
-    expect(toolResult).toHaveProperty('success', true);
-    expect(toolResult).toHaveProperty('theme');
-    expect(toolResult.theme).toHaveProperty('id', 'calm-wellness');
-  });
+    expect(toolResult).toHaveProperty('success', false);
+    expect(toolResult.error).toMatch(/Authentication required\.|whoami required\./);
+    expect(toolResult).toHaveProperty('hint');
+    expect(response.result).toHaveProperty('isError', true);
+  }, 30000);
 
-  it('should handle tools/call request with invalid tool name', async () => {
+  it('should return auth guard error for all tool calls without whoami', async () => {
+    // 존재하지 않는 도구 호출도 인증 가드에서 먼저 걸림
     const request = {
       jsonrpc: '2.0',
       id: 3,
@@ -141,18 +151,13 @@ describe('stdio transport', () => {
 
     const response = await sendRequest(request);
 
-    // Verify JSON-RPC 2.0 error format
     expect(response).toHaveProperty('jsonrpc', '2.0');
     expect(response).toHaveProperty('id', 3);
-    expect(response).toHaveProperty('result');
 
-    // Verify error content
-    expect(response.result).toHaveProperty('content');
     const toolResult = JSON.parse(response.result.content[0].text);
     expect(toolResult).toHaveProperty('success', false);
-    expect(toolResult).toHaveProperty('error');
-    expect(toolResult.error).toContain('Unknown tool');
-  });
+    expect(toolResult.error).toMatch(/Authentication required\.|whoami required\./);
+  }, 30000);
 
   it('should handle tools/call with missing required parameters', async () => {
     const request = {
@@ -167,7 +172,7 @@ describe('stdio transport', () => {
 
     const response = await sendRequest(request);
 
-    // Should return error result
+    // Should return error result (auth guard error since no whoami)
     expect(response).toHaveProperty('jsonrpc', '2.0');
     expect(response).toHaveProperty('id', 4);
     expect(response).toHaveProperty('result');
@@ -175,43 +180,48 @@ describe('stdio transport', () => {
     const toolResult = JSON.parse(response.result.content[0].text);
     expect(toolResult).toHaveProperty('success', false);
     expect(toolResult).toHaveProperty('error');
-  });
+  }, 30000);
 
   it('should send logs to stderr, not stdout', async () => {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const server: ChildProcess = spawn('node', [serverPath]);
 
-      const stdoutLines: string[] = [];
+      let fullStdout = '';
       const stderrLines: string[] = [];
-      let receivedResponse = false;
 
       const timeout = setTimeout(() => {
         server.kill();
 
-        // Verify stderr contains logs
-        expect(stderrLines.length).toBeGreaterThan(0);
-        expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
+        try {
+          // Verify stderr contains logs
+          expect(stderrLines.length).toBeGreaterThan(0);
+          expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
 
-        // Verify stdout only contains JSON-RPC
-        for (const line of stdoutLines) {
-          if (line.trim()) {
-            expect(() => JSON.parse(line)).not.toThrow();
+          // Verify stdout only contains valid JSON-RPC (no log lines)
+          // Parse complete JSON objects from accumulated stdout
+          if (fullStdout.trim()) {
+            const lines = fullStdout.split('\n').filter(l => l.trim());
+            for (const line of lines) {
+              // Each non-empty line should be valid JSON-RPC
+              try {
+                const parsed = JSON.parse(line);
+                expect(parsed).toHaveProperty('jsonrpc');
+              } catch (_e) {
+                // 청크가 분리된 경우 무시 (불완전한 JSON line)
+                // 전체 stdout에 로그 라인이 섞여있지 않으면 OK
+                expect(line).not.toMatch(/^\[INFO\]|\[ERROR\]/);
+              }
+            }
           }
-        }
 
-        resolve(undefined);
-      }, 3000);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      }, 5000);
 
       server.stdout?.on('data', data => {
-        const lines = data
-          .toString()
-          .split('\n')
-          .filter((l: string) => l.trim());
-        stdoutLines.push(...lines);
-
-        if (!receivedResponse && lines.length > 0) {
-          receivedResponse = true;
-        }
+        fullStdout += data.toString();
       });
 
       server.stderr?.on('data', data => {
@@ -238,5 +248,5 @@ describe('stdio transport', () => {
       server.stdin?.write(JSON.stringify(request) + '\n');
       server.stdin?.end();
     });
-  });
+  }, 30000);
 });

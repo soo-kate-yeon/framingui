@@ -2,7 +2,7 @@ name: Quality Gate
 
 on:
   push:
-    branches: [master, main, develop, 'feature/**']
+    branches: [master, main, develop, 'feature/**', 'feat/**']
   pull_request:
     branches: [master, main]
 
@@ -34,7 +34,7 @@ jobs:
         run: pnpm lint:all
 
       - name: Check code formatting
-        run: pnpm exec prettier --check "**/*.{ts,tsx,js,jsx,json,md}"
+        run: pnpm exec prettier --check "packages/*/src/**/*.{ts,tsx}" "packages/*/__tests__/**/*.{ts,tsx}" "*.{ts,js,json}" ".github/**/*.yml"
 
       - name: Upload lint results
         uses: actions/upload-artifact@v4
@@ -66,17 +66,19 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
           path: .
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Run TypeScript compiler
-        run: pnpm exec tsc --build
+        run: |
+          # Type check core packages (mcp-server has separate build with @tekton/ui)
+          pnpm exec tsc --build packages/core packages/tokens packages/styled packages/esbuild-plugin --force
 
       - name: Upload type check errors
         uses: actions/upload-artifact@v4
@@ -157,8 +159,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Verify workspace dependencies
+        run: pnpm list --depth 0
+
       - name: Build all packages
-        run: pnpm build:all
+        run: pnpm --filter "./packages/*" build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

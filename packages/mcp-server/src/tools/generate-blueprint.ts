@@ -1,6 +1,7 @@
 /**
  * Generate Blueprint MCP Tool
  * SPEC-MCP-002: E-001 Blueprint Generation Request
+ * SPEC-MCP-004 Phase 3: Enhanced with Template Matching
  */
 
 import {
@@ -9,15 +10,22 @@ import {
   loadTheme,
   listThemes,
   COMPONENT_CATALOG,
-} from '@tekton/core';
-import type { ComponentNode } from '@tekton/core';
-import type { GenerateBlueprintInput, GenerateBlueprintOutput } from '../schemas/mcp-schemas.js';
+  iconLibraryExists,
+  listIconLibraries,
+} from '@tekton-ui/core';
+import type { ComponentNode } from '@tekton-ui/core';
+import type {
+  GenerateBlueprintInput,
+  GenerateBlueprintOutput,
+  TemplateRecommendation,
+} from '../schemas/mcp-schemas.js';
 import { getDefaultStorage } from '../storage/blueprint-storage.js';
 import {
   createThemeNotFoundError,
   createValidationError,
   extractErrorMessage,
 } from '../utils/error-handler.js';
+import { matchTemplates } from '../data/template-matcher.js';
 
 type ComponentType = (typeof COMPONENT_CATALOG)[number];
 
@@ -117,8 +125,17 @@ export async function generateBlueprintTool(
     // SPEC: U-005 Theme Validation - Validate theme ID exists
     const theme = loadTheme(input.themeId);
     if (!theme) {
-      const availableThemes = listThemes().map(t => t.id);
+      const availableThemes = listThemes().map((t: { id: string }) => t.id);
       return createThemeNotFoundError(input.themeId, availableThemes);
+    }
+
+    // SPEC-ICON-001: Validate icon library exists (if provided)
+    if (input.iconLibrary && !iconLibraryExists(input.iconLibrary)) {
+      const availableLibraries = listIconLibraries().map((lib: { id: string }) => lib.id);
+      return {
+        success: false,
+        error: `Icon library "${input.iconLibrary}" not found. Available libraries: ${availableLibraries.join(', ')}`,
+      };
     }
 
     // Parse description to generate components
@@ -130,7 +147,7 @@ export async function generateBlueprintTool(
     // Generate timestamp for blueprint ID
     const timestamp = Date.now();
 
-    // SPEC: U-003 @tekton/core Integration - Use createBlueprint from @tekton/core
+    // SPEC: U-003 @tekton-ui/core Integration - Use createBlueprint from @tekton-ui/core
     const blueprint = createBlueprint({
       name,
       themeId: input.themeId,
@@ -144,7 +161,7 @@ export async function generateBlueprintTool(
       timestamp,
     };
 
-    // SPEC: U-003 @tekton/core Integration - Use validateBlueprint from @tekton/core
+    // SPEC: U-003 @tekton-ui/core Integration - Use validateBlueprint from @tekton-ui/core
     const validation = validateBlueprint(blueprint);
 
     // SPEC: S-003 Blueprint Validation Result - Return errors without saving if invalid
@@ -156,17 +173,32 @@ export async function generateBlueprintTool(
     const storage = getDefaultStorage();
     const blueprintId = await storage.saveBlueprint(blueprintWithTimestamp);
 
-    // MCP JSON-RPC format: Return blueprint data only (no preview URL)
+    // SPEC-MCP-004 Phase 3: Match templates based on description
+    const templateMatches = matchTemplates(input.description, 3);
+    const templateRecommendations: TemplateRecommendation[] = templateMatches.map(match => ({
+      templateId: match.templateId,
+      templateName: match.templateName,
+      category: match.category,
+      confidence: match.confidence,
+      matchedKeywords: match.matchedKeywords,
+      layoutRecommendation: match.layoutRecommendation,
+    }));
+
+    // MCP JSON-RPC format: Return blueprint data with template recommendations
     return {
       success: true,
       blueprint: {
         id: blueprintId,
         name: blueprint.name,
         themeId: blueprint.themeId,
+        iconLibrary: input.iconLibrary || 'lucide', // Default to lucide
         layout: blueprint.layout,
         components: blueprint.components,
         timestamp,
       },
+      // SPEC-MCP-004: Include template recommendations for LLM guidance
+      templateRecommendations:
+        templateRecommendations.length > 0 ? templateRecommendations : undefined,
     };
   } catch (error) {
     return {

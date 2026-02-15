@@ -1,5 +1,5 @@
 /**
- * @tekton/core - Render Module
+ * @tekton-ui/core - Render Module
  * Template-based JSX generation (no AST dependencies)
  * Target: 300 LOC
  */

@@ -8,6 +8,97 @@
 
 This package replaces 14 bloated packages with a single, focused implementation of the core pipeline.
 
+### NEW: Screen Generation Pipeline (SPEC-LAYOUT-002) ✅
+
+Transform JSON screen definitions into production-ready React components with multiple CSS frameworks.
+
+**Features:**
+
+- 🎯 **JSON Schema-based definitions** - Type-safe with TypeScript and Zod validation
+- 🔄 **Token resolver pipeline** - Automatic layout and component token resolution
+- 🎨 **Multiple CSS outputs** - CSS-in-JS (styled-components, Emotion) and Tailwind support
+- ⚛️ **React component generation** - TypeScript React functional components
+- 🤖 **MCP server integration** - 3 tools for Claude Code/Desktop LLM usage
+- ✅ **85%+ test coverage** - TRUST 5 framework compliant
+
+**Quick Start:**
+
+```typescript
+import {
+  validateScreenDefinition,
+  resolveScreen,
+  generateReactComponent,
+} from '@tekton/core/screen-generation';
+
+const validation = validateScreenDefinition(screenDef);
+const resolved = await resolveScreen(screenDef);
+const result = generateReactComponent(resolved);
+```
+
+**📚 Documentation:**
+
+- [Screen Generation README](./src/screen-generation/README.md) - Complete overview
+- [Phase 1: Schema & Validation](./src/screen-generation/PHASE-1.md)
+- [Phase 2: Resolver Pipeline](./src/screen-generation/PHASE-2.md)
+- [Phase 3: Output Generators](./src/screen-generation/PHASE-3.md)
+- [API Reference](./src/screen-generation/API.md)
+- [Integration Guide](./src/screen-generation/INTEGRATION.md)
+- [MCP Tools](../mcp-server/SCREEN-TOOLS.md)
+
+### NEW: Responsive Web Enhancement (SPEC-LAYOUT-003) ✅
+
+Advanced responsive design system with xl/2xl breakpoints, Container Queries, and Orientation support.
+
+**Features:**
+
+- 📱 **Extended Breakpoints** - xl (1280px), 2xl (1536px) for large displays
+- 📦 **Container Queries** - Component-level responsiveness independent of viewport
+- 🔄 **Orientation Support** - Portrait/Landscape optimizations for tablets
+- 🎯 **27 Layout Tokens Updated** - All shells, pages, and sections enhanced
+- ✅ **100% Test Coverage** - 1041/1041 tests passing
+- 🌐 **Browser Compatibility** - Chrome 105+, Safari 16+, Firefox 110+ with fallback
+
+**Quick Start:**
+
+```typescript
+import {
+  generateResponsiveCSS,
+  generateContainerQueryCSS,
+  generateOrientationCSS,
+} from '@tekton/core/layout-tokens';
+
+// Responsive breakpoints including xl/2xl
+const responsive = generateResponsiveCSS({
+  default: { gridColumns: 1 },
+  md: { gridColumns: 2 },
+  xl: { gridColumns: 4 },
+  '2xl': { gridColumns: 6 },
+});
+
+// Container Queries for component-level responsiveness
+const container = generateContainerQueryCSS({
+  name: 'card-grid',
+  type: 'inline-size',
+  breakpoints: {
+    md: { minWidth: 480, css: { 'grid-template-columns': 'repeat(2, 1fr)' } },
+    lg: { minWidth: 640, css: { 'grid-template-columns': 'repeat(3, 1fr)' } },
+  },
+});
+
+// Orientation support for tablets
+const orientation = generateOrientationCSS({
+  portrait: { gridColumns: 1 },
+  landscape: { gridColumns: 2 },
+});
+```
+
+**📚 Documentation:**
+
+- [Responsive Design Guide](../../docs/guides/responsive-design.md)
+- [Browser Compatibility Matrix](../../docs/guides/browser-compatibility.md)
+- [SPEC-LAYOUT-003 Specification](../../.moai/specs/SPEC-LAYOUT-003/spec.md)
+- [Acceptance Report](../../.moai/specs/SPEC-LAYOUT-003/acceptance.md)
+
 ## Installation
 
 ```bash

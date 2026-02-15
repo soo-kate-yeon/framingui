@@ -183,6 +183,10 @@ private-key*
 *.secret.*
 secret-*.*
 
+# Exceptions: Allow source code files with key-related names
+!**/lib/security/api-key.ts
+!**/lib/security/*-key.ts
+
 # API credentials patterns
 *_secret=*
 *_token=*
@@ -220,7 +224,7 @@ secret-*.*
 # ---------------------------------------------
 # MoAI Directory Management
 # ---------------------------------------------
-# Tracked in git: config/, memory/, scripts/, specs/
+# Tracked in git: config/, memory/, scripts/, specs/, themes/
 # User-generated content: logs/, cache/, reports/, etc.
 
 .moai/*
@@ -232,6 +236,8 @@ secret-*.*
 !.moai/scripts/**
 !.moai/specs/
 !.moai/specs/**
+!.moai/themes/
+!.moai/themes/**
 
 # Legacy config format (migrated to YAML in v0.32.0)
 .moai/config/config.json
@@ -286,3 +292,7 @@ dist-ssr/
 # ===========================================
 # Private keys (specific patterns to avoid false positives)
 .nuxt/
+service-account.json
+.DS_Store
+# Legal documents are now tracked in git (public information)
+workflow_logs.txt

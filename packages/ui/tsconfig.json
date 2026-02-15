@@ -23,8 +23,25 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
+<<<<<<< HEAD
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": ["src/**/*", "__tests__/**/*"],
   "exclude": ["node_modules", "dist"]
+=======
+    "types": ["vitest/globals", "@testing-library/jest-dom", "vitest-axe/extend-expect"]
+  },
+  "include": ["src/**/*", "vitest-axe.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vitest.setup.ts",
+    "vitest.config.ts",
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "**/*.stories.tsx",
+    "**/*.stories.ts",
+    "**/__tests__/**"
+  ]
+>>>>>>> master
 }

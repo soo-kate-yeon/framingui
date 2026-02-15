@@ -1,0 +1,144 @@
+name: Deploy to Vercel
+
+# 아키텍처:
+#   1. Quality Gate 통과 후 자동 트리거
+#   2. Vercel CLI로 직접 배포 (모노레포 의존성 빌드 포함)
+#   3. Production (main/master) / Preview (기타 브랜치) 환경 자동 분리
+
+on:
+  workflow_run:
+    workflows: ['Quality Gate']
+    types:
+      - completed
+    branches:
+      - master
+      - main
+      - 'feature/**'
+      - 'fix/**'
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    # Quality Gate 성공 시에만 배포
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace dependencies
+        run: |
+          echo "Building workspace packages in order..."
+          pnpm --filter @tekton/tokens build
+          pnpm --filter @tekton/core build
+          pnpm --filter @tekton/ui build
+          pnpm --filter @tekton/mcp-server build
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: |
+          cd packages/playground-web
+          vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts (Preview)
+        if: github.event.workflow_run.head_branch != 'master' && github.event.workflow_run.head_branch != 'main'
+        run: |
+          cd packages/playground-web
+          vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts (Production)
+        if: github.event.workflow_run.head_branch == 'master' || github.event.workflow_run.head_branch == 'main'
+        run: |
+          cd packages/playground-web
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel (Preview)
+        id: deploy-preview
+        if: github.event.workflow_run.head_branch != 'master' && github.event.workflow_run.head_branch != 'main'
+        run: |
+          cd packages/playground-web
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOYMENT_URL"
+
+      - name: Deploy to Vercel (Production)
+        id: deploy-production
+        if: github.event.workflow_run.head_branch == 'master' || github.event.workflow_run.head_branch == 'main'
+        run: |
+          cd packages/playground-web
+          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOYMENT_URL"
+
+      - name: Comment on PR (Preview)
+        if: |
+          github.event.workflow_run.event == 'pull_request' &&
+          github.event.workflow_run.pull_requests[0] &&
+          steps.deploy-preview.outputs.deployment_url != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployment_url = '${{ steps.deploy-preview.outputs.deployment_url }}';
+            const pr_number = ${{ github.event.workflow_run.pull_requests[0].number }};
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr_number,
+              body: `## 🚀 Preview Deployment\n\nDeployed to Vercel: ${deployment_url}\n\n✅ Quality Gate passed`
+            });
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment successful" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            if [ "${{ github.event.workflow_run.head_branch }}" == "master" ] || [ "${{ github.event.workflow_run.head_branch }}" == "main" ]; then
+              echo "**Environment:** Production" >> $GITHUB_STEP_SUMMARY
+              echo "**URL:** ${{ steps.deploy-production.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "**Environment:** Preview" >> $GITHUB_STEP_SUMMARY
+              echo "**URL:** ${{ steps.deploy-preview.outputs.deployment_url }}" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Deployment failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.event.workflow_run.head_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.event.workflow_run.head_sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Quality Gate:** ${{ github.event.workflow_run.html_url }}" >> $GITHUB_STEP_SUMMARY

@@ -4,21 +4,34 @@ Tekton UI Reference Component Library - High-quality, accessible React component
 
 ## Overview
 
+<<<<<<< HEAD
 @tekton/ui provides 20 production-ready components built with:
 
+=======
+@tekton/ui provides 20 production-ready components + 13 screen templates built with:
+
+- **Screen Templates (NEW)**: 13 full-page layouts for rapid development
+>>>>>>> master
 - **React 19** - Latest React features with Server Components support
 - **TypeScript 5.7+** - Full type safety with strict mode
 - **Radix UI v1.0+** - Accessible headless primitives
 - **CSS Variables** - 3-layer architecture (Atomic → Semantic → Component)
+<<<<<<< HEAD
 - **WCAG 2.1 AA** - Fully accessible (98.93% test coverage)
+=======
+- **WCAG 2.1 AA** - Fully accessible
+>>>>>>> master
 
 ## Installation
 
 ```bash
 pnpm add @tekton/ui
 # or
+<<<<<<< HEAD
 npm install @tekton/ui
 # or
+=======
+>>>>>>> master
 yarn add @tekton/ui
 ```
 
@@ -652,6 +665,144 @@ import { Button } from '@tekton/ui';
 
 ---
 
+<<<<<<< HEAD
+=======
+## Screen Templates (Phase 3)
+
+**New in Phase 3**: 13 Screen Templates for rapid full-screen composition.
+
+### Overview
+
+Screen Templates provide pre-built, theme-aware full-screen layouts that combine multiple components into cohesive user experiences. Each template is registered in a centralized `TemplateRegistry` for easy discovery and reuse.
+
+**Features:**
+
+- **13 Pre-built Layouts**: Auth (4), Core (3), Feedback (5), Dashboard (1)
+- **Theme-Aware**: Automatically adapts to active theme via CSS Variables
+- **AI-Friendly**: Clear customization boundaries for AI agents
+- **Type-Safe**: Full TypeScript support with ScreenTemplate interface
+- **Responsive**: Desktop, Tablet, Mobile layouts
+
+### Quick Start
+
+```tsx
+import { templateRegistry } from '@tekton/ui/templates';
+
+// Get all templates
+const allTemplates = templateRegistry.getAll(); // 13 templates
+
+// Get by category
+const authTemplates = templateRegistry.getByCategory('auth'); // 4 templates
+
+// Get specific template
+const loginTemplate = templateRegistry.get('auth.login');
+```
+
+### Available Templates (13)
+
+#### Auth Templates (4)
+
+```tsx
+import {
+  LoginTemplate,
+  SignupTemplate,
+  ForgotPasswordTemplate,
+  VerificationTemplate,
+} from '@tekton/ui/templates/auth';
+```
+
+- **LoginTemplate** (`auth.login`) - Centered login card with email/password
+- **SignupTemplate** (`auth.signup`) - Registration form with terms acceptance
+- **ForgotPasswordTemplate** (`auth.forgot-password`) - Password reset flow
+- **VerificationTemplate** (`auth.verification`) - Email verification confirmation
+
+#### Core Templates (3)
+
+```tsx
+import { LandingTemplate, PreferencesTemplate, ProfileTemplate } from '@tekton/ui/templates/core';
+```
+
+- **LandingTemplate** (`home.landing`) - Full-width landing page with CTA
+- **PreferencesTemplate** (`settings.preferences`) - Sidebar settings layout
+- **ProfileTemplate** (`account.profile`) - User profile with avatar editing
+
+#### Feedback Templates (5)
+
+```tsx
+import {
+  LoadingTemplate,
+  ErrorTemplate,
+  EmptyTemplate,
+  ConfirmationTemplate,
+  SuccessTemplate,
+} from '@tekton/ui/templates/feedback';
+```
+
+- **LoadingTemplate** (`feedback.loading`) - Loading skeleton state
+- **ErrorTemplate** (`feedback.error`) - Error state with retry button
+- **EmptyTemplate** (`feedback.empty`) - Empty state with CTA
+- **ConfirmationTemplate** (`feedback.confirmation`) - Dialog confirmation
+- **SuccessTemplate** (`feedback.success`) - Success message with next steps
+
+#### Dashboard Template (1)
+
+```tsx
+import { DashboardTemplate } from '@tekton/ui/templates/dashboard';
+```
+
+- **DashboardTemplate** (`dashboard.overview`) - Dashboard layout with sidebar
+
+### Template Features
+
+- **Type-Safe**: Full TypeScript support with `ScreenTemplate` interface
+- **AI-Friendly**: Clear customization boundaries (`slots`, `texts`, `options`)
+- **Theme-Aware**: CSS Variables for automatic theme adaptation
+- **Responsive**: Breakpoint-based layouts (Desktop 1024px+, Tablet 768-1024px, Mobile <768px)
+- **Accessible**: WCAG 2.1 AA compliance (validation in progress)
+
+### TemplateRegistry API
+
+The `TemplateRegistry` provides centralized template management:
+
+```tsx
+import { templateRegistry } from '@tekton/ui/templates/registry';
+
+// Get all templates
+const allTemplates = templateRegistry.getAll(); // 13 templates
+
+// Get templates by category
+const authTemplates = templateRegistry.getByCategory('auth'); // 4 templates
+
+// Get specific template
+const loginTemplate = templateRegistry.get('auth.login');
+
+// Find by required components
+const formsTemplates = templateRegistry.findByRequiredComponents(['Button', 'Input', 'Form']);
+```
+
+**Design Reference**: All templates follow [Claude.ai Design Philosophy](../../.moai/specs/SPEC-UI-002/reference-guide.md) - clarity, accessibility, universality.
+
+### Phase 3 Status
+
+**Completed (2026-02-01):**
+
+- ✅ Template type system (`ScreenTemplate`, `TemplateRegistry`)
+- ✅ 13 templates implemented (Auth 4, Core 3, Feedback 5, Dashboard 1)
+- ✅ Template registry with category filtering
+- ✅ Storybook stories for all templates
+- ✅ SPEC TAG annotations (TAG-UI002-001 ~ 035)
+- ⚠️ Test coverage: 17.26% (improvement planned)
+
+**Next Steps:**
+
+- Test coverage to 85%+
+- Accessibility validation (axe-core, WCAG 2.1 AA)
+- Additional template variants
+- Template preview gallery in Storybook
+
+---
+
+>>>>>>> master
 ## CSS Variables Reference
 
 @tekton/ui uses a 3-layer CSS Variables architecture:

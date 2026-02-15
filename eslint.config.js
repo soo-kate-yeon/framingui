@@ -146,6 +146,94 @@ export default [
     },
   },
   {
+    files: ['packages/esbuild-plugin/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      // Allow console for esbuild plugin logging
+      'no-console': 'off',
+      // Support underscore prefix for unused variables
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+          caughtErrors: 'none',
+        },
+      ],
+    },
+  },
+  {
+    files: ['packages/ui/**/*.js', 'packages/ui/**/*.jsx'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: 'readonly',
+      },
+    },
+    rules: {
+      // Allow console for UI library logging
+      'no-console': 'off',
+      // Support underscore prefix for unused variables
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+          caughtErrors: 'none',
+        },
+      ],
+    },
+  },
+  {
+    files: [
+      'packages/ui/**/*.stories.jsx',
+      'packages/ui/**/*.test.jsx',
+      'packages/ui/**/__tests__/**/*.jsx',
+      'packages/ui/src/templates/**/*.jsx',
+    ],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: 'readonly',
+        // Vitest globals
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+      },
+    },
+    rules: {
+      // Relax rules for stories, tests, and template files
+      'no-console': 'off',
+      'no-unused-vars': 'warn', // Warning instead of error for unused imports
+    },
+  },
+  {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.config.js', '.claude/**', '.moai/**'],
   },
 ];

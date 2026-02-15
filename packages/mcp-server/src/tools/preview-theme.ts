@@ -1,41 +1,71 @@
 /**
- * Preview Theme MCP Tool
+ * Preview Theme MCP Tool (v2.1)
  * SPEC-MCP-002: E-002 Theme Preview Request
+ * SPEC-DEPLOY-001: 인증된 사용자의 라이선스 보유 테마만 접근 가능
  */
 
-import { loadTheme, generateCSSVariables, listThemes } from '@tekton/core';
+import { loadTheme, listThemes } from '@tekton-ui/core';
 import type { PreviewThemeInput, PreviewThemeOutput } from '../schemas/mcp-schemas.js';
 import { createThemeNotFoundError, extractErrorMessage } from '../utils/error-handler.js';
+import { getAuthData } from '../auth/state.js';
 
 /**
  * Preview theme MCP tool implementation
- * SPEC: E-002 Theme Preview Request
+ * 인증된 사용자의 라이선스 보유 테마만 미리보기 가능
  *
  * @param input - Theme ID to preview
- * @returns Theme metadata with CSS variables (MCP JSON-RPC format - no preview URL)
+ * @returns Full v2.1 theme data (MCP JSON-RPC format)
  */
 export async function previewThemeTool(input: PreviewThemeInput): Promise<PreviewThemeOutput> {
   try {
-    // SPEC: U-003 @tekton/core Integration - Use loadTheme from @tekton/core
-    const theme = loadTheme(input.themeId);
+    const authData = getAuthData();
+    const themeId = input.themeId;
 
-    if (!theme) {
-      // SPEC: S-002 Theme Availability Check - Provide helpful error with available themes
-      const availableThemes = listThemes().map(t => t.id);
-      return createThemeNotFoundError(input.themeId, availableThemes);
+    // 인증 + 라이선스 확인
+    if (!authData || !authData.valid) {
+      return {
+        success: false,
+        error: `Authentication required to preview themes. Run \`tekton-mcp login\` to authenticate.`,
+      };
     }
 
-    // SPEC: U-003 @tekton/core Integration - Use generateCSSVariables from @tekton/core
-    const cssVariables = generateCSSVariables(theme);
+    // 라이선스 보유 확인
+    const licensedThemes = authData.themes?.licensed || [];
+    if (!licensedThemes.includes(themeId)) {
+      return {
+        success: false,
+        error: `Theme "${themeId}" is not included in your license. Please purchase this theme at https://tekton-ui.com.`,
+      };
+    }
 
-    // MCP JSON-RPC format: Return theme data only (no preview URL)
+    // @tekton-ui/core에서 테마 로드
+    const theme = loadTheme(themeId);
+
+    if (!theme) {
+      const availableThemes = listThemes().map((t: { id: string }) => t.id);
+      return createThemeNotFoundError(themeId, availableThemes);
+    }
+
+    // v2.1 테마 데이터 반환
     return {
       success: true,
       theme: {
         id: theme.id,
         name: theme.name,
         description: theme.description,
-        cssVariables,
+        brandTone: theme.brandTone,
+        schemaVersion: theme.schemaVersion,
+        designDNA: theme.designDNA,
+        tokens: {
+          atomic: theme.tokens.atomic,
+          semantic: theme.tokens.semantic,
+          component: theme.tokens.component,
+          recipes: (theme.tokens as any).recipes,
+        },
+        stateLayer: theme.stateLayer,
+        motion: theme.motion,
+        elevation: theme.elevation,
+        typography: theme.typography,
       },
     };
   } catch (error) {

@@ -1,0 +1,37 @@
+{
+  "$schema": "../screen-definition.schema.json",
+  "_comment": "Minimal valid screen definition - matches @tekton/core ScreenDefinitionSchema",
+
+  "id": "minimal-page",
+  "name": "Minimal Page",
+  "shell": "shell.web.minimal",
+  "page": "page.empty",
+  "sections": [
+    {
+      "id": "main",
+      "pattern": "section.stack",
+      "components": [
+        {
+          "type": "Heading",
+          "props": {
+            "level": 1,
+            "children": "Welcome"
+          }
+        },
+        {
+          "type": "Text",
+          "props": {
+            "children": "This is the simplest valid screen definition."
+          }
+        },
+        {
+          "type": "Button",
+          "props": {
+            "variant": "primary",
+            "children": "Get Started"
+          }
+        }
+      ]
+    }
+  ]
+}

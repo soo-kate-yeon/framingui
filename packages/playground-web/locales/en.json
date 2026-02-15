@@ -1,0 +1,35 @@
+{
+  "studio": {
+    "landing": {
+      "hero": {
+        "openDemo": "Open Demo",
+        "buyNow": "Buy Now",
+        "tryFree": "Try Free"
+      },
+      "topNav": {
+        "features": "Features",
+        "pricing": "Pricing",
+        "docs": "Docs",
+        "signIn": "Sign In"
+      },
+      "pricing": {
+        "title": "Simple, Transparent Pricing",
+        "description": "Choose the plan that works best for you",
+        "perMonth": "/month",
+        "perYear": "/year",
+        "getStarted": "Get Started",
+        "mostPopular": "Most Popular"
+      },
+      "component": {
+        "title": "Component Overview"
+      },
+      "codeBlock": {
+        "copy": "Copy",
+        "copied": "Copied!"
+      }
+    }
+  },
+  "common": {
+    "learnMore": "Learn More"
+  }
+}

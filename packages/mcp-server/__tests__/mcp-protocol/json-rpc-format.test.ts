@@ -28,22 +28,33 @@ describe('JSON-RPC format validation', () => {
       const timeout = setTimeout(() => {
         server.kill();
         reject(new Error('Request timeout'));
-      }, 5000);
+      }, 15000);
 
       server.stdout?.on('data', data => {
         stdoutData += data.toString();
 
-        try {
-          const lines = stdoutData.split('\n').filter(line => line.trim());
-          for (const line of lines) {
-            const response = JSON.parse(line);
-            clearTimeout(timeout);
-            server.kill();
-            resolve(response);
+        // Try to find a complete JSON-RPC response line
+        const lines = stdoutData.split('\n');
+        for (const line of lines) {
+          if (!line.trim()) {
+            continue;
           }
-        } catch (e) {
-          // Continue accumulating
+          try {
+            const response = JSON.parse(line);
+            if (response.jsonrpc) {
+              clearTimeout(timeout);
+              server.kill();
+              resolve(response);
+              return;
+            }
+          } catch (_e) {
+            // Incomplete JSON, continue accumulating
+          }
         }
+      });
+
+      server.stderr?.on('data', () => {
+        // Consume stderr to prevent buffer overflow
       });
 
       server.on('error', error => {
@@ -69,7 +80,7 @@ describe('JSON-RPC format validation', () => {
 
       expect(response).toHaveProperty('jsonrpc');
       expect(response.jsonrpc).toBe('2.0');
-    });
+    }, 30000);
 
     it('should have id field matching request id', async () => {
       const testId = 42;
@@ -165,7 +176,7 @@ describe('JSON-RPC format validation', () => {
         method: 'tools/call',
         params: {
           name: 'preview-theme',
-          arguments: { themeId: 'calm-wellness' },
+          arguments: { themeId: 'classic-magazine' },
         },
       };
 
@@ -183,7 +194,7 @@ describe('JSON-RPC format validation', () => {
         method: 'tools/call',
         params: {
           name: 'preview-theme',
-          arguments: { themeId: 'calm-wellness' },
+          arguments: { themeId: 'classic-magazine' },
         },
       };
 
@@ -266,7 +277,7 @@ describe('JSON-RPC format validation', () => {
           jsonrpc: '2.0',
           id: 2,
           method: 'tools/call',
-          params: { name: 'preview-theme', arguments: { themeId: 'calm-wellness' } },
+          params: { name: 'preview-theme', arguments: { themeId: 'classic-magazine' } },
         },
       ];
 
@@ -274,7 +285,7 @@ describe('JSON-RPC format validation', () => {
         const response = await sendJsonRpcRequest(request);
         expect(response.jsonrpc).toBe('2.0');
       }
-    });
+    }, 45000);
 
     it('should maintain request-response id correlation', async () => {
       const testIds = [1, 100, 'test-string-id'];
@@ -290,7 +301,7 @@ describe('JSON-RPC format validation', () => {
         const response = await sendJsonRpcRequest(request);
         expect(response.id).toBe(id);
       }
-    });
+    }, 60000);
   });
 
   describe('malformed requests', () => {

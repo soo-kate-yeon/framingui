@@ -17,12 +17,12 @@ export declare const StackSchema: z.ZodObject<{
     components: z.ZodLiteral<"shadcn-ui">;
 }, "strip", z.ZodTypeAny, {
     components: "shadcn-ui";
-    framework: "nextjs" | "vite" | "remix";
     styling: "tailwindcss";
+    framework: "nextjs" | "vite" | "remix";
 }, {
     components: "shadcn-ui";
-    framework: "nextjs" | "vite" | "remix";
     styling: "tailwindcss";
+    framework: "nextjs" | "vite" | "remix";
 }>;
 /**
  * Theme metadata schema
@@ -88,12 +88,12 @@ export declare const ThemeSchema: z.ZodObject<{
         components: z.ZodLiteral<"shadcn-ui">;
     }, "strip", z.ZodTypeAny, {
         components: "shadcn-ui";
-        framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     }, {
         components: "shadcn-ui";
-        framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     }>;
     questionnaire: z.ZodObject<{
         brandTone: z.ZodEnum<["professional", "playful", "elegant", "bold", "minimal"]>;
@@ -160,8 +160,8 @@ export declare const ThemeSchema: z.ZodObject<{
     version: string;
     stack: {
         components: "shadcn-ui";
-        framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     };
     questionnaire: {
         brandTone: "professional" | "playful" | "elegant" | "bold" | "minimal";
@@ -188,8 +188,8 @@ export declare const ThemeSchema: z.ZodObject<{
     version: string;
     stack: {
         components: "shadcn-ui";
-        framework: "nextjs" | "vite" | "remix";
         styling: "tailwindcss";
+        framework: "nextjs" | "vite" | "remix";
     };
     questionnaire: {
         brandTone: "professional" | "playful" | "elegant" | "bold" | "minimal";

@@ -4,6 +4,10 @@ node_modules/
 
 # Build outputs
 dist/
+<<<<<<< HEAD
+=======
+storybook-static/
+>>>>>>> master
 *.tsbuildinfo
 
 # Testing
@@ -23,6 +27,7 @@ Thumbs.db
 
 # TypeScript build artifacts in src/
 src/**/*.js
+<<<<<<< HEAD
 src/**/*.d.ts
 src/**/*.js.map
 src/**/*.d.ts.map
@@ -36,3 +41,20 @@ __tests__/**/*.js.map
 __tests__/**/*.d.ts.map
 !__tests__/**/*.tsx
 !__tests__/**/*.ts
+=======
+src/**/*.js.map
+!src/**/*.tsx
+!src/**/*.ts
+# Re-ignore .d.ts after !*.ts (order matters in gitignore)
+src/**/*.d.ts
+src/**/*.d.ts.map
+
+# TypeScript build artifacts in __tests__/
+__tests__/**/*.js
+__tests__/**/*.js.map
+!__tests__/**/*.tsx
+!__tests__/**/*.ts
+# Re-ignore .d.ts after !*.ts (order matters in gitignore)
+__tests__/**/*.d.ts
+__tests__/**/*.d.ts.map
+>>>>>>> master

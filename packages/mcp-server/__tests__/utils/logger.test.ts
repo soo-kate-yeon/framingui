@@ -55,7 +55,7 @@ describe('logger utility', () => {
       const message = 'Server started';
       info(message);
 
-      const call = consoleErrorSpy.mock.calls[0];
+      const call = consoleErrorSpy.mock.calls[0]!;
       expect(call[0]).toBe(`[INFO] ${message}`);
     });
   });
@@ -89,7 +89,7 @@ describe('logger utility', () => {
       const message = 'Critical error';
       error(message);
 
-      const call = consoleErrorSpy.mock.calls[0];
+      const call = consoleErrorSpy.mock.calls[0]!;
       expect(call[0]).toBe(`[ERROR] ${message}`);
     });
   });
@@ -126,7 +126,7 @@ describe('logger utility', () => {
       const message = 'Debugging info';
       debug(message);
 
-      const call = consoleErrorSpy.mock.calls[0];
+      const call = consoleErrorSpy.mock.calls[0]!;
       expect(call[0]).toBe(`[DEBUG] ${message}`);
     });
   });
@@ -139,24 +139,24 @@ describe('logger utility', () => {
 
       const calls = consoleErrorSpy.mock.calls;
 
-      expect(calls[0][0]).toContain('[INFO]');
-      expect(calls[1][0]).toContain('[ERROR]');
-      expect(calls[2][0]).toContain('[DEBUG]');
+      expect(calls[0]![0]).toContain('[INFO]');
+      expect(calls[1]![0]).toContain('[ERROR]');
+      expect(calls[2]![0]).toContain('[DEBUG]');
     });
 
     it('should maintain consistent prefix format', () => {
       const messages = ['test1', 'test2', 'test3'];
 
-      info(messages[0]);
-      error(messages[1]);
-      debug(messages[2]);
+      info(messages[0]!);
+      error(messages[1]!);
+      debug(messages[2]!);
 
       const calls = consoleErrorSpy.mock.calls;
 
       for (let i = 0; i < calls.length; i++) {
-        const logMessage = calls[i][0] as string;
+        const logMessage = calls[i]![0] as string;
         expect(logMessage).toMatch(/^\[INFO|ERROR|DEBUG\] /);
-        expect(logMessage).toContain(messages[i]);
+        expect(logMessage).toContain(messages[i]!);
       }
     });
   });
