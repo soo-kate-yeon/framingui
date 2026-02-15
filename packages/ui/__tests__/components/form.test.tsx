@@ -214,9 +214,7 @@ describe('Form', () => {
       );
 
       // FormMessage는 tekton destructive 토큰 사용
-      expect(screen.getByTestId('message')).toHaveClass(
-        'text-[var(--tekton-bg-destructive)]'
-      );
+      expect(screen.getByTestId('message')).toHaveClass('text-[var(--tekton-bg-destructive)]');
     });
   });
 

@@ -34,7 +34,14 @@ import {
   CardContent,
   CardFooter,
 } from '../src/components/card';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '../src/components/form';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '../src/components/form';
 import { useForm } from 'react-hook-form';
 import {
   Modal,
@@ -465,11 +472,7 @@ describe('Accessibility Compliance (WCAG 2.1 AA)', () => {
             <label htmlFor="slider-input" id="slider-label-complex">
               Volume
             </label>
-            <Slider
-              id="slider-input"
-              defaultValue={[50]}
-              aria-labelledby="slider-label-complex"
-            />
+            <Slider id="slider-input" defaultValue={[50]} aria-labelledby="slider-label-complex" />
           </div>
         </TestForm>
       );
