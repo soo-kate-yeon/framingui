@@ -31,5 +31,18 @@
   },
   "common": {
     "learnMore": "자세히 보기"
+  },
+  "blog": {
+    "title": "블로그",
+    "latestPosts": "최신 글",
+    "description": "AI 기반 개발, 디자인 시스템, 모던 웹 엔지니어링에 대한 인사이트.",
+    "readMore": "더 읽기",
+    "minRead": "분 소요",
+    "relatedPosts": "관련 글",
+    "noPosts": "게시글이 없습니다.",
+    "share": "공유",
+    "onThisPage": "목차",
+    "allPosts": "전체 글",
+    "taggedWith": "태그"
   }
 }

@@ -8,6 +8,7 @@ interface FooterProps {
 
 const LEGAL_LINKS = [
   { href: '/pricing', label: 'Pricing' },
+  { href: '/blog', label: 'Blog' },
   { href: '/legal/terms-of-service', label: 'Terms' },
   { href: '/legal/privacy-policy', label: 'Privacy' },
   { href: '/legal/refund-policy', label: 'Refund' },

@@ -31,5 +31,18 @@
   },
   "common": {
     "learnMore": "Learn More"
+  },
+  "blog": {
+    "title": "Blog",
+    "latestPosts": "Latest Posts",
+    "description": "Insights on AI-powered development, design systems, and modern web engineering.",
+    "readMore": "Read More",
+    "minRead": "min read",
+    "relatedPosts": "Related Posts",
+    "noPosts": "No posts found.",
+    "share": "Share",
+    "onThisPage": "On This Page",
+    "allPosts": "All Posts",
+    "taggedWith": "Tagged with"
   }
 }

@@ -1,0 +1,70 @@
+---
+title: "Getting Started with Tekton: AI-Powered Design Token Generator"
+description: "Learn how to use Tekton to generate OKLCH-based design tokens and build consistent design systems for your web applications."
+date: "2026-02-10"
+author:
+  name: "Tekton Team"
+tags:
+  - tutorial
+  - design-system
+  - getting-started
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## What is Tekton?
+
+Tekton is an AI-powered design token generator that uses the OKLCH color space to create perceptually uniform, accessible color palettes. Whether you're building a design system from scratch or refining an existing one, Tekton helps you generate consistent, production-ready tokens in seconds.
+
+### Why OKLCH?
+
+Traditional color spaces like HSL and RGB don't account for human color perception. A "50% lightness" in HSL can look drastically different across hues. OKLCH solves this by providing **perceptual uniformity** — colors with the same lightness value actually appear equally bright to the human eye.
+
+## Quick Start
+
+Getting started with Tekton takes just a few steps:
+
+### Step 1: Open the Playground
+
+Visit [tekton-ui.com](https://tekton-ui.com) and open the interactive playground. You'll see a real-time preview of your design tokens as you adjust parameters.
+
+### Step 2: Configure Your Base Colors
+
+Choose your brand's primary color, and Tekton will automatically generate:
+
+- **Primary palette** — 10 shades from lightest to darkest
+- **Semantic colors** — Success, warning, error, info
+- **Neutral scale** — For text, backgrounds, and borders
+
+### Step 3: Export Your Tokens
+
+Export your design tokens in multiple formats:
+
+- **CSS Custom Properties** — Ready to drop into any project
+- **Tailwind CSS** — Direct integration with your Tailwind config
+- **JSON** — For design tools and custom integrations
+
+## Key Features
+
+### Accessibility First
+
+Every color combination is checked against WCAG 2.1 contrast ratios. Tekton flags any pairs that don't meet AA or AAA standards, so you can fix accessibility issues before they ship.
+
+### Dark Mode Support
+
+Generate light and dark mode palettes simultaneously. Tekton ensures both modes maintain the same visual hierarchy and contrast ratios.
+
+### Component Preview
+
+See your tokens applied to real UI components — buttons, cards, forms, and more. This helps you validate your design decisions in context before committing to them.
+
+## What's Next?
+
+Now that you have your design tokens, here are some next steps:
+
+1. **Integrate with your codebase** — Copy the generated CSS or Tailwind config into your project
+2. **Share with your team** — Export and share the token specification with designers and developers
+3. **Iterate** — Use the playground to experiment with different color schemes and find the perfect palette
+
+Tekton is designed to grow with your project. Start simple, and expand your design system as your needs evolve.
