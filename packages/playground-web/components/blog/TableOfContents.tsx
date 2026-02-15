@@ -28,7 +28,7 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
     const timer = setTimeout(() => {
       toc.forEach(({ id }) => {
         const element = document.getElementById(id);
-        if (element) observer.observe(element);
+        if (element) { observer.observe(element); }
       });
     }, 100);
 
@@ -49,7 +49,7 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
     []
   );
 
-  if (toc.length === 0) return null;
+  if (toc.length === 0) { return null; }
 
   const tocContent = (
     <nav>

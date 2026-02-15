@@ -34,7 +34,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   // 다크모드 persistence
   useEffect(() => {
     const saved = localStorage.getItem('darkMode');
-    if (saved === 'true') setDarkMode(true);
+    if (saved === 'true') { setDarkMode(true); }
   }, []);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   // 언어 설정 persistence
   useEffect(() => {
     const saved = localStorage.getItem('blogLocale');
-    if (saved === 'en' || saved === 'ko') setLocale(saved);
+    if (saved === 'en' || saved === 'ko') { setLocale(saved); }
   }, []);
 
   useEffect(() => {

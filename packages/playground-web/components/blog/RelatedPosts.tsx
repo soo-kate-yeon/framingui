@@ -9,7 +9,7 @@ interface RelatedPostsProps {
 }
 
 export function RelatedPosts({ posts, locale }: RelatedPostsProps) {
-  if (posts.length === 0) return null;
+  if (posts.length === 0) { return null; }
 
   return (
     <section className="mt-16 pt-10 border-t border-neutral-200 dark:border-neutral-800">

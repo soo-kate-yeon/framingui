@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const { slug } = await params;
   const post = getBlogPost(slug);
 
-  if (!post) return {};
+  if (!post) { return {}; }
 
   const fm = post.frontmatter.en;
   const url = `https://tekton-ui.com/blog/${slug}`;
@@ -55,7 +55,7 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = getBlogPost(slug);
 
-  if (!post) notFound();
+  if (!post) { notFound(); }
 
   const enRelated = getRelatedPosts(slug, 'en');
   const koRelated = getRelatedPosts(slug, 'ko');

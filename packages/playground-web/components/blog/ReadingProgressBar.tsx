@@ -8,7 +8,7 @@ export function ReadingProgressBar() {
   useEffect(() => {
     const calculateProgress = () => {
       const article = document.querySelector('.blog-article-content');
-      if (!article) return;
+      if (!article) { return; }
 
       const windowHeight = window.innerHeight;
       const articleRect = article.getBoundingClientRect();

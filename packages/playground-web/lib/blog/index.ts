@@ -62,7 +62,7 @@ function parseBlogFile(
   locale: BlogLocale
 ): { frontmatter: BlogFrontmatter; content: string } | null {
   const filePath = path.join(BLOG_DIR, locale, `${slug}.mdx`);
-  if (!fs.existsSync(filePath)) return null;
+  if (!fs.existsSync(filePath)) { return null; }
 
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(raw);
@@ -78,7 +78,7 @@ export function getBlogPost(slug: string): BlogPost | null {
   const en = parseBlogFile(slug, 'en');
   const ko = parseBlogFile(slug, 'ko');
 
-  if (!en || !ko) return null;
+  if (!en || !ko) { return null; }
 
   return {
     slug,
@@ -120,7 +120,7 @@ export function getAllBlogPosts(locale: BlogLocale): BlogPostSummary[] {
  */
 export function getAllBlogSlugs(): string[] {
   const enDir = path.join(BLOG_DIR, 'en');
-  if (!fs.existsSync(enDir)) return [];
+  if (!fs.existsSync(enDir)) { return []; }
 
   return fs
     .readdirSync(enDir)
@@ -165,7 +165,7 @@ export function getRelatedPosts(
   limit = 3
 ): BlogPostSummary[] {
   const current = parseBlogFile(slug, locale);
-  if (!current) return [];
+  if (!current) { return []; }
 
   const allPosts = getAllBlogPosts(locale).filter((p) => p.slug !== slug);
   const currentTags = new Set(current.frontmatter.tags.map((t) => t.toLowerCase()));
