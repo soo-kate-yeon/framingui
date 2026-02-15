@@ -16,8 +16,6 @@ expect.extend(axeMatchers);
   disconnect: vi.fn(),
 }));
 
-<<<<<<< HEAD
-=======
 // Add polyfills for pointer capture (required by Radix UI Tooltip)
 if (!(global as any).Element.prototype.hasPointerCapture) {
   (global as any).Element.prototype.hasPointerCapture = vi.fn().mockReturnValue(false);
@@ -66,7 +64,6 @@ Object.defineProperty((global as any).HTMLCanvasElement.prototype, 'getContext',
   configurable: true,
 });
 
->>>>>>> master
 // Cleanup after each test
 afterEach(() => {
   cleanup();

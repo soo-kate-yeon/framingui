@@ -4,34 +4,20 @@ Tekton UI Reference Component Library - High-quality, accessible React component
 
 ## Overview
 
-<<<<<<< HEAD
-@tekton/ui provides 20 production-ready components built with:
-
-=======
 @tekton/ui provides 20 production-ready components + 13 screen templates built with:
 
 - **Screen Templates (NEW)**: 13 full-page layouts for rapid development
->>>>>>> master
 - **React 19** - Latest React features with Server Components support
 - **TypeScript 5.7+** - Full type safety with strict mode
 - **Radix UI v1.0+** - Accessible headless primitives
 - **CSS Variables** - 3-layer architecture (Atomic → Semantic → Component)
-<<<<<<< HEAD
-- **WCAG 2.1 AA** - Fully accessible (98.93% test coverage)
-=======
 - **WCAG 2.1 AA** - Fully accessible
->>>>>>> master
 
 ## Installation
 
 ```bash
 pnpm add @tekton/ui
 # or
-<<<<<<< HEAD
-npm install @tekton/ui
-# or
-=======
->>>>>>> master
 yarn add @tekton/ui
 ```
 
@@ -665,8 +651,6 @@ import { Button } from '@tekton/ui';
 
 ---
 
-<<<<<<< HEAD
-=======
 ## Screen Templates (Phase 3)
 
 **New in Phase 3**: 13 Screen Templates for rapid full-screen composition.
@@ -802,7 +786,7 @@ const formsTemplates = templateRegistry.findByRequiredComponents(['Button', 'Inp
 
 ---
 
->>>>>>> master
+
 ## CSS Variables Reference
 
 @tekton/ui uses a 3-layer CSS Variables architecture:
