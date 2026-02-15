@@ -1,8 +1,4 @@
 /**
-<<<<<<< HEAD
- * @tekton/ui - Utility Functions
- * [SPEC-COMPONENT-001-C]
-=======
  * @tekton-ui/ui - Utility Functions
  * [SPEC-COMPONENT-001-C]
  *
@@ -12,7 +8,6 @@
  *
  * WHY: 유틸리티 함수가 코드 재사용성을 보장
  * IMPACT: 유틸리티 오류 시 전체 컴포넌트 영향
->>>>>>> master
  */
 
 import { type ClassValue, clsx } from 'clsx';

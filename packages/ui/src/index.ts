@@ -1,50 +1,4 @@
 /**
-<<<<<<< HEAD
- * @tekton/ui - Component Library Index
- * [SPEC-COMPONENT-001-C]
- */
-
-// Utility functions
-export { cn } from './lib/utils';
-
-// Primitive Components
-export { Button, buttonVariants } from './primitives/button';
-export type { ButtonProps } from './primitives/button';
-
-export { Input } from './primitives/input';
-export type { InputProps } from './primitives/input';
-
-export { Checkbox } from './primitives/checkbox';
-
-export { RadioGroup, RadioGroupItem } from './primitives/radio';
-
-export { Switch } from './primitives/switch';
-
-export { Slider } from './primitives/slider';
-
-export { Text, textVariants } from './primitives/text';
-export type { TextProps } from './primitives/text';
-
-export { Heading, headingVariants } from './primitives/heading';
-export type { HeadingProps } from './primitives/heading';
-
-export { Badge, badgeVariants } from './primitives/badge';
-export type { BadgeProps } from './primitives/badge';
-
-export { Avatar, AvatarImage, AvatarFallback } from './primitives/avatar';
-
-export { Progress } from './primitives/progress';
-
-export { Link, linkVariants } from './primitives/link';
-export type { LinkProps } from './primitives/link';
-
-export { List, ListItem } from './primitives/list';
-
-export { Image } from './primitives/image';
-export type { ImageProps } from './primitives/image';
-
-// Composed Components
-=======
  * @tekton-ui/ui - Component Library Index
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
@@ -103,7 +57,6 @@ export type { InputProps } from './components/input';
 export { Label } from './components/label';
 
 // Card
->>>>>>> master
 export {
   Card,
   CardHeader,
@@ -113,44 +66,6 @@ export {
   CardContent,
 } from './components/card';
 
-<<<<<<< HEAD
-export {
-  Form,
-  FormField,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  useFormContext,
-} from './components/form';
-
-export {
-  Modal,
-  ModalPortal,
-  ModalOverlay,
-  ModalClose,
-  ModalTrigger,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalTitle,
-  ModalDescription,
-} from './components/modal';
-
-export {
-  Dropdown,
-  DropdownTrigger,
-  DropdownContent,
-  DropdownItem,
-  DropdownSeparator,
-  DropdownGroup,
-  DropdownPortal,
-  DropdownSub,
-  DropdownRadioGroup,
-} from './components/dropdown';
-
-export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/tabs';
-
-=======
 // Badge
 export { Badge, badgeVariants } from './components/badge';
 export type { BadgeProps } from './components/badge';
@@ -245,7 +160,6 @@ export {
 } from './components/dropdown-menu';
 
 // Table
->>>>>>> master
 export {
   Table,
   TableHeader,
@@ -256,8 +170,6 @@ export {
   TableCell,
   TableCaption,
 } from './components/table';
-<<<<<<< HEAD
-=======
 
 // Tabs
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './components/tabs';
@@ -390,4 +302,3 @@ export { Calendar } from './components/calendar';
 // WHY: templates/index.ts contains templateRegistry.registerMany() which registers all built-in templates
 // IMPACT: Without this import, templateRegistry.getAll() returns empty array
 export * from './templates';
->>>>>>> master
