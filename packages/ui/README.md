@@ -786,6 +786,7 @@ const formsTemplates = templateRegistry.findByRequiredComponents(['Button', 'Inp
 
 ---
 
+
 ## CSS Variables Reference
 
 @tekton/ui uses a 3-layer CSS Variables architecture:

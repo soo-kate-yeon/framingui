@@ -1,11 +1,17 @@
 ---
 id: SPEC-LAYOUT-001
 version: "1.0.0"
+<<<<<<< HEAD
+status: "planned"
+created: "2026-01-26"
+updated: "2026-01-26"
+=======
 status: "completed"
 created: "2026-01-26"
 updated: "2026-01-27"
 completed: "2026-01-27"
 commit: "9a5b3d38bcad203fa0c43b2d2e58bc6072666936"
+>>>>>>> master
 author: "Tekton Team"
 priority: "HIGH"
 lifecycle: "spec-anchored"
@@ -567,6 +573,21 @@ packages/core/src/
 
 ---
 
+<<<<<<< HEAD
+**Last Updated**: 2026-01-26
+**Status**: Planned
+**Next Steps**:
+1. Create TypeScript interfaces for all layout token types
+2. Implement shell tokens with Zod validation
+3. Implement page layout tokens with Zod validation
+4. Implement section pattern tokens with Zod validation
+5. Implement responsive tokens with Zod validation
+6. Create resolveLayout() function
+7. Create generateLayoutCSS() function
+8. Update createBlueprint() for layout token support
+9. Write comprehensive tests (>=85% coverage)
+10. Integrate with SPEC-LAYOUT-002
+=======
 ## IMPLEMENTATION RESULTS
 
 ### Completion Summary
@@ -643,3 +664,4 @@ packages/core/src/
 **Last Updated**: 2026-01-27
 **Status**: ✅ Completed
 **Ready For**: SPEC-LAYOUT-002 (Screen Generation Pipeline)
+>>>>>>> master

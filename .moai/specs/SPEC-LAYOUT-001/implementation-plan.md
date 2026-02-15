@@ -449,6 +449,16 @@ const blueprint = createBlueprint({
 
 ---
 
+<<<<<<< HEAD
+**문서 작성자**: Manager-Docs Agent
+**검토자**: TBD
+**승인자**: TBD
+**다음 리뷰**: 구현 시작 전
+
+---
+
+*이 계획은 프로젝트 진행 상황에 따라 조정될 수 있습니다.*
+=======
 ## IMPLEMENTATION RESULTS
 
 ### 실행 요약
@@ -536,3 +546,4 @@ const blueprint = createBlueprint({
 ---
 
 *계획 대비 1일 만에 조기 완료되었으며, 모든 품질 지표를 초과 달성했습니다.*
+>>>>>>> master

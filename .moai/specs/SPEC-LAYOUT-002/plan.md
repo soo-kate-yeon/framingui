@@ -61,6 +61,88 @@ css-in-js  tailwind  react
 
 ## Milestones
 
+<<<<<<< HEAD
+### Primary Goal: JSON Schema & Validation
+
+**Tasks:**
+1. Define TypeScript interfaces for screen definitions
+2. Create JSON Schema (Draft 2020-12)
+3. Implement Zod validators with helpful error messages
+4. Create example screen definitions
+
+**Deliverables:**
+- `schema/screen-definition.ts` - TypeScript types
+- `schema/screen-definition.schema.json` - JSON Schema
+- `schema/validators.ts` - Zod validation
+- `schema/examples/` - Example definitions
+
+**Acceptance Criteria:**
+- JSON Schema validates all example definitions
+- Zod validators produce clear error messages
+- TypeScript types match JSON Schema
+
+### Secondary Goal: Screen Resolver Pipeline
+
+**Tasks:**
+1. Implement screen resolver entry point
+2. Integrate with SPEC-LAYOUT-001 layout resolution
+3. Implement component resolution with schema bindings
+4. Implement token binding resolution
+
+**Deliverables:**
+- `resolver/screen-resolver.ts` - Main resolver
+- `resolver/layout-resolver.ts` - Layout integration
+- `resolver/component-resolver.ts` - Component resolution
+- `resolver/token-resolver.ts` - Token binding resolution
+
+**Acceptance Criteria:**
+- Resolver produces complete ResolvedScreen
+- All layout tokens resolved from SPEC-LAYOUT-001
+- All component schemas resolved from SPEC-COMPONENT-001-B
+- Token bindings resolve to CSS values
+
+### Tertiary Goal: Output Generators
+
+**Tasks:**
+1. Implement CSS-in-JS generator (styled-components/emotion)
+2. Implement Tailwind CSS generator
+3. Implement React component generator
+4. Create generator factory with format selection
+
+**Deliverables:**
+- `generators/css-in-js.ts` - CSS-in-JS output
+- `generators/tailwind.ts` - Tailwind output
+- `generators/react.ts` - Plain React output
+- `generators/index.ts` - Factory and utilities
+
+**Acceptance Criteria:**
+- All generators produce valid, compilable code
+- Output passes ESLint checks
+- Output includes accessibility attributes
+- No hard-coded values in generated code
+
+### Final Goal: MCP Server Integration
+
+**Tasks:**
+1. Implement `generate_screen` MCP tool
+2. Implement `validate_screen` MCP tool
+3. Implement `list_tokens` MCP tool
+4. Create MCP server package
+5. Document LLM prompting guide
+
+**Deliverables:**
+- `mcp-server/src/tools/generate-screen.ts`
+- `mcp-server/src/tools/validate-screen.ts`
+- `mcp-server/src/tools/list-tokens.ts`
+- `mcp-server/src/server.ts`
+- `docs/llm-prompting-guide.md`
+
+**Acceptance Criteria:**
+- MCP tools callable from Claude
+- Tools return properly formatted responses
+- Error handling with recovery suggestions
+- Documentation enables effective LLM usage
+=======
 ### ✅ Primary Goal: JSON Schema & Validation
 
 **Tasks:**
@@ -149,6 +231,7 @@ css-in-js  tailwind  react
 - ✅ Documentation enables effective LLM usage
 
 **Coverage**: 85%+ | **Tests**: 14 passing
+>>>>>>> master
 
 ---
 
@@ -596,6 +679,11 @@ TASK-003   TASK-004   TASK-005                      │
 
 ---
 
+<<<<<<< HEAD
+**Last Updated**: 2026-01-26
+**Status**: Planned
+**Blocked By**: SPEC-LAYOUT-001
+=======
 ## Implementation Complete
 
 **Status**: ✅ **COMPLETED**
@@ -612,3 +700,4 @@ TASK-003   TASK-004   TASK-005                      │
 
 **Last Updated**: 2026-01-28
 **Status**: Completed
+>>>>>>> master

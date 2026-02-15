@@ -1,5 +1,8 @@
 #!/usr/bin/env node
+<<<<<<< HEAD
+=======
 /* global console, process */
+>>>>>>> master
 /**
  * tsup + TypeScript composite 호환성 검사 스크립트
  *
@@ -45,7 +48,12 @@ function checkPackage(packagePath) {
   const packageName = packageJson.name || packagePath;
 
   // tsup 사용 여부 확인
+<<<<<<< HEAD
+  const hasTsup =
+    packageJson.devDependencies?.tsup || packageJson.dependencies?.tsup;
+=======
   const hasTsup = packageJson.devDependencies?.tsup || packageJson.dependencies?.tsup;
+>>>>>>> master
   const buildScript = packageJson.scripts?.build || '';
   const usesTsupBuild = buildScript.includes('tsup');
   const usesDts = buildScript.includes('--dts');
@@ -136,7 +144,15 @@ function main() {
   console.log('');
 
   if (hasErrors) {
+<<<<<<< HEAD
+    log(
+      'red',
+      '✖',
+      'tsup + composite 호환성 문제가 발견되었습니다. 위 내용을 수정하세요.\n'
+    );
+=======
     log('red', '✖', 'tsup + composite 호환성 문제가 발견되었습니다. 위 내용을 수정하세요.\n');
+>>>>>>> master
     return 1;
   }
 

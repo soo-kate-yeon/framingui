@@ -1,9 +1,15 @@
 ---
 id: SPEC-LAYOUT-002
 version: "1.0.0"
+<<<<<<< HEAD
+status: "planned"
+created: "2026-01-26"
+updated: "2026-01-26"
+=======
 status: "completed"
 created: "2026-01-26"
 updated: "2026-01-28"
+>>>>>>> master
 author: "Tekton Team"
 priority: "HIGH"
 lifecycle: "spec-anchored"
@@ -738,6 +744,19 @@ packages/mcp-server/
 
 ---
 
+<<<<<<< HEAD
+**Last Updated**: 2026-01-26
+**Status**: Planned
+**Blocked By**: SPEC-LAYOUT-001 completion
+**Next Steps**:
+1. Wait for SPEC-LAYOUT-001 completion
+2. Define JSON Schema for screen definitions
+3. Implement screen resolver pipeline
+4. Implement output generators
+5. Create MCP server integration
+6. Write comprehensive tests
+7. Create LLM prompting guide
+=======
 ## Implementation Summary
 
 **Status**: ✅ **COMPLETED**
@@ -792,3 +811,4 @@ packages/mcp-server/
 **Last Updated**: 2026-01-28
 **Status**: Completed
 **Next Steps**: Integration with downstream projects (SPEC-COMPONENT-001-C)
+>>>>>>> master
