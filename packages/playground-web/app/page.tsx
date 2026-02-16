@@ -1,37 +1,36 @@
-'use client';
+import { Metadata } from 'next';
+import { LandingPageWrapper } from '../components/landing/LandingPageWrapper';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../contexts/AuthContext';
-import { LandingPage } from '../components/landing/LandingPage';
+export const metadata: Metadata = {
+  title: 'TEKTON - Design Intelligence for AI Agents',
+  description:
+    'TEKTON is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
+  keywords: [
+    'design system',
+    'AI agents',
+    'design tokens',
+    'OKLCH',
+    'Tailwind CSS',
+    'React',
+    'Next.js',
+    'MCP',
+  ],
+  authors: [{ name: 'TEKTON Team' }],
+  openGraph: {
+    title: 'TEKTON - Design Intelligence for AI Agents',
+    description:
+      'The first design system AI agents can actually understand. Generate production-ready UI directly in your codebase.',
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'TEKTON',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TEKTON - Design Intelligence for AI Agents',
+    description: 'The first design system AI agents can actually understand.',
+  },
+};
 
 export default function HomePage() {
-  const router = useRouter();
-  const { user, isLoading } = useAuth();
-
-  useEffect(() => {
-    // 인증 상태 로딩 중에는 아무것도 하지 않음
-    if (isLoading) {
-      return;
-    }
-
-    // 로그인된 사용자 → /studio로 리디렉션
-    if (user) {
-      router.push('/studio');
-    }
-  }, [user, isLoading, router]);
-
-  // 로딩 중이거나 로그인된 사용자(리디렉션 대기 중)는 로딩 화면 표시
-  if (isLoading || user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="text-2xl font-bold tracking-tighter mb-4 animate-pulse">TEKTON</div>
-        </div>
-      </div>
-    );
-  }
-
-  // 비로그인 사용자는 랜딩 페이지 표시
-  return <LandingPage />;
+  return <LandingPageWrapper />;
 }
