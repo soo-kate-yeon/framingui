@@ -14,6 +14,7 @@ import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { SidebarProvider, useSidebar } from '../../contexts/SidebarContext';
+import { StudioLanguageProvider } from '../../contexts/StudioLanguageContext';
 import { Sidebar } from '../../components/studio/Sidebar';
 import { Footer } from '../../components/shared/Footer';
 
@@ -63,8 +64,10 @@ export default function StudioLayout({ children }: StudioLayoutProps) {
   const defaultCollapsed = !isMainPage;
 
   return (
-    <SidebarProvider defaultCollapsed={defaultCollapsed}>
-      <StudioLayoutContent>{children}</StudioLayoutContent>
-    </SidebarProvider>
+    <StudioLanguageProvider>
+      <SidebarProvider defaultCollapsed={defaultCollapsed}>
+        <StudioLayoutContent>{children}</StudioLayoutContent>
+      </SidebarProvider>
+    </StudioLanguageProvider>
   );
 }

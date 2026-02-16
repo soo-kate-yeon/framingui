@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
 
 const ROUND_MINIMAL_FALLBACK: Record<string, string> = {
   '--tekton-bg-canvas': '#F3F5F7', // Cool gray background
@@ -136,136 +137,141 @@ export default function RoundMinimalTemplate() {
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   return (
-    // Fixed height container to allow inner scrolling
-    <div
-      className={`flex h-[calc(100vh)] bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 ${themeLoaded ? 'opacity-100' : 'opacity-0'} overflow-hidden`}
-    >
-      {/* Left Sidebar (Collapsed) - Desktop Only */}
-      <aside className="w-[88px] hidden md:flex flex-col items-center py-6 bg-[var(--tekton-bg-surface)] border-r border-transparent h-full shrink-0 overflow-y-auto no-scrollbar">
-        <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mb-8 cursor-pointer hover:bg-red-700 transition-colors shrink-0">
-          <span className="font-bold text-lg">P</span>
-        </div>
+    <>
+      {/* Preview Banner */}
+      <PreviewBanner templateId="round-minimal" templateName="Round Minimal" />
 
-        <nav className="flex flex-col gap-6 w-full items-center flex-1">
-          <SidebarItem icon={<Home size={24} />} active />
-          <SidebarItem icon={<Compass size={24} />} />
-          <SidebarItem icon={<Plus size={24} />} />
-        </nav>
-
-        <div className="mt-auto flex flex-col gap-6 items-center w-full">
-          <SidebarItem icon={<Bell size={24} />} />
-          <SidebarItem icon={<MessageCircle size={24} />} />
-          <div className="w-8 h-8 rounded-full bg-neutral-200 overflow-hidden cursor-pointer hover:ring-4 hover:ring-neutral-100 transition-all">
-            <img src="https://github.com/shadcn.png" alt="User" />
+      {/* Fixed height container to allow inner scrolling - Adjusted for banner */}
+      <div
+        className={`flex h-[calc(100vh-3rem)] mt-12 bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 ${themeLoaded ? 'opacity-100' : 'opacity-0'} overflow-hidden`}
+      >
+        {/* Left Sidebar (Collapsed) - Desktop Only */}
+        <aside className="w-[88px] hidden md:flex flex-col items-center py-6 bg-[var(--tekton-bg-surface)] border-r border-transparent h-full shrink-0 overflow-y-auto no-scrollbar">
+          <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mb-8 cursor-pointer hover:bg-red-700 transition-colors shrink-0">
+            <span className="font-bold text-lg">P</span>
           </div>
-          <button className="text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] p-3 rounded-full transition-colors">
-            <ChevronDown size={20} />
-          </button>
-        </div>
-      </aside>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full h-full flex flex-col min-w-0 overflow-hidden">
-        {/* Header Section (Static) */}
-        <header className="bg-[var(--tekton-bg-surface)]/95 backdrop-blur-md z-40 pt-4 pb-2 px-4 shadow-[0_4px_20px_rgba(0,0,0,0.02)] shrink-0">
-          {/* Top Bar: Mobile Logo + Search + Profile */}
-          <div className="flex items-center gap-4 mb-4">
-            {/* Mobile Menu Button / Logo */}
-            <div className="md:hidden w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center flex-shrink-0">
-              <span className="font-bold">P</span>
+          <nav className="flex flex-col gap-6 w-full items-center flex-1">
+            <SidebarItem icon={<Home size={24} />} active />
+            <SidebarItem icon={<Compass size={24} />} />
+            <SidebarItem icon={<Plus size={24} />} />
+          </nav>
+
+          <div className="mt-auto flex flex-col gap-6 items-center w-full">
+            <SidebarItem icon={<Bell size={24} />} />
+            <SidebarItem icon={<MessageCircle size={24} />} />
+            <div className="w-8 h-8 rounded-full bg-neutral-200 overflow-hidden cursor-pointer hover:ring-4 hover:ring-neutral-100 transition-all">
+              <img src="https://github.com/shadcn.png" alt="User" />
             </div>
+            <button className="text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] p-3 rounded-full transition-colors">
+              <ChevronDown size={20} />
+            </button>
+          </div>
+        </aside>
 
-            {/* Search Bar (Pill) */}
-            <div className="flex-1 relative group">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--tekton-text-secondary)] group-focus-within:text-[var(--tekton-text-primary)] transition-colors">
-                <Search size={20} strokeWidth={2.5} />
+        {/* Main Content Area */}
+        <main className="flex-1 w-full h-full flex flex-col min-w-0 overflow-hidden">
+          {/* Header Section (Static) */}
+          <header className="bg-[var(--tekton-bg-surface)]/95 backdrop-blur-md z-40 pt-4 pb-2 px-4 shadow-[0_4px_20px_rgba(0,0,0,0.02)] shrink-0">
+            {/* Top Bar: Mobile Logo + Search + Profile */}
+            <div className="flex items-center gap-4 mb-4">
+              {/* Mobile Menu Button / Logo */}
+              <div className="md:hidden w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center flex-shrink-0">
+                <span className="font-bold">P</span>
               </div>
-              <input
-                type="text"
-                placeholder="Search for ideas..."
-                className="w-full h-12 rounded-[var(--tekton-radius-full)] bg-[var(--tekton-bg-canvas)] pl-12 pr-6 text-lg placeholder:text-neutral-400 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white border-2 border-transparent focus:border-blue-200 transition-all"
-              />
-            </div>
 
-            {/* Right Actions (Desktop & Mobile) */}
-            <div className="flex items-center gap-2">
-              <div className="md:hidden w-10 h-10 rounded-full bg-neutral-200 overflow-hidden">
-                <img src="https://github.com/shadcn.png" alt="User" />
-              </div>
-            </div>
-          </div>
-
-          {/* Category Chips (Scrollable) */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar pl-1">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2.5 rounded-[16px] font-semibold text-sm whitespace-nowrap transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-black text-white hover:bg-neutral-800'
-                    : 'bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] hover:bg-neutral-200'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </header>
-
-        {/* Masonry Grid Content (Scrollable) */}
-        <div className="p-4 md:p-6 lg:px-12 flex-1 overflow-y-auto custom-scrollbar">
-          <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 pb-20">
-            {PINS.map((pin) => (
-              <div
-                key={pin.id}
-                className="break-inside-avoid mb-4 group relative rounded-[var(--tekton-radius-xl)] overflow-hidden cursor-zoom-in"
-              >
-                <img
-                  src={pin.image}
-                  alt={pin.title}
-                  className="w-full object-cover rounded-[var(--tekton-radius-xl)]"
-                  style={{ height: 'auto', minHeight: pin.height / 2 }} // approximate ratio aspect
+              {/* Search Bar (Pill) */}
+              <div className="flex-1 relative group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--tekton-text-secondary)] group-focus-within:text-[var(--tekton-text-primary)] transition-colors">
+                  <Search size={20} strokeWidth={2.5} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search for ideas..."
+                  className="w-full h-12 rounded-[var(--tekton-radius-full)] bg-[var(--tekton-bg-canvas)] pl-12 pr-6 text-lg placeholder:text-neutral-400 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white border-2 border-transparent focus:border-blue-200 transition-all"
                 />
+              </div>
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4">
-                  <div className="flex justify-end">
-                    <button className="bg-red-600 text-white px-4 py-2 rounded-[var(--tekton-radius-full)] font-bold shadow-sm hover:bg-red-700 transition-colors">
-                      Save
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
-                      <ArrowUpRight size={16} />
-                    </button>
-                    <div className="flex gap-2">
-                      <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
-                        <Share2 size={16} />
+              {/* Right Actions (Desktop & Mobile) */}
+              <div className="flex items-center gap-2">
+                <div className="md:hidden w-10 h-10 rounded-full bg-neutral-200 overflow-hidden">
+                  <img src="https://github.com/shadcn.png" alt="User" />
+                </div>
+              </div>
+            </div>
+
+            {/* Category Chips (Scrollable) */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar pl-1">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-4 py-2.5 rounded-[16px] font-semibold text-sm whitespace-nowrap transition-all ${
+                    selectedCategory === cat
+                      ? 'bg-black text-white hover:bg-neutral-800'
+                      : 'bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] hover:bg-neutral-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </header>
+
+          {/* Masonry Grid Content (Scrollable) */}
+          <div className="p-4 md:p-6 lg:px-12 flex-1 overflow-y-auto custom-scrollbar">
+            <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 pb-20">
+              {PINS.map((pin) => (
+                <div
+                  key={pin.id}
+                  className="break-inside-avoid mb-4 group relative rounded-[var(--tekton-radius-xl)] overflow-hidden cursor-zoom-in"
+                >
+                  <img
+                    src={pin.image}
+                    alt={pin.title}
+                    className="w-full object-cover rounded-[var(--tekton-radius-xl)]"
+                    style={{ height: 'auto', minHeight: pin.height / 2 }} // approximate ratio aspect
+                  />
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4">
+                    <div className="flex justify-end">
+                      <button className="bg-red-600 text-white px-4 py-2 rounded-[var(--tekton-radius-full)] font-bold shadow-sm hover:bg-red-700 transition-colors">
+                        Save
                       </button>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
                       <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
-                        <MoreHorizontal size={16} />
+                        <ArrowUpRight size={16} />
                       </button>
+                      <div className="flex gap-2">
+                        <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
+                          <Share2 size={16} />
+                        </button>
+                        <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
+                          <MoreHorizontal size={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Mobile Bottom Nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--tekton-border-default)] px-6 py-3 flex justify-between items-center z-50">
-          <Home size={28} className="text-black" />
-          <Search size={28} className="text-neutral-400" />
-          <Plus size={28} className="text-neutral-400" />
-          <MessageCircle size={28} className="text-neutral-400" />
-          <div className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden">
-            <img src="https://github.com/shadcn.png" alt="User" />
-          </div>
-        </nav>
-      </main>
-    </div>
+          {/* Mobile Bottom Nav */}
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--tekton-border-default)] px-6 py-3 flex justify-between items-center z-50">
+            <Home size={28} className="text-black" />
+            <Search size={28} className="text-neutral-400" />
+            <Plus size={28} className="text-neutral-400" />
+            <MessageCircle size={28} className="text-neutral-400" />
+            <div className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden">
+              <img src="https://github.com/shadcn.png" alt="User" />
+            </div>
+          </nav>
+        </main>
+      </div>
+    </>
   );
 }
 

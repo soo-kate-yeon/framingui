@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Play, Info, ChevronRight, Star } from 'lucide-react';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
 
 /**
  * Equinox Fitness V2 - MasterClass Inspired Landing Page
@@ -11,8 +12,11 @@ import { Play, Info, ChevronRight, Star } from 'lucide-react';
 export default function EquinoxFitnessLanding() {
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black scroll-smooth">
-      {/* Immersive Hero Section */}
-      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden">
+      {/* Preview Banner */}
+      <PreviewBanner templateId="equinox-fitness" templateName="Equinox Fitness" />
+
+      {/* Immersive Hero Section - Adjusted for banner */}
+      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden mt-12">
         {/* Background "Video" Placeholder / Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Search, Menu } from 'lucide-react';
 import { articles } from '@/lib/data/articles';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
 
 /**
  * Classic Magazine - Main Page
@@ -24,8 +25,11 @@ export default function ClassicMagazineDemo() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
-      {/* Header (Newsstand Style) */}
-      <header className="border-b-4 border-black sticky top-0 bg-white z-50">
+      {/* Preview Banner */}
+      <PreviewBanner templateId="classic-magazine" templateName="Classic Magazine" />
+
+      {/* Header (Newsstand Style) - Adjusted for banner */}
+      <header className="border-b-4 border-black sticky top-12 bg-white z-40 mt-12">
         {/* Top Utility Bar */}
         <div className="border-b border-neutral-200 py-2 px-6 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-neutral-500">
           <div className="flex gap-4">

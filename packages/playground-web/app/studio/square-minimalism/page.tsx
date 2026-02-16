@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Search, ShoppingBag, Menu, ArrowRight, X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
 
 const SQUARE_MINIMAL_FALLBACK = {
   '--tekton-bg-canvas': '#FFFFFF',
@@ -269,8 +270,11 @@ export default function SquareMinimalismEcom() {
     <div
       className={`flex flex-col min-h-screen bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-700 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      {/* Top Navigation - Architectural & Sticky (Respects Global Sidebar) */}
-      <nav className="sticky top-0 w-full h-20 bg-white/95 backdrop-blur-md z-40 px-6 md:px-12 flex items-center justify-between border-b border-[var(--tekton-border-default)]">
+      {/* Preview Banner */}
+      <PreviewBanner templateId="square-minimalism" templateName="Square Minimalism" />
+
+      {/* Top Navigation - Architectural & Sticky - Adjusted for banner */}
+      <nav className="sticky top-12 w-full h-20 bg-white/95 backdrop-blur-md z-40 px-6 md:px-12 flex items-center justify-between border-b border-[var(--tekton-border-default)] mt-12">
         <div className="flex items-center gap-12">
           <div className="text-2xl font-black tracking-tighter uppercase leading-none border-2 border-black px-2 py-1">
             AX

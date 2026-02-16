@@ -59,7 +59,6 @@ export async function loadThemes(): Promise<GalleryItem[]> {
 
     for (const file of files) {
       try {
-        const themeId = file.replace('.json', '');
         const themePath = join(themesDir, file);
         const themeContent = readFileSync(themePath, 'utf-8');
         const theme = JSON.parse(themeContent) as ThemeMeta;

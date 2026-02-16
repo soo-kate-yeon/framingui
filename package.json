@@ -55,8 +55,7 @@
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
     "vitest": "^2.1.8",
-    "yaml": "^2.8.2",
-    "glob": "^11.0.0"
+    "yaml": "^2.8.2"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -64,6 +63,7 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "googleapis": "^170.1.0",
+    "recharts": "^3.7.0",
     "zod": "^3.23.8"
   },
   "engines": {
