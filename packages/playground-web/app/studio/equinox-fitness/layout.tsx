@@ -6,16 +6,17 @@ import { usePathname } from 'next/navigation';
 import { Home, Search, Library, Settings, Bell, User, PlusCircle } from 'lucide-react';
 
 /**
- * Equinox Fitness V2 Dashboard Layout - Streaming Edition
+ * Equinox Fitness V2 Layout - Streaming Edition
  * Theme: Elite luxury night gym - True Black canvas, 0px radius
+ * Width: w-[80px] hover:w-[200px] (최적화됨)
  */
-export default function EquinoxDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function EquinoxLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
     <div className="min-h-screen bg-black font-sans selection:bg-white selection:text-black flex">
       {/* Sidebar - Desktop Only (Hidden on Mobile) */}
-      <aside className="hidden md:flex w-[100px] hover:w-[240px] bg-black border-r border-neutral-900 flex-col fixed h-full z-30 transition-all duration-300 group overflow-hidden">
+      <aside className="hidden md:flex w-[80px] hover:w-[200px] bg-black border-r border-neutral-900 flex-col fixed h-full z-30 transition-all duration-300 group overflow-hidden">
         <div className="p-8 flex items-center gap-4">
           <div className="w-8 h-8 bg-white flex-shrink-0" />
           <span className="text-xl font-black tracking-tighter text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
@@ -28,6 +29,7 @@ export default function EquinoxDashboardLayout({ children }: { children: React.R
             href="/studio/equinox-fitness"
             icon={<Home size={20} />}
             label="Home"
+            active={pathname === '/studio/equinox-fitness'}
             groupHover
           />
           <NavItem
@@ -80,7 +82,7 @@ export default function EquinoxDashboardLayout({ children }: { children: React.R
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-[100px] min-w-0">
+      <main className="flex-1 md:ml-[80px] min-w-0">
         {/* Top Header - Immersive & Minimal */}
         <header className="h-[80px] bg-gradient-to-b from-black to-transparent sticky top-0 z-20 px-4 md:px-12 flex items-center justify-between gap-4">
           <div className="flex items-center gap-8">
