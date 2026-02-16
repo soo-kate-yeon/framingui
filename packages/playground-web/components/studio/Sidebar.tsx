@@ -83,7 +83,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
         ${className}`}
     >
       {/* Header */}
-      <div className={`border-b border-neutral-100 ${isCollapsed ? 'p-4' : 'p-6'}`}>
+      <div className={`border-b border-neutral-200 ${isCollapsed ? 'p-4' : 'p-6'}`}>
         {isCollapsed ? (
           // 접힌 상태: 로고 + 토글 버튼 세로 배치
           <div className="flex flex-col items-center gap-3">
@@ -91,7 +91,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
             <button
               type="button"
               onClick={toggleSidebar}
-              className="p-2 hover:bg-neutral-100 transition-colors border border-neutral-200"
+              className="p-2 hover:bg-neutral-100 transition-colors border border-neutral-200 rounded-lg"
               aria-label="Expand sidebar"
             >
               <ChevronRight size={14} />
@@ -102,14 +102,14 @@ export function Sidebar({ className = '' }: SidebarProps) {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xl font-bold tracking-tighter">TEKTON</div>
-              <span className="text-[10px] uppercase tracking-widest text-neutral-400 mt-1 block">
+              <span className="text-xs font-medium text-neutral-500 mt-1 block">
                 Studio
               </span>
             </div>
             <button
               type="button"
               onClick={toggleSidebar}
-              className="p-2 hover:bg-neutral-100 transition-colors"
+              className="p-2 hover:bg-neutral-100 transition-colors rounded-lg"
               aria-label="Collapse sidebar"
             >
               <ChevronLeft size={14} />
@@ -132,15 +132,15 @@ export function Sidebar({ className = '' }: SidebarProps) {
                   onClick={closeMobileMenu}
                   aria-current={isActive ? 'page' : undefined}
                   title={isCollapsed ? item.label : undefined}
-                  className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3'} text-xs font-bold uppercase tracking-wider transition-all
+                  className={`flex items-center ${isCollapsed ? 'justify-center p-3 rounded-lg' : 'gap-3 px-4 py-3 rounded-lg'} text-sm font-medium transition-all
                     ${
                       isActive
                         ? 'bg-neutral-900 text-white'
-                        : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
+                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
                     }
                   `}
                 >
-                  <Icon size={16} aria-hidden="true" />
+                  <Icon size={18} aria-hidden="true" />
                   {!isCollapsed && <span>{item.label}</span>}
                 </Link>
               </li>

@@ -111,9 +111,9 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
       </header>
 
       {/* 메인 */}
-      <div className="flex min-h-screen bg-white dark:bg-neutral-900 transition-colors">
-        <main className="flex-1 max-w-4xl mx-auto">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="flex min-h-screen bg-white dark:bg-neutral-900 transition-colors max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 max-w-4xl w-full">
+          <div className="py-8 sm:py-12 pr-0 xl:pr-8">
             {/* 브레드크럼 */}
             <Breadcrumbs
               items={[

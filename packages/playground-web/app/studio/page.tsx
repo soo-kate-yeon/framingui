@@ -2,13 +2,12 @@
  * Explore Page (Studio Home)
  * [SPEC-UI-003][TAG-UI003-037]
  *
- * Theme: Square Minimalism
  * Function: Lists ACTUAL themes from .moai/themes/generated via @tekton-ui/core
+ * Uses Server Action for safe filesystem access
  */
 
-import { listThemes } from '@tekton-ui/core';
-import { getTemplateData } from '../../data/templates';
 import { TemplateGallery } from '../../components/studio/TemplateGallery';
+import { loadThemes } from './actions';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -16,51 +15,21 @@ export const metadata: Metadata = {
   description: 'Choose a design system theme to start building.',
 };
 
-interface GalleryItem {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  thumbnail?: string;
-  price?: number;
-}
-
-export default function ExplorePage() {
-  // Fetch real themes from the connected MCP core (FileSystem)
-  let themes;
-  let galleryItems: GalleryItem[];
-
-  try {
-    themes = listThemes();
-
-    // Map themes to TemplateGallery format with price data
-    galleryItems = themes.map((theme) => {
-      const templateData = getTemplateData(theme.id);
-      return {
-        id: theme.id,
-        name: theme.name,
-        description: theme.description || `A ${theme.brandTone || 'Modern'} design system.`,
-        category: 'Design System',
-        thumbnail: undefined,
-        price: templateData?.price,
-      };
-    });
-  } catch (error) {
-    console.error('[Studio Page] Error loading themes:', error);
-    galleryItems = [];
-  }
+export default async function ExplorePage() {
+  // Load themes using Server Action for safe filesystem access
+  const galleryItems = await loadThemes();
 
   return (
     <div className="p-6 md:p-12 max-w-7xl mx-auto">
       {/* Header */}
       <header className="mb-12">
-        <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
+        <span className="text-sm font-medium text-neutral-500 mb-4 block">
           Tekton Studio
         </span>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tighter text-neutral-900 mb-6">
-          SELECT THEME
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-6">
+          Select Theme
         </h1>
-        <p className="text-sm md:text-base text-neutral-500 max-w-2xl leading-relaxed">
+        <p className="text-base md:text-lg text-neutral-600 max-w-2xl leading-relaxed">
           Choose a design system to activate the Agentic Styling engine. Every theme is loaded
           directly from the MCP knowledge base.
         </p>

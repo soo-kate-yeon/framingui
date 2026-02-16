@@ -80,7 +80,7 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
     <>
       {/* 데스크톱 사이드바 */}
       <aside className="hidden xl:block sticky top-16 w-64 max-h-[calc(100vh-5rem)] overflow-y-auto flex-shrink-0">
-        <div className="py-6 pl-6">
+        <div className="py-6 pl-8 pr-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-4">
             {locale === 'en' ? 'On This Page' : '목차'}
           </h3>

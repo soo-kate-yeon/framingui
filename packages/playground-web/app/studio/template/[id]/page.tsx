@@ -105,7 +105,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <button
                   type="button"
                   onClick={handlePreviewClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded flex items-center justify-center gap-2"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg flex items-center justify-center gap-2"
                 >
                   Preview
                   <ExternalLink size={14} />
@@ -114,7 +114,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <button
                   type="button"
                   onClick={handleBuyClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-lg"
                 >
                   Buy for ${template.price}
                 </button>
@@ -122,7 +122,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <button
                   type="button"
                   onClick={handleDocumentationClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded-lg"
                 >
                   Documentation
                 </button>
@@ -140,7 +140,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
               {template.screenshots.slice(0, 4).map((screenshot, index) => (
                 <div
                   key={index}
-                  className="aspect-video bg-neutral-200 rounded overflow-hidden border border-neutral-300"
+                  className="aspect-video bg-neutral-200 rounded-lg overflow-hidden border border-neutral-300"
                 >
                   <img
                     src={screenshot}
@@ -175,7 +175,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {template.features.map((feature, index) => (
               <ScrollReveal key={index} delay={0.25 + index * 0.05}>
-                <div className="p-5 sm:p-6 bg-neutral-50 border border-neutral-200 rounded">
+                <div className="p-5 sm:p-6 bg-neutral-50 border border-neutral-200 rounded-lg">
                   <h3 className="text-base sm:text-lg font-bold text-neutral-900 mb-2 sm:mb-3">
                     {feature.title}
                   </h3>

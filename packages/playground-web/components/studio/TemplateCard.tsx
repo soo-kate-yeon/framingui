@@ -86,16 +86,16 @@ export function TemplateCard({
 
   return (
     <article
-      className={`group relative flex flex-col bg-white border border-neutral-200 transition-colors hover:border-neutral-900 cursor-pointer ${className}`}
+      className={`group relative flex flex-col bg-white border border-neutral-200 rounded-2xl transition-all hover:border-neutral-300 hover:shadow-lg cursor-pointer ${className}`}
       onClick={onClick}
     >
       {/* Thumbnail Area */}
-      <div className="relative aspect-video w-full bg-neutral-50 overflow-hidden border-b border-neutral-100 group-hover:border-neutral-900 transition-colors">
+      <div className="relative aspect-video w-full bg-neutral-50 overflow-hidden rounded-t-2xl border-b border-neutral-100 group-hover:border-neutral-200 transition-colors">
         {thumbnail ? (
           <img
             src={thumbnail}
             alt={name}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+            className="w-full h-full object-cover transition-all duration-500"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -110,10 +110,10 @@ export function TemplateCard({
         {user && (
           <button
             onClick={handleLikeClick}
-            className="absolute top-3 left-3 w-8 h-8 flex items-center justify-center bg-white border border-neutral-200 hover:bg-neutral-50 transition-colors z-10"
+            className="absolute top-3 left-3 w-9 h-9 flex items-center justify-center bg-white border border-neutral-200 rounded-full hover:bg-neutral-50 transition-colors z-10 shadow-sm"
           >
             <Heart
-              size={14}
+              size={16}
               className={isLiked ? 'fill-red-500 stroke-red-500' : 'stroke-neutral-500'}
             />
           </button>
@@ -123,10 +123,10 @@ export function TemplateCard({
         {hasDemoApp && (
           <button
             onClick={handleLiveDemoClick}
-            className="absolute bottom-3 right-3 px-3 py-1.5 flex items-center gap-1.5 bg-neutral-900 text-white text-[10px] font-bold uppercase tracking-wider opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10 hover:bg-neutral-800"
+            className="absolute bottom-3 right-3 px-4 py-2 flex items-center gap-2 bg-neutral-900 text-white text-xs font-medium rounded-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10 hover:bg-neutral-800"
           >
             Live Demo
-            <ExternalLink size={10} />
+            <ExternalLink size={12} />
           </button>
         )}
       </div>
@@ -134,23 +134,23 @@ export function TemplateCard({
       {/* Content Area */}
       <div className="p-6 flex flex-col flex-1">
         <div className="mb-4">
-          <span className="inline-block px-2 py-1 bg-neutral-100 text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-3">
+          <span className="inline-block px-3 py-1 bg-neutral-100 text-xs font-medium text-neutral-700 mb-3 rounded-full">
             {category}
           </span>
-          <h3 className="text-lg font-bold text-neutral-900 uppercase tracking-tight mb-1">
+          <h3 className="text-lg font-bold text-neutral-900 mb-1">
             {name}
           </h3>
-          <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">{description}</p>
+          <p className="text-sm text-neutral-600 line-clamp-2 leading-relaxed">{description}</p>
         </div>
 
-        <div className="mt-auto pt-4 border-t border-neutral-100 flex justify-between items-center group-hover:border-neutral-900/10 transition-colors">
+        <div className="mt-auto pt-4 border-t border-neutral-200 flex justify-between items-center group-hover:border-neutral-300 transition-colors">
           {price && (
-            <span className="text-lg font-bold text-neutral-900 uppercase tracking-tight">
+            <span className="text-lg font-bold text-neutral-900">
               ${price}
             </span>
           )}
           <ArrowRight
-            size={16}
+            size={18}
             className="text-neutral-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-neutral-900 transition-all duration-300 ml-auto"
           />
         </div>

@@ -93,14 +93,14 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
           <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={goBack}
-              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
               aria-label="Back to template"
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400" />
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+              className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
               aria-label="Toggle dark mode"
             >
               {darkMode ? (
@@ -119,7 +119,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
           {/* Right: TOC toggle (mobile) */}
           <button
             onClick={() => setSidebarOpen(true)}
-            className="xl:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors flex-shrink-0"
+            className="xl:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors flex-shrink-0"
             aria-label="Toggle table of contents"
           >
             <Menu className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400" />
@@ -153,7 +153,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
                 {data.philosophy.description}
               </p>
 
-              <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 sm:p-6 rounded">
+              <div className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 sm:p-6 rounded-lg">
                 <h3 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-neutral-900 dark:text-neutral-100">
                   Core Principles
                 </h3>
@@ -185,7 +185,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
                 {data.colorTokens.map((token, index) => (
                   <div
                     key={index}
-                    className="border border-neutral-200 dark:border-neutral-700 rounded overflow-hidden"
+                    className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden"
                   >
                     <div className="h-24 sm:h-32 w-full" style={{ backgroundColor: token.hex }} />
                     <div className="p-3 sm:p-4 bg-white dark:bg-neutral-800">
@@ -219,7 +219,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
                 {data.typographyTokens.map((token, index) => (
                   <div
                     key={index}
-                    className="border border-neutral-200 dark:border-neutral-700 rounded p-4 sm:p-6"
+                    className="border border-neutral-200 dark:border-neutral-700 rounded-lg p-4 sm:p-6"
                   >
                     <div
                       className="mb-3 sm:mb-4 text-neutral-900 dark:text-neutral-100 break-words"
@@ -261,7 +261,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
                 {data.designDetails.map((detail, index) => (
                   <div
                     key={index}
-                    className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 sm:p-6 rounded"
+                    className="bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 p-4 sm:p-6 rounded-lg"
                   >
                     <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-neutral-900 dark:text-neutral-100">
                       {detail.title}
@@ -293,7 +293,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
               </h3>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="xl:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+                className="xl:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
               </button>

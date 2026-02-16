@@ -25,12 +25,12 @@ function StudioLayoutContent({ children }: StudioLayoutProps) {
   const { isMobileOpen, toggleMobileMenu, closeMobileMenu } = useSidebar();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#F0F0F0] selection:bg-neutral-900 selection:text-white font-sans text-neutral-900">
+    <div className="flex h-screen overflow-hidden bg-neutral-50 selection:bg-neutral-900 selection:text-white font-sans text-neutral-900">
       {/* Mobile Hamburger Button */}
       <button
         type="button"
         onClick={toggleMobileMenu}
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white border border-neutral-200 hover:bg-neutral-50 transition-colors"
+        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors shadow-sm"
         aria-label="Toggle menu"
       >
         {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -58,11 +58,12 @@ function StudioLayoutContent({ children }: StudioLayoutProps) {
 export default function StudioLayout({ children }: StudioLayoutProps) {
   const pathname = usePathname();
 
-  // Template 페이지인지 확인 - 초기 접힘 상태 결정
-  const isTemplatePage = pathname?.includes('/template/');
+  // /studio 메인 페이지에서만 sidebar 열림, 나머지 모든 상세 페이지에서는 접힘
+  const isMainPage = pathname === '/studio';
+  const defaultCollapsed = !isMainPage;
 
   return (
-    <SidebarProvider defaultCollapsed={isTemplatePage}>
+    <SidebarProvider defaultCollapsed={defaultCollapsed}>
       <StudioLayoutContent>{children}</StudioLayoutContent>
     </SidebarProvider>
   );
