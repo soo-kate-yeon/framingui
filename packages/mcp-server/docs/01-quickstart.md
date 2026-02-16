@@ -1,146 +1,183 @@
-# 빠른 시작 가이드 (Quick Start Guide)
+# Quick Start Guide
 
-Tekton MCP Server를 5분 안에 시작하세요.
+Get started with Tekton MCP Server in 5 minutes.
 
-## 개요
+## Overview
 
-Tekton MCP Server는 Claude Code와 통합되어 자연어로 디자인 시스템 화면을 생성하는 MCP Protocol 서버입니다.
+Tekton MCP Server is a **stdio-based MCP protocol** server that integrates with AI coding assistants (Claude Code, Cursor, Windsurf, etc.) to generate production-ready UI screens from natural language.
 
-**핵심 기능**:
+**Key Features**:
 
-- 🤖 **Claude Code 통합**: MCP Protocol을 통한 AI 기반 블루프린트 생성
-- 🎨 **13개 내장 테마**: OKLCH 기반 색상 시스템으로 일관된 디자인
-- 📋 **타입 안전 블루프린트**: Zod 스키마 검증으로 오류 방지
-- ⏱️ **타임스탬프 기반 히스토리**: 모든 디자인 반복을 불변 URL로 보존
-- 🚀 **프로덕션 코드 내보내기**: JSX, TSX, Vue 형식 지원
+- 🤖 **MCP Protocol (stdio)**: 17 AI-powered tools via JSON-RPC 2.0
+- 🎨 **6 Premium Themes**: Curated design systems with full design tokens
+- 🔒 **OAuth Authentication**: Secure login via browser-based OAuth
+- 🧩 **30+ Components**: Discoverable UI components with props, variants & examples
+- 📄 **Screen Templates**: 13 pre-built screen templates (auth, dashboard, marketing, etc.)
+- 🚀 **Production Code**: JSX, TSX, Vue code generation with theme applied
 
-## 설치
+## Prerequisites
 
-### 전제 조건
+- Node.js 20+
+- An AI coding assistant with MCP support (Claude Code, Cursor, Windsurf, etc.)
 
-- Node.js 20 이상
-- pnpm 8 이상
-- Claude Code (MCP Protocol 지원)
+## Installation
 
-### 패키지 설치
+### Option 1: One-line Setup (Recommended)
 
-```bash
-# 저장소 클론
-git clone https://github.com/your-org/tekton.git
-cd tekton
-
-# 의존성 설치
-pnpm install
-
-# MCP 서버 빌드
-cd packages/mcp-server
-pnpm build
-```
-
-## 서버 실행
+Run this in your project directory:
 
 ```bash
-# 개발 모드 (자동 재빌드)
-pnpm dev
-
-# 프로덕션 모드
-pnpm start
+npx @tekton-ui/mcp-server init
 ```
 
-서버는 기본적으로 `http://localhost:3000`에서 실행됩니다.
+This automatically:
 
-## 첫 블루프린트 생성
+1. Detects your framework (Next.js / Vite)
+2. Installs `@tekton-ui/ui` and `tailwindcss-animate`
+3. Configures Tailwind CSS (content paths + animate plugin)
+4. Adds CSS token imports to `globals.css`
+5. Registers MCP server in `.mcp.json`
+6. Generates `TEKTON-GUIDE.md` and updates `CLAUDE.md` / `AGENTS.md`
 
-### Claude Code에서 MCP Tool 사용
+### Option 2: Manual MCP Configuration
 
-Claude Code를 열고 다음과 같이 요청하세요:
-
-```
-Use generate-blueprint tool to create a user profile dashboard with:
-- Layout: sidebar-left
-- Theme: calm-wellness
-- Components: Card, Avatar, Button, Text
-- Description: User profile with avatar, bio text, and settings button
-```
-
-### 응답 예시
+Add to your project's `.mcp.json`:
 
 ```json
 {
-  "success": true,
-  "blueprint": {
-    "id": "1738123456789",
-    "name": "User Profile Dashboard",
-    "themeId": "calm-wellness",
-    "layout": "sidebar-left",
-    "components": [...]
-  },
-  "previewUrl": "http://localhost:3000/preview/1738123456789/calm-wellness"
+  "mcpServers": {
+    "tekton": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@tekton-ui/mcp-server"]
+    }
+  }
 }
 ```
 
-### 미리보기 확인
+## Authentication
 
-브라우저에서 `previewUrl`을 열면 생성된 화면을 볼 수 있습니다.
-
-## 테마 미리보기
-
-다른 테마를 확인하려면:
-
-```
-Use preview-theme tool with themeId: premium-editorial
-```
-
-응답으로 받은 `previewUrl`에서 테마를 확인할 수 있습니다.
-
-## 코드 내보내기
-
-생성된 블루프린트를 프로덕션 코드로 내보내기:
-
-```
-Use export-screen tool with:
-- blueprintId: 1738123456789
-- format: tsx
-- outputPath: src/screens/UserProfile.tsx
-```
-
-## 다음 단계
-
-- [사용자 가이드](./02-user-guide.md) - 상세한 사용법과 예제
-- [API 참조](./03-api-reference.md) - MCP Tools와 HTTP 엔드포인트 상세 문서
-- [아키텍처 문서](./04-architecture.md) - 시스템 구조와 데이터 흐름
-- [개발자 가이드](./05-developer-guide.md) - 기여 방법과 테스트 가이드
-- [통합 가이드](./06-integration-guide.md) - SPEC-PLAYGROUND-001 연동
-
-## 문제 해결
-
-### 서버가 시작되지 않음
+All themes require authentication. Log in via browser OAuth:
 
 ```bash
-# 포트가 사용 중인지 확인
-lsof -i :3000
-
-# 다른 포트로 시작
-PORT=3001 pnpm start
+npx @tekton-ui/mcp-server login
 ```
 
-### MCP Tool을 찾을 수 없음
+This will:
 
-1. 서버가 실행 중인지 확인: `http://localhost:3000/tools`
-2. Claude Code MCP 설정 확인
-3. 서버 재시작: `pnpm start`
+1. Open your browser to `tekton-ui.com/mcp/auth`
+2. Complete the OAuth flow
+3. Save credentials to `~/.tekton/credentials.json`
 
-### 블루프린트 검증 실패
+**Alternative**: Set the `TEKTON_API_KEY` environment variable directly.
 
-- `description`은 10-500자 사이여야 함
-- `themeId`는 소문자, 숫자, 하이픈만 허용
-- `layout`은 지원되는 6가지 중 하나여야 함
+### Verify Authentication
 
-## 지원
+```bash
+npx @tekton-ui/mcp-server status
+```
 
-- GitHub Issues: [tekton/issues](https://github.com/your-org/tekton/issues)
-- SPEC 문서: [SPEC-MCP-002](../../.moai/specs/SPEC-MCP-002/spec.md)
+## First Use
+
+After authentication, restart your AI assistant and follow this flow:
+
+### Step 1: Call `whoami` (Mandatory)
+
+Every session must start with `whoami`. Your AI assistant will call it automatically:
+
+```
+You: "Check my Tekton account"
+→ AI calls whoami
+→ Returns: plan, licensed themes, MCP support status
+```
+
+### Step 2: Explore Themes
+
+```
+You: "What themes are available?"
+→ AI calls list-themes
+→ Returns: 6 premium themes
+
+You: "Show me the minimal-workspace theme"
+→ AI calls preview-theme
+→ Returns: Full design tokens (colors, typography, spacing)
+```
+
+### Step 3: Generate a Screen
+
+**Quick Prototype** (blueprint workflow):
+
+```
+You: "Create a login page with the classic-magazine theme"
+→ AI calls generate-blueprint → export-screen
+→ Returns: TSX/JSX/Vue code
+```
+
+**Production Workflow** (recommended):
+
+```
+You: "Build a dashboard screen"
+→ AI calls:
+  1. get-screen-generation-context (gather context)
+  2. validate-screen-definition (validate JSON)
+  3. generate_screen (generate themed code)
+  4. validate-environment (check dependencies)
+→ Returns: Production-ready React code with theme applied
+```
+
+## Available Themes
+
+| Theme ID | Description |
+|---|---|
+| `classic-magazine` | Classic magazine editorial style |
+| `equinox-fitness` | Fitness & wellness |
+| `minimal-workspace` | Minimal clean workspace |
+| `neutral-humanism` | Neutral humanist design |
+| `round-minimal` | Rounded minimal style |
+| `square-minimalism` | Square minimalist design |
+
+> **Note**: All themes require a valid license. Use `whoami` to check your accessible themes.
+
+## CLI Commands
+
+| Command | Description |
+|---|---|
+| `npx @tekton-ui/mcp-server init` | One-line project setup |
+| `npx @tekton-ui/mcp-server login` | Browser OAuth login |
+| `npx @tekton-ui/mcp-server logout` | Clear saved credentials |
+| `npx @tekton-ui/mcp-server status` | Check auth status |
+| `npx @tekton-ui/mcp-server` | Start MCP stdio server |
+
+## Troubleshooting
+
+### "Authentication required" Error
+
+```bash
+# Log in first
+npx @tekton-ui/mcp-server login
+
+# Or set API key directly
+export TEKTON_API_KEY=tk_live_xxx...
+```
+
+### "whoami required" Error
+
+Your AI assistant must call `whoami` before any other tool. Simply ask it to check your account first.
+
+### MCP Server Not Detected
+
+1. Ensure `.mcp.json` exists in your project root
+2. Restart your AI assistant after adding `.mcp.json`
+3. Check that `npx @tekton-ui/mcp-server` runs without errors
+
+## Next Steps
+
+- [User Guide](./02-user-guide.md) — Full feature guide & workflows
+- [API Reference](./03-api-reference.md) — All 17 tools with schemas
+- [Architecture](./04-architecture.md) — System design & auth flow
+- [Developer Guide](./05-developer-guide.md) — Contributing & testing
+- [Integration Guide](./06-integration-guide.md) — MCP client setup
 
 ---
 
-**다음**: [사용자 가이드](./02-user-guide.md) - 상세한 기능 설명과 사용 예제
+**Version**: 0.4.5 | **Last Updated**: 2026-02-16
