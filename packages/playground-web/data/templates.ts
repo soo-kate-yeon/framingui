@@ -116,7 +116,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A minimalist design system featuring sharp corners and high contrast. Build professional web applications quickly with clear visual hierarchy and clean typography.',
     descriptionKo:
-      '정사각형 모서리와 높은 대비를 특징으로 하는 미니멀리즘 디자인 시스템입니다. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 애플리케이션을 빠르게 구축할 수 있습니다.',
+      '날카로운 모서리와 높은 대비가 특징인 미니멀리즘 디자인 시스템이에요. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 앱을 빠르게 만들 수 있어요.',
     price: 49,
     screenshots: [
       getScreenshotUrl('square-minimalism', 'hero.png'),
@@ -134,7 +134,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Includes 30 reusable components like Button, Input, Card, and Modal. Fully typed with TypeScript and follows accessibility standards. Each component supports dark mode and is highly customizable.',
         descriptionKo:
-          'Button, Input, Card, Modal 등 30개의 재사용 가능한 컴포넌트를 제공합니다. TypeScript로 완벽하게 타입이 지정되어 있으며, 접근성 표준을 준수합니다. 각 컴포넌트는 다크 모드를 지원하고 커스터마이징이 가능합니다.',
+          'Button, Input, Card, Modal 등 30개의 컴포넌트를 바로 쓸 수 있어요. TypeScript로 타입이 완벽하게 지정돼 있고, 웹 접근성 표준도 준수해요. 모든 컴포넌트가 다크 모드를 지원하고 커스터마이징도 자유로워요.',
       },
       {
         icon: '2',
