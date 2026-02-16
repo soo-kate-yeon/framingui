@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { Clock, Calendar } from 'lucide-react';
+import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
+import { getBlogContent } from '@/data/i18n/blog';
 import type { BlogFrontmatter } from '@/lib/blog';
 
 interface BlogCardProps {
@@ -11,11 +13,17 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ slug, frontmatter, readingTime }: BlogCardProps) {
-  const formattedDate = new Date(frontmatter.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  const { locale } = useGlobalLanguage();
+  const content = getBlogContent(locale);
+
+  const formattedDate = new Date(frontmatter.date).toLocaleDateString(
+    locale === 'ko' ? 'ko-KR' : 'en-US',
+    {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }
+  );
 
   return (
     <article className="group">
@@ -62,7 +70,7 @@ export function BlogCard({ slug, frontmatter, readingTime }: BlogCardProps) {
           </span>
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5" />
-            {readingTime} min read
+            {readingTime} {content.meta.readingTime}
           </span>
         </div>
       </Link>

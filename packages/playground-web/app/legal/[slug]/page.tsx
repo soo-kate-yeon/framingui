@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getLegalDocument, getAllLegalSlugs, type LegalSlug } from '../../../lib/legal';
 import { LegalPageLayout } from '../../../components/legal/LegalPageLayout';
+import { getLegalPageMeta } from '../../../data/i18n/legal';
 
 interface LegalPageProps {
   params: Promise<{ slug: string }>;
@@ -18,10 +19,23 @@ export async function generateMetadata({ params }: LegalPageProps) {
     return {};
   }
 
-  const doc = getLegalDocument(slug as LegalSlug);
+  const metaEn = getLegalPageMeta(slug as LegalSlug, 'en');
+
   return {
-    title: `${doc.title.en} | Tekton`,
-    description: `${doc.title.en} - Tekton by Morak`,
+    title: `${metaEn.title} | Tekton`,
+    description: metaEn.description,
+    alternates: {
+      languages: {
+        en: `/legal/${slug}?lang=en`,
+        ko: `/legal/${slug}?lang=ko`,
+      },
+    },
+    openGraph: {
+      title: `${metaEn.title} | Tekton`,
+      description: metaEn.description,
+      locale: 'en_US',
+      alternateLocale: 'ko_KR',
+    },
   };
 }
 

@@ -1,7 +1,10 @@
+'use client';
+
 import Link from 'next/link';
 import { Search, Menu } from 'lucide-react';
 import { articles } from '@/lib/data/articles';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 
 /**
  * Classic Magazine - Main Page
@@ -14,6 +17,8 @@ import { PreviewBanner } from '@/components/studio/PreviewBanner';
  * 3. Borders: Divider lines (border-b, border-t), High contrast
  */
 export default function ClassicMagazineDemo() {
+  const { locale } = useStudioLanguage();
+
   // 메인 기사 (첫 번째) - 항상 존재한다고 가정
   const featuredArticle = articles[0]!;
 
@@ -45,8 +50,8 @@ export default function ClassicMagazineDemo() {
             <span>Vol. 132, No. 42</span>
           </div>
           <div className="flex gap-4">
-            <button className="hover:text-black">Subscribe</button>
-            <button className="hover:text-black">Log In</button>
+            <button className="hover:text-black">{locale === 'ko' ? '구독' : 'Subscribe'}</button>
+            <button className="hover:text-black">{locale === 'ko' ? '로그인' : 'Log In'}</button>
           </div>
         </div>
 
@@ -67,16 +72,17 @@ export default function ClassicMagazineDemo() {
 
         {/* Navigation Links */}
         <nav className="border-t border-black py-3 flex justify-center gap-8 md:gap-12 overflow-x-auto px-6 scrollbar-hide">
-          {['World', 'Technology', 'Design', 'Culture', 'Business', 'Opinion', 'Travel'].map(
-            (item) => (
-              <button
-                key={item}
-                className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 underline-offset-4 whitespace-nowrap"
-              >
-                {item}
-              </button>
-            )
-          )}
+          {(locale === 'ko'
+            ? ['세계', '기술', '디자인', '문화', '비즈니스', '오피니언', '여행']
+            : ['World', 'Technology', 'Design', 'Culture', 'Business', 'Opinion', 'Travel']
+          ).map((item) => (
+            <button
+              key={item}
+              className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 underline-offset-4 whitespace-nowrap"
+            >
+              {item}
+            </button>
+          ))}
         </nav>
       </header>
 
@@ -141,9 +147,11 @@ export default function ClassicMagazineDemo() {
             {/* Section Header */}
             <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-8">
               <h3 className="font-sans text-sm font-bold uppercase tracking-widest">
-                Editor's Picks
+                {locale === 'ko' ? '에디터 추천' : "Editor's Picks"}
               </h3>
-              <button className="text-xs font-bold uppercase hover:underline">View All</button>
+              <button className="text-xs font-bold uppercase hover:underline">
+                {locale === 'ko' ? '모두 보기' : 'View All'}
+              </button>
             </div>
 
             {/* List Items (Recipe: card.compact) */}
@@ -172,12 +180,16 @@ export default function ClassicMagazineDemo() {
 
             {/* Ad / Promo Area */}
             <div className="mt-12 bg-neutral-900 text-white p-8 text-center border-4 border-double border-neutral-700">
-              <h4 className="font-serif text-2xl font-bold mb-4 font-italic">"Timeless Design"</h4>
+              <h4 className="font-serif text-2xl font-bold mb-4 font-italic">
+                {locale === 'ko' ? '"시대를 초월한 디자인"' : '"Timeless Design"'}
+              </h4>
               <p className="font-serif text-sm text-neutral-400 mb-6 italic">
-                Subscribe to the digital edition for unlimited access to our archives.
+                {locale === 'ko'
+                  ? '디지털 에디션을 구독하고 아카이브에 무제한으로 액세스하세요.'
+                  : 'Subscribe to the digital edition for unlimited access to our archives.'}
               </p>
               <button className="w-full bg-white text-black h-12 uppercase font-bold tracking-widest text-xs hover:bg-neutral-200 transition-colors">
-                Subscribe Now
+                {locale === 'ko' ? '지금 구독하기' : 'Subscribe Now'}
               </button>
             </div>
           </div>
@@ -194,13 +206,13 @@ export default function ClassicMagazineDemo() {
               href="/studio/classic-magazine/docs"
               className="text-xs font-bold uppercase tracking-widest hover:underline"
             >
-              Documentation
+              {locale === 'ko' ? '문서' : 'Documentation'}
             </Link>
             <a href="#" className="text-xs font-bold uppercase tracking-widest hover:underline">
-              Privacy Policy
+              {locale === 'ko' ? '개인정보 보호정책' : 'Privacy Policy'}
             </a>
             <a href="#" className="text-xs font-bold uppercase tracking-widest hover:underline">
-              Terms of Service
+              {locale === 'ko' ? '이용약관' : 'Terms of Service'}
             </a>
           </div>
           <p className="font-serif text-sm text-neutral-500 italic">

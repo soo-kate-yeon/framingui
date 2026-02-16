@@ -1,8 +1,8 @@
 /**
  * Legal Document Page Layout
  *
- * Nextra 스타일 레이아웃 - TemplateDocsPage 기반
- * - 헤더: 뒤로가기 + 다크모드 + EN/KO 토글
+ * GlobalLanguageContext 통합 레이아웃
+ * - 헤더: 뒤로가기 + 다크모드 + EN/KO 토글 (GlobalLanguageContext 연동)
  * - 중앙: 마크다운 렌더링
  * - 우측: TOC 사이드바
  */
@@ -15,8 +15,8 @@ import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { TocItem } from '../../lib/legal';
-
-type Locale = 'en' | 'ko';
+import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
+import { getLegalPageContent } from '../../data/i18n/legal';
 
 interface LegalPageLayoutProps {
   title: { en: string; ko: string };
@@ -28,8 +28,11 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [locale, setLocale] = useState<Locale>('ko');
   const [activeSection, setActiveSection] = useState('');
+
+  // GlobalLanguageContext 사용
+  const { locale, toggleLocale } = useGlobalLanguage();
+  const i18n = getLegalPageContent(locale);
 
   const currentToc = toc[locale];
   const currentContent = content[locale];
@@ -51,18 +54,6 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
-
-  // 언어 설정 persistence
-  useEffect(() => {
-    const saved = localStorage.getItem('legalLocale');
-    if (saved === 'en' || saved === 'ko') {
-      setLocale(saved);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('legalLocale', locale);
-  }, [locale]);
 
   // Intersection Observer - 활성 섹션 추적
   useEffect(() => {
@@ -109,8 +100,8 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
     }
   };
 
-  const toggleLocale = () => {
-    setLocale((prev) => (prev === 'en' ? 'ko' : 'en'));
+  const handleLanguageToggle = () => {
+    toggleLocale();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -132,14 +123,14 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
             <button
               onClick={goBack}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              aria-label="Go back"
+              aria-label={i18n.ui.backButton}
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400" />
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              aria-label="Toggle dark mode"
+              aria-label={i18n.ui.darkModeToggle}
             >
               {darkMode ? (
                 <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-400" />
@@ -157,9 +148,9 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
           {/* 오른쪽: 언어 토글 + TOC 토글 */}
           <div className="flex items-center gap-1 sm:gap-2">
             <button
-              onClick={toggleLocale}
+              onClick={handleLanguageToggle}
               className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium rounded border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-300"
-              aria-label="Toggle language"
+              aria-label={i18n.ui.languageToggle}
             >
               <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <span>{locale === 'en' ? 'KO' : 'EN'}</span>
@@ -167,7 +158,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
             <button
               onClick={() => setSidebarOpen(true)}
               className="xl:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors flex-shrink-0"
-              aria-label="Toggle table of contents"
+              aria-label={i18n.ui.tocToggle}
             >
               <Menu className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400" />
             </button>
@@ -310,7 +301,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
             {/* 닫기 버튼 (모바일) */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
-                {locale === 'en' ? 'On This Page' : '목차'}
+                {i18n.ui.tocHeading}
               </h3>
               <button
                 onClick={() => setSidebarOpen(false)}

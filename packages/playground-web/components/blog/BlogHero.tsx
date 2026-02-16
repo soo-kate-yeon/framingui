@@ -2,15 +2,19 @@
 
 import { Clock, Calendar, User } from 'lucide-react';
 import { TagList } from './TagList';
+import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
+import { getBlogContent } from '@/data/i18n/blog';
 import type { BlogFrontmatter } from '@/lib/blog';
 
 interface BlogHeroProps {
   frontmatter: BlogFrontmatter;
   readingTime: number;
-  locale: 'en' | 'ko';
 }
 
-export function BlogHero({ frontmatter, readingTime, locale }: BlogHeroProps) {
+export function BlogHero({ frontmatter, readingTime }: BlogHeroProps) {
+  const { locale } = useGlobalLanguage();
+  const content = getBlogContent(locale);
+
   const formattedDate = new Date(frontmatter.date).toLocaleDateString(
     locale === 'ko' ? 'ko-KR' : 'en-US',
     {
@@ -51,7 +55,7 @@ export function BlogHero({ frontmatter, readingTime, locale }: BlogHeroProps) {
         </span>
         <span className="flex items-center gap-1.5">
           <Clock className="w-4 h-4" />
-          {readingTime} {locale === 'ko' ? '분 소요' : 'min read'}
+          {readingTime} {content.meta.readingTime}
         </span>
       </div>
 

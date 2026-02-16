@@ -12,6 +12,7 @@
 
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { GlobalLanguageProvider } from '@/contexts/GlobalLanguageContext';
 import type { ReactNode } from 'react';
 
 interface ProvidersProps {
@@ -21,12 +22,14 @@ interface ProvidersProps {
 /**
  * 전역 Provider 컴포넌트
  *
- * AuthProvider (Supabase Auth)와 ThemeContext를 통합
+ * GlobalLanguageProvider, AuthProvider (Supabase Auth), ThemeContext를 통합
  */
 export function Providers({ children }: ProvidersProps) {
   return (
-    <AuthProvider>
-      <ThemeProvider>{children}</ThemeProvider>
-    </AuthProvider>
+    <GlobalLanguageProvider>
+      <AuthProvider>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
+    </GlobalLanguageProvider>
   );
 }

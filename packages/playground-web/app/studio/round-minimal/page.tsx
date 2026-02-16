@@ -15,6 +15,7 @@ import {
 import { useState } from 'react';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 
 const ROUND_MINIMAL_FALLBACK: Record<string, string> = {
   '--tekton-bg-canvas': '#F3F5F7', // Cool gray background
@@ -116,24 +117,40 @@ const PINS = [
   },
 ];
 
-const CATEGORIES = [
-  'All',
-  'UI Design',
-  'Interior',
-  'Photography',
-  'Typography',
-  'Branding',
-  'Fashion',
-  'Architecture',
-  'Art',
-  'Travel',
-  'Food',
-];
+const CATEGORIES = {
+  en: [
+    'All',
+    'UI Design',
+    'Interior',
+    'Photography',
+    'Typography',
+    'Branding',
+    'Fashion',
+    'Architecture',
+    'Art',
+    'Travel',
+    'Food',
+  ],
+  ko: [
+    '전체',
+    'UI 디자인',
+    '인테리어',
+    '사진',
+    '타이포그래피',
+    '브랜딩',
+    '패션',
+    '건축',
+    '아트',
+    '여행',
+    '음식',
+  ],
+};
 
 export default function RoundMinimalTemplate() {
   const { loaded: themeLoaded } = useTektonTheme('round-minimal', {
     fallback: ROUND_MINIMAL_FALLBACK,
   });
+  const { locale } = useStudioLanguage();
   const [selectedCategory, setSelectedCategory] = useState('All');
 
   return (
@@ -187,7 +204,7 @@ export default function RoundMinimalTemplate() {
                 </div>
                 <input
                   type="text"
-                  placeholder="Search for ideas..."
+                  placeholder={locale === 'ko' ? '아이디어 검색...' : 'Search for ideas...'}
                   className="w-full h-12 rounded-[var(--tekton-radius-full)] bg-[var(--tekton-bg-canvas)] pl-12 pr-6 text-lg placeholder:text-neutral-400 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white border-2 border-transparent focus:border-blue-200 transition-all"
                 />
               </div>
@@ -202,12 +219,12 @@ export default function RoundMinimalTemplate() {
 
             {/* Category Chips (Scrollable) */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar pl-1">
-              {CATEGORIES.map((cat) => (
+              {CATEGORIES[locale].map((cat, idx) => (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => setSelectedCategory(CATEGORIES.en[idx] || 'All')}
                   className={`px-4 py-2.5 rounded-[16px] font-semibold text-sm whitespace-nowrap transition-all ${
-                    selectedCategory === cat
+                    selectedCategory === CATEGORIES.en[idx]
                       ? 'bg-black text-white hover:bg-neutral-800'
                       : 'bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] hover:bg-neutral-200'
                   }`}
@@ -237,7 +254,7 @@ export default function RoundMinimalTemplate() {
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4">
                     <div className="flex justify-end">
                       <button className="bg-red-600 text-white px-4 py-2 rounded-[var(--tekton-radius-full)] font-bold shadow-sm hover:bg-red-700 transition-colors">
-                        Save
+                        {locale === 'ko' ? '저장' : 'Save'}
                       </button>
                     </div>
                     <div className="flex items-center justify-between gap-2">

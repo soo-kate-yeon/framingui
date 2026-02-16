@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Globe, Moon, Sun } from 'lucide-react';
 import { BlogCard } from './BlogCard';
 import { TagList } from './TagList';
+import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
+import { getBlogContent } from '@/data/i18n/blog';
 import type { BlogPostSummary } from '@/lib/blog';
-
-type Locale = 'en' | 'ko';
 
 interface BlogListPageProps {
   posts: { en: BlogPostSummary[]; ko: BlogPostSummary[] };
@@ -17,16 +17,19 @@ interface BlogListPageProps {
 
 export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
   const router = useRouter();
-  const [locale, setLocale] = useState<Locale>('ko');
+  const { locale, toggleLocale } = useGlobalLanguage();
   const [darkMode, setDarkMode] = useState(false);
 
+  const content = getBlogContent(locale);
   const currentPosts = posts[locale];
   const currentTags = allTags[locale];
 
   // 다크모드 persistence
   useEffect(() => {
     const saved = localStorage.getItem('darkMode');
-    if (saved === 'true') { setDarkMode(true); }
+    if (saved === 'true') {
+      setDarkMode(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -37,20 +40,6 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
-
-  // 언어 설정 persistence
-  useEffect(() => {
-    const saved = localStorage.getItem('blogLocale');
-    if (saved === 'en' || saved === 'ko') { setLocale(saved); }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('blogLocale', locale);
-  }, [locale]);
-
-  const toggleLocale = () => {
-    setLocale((prev) => (prev === 'en' ? 'ko' : 'en'));
-  };
 
   const tagNames = useMemo(() => currentTags.map((t) => t.tag), [currentTags]);
 
@@ -63,14 +52,14 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
             <button
               onClick={() => router.push('/')}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              aria-label="Go home"
+              aria-label={content.header.backToHome}
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400" />
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              aria-label="Toggle dark mode"
+              aria-label={content.header.toggleDarkMode}
             >
               {darkMode ? (
                 <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-400" />
@@ -81,13 +70,13 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
           </div>
 
           <h1 className="text-base sm:text-xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
-            {locale === 'en' ? 'Blog' : '블로그'}
+            {content.header.title}
           </h1>
 
           <button
             onClick={toggleLocale}
             className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium rounded border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-300"
-            aria-label="Toggle language"
+            aria-label={content.header.toggleLanguage}
           >
             <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>{locale === 'en' ? 'KO' : 'EN'}</span>
@@ -101,16 +90,10 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
           {/* 히어로 */}
           <div className="mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100 mb-3">
-              {activeTag
-                ? `#${activeTag}`
-                : locale === 'en'
-                  ? 'Latest Posts'
-                  : '최신 글'}
+              {activeTag ? `${content.list.tagPosts}${activeTag}` : content.list.latestPosts}
             </h2>
             <p className="text-lg text-neutral-600 dark:text-neutral-400">
-              {locale === 'en'
-                ? 'Insights on AI-powered development, design systems, and modern web engineering.'
-                : 'AI 기반 개발, 디자인 시스템, 모던 웹 엔지니어링에 대한 인사이트.'}
+              {content.list.description}
             </p>
           </div>
 
@@ -135,9 +118,7 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
             </div>
           ) : (
             <div className="text-center py-20 text-neutral-500 dark:text-neutral-400">
-              <p className="text-lg">
-                {locale === 'en' ? 'No posts found.' : '게시글이 없습니다.'}
-              </p>
+              <p className="text-lg">{content.list.noPosts}</p>
             </div>
           )}
         </div>
