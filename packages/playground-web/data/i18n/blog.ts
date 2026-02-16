@@ -119,8 +119,8 @@ export const blogContent: Record<GlobalLocale, BlogContent> = {
     list: {
       latestPosts: '최신 글',
       tagPosts: '#',
-      description: 'AI 기반 개발, 디자인 시스템, 모던 웹 엔지니어링에 대한 인사이트.',
-      noPosts: '게시글이 없습니다.',
+      description: 'AI 기반 개발, 디자인 시스템, 모던 웹 엔지니어링 인사이트를 공유해요.',
+      noPosts: '아직 게시글이 없어요.',
     },
     post: {
       backToBlog: '블로그로 돌아가기',
@@ -146,7 +146,7 @@ export const blogContent: Record<GlobalLocale, BlogContent> = {
     },
     search: {
       placeholder: '게시글 검색...',
-      noResults: '검색 결과가 없습니다.',
+      noResults: '검색 결과가 없어요.',
     },
     tags: {
       allPosts: '전체 글',
