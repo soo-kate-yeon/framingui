@@ -1,0 +1,15 @@
+# Compiled JavaScript files in src (should be in dist/)
+src/**/*.js
+src/**/*.d.ts
+src/**/*.js.map
+src/**/*.d.ts.map
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Coverage
+coverage/
