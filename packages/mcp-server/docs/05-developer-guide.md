@@ -56,10 +56,10 @@ pnpm inspect
 
 ### Environment Variables
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `TEKTON_API_KEY` | Yes* | — | API key for authentication. *Or use `tekton-mcp login` |
-| `TEKTON_API_URL` | No | `https://tekton-ui.com` | API endpoint (use `http://localhost:3000` for local dev) |
+| Variable         | Required | Default                 | Description                                              |
+| ---------------- | -------- | ----------------------- | -------------------------------------------------------- |
+| `TEKTON_API_KEY` | Yes\*    | —                       | API key for authentication. \*Or use `tekton-mcp login`  |
+| `TEKTON_API_URL` | No       | `https://tekton-ui.com` | API endpoint (use `http://localhost:3000` for local dev) |
 
 ---
 
@@ -83,14 +83,14 @@ packages/mcp-server/
 
 ### Module Responsibilities
 
-| Module | Role |
-|---|---|
+| Module     | Role                                                                  |
+| ---------- | --------------------------------------------------------------------- |
 | `index.ts` | MCP server entry: registers 17 tools + 2 prompts, applies auth guards |
-| `cli/` | CLI subcommand router: `login` (OAuth), `logout`, `status`, `init` |
-| `auth/` | Auth layer: API key verification, guard enforcement, license gating |
-| `tools/` | Tool logic: each file exports one tool handler |
-| `prompts/` | MCP prompts: `getting-started`, `screen-workflow` |
-| `schemas/` | Zod schemas for input validation |
+| `cli/`     | CLI subcommand router: `login` (OAuth), `logout`, `status`, `init`    |
+| `auth/`    | Auth layer: API key verification, guard enforcement, license gating   |
+| `tools/`   | Tool logic: each file exports one tool handler                        |
+| `prompts/` | MCP prompts: `getting-started`, `screen-workflow`                     |
+| `schemas/` | Zod schemas for input validation                                      |
 
 ---
 
@@ -184,7 +184,7 @@ describe('whoamiTool', () => {
 
 ```typescript
 // Use specific error types
-throw new AuthRequiredError();      // not: throw new Error('auth required')
+throw new AuthRequiredError(); // not: throw new Error('auth required')
 throw new WhoamiRequiredError();
 throw new ValidationError(message);
 ```

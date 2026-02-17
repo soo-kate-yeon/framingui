@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Play, Info, ChevronRight, Star } from 'lucide-react';
-import { PreviewBanner } from '@/components/studio/PreviewBanner';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 
 /**
@@ -15,11 +14,8 @@ export default function EquinoxFitnessLanding() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black scroll-smooth">
-      {/* Preview Banner */}
-      <PreviewBanner templateId="equinox-fitness" templateName="Equinox Fitness" />
-
-      {/* Immersive Hero Section - Adjusted for banner */}
-      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden mt-12">
+      {/* Immersive Hero Section */}
+      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden">
         {/* Background "Video" Placeholder / Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
@@ -105,7 +101,7 @@ export default function EquinoxFitnessLanding() {
               title: 'Hypertrophy V2',
               instructor: 'Julian Cross',
               image:
-                'https://images.unsplash.com/photo-1534367598536-19363914a1e9?auto=format&fit=crop&q=80&w=1000',
+                'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=1000',
             },
             {
               title: 'Cognitive Endurance',
@@ -128,7 +124,7 @@ export default function EquinoxFitnessLanding() {
               title: 'Barbell Masterclass',
               instructor: 'Iron Team',
               image:
-                'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&q=80&w=1000',
+                'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1000',
             },
             {
               title: 'Olympic Lifting',

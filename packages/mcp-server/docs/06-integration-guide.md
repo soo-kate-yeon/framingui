@@ -126,16 +126,16 @@ npx @tekton-ui/mcp-server init
 
 ### What It Does
 
-| Step | Action |
-|---|---|
-| 1 | **Detect framework**: Next.js or Vite |
-| 2 | **Install packages**: `@tekton-ui/ui`, `tailwindcss-animate` |
-| 3 | **Configure Tailwind**: Add content paths and animate plugin |
-| 4 | **Setup CSS**: Add `@import '@tekton-ui/ui/styles'` to `globals.css` |
-| 5 | **Register MCP**: Create/update `.mcp.json` with Tekton server |
-| 6 | **Generate guide**: Create `TEKTON-GUIDE.md` |
-| 7 | **Update AI config**: Add Tekton workflow to `CLAUDE.md` / `AGENTS.md` |
-| 8 | **Print next steps**: Auth instructions and usage guide |
+| Step | Action                                                                 |
+| ---- | ---------------------------------------------------------------------- |
+| 1    | **Detect framework**: Next.js or Vite                                  |
+| 2    | **Install packages**: `@tekton-ui/ui`, `tailwindcss-animate`           |
+| 3    | **Configure Tailwind**: Add content paths and animate plugin           |
+| 4    | **Setup CSS**: Add `@import '@tekton-ui/ui/styles'` to `globals.css`   |
+| 5    | **Register MCP**: Create/update `.mcp.json` with Tekton server         |
+| 6    | **Generate guide**: Create `TEKTON-GUIDE.md`                           |
+| 7    | **Update AI config**: Add Tekton workflow to `CLAUDE.md` / `AGENTS.md` |
+| 8    | **Print next steps**: Auth instructions and usage guide                |
 
 ### Supported Frameworks
 
@@ -150,10 +150,10 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 
 ## Environment Variables
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `TEKTON_API_KEY` | Conditional | — | API key. Not needed if using `tekton-mcp login` |
-| `TEKTON_API_URL` | No | `https://tekton-ui.com` | API endpoint |
+| Variable         | Required    | Default                 | Description                                     |
+| ---------------- | ----------- | ----------------------- | ----------------------------------------------- |
+| `TEKTON_API_KEY` | Conditional | —                       | API key. Not needed if using `tekton-mcp login` |
+| `TEKTON_API_URL` | No          | `https://tekton-ui.com` | API endpoint                                    |
 
 ### Credential Precedence
 

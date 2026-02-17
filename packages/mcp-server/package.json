@@ -41,7 +41,7 @@
     "test:coverage": "vitest run --coverage",
     "start": "node dist/index.js",
     "inspect": "npx @anthropic-ai/mcp-inspector node dist/index.js",
-    "lint": "eslint src __tests__ --ext .ts",
+    "lint": "eslint src __tests__ --ext .ts --ignore-pattern 'src/**/*.js' --ignore-pattern 'src/**/*.d.ts'",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
     "prepublishOnly": "pnpm build"

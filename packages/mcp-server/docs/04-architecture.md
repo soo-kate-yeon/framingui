@@ -243,15 +243,15 @@ graph TD
 
 ### Components
 
-| Module | Responsibility |
-|---|---|
-| `cli/login.ts` | Browser OAuth flow: localhost callback server → save credentials |
-| `cli/credentials.ts` | Read/write `~/.tekton/credentials.json` |
-| `auth/verify.ts` | `verifyApiKey()`: GET `tekton-ui.com/api/mcp/verify` with Bearer token |
-| `auth/guard.ts` | `requireAuth()` and `requireWhoami()` — throws if not met |
-| `auth/state.ts` | In-memory auth state: `authData`, `whoamiCompleted` flag |
-| `auth/cache.ts` | API key verification cache (5-minute TTL) |
-| `auth/theme-access.ts` | `PREMIUM_THEMES` list, `MASTER_EMAILS`, `isMasterAccount()` |
+| Module                 | Responsibility                                                         |
+| ---------------------- | ---------------------------------------------------------------------- |
+| `cli/login.ts`         | Browser OAuth flow: localhost callback server → save credentials       |
+| `cli/credentials.ts`   | Read/write `~/.tekton/credentials.json`                                |
+| `auth/verify.ts`       | `verifyApiKey()`: GET `tekton-ui.com/api/mcp/verify` with Bearer token |
+| `auth/guard.ts`        | `requireAuth()` and `requireWhoami()` — throws if not met              |
+| `auth/state.ts`        | In-memory auth state: `authData`, `whoamiCompleted` flag               |
+| `auth/cache.ts`        | API key verification cache (5-minute TTL)                              |
+| `auth/theme-access.ts` | `PREMIUM_THEMES` list, `MASTER_EMAILS`, `isMasterAccount()`            |
 
 ### Auth Guard Flow
 

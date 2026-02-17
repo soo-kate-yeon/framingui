@@ -205,7 +205,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         {
           title: 'What is your refund policy?',
           content:
-            'Since templates are digital products, refunds are available before download within 7 days of purchase. Technical defects and duplicate purchases are always eligible for refund. See our full refund policy for details.',
+            'Since templates are digital products, refunds are available before download within 14 days of purchase. Technical defects and duplicate purchases are always eligible for refund. See our full refund policy for details.',
         },
         {
           title: 'Do you offer team or education discounts?',
@@ -329,7 +329,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         {
           title: '환불은 어떻게 받을 수 있나요?',
           content:
-            '템플릿은 디지털 제품이라서, 구매 후 7일 이내에 다운로드하기 전이라면 환불받을 수 있어요. 기술적 문제나 중복 구매는 언제든 환불 가능해요. 자세한 내용은 환불 정책을 확인해보세요.',
+            '템플릿은 디지털 제품이라서, 구매 후 14일 이내에 다운로드하기 전이라면 환불받을 수 있어요. 기술적 문제나 중복 구매는 언제든 환불 가능해요. 자세한 내용은 환불 정책을 확인해보세요.',
         },
         {
           title: '팀이나 교육 할인이 있나요?',

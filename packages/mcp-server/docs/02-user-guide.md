@@ -32,13 +32,13 @@ Every MCP session must start with `whoami`. All other tools will reject requests
 
 **Returns**:
 
-| Field | Type | Description |
-|---|---|---|
-| `plan` | string | Subscription tier: `free`, `pro`, `enterprise`, `master` |
-| `isMaster` | boolean | Whether this is a master account with full access |
-| `licensedThemes` | string[] | Theme IDs accessible with your license |
-| `totalThemes` | number | Total available themes |
-| `mcpSupport` | object | MCP support period and renewal info |
+| Field            | Type     | Description                                              |
+| ---------------- | -------- | -------------------------------------------------------- |
+| `plan`           | string   | Subscription tier: `free`, `pro`, `enterprise`, `master` |
+| `isMaster`       | boolean  | Whether this is a master account with full access        |
+| `licensedThemes` | string[] | Theme IDs accessible with your license                   |
+| `totalThemes`    | number   | Total available themes                                   |
+| `mcpSupport`     | object   | MCP support period and renewal info                      |
 
 ### 3. Use Tools
 
@@ -50,25 +50,25 @@ After `whoami`, all 17 tools become available.
 
 ### Overview
 
-| # | Tool | Category | Description |
-|---|---|---|---|
-| 1 | `whoami` | Auth | Verify account & license (mandatory first call) |
-| 2 | `list-themes` | Theme | List available themes |
-| 3 | `preview-theme` | Theme | Get theme design tokens |
-| 4 | `list-icon-libraries` | Icons | List icon libraries |
-| 5 | `preview-icon-library` | Icons | Preview icon library details |
-| 6 | `list-components` | Components | Browse 30+ UI components |
-| 7 | `preview-component` | Components | Get component props & examples |
-| 8 | `list-screen-templates` | Templates | Browse 13 screen templates |
-| 9 | `preview-screen-template` | Templates | Get template structure & customization |
-| 10 | `list_tokens` | Tokens | List layout tokens (shell/page/section) |
-| 11 | `generate-blueprint` | Prototyping | Generate UI blueprint from natural language |
-| 12 | `export-screen` | Prototyping | Export blueprint to JSX/TSX/Vue |
-| 13 | `validate_screen` | Validation | Basic screen definition validation |
-| 14 | `get-screen-generation-context` | Workflow 1/3 | Get context for screen generation |
-| 15 | `validate-screen-definition` | Workflow 2/3 | Validate screen definition with auto-fix |
-| 16 | `generate_screen` | Workflow 3/4 | Generate production code with theme |
-| 17 | `validate-environment` | Workflow 3/3 | Verify NPM packages & Tailwind config |
+| #   | Tool                            | Category     | Description                                     |
+| --- | ------------------------------- | ------------ | ----------------------------------------------- |
+| 1   | `whoami`                        | Auth         | Verify account & license (mandatory first call) |
+| 2   | `list-themes`                   | Theme        | List available themes                           |
+| 3   | `preview-theme`                 | Theme        | Get theme design tokens                         |
+| 4   | `list-icon-libraries`           | Icons        | List icon libraries                             |
+| 5   | `preview-icon-library`          | Icons        | Preview icon library details                    |
+| 6   | `list-components`               | Components   | Browse 30+ UI components                        |
+| 7   | `preview-component`             | Components   | Get component props & examples                  |
+| 8   | `list-screen-templates`         | Templates    | Browse 13 screen templates                      |
+| 9   | `preview-screen-template`       | Templates    | Get template structure & customization          |
+| 10  | `list_tokens`                   | Tokens       | List layout tokens (shell/page/section)         |
+| 11  | `generate-blueprint`            | Prototyping  | Generate UI blueprint from natural language     |
+| 12  | `export-screen`                 | Prototyping  | Export blueprint to JSX/TSX/Vue                 |
+| 13  | `validate_screen`               | Validation   | Basic screen definition validation              |
+| 14  | `get-screen-generation-context` | Workflow 1/3 | Get context for screen generation               |
+| 15  | `validate-screen-definition`    | Workflow 2/3 | Validate screen definition with auto-fix        |
+| 16  | `generate_screen`               | Workflow 3/4 | Generate production code with theme             |
+| 17  | `validate-environment`          | Workflow 3/3 | Verify NPM packages & Tailwind config           |
 
 ### Tool Details
 
@@ -147,14 +147,14 @@ Tekton provides 6 premium themes. All themes require authentication.
 
 ### Available Themes
 
-| Theme ID | Name | Style |
-|---|---|---|
-| `classic-magazine` | Classic Magazine | Editorial with serif typography |
-| `equinox-fitness` | Equinox Fitness | Fitness & wellness, energetic |
+| Theme ID            | Name              | Style                             |
+| ------------------- | ----------------- | --------------------------------- |
+| `classic-magazine`  | Classic Magazine  | Editorial with serif typography   |
+| `equinox-fitness`   | Equinox Fitness   | Fitness & wellness, energetic     |
 | `minimal-workspace` | Minimal Workspace | Clean, minimal, workspace-focused |
-| `neutral-humanism` | Neutral Humanism | Warm neutral tones, humanist |
-| `round-minimal` | Round Minimal | Soft rounded corners, minimal |
-| `square-minimalism` | Square Minimalism | Sharp edges, bold minimalism |
+| `neutral-humanism`  | Neutral Humanism  | Warm neutral tones, humanist      |
+| `round-minimal`     | Round Minimal     | Soft rounded corners, minimal     |
+| `square-minimalism` | Square Minimalism | Sharp edges, bold minimalism      |
 
 ### Theme Data Structure (v2.1)
 
@@ -193,12 +193,12 @@ Use `list-components` and `preview-component` to discover details, props, varian
 
 13 pre-built screen templates:
 
-| Category | Templates |
-|---|---|
-| **Auth** | login, signup, forgot-password, verification |
-| **Dashboard** | overview |
-| **Marketing** | landing, preferences, profile |
-| **Feedback** | loading, error, empty, confirmation, success |
+| Category      | Templates                                    |
+| ------------- | -------------------------------------------- |
+| **Auth**      | login, signup, forgot-password, verification |
+| **Dashboard** | overview                                     |
+| **Marketing** | landing, preferences, profile                |
+| **Feedback**  | loading, error, empty, confirmation, success |
 
 Use `list-screen-templates` and `preview-screen-template` to explore skeleton structure, layout, and customization boundaries.
 
@@ -298,10 +298,10 @@ Run `validate-environment` with `checkTailwind: true` to verify your `tailwind.c
 
 The server provides 2 built-in prompts:
 
-| Prompt | Description |
-|---|---|
+| Prompt            | Description                                                   |
+| ----------------- | ------------------------------------------------------------- |
 | `getting-started` | Complete onboarding guide: auth, themes, components, workflow |
-| `screen-workflow` | Detailed 4-step production screen generation workflow |
+| `screen-workflow` | Detailed 4-step production screen generation workflow         |
 
 These prompts are platform-agnostic and work with any MCP-compatible client.
 

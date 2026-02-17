@@ -127,26 +127,26 @@ You: "Build a dashboard screen"
 
 ## Available Themes
 
-| Theme ID | Description |
-|---|---|
-| `classic-magazine` | Classic magazine editorial style |
-| `equinox-fitness` | Fitness & wellness |
-| `minimal-workspace` | Minimal clean workspace |
-| `neutral-humanism` | Neutral humanist design |
-| `round-minimal` | Rounded minimal style |
-| `square-minimalism` | Square minimalist design |
+| Theme ID            | Description                      |
+| ------------------- | -------------------------------- |
+| `classic-magazine`  | Classic magazine editorial style |
+| `equinox-fitness`   | Fitness & wellness               |
+| `minimal-workspace` | Minimal clean workspace          |
+| `neutral-humanism`  | Neutral humanist design          |
+| `round-minimal`     | Rounded minimal style            |
+| `square-minimalism` | Square minimalist design         |
 
 > **Note**: All themes require a valid license. Use `whoami` to check your accessible themes.
 
 ## CLI Commands
 
-| Command | Description |
-|---|---|
-| `npx @tekton-ui/mcp-server init` | One-line project setup |
-| `npx @tekton-ui/mcp-server login` | Browser OAuth login |
+| Command                            | Description             |
+| ---------------------------------- | ----------------------- |
+| `npx @tekton-ui/mcp-server init`   | One-line project setup  |
+| `npx @tekton-ui/mcp-server login`  | Browser OAuth login     |
 | `npx @tekton-ui/mcp-server logout` | Clear saved credentials |
-| `npx @tekton-ui/mcp-server status` | Check auth status |
-| `npx @tekton-ui/mcp-server` | Start MCP stdio server |
+| `npx @tekton-ui/mcp-server status` | Check auth status       |
+| `npx @tekton-ui/mcp-server`        | Start MCP stdio server  |
 
 ## Troubleshooting
 

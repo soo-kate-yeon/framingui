@@ -27,7 +27,8 @@ Verify your account, license status, and accessible themes.
 **Input Schema**:
 
 ```typescript
-{} // No parameters
+{
+} // No parameters
 ```
 
 **Output Schema**:
@@ -104,9 +105,9 @@ Preview a theme and retrieve its full v2.1 theme data including design tokens.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `themeId` | string | ✓ | Theme ID (lowercase alphanumeric with hyphens) |
+| Parameter | Type   | Required | Description                                    |
+| --------- | ------ | -------- | ---------------------------------------------- |
+| `themeId` | string | ✓        | Theme ID (lowercase alphanumeric with hyphens) |
 
 **Output**: Complete theme data including colors, typography, spacing, and component tokens.
 
@@ -134,9 +135,9 @@ Preview an icon library and retrieve its configuration.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `libraryId` | string | ✓ | Icon library ID (e.g., `lucide`, `heroicons`, `feather`) |
+| Parameter   | Type   | Required | Description                                              |
+| ----------- | ------ | -------- | -------------------------------------------------------- |
+| `libraryId` | string | ✓        | Icon library ID (e.g., `lucide`, `heroicons`, `feather`) |
 
 **Output**: Library configuration, NPM package name, icon samples, and usage instructions.
 
@@ -150,10 +151,10 @@ List all available UI components from `@tekton-ui/ui`.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `category` | string | ✗ | Filter: `core`, `complex`, `advanced`, `all` (default: `all`) |
-| `search` | string | ✗ | Search by keyword |
+| Parameter  | Type   | Required | Description                                                   |
+| ---------- | ------ | -------- | ------------------------------------------------------------- |
+| `category` | string | ✗        | Filter: `core`, `complex`, `advanced`, `all` (default: `all`) |
+| `search`   | string | ✗        | Search by keyword                                             |
 
 **Output**:
 
@@ -170,7 +171,11 @@ List all available UI components from `@tekton-ui/ui`.
     tier: number;
   }>;
   count: number;
-  categories: { core: number; complex: number; advanced: number };
+  categories: {
+    core: number;
+    complex: number;
+    advanced: number;
+  }
 }
 ```
 
@@ -180,11 +185,11 @@ Get detailed information about a specific UI component.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `componentId` | string | ✓ | Component ID (e.g., `button`, `card`, `dialog`) |
-| `includeExamples` | boolean | ✗ | Include usage examples (default: `true`) |
-| `includeDependencies` | boolean | ✗ | Include dependency info (default: `true`) |
+| Parameter             | Type    | Required | Description                                     |
+| --------------------- | ------- | -------- | ----------------------------------------------- |
+| `componentId`         | string  | ✓        | Component ID (e.g., `button`, `card`, `dialog`) |
+| `includeExamples`     | boolean | ✗        | Include usage examples (default: `true`)        |
+| `includeDependencies` | boolean | ✗        | Include dependency info (default: `true`)       |
 
 **Output**:
 
@@ -223,10 +228,10 @@ List all available screen templates from the Template Registry.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `category` | string | ✗ | Filter: `auth`, `dashboard`, `form`, `marketing`, `feedback`, `all` |
-| `search` | string | ✗ | Search by keyword |
+| Parameter  | Type   | Required | Description                                                         |
+| ---------- | ------ | -------- | ------------------------------------------------------------------- |
+| `category` | string | ✗        | Filter: `auth`, `dashboard`, `form`, `marketing`, `feedback`, `all` |
+| `search`   | string | ✗        | Search by keyword                                                   |
 
 **Output**: Array of template IDs with categories, descriptions, and preview information.
 
@@ -236,10 +241,10 @@ Preview a screen template with skeleton, layout, and customization boundaries.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `templateId` | string | ✓ | Template ID (format: `category.name`, e.g., `auth.login`) |
-| `includeLayoutTokens` | boolean | ✗ | Include responsive layout tokens (default: `true`) |
+| Parameter             | Type    | Required | Description                                               |
+| --------------------- | ------- | -------- | --------------------------------------------------------- |
+| `templateId`          | string  | ✓        | Template ID (format: `category.name`, e.g., `auth.login`) |
+| `includeLayoutTokens` | boolean | ✗        | Include responsive layout tokens (default: `true`)        |
 
 **Output**: Template details including skeleton structure, layout configuration, customization boundaries, required components, and usage guide.
 
@@ -253,10 +258,10 @@ List available layout tokens from SPEC-LAYOUT-001.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `tokenType` | string | ✗ | Filter: `shell`, `page`, `section`, `all` |
-| `filter` | string | ✗ | Pattern filter (case-insensitive substring match) |
+| Parameter   | Type   | Required | Description                                       |
+| ----------- | ------ | -------- | ------------------------------------------------- |
+| `tokenType` | string | ✗        | Filter: `shell`, `page`, `section`, `all`         |
+| `filter`    | string | ✗        | Pattern filter (case-insensitive substring match) |
 
 **Output**: Array of layout tokens with descriptions and usage contexts.
 
@@ -272,13 +277,13 @@ Generate a UI blueprint from natural language description.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `description` | string | ✓ | Natural language description (10-500 chars) |
-| `layout` | string | ✓ | Layout type: `single-column`, `two-column`, `sidebar-left`, `sidebar-right`, `dashboard`, `landing` |
-| `themeId` | string | ✓ | Theme ID |
-| `componentHints` | string[] | ✗ | Optional component type hints |
-| `iconLibrary` | string | ✗ | Icon library ID |
+| Parameter        | Type     | Required | Description                                                                                         |
+| ---------------- | -------- | -------- | --------------------------------------------------------------------------------------------------- |
+| `description`    | string   | ✓        | Natural language description (10-500 chars)                                                         |
+| `layout`         | string   | ✓        | Layout type: `single-column`, `two-column`, `sidebar-left`, `sidebar-right`, `dashboard`, `landing` |
+| `themeId`        | string   | ✓        | Theme ID                                                                                            |
+| `componentHints` | string[] | ✗        | Optional component type hints                                                                       |
+| `iconLibrary`    | string   | ✗        | Icon library ID                                                                                     |
 
 **Output**: Blueprint object with layout structure and component suggestions.
 
@@ -288,10 +293,10 @@ Export a blueprint to production code.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `blueprint` | object | ✓ | Blueprint object to export |
-| `format` | string | ✓ | Export format: `jsx`, `tsx`, `vue` |
+| Parameter   | Type   | Required | Description                        |
+| ----------- | ------ | -------- | ---------------------------------- |
+| `blueprint` | object | ✓        | Blueprint object to export         |
+| `format`    | string | ✓        | Export format: `jsx`, `tsx`, `vue` |
 
 **Output**: Generated code in the requested format.
 
@@ -305,11 +310,11 @@ Get complete context for AI agents to generate screen definitions from natural l
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `description` | string | ✓ | Natural language description (5-1000 chars) |
-| `themeId` | string | ✗ | Optional theme ID for recipe information |
-| `includeExamples` | boolean | ✗ | Include example definitions (default: `true`) |
+| Parameter         | Type    | Required | Description                                   |
+| ----------------- | ------- | -------- | --------------------------------------------- |
+| `description`     | string  | ✓        | Natural language description (5-1000 chars)   |
+| `themeId`         | string  | ✗        | Optional theme ID for recipe information      |
+| `includeExamples` | boolean | ✗        | Include example definitions (default: `true`) |
 
 **Output**:
 
@@ -325,10 +330,10 @@ Validate a screen definition JSON with detailed error messages and auto-fix.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `definition` | object | ✓ | Screen definition object to validate |
-| `strict` | boolean | ✗ | Enable strict validation (default: `true`) |
+| Parameter    | Type    | Required | Description                                |
+| ------------ | ------- | -------- | ------------------------------------------ |
+| `definition` | object  | ✓        | Screen definition object to validate       |
+| `strict`     | boolean | ✗        | Enable strict validation (default: `true`) |
 
 **Output**:
 
@@ -350,11 +355,11 @@ Generate production-ready React code with theme applied from validated Screen De
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `screenDefinition` | object | ✓ | JSON screen definition with `id`, `shell`, `page`, `sections` |
-| `outputFormat` | string | ✓ | Code format: `css-in-js`, `tailwind`, `react` |
-| `options` | object | ✗ | `{ cssFramework?: 'styled-components' \| 'emotion', typescript?: boolean, prettier?: boolean }` |
+| Parameter          | Type   | Required | Description                                                                                     |
+| ------------------ | ------ | -------- | ----------------------------------------------------------------------------------------------- |
+| `screenDefinition` | object | ✓        | JSON screen definition with `id`, `shell`, `page`, `sections`                                   |
+| `outputFormat`     | string | ✓        | Code format: `css-in-js`, `tailwind`, `react`                                                   |
+| `options`          | object | ✗        | `{ cssFramework?: 'styled-components' \| 'emotion', typescript?: boolean, prettier?: boolean }` |
 
 **Output**:
 
@@ -368,11 +373,11 @@ Validate user environment: NPM packages + Tailwind CSS configuration.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `projectPath` | string | ✓ | Path to `package.json` or project root |
-| `requiredPackages` | string[] | ✓ | Package names to validate |
-| `checkTailwind` | boolean | ✗ | Validate Tailwind CSS config (default: `true`) |
+| Parameter          | Type     | Required | Description                                    |
+| ------------------ | -------- | -------- | ---------------------------------------------- |
+| `projectPath`      | string   | ✓        | Path to `package.json` or project root         |
+| `requiredPackages` | string[] | ✓        | Package names to validate                      |
+| `checkTailwind`    | boolean  | ✗        | Validate Tailwind CSS config (default: `true`) |
 
 **Output**:
 
@@ -397,10 +402,10 @@ Basic screen definition validation with helpful feedback.
 
 **Input**:
 
-| Parameter | Type | Required | Description |
-|---|---|---|---|
-| `screenDefinition` | object | ✓ | JSON screen definition to validate |
-| `strictMode` | boolean | ✗ | Enable strict validation (default: `false`) |
+| Parameter          | Type    | Required | Description                                 |
+| ------------------ | ------- | -------- | ------------------------------------------- |
+| `screenDefinition` | object  | ✓        | JSON screen definition to validate          |
+| `strictMode`       | boolean | ✗        | Enable strict validation (default: `false`) |
 
 ---
 
@@ -408,27 +413,27 @@ Basic screen definition validation with helpful feedback.
 
 ### Authentication Errors
 
-| Error | Cause | Solution |
-|---|---|---|
-| `Authentication required` | No API key found | Run `tekton-mcp login` or set `TEKTON_API_KEY` |
-| `whoami required` | `whoami` not called yet | Call `whoami` first |
-| `API key is invalid` | Expired or revoked key | Re-run `tekton-mcp login` |
+| Error                     | Cause                   | Solution                                       |
+| ------------------------- | ----------------------- | ---------------------------------------------- |
+| `Authentication required` | No API key found        | Run `tekton-mcp login` or set `TEKTON_API_KEY` |
+| `whoami required`         | `whoami` not called yet | Call `whoami` first                            |
+| `API key is invalid`      | Expired or revoked key  | Re-run `tekton-mcp login`                      |
 
 ### Validation Errors
 
-| Error | Cause | Solution |
-|---|---|---|
-| `INVALID_DESCRIPTION` | Description < 10 or > 500 chars | Adjust length |
-| `INVALID_THEME_ID` | Non-existent theme | Check `list-themes` |
-| `INVALID_LAYOUT` | Unsupported layout type | Use one of the 6 supported layouts |
-| `VALIDATION_FAILED` | Screen definition validation error | Apply `autoFixPatches` or fix manually |
+| Error                 | Cause                              | Solution                               |
+| --------------------- | ---------------------------------- | -------------------------------------- |
+| `INVALID_DESCRIPTION` | Description < 10 or > 500 chars    | Adjust length                          |
+| `INVALID_THEME_ID`    | Non-existent theme                 | Check `list-themes`                    |
+| `INVALID_LAYOUT`      | Unsupported layout type            | Use one of the 6 supported layouts     |
+| `VALIDATION_FAILED`   | Screen definition validation error | Apply `autoFixPatches` or fix manually |
 
 ### License Errors
 
-| Error | Cause | Solution |
-|---|---|---|
-| `Theme not licensed` | Theme not in your license | Check `whoami` response for `licensedThemes` |
-| `License expired` | MCP support period expired | Renew license |
+| Error                | Cause                      | Solution                                     |
+| -------------------- | -------------------------- | -------------------------------------------- |
+| `Theme not licensed` | Theme not in your license  | Check `whoami` response for `licensedThemes` |
+| `License expired`    | MCP support period expired | Renew license                                |
 
 ---
 
