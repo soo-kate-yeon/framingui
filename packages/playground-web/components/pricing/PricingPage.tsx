@@ -137,7 +137,7 @@ const FAQ_ITEMS = [
   {
     title: 'What is your refund policy?',
     content:
-      'Since templates are digital products, refunds are available before download within 7 days of purchase. Technical defects and duplicate purchases are always eligible for refund. See our full refund policy for details.',
+      'Since templates are digital products, refunds are available before download within 14 days of purchase. Technical defects and duplicate purchases are always eligible for refund. See our full refund policy for details.',
   },
   {
     title: 'Do you offer team or education discounts?',

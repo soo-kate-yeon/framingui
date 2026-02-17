@@ -32,11 +32,11 @@ This is because digital products cannot be "returned" like physical goods, and a
 
 ### 3.1 Eligible for Refund
 
-| Situation                     | Refund Available | Conditions                                            |
-| ----------------------------- | ---------------- | ----------------------------------------------------- |
-| **Pre-download cancellation** | ✅ Yes           | Request within 7 days of purchase AND before download |
-| **Technical defect**          | ✅ Yes           | Product is fundamentally broken and we cannot fix it  |
-| **Duplicate purchase**        | ✅ Yes           | Accidental duplicate payment for same product         |
+| Situation                     | Refund Available | Conditions                                             |
+| ----------------------------- | ---------------- | ------------------------------------------------------ |
+| **Pre-download cancellation** | ✅ Yes           | Request within 14 days of purchase AND before download |
+| **Technical defect**          | ✅ Yes           | Product is fundamentally broken and we cannot fix it   |
+| **Duplicate purchase**        | ✅ Yes           | Accidental duplicate payment for same product          |
 
 ### 3.2 Not Eligible for Refund
 
@@ -60,11 +60,11 @@ This is because digital products cannot be "returned" like physical goods, and a
 
 ### 4.2 Refund Policy for Subscriptions
 
-| Situation                                               | Refund                                                |
-| ------------------------------------------------------- | ----------------------------------------------------- |
-| Cancel within 7 days of initial purchase (no downloads) | ✅ Full refund                                        |
-| Cancel after 7 days or after downloading templates      | ❌ No refund; access continues until period ends      |
-| Renewal charge (if cancelled before renewal date)       | Renewal will not occur; no refund for previous period |
+| Situation                                                | Refund                                                |
+| -------------------------------------------------------- | ----------------------------------------------------- |
+| Cancel within 14 days of initial purchase (no downloads) | ✅ Full refund                                        |
+| Cancel after 14 days or after downloading templates      | ❌ No refund; access continues until period ends      |
+| Renewal charge (if cancelled before renewal date)        | Renewal will not occur; no refund for previous period |
 
 ---
 
