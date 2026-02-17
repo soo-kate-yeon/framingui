@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import {
@@ -112,7 +112,9 @@ describe('Modal', () => {
       expect(screen.getByText('Title')).toBeInTheDocument();
 
       await user.keyboard('{Escape}');
-      expect(screen.queryByText('Title')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByText('Title')).not.toBeInTheDocument();
+      });
     });
   });
 

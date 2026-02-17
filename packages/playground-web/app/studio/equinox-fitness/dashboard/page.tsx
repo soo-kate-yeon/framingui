@@ -75,7 +75,7 @@ export default function EquinoxDashboardPage() {
               title: 'Hypertrophy V2',
               author: 'Julian Cross',
               image:
-                'https://images.unsplash.com/photo-1534367598536-19363914a1e9?auto=format&fit=crop&q=80&w=1000',
+                'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=1000',
               rating: 5.0,
             },
             {
@@ -116,7 +116,7 @@ export default function EquinoxDashboardPage() {
               title: 'Barbell Masterclass',
               author: 'Iron Team',
               image:
-                'https://images.unsplash.com/photo-1599058917232-d750c1859d7c?auto=format&fit=crop&q=80&w=1000',
+                'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1000',
               rating: 5.0,
             },
           ]}

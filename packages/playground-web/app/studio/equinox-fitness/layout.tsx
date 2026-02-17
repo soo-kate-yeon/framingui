@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, Search, Library, Settings, Bell, User, PlusCircle } from 'lucide-react';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
 
 /**
  * Equinox Fitness V2 Layout - Streaming Edition
@@ -15,16 +16,12 @@ export default function EquinoxLayout({ children }: { children: React.ReactNode 
 
   return (
     <div className="min-h-screen bg-black font-sans selection:bg-white selection:text-black flex">
-      {/* Sidebar - Desktop Only (Hidden on Mobile) */}
-      <aside className="hidden md:flex w-[80px] hover:w-[200px] bg-black border-r border-neutral-900 flex-col fixed h-full z-30 transition-all duration-300 group overflow-hidden">
-        <div className="p-8 flex items-center gap-4">
-          <div className="w-8 h-8 bg-white flex-shrink-0" />
-          <span className="text-xl font-black tracking-tighter text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            EQUINOX
-          </span>
-        </div>
+      {/* Preview Banner - 모든 equinox 하위 페이지에서 표시 */}
+      <PreviewBanner templateId="equinox-fitness" templateName="Equinox Fitness" />
 
-        <nav className="flex-1 px-4 space-y-2">
+      {/* Sidebar - Desktop Only (Hidden on Mobile) — top-12로 배너 아래 시작 */}
+      <aside className="hidden md:flex w-[80px] hover:w-[200px] bg-black border-r border-neutral-900 flex-col fixed top-12 bottom-0 z-30 transition-all duration-300 group overflow-hidden">
+        <nav className="flex-1 px-4 pt-6 space-y-2">
           <NavItem
             href="/studio/equinox-fitness"
             icon={<Home size={20} />}
@@ -62,8 +59,8 @@ export default function EquinoxLayout({ children }: { children: React.ReactNode 
         </div>
       </aside>
 
-      {/* Bottom Navigation - Mobile Only */}
-      <nav className="md:hidden fixed bottom-1 left-4 right-4 h-16 bg-neutral-900/90 backdrop-blur-xl border border-white/10 z-50 flex items-center justify-around px-4">
+      {/* Bottom Navigation - Mobile Only — z-40으로 배너(z-50) 아래 유지 */}
+      <nav className="md:hidden fixed bottom-1 left-4 right-4 h-16 bg-neutral-900/90 backdrop-blur-xl border border-white/10 z-40 flex items-center justify-around px-4">
         <MobileNavItem
           href="/studio/equinox-fitness"
           icon={<Home size={20} />}
@@ -82,9 +79,9 @@ export default function EquinoxLayout({ children }: { children: React.ReactNode 
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-[80px] min-w-0">
-        {/* Top Header - Immersive & Minimal */}
-        <header className="h-[80px] bg-gradient-to-b from-black to-transparent sticky top-0 z-20 px-4 md:px-12 flex items-center justify-between gap-4">
+      <main className="flex-1 md:ml-[80px] min-w-0 pt-12">
+        {/* Top Header - Immersive & Minimal — top-12로 배너 아래에 sticky */}
+        <header className="h-[80px] bg-gradient-to-b from-black to-transparent sticky top-12 z-20 px-4 md:px-12 flex items-center justify-between gap-4">
           <div className="flex items-center gap-8">
             <div className="relative group/search flex-1 md:flex-none">
               <Search className="w-4 h-4 absolute left-0 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within/search:text-white transition-colors" />
