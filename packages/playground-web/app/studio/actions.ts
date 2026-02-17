@@ -13,6 +13,7 @@ interface GalleryItem {
   id: string;
   name: string;
   description: string;
+  descriptionKo?: string;
   category: string;
   thumbnail?: string;
   price?: number;
@@ -68,7 +69,8 @@ export async function loadThemes(): Promise<GalleryItem[]> {
         galleryItems.push({
           id: theme.id,
           name: theme.name,
-          description: theme.description || 'A modern design system.',
+          description: templateData?.description || theme.description || 'A modern design system.',
+          descriptionKo: templateData?.descriptionKo,
           category: 'Design System',
           thumbnail: undefined,
           price: templateData?.price,

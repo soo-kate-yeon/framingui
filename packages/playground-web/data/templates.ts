@@ -116,7 +116,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A minimalist design system featuring sharp corners and high contrast. Build professional web applications quickly with clear visual hierarchy and clean typography.',
     descriptionKo:
-      '정사각형 모서리와 높은 대비를 특징으로 하는 미니멀리즘 디자인 시스템입니다. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 애플리케이션을 빠르게 구축할 수 있습니다.',
+      '날카로운 모서리와 높은 대비가 특징인 미니멀리즘 디자인 시스템이에요. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 앱을 빠르게 만들 수 있어요.',
     price: 49,
     screenshots: [
       getScreenshotUrl('square-minimalism', 'hero.png'),
@@ -134,7 +134,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Includes 30 reusable components like Button, Input, Card, and Modal. Fully typed with TypeScript and follows accessibility standards. Each component supports dark mode and is highly customizable.',
         descriptionKo:
-          'Button, Input, Card, Modal 등 30개의 재사용 가능한 컴포넌트를 제공합니다. TypeScript로 완벽하게 타입이 지정되어 있으며, 접근성 표준을 준수합니다. 각 컴포넌트는 다크 모드를 지원하고 커스터마이징이 가능합니다.',
+          'Button, Input, Card, Modal 등 30개의 컴포넌트를 바로 쓸 수 있어요. TypeScript로 타입이 완벽하게 지정돼 있고, 웹 접근성 표준도 준수해요. 모든 컴포넌트가 다크 모드를 지원하고 커스터마이징도 자유로워요.',
       },
       {
         icon: '2',
@@ -145,7 +145,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Complete layouts for Landing, Dashboard, Auth, and Profile pages. Fully responsive from mobile to desktop. Ready to use with simple copy-paste.',
         descriptionKo:
-          'Landing, Dashboard, Auth, Profile 등 13개의 완성된 페이지 레이아웃을 제공합니다. 반응형 디자인이 적용되어 있으며, 모바일부터 데스크톱까지 완벽하게 대응합니다. 복사-붙여넣기만으로 바로 사용 가능합니다.',
+          'Landing, Dashboard, Auth, Profile 등 13개의 완성된 페이지 레이아웃이 들어있어요. 모바일부터 데스크톱까지 반응형으로 완벽하게 대응해요. 복사-붙여넣기만 하면 바로 쓸 수 있어요.',
       },
       {
         icon: '3',
@@ -156,7 +156,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Integrated with Tekton MCP server. Generate UIs using natural language prompts in Claude Code. Simply ask "Create a dashboard with Square Minimalism theme" and get instant code.',
         descriptionKo:
-          'Tekton MCP 서버와 통합되어 Claude Code에서 자연어 프롬프트만으로 이 테마를 사용한 UI를 생성할 수 있습니다. "Square Minimalism 테마로 대시보드를 만들어줘"라고 요청하면 즉시 코드가 생성됩니다.',
+          'Tekton MCP 서버와 통합되어 있어서 Claude Code에서 자연어만으로 UI를 만들 수 있어요. "Square Minimalism 테마로 대시보드 만들어줘"라고 요청하면 바로 코드가 생성돼요.',
       },
       {
         icon: '4',
@@ -167,7 +167,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'All colors, spacing, and typography defined as CSS variables. Change your brand color once and the entire theme updates automatically. Dark mode is as simple as variable switching.',
         descriptionKo:
-          '색상, 간격, 타이포그래피가 모두 CSS 변수로 정의되어 있습니다. 브랜드 컬러를 변경하면 전체 테마가 자동으로 업데이트됩니다. 다크 모드 전환도 변수만 변경하면 됩니다.',
+          '색상, 간격, 타이포그래피가 모두 CSS 변수로 정의되어 있어요. 브랜드 컬러를 한 번만 바꾸면 전체 테마가 자동으로 업데이트돼요. 다크 모드도 변수 하나만 바꾸면 끝이에요.',
       },
       {
         icon: '5',
@@ -178,7 +178,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Over 500 Lucide React icons optimized for the theme design language. Icon size, stroke, and color perfectly harmonized with the theme aesthetic.',
         descriptionKo:
-          '500개 이상의 Lucide React 아이콘이 테마의 디자인 언어에 맞게 최적화되어 있습니다. 아이콘 크기, 스트로크, 컬러가 테마와 완벽하게 조화를 이룹니다.',
+          '500개 이상의 Lucide React 아이콘이 테마에 맞게 최적화되어 있어요. 아이콘 크기, 스트로크, 컬러가 테마와 완벽하게 어우러져요.',
       },
       {
         icon: '6',
@@ -189,7 +189,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Integrated layout tokens with Tailwind CSS responsive utilities. Ask the MCP server "1 column on mobile, 2 on tablet" and it implements automatically.',
         descriptionKo:
-          'Tailwind CSS의 반응형 유틸리티와 통합된 레이아웃 토큰을 제공합니다. MCP 서버에 "모바일에서는 1열, 태블릿에서는 2열"이라고 요청하면 자동으로 구현됩니다.',
+          'Tailwind CSS 반응형 유틸리티와 통합된 레이아웃 토큰이 있어요. MCP 서버에 "모바일에서는 1열, 태블릿에서는 2열"이라고 요청하면 자동으로 만들어져요.',
       },
     ],
     recommendedFor: [
@@ -199,7 +199,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Clear hierarchy and high contrast effectively display data. Charts and tables stand out, action buttons are clearly distinguished.',
         descriptionKo:
-          '명확한 계층 구조와 높은 대비로 데이터를 효과적으로 표시합니다. 차트와 테이블이 돋보이며, 액션 버튼이 분명하게 구분됩니다.',
+          '명확한 계층 구조와 높은 대비로 데이터를 효과적으로 보여줘요. 차트와 테이블이 눈에 잘 들어오고, 액션 버튼도 분명하게 구분돼요.',
       },
       {
         title: 'Professional B2B Applications',
@@ -207,7 +207,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Trustworthy minimalist design suited for business users. Focus on functionality without unnecessary decoration.',
         descriptionKo:
-          '신뢰감을 주는 미니멀한 디자인으로 비즈니스 사용자에게 적합합니다. 불필요한 장식 없이 기능에 집중할 수 있습니다.',
+          '신뢰감을 주는 미니멀한 디자인으로 비즈니스 사용자에게 딱이에요. 불필요한 장식 없이 기능에만 집중할 수 있어요.',
       },
       {
         title: 'Rapid Prototyping',
@@ -215,7 +215,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Minimal styling enables quick idea validation. Focus on feature development instead of design decisions.',
         descriptionKo:
-          '최소한의 스타일로 구성되어 있어 빠르게 아이디어를 검증할 수 있습니다. 디자인 결정에 시간을 낭비하지 않고 기능 개발에 집중할 수 있습니다.',
+          '최소한의 스타일로 구성되어 있어서 아이디어를 빠르게 검증할 수 있어요. 디자인 고민 없이 기능 개발에 집중할 수 있어요.',
       },
       {
         title: 'Accessibility-First Projects',
@@ -223,7 +223,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'High color contrast (AAA rating) ensures usability for visually impaired users. Full keyboard navigation and screen reader support.',
         descriptionKo:
-          '높은 색상 대비(AAA 등급)로 시각 장애가 있는 사용자도 쉽게 사용할 수 있습니다. 키보드 네비게이션과 스크린 리더를 완벽하게 지원합니다.',
+          '높은 색상 대비(AAA 등급)로 시각 장애가 있는 사용자도 쉽게 쓸 수 있어요. 키보드 네비게이션과 스크린 리더를 완벽하게 지원해요.',
       },
     ],
     howToUse: [
@@ -257,7 +257,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A vibrant design system with energetic colors and bold typography for fitness and wellness brands. Motivate users with dynamic visuals and engaging interactions.',
     descriptionKo:
-      '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스 및 웰니스 브랜드를 위한 디자인 시스템입니다. 역동적인 비주얼과 매력적인 인터랙션으로 사용자에게 동기를 부여합니다.',
+      '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스와 웰니스 브랜드를 위한 디자인 시스템이에요. 역동적인 비주얼과 매력적인 인터랙션으로 사용자에게 동기를 부여해요.',
     price: 49,
     screenshots: [
       getScreenshotUrl('equinox-fitness', 'hero.png'),
@@ -275,7 +275,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Workout cards, progress bars, calorie trackers, and more—30 components optimized for fitness apps. Bold colors and motion effects motivate users to stay active.',
         descriptionKo:
-          '운동 카드, 진행률 바, 칼로리 트래커 등 피트니스 앱에 최적화된 30개의 컴포넌트를 제공합니다. 모든 컴포넌트는 대담한 컬러와 모션 효과로 사용자의 동기를 부여합니다.',
+          '운동 카드, 진행률 바, 칼로리 트래커 등 피트니스 앱에 최적화된 30개의 컴포넌트가 있어요. 대담한 컬러와 모션 효과가 사용자의 동기를 자극해요.',
       },
       {
         icon: '2',
@@ -286,7 +286,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Workout Dashboard, Progress Tracking, Meal Plans, and Profile layouts. Each designed to maximize user engagement and motivation.',
         descriptionKo:
-          'Workout Dashboard, Progress Tracking, Meal Plans, Profile 등 피트니스 앱에 필요한 13개의 레이아웃을 제공합니다. 각 레이아웃은 사용자 참여를 극대화하도록 설계되었습니다.',
+          'Workout Dashboard, Progress Tracking, Meal Plans, Profile 등 피트니스 앱에 필요한 13개의 레이아웃이 들어있어요. 사용자 참여를 극대화하도록 설계됐어요.',
       },
       {
         icon: '3',
@@ -297,7 +297,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Ask Claude Code "Create a workout progress dashboard with Equinox theme" and instantly generate UI showing calories burned, workout duration, and goal completion.',
         descriptionKo:
-          '"Equinox 테마로 운동 진행률 대시보드 만들어줘"라고 Claude Code에 요청하면, 칼로리 소모량, 운동 시간, 목표 달성률을 표시하는 UI가 자동으로 생성됩니다.',
+          'Claude Code에 "Equinox 테마로 운동 진행률 대시보드 만들어줘"라고 요청하면, 칼로리 소모량, 운동 시간, 목표 달성률을 보여주는 UI가 바로 만들어져요.',
       },
       {
         icon: '4',
@@ -308,7 +308,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Vibrant orange, green, and blue colors defined as CSS variables. Change your brand color once and the entire theme updates automatically.',
         descriptionKo:
-          '오렌지, 그린, 블루 등 에너지가 느껴지는 컬러 팔레트가 CSS 변수로 정의되어 있습니다. 브랜드 컬러를 변경하면 전체 테마가 자동으로 업데이트됩니다.',
+          '오렌지, 그린, 블루 등 에너지 넘치는 컬러 팔레트가 CSS 변수로 정의되어 있어요. 브랜드 컬러를 한 번만 바꾸면 전체 테마가 자동으로 업데이트돼요.',
       },
       {
         icon: '5',
@@ -319,7 +319,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Framer Motion animation presets included. Dynamic motion applied to button clicks, card hovers, and page transitions.',
         descriptionKo:
-          'Framer Motion 기반의 애니메이션 프리셋이 포함되어 있습니다. 버튼 클릭, 카드 호버, 페이지 전환에 역동적인 모션이 적용됩니다.',
+          'Framer Motion 애니메이션 프리셋이 포함되어 있어요. 버튼 클릭, 카드 호버, 페이지 전환에 역동적인 모션이 적용돼요.',
       },
       {
         icon: '6',
@@ -330,7 +330,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Calorie burn graphs, workout duration charts, and goal progress bars. Seamlessly integrated with Chart.js for beautiful data visualization.',
         descriptionKo:
-          '칼로리 소모 그래프, 운동 시간 차트, 목표 달성률 프로그레스 바 등 데이터 시각화 컴포넌트가 포함되어 있습니다. Chart.js와 완벽하게 통합됩니다.',
+          '칼로리 소모 그래프, 운동 시간 차트, 목표 달성률 프로그레스 바가 들어있어요. Chart.js와 완벽하게 통합돼요.',
       },
     ],
     recommendedFor: [
@@ -340,7 +340,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Optimized for workout tracking, calorie management, and health data visualization. Design that motivates users to achieve their goals.',
         descriptionKo:
-          '운동 추적, 칼로리 관리, 건강 데이터 시각화에 최적화되어 있습니다. 사용자가 목표를 달성하도록 동기를 부여하는 디자인입니다.',
+          '운동 추적, 칼로리 관리, 건강 데이터 시각화에 딱 맞아요. 사용자가 목표를 달성하도록 동기를 부여하는 디자인이에요.',
       },
       {
         title: 'Sports Events & Communities',
@@ -348,7 +348,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Perfect for marathon, cycling, and CrossFit community platforms. Energetic design fosters team spirit and camaraderie.',
         descriptionKo:
-          '마라톤, 사이클링, 크로스핏 등 스포츠 커뮤니티 플랫폼에 적합합니다. 에너지 넘치는 디자인이 팀 정신을 고취시킵니다.',
+          '마라톤, 사이클링, 크로스핏 같은 스포츠 커뮤니티 플랫폼에 완벽해요. 에너지 넘치는 디자인이 팀 정신을 북돋워줘요.',
       },
       {
         title: 'Wellness & Lifestyle Services',
@@ -356,7 +356,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Suitable for meditation, yoga, nutrition management, and holistic wellness services. Creates a positive and vibrant atmosphere.',
         descriptionKo:
-          '명상, 요가, 영양 관리 등 전반적인 웰빙 서비스에 사용할 수 있습니다. 긍정적이고 활기찬 분위기를 연출합니다.',
+          '명상, 요가, 영양 관리 같은 웰빙 서비스에 쓸 수 있어요. 긍정적이고 활기찬 분위기를 만들어줘요.',
       },
       {
         title: 'Dynamic Brands',
@@ -364,7 +364,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Ideal for brands seeking a dynamic and vibrant image. Makes a strong impression on younger target audiences.',
         descriptionKo:
-          '역동적이고 활기찬 브랜드 이미지를 구축하고 싶은 경우에 적합합니다. 젊은 타겟층에게 강한 인상을 남깁니다.',
+          '역동적이고 활기찬 브랜드 이미지를 원한다면 딱이에요. 젊은 타겟층에게 강한 인상을 남겨요.',
       },
     ],
     howToUse: [
@@ -398,7 +398,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A minimal design system with soft corners and gentle colors for friendly user experiences. Approachable and comfortable for consumer-facing applications.',
     descriptionKo:
-      '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 제공하는 미니멀 디자인 시스템입니다. 소비자 대상 애플리케이션에 접근하기 쉽고 편안합니다.',
+      '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 만드는 미니멀 디자인 시스템이에요. 소비자 대상 앱에 접근하기 쉽고 편안해요.',
     price: 49,
     screenshots: [
       getScreenshotUrl('round-minimal', 'hero.png'),
@@ -416,7 +416,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           '30 components with soft corners (rounded-xl, rounded-2xl). Friendly and comfortable feel optimized for consumer apps.',
         descriptionKo:
-          'rounded-xl, rounded-2xl 등 부드러운 모서리가 적용된 30개의 컴포넌트를 제공합니다. 친근하고 편안한 느낌을 주어 소비자 앱에 최적화되어 있습니다.',
+          'rounded-xl, rounded-2xl 같은 부드러운 모서리가 적용된 30개의 컴포넌트가 있어요. 친근하고 편안한 느낌으로 소비자 앱에 딱 맞아요.',
       },
       {
         icon: '2',
@@ -427,7 +427,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Social Feed, User Profile, Community, and Chat layouts for consumer apps. Intuitive and accessible design.',
         descriptionKo:
-          'Social Feed, User Profile, Community, Chat 등 소비자 대상 앱에 필요한 13개의 레이아웃을 제공합니다. 직관적이고 접근하기 쉬운 디자인입니다.',
+          'Social Feed, User Profile, Community, Chat 같은 소비자 앱용 레이아웃 13개가 들어있어요. 직관적이고 접근하기 쉬워요.',
       },
       {
         icon: '3',
@@ -438,7 +438,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Ask "Create a profile page with Round Minimal theme" and get a friendly profile UI with avatar, bio, and follow button.',
         descriptionKo:
-          '"Round Minimal 테마로 프로필 페이지 만들어줘"라고 요청하면, 아바타, 자기소개, 팔로우 버튼이 포함된 친근한 프로필 UI가 생성됩니다.',
+          '"Round Minimal 테마로 프로필 페이지 만들어줘"라고 요청하면, 아바타, 자기소개, 팔로우 버튼이 포함된 친근한 프로필 UI가 만들어져요.',
       },
       {
         icon: '4',
@@ -449,7 +449,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Gentle colors like pastel blue and soft pink defined as CSS variables. Easy on the eyes even during extended use.',
         descriptionKo:
-          '파스텔 블루, 소프트 핑크 등 눈에 부담이 없는 온화한 컬러가 CSS 변수로 정의되어 있습니다. 장시간 사용해도 피로감이 적습니다.',
+          '파스텔 블루, 소프트 핑크 같은 온화한 컬러가 CSS 변수로 정의되어 있어요. 장시간 써도 눈이 편해요.',
       },
       {
         icon: '5',
@@ -460,7 +460,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Multi-layer soft shadows give components natural depth. Consistent application via elevation-sm, elevation-md, elevation-lg tokens.',
         descriptionKo:
-          '여러 레이어의 부드러운 그림자가 컴포넌트에 자연스러운 깊이감을 부여합니다. elevation-sm, elevation-md, elevation-lg 토큰으로 일관성있게 적용됩니다.',
+          '여러 겹의 부드러운 그림자가 컴포넌트에 자연스러운 깊이감을 줘요. elevation-sm, elevation-md, elevation-lg 토큰으로 일관성 있게 적용돼요.',
       },
       {
         icon: '6',
@@ -471,7 +471,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'All interactive elements guarantee minimum 44x44px touch targets. Adequate spacing ensures easy finger tapping.',
         descriptionKo:
-          '모든 인터랙티브 요소는 최소 44x44px 터치 타겟을 보장합니다. 손가락으로 쉽게 탭할 수 있도록 간격이 충분히 확보되어 있습니다.',
+          '모든 인터랙티브 요소가 최소 44x44px 터치 타겟을 보장해요. 손가락으로 쉽게 탭할 수 있도록 간격이 충분해요.',
       },
     ],
     recommendedFor: [
@@ -481,7 +481,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Soft design feels friendly and comfortable to users. Optimized for social, shopping, and lifestyle apps.',
         descriptionKo:
-          '부드러운 디자인이 사용자에게 친근하고 편안한 느낌을 줍니다. 소셜, 쇼핑, 라이프스타일 앱에 최적화되어 있습니다.',
+          '부드러운 디자인이 사용자에게 친근하고 편안한 느낌을 줘요. 소셜, 쇼핑, 라이프스타일 앱에 최적화되어 있어요.',
       },
       {
         title: 'Approachable Brand Identity',
@@ -489,7 +489,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Build an accessible and warm brand image. Ideal for young female demographics or family-oriented services.',
         descriptionKo:
-          '접근하기 쉽고 따뜻한 브랜드 이미지를 구축할 수 있습니다. 젊은 여성 타겟층이나 가족 대상 서비스에 적합합니다.',
+          '접근하기 쉽고 따뜻한 브랜드 이미지를 만들 수 있어요. 젊은 여성 타겟층이나 가족 대상 서비스에 딱이에요.',
       },
       {
         title: 'Community & Social Platforms',
@@ -497,7 +497,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Design that encourages user interaction and sharing. Social features like comments, likes, and shares blend naturally.',
         descriptionKo:
-          '사용자 간의 상호작용과 공유를 장려하는 디자인입니다. 댓글, 좋아요, 공유 등 소셜 기능이 자연스럽게 어우러집니다.',
+          '사용자 간의 상호작용과 공유를 자연스럽게 이끌어내는 디자인이에요. 댓글, 좋아요, 공유 같은 소셜 기능이 자연스럽게 어우러져요.',
       },
       {
         title: 'Services Requiring Soft UX',
@@ -505,7 +505,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Perfect for meditation, sleep, parenting services where comfort and stability matter. Helps users relax and enjoy the service.',
         descriptionKo:
-          '명상, 수면, 육아 등 편안함과 안정감이 중요한 서비스에 적합합니다. 사용자가 긴장을 풀고 서비스를 즐길 수 있도록 돕습니다.',
+          '명상, 수면, 육아 같은 편안함과 안정감이 중요한 서비스에 완벽해요. 사용자가 편하게 서비스를 즐길 수 있도록 도와줘요.',
       },
     ],
     howToUse: [
@@ -539,7 +539,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A design system with classic magazine layouts and elegant typography for content-focused websites. Honors the traditions of readability and editorial design.',
     descriptionKo:
-      '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심의 웹사이트를 위한 디자인 시스템입니다. 가독성과 편집 디자인의 전통을 계승합니다.',
+      '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심 웹사이트를 위한 디자인 시스템이에요. 가독성과 편집 디자인의 전통을 이어가요.',
     price: 49,
     screenshots: [
       getScreenshotUrl('classic-magazine', 'hero.png'),
@@ -557,7 +557,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Article Card, Byline, Pull Quote, Drop Cap, and more—30 components specialized for content publishing. Brings traditional magazine layouts to the web.',
         descriptionKo:
-          'Article Card, Byline, Pull Quote, Drop Cap 등 콘텐츠 퍼블리싱에 특화된 30개의 컴포넌트를 제공합니다. 전통적인 잡지 레이아웃을 웹에서 구현합니다.',
+          'Article Card, Byline, Pull Quote, Drop Cap 같은 콘텐츠 퍼블리싱 특화 컴포넌트 30개가 있어요. 전통적인 잡지 레이아웃을 웹에서 그대로 구현해요.',
       },
       {
         icon: '2',
@@ -568,7 +568,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Homepage Grid, Article Detail, Category Page, and Author Profile layouts for content sites. Precisely designed grid system.',
         descriptionKo:
-          'Homepage Grid, Article Detail, Category Page, Author Profile 등 콘텐츠 사이트에 필요한 13개의 레이아웃을 제공합니다. 그리드 시스템이 정교하게 설계되어 있습니다.',
+          'Homepage Grid, Article Detail, Category Page, Author Profile 같은 콘텐츠 사이트용 레이아웃 13개가 들어있어요. 그리드 시스템이 정교하게 설계되어 있어요.',
       },
       {
         icon: '3',
@@ -579,7 +579,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Request "Create a blog post with Classic Magazine theme" and get a traditional article layout with headline, lead paragraph, body, and sidebar.',
         descriptionKo:
-          '"Classic Magazine 테마로 블로그 포스트 만들어줘"라고 요청하면, 헤드라인, 리드 문단, 본문, 사이드바가 포함된 전통적인 아티클 레이아웃이 생성됩니다.',
+          '"Classic Magazine 테마로 블로그 포스트 만들어줘"라고 요청하면, 헤드라인, 리드 문단, 본문, 사이드바가 포함된 전통적인 아티클 레이아웃이 만들어져요.',
       },
       {
         icon: '4',
@@ -590,7 +590,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Merriweather Serif headlines paired with Inter Sans body text maximize readability. Line height, letter spacing, and paragraph spacing optimized for long-form reading.',
         descriptionKo:
-          'Merriweather Serif 헤드라인과 Inter Sans 본문의 조합으로 가독성을 극대화합니다. 행간, 자간, 문단 간격이 최적화되어 장시간 독서에 적합합니다.',
+          'Merriweather Serif 헤드라인과 Inter Sans 본문의 조합으로 가독성을 극대화해요. 행간, 자간, 문단 간격이 최적화되어 있어서 오래 읽기 편해요.',
       },
       {
         icon: '5',
@@ -601,7 +601,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           '12-column grid system enables complex layouts. Supports 2, 3, 4-column arrangements with responsive auto-adjustment.',
         descriptionKo:
-          '12컬럼 그리드 시스템으로 복잡한 레이아웃을 구현할 수 있습니다. 2단, 3단, 4단 등 다양한 컬럼 배치를 지원하며, 반응형으로 자동 조정됩니다.',
+          '12컬럼 그리드 시스템으로 복잡한 레이아웃도 만들 수 있어요. 2단, 3단, 4단 배치를 지원하고, 반응형으로 자동 조정돼요.',
       },
       {
         icon: '6',
@@ -612,7 +612,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Metadata like categories, tags, dates, and authors clearly distinguished. Designed for users to easily explore content and discover related articles.',
         descriptionKo:
-          '카테고리, 태그, 날짜, 저자 등 메타데이터가 명확하게 구분됩니다. 사용자가 콘텐츠를 탐색하고 관련 아티클을 발견하기 쉽도록 설계되었습니다.',
+          '카테고리, 태그, 날짜, 저자 같은 메타데이터가 명확하게 구분돼요. 사용자가 콘텐츠를 탐색하고 관련 글을 쉽게 찾을 수 있도록 설계했어요.',
       },
     ],
     recommendedFor: [
@@ -622,7 +622,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Displays long-form articles in a comfortable reading format. Optimized typography and line spacing provide immersive reading experiences.',
         descriptionKo:
-          '장문의 아티클을 읽기 편하게 표시합니다. 타이포그래피와 행간이 최적화되어 있어 몰입도 높은 독서 경험을 제공합니다.',
+          '긴 글을 읽기 편하게 보여줘요. 타이포그래피와 행간이 최적화되어 있어서 몰입해서 읽을 수 있어요.',
       },
       {
         title: 'News & Media Websites',
@@ -630,7 +630,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Effectively presents diverse content formats like news articles, interviews, and reports. Modern reinterpretation of traditional news layouts.',
         descriptionKo:
-          '뉴스 기사, 인터뷰, 리포트 등 다양한 콘텐츠 형식을 효과적으로 표현합니다. 전통적인 뉴스 레이아웃을 현대적으로 재해석했습니다.',
+          '뉴스 기사, 인터뷰, 리포트 같은 다양한 콘텐츠를 효과적으로 표현해요. 전통적인 뉴스 레이아웃을 현대적으로 재해석했어요.',
       },
       {
         title: 'Long-Form Content & Article Sites',
@@ -638,7 +638,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Perfect for in-depth content like essays, reviews, and guides. Typography and layout encourage users to read to the end.',
         descriptionKo:
-          '에세이, 리뷰, 가이드 등 깊이 있는 콘텐츠에 적합합니다. 사용자가 끝까지 읽도록 유도하는 타이포그래피와 레이아웃입니다.',
+          '에세이, 리뷰, 가이드 같은 깊이 있는 콘텐츠에 완벽해요. 타이포그래피와 레이아웃이 끝까지 읽고 싶게 만들어요.',
       },
       {
         title: 'Traditional Editorial Design Projects',
@@ -646,7 +646,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Ideal for literary journals, academic publications, and corporate magazines requiring authoritative, trustworthy design. Perfect for projects valuing classic aesthetics.',
         descriptionKo:
-          '문학지, 학술지, 기업 매거진 등 권위 있고 신뢰감 있는 디자인이 필요한 경우에 적합합니다. 클래식한 미학을 중시하는 프로젝트에 이상적입니다.',
+          '문학지, 학술지, 기업 매거진처럼 권위 있고 신뢰감 있는 디자인이 필요한 곳에 딱이에요. 클래식한 미학을 중시하는 프로젝트에 이상적이에요.',
       },
     ],
     howToUse: [
@@ -680,7 +680,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A design system prioritizing accessibility and readability with warm human-centered design and a neutral color palette. Provides comfortable experiences for all users.',
     descriptionKo:
-      '사람 중심의 따뜻한 디자인과 중립적인 컬러 팔레트로 접근성과 가독성을 우선하는 디자인 시스템입니다. 모든 사용자에게 편안한 경험을 제공합니다.',
+      '사람 중심의 따뜻한 디자인과 중립적인 컬러로 접근성과 가독성을 최우선으로 하는 디자인 시스템이에요. 모든 사용자에게 편안한 경험을 제공해요.',
     price: 59,
     screenshots: [
       getScreenshotUrl('neutral-humanism', 'hero.png'),
@@ -698,7 +698,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           '30 components meeting WCAG AAA standards. Designed for easy use by users of all ages and abilities.',
         descriptionKo:
-          'WCAG AAA 등급을 만족하는 30개의 컴포넌트를 제공합니다. 모든 연령층과 능력을 가진 사용자가 쉽게 사용할 수 있도록 설계되었습니다.',
+          'WCAG AAA 등급을 만족하는 30개의 컴포넌트가 있어요. 모든 연령층과 능력을 가진 사용자가 쉽게 쓸 수 있도록 설계했어요.',
       },
       {
         icon: '2',
@@ -709,7 +709,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Healthcare Dashboard, Education Portal, Government Forms—13 layouts for trust-critical sectors. Clearly communicates complex information.',
         descriptionKo:
-          'Healthcare Dashboard, Education Portal, Government Forms 등 신뢰성이 중요한 분야의 13개 레이아웃을 제공합니다. 복잡한 정보를 명확하게 전달합니다.',
+          'Healthcare Dashboard, Education Portal, Government Forms 같은 신뢰성이 중요한 분야의 레이아웃 13개가 들어있어요. 복잡한 정보도 명확하게 전달해요.',
       },
       {
         icon: '3',
@@ -720,7 +720,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Request "Create a patient information form with Neutral Humanism theme" and get an accessible form with clear labels, error messages, and help text.',
         descriptionKo:
-          '"Neutral Humanism 테마로 환자 정보 폼 만들어줘"라고 요청하면, 명확한 라벨, 에러 메시지, 도움말이 포함된 접근 가능한 폼이 생성됩니다.',
+          '"Neutral Humanism 테마로 환자 정보 폼 만들어줘"라고 요청하면, 명확한 라벨, 에러 메시지, 도움말이 포함된 접근 가능한 폼이 만들어져요.',
       },
       {
         icon: '4',
@@ -731,7 +731,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Neutral color system based on grayscale. Culturally unbiased, providing equitable experiences for all users.',
         descriptionKo:
-          '그레이스케일을 기반으로 한 중립적인 컬러 시스템을 사용합니다. 문화적 편향이 없고 모든 사용자에게 공평한 경험을 제공합니다.',
+          '그레이스케일 기반의 중립적인 컬러 시스템을 써요. 문화적 편향이 없고 모든 사용자에게 공평한 경험을 제공해요.',
       },
       {
         icon: '5',
@@ -742,7 +742,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'All interactive elements display distinct focus rings. Entire site navigable by keyboard alone with logical tab order.',
         descriptionKo:
-          '모든 인터랙티브 요소에 뚜렷한 포커스 링이 표시됩니다. 키보드만으로 전체 사이트를 탐색할 수 있으며, 탭 순서가 논리적으로 구성되어 있습니다.',
+          '모든 인터랙티브 요소에 뚜렷한 포커스 링이 표시돼요. 키보드만으로 전체 사이트를 탐색할 수 있고, 탭 순서도 논리적으로 구성되어 있어요.',
       },
       {
         icon: '6',
@@ -753,7 +753,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Supports RTL (Right-to-Left) languages like Arabic and Hebrew. Typography optimized to maintain readability across diverse writing systems.',
         descriptionKo:
-          '아랍어, 히브리어 등 RTL(Right-to-Left) 언어를 지원합니다. 다양한 문자 체계에서도 가독성이 유지되도록 타이포그래피가 최적화되어 있습니다.',
+          '아랍어, 히브리어 같은 RTL(Right-to-Left) 언어를 지원해요. 다양한 문자 체계에서도 가독성이 유지되도록 타이포그래피가 최적화되어 있어요.',
       },
     ],
     recommendedFor: [
@@ -763,7 +763,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Displays patient health information safely and clearly. Design easily understood by both medical professionals and patients.',
         descriptionKo:
-          '환자의 건강 정보를 안전하고 명확하게 표시합니다. 의료 전문가와 환자 모두가 쉽게 이해할 수 있는 디자인입니다.',
+          '환자의 건강 정보를 안전하고 명확하게 보여줘요. 의료 전문가와 환자 모두가 쉽게 이해할 수 있는 디자인이에요.',
       },
       {
         title: 'Education & Learning Platforms',
@@ -771,7 +771,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Distraction-free design enabling students and teachers to focus. Content readability is paramount, supporting diverse learning styles.',
         descriptionKo:
-          '학생과 교사가 집중할 수 있는 방해 요소 없는 디자인입니다. 콘텐츠 가독성이 최우선이며, 다양한 학습 스타일을 지원합니다.',
+          '학생과 교사가 집중할 수 있는 방해 없는 디자인이에요. 콘텐츠 가독성을 최우선으로 하고, 다양한 학습 스타일을 지원해요.',
       },
       {
         title: 'Government & Public Institution Websites',
@@ -779,7 +779,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Design enabling equitable access for all citizens. Meets legal accessibility requirements and inspires trust.',
         descriptionKo:
-          '모든 시민이 공평하게 접근할 수 있는 디자인입니다. 법적 접근성 요구사항을 충족하며, 신뢰감을 줍니다.',
+          '모든 시민이 공평하게 접근할 수 있는 디자인이에요. 법적 접근성 요구사항을 충족하고, 신뢰감을 줘요.',
       },
       {
         title: 'Accessibility-First Projects',
@@ -787,7 +787,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Ideal for projects targeting WCAG AAA compliance. Design considers users with visual, auditory, and motor disabilities.',
         descriptionKo:
-          'WCAG AAA 등급을 목표로 하는 프로젝트에 적합합니다. 시각, 청각, 운동 능력 장애가 있는 사용자를 모두 고려한 디자인입니다.',
+          'WCAG AAA 등급을 목표로 하는 프로젝트에 딱이에요. 시각, 청각, 운동 능력 장애가 있는 사용자를 모두 고려한 디자인이에요.',
       },
     ],
     howToUse: [
@@ -821,7 +821,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'A minimal workspace design system maximizing productivity and focus. Eliminates unnecessary elements so users can immerse themselves in their work.',
     descriptionKo:
-      '생산성과 집중력을 극대화하는 미니멀 워크스페이스 디자인 시스템입니다. 불필요한 요소를 제거하고 사용자가 작업에만 몰입할 수 있도록 설계되었습니다.',
+      '생산성과 집중력을 극대화하는 미니멀 워크스페이스 디자인 시스템이에요. 불필요한 요소를 없애서 작업에만 몰입할 수 있도록 설계했어요.',
     price: 59,
     screenshots: [
       getScreenshotUrl('minimal-workspace', 'workspace.png'),
@@ -839,7 +839,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Editor, Sidebar, Command Palette, Toolbar—30 components for productivity apps. All optimized for efficiency and speed.',
         descriptionKo:
-          'Editor, Sidebar, Command Palette, Toolbar 등 생산성 앱에 필요한 30개의 컴포넌트를 제공합니다. 모든 컴포넌트는 효율성과 속도에 최적화되어 있습니다.',
+          'Editor, Sidebar, Command Palette, Toolbar 같은 생산성 앱용 컴포넌트 30개가 있어요. 모두 효율성과 속도에 최적화되어 있어요.',
       },
       {
         icon: '2',
@@ -850,7 +850,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Code Editor, Note Taking, Task Management, Project Dashboard—13 productivity app layouts. Features left sidebar and spacious work area.',
         descriptionKo:
-          'Code Editor, Note Taking, Task Management, Project Dashboard 등 생산성 앱의 13개 레이아웃을 제공합니다. 좌측 사이드바와 넓은 작업 영역이 특징입니다.',
+          'Code Editor, Note Taking, Task Management, Project Dashboard 같은 생산성 앱용 레이아웃 13개가 들어있어요. 좌측 사이드바와 넓은 작업 영역이 특징이에요.',
       },
       {
         icon: '3',
@@ -861,7 +861,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Request "Create a code editor with Minimal Workspace theme" and get an IDE-style layout with sidebar, editor area, and status bar.',
         descriptionKo:
-          '"Minimal Workspace 테마로 코드 에디터 만들어줘"라고 요청하면, 사이드바, 에디터 영역, 상태바가 포함된 IDE 스타일 레이아웃이 생성됩니다.',
+          '"Minimal Workspace 테마로 코드 에디터 만들어줘"라고 요청하면, 사이드바, 에디터 영역, 상태바가 포함된 IDE 스타일 레이아웃이 만들어져요.',
       },
       {
         icon: '4',
@@ -872,7 +872,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Eliminates unnecessary decoration, animations, and colors. Interface recedes to the background so users focus solely on content and work.',
         descriptionKo:
-          '불필요한 장식, 애니메이션, 컬러를 배제했습니다. 사용자가 콘텐츠와 작업에만 집중할 수 있도록 인터페이스는 배경으로 물러납니다.',
+          '불필요한 장식, 애니메이션, 컬러를 없앴어요. 인터페이스는 배경으로 물러나서 콘텐츠와 작업에만 집중할 수 있어요.',
       },
       {
         icon: '5',
@@ -883,7 +883,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'All features executable via keyboard shortcuts. Command Palette (Cmd+K) allows quick action searches and execution.',
         descriptionKo:
-          '모든 기능을 키보드 단축키로 실행할 수 있습니다. Command Palette (Cmd+K)로 검색하여 빠르게 액션을 실행할 수 있습니다.',
+          '모든 기능을 키보드 단축키로 실행할 수 있어요. Command Palette (Cmd+K)로 빠르게 검색하고 실행할 수 있어요.',
       },
       {
         icon: '6',
@@ -894,7 +894,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Designed with dark mode as default to minimize eye strain. Blends naturally with code editors, terminals, and other developer tools.',
         descriptionKo:
-          '다크 모드를 기본으로 설계되어 눈의 피로를 최소화합니다. 코드 에디터, 터미널 등 개발자 도구와 자연스럽게 어우러집니다.',
+          '다크 모드를 기본으로 설계해서 눈이 편해요. 코드 에디터, 터미널 같은 개발자 도구와 자연스럽게 어우러져요.',
       },
     ],
     recommendedFor: [
@@ -904,7 +904,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Efficiently manage tasks, projects, and team members. Ideal for Notion, Linear, Asana-style productivity tools.',
         descriptionKo:
-          '태스크, 프로젝트, 팀원을 효율적으로 관리할 수 있습니다. Notion, Linear, Asana 스타일의 생산성 도구에 적합합니다.',
+          '태스크, 프로젝트, 팀원을 효율적으로 관리할 수 있어요. Notion, Linear, Asana 스타일의 생산성 도구에 딱이에요.',
       },
       {
         title: 'Note Apps & Knowledge Management Systems',
@@ -912,7 +912,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Distraction-free interface for writing and thought organization. Ideal for Obsidian, Roam Research-style apps.',
         descriptionKo:
-          '글쓰기와 사고 정리에 집중할 수 있는 방해 없는 인터페이스입니다. Obsidian, Roam Research 스타일의 앱에 이상적입니다.',
+          '글쓰기와 사고 정리에 집중할 수 있는 방해 없는 인터페이스에요. Obsidian, Roam Research 스타일의 앱에 이상적이에요.',
       },
       {
         title: 'Code Editors & Developer Tools',
@@ -920,7 +920,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Build VS Code, Sublime Text-style development environments. Optimized sidebar, editor, and terminal layouts.',
         descriptionKo:
-          'VS Code, Sublime Text 스타일의 개발 환경을 구축할 수 있습니다. 사이드바, 에디터, 터미널 레이아웃이 최적화되어 있습니다.',
+          'VS Code, Sublime Text 스타일의 개발 환경을 만들 수 있어요. 사이드바, 에디터, 터미널 레이아웃이 최적화되어 있어요.',
       },
       {
         title: 'Work Environments Prioritizing Productivity',
@@ -928,7 +928,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'Tools for power users and professionals. Ideal for projects aiming to maximize efficiency and reduce unnecessary clicks.',
         descriptionKo:
-          '파워 유저와 전문가를 위한 도구입니다. 효율성을 극대화하고 불필요한 클릭을 줄이는 것이 목표인 프로젝트에 적합합니다.',
+          '파워 유저와 전문가를 위한 도구에요. 효율성을 극대화하고 불필요한 클릭을 줄이려는 프로젝트에 적합해요.',
       },
     ],
     howToUse: [

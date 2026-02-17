@@ -7,6 +7,7 @@
  */
 
 import { TemplateGallery } from '../../components/studio/TemplateGallery';
+import { StudioPageHeader } from '../../components/studio/StudioPageHeader';
 import { loadThemes } from './actions';
 import type { Metadata } from 'next';
 
@@ -21,19 +22,8 @@ export default async function ExplorePage() {
 
   return (
     <div className="p-6 md:p-12 max-w-7xl mx-auto">
-      {/* Header */}
-      <header className="mb-12">
-        <span className="text-sm font-medium text-neutral-500 mb-4 block">
-          Tekton Studio
-        </span>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-6">
-          Select Theme
-        </h1>
-        <p className="text-base md:text-lg text-neutral-600 max-w-2xl leading-relaxed">
-          Choose a design system to activate the Agentic Styling engine. Every theme is loaded
-          directly from the MCP knowledge base.
-        </p>
-      </header>
+      {/* Header with i18n support */}
+      <StudioPageHeader />
 
       {/* Real Theme Gallery */}
       <div className="border-t border-neutral-200 pt-12">

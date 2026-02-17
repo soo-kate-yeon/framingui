@@ -20,6 +20,7 @@ import {
 import { useState } from 'react';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -52,6 +53,7 @@ export default function NeutralHumanismDemo() {
   const { loaded: themeLoaded } = useTektonTheme('neutral-humanism', {
     fallback: NEUTRAL_HUMANISM_FALLBACK,
   });
+  const { locale } = useStudioLanguage();
 
   return (
     <div
@@ -88,19 +90,19 @@ export default function NeutralHumanismDemo() {
               onClick={() => setCurrentView('overview')}
               className={`text-sm font-medium transition-colors ${currentView === 'overview' ? 'text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)]'}`}
             >
-              Overview
+              {locale === 'ko' ? '개요' : 'Overview'}
             </button>
             <button
               onClick={() => setCurrentView('customers')}
               className={`text-sm font-medium transition-colors ${currentView === 'customers' ? 'text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)]'}`}
             >
-              Customers
+              {locale === 'ko' ? '고객' : 'Customers'}
             </button>
             <button
               onClick={() => setCurrentView('settings')}
               className={`text-sm font-medium transition-colors ${currentView === 'settings' ? 'text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)]'}`}
             >
-              Settings
+              {locale === 'ko' ? '설정' : 'Settings'}
             </button>
           </nav>
 
@@ -109,7 +111,7 @@ export default function NeutralHumanismDemo() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--tekton-text-secondary)] group-focus-within:text-[var(--tekton-text-primary)] transition-colors" />
               <input
                 className="h-9 w-9 md:w-64 rounded-[var(--tekton-radius-md)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] pl-9 md:pr-4 py-2 text-sm outline-none placeholder:text-[var(--tekton-text-secondary)] focus:ring-1 focus:ring-[var(--tekton-text-primary)] transition-all cursor-pointer md:cursor-text"
-                placeholder="Search workspace..."
+                placeholder={locale === 'ko' ? '워크스페이스 검색...' : 'Search workspace...'}
               />
             </div>
             <button className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border border-[var(--tekton-border-default)] flex-shrink-0">

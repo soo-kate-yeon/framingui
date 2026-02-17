@@ -95,9 +95,9 @@ export default function MinimalWorkspaceDemo() {
       )}
 
       {/* Header - Adjusted for banner */}
-      <div className="pt-12">
+      <div>
         {/* Header */}
-        <header className="border-b border-neutral-200 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <header className="border-b border-neutral-200 sticky top-12 bg-white/80 backdrop-blur-md z-40 mt-12">
           <div className="flex h-16 items-center px-4 md:px-6 gap-4">
             {/* Mobile Menu */}
             <div className="md:hidden">

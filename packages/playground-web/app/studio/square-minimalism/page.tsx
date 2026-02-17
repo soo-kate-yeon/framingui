@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { Search, ShoppingBag, Menu, ArrowRight, X, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 
 const SQUARE_MINIMAL_FALLBACK = {
   '--tekton-bg-canvas': '#FFFFFF',
@@ -14,7 +15,10 @@ const SQUARE_MINIMAL_FALLBACK = {
   '--tekton-radius-none': '0px',
 };
 
-const CATEGORIES = ['All', 'Outerwear', 'Tops', 'Bottoms', 'Accessories', 'Footwear'];
+const CATEGORIES = {
+  en: ['All', 'Outerwear', 'Tops', 'Bottoms', 'Accessories', 'Footwear'],
+  ko: ['전체', '아우터', '상의', '하의', '액세서리', '신발'],
+};
 
 const ALL_PRODUCTS = [
   // Page 1
@@ -246,17 +250,19 @@ export default function SquareMinimalismEcom() {
   const { loaded: themeLoaded } = useTektonTheme('square-minimalism', {
     fallback: SQUARE_MINIMAL_FALLBACK,
   });
+  const { locale } = useStudioLanguage();
 
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Filter and Paginate Logic
   const filteredProducts = useMemo(() => {
-    if (selectedCategory === 'All') {
+    if (selectedCategory === 0) {
       return ALL_PRODUCTS;
     }
-    return ALL_PRODUCTS.filter((p) => p.category === selectedCategory);
+    const categoryName = CATEGORIES.en[selectedCategory];
+    return ALL_PRODUCTS.filter((p) => p.category === categoryName);
   }, [selectedCategory]);
 
   const paginatedProducts = useMemo(() => {
@@ -282,7 +288,10 @@ export default function SquareMinimalismEcom() {
 
           {/* Desktop Menu Links */}
           <div className="hidden lg:flex items-center gap-8">
-            {['Collections', 'Archive', 'Projects', 'Studio', 'Store'].map((item) => (
+            {(locale === 'ko'
+              ? ['컬렉션', '아카이브', '프로젝트', '스튜디오', '스토어']
+              : ['Collections', 'Archive', 'Projects', 'Studio', 'Store']
+            ).map((item) => (
               <button
                 key={item}
                 className="text-xs font-bold uppercase tracking-[0.2em] hover:text-neutral-400 transition-colors"
@@ -315,18 +324,18 @@ export default function SquareMinimalismEcom() {
         {/* Left Sidebar - Categories (Clothing Concept) */}
         <aside className="hidden lg:block w-72 h-[calc(100vh-80px)] sticky top-20 p-12 overflow-y-auto border-r border-[var(--tekton-border-default)]">
           <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-neutral-400 mb-10">
-            Categories
+            {locale === 'ko' ? '카테고리' : 'Categories'}
           </h3>
           <nav className="flex flex-col gap-6">
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES[locale].map((cat, idx) => (
               <button
                 key={cat}
                 onClick={() => {
-                  setSelectedCategory(cat);
+                  setSelectedCategory(idx);
                   setCurrentPage(1);
                 }}
                 className={`text-left text-sm font-bold uppercase tracking-widest transition-all ${
-                  selectedCategory === cat
+                  selectedCategory === idx
                     ? 'text-black translate-x-2'
                     : 'text-neutral-400 hover:text-black hover:translate-x-1'
                 }`}
@@ -338,12 +347,12 @@ export default function SquareMinimalismEcom() {
 
           <div className="mt-24 pt-12 border-t border-neutral-100">
             <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-300 mb-4">
-              Newsletter
+              {locale === 'ko' ? '뉴스레터' : 'Newsletter'}
             </h4>
             <div className="relative">
               <input
                 type="text"
-                placeholder="EMAIL@STORE-AX.COM"
+                placeholder={locale === 'ko' ? '이메일@스토어-AX.COM' : 'EMAIL@STORE-AX.COM'}
                 className="w-full bg-transparent border-b border-black py-2 text-[10px] font-bold tracking-widest outline-none placeholder:text-neutral-200"
               />
               <button className="absolute right-0 bottom-2">
@@ -359,14 +368,20 @@ export default function SquareMinimalismEcom() {
           <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 mb-2 block">
-                Season' 24
+                {locale === 'ko' ? '시즌 24' : "Season' 24"}
               </span>
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
-                {selectedCategory === 'All' ? 'New Arrivals' : selectedCategory}
+                {selectedCategory === 0
+                  ? locale === 'ko'
+                    ? '신상품'
+                    : 'New Arrivals'
+                  : CATEGORIES[locale][selectedCategory]}
               </h2>
             </div>
             <div className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-              Showing {paginatedProducts.length} of {filteredProducts.length} Items
+              {locale === 'ko'
+                ? `총 ${filteredProducts.length}개 중 ${paginatedProducts.length}개 표시`
+                : `Showing ${paginatedProducts.length} of ${filteredProducts.length} Items`}
             </div>
           </div>
 
@@ -387,7 +402,7 @@ export default function SquareMinimalismEcom() {
                     {/* Overlay Info */}
                     <div className="absolute top-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="bg-black text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
-                        Limited Edition
+                        {locale === 'ko' ? '한정판' : 'Limited Edition'}
                       </div>
                     </div>
                   </div>
@@ -405,7 +420,7 @@ export default function SquareMinimalismEcom() {
                     </h4>
                     <div className="pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button className="text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 group/btn">
-                        Discover Piece{' '}
+                        {locale === 'ko' ? '제품 보기' : 'Discover Piece'}{' '}
                         <ArrowRight
                           size={12}
                           className="group-hover/btn:translate-x-1 transition-transform"
@@ -419,7 +434,7 @@ export default function SquareMinimalismEcom() {
           ) : (
             <div className="h-96 flex items-center justify-center border border-dashed border-neutral-200">
               <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">
-                No items found in this section
+                {locale === 'ko' ? '이 섹션에 아이템이 없습니다' : 'No items found in this section'}
               </p>
             </div>
           )}
@@ -432,7 +447,7 @@ export default function SquareMinimalismEcom() {
                 disabled={currentPage === 1}
                 className={`flex items-center gap-2 transition-colors ${currentPage === 1 ? 'text-neutral-200 cursor-not-allowed' : 'text-neutral-400 hover:text-black'}`}
               >
-                <ChevronLeft size={16} /> Prev
+                <ChevronLeft size={16} /> {locale === 'ko' ? '이전' : 'Prev'}
               </button>
               <div className="flex gap-6">
                 {[...Array(totalPages)].map((_, i) => (
@@ -450,7 +465,7 @@ export default function SquareMinimalismEcom() {
                 disabled={currentPage === totalPages}
                 className={`flex items-center gap-2 transition-colors ${currentPage === totalPages ? 'text-neutral-200 cursor-not-allowed' : 'text-neutral-400 hover:text-black'}`}
               >
-                Next <ChevronRight size={16} />
+                {locale === 'ko' ? '다음' : 'Next'} <ChevronRight size={16} />
               </button>
             </div>
           )}
@@ -467,11 +482,11 @@ export default function SquareMinimalismEcom() {
             <X size={32} />
           </button>
           <nav className="flex flex-col gap-8">
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES[locale].map((cat, idx) => (
               <button
                 key={cat}
                 onClick={() => {
-                  setSelectedCategory(cat);
+                  setSelectedCategory(idx);
                   setCurrentPage(1);
                   setIsMenuOpen(false);
                 }}
