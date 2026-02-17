@@ -27,7 +27,6 @@ import crypto from 'crypto';
 test.describe('MCP Verify Endpoint E2E', () => {
   let userId: string;
   let userEmail: string;
-  let _userPassword: string;
   const baseUrl = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3001';
 
   // 테스트 시작 전: 테스트 사용자 생성
@@ -35,7 +34,7 @@ test.describe('MCP Verify Endpoint E2E', () => {
     const { user, userId: id } = await createTestUser();
     userId = id;
     userEmail = user.email;
-    _userPassword = user.password;
+    // userPassword는 현재 사용하지 않지만 향후 사용 가능
 
     console.log('[E2E] Test user created:', { userId, email: userEmail });
   });

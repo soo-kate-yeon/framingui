@@ -80,7 +80,7 @@ test.describe('Security Tests E2E', () => {
     await setAuthSession(page, userEmail, userPassword);
 
     // 2. Rate Limit 초과할 때까지 요청 (분당 10회)
-    const requests: Promise<Response>[] = [];
+    const requests = [];
 
     for (let i = 0; i < RATE_LIMITS.API_KEYS_MANAGEMENT + 5; i++) {
       requests.push(
@@ -104,9 +104,9 @@ test.describe('Security Tests E2E', () => {
     );
 
     // 4. Rate limit 응답 확인
-    const rateLimitData = await rateLimitedResponses[0].json();
-    expect(rateLimitData.error).toBe('rate_limit_exceeded');
-    expect(rateLimitData.retryAfter).toBeDefined();
+    const rateLimitData = await rateLimitedResponses[0]?.json();
+    expect(rateLimitData?.error).toBe('rate_limit_exceeded');
+    expect(rateLimitData?.retryAfter).toBeDefined();
 
     console.log('[E2E] Rate limit response:', {
       error: rateLimitData.error,
@@ -120,7 +120,7 @@ test.describe('Security Tests E2E', () => {
 
     try {
       // 2. Rate Limit 초과할 때까지 요청 (분당 60회)
-      const requests: Promise<Response>[] = [];
+      const requests = [];
 
       for (let i = 0; i < RATE_LIMITS.MCP_VERIFY + 10; i++) {
         requests.push(

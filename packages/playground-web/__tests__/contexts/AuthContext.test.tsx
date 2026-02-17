@@ -307,7 +307,8 @@ describe('login function', () => {
         message: 'OAuth failed',
         name: 'AuthError',
         status: 400,
-      },
+        code: 'oauth_failed',
+      } as any,
     });
 
     const { result } = renderHook(() => useAuth(), {
@@ -369,7 +370,8 @@ describe('logout function', () => {
         message: 'Logout failed',
         name: 'AuthError',
         status: 500,
-      },
+        code: 'logout_failed',
+      } as any,
     });
 
     const { result } = renderHook(() => useAuth(), {

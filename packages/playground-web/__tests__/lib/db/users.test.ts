@@ -59,14 +59,14 @@ describe('createOrUpdateUser', () => {
   });
 
   it('should handle user without email', async () => {
-    const mockUser: User = {
+    const mockUser = {
       id: 'user-123',
-      email: null,
+      email: undefined,
       app_metadata: {},
       user_metadata: {},
       aud: 'authenticated',
       created_at: '2024-01-01T00:00:00Z',
-    };
+    } as User;
 
     const result = await createOrUpdateUser(mockUser);
 
@@ -79,15 +79,15 @@ describe('createOrUpdateUser', () => {
   });
 
   it('should use created_at as updated_at when updated_at is missing', async () => {
-    const mockUser: User = {
+    const mockUser = {
       id: 'user-123',
       email: 'test@example.com',
       app_metadata: {},
       user_metadata: {},
       aud: 'authenticated',
       created_at: '2024-01-01T00:00:00Z',
-      updated_at: null,
-    };
+      updated_at: undefined,
+    } as User;
 
     const result = await createOrUpdateUser(mockUser);
 
@@ -190,14 +190,14 @@ describe('getUserById', () => {
   });
 
   it('should handle user without email', async () => {
-    const mockUser: User = {
+    const mockUser = {
       id: 'user-123',
-      email: null,
+      email: undefined,
       app_metadata: {},
       user_metadata: {},
       aud: 'authenticated',
       created_at: '2024-01-01T00:00:00Z',
-    };
+    } as User;
 
     mockGetUserById.mockResolvedValue({
       data: { user: mockUser },
@@ -390,15 +390,15 @@ describe('getCurrentUser', () => {
   });
 
   it('should handle user without updated_at', async () => {
-    const mockUser: User = {
+    const mockUser = {
       id: 'user-123',
       email: 'test@example.com',
       app_metadata: {},
       user_metadata: {},
       aud: 'authenticated',
       created_at: '2024-01-01T00:00:00Z',
-      updated_at: null,
-    };
+      updated_at: undefined,
+    } as User;
 
     mockGetUser.mockResolvedValue({
       data: { user: mockUser },
