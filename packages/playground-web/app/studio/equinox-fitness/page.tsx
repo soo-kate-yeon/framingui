@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { Play, Info, ChevronRight, Star } from 'lucide-react';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 
 /**
  * Equinox Fitness V2 - MasterClass Inspired Landing Page
@@ -9,10 +11,15 @@ import { Play, Info, ChevronRight, Star } from 'lucide-react';
  * Design DNA: True Black (#000000), 0px Radius, Immersive Media
  */
 export default function EquinoxFitnessLanding() {
+  const { locale } = useStudioLanguage();
+
   return (
     <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black scroll-smooth">
-      {/* Immersive Hero Section */}
-      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden">
+      {/* Preview Banner */}
+      <PreviewBanner templateId="equinox-fitness" templateName="Equinox Fitness" />
+
+      {/* Immersive Hero Section - Adjusted for banner */}
+      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden mt-12">
         {/* Background "Video" Placeholder / Image */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
@@ -24,22 +31,33 @@ export default function EquinoxFitnessLanding() {
         <div className="relative z-20 max-w-4xl">
           <div className="flex items-center gap-2 mb-4">
             <span className="bg-white text-black px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter">
-              Original Series
+              {locale === 'ko' ? '오리지널 시리즈' : 'Original Series'}
             </span>
             <span className="text-neutral-400 text-[10px] uppercase tracking-widest font-bold">
-              Equinox MasterSeries
+              {locale === 'ko' ? 'Equinox 마스터시리즈' : 'Equinox MasterSeries'}
             </span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-            The Art of
-            <br />
-            Elite Performance
+            {locale === 'ko' ? (
+              <>
+                엘리트 퍼포먼스의
+                <br />
+                예술
+              </>
+            ) : (
+              <>
+                The Art of
+                <br />
+                Elite Performance
+              </>
+            )}
           </h1>
 
           <p className="text-lg md:text-xl text-neutral-200 max-w-2xl mb-10 leading-relaxed font-light">
-            Join the world's most elite trainers as they reveal the discipline, technique, and
-            mindset required to reach the absolute pinnacle of human potential.
+            {locale === 'ko'
+              ? '세계 최고의 엘리트 트레이너들과 함께 인간 잠재력의 정점에 도달하는 데 필요한 규율, 기술, 마인드셋을 발견하세요.'
+              : "Join the world's most elite trainers as they reveal the discipline, technique, and mindset required to reach the absolute pinnacle of human potential."}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -48,11 +66,11 @@ export default function EquinoxFitnessLanding() {
               className="bg-white text-black h-12 md:h-14 px-8 md:px-12 uppercase tracking-[0.2em] text-[10px] md:text-xs font-black hover:bg-neutral-200 transition-all flex items-center justify-center gap-3 active:scale-95"
             >
               <Play fill="currentColor" size={16} />
-              Start Training
+              {locale === 'ko' ? '트레이닝 시작' : 'Start Training'}
             </Link>
             <button className="bg-neutral-900/80 backdrop-blur-md border border-white/20 text-white h-12 md:h-14 px-8 md:px-12 uppercase tracking-[0.2em] text-[10px] md:text-xs font-black hover:bg-white/10 transition-all flex items-center justify-center gap-3 active:scale-95">
               <Info size={16} />
-              Preview Trailer
+              {locale === 'ko' ? '미리보기' : 'Preview Trailer'}
             </button>
           </div>
         </div>
@@ -61,7 +79,7 @@ export default function EquinoxFitnessLanding() {
         <div className="absolute right-16 bottom-24 hidden lg:flex flex-col items-center gap-4">
           <div className="h-24 w-[1px] bg-gradient-to-b from-transparent via-white to-transparent" />
           <span className="[writing-mode:vertical-lr] text-[10px] uppercase tracking-[0.3em] font-bold text-neutral-500">
-            Scroll to Explore
+            {locale === 'ko' ? '스크롤하여 탐색' : 'Scroll to Explore'}
           </span>
         </div>
       </section>
@@ -69,7 +87,7 @@ export default function EquinoxFitnessLanding() {
       {/* Content Discovery Rows */}
       <main className="relative z-20 -mt-12 space-y-20 pb-32">
         <ContentRow
-          title="Legendary Instructors"
+          title={locale === 'ko' ? '전설적인 강사진' : 'Legendary Instructors'}
           items={[
             {
               title: 'Peak Power',
@@ -99,8 +117,12 @@ export default function EquinoxFitnessLanding() {
         />
 
         <ContentRow
-          title="Strength & Conditioning"
-          subtitle="Push beyond the threshold of ordinary."
+          title={locale === 'ko' ? '근력 & 컨디셔닝' : 'Strength & Conditioning'}
+          subtitle={
+            locale === 'ko'
+              ? '평범함의 한계를 넘어서세요.'
+              : 'Push beyond the threshold of ordinary.'
+          }
           items={[
             {
               title: 'Barbell Masterclass',
@@ -135,24 +157,25 @@ export default function EquinoxFitnessLanding() {
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-30 mix-blend-overlay" />
             <div className="relative z-10 max-w-xl">
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mb-4 block">
-                Limited Enrollment
+                {locale === 'ko' ? '제한된 등록' : 'Limited Enrollment'}
               </span>
               <h2 className="text-2xl md:text-4xl font-bold uppercase tracking-tighter mb-4 italic">
-                The 10-Week Transformation
+                {locale === 'ko' ? '10주 트랜스포메이션' : 'The 10-Week Transformation'}
               </h2>
               <p className="text-neutral-300 text-xs md:text-sm mb-8 leading-relaxed">
-                A scientific approach to body composition. No shortcuts. Just data-driven
-                programming for those ready to commit to radical change.
+                {locale === 'ko'
+                  ? '과학적 신체 구성 접근법. 지름길 없이 오직 데이터 기반 프로그래밍으로 근본적인 변화를 준비한 분들을 위한 프로그램입니다.'
+                  : 'A scientific approach to body composition. No shortcuts. Just data-driven programming for those ready to commit to radical change.'}
               </p>
               <button className="text-[10px] font-black uppercase tracking-[0.2em] bg-white text-black h-10 px-8 hover:bg-neutral-200 transition-colors">
-                Apply Now
+                {locale === 'ko' ? '지금 신청하기' : 'Apply Now'}
               </button>
             </div>
           </div>
         </section>
 
         <ContentRow
-          title="Recovery & Wellness"
+          title={locale === 'ko' ? '회복 & 웰니스' : 'Recovery & Wellness'}
           items={[
             {
               title: 'Sleep Sanctuary',
@@ -188,14 +211,34 @@ export default function EquinoxFitnessLanding() {
           <div className="max-w-xs">
             <div className="text-2xl font-black tracking-tighter mb-6">EQUINOX</div>
             <p className="text-neutral-400 text-[10px] leading-relaxed uppercase tracking-wider">
-              Built for those who demand excellence. Proprietary training methodologies for the
-              elite mover.
+              {locale === 'ko'
+                ? '탁월함을 추구하는 이들을 위해 제작되었습니다. 엘리트 운동가를 위한 독점 트레이닝 방법론.'
+                : 'Built for those who demand excellence. Proprietary training methodologies for the elite mover.'}
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
-            <FooterCol title="Platform" links={['Discovery', 'Dashboard', 'Series', 'Trainers']} />
-            <FooterCol title="Studio" links={['About Tekton', 'MCP Integration', 'Design DNA']} />
-            <FooterCol title="Legal" links={['Privacy', 'Terms', 'Support']} />
+            <FooterCol
+              title={locale === 'ko' ? '플랫폼' : 'Platform'}
+              links={
+                locale === 'ko'
+                  ? ['발견하기', '대시보드', '시리즈', '트레이너']
+                  : ['Discovery', 'Dashboard', 'Series', 'Trainers']
+              }
+            />
+            <FooterCol
+              title={locale === 'ko' ? '스튜디오' : 'Studio'}
+              links={
+                locale === 'ko'
+                  ? ['Tekton 소개', 'MCP 통합', '디자인 DNA']
+                  : ['About Tekton', 'MCP Integration', 'Design DNA']
+              }
+            />
+            <FooterCol
+              title={locale === 'ko' ? '법적 고지' : 'Legal'}
+              links={
+                locale === 'ko' ? ['개인정보', '이용약관', '지원'] : ['Privacy', 'Terms', 'Support']
+              }
+            />
           </div>
         </div>
         <div className="mt-20 md:mt-24 pt-8 border-t border-neutral-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em] text-center md:text-left">
@@ -205,9 +248,9 @@ export default function EquinoxFitnessLanding() {
               href="/studio/equinox-fitness/docs"
               className="hover:text-white transition-colors"
             >
-              Docs
+              {locale === 'ko' ? '문서' : 'Docs'}
             </Link>
-            <span>Schema v2.2</span>
+            <span>{locale === 'ko' ? '스키마 v2.2' : 'Schema v2.2'}</span>
           </span>
         </div>
       </footer>
@@ -224,6 +267,8 @@ function ContentRow({
   subtitle?: string;
   items: { title: string; instructor: string; image: string }[];
 }) {
+  const { locale } = useStudioLanguage();
+
   return (
     <section className="px-4 md:px-16">
       <div className="flex justify-between items-end mb-8">
@@ -241,7 +286,7 @@ function ContentRow({
           href="#"
           className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 hover:text-white flex items-center gap-1 transition-colors whitespace-nowrap"
         >
-          View All <ChevronRight size={12} />
+          {locale === 'ko' ? '모두 보기' : 'View All'} <ChevronRight size={12} />
         </Link>
       </div>
 
@@ -256,7 +301,7 @@ function ContentRow({
               />
               <div className="absolute inset-x-0 bottom-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black to-transparent">
                 <button className="w-full bg-white text-black py-2 text-[10px] font-black uppercase tracking-widest">
-                  Quick Preview
+                  {locale === 'ko' ? '빠른 미리보기' : 'Quick Preview'}
                 </button>
               </div>
               <div className="absolute top-2 right-2 flex gap-1">

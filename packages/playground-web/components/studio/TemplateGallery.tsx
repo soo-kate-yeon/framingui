@@ -2,13 +2,14 @@
  * Template Gallery Component
  * [SPEC-UI-003][TAG-UI003-046]
  *
- * 템플릿 그리드 레이아웃 갤러리
+ * 템플릿 그리드 레이아웃 갤러리 (i18n 지원)
  */
 
 'use client';
 
 import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
+import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 
 // ============================================================================
 // Types
@@ -18,6 +19,7 @@ interface Template {
   id: string;
   name: string;
   description: string;
+  descriptionKo?: string;
   thumbnail?: string;
   category: string;
   price?: number;
@@ -36,11 +38,25 @@ interface TemplateGalleryProps {
 
 export function TemplateGallery({ templates, className = '' }: TemplateGalleryProps) {
   const router = useRouter();
+  const { locale } = useStudioLanguage();
 
   // Handle template card click - navigate to template detail page
   const handleTemplateClick = (templateId: string) => {
     router.push(`/studio/template/${templateId}`);
   };
+
+  // i18n messages
+  const messages = {
+    en: {
+      noTemplates: 'No templates found',
+    },
+    ko: {
+      noTemplates: '템플릿을 찾을 수 없습니다',
+    },
+  };
+
+  const t = messages[locale];
+
   if (templates.length === 0) {
     return (
       <div
@@ -53,7 +69,7 @@ export function TemplateGallery({ templates, className = '' }: TemplateGalleryPr
           color: 'var(--tekton-text-muted-foreground, #6b7280)',
         }}
       >
-        No templates found
+        {t.noTemplates}
       </div>
     );
   }
@@ -68,18 +84,24 @@ export function TemplateGallery({ templates, className = '' }: TemplateGalleryPr
         padding: 'var(--tekton-spacing-lg, 16px)',
       }}
     >
-      {templates.map((template) => (
-        <TemplateCard
-          key={template.id}
-          id={template.id}
-          name={template.name}
-          description={template.description}
-          thumbnail={template.thumbnail}
-          category={template.category}
-          price={template.price}
-          onClick={() => handleTemplateClick(template.id)}
-        />
-      ))}
+      {templates.map((template) => {
+        // 언어에 맞는 description 선택
+        const description =
+          locale === 'ko' && template.descriptionKo ? template.descriptionKo : template.description;
+
+        return (
+          <TemplateCard
+            key={template.id}
+            id={template.id}
+            name={template.name}
+            description={description}
+            thumbnail={template.thumbnail}
+            category={template.category}
+            price={template.price}
+            onClick={() => handleTemplateClick(template.id)}
+          />
+        );
+      })}
     </div>
   );
 }

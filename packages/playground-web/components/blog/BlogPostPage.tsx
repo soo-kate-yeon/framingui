@@ -11,9 +11,9 @@ import { BlogHero } from './BlogHero';
 import { TableOfContents } from './TableOfContents';
 import { ShareButtons } from './ShareButtons';
 import { RelatedPosts } from './RelatedPosts';
+import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
+import { getBlogContent } from '@/data/i18n/blog';
 import type { BlogPost, BlogPostSummary } from '@/lib/blog';
-
-type Locale = 'en' | 'ko';
 
 interface BlogPostPageProps {
   post: BlogPost;
@@ -22,9 +22,10 @@ interface BlogPostPageProps {
 
 export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   const router = useRouter();
-  const [locale, setLocale] = useState<Locale>('ko');
+  const { locale, toggleLocale } = useGlobalLanguage();
   const [darkMode, setDarkMode] = useState(false);
 
+  const blogContent = getBlogContent(locale);
   const fm = post.frontmatter[locale];
   const content = post.content[locale];
   const toc = post.toc[locale];
@@ -34,7 +35,9 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   // 다크모드 persistence
   useEffect(() => {
     const saved = localStorage.getItem('darkMode');
-    if (saved === 'true') { setDarkMode(true); }
+    if (saved === 'true') {
+      setDarkMode(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -46,18 +49,8 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
     }
   }, [darkMode]);
 
-  // 언어 설정 persistence
-  useEffect(() => {
-    const saved = localStorage.getItem('blogLocale');
-    if (saved === 'en' || saved === 'ko') { setLocale(saved); }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('blogLocale', locale);
-  }, [locale]);
-
-  const toggleLocale = () => {
-    setLocale((prev) => (prev === 'en' ? 'ko' : 'en'));
+  const handleToggleLocale = () => {
+    toggleLocale();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -78,14 +71,14 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
             <button
               onClick={goBack}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              aria-label="Go back to blog"
+              aria-label={blogContent.post.backToBlog}
             >
               <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-600 dark:text-neutral-400" />
             </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
-              aria-label="Toggle dark mode"
+              aria-label={blogContent.header.toggleDarkMode}
             >
               {darkMode ? (
                 <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-400" />
@@ -100,9 +93,9 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
           </span>
 
           <button
-            onClick={toggleLocale}
+            onClick={handleToggleLocale}
             className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium rounded border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-300"
-            aria-label="Toggle language"
+            aria-label={blogContent.header.toggleLanguage}
           >
             <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             <span>{locale === 'en' ? 'KO' : 'EN'}</span>
@@ -111,9 +104,9 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
       </header>
 
       {/* 메인 */}
-      <div className="flex min-h-screen bg-white dark:bg-neutral-900 transition-colors">
-        <main className="flex-1 max-w-4xl mx-auto">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="flex min-h-screen bg-white dark:bg-neutral-900 transition-colors max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 max-w-4xl w-full">
+          <div className="py-8 sm:py-12 pr-0 xl:pr-8">
             {/* 브레드크럼 */}
             <Breadcrumbs
               items={[
@@ -124,7 +117,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
             />
 
             {/* 히어로 */}
-            <BlogHero frontmatter={fm} readingTime={rt} locale={locale} />
+            <BlogHero frontmatter={fm} readingTime={rt} />
 
             {/* 본문 */}
             <article className="blog-article-content">
@@ -189,9 +182,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
                         {children}
                       </ol>
                     ),
-                    li: ({ children }) => (
-                      <li className="text-base leading-relaxed">{children}</li>
-                    ),
+                    li: ({ children }) => <li className="text-base leading-relaxed">{children}</li>,
                     blockquote: ({ children }) => (
                       <blockquote className="border-l-4 border-neutral-300 dark:border-neutral-600 pl-4 py-2 my-4 bg-neutral-50 dark:bg-neutral-800/50 rounded-r">
                         {children}
@@ -274,12 +265,12 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
             </div>
 
             {/* 관련 포스트 */}
-            <RelatedPosts posts={related} locale={locale} />
+            <RelatedPosts posts={related} />
           </div>
         </main>
 
         {/* TOC 사이드바 */}
-        <TableOfContents toc={toc} locale={locale} />
+        <TableOfContents toc={toc} />
       </div>
     </div>
   );

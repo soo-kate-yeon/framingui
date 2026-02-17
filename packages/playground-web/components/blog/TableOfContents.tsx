@@ -2,14 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
+import { getBlogContent } from '@/data/i18n/blog';
 import type { TocItem } from '@/lib/blog';
 
 interface TableOfContentsProps {
   toc: TocItem[];
-  locale: 'en' | 'ko';
 }
 
-export function TableOfContents({ toc, locale }: TableOfContentsProps) {
+export function TableOfContents({ toc }: TableOfContentsProps) {
+  const { locale } = useGlobalLanguage();
+  const content = getBlogContent(locale);
   const [activeSection, setActiveSection] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -28,7 +31,9 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
     const timer = setTimeout(() => {
       toc.forEach(({ id }) => {
         const element = document.getElementById(id);
-        if (element) { observer.observe(element); }
+        if (element) {
+          observer.observe(element);
+        }
       });
     }, 100);
 
@@ -38,18 +43,17 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
     };
   }, [toc]);
 
-  const scrollToSection = useCallback(
-    (id: string) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      setMobileOpen(false);
-    },
-    []
-  );
+  const scrollToSection = useCallback((id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    setMobileOpen(false);
+  }, []);
 
-  if (toc.length === 0) { return null; }
+  if (toc.length === 0) {
+    return null;
+  }
 
   const tocContent = (
     <nav>
@@ -80,9 +84,9 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
     <>
       {/* 데스크톱 사이드바 */}
       <aside className="hidden xl:block sticky top-16 w-64 max-h-[calc(100vh-5rem)] overflow-y-auto flex-shrink-0">
-        <div className="py-6 pl-6">
+        <div className="py-6 pl-8 pr-4">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-4">
-            {locale === 'en' ? 'On This Page' : '목차'}
+            {content.post.onThisPage}
           </h3>
           {tocContent}
         </div>
@@ -92,7 +96,7 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
       <button
         onClick={() => setMobileOpen(true)}
         className="xl:hidden fixed bottom-6 right-6 z-40 p-3 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-full shadow-lg hover:scale-105 transition-transform"
-        aria-label="Open table of contents"
+        aria-label={content.post.openToc}
       >
         <Menu className="w-5 h-5" />
       </button>
@@ -108,7 +112,7 @@ export function TableOfContents({ toc, locale }: TableOfContentsProps) {
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
-                  {locale === 'en' ? 'On This Page' : '목차'}
+                  {content.post.onThisPage}
                 </h3>
                 <button
                   onClick={() => setMobileOpen(false)}

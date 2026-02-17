@@ -10,6 +10,7 @@
  * - Footer 제거
  * - Framer Motion 스크롤 애니메이션 (Subtle)
  * - Mobile-optimized responsive design
+ * - i18n support (en/ko)
  */
 
 'use client';
@@ -23,6 +24,7 @@ import { getTemplateData, type TemplateData } from '../../../../data/templates';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { usePaddle } from '../../../../hooks/usePaddle';
 import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
+import { useStudioLanguage } from '../../../../contexts/StudioLanguageContext';
 
 interface TemplatePageProps {
   params: Promise<{ id: string }>;
@@ -32,6 +34,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const router = useRouter();
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady } = usePaddle();
+  const { locale } = useStudioLanguage();
   const [templateId, setTemplateId] = useState<string>('');
   const [template, setTemplate] = useState<TemplateData | null>(null);
 
@@ -97,7 +100,9 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
 
               {/* Description (통합된 소개글) */}
               <p className="text-base sm:text-lg text-neutral-700 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-2">
-                {template.description}
+                {locale === 'ko' && template.descriptionKo
+                  ? template.descriptionKo
+                  : template.description}
               </p>
 
               {/* CTA Buttons - Mobile Optimized */}
@@ -105,26 +110,26 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <button
                   type="button"
                   onClick={handlePreviewClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded flex items-center justify-center gap-2"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg flex items-center justify-center gap-2"
                 >
-                  Preview
+                  {locale === 'ko' ? '미리보기' : 'Preview'}
                   <ExternalLink size={14} />
                 </button>
 
                 <button
                   type="button"
                   onClick={handleBuyClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-lg"
                 >
-                  Buy for ${template.price}
+                  {locale === 'ko' ? `$${template.price}에 구매` : `Buy for $${template.price}`}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleDocumentationClick}
-                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded"
+                  className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded-lg"
                 >
-                  Documentation
+                  {locale === 'ko' ? '문서' : 'Documentation'}
                 </button>
               </div>
             </div>
@@ -140,7 +145,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
               {template.screenshots.slice(0, 4).map((screenshot, index) => (
                 <div
                   key={index}
-                  className="aspect-video bg-neutral-200 rounded overflow-hidden border border-neutral-300"
+                  className="aspect-video bg-neutral-200 rounded-lg overflow-hidden border border-neutral-300"
                 >
                   <img
                     src={screenshot}
@@ -163,23 +168,40 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         </div>
       </section>
 
-      {/* Features Section - Mobile Optimized */}
+      {/* Features Section - Landing Page Style */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.2}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12 text-center">
-              Features
+              {locale === 'ko' ? '주요 기능' : 'Features'}
             </h2>
           </ScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12">
             {template.features.map((feature, index) => (
               <ScrollReveal key={index} delay={0.25 + index * 0.05}>
-                <div className="p-5 sm:p-6 bg-neutral-50 border border-neutral-200 rounded">
-                  <h3 className="text-base sm:text-lg font-bold text-neutral-900 mb-2 sm:mb-3">
-                    {feature.title}
+                <div className="space-y-3 sm:space-y-4">
+                  {/* Icon/Number Indicator */}
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-neutral-900 text-white font-bold text-lg">
+                    {feature.icon}
+                  </div>
+
+                  {/* Title - Bold, Prominent */}
+                  <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 leading-tight">
+                    {locale === 'ko' && feature.titleKo ? feature.titleKo : feature.title}
                   </h3>
-                  <p className="text-sm text-neutral-600 leading-relaxed">{feature.description}</p>
+
+                  {/* Subtitle - 1 Sentence Tagline */}
+                  <p className="text-base sm:text-lg font-medium text-neutral-700 leading-snug">
+                    {locale === 'ko' && feature.subtitleKo ? feature.subtitleKo : feature.subtitle}
+                  </p>
+
+                  {/* Body Text - 2-3 Sentences Detailed Explanation */}
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
+                    {locale === 'ko' && feature.descriptionKo
+                      ? feature.descriptionKo
+                      : feature.description}
+                  </p>
                 </div>
               </ScrollReveal>
             ))}
@@ -187,34 +209,43 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         </div>
       </section>
 
-      {/* Recommended to use for Section - Mobile Optimized */}
+      {/* Recommended to use for Section - Structured Cards */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 bg-neutral-50">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.3}>
-            <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-6 sm:mb-8">
-              Recommended to use for
+            <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12 text-center">
+              {locale === 'ko' ? '추천 사용처' : 'Recommended to use for'}
             </h2>
           </ScrollReveal>
 
-          <ScrollReveal delay={0.35}>
-            <ul className="space-y-3 sm:space-y-4">
-              {template.recommendedFor.map((useCase, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <div className="w-2 h-2 bg-neutral-900 rounded-full mt-2 flex-shrink-0" />
-                  <span className="text-base sm:text-lg text-neutral-700">{useCase}</span>
-                </li>
-              ))}
-            </ul>
-          </ScrollReveal>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+            {template.recommendedFor.map((useCase, index) => (
+              <ScrollReveal key={index} delay={0.35 + index * 0.05}>
+                <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
+                  {/* Title */}
+                  <h3 className="text-lg sm:text-xl font-bold text-neutral-900 leading-tight">
+                    {locale === 'ko' && useCase.titleKo ? useCase.titleKo : useCase.title}
+                  </h3>
+
+                  {/* Description - Why this template is good for this use case */}
+                  <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
+                    {locale === 'ko' && useCase.descriptionKo
+                      ? useCase.descriptionKo
+                      : useCase.description}
+                  </p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* How to use Section - Mobile Optimized */}
       <section className="py-12 sm:py-16 px-4 sm:px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.4}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12">
-              How to use
+              {locale === 'ko' ? '사용 방법' : 'How to use'}
             </h2>
           </ScrollReveal>
 
@@ -232,10 +263,12 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   {/* Step Content - Mobile Optimized */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg sm:text-xl font-bold text-neutral-900 mb-2">
-                      {step.title}
+                      {locale === 'ko' && step.titleKo ? step.titleKo : step.title}
                     </h3>
                     <p className="text-sm sm:text-base text-neutral-600 mb-3 sm:mb-4">
-                      {step.description}
+                      {locale === 'ko' && step.descriptionKo
+                        ? step.descriptionKo
+                        : step.description}
                     </p>
 
                     {step.code && (
@@ -256,17 +289,19 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal delay={0.5}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-4 sm:mb-6">
-              Ready to start?
+              {locale === 'ko' ? '시작할 준비가 되셨나요?' : 'Ready to start?'}
             </h2>
             <p className="text-base sm:text-lg text-neutral-600 mb-6 sm:mb-8 px-2">
-              Purchase now and start building your next project with {template.name}.
+              {locale === 'ko'
+                ? `지금 구매하고 ${template.name}으로 다음 프로젝트를 시작하세요.`
+                : `Purchase now and start building your next project with ${template.name}.`}
             </p>
             <button
               type="button"
               onClick={handleBuyClick}
               className="w-full sm:w-auto px-8 py-4 text-base font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded"
             >
-              Buy for ${template.price}
+              {locale === 'ko' ? `$${template.price}에 구매` : `Buy for $${template.price}`}
             </button>
           </ScrollReveal>
         </div>

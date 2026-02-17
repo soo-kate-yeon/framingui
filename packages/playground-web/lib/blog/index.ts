@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import * as yaml from 'js-yaml';
 import readingTime from 'reading-time';
 import { blogFrontmatterSchema, type BlogFrontmatter } from './schema';
 
@@ -65,7 +66,11 @@ function parseBlogFile(
   if (!fs.existsSync(filePath)) { return null; }
 
   const raw = fs.readFileSync(filePath, 'utf-8');
-  const { data, content } = matter(raw);
+  const { data, content } = matter(raw, {
+    engines: {
+      yaml: (s: string) => yaml.load(s) as Record<string, unknown>
+    }
+  });
   const frontmatter = blogFrontmatterSchema.parse({ ...data, slug });
 
   return { frontmatter, content };

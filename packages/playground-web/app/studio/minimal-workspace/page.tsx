@@ -15,116 +15,154 @@ import {
   ShieldCheck,
   Smartphone,
   LogOut,
+  X,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@tekton-ui/ui';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
 /**
  * Minimal Workspace Landing Page
  * Theme: Modern SaaS Dashboard
  */
 export default function MinimalWorkspaceDemo() {
   const [currentView, setCurrentView] = useState<'overview' | 'customers' | 'settings'>('overview');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white text-neutral-950 font-sans selection:bg-neutral-100">
-      {/* Header */}
-      <header className="border-b border-neutral-200 sticky top-0 bg-white/80 backdrop-blur-md z-50">
-        <div className="flex h-16 items-center px-4 md:px-6 gap-4">
-          {/* Mobile Menu */}
-          <div className="md:hidden">
-            <Sheet>
-              <SheetTrigger asChild>
-                <button className="p-2 -ml-2 text-neutral-500 hover:text-neutral-950 transition-colors">
-                  <Menu size={20} />
-                </button>
-              </SheetTrigger>
-              <SheetContent
-                side="left"
-                className="w-[300px] sm:w-[400px] bg-white border-r border-neutral-200 shadow-2xl p-0"
+      {/* Preview Banner */}
+      <PreviewBanner templateId="minimal-workspace" templateName="Minimal Workspace" />
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/50 z-50 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 w-[300px] sm:w-[400px] bg-white border-r border-neutral-200 shadow-2xl z-50 md:hidden">
+            <div className="px-6 py-6 border-b border-neutral-100 bg-neutral-50/30 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-neutral-900"></div>
+                <span className="font-bold tracking-tight">Acme Inc.</span>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 -mr-2 text-neutral-500 hover:text-neutral-950 transition-colors"
               >
-                <SheetHeader className="text-left px-6 py-6 border-b border-neutral-100 bg-neutral-50/30">
-                  <SheetTitle className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-neutral-900"></div>
-                    <span className="font-bold tracking-tight">Acme Inc.</span>
-                  </SheetTitle>
-                </SheetHeader>
-                <nav className="flex flex-col gap-2 px-4 pt-6">
-                  <button
-                    onClick={() => setCurrentView('overview')}
-                    className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'overview' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
-                  >
-                    Overview
-                  </button>
-                  <button
-                    onClick={() => setCurrentView('customers')}
-                    className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'customers' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
-                  >
-                    Customers
-                  </button>
-                  <button
-                    onClick={() => setCurrentView('settings')}
-                    className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'settings' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
-                  >
-                    Settings
-                  </button>
-                </nav>
-              </SheetContent>
-            </Sheet>
-          </div>
-
-          {/* Team Switcher Simulation - Hidden on Mobile */}
-          <button className="hidden md:flex w-56 h-9 items-center justify-between border border-neutral-200 rounded-md px-3 hover:bg-neutral-100 transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-neutral-900"></div>
-              <span className="text-sm font-medium">Acme Inc.</span>
+                <X size={20} />
+              </button>
             </div>
-            <ChevronDown size={14} className="text-neutral-500" />
-          </button>
-
-          {/* Nav - Hidden on Mobile */}
-          <nav className="hidden lg:flex items-center gap-6 ml-4">
-            <button
-              onClick={() => setCurrentView('overview')}
-              className={`text-sm font-medium transition-colors ${currentView === 'overview' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
-            >
-              Overview
-            </button>
-            <button
-              onClick={() => setCurrentView('customers')}
-              className={`text-sm font-medium transition-colors ${currentView === 'customers' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
-            >
-              Customers
-            </button>
-            <button
-              onClick={() => setCurrentView('settings')}
-              className={`text-sm font-medium transition-colors ${currentView === 'settings' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
-            >
-              Settings
-            </button>
-          </nav>
-
-          <div className="ml-auto flex items-center gap-2 md:gap-4">
-            {/* Search - Icon only on small mobile, expanded on Tablet/Desktop */}
-            <div className="relative group">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-500 group-focus-within:text-neutral-950 transition-colors" />
-              <input
-                className="h-9 w-9 md:w-64 rounded-md border border-neutral-200 bg-white pl-9 md:pr-4 py-2 text-sm outline-none placeholder:text-neutral-500 focus:ring-1 focus:ring-neutral-950 transition-all cursor-pointer md:cursor-text"
-                placeholder="Search..."
-              />
-            </div>
-            <button className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border border-neutral-200 flex-shrink-0">
-              <img src="https://github.com/shadcn.png" alt="User" />
-            </button>
+            <nav className="flex flex-col gap-2 px-4 pt-6">
+              <button
+                onClick={() => {
+                  setCurrentView('overview');
+                  setMobileMenuOpen(false);
+                }}
+                className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'overview' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
+              >
+                Overview
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentView('customers');
+                  setMobileMenuOpen(false);
+                }}
+                className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'customers' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
+              >
+                Customers
+              </button>
+              <button
+                onClick={() => {
+                  setCurrentView('settings');
+                  setMobileMenuOpen(false);
+                }}
+                className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'settings' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
+              >
+                Settings
+              </button>
+            </nav>
           </div>
-        </div>
-      </header>
+        </>
+      )}
 
-      {/* Main Content */}
-      <main className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8 min-h-[calc(100vh-64px)]">
-        {currentView === 'overview' && <OverviewDashboard />}
-        {currentView === 'customers' && <CustomersView />}
-        {currentView === 'settings' && <SettingsView />}
-      </main>
+      {/* Header - Adjusted for banner */}
+      <div>
+        {/* Header */}
+        <header className="border-b border-neutral-200 sticky top-12 bg-white/80 backdrop-blur-md z-40 mt-12">
+          <div className="flex h-16 items-center px-4 md:px-6 gap-4">
+            {/* Mobile Menu */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="p-2 -ml-2 text-neutral-500 hover:text-neutral-950 transition-colors"
+              >
+                <Menu size={20} />
+              </button>
+            </div>
+
+            {/* Team Switcher Simulation - Hidden on Mobile */}
+            <button className="hidden md:flex w-56 h-9 items-center justify-between border border-neutral-200 rounded-md px-3 hover:bg-neutral-100 transition-colors">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-neutral-900"></div>
+                <span className="text-sm font-medium">Acme Inc.</span>
+              </div>
+              <ChevronDown size={14} className="text-neutral-500" />
+            </button>
+
+            {/* Nav - Hidden on Mobile */}
+            <nav className="hidden lg:flex items-center gap-6 ml-4">
+              <button
+                onClick={() => setCurrentView('overview')}
+                className={`text-sm font-medium transition-colors ${currentView === 'overview' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
+              >
+                Overview
+              </button>
+              <button
+                onClick={() => setCurrentView('customers')}
+                className={`text-sm font-medium transition-colors ${currentView === 'customers' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
+              >
+                Customers
+              </button>
+              <button
+                onClick={() => setCurrentView('settings')}
+                className={`text-sm font-medium transition-colors ${currentView === 'settings' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
+              >
+                Settings
+              </button>
+            </nav>
+
+            <div className="ml-auto flex items-center gap-2 md:gap-4">
+              {/* Search - Icon only on small mobile, expanded on Tablet/Desktop */}
+              <div className="relative group">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-500 group-focus-within:text-neutral-950 transition-colors" />
+                <input
+                  className="h-9 w-9 md:w-64 rounded-md border border-neutral-200 bg-white pl-9 md:pr-4 py-2 text-sm outline-none placeholder:text-neutral-500 focus:ring-1 focus:ring-neutral-950 transition-all cursor-pointer md:cursor-text"
+                  placeholder="Search..."
+                />
+              </div>
+              <button className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border border-neutral-200 flex-shrink-0">
+                <img src="https://github.com/shadcn.png" alt="User" />
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8 min-h-[calc(100vh-64px)]">
+          {currentView === 'overview' && <OverviewDashboard />}
+          {currentView === 'customers' && <CustomersView />}
+          {currentView === 'settings' && <SettingsView />}
+        </main>
+      </div>
     </div>
   );
 }
@@ -221,116 +259,66 @@ function OverviewDashboard() {
 }
 
 function OverviewChart() {
-  const data = [120, 150, 180, 160, 210, 250, 230, 280, 320, 300, 340, 380];
-  const maxVal = Math.max(...data);
-  const height = 300;
-  const width = 600;
-  const padding = 20;
-
-  // Calculate points for the stroke path
-  const points = data
-    .map((val, i) => {
-      const x = (i / (data.length - 1)) * (width - 2 * padding) + padding;
-      const y = height - ((val / maxVal) * (height - 2 * padding) + padding);
-      return `${x},${y}`;
-    })
-    .join(' ');
-
-  const areaPoints = `${padding},${height} ${points} ${width - padding},${height}`;
-
-  // Responsive month labels - only show every other month on small screens
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
+  const chartData = [
+    { month: 'Jan', value: 120 },
+    { month: 'Feb', value: 150 },
+    { month: 'Mar', value: 180 },
+    { month: 'Apr', value: 160 },
+    { month: 'May', value: 210 },
+    { month: 'Jun', value: 250 },
+    { month: 'Jul', value: 230 },
+    { month: 'Aug', value: 280 },
+    { month: 'Sep', value: 320 },
+    { month: 'Oct', value: 300 },
+    { month: 'Nov', value: 340 },
+    { month: 'Dec', value: 380 },
   ];
 
   return (
-    <div className="w-full h-full min-h-[250px] md:min-h-[300px] mt-8 relative">
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-auto overflow-visible select-none"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        {/* Horizontal Grid Lines */}
-        {[0, 0.5, 1].map((scale) => {
-          const y = height - (scale * (height - 2 * padding) + padding);
-          return (
-            <g key={scale}>
-              <line
-                x1={padding}
-                y1={y}
-                x2={width - padding}
-                y2={y}
-                className="stroke-neutral-100"
-                strokeWidth="1"
-              />
-              <text x={padding - 20} y={y + 4} className="text-[12px] fill-neutral-400 font-medium">
-                {Math.round(scale * maxVal)}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* Vertical labels - Simplified for small viewports via viewBox scaling */}
-        {months.map((m, i) => {
-          const x = (i / (data.length - 1)) * (width - 2 * padding) + padding;
-          // Hide some labels if we want more space, but SVG scales naturally
-          return (
-            <text
-              key={m}
-              x={x}
-              y={height + 25}
-              textAnchor="middle"
-              className="text-[12px] md:text-[10px] fill-neutral-400 font-medium md:block"
-            >
-              {m}
-            </text>
-          );
-        })}
-
-        <polyline points={areaPoints} fill="url(#gradient)" className="opacity-20" />
-
-        <defs>
-          <linearGradient id="gradient" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#171717" />
-            <stop offset="100%" stopColor="#fff" />
-          </linearGradient>
-        </defs>
-
-        <polyline
-          points={points}
-          fill="none"
-          stroke="#171717"
-          strokeWidth="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        {data.map((val, i) => {
-          const x = (i / (data.length - 1)) * (width - 2 * padding) + padding;
-          const y = height - ((val / maxVal) * (height - 2 * padding) + padding);
-          return (
-            <circle
-              key={i}
-              cx={x}
-              cy={y}
-              r="4"
-              className="fill-white stroke-neutral-900 group cursor-pointer hover:r-6 transition-all"
-              strokeWidth="2"
-            />
-          );
-        })}
-      </svg>
+    <div className="w-full mt-8">
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#171717" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#171717" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="0" stroke="#f5f5f5" vertical={false} />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#a3a3a3', fontSize: 12 }}
+            dy={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#a3a3a3', fontSize: 12 }}
+            dx={-10}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: 'white',
+              border: '1px solid #e5e5e5',
+              borderRadius: '8px',
+              padding: '8px 12px',
+            }}
+            labelStyle={{ color: '#171717', fontWeight: 600 }}
+            itemStyle={{ color: '#737373' }}
+          />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#171717"
+            strokeWidth={3}
+            fill="url(#colorValue)"
+            dot={{ fill: '#171717', r: 4 }}
+            activeDot={{ r: 6, fill: '#171717' }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }

@@ -12,11 +12,12 @@
 
 'use client';
 
-import { Layout, User, LogIn, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Layout, User, LogIn, LogOut, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { useSidebar } from '../../contexts/SidebarContext';
+import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 
 // ============================================================================
 // Types
@@ -64,6 +65,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const { isCollapsed, isMobileOpen, toggleSidebar, closeMobileMenu } = useSidebar();
+  const { locale, toggleLocale } = useStudioLanguage();
 
   // 로그인 상태에 따라 네비게이션 필터링
   const visibleNavItems = NAV_ITEMS.filter((item) => {
@@ -83,7 +85,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
         ${className}`}
     >
       {/* Header */}
-      <div className={`border-b border-neutral-100 ${isCollapsed ? 'p-4' : 'p-6'}`}>
+      <div className={`border-b border-neutral-200 ${isCollapsed ? 'p-4' : 'p-6'}`}>
         {isCollapsed ? (
           // 접힌 상태: 로고 + 토글 버튼 세로 배치
           <div className="flex flex-col items-center gap-3">
@@ -91,7 +93,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
             <button
               type="button"
               onClick={toggleSidebar}
-              className="p-2 hover:bg-neutral-100 transition-colors border border-neutral-200"
+              className="p-2 hover:bg-neutral-100 transition-colors border border-neutral-200 rounded-lg"
               aria-label="Expand sidebar"
             >
               <ChevronRight size={14} />
@@ -102,14 +104,12 @@ export function Sidebar({ className = '' }: SidebarProps) {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xl font-bold tracking-tighter">TEKTON</div>
-              <span className="text-[10px] uppercase tracking-widest text-neutral-400 mt-1 block">
-                Studio
-              </span>
+              <span className="text-xs font-medium text-neutral-500 mt-1 block">Studio</span>
             </div>
             <button
               type="button"
               onClick={toggleSidebar}
-              className="p-2 hover:bg-neutral-100 transition-colors"
+              className="p-2 hover:bg-neutral-100 transition-colors rounded-lg"
               aria-label="Collapse sidebar"
             >
               <ChevronLeft size={14} />
@@ -132,15 +132,15 @@ export function Sidebar({ className = '' }: SidebarProps) {
                   onClick={closeMobileMenu}
                   aria-current={isActive ? 'page' : undefined}
                   title={isCollapsed ? item.label : undefined}
-                  className={`flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-4 py-3'} text-xs font-bold uppercase tracking-wider transition-all
+                  className={`flex items-center ${isCollapsed ? 'justify-center p-3 rounded-lg' : 'gap-3 px-4 py-3 rounded-lg'} text-sm font-medium transition-all
                     ${
                       isActive
                         ? 'bg-neutral-900 text-white'
-                        : 'text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50'
+                        : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
                     }
                   `}
                 >
-                  <Icon size={16} aria-hidden="true" />
+                  <Icon size={18} aria-hidden="true" />
                   {!isCollapsed && <span>{item.label}</span>}
                 </Link>
               </li>
@@ -148,6 +148,28 @@ export function Sidebar({ className = '' }: SidebarProps) {
           })}
         </ul>
       </nav>
+
+      {/* Language Toggle */}
+      <div className={`border-t border-neutral-100 ${isCollapsed ? 'p-2' : 'p-4'}`}>
+        <button
+          type="button"
+          onClick={toggleLocale}
+          title={isCollapsed ? `Language: ${locale.toUpperCase()}` : undefined}
+          className={`flex items-center w-full text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors ${
+            isCollapsed
+              ? 'justify-center p-3 rounded-lg'
+              : 'gap-3 px-4 py-3 rounded-lg text-sm font-medium'
+          }`}
+        >
+          <Globe size={18} aria-hidden="true" />
+          {!isCollapsed && (
+            <span className="flex-1 text-left">{locale === 'en' ? 'English' : '한국어'}</span>
+          )}
+          {!isCollapsed && (
+            <span className="text-xs text-neutral-400 uppercase font-mono">{locale}</span>
+          )}
+        </button>
+      </div>
 
       {/* Footer (User Info / Login) */}
       <div className={`border-t border-neutral-100 ${isCollapsed ? 'p-2' : 'p-4'}`}>
