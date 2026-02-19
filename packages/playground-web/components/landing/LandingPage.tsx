@@ -9,6 +9,22 @@ import { Footer } from '../shared/Footer';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLandingContent } from '../../data/i18n/landing';
 import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
+import { HeroUniverse } from '../marketing/HeroUniverse';
+import {
+  ColorTokenAsset,
+  LayoutTokenAsset,
+  ComponentGalleryAsset,
+} from '../marketing/Section1Assets';
+import {
+  MCPVersatilityAsset,
+  DesignSystemCoreAsset,
+  TSCodeExportAsset,
+} from '../marketing/Section2Assets';
+import {
+  ConstraintReliabilityAsset,
+  TemplateEfficiencyAsset,
+  VerificationLogicAsset,
+} from '../marketing/Section3Assets';
 
 function FadeIn({
   children,
@@ -38,6 +54,11 @@ export function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { locale } = useGlobalLanguage();
   const content = getLandingContent(locale);
+
+  // Section active indices
+  const [s1Active, setS1Active] = useState(0);
+  const [s2Active, setS2Active] = useState(0);
+  const [s3Active, setS3Active] = useState(0);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setIsScrolled(latest > 50);
@@ -128,16 +149,10 @@ export function LandingPage() {
         </FadeIn>
       </header>
 
-      {/* Main Image */}
+      {/* Main Image -> Hero Universe */}
       <section className="container mx-auto px-6 md:px-8 mb-20 md:mb-32">
         <FadeIn delay={0.5}>
-          <div className="relative rounded-2xl overflow-hidden aspect-[16/9] md:aspect-[21/9] bg-neutral-100 border border-neutral-200 shadow-2xl">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-neutral-400 font-medium">{content.mainImage.placeholder}</span>
-            </div>
-            {/* Placeholder for Main Image */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-neutral-50/50 to-neutral-200/50" />
-          </div>
+          <HeroUniverse />
         </FadeIn>
       </section>
 
@@ -145,13 +160,30 @@ export function LandingPage() {
       <section className="container mx-auto px-6 md:px-8 mb-20 md:mb-32">
         <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
           <FadeIn className="order-2 md:order-1">
-            <div className="bg-neutral-100 rounded-2xl aspect-square flex items-center justify-center border border-neutral-200">
-              <span className="text-neutral-400">{content.feature1.imageAlt}</span>
+            <div className="relative aspect-square">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={s1Active}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full"
+                >
+                  {s1Active === 0 && <ColorTokenAsset />}
+                  {s1Active === 1 && <LayoutTokenAsset />}
+                  {s1Active === 2 && <ComponentGalleryAsset />}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </FadeIn>
           <FadeIn className="order-1 md:order-2" delay={0.2}>
             <h2 className="text-3xl font-bold mb-8">{content.feature1.title}</h2>
-            <Accordion items={content.feature1.accordionItems} />
+            <Accordion
+              items={content.feature1.accordionItems}
+              onChange={(i) => i !== -1 && setS1Active(i)}
+              defaultIndex={0}
+            />
           </FadeIn>
         </div>
       </section>
@@ -161,11 +193,28 @@ export function LandingPage() {
         <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
           <FadeIn className="order-1">
             <h2 className="text-3xl font-bold mb-8">{content.feature2.title}</h2>
-            <Accordion items={content.feature2.accordionItems} />
+            <Accordion
+              items={content.feature2.accordionItems}
+              onChange={(i) => i !== -1 && setS2Active(i)}
+              defaultIndex={0}
+            />
           </FadeIn>
           <FadeIn className="order-2" delay={0.2}>
-            <div className="bg-neutral-100 rounded-2xl aspect-square flex items-center justify-center border border-neutral-200">
-              <span className="text-neutral-400">{content.feature2.imageAlt}</span>
+            <div className="relative aspect-square">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={s2Active}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full"
+                >
+                  {s2Active === 0 && <MCPVersatilityAsset />}
+                  {s2Active === 1 && <DesignSystemCoreAsset />}
+                  {s2Active === 2 && <TSCodeExportAsset />}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </FadeIn>
         </div>
@@ -175,13 +224,30 @@ export function LandingPage() {
       <section className="container mx-auto px-6 md:px-8 mb-20 md:mb-32">
         <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
           <FadeIn className="order-2 md:order-1">
-            <div className="bg-neutral-100 rounded-2xl aspect-square flex items-center justify-center border border-neutral-200">
-              <span className="text-neutral-400">{content.feature3.imageAlt}</span>
+            <div className="relative aspect-square">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={s3Active}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full"
+                >
+                  {s3Active === 0 && <ConstraintReliabilityAsset />}
+                  {s3Active === 1 && <TemplateEfficiencyAsset />}
+                  {s3Active === 2 && <VerificationLogicAsset />}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </FadeIn>
           <FadeIn className="order-1 md:order-2" delay={0.2}>
             <h2 className="text-3xl font-bold mb-8">{content.feature3.title}</h2>
-            <Accordion items={content.feature3.accordionItems} />
+            <Accordion
+              items={content.feature3.accordionItems}
+              onChange={(i) => i !== -1 && setS3Active(i)}
+              defaultIndex={0}
+            />
           </FadeIn>
         </div>
       </section>

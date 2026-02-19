@@ -48,18 +48,35 @@ const AccordionItem = ({ title, content, isOpen, onToggle }: AccordionItemProps)
 interface AccordionProps {
   items: { title: string; content: string }[];
   allowMultiple?: boolean;
+  onChange?: (index: number) => void;
+  defaultIndex?: number;
 }
 
-export function Accordion({ items, allowMultiple = false }: AccordionProps) {
-  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+export function Accordion({
+  items,
+  allowMultiple = false,
+  onChange,
+  defaultIndex = 0,
+}: AccordionProps) {
+  const [openIndexes, setOpenIndexes] = useState<number[]>(
+    defaultIndex !== undefined && items[defaultIndex] ? [defaultIndex] : []
+  );
 
   const handleToggle = (index: number) => {
     if (allowMultiple) {
-      setOpenIndexes((prev) =>
-        prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
-      );
+      const next = openIndexes.includes(index)
+        ? openIndexes.filter((i) => i !== index)
+        : [...openIndexes, index];
+      setOpenIndexes(next);
+      if (onChange) {
+        onChange(index);
+      }
     } else {
-      setOpenIndexes((prev) => (prev.includes(index) ? [] : [index]));
+      const isOpen = openIndexes.includes(index);
+      setOpenIndexes(isOpen ? [] : [index]);
+      if (onChange) {
+        onChange(isOpen ? -1 : index);
+      }
     }
   };
 
