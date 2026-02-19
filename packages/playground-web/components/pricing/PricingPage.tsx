@@ -16,6 +16,7 @@ import { Footer } from '../shared/Footer';
 import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getPricingContent } from '../../data/i18n/pricing';
+import { useAuth } from '../../contexts/AuthContext';
 
 /* ─── 애니메이션 ─── */
 function FadeIn({
@@ -107,6 +108,20 @@ export function PricingPage() {
   const router = useRouter();
   const { locale } = useGlobalLanguage();
   const content = getPricingContent(locale);
+  const { user } = useAuth();
+
+  /**
+   * 베타 접근 핸들러
+   * - 로그인 안 됨: /auth/login으로 리디렉션
+   * - 로그인 됨: /studio로 바로 리디렉션 (결제 없이)
+   */
+  const handleBetaAccess = () => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    router.push('/studio');
+  };
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
@@ -142,6 +157,17 @@ export function PricingPage() {
           <p className="text-lg md:text-xl text-neutral-500 leading-relaxed max-w-2xl mx-auto">
             {content.hero.description}
           </p>
+        </FadeIn>
+      </section>
+
+      {/* Beta Banner */}
+      <section className="container mx-auto px-6 md:px-8 pb-8">
+        <FadeIn>
+          <div className="max-w-5xl mx-auto bg-green-50 border border-green-200 rounded-xl p-4 md:p-6">
+            <p className="text-center text-green-800 font-semibold text-sm md:text-base">
+              🎉 Beta Launch Special: All templates FREE for early adopters!
+            </p>
+          </div>
         </FadeIn>
       </section>
 
@@ -181,35 +207,59 @@ export function PricingPage() {
                   <h3 className="text-lg font-bold text-neutral-900 mb-1">{planContent.name}</h3>
                   <p className="text-sm text-neutral-500 mb-6">{planContent.description}</p>
 
-                  {/* 가격 */}
+                  {/* 가격 - 베타 모드 */}
                   <div className="mb-6">
                     {planData.price !== null ? (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-4xl md:text-5xl font-bold tracking-tight">
-                          {planContent.priceLabel}
-                        </span>
-                        <span className="text-neutral-500 text-sm">{planContent.priceSub}</span>
+                      <div className="relative">
+                        {/* 원가 (취소선) */}
+                        <div className="flex items-baseline gap-1 mb-2">
+                          <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-400 line-through">
+                            {planContent.priceLabel}
+                          </span>
+                          <span className="text-neutral-400 text-xs line-through">
+                            {planContent.priceSub}
+                          </span>
+                        </div>
+                        {/* FREE 표시 */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-4xl md:text-5xl font-bold text-green-600">
+                            FREE
+                          </span>
+                          <span className="text-sm text-neutral-500">during beta</span>
+                        </div>
                       </div>
                     ) : (
-                      <div>
-                        <span className="text-2xl md:text-3xl font-bold text-neutral-400">
-                          {planContent.priceLabel}
-                        </span>
-                        <p className="text-sm text-neutral-400 mt-1">{planContent.priceSub}</p>
+                      <div className="relative">
+                        {/* 템플릿별 상이 (취소선) */}
+                        <div className="mb-2">
+                          <span className="text-xl md:text-2xl font-bold text-neutral-400 line-through">
+                            {planContent.priceLabel}
+                          </span>
+                          <p className="text-xs text-neutral-400 mt-1 line-through">
+                            {planContent.priceSub}
+                          </p>
+                        </div>
+                        {/* FREE 표시 */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-4xl md:text-5xl font-bold text-green-600">
+                            FREE
+                          </span>
+                          <span className="text-sm text-neutral-500">during beta</span>
+                        </div>
                       </div>
                     )}
                   </div>
 
-                  {/* CTA 버튼 */}
+                  {/* CTA 버튼 - 베타 모드 */}
                   <button
-                    onClick={() => router.push(planData.ctaHref)}
+                    onClick={handleBetaAccess}
                     className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-6 flex items-center justify-center gap-2 ${
                       planData.featured
                         ? 'bg-neutral-900 text-white hover:bg-neutral-800'
                         : 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
                     }`}
                   >
-                    {planContent.cta}
+                    Get Beta Access - FREE
                     <ArrowRight className="w-4 h-4" />
                   </button>
 
