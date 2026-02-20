@@ -15,6 +15,10 @@ export interface PricingContent {
     title: string;
     description: string;
   };
+  betaBanner: {
+    mobile: string;
+    desktop: string;
+  };
   plans: {
     single: {
       name: string;
@@ -100,6 +104,10 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
       title: 'Choose your plan',
       description:
         'Premium React templates with AI-powered design system. Start building production-ready interfaces today.',
+    },
+    betaBanner: {
+      mobile: '🎉 Single Template FREE!',
+      desktop: '🎉 Beta Launch: Single Template FREE during beta period!',
     },
     plans: {
       single: {
@@ -224,6 +232,10 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
       title: '플랜을 선택해보세요',
       description:
         'AI 기반 디자인 시스템을 갖춘 프리미엄 React 템플릿이에요. 오늘부터 바로 쓸 수 있는 인터페이스를 만들어보세요.',
+    },
+    betaBanner: {
+      mobile: '🎉 단일 템플릿 무료!',
+      desktop: '🎉 베타 런칭: 베타 기간 동안 단일 템플릿 무료!',
     },
     plans: {
       single: {

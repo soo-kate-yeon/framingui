@@ -17,6 +17,7 @@ import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getPricingContent } from '../../data/i18n/pricing';
 import { useAuth } from '../../contexts/AuthContext';
+import { usePaddle } from '../../hooks/usePaddle';
 
 /* ─── 애니메이션 ─── */
 function FadeIn({
@@ -109,9 +110,10 @@ export function PricingPage() {
   const { locale } = useGlobalLanguage();
   const content = getPricingContent(locale);
   const { user } = useAuth();
+  const { openCheckout, isReady: isPaddleReady } = usePaddle();
 
   /**
-   * 베타 접근 핸들러
+   * 베타 접근 핸들러 (Single Template 전용)
    * - 로그인 안 됨: /auth/login으로 리디렉션
    * - 로그인 됨: /studio로 바로 리디렉션 (결제 없이)
    */
@@ -123,8 +125,53 @@ export function PricingPage() {
     router.push('/studio');
   };
 
+  /**
+   * Paddle Checkout 핸들러 (Double, Creator 전용)
+   */
+  const handleCheckout = (planId: 'double' | 'creator') => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (!isPaddleReady) {
+      console.error('[Paddle] Payment system is not ready');
+      alert('Payment system is not ready. Please try again later.');
+      return;
+    }
+
+    // Paddle Price ID는 환경 변수에서 가져와야 함
+    const priceId =
+      planId === 'double'
+        ? process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_DOUBLE
+        : process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_CREATOR;
+
+    if (!priceId) {
+      console.error('[Paddle] Price configuration missing for plan:', planId);
+      alert('Price configuration missing. Please contact support.');
+      return;
+    }
+
+    openCheckout({
+      priceId,
+      userId: user.id,
+      userEmail: user.email || '',
+      tier: planId,
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
+    <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white pt-12">
+      {/* Beta Launch Banner */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center justify-center px-4 sm:px-6 transition-colors bg-black text-white">
+        <p className="text-xs sm:text-sm font-medium text-center">
+          {/* 모바일: 짧은 메시지 */}
+          <span className="sm:hidden">{content.betaBanner.mobile}</span>
+          {/* 데스크톱: 전체 메시지 */}
+          <span className="hidden sm:inline">{content.betaBanner.desktop}</span>
+        </p>
+      </div>
+
       {/* 네비게이션 */}
       <nav className="border-b border-neutral-200">
         <div className="container mx-auto px-6 md:px-8 h-16 flex items-center justify-between">
@@ -160,17 +207,6 @@ export function PricingPage() {
         </FadeIn>
       </section>
 
-      {/* Beta Banner */}
-      <section className="container mx-auto px-6 md:px-8 pb-8">
-        <FadeIn>
-          <div className="max-w-5xl mx-auto bg-green-50 border border-green-200 rounded-xl p-4 md:p-6">
-            <p className="text-center text-green-800 font-semibold text-sm md:text-base">
-              🎉 Beta Launch Special: All templates FREE for early adopters!
-            </p>
-          </div>
-        </FadeIn>
-      </section>
-
       {/* Pricing Cards */}
       <section className="container mx-auto px-6 md:px-8 pb-20 md:pb-32">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -203,85 +239,90 @@ export function PricingPage() {
                     </div>
                   )}
 
-                  {/* 플랜 이름 + 설명 */}
-                  <h3 className="text-lg font-bold text-neutral-900 mb-1">{planContent.name}</h3>
-                  <p className="text-sm text-neutral-500 mb-6">{planContent.description}</p>
-
-                  {/* 가격 - 베타 모드 */}
+                  {/* 상단 고정 영역: 플랜 이름 + 설명 + 가격 */}
                   <div className="mb-6">
-                    {planData.price !== null ? (
-                      <div className="relative">
-                        {/* 원가 (취소선) */}
-                        <div className="flex items-baseline gap-1 mb-2">
-                          <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-400 line-through">
-                            {planContent.priceLabel}
-                          </span>
-                          <span className="text-neutral-400 text-xs line-through">
-                            {planContent.priceSub}
-                          </span>
+                    {/* 플랜 이름 + 설명 */}
+                    <h3 className="text-lg font-bold text-neutral-900 mb-1">{planContent.name}</h3>
+                    <p className="text-sm text-neutral-500 mb-6">{planContent.description}</p>
+
+                    {/* 가격 */}
+                    <div className="min-h-[100px] flex items-end">
+                      {planId === 'single' ? (
+                        /* Single Template - 베타 무료 */
+                        <div className="relative w-full">
+                          {/* 템플릿별 상이 (취소선) */}
+                          <div className="mb-2">
+                            <span className="text-xl md:text-2xl font-bold text-neutral-400 line-through">
+                              {planContent.priceLabel}
+                            </span>
+                            <p className="text-xs text-neutral-400 mt-1 line-through">
+                              {planContent.priceSub}
+                            </p>
+                          </div>
+                          {/* FREE 표시 */}
+                          <div className="flex items-center gap-2">
+                            <span className="text-4xl md:text-5xl font-bold text-black">FREE</span>
+                            <span className="text-sm text-neutral-500">during beta</span>
+                          </div>
                         </div>
-                        {/* FREE 표시 */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-4xl md:text-5xl font-bold text-green-600">
-                            FREE
-                          </span>
-                          <span className="text-sm text-neutral-500">during beta</span>
+                      ) : (
+                        /* Double & Creator - 정상 가격 */
+                        <div className="w-full">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
+                              {planContent.priceLabel}
+                            </span>
+                            <span className="text-neutral-500 text-sm">{planContent.priceSub}</span>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className="relative">
-                        {/* 템플릿별 상이 (취소선) */}
-                        <div className="mb-2">
-                          <span className="text-xl md:text-2xl font-bold text-neutral-400 line-through">
-                            {planContent.priceLabel}
-                          </span>
-                          <p className="text-xs text-neutral-400 mt-1 line-through">
-                            {planContent.priceSub}
-                          </p>
-                        </div>
-                        {/* FREE 표시 */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-4xl md:text-5xl font-bold text-green-600">
-                            FREE
-                          </span>
-                          <span className="text-sm text-neutral-500">during beta</span>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
 
-                  {/* CTA 버튼 - 베타 모드 */}
-                  <button
-                    onClick={handleBetaAccess}
-                    className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-6 flex items-center justify-center gap-2 ${
-                      planData.featured
-                        ? 'bg-neutral-900 text-white hover:bg-neutral-800'
-                        : 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
-                    }`}
-                  >
-                    Get Beta Access - FREE
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+                  {/* 중간 확장 영역: 구분선 + 기능 목록 */}
+                  <div className="flex-1 flex flex-col mb-6">
+                    {/* 구분선 */}
+                    <div className="border-t border-neutral-100 mb-6" />
 
-                  {/* ROSCA 자동갱신 고지 */}
-                  {'renewalNotice' in planContent && planContent.renewalNotice && (
-                    <p className="text-xs text-neutral-400 mb-4 -mt-3 text-center">
-                      {planContent.renewalNotice}
-                    </p>
-                  )}
+                    {/* 기능 목록 */}
+                    <ul className="space-y-3">
+                      {planContent.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <Check className="w-4 h-4 text-neutral-900 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm text-neutral-600">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                  {/* 구분선 */}
-                  <div className="border-t border-neutral-100 mb-6" />
+                  {/* 하단 고정 영역: 버튼 + ROSCA 고지 */}
+                  <div className="mt-auto">
+                    {/* CTA 버튼 */}
+                    <button
+                      onClick={() => {
+                        if (planId === 'single') {
+                          handleBetaAccess();
+                        } else {
+                          handleCheckout(planId as 'double' | 'creator');
+                        }
+                      }}
+                      className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${
+                        planData.featured
+                          ? 'bg-neutral-900 text-white hover:bg-neutral-800'
+                          : 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
+                      }`}
+                    >
+                      {planId === 'single' ? 'Get Beta Access - FREE' : planContent.cta}
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
 
-                  {/* 기능 목록 */}
-                  <ul className="space-y-3 flex-1">
-                    {planContent.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
-                        <Check className="w-4 h-4 text-neutral-900 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-neutral-600">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    {/* ROSCA 자동갱신 고지 */}
+                    {'renewalNotice' in planContent && planContent.renewalNotice && (
+                      <p className="text-xs text-neutral-400 text-center min-h-[32px]">
+                        {planContent.renewalNotice}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </FadeIn>
             );
