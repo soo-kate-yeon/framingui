@@ -27,13 +27,13 @@ export function StudioPageHeader({ className = '' }: StudioPageHeaderProps) {
 
   const content = {
     en: {
-      subtitle: 'Tekton Studio',
+      subtitle: 'tekton/studio',
       title: 'Select Theme',
       description:
         'Choose a design system to activate the Agentic Styling engine. Every theme is loaded directly from the MCP knowledge base.',
     },
     ko: {
-      subtitle: 'Tekton Studio',
+      subtitle: 'tekton/studio',
       title: '테마 선택',
       description:
         '에이전틱 스타일링 엔진을 활성화할 디자인 시스템을 선택하세요. 모든 테마는 MCP 지식 베이스에서 직접 로드됩니다.',

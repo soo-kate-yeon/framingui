@@ -26,8 +26,8 @@ export interface FooterContent {
 
 export const footerContent: Record<GlobalLocale, FooterContent> = {
   en: {
-    brandName: 'TEKTON',
-    copyright: 'Tekton. All rights reserved.',
+    brandName: 'tekton/ui',
+    copyright: 'tekton/ui. All rights reserved.',
     links: {
       pricing: 'Pricing',
       blog: 'Blog',
@@ -43,8 +43,8 @@ export const footerContent: Record<GlobalLocale, FooterContent> = {
     },
   },
   ko: {
-    brandName: 'TEKTON',
-    copyright: 'Tekton. 모든 권리 보유.',
+    brandName: 'tekton/ui',
+    copyright: 'tekton/ui. 모든 권리 보유.',
     links: {
       pricing: '가격',
       blog: '블로그',

@@ -118,8 +118,8 @@ export function Footer({ className = '' }: FooterProps) {
   // 동적 클래스 생성
   const footerClasses = `border-t py-12 transition-colors ${
     isDark
-      ? 'bg-neutral-900 text-neutral-100 border-neutral-800'
-      : 'bg-white text-neutral-900 border-neutral-200'
+      ? 'bg-white text-neutral-900 border-neutral-200'
+      : 'bg-neutral-900 text-neutral-100 border-neutral-800'
   } ${className}`;
 
   return (
@@ -129,7 +129,7 @@ export function Footer({ className = '' }: FooterProps) {
           {/* Brand & Copyright */}
           <div>
             <div className="text-xl font-bold tracking-tighter mb-4">{content.brandName}</div>
-            <p className={`text-sm mb-2 ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
+            <p className={`text-sm mb-2 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
               &copy; {new Date().getFullYear()} {content.copyright}
             </p>
           </div>
@@ -140,7 +140,7 @@ export function Footer({ className = '' }: FooterProps) {
               <Link
                 key={href}
                 href={href}
-                className={`transition-colors ${isDark ? 'hover:text-neutral-100' : 'hover:text-neutral-900'}`}
+                className={`transition-colors ${isDark ? 'hover:text-neutral-900' : 'hover:text-neutral-100'}`}
               >
                 {label}
               </Link>
@@ -150,7 +150,7 @@ export function Footer({ className = '' }: FooterProps) {
 
         {/* Business Info (Legal Requirement) */}
         <div
-          className={`pt-8 border-t text-xs space-y-1 ${isDark ? 'border-neutral-800 text-neutral-400' : 'border-neutral-100 text-neutral-400'}`}
+          className={`pt-8 border-t text-xs space-y-1 ${isDark ? 'border-neutral-100 text-neutral-400' : 'border-neutral-800 text-neutral-400'}`}
         >
           <p className={`font-semibold ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
             {content.businessInfo.operatedBy}

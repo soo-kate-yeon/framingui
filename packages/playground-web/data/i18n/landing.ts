@@ -66,22 +66,22 @@ export interface LandingContent {
 export const landingContent: Record<GlobalLocale, LandingContent> = {
   en: {
     nav: {
-      brandName: 'TEKTON',
+      brandName: 'tekton/ui',
       pricing: 'Pricing',
-      preview: 'Preview',
-      getStarted: 'Get Started',
+      preview: 'Demo',
+      getStarted: 'Sign up',
     },
     hero: {
-      brandName: 'TEKTON',
+      brandName: 'tekton/ui',
       title: {
-        part1: 'Design Intelligence',
-        part2: 'for AI Agents',
+        part1: 'Agent-first',
+        part2: 'Design System',
       },
       description:
-        'TEKTON is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
+        'tekton/ui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
       buttons: {
-        previewDemo: 'Preview Demo',
-        getStarted: 'Get Started',
+        previewDemo: 'Live Demo',
+        getStarted: 'Sign up',
       },
     },
     mainImage: {
@@ -89,22 +89,27 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       placeholder: 'Main Dashboard Preview',
     },
     feature1: {
-      title: 'High-Quality Themes. Zero Design Effort.',
+      title: 'High-Quality Templates. Zero Design Effort.',
       accordionItems: [
         {
           title: 'Precision OKLCH Token System',
           content:
-            'Every theme ships with a complete OKLCH-based token architecture — atomic colors, semantic layers, typography, spacing, elevation, motion, density, state layers, and dark mode. All WCAG AA compliant out of the box.',
+            'Every template ships with a complete OKLCH-based token architecture — atomic colors, semantic layers, typography, spacing, elevation, motion, density, state layers, and dark mode. All WCAG AA compliant out of the box.',
         },
         {
           title: 'Fully Responsive Layout Tokens',
           content:
-            'Go beyond basic grids. TEKTON defines structured tokens for Shells (app frames), Pages (content layouts), and Sections (content blocks) that auto-adapt across Mobile, Tablet, and Desktop breakpoints. Your agent knows exactly how to scale.',
+            'Go beyond basic grids. tekton/ui defines structured tokens for Shells (app frames), Pages (content layouts), and Sections (content blocks) that auto-adapt across Mobile, Tablet, and Desktop breakpoints. Your agent knows exactly how to scale.',
         },
         {
           title: 'Built on 30+ shadcn/ui Components',
           content:
             'From Buttons and Cards to Dialogs, Tables, Sidebars, and Calendars — built on battle-tested shadcn/ui primitives organized into 3 tiers. Stable, consistent, and ready to ship.',
+        },
+        {
+          title: '6 Curated Templates, Ready Now',
+          content:
+            'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism — each handcrafted with 200+ tokens. Pick one, and your agent handles the rest.',
         },
       ],
       imageAlt: 'Feature Image 1',
@@ -115,12 +120,12 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'Works Everywhere MCP Runs',
           content:
-            'Not locked to one platform. Claude Code, Cursor, Windsurf, OpenAI Codex — if it supports MCP, TEKTON works. One npx command and your agent has full design capabilities.',
+            'Not locked to one platform. Claude Code, Cursor, Windsurf, OpenAI Codex — if it supports MCP, tekton/ui works. One npx command and your agent has full design capabilities.',
         },
         {
           title: 'Import a System, Not Just a Screen',
           content:
-            "Don't just generate one UI — import an entire design language. With tekton init, your agent sets up theme tokens, component libraries, and layout logic to design every flow in your product consistently.",
+            "Don't just generate one UI — import an entire design language. With tekton init, your agent sets up template tokens, component libraries, and layout logic to design every flow in your product consistently.",
         },
         {
           title: 'Production-Ready TypeScript Output',
@@ -136,12 +141,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'Reliable Code, Every Single Time',
           content:
-            'Raw LLMs guess at styles and layouts — TEKTON eliminates that. A semantic scoring algorithm places components using weighted rules, producing code that follows strict design constraints instead of hallucinating CSS.',
-        },
-        {
-          title: '6 Curated Themes, Ready Now',
-          content:
-            'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism — each handcrafted with 200+ tokens. Pick one, and your agent handles the rest.',
+            'Raw LLMs guess at styles and layouts — tekton/ui eliminates that. A semantic scoring algorithm places components using weighted rules, producing code that follows strict design constraints instead of hallucinating CSS.',
         },
         {
           title: 'Safety Protocols Built In',
@@ -153,12 +153,17 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     faq: {
       title: 'Frequently Asked Questions',
-      subtitle: 'Everything you need to know about Tekton.',
+      subtitle: 'Everything you need to know about tekton/ui.',
       items: [
         {
-          title: 'Is TEKTON free?',
+          title: 'How do I use the templates?',
           content:
-            'TEKTON requires a paid license. You need to purchase at least one theme to unlock MCP server access and start generating production UI with your agent.',
+            'Pick a template, install the MCP server with one command, and your AI coding tool is ready to generate production UI. During beta, your first template is free.',
+        },
+        {
+          title: 'Is tekton/ui free?',
+          content:
+            'tekton/ui requires a paid license. You need to purchase at least one template to unlock MCP server access and start generating production UI with your agent.',
         },
         {
           title: 'Can I use it for app development?',
@@ -180,22 +185,22 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
   },
   ko: {
     nav: {
-      brandName: 'TEKTON',
+      brandName: 'tekton/ui',
       pricing: '가격',
-      preview: '미리보기',
-      getStarted: '시작하기',
+      preview: '데모',
+      getStarted: '가입하기',
     },
     hero: {
-      brandName: 'TEKTON',
+      brandName: 'tekton/ui',
       title: {
-        part1: 'AI 에이전트를 위한',
-        part2: '디자인 인텔리전스',
+        part1: '에이전트를 위한',
+        part2: '에이전트-퍼스트 디자인 시스템',
       },
       description:
-        'TEKTON은 AI 에이전트가 진짜로 이해할 수 있는 첫 번째 디자인 시스템이에요. 구조화된 토큰과 레이아웃 로직으로 에이전트가 전문적이고 바로 쓸 수 있는 UI를 코드베이스에 직접 만들어줘요. Figma도, 추측도 필요 없어요.',
+        'tekton/ui는 AI 에이전트가 진짜로 이해할 수 있는 첫 번째 디자인 시스템이에요. 구조화된 토큰과 레이아웃 로직으로 에이전트가 전문적이고 바로 쓸 수 있는 UI를 코드베이스에 직접 만들어줘요. Figma도, 추측도 필요 없어요.',
       buttons: {
-        previewDemo: '데모 보기',
-        getStarted: '시작하기',
+        previewDemo: '라이브 데모',
+        getStarted: '가입하기',
       },
     },
     mainImage: {
@@ -203,22 +208,27 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       placeholder: '메인 대시보드 미리보기',
     },
     feature1: {
-      title: '고품질 테마. 디자인 노력은 제로.',
+      title: '고품질 템플릿. 디자인 노력은 제로.',
       accordionItems: [
         {
           title: '정밀한 OKLCH 토큰 시스템',
           content:
-            '모든 테마에 완전한 OKLCH 토큰 아키텍처가 들어있어요. 원자 색상, 시맨틱 레이어, 타이포그래피, 간격, 높이, 모션, 밀도, 상태 레이어, 다크 모드까지 전부요. 웹 접근성 WCAG AA 기준도 기본으로 만족해요.',
+            '모든 템플릿에 완전한 OKLCH 토큰 아키텍처가 들어있어요. 원자 색상, 시맨틱 레이어, 타이포그래피, 간격, 높이, 모션, 밀도, 상태 레이어, 다크 모드까지 전부요. 웹 접근성 WCAG AA 기준도 기본으로 만족해요.',
         },
         {
           title: '완전 반응형 레이아웃 토큰',
           content:
-            '기본 그리드를 넘어서요. TEKTON은 Shells(앱 프레임), Pages(콘텐츠 레이아웃), Sections(콘텐츠 블록)을 위한 토큰을 제공해요. 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되죠. 에이전트가 정확히 어떻게 확장할지 알고 있어요.',
+            '기본 그리드를 넘어서요. tekton/ui는 Shells(앱 프레임), Pages(콘텐츠 레이아웃), Sections(콘텐츠 블록)을 위한 토큰을 제공해요. 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되죠. 에이전트가 정확히 어떻게 확장할지 알고 있어요.',
         },
         {
           title: '30개 이상의 shadcn/ui 컴포넌트 기반',
           content:
             'Button, Card부터 Dialog, Table, Sidebar, Calendar까지 검증된 shadcn/ui 컴포넌트로 만들어졌어요. 안정적이고 일관되며 바로 배포할 수 있어요.',
+        },
+        {
+          title: '6개의 엄선된 템플릿, 지금 바로 사용',
+          content:
+            'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism. 각 템플릿마다 200개 이상의 토큰을 손수 만들었어요. 하나만 선택하면 에이전트가 알아서 처리해줘요.',
         },
       ],
       imageAlt: '기능 이미지 1',
@@ -229,12 +239,12 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'MCP가 실행되는 모든 곳에서 작동해요',
           content:
-            '하나의 플랫폼에 묶이지 않아요. Claude Code, Cursor, Windsurf, OpenAI Codex처럼 MCP를 지원하는 곳이라면 TEKTON이 다 작동해요. npx 명령 하나로 에이전트가 완전한 디자인 기능을 갖출 수 있어요.',
+            '하나의 플랫폼에 묶이지 않아요. Claude Code, Cursor, Windsurf, OpenAI Codex처럼 MCP를 지원하는 곳이라면 tekton/ui가 다 작동해요. npx 명령 하나로 에이전트가 완전한 디자인 기능을 갖출 수 있어요.',
         },
         {
           title: '화면 하나가 아니라 시스템 전체를 가져와요',
           content:
-            '단순히 UI 하나만 만드는 게 아니에요. 전체 디자인 언어를 가져와요. tekton init 명령으로 에이전트가 테마 토큰, 컴포넌트 라이브러리, 레이아웃 로직을 세팅해서 제품의 모든 화면을 일관되게 디자인해줘요.',
+            '단순히 UI 하나만 만드는 게 아니에요. 전체 디자인 언어를 가져와요. tekton init 명령으로 에이전트가 템플릿 토큰, 컴포넌트 라이브러리, 레이아웃 로직을 세팅해서 제품의 모든 화면을 일관되게 디자인해줘요.',
         },
         {
           title: '바로 쓸 수 있는 TypeScript 코드',
@@ -250,12 +260,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: '매번 믿을 수 있는 코드',
           content:
-            '일반 LLM은 스타일과 레이아웃을 추측해요. TEKTON은 이걸 없앴어요. 시맨틱 스코어링 알고리즘이 규칙 기반으로 컴포넌트를 배치해서, CSS를 만들어내는 대신 정확한 디자인 제약을 따르는 코드를 생성해요.',
-        },
-        {
-          title: '6개의 엄선된 테마, 지금 바로 사용',
-          content:
-            'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism. 각 테마마다 200개 이상의 토큰을 손수 만들었어요. 하나만 선택하면 에이전트가 알아서 처리해줘요.',
+            '일반 LLM은 스타일과 레이아웃을 추측해요. tekton/ui는 이걸 없앴어요. 시맨틱 스코어링 알고리즘이 규칙 기반으로 컴포넌트를 배치해서, CSS를 만들어내는 대신 정확한 디자인 제약을 따르는 코드를 생성해요.',
         },
         {
           title: '안전장치가 내장되어 있어요',
@@ -267,12 +272,17 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     faq: {
       title: '자주 묻는 질문',
-      subtitle: 'Tekton에 대해 알아야 할 모든 것.',
+      subtitle: 'tekton/ui에 대해 알아야 할 모든 것.',
       items: [
         {
-          title: 'TEKTON은 무료인가요?',
+          title: '템플릿은 어떻게 사용하나요?',
           content:
-            'TEKTON은 유료예요. MCP 서버에 접근하고 에이전트로 실제 사용 가능한 UI를 만들려면 최소 테마 하나는 구매하셔야 해요.',
+            '템플릿을 고르고, 명령어 하나로 MCP 서버를 설치하면 AI 코딩 도구에서 바로 프로덕션 UI를 만들 수 있어요. 베타 기간에는 첫 번째 템플릿이 무료예요.',
+        },
+        {
+          title: 'tekton/ui는 무료인가요?',
+          content:
+            'tekton/ui는 유료예요. MCP 서버에 접근하고 에이전트로 실제 사용 가능한 UI를 만들려면 최소 템플릿 하나는 구매하셔야 해요.',
         },
         {
           title: '앱 개발에 사용할 수 있나요?',

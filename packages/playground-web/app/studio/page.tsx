@@ -12,7 +12,7 @@ import { loadThemes } from './actions';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Select Theme | Tekton Studio',
+  title: 'Select Theme | tekton/studio',
   description: 'Choose a design system theme to start building.',
 };
 

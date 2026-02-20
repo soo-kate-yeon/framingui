@@ -89,7 +89,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
         {isCollapsed ? (
           // 접힌 상태: 로고 + 토글 버튼 세로 배치
           <div className="flex flex-col items-center gap-3">
-            <div className="text-lg font-bold tracking-tighter">T</div>
+            <div className="text-lg font-bold tracking-tighter">t</div>
             <button
               type="button"
               onClick={toggleSidebar}
@@ -103,8 +103,8 @@ export function Sidebar({ className = '' }: SidebarProps) {
           // 펼친 상태: 로고 + 토글 버튼 가로 배치
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xl font-bold tracking-tighter">TEKTON</div>
-              <span className="text-xs font-medium text-neutral-500 mt-1 block">Studio</span>
+              <div className="text-xl font-bold tracking-tighter">tekton/ui</div>
+              <span className="text-xs font-medium text-neutral-500 mt-1 block">studio</span>
             </div>
             <button
               type="button"

@@ -31,63 +31,67 @@ export default function MarketingPreviewPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-12">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 1: Color Token</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 1-0: Color Token</h2>
             <p className="text-slate-400 text-sm mb-4">
               Semantic swatches with fan-out interaction.
             </p>
             <ColorTokenAsset />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 1: Layout Token</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 1-1: Layout Token</h2>
             <LayoutTokenAsset />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 1: Components</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 1-2: Components</h2>
             <ComponentGalleryAsset />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">
+              Section 1-3: Template Efficiency
+            </h2>
+            <p className="text-slate-400 text-sm mb-4">High-quality production skeletons.</p>
+            <TemplateEfficiencyAsset />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-24">
           <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 2: MCP Versatility</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 2-0: MCP Versatility</h2>
             <p className="text-slate-400 text-sm mb-4">
               Core adapter connecting universal frameworks.
             </p>
             <MCPVersatilityAsset />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 2: Design System Core</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">
+              Section 2-1: Design System Core
+            </h2>
             <p className="text-slate-400 text-sm mb-4">
               Exploding components into design constraints.
             </p>
             <DesignSystemCoreAsset />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 2: TS Code Export</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 2-2: TS Code Export</h2>
             <p className="text-slate-400 text-sm mb-4">Clean, type-safe code generation preview.</p>
             <TSCodeExportAsset />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-24">
           <div>
             <h2 className="text-xl font-bold text-slate-900 mb-2">
-              Section 3: Constraint Reliability
+              Section 3-0: Constraint Reliability
             </h2>
             <p className="text-slate-400 text-sm mb-4">No-hallucination scan and validation.</p>
             <ConstraintReliabilityAsset />
           </div>
           <div>
             <h2 className="text-xl font-bold text-slate-900 mb-2">
-              Section 3: Template Efficiency
+              Section 3-1: Verification Logic
             </h2>
-            <p className="text-slate-400 text-sm mb-4">High-quality production skeletons.</p>
-            <TemplateEfficiencyAsset />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 mb-2">Section 3: Verification Logic</h2>
             <p className="text-slate-400 text-sm mb-4">Terminal simulation of CI/CD checks.</p>
             <VerificationLogicAsset />
           </div>

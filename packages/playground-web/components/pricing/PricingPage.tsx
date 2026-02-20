@@ -215,7 +215,7 @@ export function PricingPage() {
             const planData = PLANS.find((p) => p.id === planId)!;
 
             return (
-              <FadeIn key={planId} delay={index * 0.1}>
+              <FadeIn key={planId} delay={index * 0.1} className="h-full">
                 <div
                   className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-lg ${
                     planData.featured
@@ -246,36 +246,17 @@ export function PricingPage() {
                     <p className="text-sm text-neutral-500 mb-6">{planContent.description}</p>
 
                     {/* 가격 */}
-                    <div className="min-h-[100px] flex items-end">
-                      {planId === 'single' ? (
-                        /* Single Template - 베타 무료 */
-                        <div className="relative w-full">
-                          {/* 템플릿별 상이 (취소선) */}
-                          <div className="mb-2">
-                            <span className="text-xl md:text-2xl font-bold text-neutral-400 line-through">
-                              {planContent.priceLabel}
-                            </span>
-                            <p className="text-xs text-neutral-400 mt-1 line-through">
-                              {planContent.priceSub}
-                            </p>
-                          </div>
-                          {/* FREE 표시 */}
-                          <div className="flex items-center gap-2">
-                            <span className="text-4xl md:text-5xl font-bold text-black">FREE</span>
-                            <span className="text-sm text-neutral-500">during beta</span>
-                          </div>
+                    <div className="min-h-[60px] flex items-end">
+                      <div className="w-full">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
+                            {planId === 'single' ? 'FREE' : planContent.priceLabel}
+                          </span>
+                          <span className="text-sm text-neutral-500">
+                            {planId === 'single' ? 'during beta' : planContent.priceSub}
+                          </span>
                         </div>
-                      ) : (
-                        /* Double & Creator - 정상 가격 */
-                        <div className="w-full">
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
-                              {planContent.priceLabel}
-                            </span>
-                            <span className="text-neutral-500 text-sm">{planContent.priceSub}</span>
-                          </div>
-                        </div>
-                      )}
+                      </div>
                     </div>
                   </div>
 

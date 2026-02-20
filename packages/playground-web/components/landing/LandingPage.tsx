@@ -173,6 +173,7 @@ export function LandingPage() {
                   {s1Active === 0 && <ColorTokenAsset />}
                   {s1Active === 1 && <LayoutTokenAsset />}
                   {s1Active === 2 && <ComponentGalleryAsset />}
+                  {s1Active === 3 && <TemplateEfficiencyAsset />}
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -235,8 +236,7 @@ export function LandingPage() {
                   className="w-full h-full"
                 >
                   {s3Active === 0 && <ConstraintReliabilityAsset />}
-                  {s3Active === 1 && <TemplateEfficiencyAsset />}
-                  {s3Active === 2 && <VerificationLogicAsset />}
+                  {s3Active === 1 && <VerificationLogicAsset />}
                 </motion.div>
               </AnimatePresence>
             </div>

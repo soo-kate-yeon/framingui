@@ -4,10 +4,11 @@ import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Tekton Playground',
-    template: '%s | Tekton Playground',
+    default: 'tekton/ui - Agentic Styling Engine',
+    template: '%s | tekton/ui',
   },
-  description: 'OKLCH-based design token generator playground',
+  description:
+    'The first design system AI agents can actually understand. Structured tokens and layout logic for production-ready UI.',
 };
 
 export default function RootLayout({
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <body className="antialiased">
         <Providers>{children}</Providers>
       </body>

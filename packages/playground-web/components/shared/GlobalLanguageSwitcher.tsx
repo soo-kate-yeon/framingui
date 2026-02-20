@@ -18,20 +18,16 @@ const localeNames: Record<GlobalLocale, string> = {
 };
 
 export function GlobalLanguageSwitcher({ className = '' }: GlobalLanguageSwitcherProps) {
-  const { locale, setLocale } = useGlobalLanguage();
+  const { locale, toggleLocale } = useGlobalLanguage();
 
   return (
-    <select
-      value={locale}
-      onChange={(e) => setLocale(e.target.value as GlobalLocale)}
-      className={`px-3 py-1.5 text-sm font-medium text-neutral-900 bg-white border border-neutral-300 rounded-md hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:ring-offset-2 ${className}`}
-      aria-label="Select language"
+    <button
+      type="button"
+      onClick={toggleLocale}
+      className={`px-3 py-1.5 text-sm font-medium text-neutral-900 bg-white border border-neutral-300 rounded-full hover:bg-neutral-50 transition-colors ${className}`}
+      aria-label={`Switch to ${locale === 'en' ? '한국어' : 'English'}`}
     >
-      {Object.entries(localeNames).map(([code, name]) => (
-        <option key={code} value={code}>
-          {name}
-        </option>
-      ))}
-    </select>
+      {localeNames[locale === 'en' ? 'ko' : 'en']}
+    </button>
   );
 }
