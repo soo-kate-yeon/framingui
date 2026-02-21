@@ -10,7 +10,7 @@ export interface LandingContent {
   nav: {
     brandName: string;
     pricing: string;
-    preview: string;
+    tryStudio: string;
     getStarted: string;
   };
   hero: {
@@ -21,7 +21,7 @@ export interface LandingContent {
     };
     description: string;
     buttons: {
-      previewDemo: string;
+      tryStudio: string;
       getStarted: string;
     };
   };
@@ -68,7 +68,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     nav: {
       brandName: 'tekton/ui',
       pricing: 'Pricing',
-      preview: 'Demo',
+      tryStudio: 'Try Studio',
       getStarted: 'Sign up',
     },
     hero: {
@@ -80,7 +80,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       description:
         'tekton/ui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
       buttons: {
-        previewDemo: 'Live Demo',
+        tryStudio: 'Try Studio Free',
         getStarted: 'Sign up',
       },
     },
@@ -187,7 +187,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     nav: {
       brandName: 'tekton/ui',
       pricing: '가격',
-      preview: '데모',
+      tryStudio: 'Studio 체험',
       getStarted: '가입하기',
     },
     hero: {
@@ -199,7 +199,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       description:
         'tekton/ui는 AI 에이전트가 진짜로 이해할 수 있는 첫 번째 디자인 시스템이에요. 구조화된 토큰과 레이아웃 로직으로 에이전트가 전문적이고 바로 쓸 수 있는 UI를 코드베이스에 직접 만들어줘요. Figma도, 추측도 필요 없어요.',
       buttons: {
-        previewDemo: '라이브 데모',
+        tryStudio: '무료로 Studio 체험하기',
         getStarted: '가입하기',
       },
     },

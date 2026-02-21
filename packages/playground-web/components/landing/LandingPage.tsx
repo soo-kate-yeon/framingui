@@ -92,10 +92,10 @@ export function LandingPage() {
                   {content.nav.pricing}
                 </Button>
                 <Button
-                  onClick={() => router.push('/studio/templates')}
+                  onClick={() => router.push('/studio')}
                   className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none"
                 >
-                  {content.nav.preview}
+                  {content.nav.tryStudio || 'Try Studio'}
                 </Button>
                 <Button
                   onClick={() => router.push('/auth/signup')}
@@ -134,14 +134,14 @@ export function LandingPage() {
         <FadeIn delay={0.4}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
-              onClick={() => router.push('/studio/templates')}
-              className="w-full sm:w-auto h-12 px-8 rounded-full text-base font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none transition-colors"
+              onClick={() => router.push('/studio')}
+              className="w-full sm:w-auto h-12 px-8 rounded-full text-base font-medium bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
             >
-              {content.hero.buttons.previewDemo}
+              {content.hero.buttons.tryStudio || 'Try Studio Free'}
             </Button>
             <Button
               onClick={() => router.push('/auth/signup')}
-              className="w-full sm:w-auto h-12 px-8 rounded-full text-base font-medium bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+              className="w-full sm:w-auto h-12 px-8 rounded-full text-base font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none transition-colors"
             >
               {content.hero.buttons.getStarted}
             </Button>

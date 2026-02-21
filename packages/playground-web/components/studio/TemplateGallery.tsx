@@ -76,13 +76,7 @@ export function TemplateGallery({ templates, className = '' }: TemplateGalleryPr
 
   return (
     <div
-      className={`template-gallery ${className}`}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-        gap: 'var(--tekton-spacing-lg, 16px)',
-        padding: 'var(--tekton-spacing-lg, 16px)',
-      }}
+      className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 ${className}`}
     >
       {templates.map((template) => {
         // 언어에 맞는 description 선택
