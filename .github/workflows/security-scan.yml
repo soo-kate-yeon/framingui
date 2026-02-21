@@ -41,7 +41,7 @@ jobs:
       - name: Run npm audit (critical and high only)
         run: |
           echo "Running npm audit for critical and high vulnerabilities..."
-          pnpm audit --audit-level=high --production 2>&1 | tee audit-results.txt || true
+          pnpm audit --audit-level=high --prod 2>&1 | tee audit-results.txt || true
 
       - name: Check audit results
         id: audit-check
