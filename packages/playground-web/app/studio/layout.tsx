@@ -11,7 +11,6 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { SidebarProvider, useSidebar } from '../../contexts/SidebarContext';
 import { StudioLanguageProvider } from '../../contexts/StudioLanguageContext';
@@ -57,11 +56,8 @@ function StudioLayoutContent({ children }: StudioLayoutProps) {
 }
 
 export default function StudioLayout({ children }: StudioLayoutProps) {
-  const pathname = usePathname();
-
-  // /studio 메인 페이지에서만 sidebar 열림, 나머지 모든 상세 페이지에서는 접힘
-  const isMainPage = pathname === '/studio';
-  const defaultCollapsed = !isMainPage;
+  // 모든 페이지에서 sidebar는 기본적으로 접힌 상태
+  const defaultCollapsed = true;
 
   return (
     <StudioLanguageProvider>
