@@ -113,8 +113,8 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
       single: {
         name: 'Single Template',
         description: 'Start with the perfect template for your project.',
-        priceLabel: 'See templates',
-        priceSub: 'Price varies by template',
+        priceLabel: '$59',
+        priceSub: 'one-time payment',
         cta: 'Browse Templates',
         features: [
           '1 template of your choice',
@@ -246,8 +246,8 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
       single: {
         name: '단일 템플릿',
         description: '프로젝트에 딱 맞는 템플릿 하나로 시작해보세요.',
-        priceLabel: '템플릿 보기',
-        priceSub: '템플릿별 가격 상이',
+        priceLabel: '$59',
+        priceSub: '1회 결제',
         cta: '템플릿 둘러보기',
         features: [
           '원하는 템플릿 1개',

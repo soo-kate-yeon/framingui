@@ -117,7 +117,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'A minimalist design system featuring sharp corners and high contrast. Build professional web applications quickly with clear visual hierarchy and clean typography.',
     descriptionKo:
       '날카로운 모서리와 높은 대비가 특징인 미니멀리즘 디자인 시스템이에요. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 앱을 빠르게 만들 수 있어요.',
-    price: 49,
+    price: 59,
     screenshots: [
       getScreenshotUrl('square-minimalism', 'hero.png'),
       getScreenshotUrl('square-minimalism', 'dashboard.png'),
@@ -258,7 +258,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'A vibrant design system with energetic colors and bold typography for fitness and wellness brands. Motivate users with dynamic visuals and engaging interactions.',
     descriptionKo:
       '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스와 웰니스 브랜드를 위한 디자인 시스템이에요. 역동적인 비주얼과 매력적인 인터랙션으로 사용자에게 동기를 부여해요.',
-    price: 49,
+    price: 59,
     screenshots: [
       getScreenshotUrl('equinox-fitness', 'hero.png'),
       getScreenshotUrl('equinox-fitness', 'workouts.png'),
@@ -399,7 +399,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'A minimal design system with soft corners and gentle colors for friendly user experiences. Approachable and comfortable for consumer-facing applications.',
     descriptionKo:
       '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 만드는 미니멀 디자인 시스템이에요. 소비자 대상 앱에 접근하기 쉽고 편안해요.',
-    price: 49,
+    price: 59,
     screenshots: [
       getScreenshotUrl('round-minimal', 'hero.png'),
       getScreenshotUrl('round-minimal', 'features.png'),
@@ -540,7 +540,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'A design system with classic magazine layouts and elegant typography for content-focused websites. Honors the traditions of readability and editorial design.',
     descriptionKo:
       '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심 웹사이트를 위한 디자인 시스템이에요. 가독성과 편집 디자인의 전통을 이어가요.',
-    price: 49,
+    price: 59,
     screenshots: [
       getScreenshotUrl('classic-magazine', 'hero.png'),
       getScreenshotUrl('classic-magazine', 'articles.png'),

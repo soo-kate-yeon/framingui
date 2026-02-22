@@ -66,55 +66,50 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
-      {/* Sticky Nav Bar */}
-      <AnimatePresence>
-        {isScrolled && (
-          <motion.nav
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-neutral-200"
+      {/* Top Nav Bar */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-white/80 backdrop-blur-md border-b border-neutral-200'
+            : 'bg-transparent border-b border-transparent'
+        }`}
+      >
+        <div className="container mx-auto px-6 md:px-8 h-16 flex items-center justify-between">
+          <div
+            className="text-xl font-bold tracking-tighter cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <div className="container mx-auto px-6 md:px-8 h-16 flex items-center justify-between">
-              <div
-                className="text-xl font-bold tracking-tighter cursor-pointer"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                {content.nav.brandName || content.hero.brandName}
-              </div>
-              <div className="flex items-center gap-3">
-                <GlobalLanguageSwitcher className="hidden sm:block" />
-                <Button
-                  onClick={() => router.push('/pricing')}
-                  className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
-                >
-                  {content.nav.pricing}
-                </Button>
-                <Button
-                  onClick={() => router.push('/studio')}
-                  className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none"
-                >
-                  {content.nav.tryStudio || 'Try Studio'}
-                </Button>
-                <Button
-                  onClick={() => router.push('/auth/signup')}
-                  className="h-9 px-4 rounded-full text-sm font-medium bg-neutral-900 text-white hover:bg-neutral-800"
-                >
-                  {content.nav.getStarted}
-                </Button>
-              </div>
-            </div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
+            {content.nav.brandName || content.hero.brandName}
+          </div>
+          <div className="flex items-center gap-3">
+            <GlobalLanguageSwitcher />
+            <Button
+              onClick={() => router.push('/pricing')}
+              className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
+            >
+              {content.nav.pricing}
+            </Button>
+            <Button
+              onClick={() => router.push('/studio')}
+              className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none"
+            >
+              {content.nav.tryStudio || 'Try Studio'}
+            </Button>
+            <Button
+              onClick={() => router.push('/auth/signup')}
+              className="h-9 px-4 rounded-full text-sm font-medium bg-neutral-900 text-white hover:bg-neutral-800"
+            >
+              {content.nav.getStarted}
+            </Button>
+          </div>
+        </div>
+      </nav>
 
       {/* Header / Hero Section */}
       <header className="container mx-auto px-6 md:px-8 pt-20 pb-20 md:pt-32 md:pb-32 text-center max-w-5xl">
         <FadeIn delay={0.1}>
           <div className="mb-8 flex justify-center items-center gap-4">
             <div className="text-2xl font-bold tracking-tighter">{content.hero.brandName}</div>
-            <GlobalLanguageSwitcher className="sm:hidden" />
           </div>
         </FadeIn>
 

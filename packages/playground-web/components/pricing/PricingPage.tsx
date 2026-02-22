@@ -18,6 +18,7 @@ import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getPricingContent } from '../../data/i18n/pricing';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePaddle } from '../../hooks/usePaddle';
+import { PADDLE_CONFIG } from '../../lib/paddle/config';
 
 /* ─── 애니메이션 ─── */
 function FadeIn({
@@ -48,9 +49,9 @@ const PLANS = [
     id: 'single',
     name: 'Single Template',
     description: 'Start with the perfect template for your project.',
-    price: null, // 템플릿별 상이
-    priceLabel: 'See templates',
-    priceSub: 'Price varies by template',
+    price: 59,
+    priceLabel: '$59',
+    priceSub: 'one-time payment',
     cta: 'Browse Templates',
     ctaHref: '/studio',
     featured: false,
@@ -140,11 +141,8 @@ export function PricingPage() {
       return;
     }
 
-    // Paddle Price ID는 환경 변수에서 가져와야 함
-    const priceId =
-      planId === 'double'
-        ? process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_DOUBLE
-        : process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_CREATOR;
+    // Paddle Price ID (lib/paddle/config.ts와 동일한 환경변수 사용)
+    const priceId = PADDLE_CONFIG.prices[planId];
 
     if (!priceId) {
       console.error('[Paddle] Price configuration missing for plan:', planId);
