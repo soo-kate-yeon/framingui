@@ -8,9 +8,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
 import { SelectionBar } from './SelectionBar';
+import { TemplateModal } from './TemplateModal';
+import { getTemplateData } from '../../data/templates';
 import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 
 // ============================================================================
@@ -45,9 +46,11 @@ export function TemplateGallery({
   className = '',
   selectionMode,
 }: TemplateGalleryProps) {
-  const router = useRouter();
   const { locale } = useStudioLanguage();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Modal State
+  const [activeModalId, setActiveModalId] = useState<string | null>(null);
 
   const maxSelection = selectionMode === 'double' ? 2 : 0;
   const isSelectionMode = !!selectionMode;
@@ -55,7 +58,8 @@ export function TemplateGallery({
   // 선택 모드: 카드 클릭 = 선택/해제 토글
   const handleCardClick = (templateId: string) => {
     if (!isSelectionMode) {
-      router.push(`/studio/template/${templateId}`);
+      // route 대신 모달 띄우기
+      setActiveModalId(templateId);
       return;
     }
 
@@ -104,10 +108,13 @@ export function TemplateGallery({
     .map((id) => templates.find((t) => t.id === id)?.name)
     .filter(Boolean) as string[];
 
+  // Modal Data
+  const activeTemplateData = activeModalId ? getTemplateData(activeModalId) : null;
+
   return (
     <>
       <div
-        className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 ${isSelectionMode ? 'pb-24' : ''} ${className}`}
+        className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-0 ${isSelectionMode ? 'pb-32' : ''} ${className}`}
       >
         {templates.map((template) => {
           const description =
@@ -135,6 +142,15 @@ export function TemplateGallery({
           );
         })}
       </div>
+
+      {/* 모달 렌더링 */}
+      {activeTemplateData && (
+        <TemplateModal
+          template={activeTemplateData}
+          isOpen={!!activeModalId}
+          onClose={() => setActiveModalId(null)}
+        />
+      )}
 
       {/* 선택 모드일 때만 하단 바 표시 */}
       {isSelectionMode && (

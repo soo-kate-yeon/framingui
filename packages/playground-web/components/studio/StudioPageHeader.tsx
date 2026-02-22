@@ -58,9 +58,11 @@ export function StudioPageHeader({ className = '', selectionMode }: StudioPageHe
   const t = selectionMode ? selectionContent[locale] : content[locale];
 
   return (
-    <header className={`mb-12 ${className}`}>
-      <span className="text-sm font-medium text-neutral-500 mb-4 block">{t.subtitle}</span>
-      <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-6">
+    <header className={className}>
+      <span className="text-xs font-semibold tracking-widest uppercase text-neutral-500 mb-3 block">
+        {t.subtitle}
+      </span>
+      <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-neutral-950 mb-4">
         {t.title}
       </h1>
       <p className="text-base md:text-lg text-neutral-600 max-w-2xl leading-relaxed">

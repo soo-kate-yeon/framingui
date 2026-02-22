@@ -27,33 +27,39 @@ export function Footer({ className = '' }: FooterProps) {
 
   return (
     <footer
-      className={`border-t border-neutral-200 bg-white text-neutral-900 py-12 transition-colors ${className}`}
+      className={`border-t border-neutral-200 bg-white text-neutral-950 py-24 md:py-32 transition-colors ${className}`}
     >
-      <div className="container mx-auto px-6 md:px-8">
-        <div className="flex flex-col md:flex-row justify-between gap-8 mb-8">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8">
+        <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
           {/* Brand & Copyright */}
           <div>
-            <div className="text-xl font-bold tracking-tighter mb-4">{content.brandName}</div>
-            <p className="text-sm text-neutral-500 mb-2">
+            <div className="text-2xl font-bold tracking-tighter mb-4 text-neutral-950">
+              {content.brandName}
+            </div>
+            <p className="text-base text-neutral-600 mb-2">
               &copy; {new Date().getFullYear()} {content.copyright}
             </p>
           </div>
 
           {/* Links + Language Toggle */}
-          <nav className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm font-medium">
+          <nav className="flex flex-wrap items-center gap-6 sm:gap-8 text-base font-medium">
             {LEGAL_LINKS.map(({ href, label }) => (
-              <Link key={href} href={href} className="transition-colors hover:text-neutral-900">
+              <Link
+                key={href}
+                href={href}
+                className="transition-colors text-neutral-600 hover:text-neutral-950"
+              >
                 {label}
               </Link>
             ))}
-            <GlobalLanguageSwitcher className="bg-white border-neutral-300 text-neutral-900 hover:bg-neutral-50" />
+            <GlobalLanguageSwitcher className="bg-white border-neutral-300 text-neutral-950 hover:bg-neutral-50 rounded-full" />
           </nav>
         </div>
 
         {/* Business Info (Legal Requirement) */}
-        <div className="pt-8 border-t border-neutral-100 text-xs text-neutral-400 space-y-1">
-          <p className="font-semibold text-neutral-500">{content.businessInfo.operatedBy}</p>
-          <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+        <div className="pt-12 border-t border-neutral-200 text-sm text-neutral-500 space-y-2 leading-relaxed">
+          <p className="font-medium text-neutral-600">{content.businessInfo.operatedBy}</p>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-6">
             <p>{content.businessInfo.representative}</p>
           </div>
           <p>{content.businessInfo.address}</p>

@@ -11,8 +11,7 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { Menu, X } from 'lucide-react';
-import { SidebarProvider, useSidebar } from '../../contexts/SidebarContext';
+import { SidebarProvider } from '../../contexts/SidebarContext';
 import { StudioLanguageProvider } from '../../contexts/StudioLanguageContext';
 import { Sidebar } from '../../components/studio/Sidebar';
 import { Footer } from '../../components/shared/Footer';
@@ -22,33 +21,16 @@ interface StudioLayoutProps {
 }
 
 function StudioLayoutContent({ children }: StudioLayoutProps) {
-  const { isMobileOpen, toggleMobileMenu, closeMobileMenu } = useSidebar();
-
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50 selection:bg-neutral-900 selection:text-white font-sans text-neutral-900">
-      {/* Mobile Hamburger Button */}
-      <button
-        type="button"
-        onClick={toggleMobileMenu}
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-white border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors shadow-sm"
-        aria-label="Toggle menu"
-      >
-        {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div className="md:hidden fixed inset-0 bg-neutral-900/50 z-40" onClick={closeMobileMenu} />
-      )}
-
-      {/* Sidebar - 항상 동일한 컴포넌트 */}
+    <div className="flex h-screen overflow-hidden bg-white selection:bg-neutral-950 selection:text-white font-sans text-neutral-950">
+      {/* Sidebar - Desktop Sidebar & Mobile Top Nav Dropdown */}
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-white pt-16 md:pt-0">
         <div className="min-h-full flex flex-col">
           <div className="flex-1">{children}</div>
-          <Footer className="bg-white/50" />
+          <Footer className="bg-white" />
         </div>
       </main>
     </div>

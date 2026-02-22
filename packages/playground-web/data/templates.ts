@@ -249,6 +249,100 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
+  'editorial-tech': {
+    id: 'editorial-tech',
+    name: 'Editorial Tech',
+    tagline: 'Lucid, airy, typography-first rational design',
+    taglineKo: '명료하고 여유로운 타이포그래피 중심의 이성적인 디자인',
+    description:
+      'An elegant design system blending intellectual clarity with airy layouts. Prioritizes large, clean headings and generous white space to create a rational "blank canvas" atmosphere.',
+    descriptionKo:
+      '지적인 명확성과 여유로운 레이아웃을 결합한 우아한 디자인 시스템입니다. 크고 깔끔한 헤딩과 넉넉한 여백을 우선시하여 이성적인 "빈 캔버스" 같은 분위기를 조성합니다.',
+    price: 59,
+    screenshots: [
+      getScreenshotUrl('editorial-tech', 'hero.png'),
+      getScreenshotUrl('editorial-tech', 'articles.png'),
+      getScreenshotUrl('editorial-tech', 'typography.png'),
+      getScreenshotUrl('editorial-tech', 'layout.png'),
+    ],
+    features: [
+      {
+        icon: '1',
+        title: 'Airy Canvas Layouts',
+        titleKo: '에어리 캔버스 레이아웃',
+        subtitle: 'Generous padding and wide margins',
+        subtitleKo: '넉넉한 패딩과 넓은 마진',
+        description:
+          'Features a systematic approach to white space, treating the screen as an open, breathable canvas that gives content maximum clarity.',
+        descriptionKo:
+          '여백에 대한 체계적인 접근 방식을 특징으로 하며, 화면을 개방적이고 숨 쉴 수 있는 캔버스로 취급하여 콘텐츠에 최대한의 명확성을 부여합니다.',
+      },
+      {
+        icon: '2',
+        title: 'Typography-First Hierarchy',
+        titleKo: '타이포그래피 중심의 계층',
+        subtitle: 'Big clean headings, high legibility',
+        subtitleKo: '크고 깔끔한 헤딩, 높은 가독성',
+        description:
+          'Information architecture driven entirely by font scales, weights, and tracking. Achieves logical separation without relying on heavy borders or backgrounds.',
+        descriptionKo:
+          '오로지 폰트 스케일, 웨이트, 자간에 의해 주도되는 정보 아키텍처. 무거운 테두리나 배경에 의존하지 않고도 논리적인 분리를 달성합니다.',
+      },
+      {
+        icon: '3',
+        title: 'Systematic Neutrals',
+        titleKo: '체계적인 뉴트럴',
+        subtitle: 'Pure grays with stark contrast',
+        subtitleKo: '뚜렷한 대비를 보여주는 순수한 그레이',
+        description:
+          'A restrained, intellectual palette reliant on neutral 950s and pure white canvases to emphasize the content rather than the container.',
+        descriptionKo:
+          '컨테이너보다는 콘텐츠를 강조하기 위해 뉴트럴 950과 순백의 캔버스에 의존하는 절제된 지적인 팔레트입니다.',
+      },
+      {
+        icon: '4',
+        title: 'Measured Curves',
+        titleKo: '절제된 곡선',
+        subtitle: 'Alloy of sharp logic and human circularity',
+        subtitleKo: '날카로운 논리와 인간적인 둥글음의 조화',
+        description:
+          'Select components feature distinct pill shapes (rounded-full) functioning as accents amidst an otherwise sharp, geometric environment.',
+        descriptionKo:
+          '선택된 컴포넌트는 그 외에는 날카롭고 기하학적인 환경 속에서 악센트로 기능하는 독특한 알약 모양(rounded-full)을 특징으로 합니다.',
+      },
+    ],
+    recommendedFor: [
+      {
+        title: 'Design Portfolios & Agencys',
+        titleKo: '디자인 포트폴리오 및 에이전시',
+        description:
+          'Lets the work speak for itself by removing UI clutter and focusing purely on the visual content and underlying grid.',
+        descriptionKo:
+          'UI의 어수선함을 제거하고 시각적 콘텐츠와 기본 그리드에만 순수하게 집중함으로써 작품 자체가 스스로를 대변하게 합니다.',
+      },
+      {
+        title: 'Intellectual Publications',
+        titleKo: '지적인 출판물',
+        description:
+          'Perfect for long-form essays, tech-journalism, or deep-dive newsletters requiring sustained reader focus.',
+        descriptionKo:
+          '지속적인 독자의 집중이 필요한 긴 에세이, 테크 저널리즘 또는 심층 뉴스레터에 완벽합니다.',
+      },
+    ],
+    howToUse: [
+      ...SHARED_HOW_TO_USE,
+      {
+        step: 5,
+        title: 'Use generate-blueprint Tool',
+        titleKo: 'generate-blueprint 툴 사용',
+        description:
+          'In Claude Code, request: "Use generate-blueprint tool with themeId: editorial-tech, layout: feed, components: Card, Heading, Article"',
+        descriptionKo:
+          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: editorial-tech, layout: feed, components: Card, Heading, Article"',
+      },
+    ],
+  },
+
   'dark-boldness': {
     id: 'dark-boldness',
     name: 'Dark Boldness',

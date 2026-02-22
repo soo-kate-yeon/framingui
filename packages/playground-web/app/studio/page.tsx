@@ -28,18 +28,20 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const galleryItems = await loadThemes();
 
   return (
-    <div className="p-6 md:p-12 max-w-7xl mx-auto">
+    <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
       {/* Header with i18n support */}
       <StudioPageHeader selectionMode={selectionMode} />
 
       {/* Real Theme Gallery */}
-      <div className="border-t border-neutral-200 pt-12">
+      <div className="mt-12 flex flex-col">
         {galleryItems && galleryItems.length > 0 ? (
           <TemplateGallery templates={galleryItems} selectionMode={selectionMode} />
         ) : (
-          <div className="text-center py-12">
-            <p className="text-neutral-500 mb-4">No themes found or error loading themes</p>
-            <p className="text-xs text-neutral-400">
+          <div className="text-center py-24">
+            <p className="text-lg font-medium text-neutral-600 mb-4">
+              No themes found or error loading themes
+            </p>
+            <p className="text-sm text-neutral-400">
               Check browser console and server terminal for errors
             </p>
           </div>
