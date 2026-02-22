@@ -128,7 +128,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         description: 'Best value for developers who need more.',
         priceLabel: '$99',
         priceSub: 'one-time payment',
-        cta: 'Get Started',
+        cta: 'Choose Templates',
         badge: 'Most Popular',
         features: [
           '2 templates of your choice',
@@ -261,7 +261,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         description: '더 많이 필요한 분들을 위한 최고의 가성비.',
         priceLabel: '$99',
         priceSub: '한 번만 결제',
-        cta: '시작하기',
+        cta: '템플릿 고르기',
         badge: '가장 인기 있는',
         features: [
           '원하는 템플릿 2개',

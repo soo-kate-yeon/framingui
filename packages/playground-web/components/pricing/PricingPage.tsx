@@ -70,8 +70,8 @@ const PLANS = [
     price: 99,
     priceLabel: '$99',
     priceSub: 'one-time payment',
-    cta: 'Get Started',
-    ctaHref: '/auth/signup',
+    cta: 'Choose Templates',
+    ctaHref: '/studio?plan=double',
     featured: true,
     badge: 'Most Popular',
     features: [
@@ -281,8 +281,14 @@ export function PricingPage() {
                       onClick={() => {
                         if (planId === 'single') {
                           handleBetaAccess();
+                        } else if (planId === 'double') {
+                          if (!user) {
+                            router.push('/auth/login');
+                            return;
+                          }
+                          router.push('/studio?plan=double');
                         } else {
-                          handleCheckout(planId as 'double' | 'creator');
+                          handleCheckout('creator');
                         }
                       }}
                       className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${

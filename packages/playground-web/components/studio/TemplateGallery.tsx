@@ -7,8 +7,10 @@
 
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
+import { SelectionBar } from './SelectionBar';
 import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 
 // ============================================================================
@@ -30,19 +32,42 @@ interface TemplateGalleryProps {
   templates: Template[];
   /** 추가 className */
   className?: string;
+  /** 선택 모드 (double 패키지) */
+  selectionMode?: 'double';
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function TemplateGallery({ templates, className = '' }: TemplateGalleryProps) {
+export function TemplateGallery({
+  templates,
+  className = '',
+  selectionMode,
+}: TemplateGalleryProps) {
   const router = useRouter();
   const { locale } = useStudioLanguage();
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  // Handle template card click - navigate to template detail page
-  const handleTemplateClick = (templateId: string) => {
-    router.push(`/studio/template/${templateId}`);
+  const maxSelection = selectionMode === 'double' ? 2 : 0;
+  const isSelectionMode = !!selectionMode;
+
+  // 선택 모드: 카드 클릭 = 선택/해제 토글
+  const handleCardClick = (templateId: string) => {
+    if (!isSelectionMode) {
+      router.push(`/studio/template/${templateId}`);
+      return;
+    }
+
+    setSelectedIds((prev) => {
+      if (prev.includes(templateId)) {
+        return prev.filter((id) => id !== templateId);
+      }
+      if (prev.length >= maxSelection) {
+        return prev;
+      }
+      return [...prev, templateId];
+    });
   };
 
   // i18n messages
@@ -74,28 +99,51 @@ export function TemplateGallery({ templates, className = '' }: TemplateGalleryPr
     );
   }
 
-  return (
-    <div
-      className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 ${className}`}
-    >
-      {templates.map((template) => {
-        // 언어에 맞는 description 선택
-        const description =
-          locale === 'ko' && template.descriptionKo ? template.descriptionKo : template.description;
+  // 선택된 템플릿 이름 목록
+  const selectedNames = selectedIds
+    .map((id) => templates.find((t) => t.id === id)?.name)
+    .filter(Boolean) as string[];
 
-        return (
-          <TemplateCard
-            key={template.id}
-            id={template.id}
-            name={template.name}
-            description={description}
-            thumbnail={template.thumbnail}
-            category={template.category}
-            price={template.price}
-            onClick={() => handleTemplateClick(template.id)}
-          />
-        );
-      })}
-    </div>
+  return (
+    <>
+      <div
+        className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 ${isSelectionMode ? 'pb-24' : ''} ${className}`}
+      >
+        {templates.map((template) => {
+          const description =
+            locale === 'ko' && template.descriptionKo
+              ? template.descriptionKo
+              : template.description;
+
+          const isSelected = selectedIds.includes(template.id);
+          const selectionDisabled = !isSelected && selectedIds.length >= maxSelection;
+
+          return (
+            <TemplateCard
+              key={template.id}
+              id={template.id}
+              name={template.name}
+              description={description}
+              thumbnail={template.thumbnail}
+              category={template.category}
+              price={template.price}
+              onClick={() => handleCardClick(template.id)}
+              selectionMode={isSelectionMode}
+              isSelected={isSelected}
+              selectionDisabled={selectionDisabled}
+            />
+          );
+        })}
+      </div>
+
+      {/* 선택 모드일 때만 하단 바 표시 */}
+      {isSelectionMode && (
+        <SelectionBar
+          selectedTemplates={selectedIds}
+          selectedNames={selectedNames}
+          maxSelection={maxSelection}
+        />
+      )}
+    </>
   );
 }

@@ -16,19 +16,26 @@ export const metadata: Metadata = {
   description: 'Choose a design system theme to start building.',
 };
 
-export default async function ExplorePage() {
+interface ExplorePageProps {
+  searchParams: Promise<{ plan?: string }>;
+}
+
+export default async function ExplorePage({ searchParams }: ExplorePageProps) {
+  const params = await searchParams;
+  const selectionMode = params.plan === 'double' ? ('double' as const) : undefined;
+
   // Load themes using Server Action for safe filesystem access
   const galleryItems = await loadThemes();
 
   return (
     <div className="p-6 md:p-12 max-w-7xl mx-auto">
       {/* Header with i18n support */}
-      <StudioPageHeader />
+      <StudioPageHeader selectionMode={selectionMode} />
 
       {/* Real Theme Gallery */}
       <div className="border-t border-neutral-200 pt-12">
         {galleryItems && galleryItems.length > 0 ? (
-          <TemplateGallery templates={galleryItems} />
+          <TemplateGallery templates={galleryItems} selectionMode={selectionMode} />
         ) : (
           <div className="text-center py-12">
             <p className="text-neutral-500 mb-4">No themes found or error loading themes</p>

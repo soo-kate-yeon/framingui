@@ -10,7 +10,7 @@
 
 'use client';
 
-import { Heart, ArrowRight, ExternalLink } from 'lucide-react';
+import { Heart, ArrowRight, ExternalLink, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 // ============================================================================
@@ -47,6 +47,12 @@ interface TemplateCardProps {
   onClick?: () => void;
   /** 추가 className */
   className?: string;
+  /** 선택 모드 여부 */
+  selectionMode?: boolean;
+  /** 선택된 상태 */
+  isSelected?: boolean;
+  /** 선택 불가 상태 (이미 최대 선택) */
+  selectionDisabled?: boolean;
 }
 
 // ============================================================================
@@ -62,6 +68,9 @@ export function TemplateCard({
   price,
   onClick,
   className = '',
+  selectionMode = false,
+  isSelected = false,
+  selectionDisabled = false,
 }: TemplateCardProps) {
   const { user, toggleLike, userData } = useAuth();
   const isLiked = userData?.likedTemplates.includes(id) ?? false;
@@ -84,11 +93,31 @@ export function TemplateCard({
     }
   };
 
+  // 선택 모드 스타일 계산
+  const selectionStyles = selectionMode
+    ? isSelected
+      ? 'border-neutral-900 ring-2 ring-neutral-900'
+      : selectionDisabled
+        ? 'opacity-50 cursor-not-allowed border-neutral-200'
+        : 'border-neutral-200 hover:border-neutral-300 hover:shadow-lg cursor-pointer'
+    : 'border-neutral-200 hover:border-neutral-300 hover:shadow-lg cursor-pointer';
+
   return (
     <article
-      className={`group relative flex flex-col bg-white border border-neutral-200 rounded-2xl transition-all hover:border-neutral-300 hover:shadow-lg cursor-pointer ${className}`}
+      className={`group relative flex flex-col bg-white border rounded-2xl transition-all ${selectionStyles} ${className}`}
       onClick={onClick}
     >
+      {/* 선택 모드: 체크마크 아이콘 */}
+      {selectionMode && (
+        <div
+          className={`absolute top-3 right-3 z-20 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${
+            isSelected ? 'bg-neutral-900 border-neutral-900' : 'bg-white border-neutral-300'
+          }`}
+        >
+          {isSelected && <Check size={14} className="text-white" />}
+        </div>
+      )}
+
       {/* Thumbnail Area */}
       <div className="relative aspect-video w-full bg-neutral-50 overflow-hidden rounded-t-2xl border-b border-neutral-100 group-hover:border-neutral-200 transition-colors">
         {thumbnail ? (
@@ -137,18 +166,12 @@ export function TemplateCard({
           <span className="inline-block px-3 py-1 bg-neutral-100 text-xs font-medium text-neutral-700 mb-3 rounded-full">
             {category}
           </span>
-          <h3 className="text-lg font-bold text-neutral-900 mb-1">
-            {name}
-          </h3>
+          <h3 className="text-lg font-bold text-neutral-900 mb-1">{name}</h3>
           <p className="text-sm text-neutral-600 line-clamp-2 leading-relaxed">{description}</p>
         </div>
 
         <div className="mt-auto pt-4 border-t border-neutral-200 flex justify-between items-center group-hover:border-neutral-300 transition-colors">
-          {price && (
-            <span className="text-lg font-bold text-neutral-900">
-              ${price}
-            </span>
-          )}
+          {price && <span className="text-lg font-bold text-neutral-900">${price}</span>}
           <ArrowRight
             size={18}
             className="text-neutral-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-neutral-900 transition-all duration-300 ml-auto"

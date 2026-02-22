@@ -16,13 +16,15 @@ import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 interface StudioPageHeaderProps {
   /** 추가 className */
   className?: string;
+  /** 선택 모드 (double 패키지) */
+  selectionMode?: 'double';
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function StudioPageHeader({ className = '' }: StudioPageHeaderProps) {
+export function StudioPageHeader({ className = '', selectionMode }: StudioPageHeaderProps) {
   const { locale } = useStudioLanguage();
 
   const content = {
@@ -40,7 +42,20 @@ export function StudioPageHeader({ className = '' }: StudioPageHeaderProps) {
     },
   };
 
-  const t = content[locale];
+  const selectionContent = {
+    en: {
+      subtitle: 'tekton/studio',
+      title: 'Pick 2 Templates',
+      description: 'Choose 2 templates for your Double Package.',
+    },
+    ko: {
+      subtitle: 'tekton/studio',
+      title: '템플릿 2개 고르기',
+      description: '더블 패키지에 포함할 템플릿 2개를 선택하세요.',
+    },
+  };
+
+  const t = selectionMode ? selectionContent[locale] : content[locale];
 
   return (
     <header className={`mb-12 ${className}`}>

@@ -174,35 +174,64 @@ export async function POST(request: NextRequest) {
         // Idempotency: paddle_subscription_id로 중복 확인
         const transactionId = transaction.id;
 
-        const { data: existing } = await adminClient
+        const { data: existingRows } = await adminClient
           .from('user_licenses')
           .select('id')
           .eq('user_id', customData.user_id)
           .eq('paddle_subscription_id', transactionId)
-          .maybeSingle();
+          .limit(1);
 
-        if (existing) {
+        if (existingRows && existingRows.length > 0) {
           console.log(`[Paddle Webhook] 이미 처리된 트랜잭션: ${transactionId}`);
           return NextResponse.json({ status: 'already_processed' });
         }
 
-        // 라이선스 생성
-        const { error: insertError } = await adminClient.from('user_licenses').insert({
-          user_id: customData.user_id,
-          theme_id: themeId,
-          tier,
-          paddle_subscription_id: transactionId,
-          is_active: true,
-        });
+        // Double 패키지: 쉼표 구분 themeId → 각각 라이선스 생성
+        if (tier === 'double' && themeId.includes(',')) {
+          const themeIds = themeId
+            .split(',')
+            .map((id) => id.trim())
+            .filter(Boolean);
 
-        if (insertError) {
-          console.error('[Paddle Webhook] 라이선스 생성 실패:', insertError);
-          return NextResponse.json({ error: 'license_creation_failed' }, { status: 500 });
+          const licenseRecords = themeIds.map((tId) => ({
+            user_id: customData.user_id,
+            theme_id: tId,
+            tier,
+            paddle_subscription_id: transactionId,
+            is_active: true,
+          }));
+
+          const { error: insertError } = await adminClient
+            .from('user_licenses')
+            .insert(licenseRecords);
+
+          if (insertError) {
+            console.error('[Paddle Webhook] Double 라이선스 생성 실패:', insertError);
+            return NextResponse.json({ error: 'license_creation_failed' }, { status: 500 });
+          }
+
+          console.log(
+            `[Paddle Webhook] Double 라이선스 생성 완료: user=${customData.user_id}, themes=${themeIds.join(',')}`
+          );
+        } else {
+          // Single / Creator / themeId가 단일인 경우
+          const { error: insertError } = await adminClient.from('user_licenses').insert({
+            user_id: customData.user_id,
+            theme_id: themeId,
+            tier,
+            paddle_subscription_id: transactionId,
+            is_active: true,
+          });
+
+          if (insertError) {
+            console.error('[Paddle Webhook] 라이선스 생성 실패:', insertError);
+            return NextResponse.json({ error: 'license_creation_failed' }, { status: 500 });
+          }
+
+          console.log(
+            `[Paddle Webhook] 라이선스 생성 완료: user=${customData.user_id}, tier=${tier}`
+          );
         }
-
-        console.log(
-          `[Paddle Webhook] 라이선스 생성 완료: user=${customData.user_id}, tier=${tier}`
-        );
         break;
       }
 
