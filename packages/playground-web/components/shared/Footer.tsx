@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useMemo, useState, useEffect } from 'react';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getFooterContent } from '../../data/i18n/footer';
+import { GlobalLanguageSwitcher } from './GlobalLanguageSwitcher';
 
 interface FooterProps {
   className?: string;
@@ -115,11 +116,11 @@ export function Footer({ className = '' }: FooterProps) {
     };
   }, []);
 
-  // 동적 클래스 생성
+  // 동적 클래스 생성 (페이지가 dark이면 footer도 dark)
   const footerClasses = `border-t py-12 transition-colors ${
     isDark
-      ? 'bg-white text-neutral-900 border-neutral-200'
-      : 'bg-neutral-900 text-neutral-100 border-neutral-800'
+      ? 'bg-neutral-900 text-neutral-100 border-neutral-800'
+      : 'bg-white text-neutral-900 border-neutral-200'
   } ${className}`;
 
   return (
@@ -129,7 +130,7 @@ export function Footer({ className = '' }: FooterProps) {
           {/* Brand & Copyright */}
           <div>
             <div className="text-xl font-bold tracking-tighter mb-4">{content.brandName}</div>
-            <p className={`text-sm mb-2 ${isDark ? 'text-neutral-500' : 'text-neutral-400'}`}>
+            <p className={`text-sm mb-2 ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
               &copy; {new Date().getFullYear()} {content.copyright}
             </p>
           </div>
@@ -140,7 +141,7 @@ export function Footer({ className = '' }: FooterProps) {
               <Link
                 key={href}
                 href={href}
-                className={`transition-colors ${isDark ? 'hover:text-neutral-900' : 'hover:text-neutral-100'}`}
+                className={`transition-colors ${isDark ? 'hover:text-neutral-100' : 'hover:text-neutral-900'}`}
               >
                 {label}
               </Link>
@@ -148,9 +149,16 @@ export function Footer({ className = '' }: FooterProps) {
           </nav>
         </div>
 
+        {/* Language Toggle */}
+        <div className="flex justify-center mb-8">
+          <GlobalLanguageSwitcher
+            className={`${isDark ? 'bg-neutral-800 border-neutral-700 text-neutral-100 hover:bg-neutral-700' : 'bg-white border-neutral-300 text-neutral-900 hover:bg-neutral-50'}`}
+          />
+        </div>
+
         {/* Business Info (Legal Requirement) */}
         <div
-          className={`pt-8 border-t text-xs space-y-1 ${isDark ? 'border-neutral-100 text-neutral-400' : 'border-neutral-800 text-neutral-400'}`}
+          className={`pt-8 border-t text-xs space-y-1 ${isDark ? 'border-neutral-800 text-neutral-400' : 'border-neutral-100 text-neutral-400'}`}
         >
           <p className={`font-semibold ${isDark ? 'text-neutral-500' : 'text-neutral-500'}`}>
             {content.businessInfo.operatedBy}

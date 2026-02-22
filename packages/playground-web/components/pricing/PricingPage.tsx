@@ -13,7 +13,6 @@ import { motion } from 'framer-motion';
 import { Check, X, ArrowRight, Sparkles } from 'lucide-react';
 import { Accordion } from '../landing/Accordion';
 import { Footer } from '../shared/Footer';
-import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getPricingContent } from '../../data/i18n/pricing';
 import { useAuth } from '../../contexts/AuthContext';
@@ -180,7 +179,6 @@ export function PricingPage() {
             {content.nav.brandName}
           </button>
           <div className="flex items-center gap-4">
-            <GlobalLanguageSwitcher />
             <button
               onClick={() => router.push('/auth/signup')}
               className="h-9 px-5 rounded-full text-sm font-medium bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"

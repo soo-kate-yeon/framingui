@@ -8,7 +8,6 @@ import { Button } from '@tekton-ui/ui';
 import { Footer } from '../shared/Footer';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLandingContent } from '../../data/i18n/landing';
-import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 import { HeroUniverse } from '../marketing/HeroUniverse';
 import {
   ColorTokenAsset,
@@ -82,7 +81,6 @@ export function LandingPage() {
             {content.nav.brandName || content.hero.brandName}
           </div>
           <div className="flex items-center gap-3">
-            <GlobalLanguageSwitcher />
             <Button
               onClick={() => router.push('/pricing')}
               className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
