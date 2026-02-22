@@ -2,7 +2,7 @@
 
 /**
  * Account Page
- * Theme: Round Minimal (v2.1)
+ * Theme: Pebble (v2.1)
  */
 export default function AccountPage() {
   const canvasColor = 'oklch(0.96 0.01 210)';

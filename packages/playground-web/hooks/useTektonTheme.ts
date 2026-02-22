@@ -20,7 +20,7 @@ interface UseTektonThemeResult {
  *
  * @example
  * ```tsx
- * const { loaded, error } = useTektonTheme("neutral-humanism", {
+ * const { loaded, error } = useTektonTheme("neutral-workspace", {
  *   fallback: {
  *     "--tekton-bg-canvas": "#FDFCFB",
  *     "--tekton-text-primary": "#171717",

@@ -44,13 +44,13 @@ const NEUTRAL_HUMANISM_FALLBACK: Record<string, string> = {
 };
 
 /**
- * Neutral Humanism Workspace Demo
- * Replicating the Minimal Workspace IA with the Neutral Humanism theme.
+ * Neutral Workspace Workspace Demo
+ * Replicating the Minimal Workspace IA with the Neutral Workspace theme.
  */
 export default function NeutralHumanismDemo() {
   const [currentView, setCurrentView] = useState<'overview' | 'customers' | 'settings'>('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { loaded: themeLoaded } = useTektonTheme('neutral-humanism', {
+  const { loaded: themeLoaded } = useTektonTheme('neutral-workspace', {
     fallback: NEUTRAL_HUMANISM_FALLBACK,
   });
   const { locale } = useStudioLanguage();
@@ -60,7 +60,7 @@ export default function NeutralHumanismDemo() {
       className={`min-h-screen bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
       {/* Preview Banner */}
-      <PreviewBanner templateId="neutral-humanism" templateName="Neutral Humanism" />
+      <PreviewBanner templateId="neutral-workspace" templateName="Neutral Workspace" />
 
       {/* Header - Adjusted for banner */}
       <header className="border-b border-[var(--tekton-border-default)] sticky top-12 bg-[var(--tekton-bg-surface)]/80 backdrop-blur-md z-40 mt-12">
@@ -477,7 +477,7 @@ function SettingsView() {
             <SettingItem
               icon={<User size={18} />}
               label="Profile Information"
-              value="Neutral Humanism"
+              value="Neutral Workspace"
             />
             <SettingItem
               icon={<CreditCard size={18} />}

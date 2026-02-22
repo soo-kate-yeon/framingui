@@ -109,7 +109,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: '6 Curated Templates, Ready Now',
           content:
-            'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism — each handcrafted with 200+ tokens. Pick one, and your agent handles the rest.',
+            'classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism — each handcrafted with 200+ tokens. Pick one, and your agent handles the rest.',
         },
       ],
       imageAlt: 'Feature Image 1',
@@ -228,7 +228,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: '6개의 엄선된 템플릿, 지금 바로 사용',
           content:
-            'classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism. 각 템플릿마다 200개 이상의 토큰을 손수 만들었어요. 하나만 선택하면 에이전트가 알아서 처리해줘요.',
+            'classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism. 각 템플릿마다 200개 이상의 토큰을 손수 만들었어요. 하나만 선택하면 에이전트가 알아서 처리해줘요.',
         },
       ],
       imageAlt: '기능 이미지 1',

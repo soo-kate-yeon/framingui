@@ -13,14 +13,14 @@ import {
 import { useRouter } from 'next/navigation';
 
 /**
- * Settings Page - Equinox Fitness V2
+ * Settings Page - Dark Boldness V2
  * Redesigned as a standard sectioned list interface for elite member preferences.
  */
 export default function SettingsPage() {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.push('/studio/equinox-fitness');
+    router.push('/studio/dark-boldness');
   };
 
   return (

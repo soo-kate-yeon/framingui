@@ -39,7 +39,7 @@ describe('Theme Presets', () => {
 
     it('필수 프리셋 ID 존재', () => {
       const ids = colorPresets.map((p) => p.id);
-      expect(ids).toContain('color-round-minimal');
+      expect(ids).toContain('color-pebble');
       expect(ids).toContain('color-platform-minimal');
       expect(ids).toContain('color-platform-warm');
       expect(ids).toContain('color-platform-cool');
@@ -66,7 +66,7 @@ describe('Theme Presets', () => {
 
     it('필수 프리셋 ID 존재', () => {
       const ids = typographyPresets.map((p) => p.id);
-      expect(ids).toContain('typo-round-minimal');
+      expect(ids).toContain('typo-pebble');
       expect(ids).toContain('typo-platform-sans');
       expect(ids).toContain('typo-platform-serif');
       expect(ids).toContain('typo-platform-mono');
@@ -93,7 +93,7 @@ describe('Theme Presets', () => {
 
     it('필수 프리셋 ID 존재', () => {
       const ids = spacingPresets.map((p) => p.id);
-      expect(ids).toContain('spacing-round-minimal');
+      expect(ids).toContain('spacing-pebble');
       expect(ids).toContain('spacing-platform-compact');
       expect(ids).toContain('spacing-platform-standard');
       expect(ids).toContain('spacing-platform-spacious');
@@ -108,9 +108,9 @@ describe('Theme Presets', () => {
 
   describe('getPresetById', () => {
     it('유효한 ID로 프리셋 검색', () => {
-      const preset = getPresetById('color-round-minimal');
+      const preset = getPresetById('color-pebble');
       expect(preset).toBeDefined();
-      expect(preset?.id).toBe('color-round-minimal');
+      expect(preset?.id).toBe('color-pebble');
       expect(preset?.category).toBe('color');
     });
 
@@ -120,9 +120,9 @@ describe('Theme Presets', () => {
     });
 
     it('모든 카테고리에서 검색 가능', () => {
-      expect(getPresetById('color-round-minimal')).toBeDefined();
-      expect(getPresetById('typo-round-minimal')).toBeDefined();
-      expect(getPresetById('spacing-round-minimal')).toBeDefined();
+      expect(getPresetById('color-pebble')).toBeDefined();
+      expect(getPresetById('typo-pebble')).toBeDefined();
+      expect(getPresetById('spacing-pebble')).toBeDefined();
     });
   });
 

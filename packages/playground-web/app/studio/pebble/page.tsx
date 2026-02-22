@@ -147,7 +147,7 @@ const CATEGORIES = {
 };
 
 export default function RoundMinimalTemplate() {
-  const { loaded: themeLoaded } = useTektonTheme('round-minimal', {
+  const { loaded: themeLoaded } = useTektonTheme('pebble', {
     fallback: ROUND_MINIMAL_FALLBACK,
   });
   const { locale } = useStudioLanguage();
@@ -156,7 +156,7 @@ export default function RoundMinimalTemplate() {
   return (
     <>
       {/* Preview Banner */}
-      <PreviewBanner templateId="round-minimal" templateName="Round Minimal" />
+      <PreviewBanner templateId="pebble" templateName="Pebble" />
 
       {/* Fixed height container to allow inner scrolling - Adjusted for banner */}
       <div

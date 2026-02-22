@@ -19,10 +19,10 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const DEMO_ROUTES: Record<string, string> = {
   'square-minimalism': '/studio/square-minimalism',
-  'equinox-fitness': '/studio/equinox-fitness',
-  'round-minimal': '/studio/round-minimal',
+  'dark-boldness': '/studio/dark-boldness',
+  pebble: '/studio/pebble',
   'classic-magazine': '/studio/classic-magazine',
-  'neutral-humanism': '/studio/neutral-humanism',
+  'neutral-workspace': '/studio/neutral-workspace',
   'minimal-workspace': '/studio/minimal-workspace',
 };
 

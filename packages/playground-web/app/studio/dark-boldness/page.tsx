@@ -5,7 +5,7 @@ import { Play, Info, ChevronRight, Star } from 'lucide-react';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
 
 /**
- * Equinox Fitness V2 - MasterClass Inspired Landing Page
+ * Dark Boldness V2 - MasterClass Inspired Landing Page
  * Theme: Elite luxury night gym / Media Streaming
  * Design DNA: True Black (#000000), 0px Radius, Immersive Media
  */
@@ -58,7 +58,7 @@ export default function EquinoxFitnessLanding() {
 
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
-              href="/studio/equinox-fitness/dashboard"
+              href="/studio/dark-boldness/dashboard"
               className="bg-white text-black h-12 md:h-14 px-8 md:px-12 uppercase tracking-[0.2em] text-[10px] md:text-xs font-black hover:bg-neutral-200 transition-all flex items-center justify-center gap-3 active:scale-95"
             >
               <Play fill="currentColor" size={16} />
@@ -240,10 +240,7 @@ export default function EquinoxFitnessLanding() {
         <div className="mt-20 md:mt-24 pt-8 border-t border-neutral-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em] text-center md:text-left">
           <span>© 2026 Tekton Studio x Equinox</span>
           <span className="flex gap-4">
-            <Link
-              href="/studio/equinox-fitness/docs"
-              className="hover:text-white transition-colors"
-            >
+            <Link href="/studio/dark-boldness/docs" className="hover:text-white transition-colors">
               {locale === 'ko' ? '문서' : 'Docs'}
             </Link>
             <span>{locale === 'ko' ? '스키마 v2.2' : 'Schema v2.2'}</span>

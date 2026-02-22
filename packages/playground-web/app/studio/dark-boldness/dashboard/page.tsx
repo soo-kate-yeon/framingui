@@ -4,7 +4,7 @@ import { Play, Clock, Star, ChevronRight, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 /**
- * Equinox Fitness V2 - Personal Library Dashboard
+ * Dark Boldness V2 - Personal Library Dashboard
  * Theme: Elite luxury night gym / Streaming Library
  */
 export default function EquinoxDashboardPage() {

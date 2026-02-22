@@ -82,7 +82,7 @@ const SHARED_HOW_TO_USE = [
     titleKo: '테마 토큰 설정',
     description: 'Import and apply the theme tokens in your application root or layout file.',
     descriptionKo: '애플리케이션 루트 또는 레이아웃 파일에서 테마 토큰을 가져와 적용합니다.',
-    code: 'import "@tekton-ui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with: square-minimalism, neutral-humanism, etc.',
+    code: 'import "@tekton-ui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with: square-minimalism, neutral-workspace, etc.',
   },
   {
     step: 3,
@@ -249,9 +249,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'equinox-fitness': {
-    id: 'equinox-fitness',
-    name: 'Equinox Fitness',
+  'dark-boldness': {
+    id: 'dark-boldness',
+    name: 'Dark Boldness',
     tagline: 'Energetic, bold fitness & wellness design',
     taglineKo: '에너지 넘치고 대담한 피트니스 및 웰니스 디자인',
     description:
@@ -260,10 +260,10 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스와 웰니스 브랜드를 위한 디자인 시스템이에요. 역동적인 비주얼과 매력적인 인터랙션으로 사용자에게 동기를 부여해요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('equinox-fitness', 'hero.png'),
-      getScreenshotUrl('equinox-fitness', 'workouts.png'),
-      getScreenshotUrl('equinox-fitness', 'profile.png'),
-      getScreenshotUrl('equinox-fitness', 'plans.png'),
+      getScreenshotUrl('dark-boldness', 'hero.png'),
+      getScreenshotUrl('dark-boldness', 'workouts.png'),
+      getScreenshotUrl('dark-boldness', 'profile.png'),
+      getScreenshotUrl('dark-boldness', 'plans.png'),
     ],
     features: [
       {
@@ -295,9 +295,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
         subtitle: 'AI-powered workout UI generation',
         subtitleKo: 'AI로 운동 UI를 즉시 생성',
         description:
-          'Ask Claude Code "Create a workout progress dashboard with Equinox theme" and instantly generate UI showing calories burned, workout duration, and goal completion.',
+          'Ask Claude Code "Create a workout progress dashboard with Dark Boldness theme" and instantly generate UI showing calories burned, workout duration, and goal completion.',
         descriptionKo:
-          'Claude Code에 "Equinox 테마로 운동 진행률 대시보드 만들어줘"라고 요청하면, 칼로리 소모량, 운동 시간, 목표 달성률을 보여주는 UI가 바로 만들어져요.',
+          'Claude Code에 "Dark Boldness 테마로 운동 진행률 대시보드 만들어줘"라고 요청하면, 칼로리 소모량, 운동 시간, 목표 달성률을 보여주는 UI가 바로 만들어져요.',
       },
       {
         icon: '4',
@@ -374,9 +374,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
         title: 'Use generate-blueprint Tool',
         titleKo: 'generate-blueprint 툴 사용',
         description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: equinox-fitness, layout: dashboard, components: Card, Progress, Chart"',
+          'In Claude Code, request: "Use generate-blueprint tool with themeId: dark-boldness, layout: dashboard, components: Card, Progress, Chart"',
         descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: equinox-fitness, layout: dashboard, components: Card, Progress, Chart"',
+          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: dark-boldness, layout: dashboard, components: Card, Progress, Chart"',
       },
       {
         step: 6,
@@ -390,9 +390,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'round-minimal': {
-    id: 'round-minimal',
-    name: 'Round Minimal',
+  pebble: {
+    id: 'pebble',
+    name: 'Pebble',
     tagline: 'Soft, rounded, gentle user experience',
     taglineKo: '부드럽고 둥글며 온화한 사용자 경험',
     description:
@@ -401,10 +401,10 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 만드는 미니멀 디자인 시스템이에요. 소비자 대상 앱에 접근하기 쉽고 편안해요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('round-minimal', 'hero.png'),
-      getScreenshotUrl('round-minimal', 'features.png'),
-      getScreenshotUrl('round-minimal', 'auth.png'),
-      getScreenshotUrl('round-minimal', 'dashboard.png'),
+      getScreenshotUrl('pebble', 'hero.png'),
+      getScreenshotUrl('pebble', 'features.png'),
+      getScreenshotUrl('pebble', 'auth.png'),
+      getScreenshotUrl('pebble', 'dashboard.png'),
     ],
     features: [
       {
@@ -436,9 +436,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
         subtitle: 'Generate friendly UIs with natural language',
         subtitleKo: '친근한 UI를 자연어로 생성',
         description:
-          'Ask "Create a profile page with Round Minimal theme" and get a friendly profile UI with avatar, bio, and follow button.',
+          'Ask "Create a profile page with Pebble theme" and get a friendly profile UI with avatar, bio, and follow button.',
         descriptionKo:
-          '"Round Minimal 테마로 프로필 페이지 만들어줘"라고 요청하면, 아바타, 자기소개, 팔로우 버튼이 포함된 친근한 프로필 UI가 만들어져요.',
+          '"Pebble 테마로 프로필 페이지 만들어줘"라고 요청하면, 아바타, 자기소개, 팔로우 버튼이 포함된 친근한 프로필 UI가 만들어져요.',
       },
       {
         icon: '4',
@@ -515,9 +515,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
         title: 'Use generate-blueprint Tool',
         titleKo: 'generate-blueprint 툴 사용',
         description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: round-minimal, layout: centered, components: Card, Avatar, Button"',
+          'In Claude Code, request: "Use generate-blueprint tool with themeId: pebble, layout: centered, components: Card, Avatar, Button"',
         descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: round-minimal, layout: centered, components: Card, Avatar, Button"',
+          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: pebble, layout: centered, components: Card, Avatar, Button"',
       },
       {
         step: 6,
@@ -672,9 +672,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
     ],
   },
 
-  'neutral-humanism': {
-    id: 'neutral-humanism',
-    name: 'Neutral Humanism',
+  'neutral-workspace': {
+    id: 'neutral-workspace',
+    name: 'Neutral Workspace',
     tagline: 'Human-centered, approachable, balanced design',
     taglineKo: '사람 중심의 접근하기 쉬운 균형잡힌 디자인',
     description:
@@ -683,10 +683,10 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '사람 중심의 따뜻한 디자인과 중립적인 컬러로 접근성과 가독성을 최우선으로 하는 디자인 시스템이에요. 모든 사용자에게 편안한 경험을 제공해요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('neutral-humanism', 'hero.png'),
-      getScreenshotUrl('neutral-humanism', 'features.png'),
-      getScreenshotUrl('neutral-humanism', 'form.png'),
-      getScreenshotUrl('neutral-humanism', 'cards.png'),
+      getScreenshotUrl('neutral-workspace', 'hero.png'),
+      getScreenshotUrl('neutral-workspace', 'features.png'),
+      getScreenshotUrl('neutral-workspace', 'form.png'),
+      getScreenshotUrl('neutral-workspace', 'cards.png'),
     ],
     features: [
       {
@@ -718,9 +718,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
         subtitle: 'Auto-generate accessible UIs',
         subtitleKo: '접근 가능한 UI를 자동 생성',
         description:
-          'Request "Create a patient information form with Neutral Humanism theme" and get an accessible form with clear labels, error messages, and help text.',
+          'Request "Create a patient information form with Neutral Workspace theme" and get an accessible form with clear labels, error messages, and help text.',
         descriptionKo:
-          '"Neutral Humanism 테마로 환자 정보 폼 만들어줘"라고 요청하면, 명확한 라벨, 에러 메시지, 도움말이 포함된 접근 가능한 폼이 만들어져요.',
+          '"Neutral Workspace 테마로 환자 정보 폼 만들어줘"라고 요청하면, 명확한 라벨, 에러 메시지, 도움말이 포함된 접근 가능한 폼이 만들어져요.',
       },
       {
         icon: '4',
@@ -797,9 +797,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
         title: 'Use generate-blueprint Tool',
         titleKo: 'generate-blueprint 툴 사용',
         description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: neutral-humanism, layout: form, components: Input, Label, Button"',
+          'In Claude Code, request: "Use generate-blueprint tool with themeId: neutral-workspace, layout: form, components: Input, Label, Button"',
         descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: neutral-humanism, layout: form, components: Input, Label, Button"',
+          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: neutral-workspace, layout: form, components: Input, Label, Button"',
       },
       {
         step: 6,

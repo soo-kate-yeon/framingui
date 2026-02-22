@@ -64,12 +64,12 @@ interface ThemeContextValue {
 }
 
 /**
- * 기본 테마 상태 (Round Minimal 기반)
+ * 기본 테마 상태 (Pebble 기반)
  */
 const DEFAULT_THEME: ThemeState = {
-  colorPreset: 'color-round-minimal',
-  typographyPreset: 'typo-round-minimal',
-  spacingPreset: 'spacing-round-minimal',
+  colorPreset: 'color-pebble',
+  typographyPreset: 'typo-pebble',
+  spacingPreset: 'spacing-pebble',
   customOverrides: {},
 };
 

@@ -2,7 +2,7 @@
 
 /**
  * Post Detail Page
- * Theme: Round Minimal (v2.1)
+ * Theme: Pebble (v2.1)
  */
 export default function PostDetailPage() {
   const canvasColor = 'oklch(0.96 0.01 210)';
@@ -56,7 +56,7 @@ export default function PostDetailPage() {
           <p className="text-2xl font-medium leading-relaxed" style={{ color: textColorPrimary }}>
             Exploring the new Tekton design system! The{' '}
             <span style={{ color: brandColor }} className="font-black">
-              #round-minimal
+              #pebble
             </span>{' '}
             theme is so approachable. Chunky padding makes everything feel so tactile and friendly.
           </p>

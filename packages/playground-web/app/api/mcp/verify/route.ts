@@ -102,11 +102,11 @@ interface UserProfile {
  *   "valid": true,
  *   "user": { "id": "uuid", "email": "user@example.com", "plan": "pro" },
  *   "licenses": [
- *     { "themeId": "equinox-fitness-v2", "tier": "single", "isActive": true, "expiresAt": null }
+ *     { "themeId": "dark-boldness-v2", "tier": "single", "isActive": true, "expiresAt": null }
  *   ],
  *   "themes": {
  *     "free": ["minimal-starter", "basic-dashboard"],
- *     "licensed": ["equinox-fitness-v2"]
+ *     "licensed": ["dark-boldness-v2"]
  *   }
  * }
  *

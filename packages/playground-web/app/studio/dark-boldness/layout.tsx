@@ -7,7 +7,7 @@ import { Home, Search, Library, Settings, Bell, User, PlusCircle } from 'lucide-
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
 
 /**
- * Equinox Fitness V2 Layout - Streaming Edition
+ * Dark Boldness V2 Layout - Streaming Edition
  * Theme: Elite luxury night gym - True Black canvas, 0px radius
  * Width: w-[80px] hover:w-[200px] (최적화됨)
  */
@@ -17,23 +17,23 @@ export default function EquinoxLayout({ children }: { children: React.ReactNode 
   return (
     <div className="min-h-screen bg-black font-sans selection:bg-white selection:text-black flex">
       {/* Preview Banner - 모든 equinox 하위 페이지에서 표시 */}
-      <PreviewBanner templateId="equinox-fitness" templateName="Equinox Fitness" />
+      <PreviewBanner templateId="dark-boldness" templateName="Dark Boldness" />
 
       {/* Sidebar - Desktop Only (Hidden on Mobile) — top-12로 배너 아래 시작 */}
       <aside className="hidden md:flex w-[80px] hover:w-[200px] bg-black border-r border-neutral-900 flex-col fixed top-12 bottom-0 z-30 transition-all duration-300 group overflow-hidden">
         <nav className="flex-1 px-4 pt-6 space-y-2">
           <NavItem
-            href="/studio/equinox-fitness"
+            href="/studio/dark-boldness"
             icon={<Home size={20} />}
             label="Home"
-            active={pathname === '/studio/equinox-fitness'}
+            active={pathname === '/studio/dark-boldness'}
             groupHover
           />
           <NavItem
-            href="/studio/equinox-fitness/dashboard"
+            href="/studio/dark-boldness/dashboard"
             icon={<Library size={20} />}
             label="My Library"
-            active={pathname === '/studio/equinox-fitness/dashboard'}
+            active={pathname === '/studio/dark-boldness/dashboard'}
             groupHover
           />
           <div className="py-4 overflow-hidden">
@@ -41,7 +41,7 @@ export default function EquinoxLayout({ children }: { children: React.ReactNode 
           </div>
 
           <NavItem
-            href="/studio/equinox-fitness/dashboard/settings"
+            href="/studio/dark-boldness/dashboard/settings"
             icon={<Settings size={20} />}
             label="Settings"
             active={pathname?.includes('settings')}
@@ -62,17 +62,17 @@ export default function EquinoxLayout({ children }: { children: React.ReactNode 
       {/* Bottom Navigation - Mobile Only — z-40으로 배너(z-50) 아래 유지 */}
       <nav className="md:hidden fixed bottom-1 left-4 right-4 h-16 bg-neutral-900/90 backdrop-blur-xl border border-white/10 z-40 flex items-center justify-around px-4">
         <MobileNavItem
-          href="/studio/equinox-fitness"
+          href="/studio/dark-boldness"
           icon={<Home size={20} />}
-          active={pathname === '/studio/equinox-fitness'}
+          active={pathname === '/studio/dark-boldness'}
         />
         <MobileNavItem
-          href="/studio/equinox-fitness/dashboard"
+          href="/studio/dark-boldness/dashboard"
           icon={<Library size={20} />}
-          active={pathname === '/studio/equinox-fitness/dashboard'}
+          active={pathname === '/studio/dark-boldness/dashboard'}
         />
         <MobileNavItem
-          href="/studio/equinox-fitness/dashboard/settings"
+          href="/studio/dark-boldness/dashboard/settings"
           icon={<Settings size={20} />}
           active={pathname?.includes('settings')}
         />

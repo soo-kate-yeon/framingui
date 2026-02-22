@@ -11,7 +11,7 @@ export const FREE_THEMES = ['minimal-starter', 'basic-dashboard'];
 /**
  * 유료 테마 목록
  */
-export const PREMIUM_THEMES = ['equinox-fitness-v2', 'square-minimalism', 'nature-inspired'];
+export const PREMIUM_THEMES = ['dark-boldness-v2', 'square-minimalism', 'nature-inspired'];
 
 /**
  * 테스트용 API Key 이름

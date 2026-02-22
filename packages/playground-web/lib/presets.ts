@@ -14,13 +14,13 @@ export interface ThemePreset {
 }
 
 /**
- * Color Presets (4개) - Round Minimal 추가
+ * Color Presets (4개) - Pebble 추가
  * [TAG-UI003-007] 프리셋 선택 시 CSS Variables 즉시 업데이트
  */
 export const colorPresets: ThemePreset[] = [
   {
-    id: 'color-round-minimal',
-    name: 'Round Minimal',
+    id: 'color-pebble',
+    name: 'Pebble',
     category: 'color',
     values: {
       // Brand Color (보라색 계열)
@@ -169,12 +169,12 @@ export const colorPresets: ThemePreset[] = [
 ];
 
 /**
- * Typography Presets (4개) - Round Minimal 추가
+ * Typography Presets (4개) - Pebble 추가
  */
 export const typographyPresets: ThemePreset[] = [
   {
-    id: 'typo-round-minimal',
-    name: 'Round Minimal',
+    id: 'typo-pebble',
+    name: 'Pebble',
     category: 'typography',
     values: {
       '--tekton-font-family': 'Inter, sans-serif',
@@ -232,12 +232,12 @@ export const typographyPresets: ThemePreset[] = [
 ];
 
 /**
- * Spacing Presets (4개) - Round Minimal 추가
+ * Spacing Presets (4개) - Pebble 추가
  */
 export const spacingPresets: ThemePreset[] = [
   {
-    id: 'spacing-round-minimal',
-    name: 'Round Minimal',
+    id: 'spacing-pebble',
+    name: 'Pebble',
     category: 'spacing',
     values: {
       '--tekton-spacing-unit': '4px',

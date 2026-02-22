@@ -2,7 +2,7 @@
 
 /**
  * Social Feed Interface
- * Theme: Round Minimal (v2.1)
+ * Theme: Pebble (v2.1)
  * Principles: Surface over Border, Maximum Radius, Chunky Padding
  */
 export default function SocialFeedPage() {
@@ -25,7 +25,7 @@ export default function SocialFeedPage() {
             >
               Feed
             </h1>
-            <p className="text-lg font-medium opacity-60">Round Minimal Exploration</p>
+            <p className="text-lg font-medium opacity-60">Pebble Exploration</p>
           </div>
           <a
             href="/social-feed/account"
@@ -77,8 +77,8 @@ export default function SocialFeedPage() {
 
             <p className="text-xl font-medium leading-relaxed" style={{ color: textColorPrimary }}>
               Exploring the new Tekton design system! The{' '}
-              <span style={{ color: brandColor }}>#round-minimal</span> theme is so approachable.
-              Chunky padding makes everything feel so tactile.
+              <span style={{ color: brandColor }}>#pebble</span> theme is so approachable. Chunky
+              padding makes everything feel so tactile.
             </p>
 
             <div className="flex gap-4 pt-4">

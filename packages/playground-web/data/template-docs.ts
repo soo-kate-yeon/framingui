@@ -138,7 +138,7 @@ const SHARED_INSTALLATION: InstallationStep[] = [
       'Import the theme-specific CSS tokens in your root layout or _app file. This applies all design tokens globally.',
     descriptionKo:
       '루트 레이아웃 또는 _app 파일에서 테마별 CSS 토큰을 가져옵니다. 모든 디자인 토큰이 전역으로 적용됩니다.',
-    code: 'import "@tekton-ui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with your template:\n// square-minimalism, equinox-fitness, round-minimal,\n// classic-magazine, neutral-humanism, minimal-workspace',
+    code: 'import "@tekton-ui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with your template:\n// square-minimalism, dark-boldness, pebble,\n// classic-magazine, neutral-workspace, minimal-workspace',
     language: 'tsx',
   },
   {
@@ -533,16 +533,16 @@ export function HeroSection() {
     tocSections: TOC_SECTIONS,
   },
 
-  'equinox-fitness': {
-    id: 'equinox-fitness',
-    name: 'Equinox Fitness',
+  'dark-boldness': {
+    id: 'dark-boldness',
+    name: 'Dark Boldness',
     philosophy: {
       tagline: 'Visualize energy and motion',
       taglineKo: '에너지를 시각화하다',
       description:
-        'Equinox Fitness transforms the dynamism and energy of physical activity into a visual language. Bold colors, strong gradients, and motivational typography create an environment that inspires action and achievement.',
+        'Dark Boldness transforms the dynamism and energy of physical activity into a visual language. Bold colors, strong gradients, and motivational typography create an environment that inspires action and achievement.',
       descriptionKo:
-        'Equinox Fitness는 운동의 역동성과 에너지를 시각 언어로 변환합니다. 대담한 색상, 강력한 그래디언트, 동기부여 타이포그래피가 행동과 성취를 고취시키는 환경을 만듭니다.',
+        'Dark Boldness는 운동의 역동성과 에너지를 시각 언어로 변환합니다. 대담한 색상, 강력한 그래디언트, 동기부여 타이포그래피가 행동과 성취를 고취시키는 환경을 만듭니다.',
       principles: [
         'Bold Colors - Express energy through high saturation',
         'Dynamic Gradients - Suggest movement and transformation',
@@ -762,16 +762,16 @@ export function WorkoutDashboard() {
     tocSections: TOC_SECTIONS,
   },
 
-  'round-minimal': {
-    id: 'round-minimal',
-    name: 'Round Minimal',
+  pebble: {
+    id: 'pebble',
+    name: 'Pebble',
     philosophy: {
       tagline: 'Clarity within softness',
       taglineKo: '부드러움 속의 명료함',
       description:
-        'Round Minimal combines soft curves with gentle colors to create a friendly yet professional impression. The rounded aesthetics reduce visual tension, making interfaces more approachable and comfortable for extended use.',
+        'Pebble combines soft curves with gentle colors to create a friendly yet professional impression. The rounded aesthetics reduce visual tension, making interfaces more approachable and comfortable for extended use.',
       descriptionKo:
-        'Round Minimal은 부드러운 곡선과 온화한 컬러를 결합하여 친근하면서도 전문적인 인상을 전달합니다. 둥근 미학은 시각적 긴장을 줄여 인터페이스를 더 접근하기 쉽고 장시간 사용에 편안하게 만듭니다.',
+        'Pebble은 부드러운 곡선과 온화한 컬러를 결합하여 친근하면서도 전문적인 인상을 전달합니다. 둥근 미학은 시각적 긴장을 줄여 인터페이스를 더 접근하기 쉽고 장시간 사용에 편안하게 만듭니다.',
       principles: [
         'Soft Corners - 16px+ rounded borders for approachability',
         'Gentle Colors - Low saturation palette reduces eye strain',
@@ -1206,16 +1206,16 @@ export function MagazineArticle() {
     tocSections: TOC_SECTIONS,
   },
 
-  'neutral-humanism': {
-    id: 'neutral-humanism',
-    name: 'Neutral Humanism',
+  'neutral-workspace': {
+    id: 'neutral-workspace',
+    name: 'Neutral Workspace',
     philosophy: {
       tagline: 'Design for people',
       taglineKo: '사람을 위한 디자인',
       description:
-        'Neutral Humanism prioritizes accessibility and inclusivity above all. With a neutral color palette, clear typography, and human-centered design principles, this system ensures comfortable experiences for users of all ages and abilities.',
+        'Neutral Workspace prioritizes accessibility and inclusivity above all. With a neutral color palette, clear typography, and human-centered design principles, this system ensures comfortable experiences for users of all ages and abilities.',
       descriptionKo:
-        'Neutral Humanism은 접근성과 포용성을 최우선으로 합니다. 중립적인 컬러 팔레트, 명확한 타이포그래피, 사람 중심 디자인 원칙으로 모든 연령과 능력의 사용자에게 편안한 경험을 보장합니다.',
+        'Neutral Workspace은 접근성과 포용성을 최우선으로 합니다. 중립적인 컬러 팔레트, 명확한 타이포그래피, 사람 중심 디자인 원칙으로 모든 연령과 능력의 사용자에게 편안한 경험을 보장합니다.',
       principles: [
         'Accessibility First - WCAG AAA compliance as standard',
         'Neutral Palette - Fatigue-free neutral colors',

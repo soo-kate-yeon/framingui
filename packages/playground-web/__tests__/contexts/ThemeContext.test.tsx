@@ -79,9 +79,9 @@ describe('ThemeContext', () => {
         </ThemeProvider>
       );
 
-      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-round-minimal');
-      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-round-minimal');
-      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-round-minimal');
+      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-pebble');
+      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-pebble');
+      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-pebble');
     });
 
     it('setColorPreset() 호출 시 상태 업데이트', () => {
@@ -175,8 +175,8 @@ describe('ThemeContext', () => {
 
       expect(json.version).toBe('1.0.0');
       expect(json.presets.color).toBe('color-platform-warm');
-      expect(json.presets.typography).toBe('typo-round-minimal');
-      expect(json.presets.spacing).toBe('spacing-round-minimal');
+      expect(json.presets.typography).toBe('typo-pebble');
+      expect(json.presets.spacing).toBe('spacing-pebble');
     });
 
     it('resetTheme() 호출 시 기본값으로 재설정', () => {
@@ -200,9 +200,9 @@ describe('ThemeContext', () => {
         screen.getByText('Reset Theme').click();
       });
 
-      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-round-minimal');
-      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-round-minimal');
-      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-round-minimal');
+      expect(screen.getByTestId('color-preset')).toHaveTextContent('color-pebble');
+      expect(screen.getByTestId('typography-preset')).toHaveTextContent('typo-pebble');
+      expect(screen.getByTestId('spacing-preset')).toHaveTextContent('spacing-pebble');
     });
 
     it('customOverrides가 프리셋보다 우선 적용', async () => {
