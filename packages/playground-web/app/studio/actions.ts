@@ -2,12 +2,10 @@
 
 /**
  * Server Actions for Studio Page
- * Provides safe filesystem access for theme loading
+ * 정적 템플릿 데이터를 GalleryItem 형태로 변환하여 제공
  */
 
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
-import { getTemplateData } from '../../data/templates';
+import { getAllTemplates } from '../../data/templates';
 
 interface GalleryItem {
   id: string;
@@ -19,72 +17,24 @@ interface GalleryItem {
   price?: number;
 }
 
-interface ThemeMeta {
-  id: string;
-  name: string;
-  description?: string;
-  brandTone?: string;
-  schemaVersion?: string;
-}
-
 /**
- * Load themes using Server Action
- * This runs in an isolated server context with proper filesystem access
- * Reads theme files directly to avoid process.cwd() issues
+ * 템플릿 목록을 갤러리 아이템 형태로 반환
+ *
+ * 이전 구현: .moai/themes/generated/*.json 파일시스템에서 읽음
+ * → Vercel 서버리스 환경에서 해당 디렉토리가 번들에 포함되지 않아 실패
+ *
+ * 현재 구현: data/templates.ts의 정적 데이터를 직접 사용
  */
 export async function loadThemes(): Promise<GalleryItem[]> {
-  try {
-    // Calculate absolute path to project root
-    const projectRoot = process.cwd();
-    const actualRoot = projectRoot.includes('packages/playground-web')
-      ? projectRoot.replace('/packages/playground-web', '')
-      : projectRoot;
+  const templates = getAllTemplates();
 
-    const themesDir = join(actualRoot, '.moai', 'themes', 'generated');
-
-    console.log('[Server Action] Process CWD:', projectRoot);
-    console.log('[Server Action] Project root:', actualRoot);
-    console.log('[Server Action] Themes dir:', themesDir);
-
-    // Check if themes directory exists
-    if (!existsSync(themesDir)) {
-      console.warn('[Server Action] Themes directory not found:', themesDir);
-      return [];
-    }
-
-    // Read theme files directly
-    const files = readdirSync(themesDir).filter((f) => f.endsWith('.json'));
-    console.log('[Server Action] Found theme files:', files.length);
-
-    const galleryItems: GalleryItem[] = [];
-
-    for (const file of files) {
-      try {
-        const themePath = join(themesDir, file);
-        const themeContent = readFileSync(themePath, 'utf-8');
-        const theme = JSON.parse(themeContent) as ThemeMeta;
-
-        const templateData = getTemplateData(theme.id);
-
-        galleryItems.push({
-          id: theme.id,
-          name: theme.name,
-          description: templateData?.description || theme.description || 'A modern design system.',
-          descriptionKo: templateData?.descriptionKo,
-          category: 'Design System',
-          thumbnail: undefined,
-          price: templateData?.price,
-        });
-      } catch (err) {
-        console.error(`[Server Action] Error loading theme ${file}:`, err);
-      }
-    }
-
-    console.log('[Server Action] Successfully loaded themes:', galleryItems.length);
-    return galleryItems;
-  } catch (error) {
-    console.error('[Server Action] Error loading themes:', error);
-    // Return empty array instead of throwing to prevent page crash
-    return [];
-  }
+  return templates.map((t) => ({
+    id: t.id,
+    name: t.name,
+    description: t.description,
+    descriptionKo: t.descriptionKo,
+    category: 'Design System',
+    thumbnail: undefined,
+    price: t.price,
+  }));
 }
