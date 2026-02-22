@@ -10,7 +10,7 @@
  * @tekton-ui/ui - Calendar Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
- * Pattern: react-day-picker + CVA + Tekton tokens
+ * Pattern: react-day-picker v9 + Tekton tokens
  */
 
 import { DayPicker, type DayPickerProps } from 'react-day-picker';
@@ -24,35 +24,43 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
       showOutsideDays={showOutsideDays}
       className={cn('p-3', className)}
       classNames={{
-        months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
+        months: 'relative flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
-        caption: 'flex justify-center pt-1 relative items-center',
+        month_caption: 'flex justify-center items-center h-7',
         caption_label: 'text-sm font-medium text-[var(--tekton-bg-foreground)]',
-        nav: 'space-x-1 flex items-center',
-        nav_button: cn(
-          'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-md)] text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)] h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
+        nav: 'absolute top-0 inset-x-0 flex items-center justify-between h-7 z-10',
+        button_previous: cn(
+          'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-md)] text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+          'hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)]',
+          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
         ),
-        nav_button_previous: 'absolute left-1',
-        nav_button_next: 'absolute right-1',
-        table: 'w-full border-collapse space-y-1',
-        head_row: 'flex',
-        head_cell:
-          'text-[var(--tekton-text-muted-foreground)] rounded-[var(--tekton-radius-md)] w-9 font-normal text-[0.8rem]',
-        row: 'flex w-full mt-2',
-        cell: 'h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-[var(--tekton-radius-md)] [&:has([aria-selected].day-outside)]:bg-[var(--tekton-bg-accent)]/50 [&:has([aria-selected])]:bg-[var(--tekton-bg-accent)] first:[&:has([aria-selected])]:rounded-l-[var(--tekton-radius-md)] last:[&:has([aria-selected])]:rounded-r-[var(--tekton-radius-md)] focus-within:relative focus-within:z-20',
-        day: cn(
-          'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-md)] text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)] h-9 w-9 p-0 font-normal aria-selected:opacity-100'
+        button_next: cn(
+          'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-md)] text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+          'hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)]',
+          'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
         ),
-        day_range_end: 'day-range-end',
-        day_selected:
-          'bg-[var(--tekton-bg-primary)] text-[var(--tekton-bg-primary-foreground)] hover:bg-[var(--tekton-bg-primary)] hover:text-[var(--tekton-bg-primary-foreground)] focus:bg-[var(--tekton-bg-primary)] focus:text-[var(--tekton-bg-primary-foreground)]',
-        day_today: 'bg-[var(--tekton-bg-accent)] text-[var(--tekton-bg-accent-foreground)]',
-        day_outside:
-          'day-outside text-[var(--tekton-text-muted-foreground)] opacity-50 aria-selected:bg-[var(--tekton-bg-accent)]/50 aria-selected:text-[var(--tekton-text-muted-foreground)] aria-selected:opacity-30',
-        day_disabled: 'text-[var(--tekton-text-muted-foreground)] opacity-50',
-        day_range_middle:
+        month_grid: 'w-full border-collapse space-y-1',
+        weekdays: 'flex',
+        weekday:
+          'text-[var(--tekton-bg-muted-foreground)] rounded-[var(--tekton-radius-md)] w-9 font-normal text-[0.8rem]',
+        week: 'flex w-full mt-2',
+        day: 'h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-[var(--tekton-radius-md)] [&:has([aria-selected].day-outside)]:bg-[var(--tekton-bg-accent)]/50 [&:has([aria-selected])]:bg-[var(--tekton-bg-accent)] first:[&:has([aria-selected])]:rounded-l-[var(--tekton-radius-md)] last:[&:has([aria-selected])]:rounded-r-[var(--tekton-radius-md)] focus-within:relative focus-within:z-20',
+        day_button: cn(
+          'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-md)] text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+          'hover:bg-[var(--tekton-bg-accent)] hover:text-[var(--tekton-bg-accent-foreground)]',
+          'h-9 w-9 p-0 font-normal aria-selected:opacity-100'
+        ),
+        range_end: 'day-range-end',
+        selected:
+          'rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-primary)] text-[var(--tekton-bg-primary-foreground)] hover:bg-[var(--tekton-bg-primary)] hover:text-[var(--tekton-bg-primary-foreground)] focus:bg-[var(--tekton-bg-primary)] focus:text-[var(--tekton-bg-primary-foreground)]',
+        today:
+          'rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-accent)] text-[var(--tekton-bg-accent-foreground)]',
+        outside:
+          'day-outside text-[var(--tekton-bg-muted-foreground)] opacity-50 aria-selected:bg-[var(--tekton-bg-accent)]/50 aria-selected:text-[var(--tekton-bg-muted-foreground)] aria-selected:opacity-30',
+        disabled: 'text-[var(--tekton-bg-muted-foreground)] opacity-50',
+        range_middle:
           'aria-selected:bg-[var(--tekton-bg-accent)] aria-selected:text-[var(--tekton-bg-accent-foreground)]',
-        day_hidden: 'invisible',
+        hidden: 'invisible',
         ...classNames,
       }}
       components={{
