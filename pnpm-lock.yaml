@@ -177,11 +177,11 @@ importers:
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
       '@tekton-ui/core':
-        specifier: ^0.3.3
-        version: 0.3.3
+        specifier: ^0.3.4
+        version: 0.3.4
       '@tekton-ui/ui':
-        specifier: ^0.3.3
-        version: 0.3.3(@emotion/is-prop-valid@1.4.0)(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        specifier: ^0.4.1
+        version: 0.4.1(883d942f6df9be89f8b1aee0a3a6f958)
     devDependencies:
       '@babel/types':
         specifier: ^7.28.6
@@ -2903,19 +2903,49 @@ packages:
     peerDependencies:
       react: ^18 || ^19
 
-  '@tekton-ui/core@0.3.3':
-    resolution: {integrity: sha512-mXLPiYMfwqh6645n4SKT2iGluq8mfiAZ5Wi19i3cyHaeeyjLMmB025aPgG3+FBhQKmiXl6jCpZeVh0cIr2UMMg==}
+  '@tekton-ui/core@0.3.4':
+    resolution: {integrity: sha512-pSeq95bmN0CvexuwSDt3zWcJcjtW0gU/VKHT6uwjBRHTRYhqUvJeyFp7xWNtCqY2ocA4YVpH+9cDhvzrqbe3iw==}
     engines: {node: '>=20.0.0'}
 
   '@tekton-ui/tokens@0.3.3':
     resolution: {integrity: sha512-9qgLjK0OZYLiD52CWlQUqW7d9efvHZtt3CJOIICmJfgXrMh7rW8NyRnHWgqV4dSWUH3PXS3/SCfDUMTSoUPKIA==}
     engines: {node: '>=20.0.0'}
 
-  '@tekton-ui/ui@0.3.3':
-    resolution: {integrity: sha512-YLXPH9nLGdSaxPI+dLrTBz736ayDjlHPkxJtQf8MC0mSfqRCaG6T7kBc2453FxsonLOSOArqptyIlXWo0AxOxA==}
+  '@tekton-ui/ui@0.4.1':
+    resolution: {integrity: sha512-5mfeq61lCXsOm3i+wZKpqx0Zd1PaqxvxAgQVoYhit5gjqIsHaPRnoxOJSs03onV6AwV2WrYYjyD7iL1CIHYS3Q==}
     peerDependencies:
+      '@hookform/resolvers': ^3.0.0
+      '@radix-ui/react-alert-dialog': ^1.0.0
+      '@radix-ui/react-avatar': ^1.0.0
+      '@radix-ui/react-checkbox': ^1.0.0
+      '@radix-ui/react-dialog': ^1.0.0
+      '@radix-ui/react-dropdown-menu': ^2.0.0
+      '@radix-ui/react-label': ^2.0.0
+      '@radix-ui/react-navigation-menu': ^1.0.0
+      '@radix-ui/react-popover': ^1.0.0
+      '@radix-ui/react-progress': ^1.0.0
+      '@radix-ui/react-radio-group': ^1.0.0
+      '@radix-ui/react-scroll-area': ^1.0.0
+      '@radix-ui/react-select': ^2.0.0
+      '@radix-ui/react-separator': ^1.0.0
+      '@radix-ui/react-slider': ^1.0.0
+      '@radix-ui/react-slot': ^1.0.0
+      '@radix-ui/react-switch': ^1.0.0
+      '@radix-ui/react-tabs': ^1.0.0
+      '@radix-ui/react-toast': ^1.0.0
+      '@radix-ui/react-tooltip': ^1.0.0
+      class-variance-authority: ^0.7.0
+      clsx: ^2.0.0
+      cmdk: ^1.0.0
+      date-fns: ^3.0.0 || ^4.0.0
+      framer-motion: ^11.0.0 || ^12.0.0
+      lucide-react: ^0.200.0
       react: ^18.0.0 || ^19.0.0
+      react-day-picker: ^9.0.0
       react-dom: ^18.0.0 || ^19.0.0
+      react-hook-form: ^7.0.0
+      tailwind-merge: ^2.0.0
+      zod: ^3.20.0
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -4956,11 +4986,6 @@ packages:
 
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
-
-  lucide-react@0.294.0:
-    resolution: {integrity: sha512-V7o0/VECSGbLHn3/1O67FUgBwWB+hmzshrgDVRJQhMh8uj5D3HBuIvhuAmQTtlupILSplwIZg5FTc4tTKMA2SA==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
 
   lucide-react@0.563.0:
     resolution: {integrity: sha512-8dXPB2GI4dI8jV4MgUDGBeLdGk8ekfqVZ0BdLcrRzocGgG75ltNEmWS+gE7uokKF/0oSUuczNDT+g9hFJ23FkA==}
@@ -8410,13 +8435,13 @@ snapshots:
       '@tanstack/query-core': 5.90.20
       react: 19.2.3
 
-  '@tekton-ui/core@0.3.3':
+  '@tekton-ui/core@0.3.4':
     dependencies:
       zod: 3.25.76
 
   '@tekton-ui/tokens@0.3.3': {}
 
-  '@tekton-ui/ui@0.3.3(@emotion/is-prop-valid@1.4.0)(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@tekton-ui/ui@0.4.1(883d942f6df9be89f8b1aee0a3a6f958)':
     dependencies:
       '@hookform/resolvers': 3.10.0(react-hook-form@7.71.1(react@19.2.3))
       '@radix-ui/react-alert-dialog': 1.1.15(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -8444,17 +8469,13 @@ snapshots:
       cmdk: 1.1.1(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       date-fns: 4.1.0
       framer-motion: 12.34.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      lucide-react: 0.294.0(react@19.2.3)
+      lucide-react: 0.563.0(react@19.2.3)
       react: 19.2.3
       react-day-picker: 9.13.2(react@19.2.3)
       react-dom: 19.2.3(react@19.2.3)
       react-hook-form: 7.71.1(react@19.2.3)
       tailwind-merge: 2.6.0
       zod: 3.25.76
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/react'
-      - '@types/react-dom'
 
   '@testing-library/dom@10.4.0':
     dependencies:
@@ -9746,7 +9767,7 @@ snapshots:
       eslint: 9.39.2(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-react: 7.37.5(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-react-hooks: 7.0.1(eslint@9.39.2(jiti@1.21.7))
@@ -9779,7 +9800,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
     transitivePeerDependencies:
       - supports-color
 
@@ -9794,7 +9815,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -10849,10 +10870,6 @@ snapshots:
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
-
-  lucide-react@0.294.0(react@19.2.3):
-    dependencies:
-      react: 19.2.3
 
   lucide-react@0.563.0(react@19.2.3):
     dependencies:
