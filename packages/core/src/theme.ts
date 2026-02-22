@@ -34,6 +34,10 @@ export {
   themeExistsV2,
   oklchToCSSV2,
   resolveTokenRef,
+  getWhiteColor,
+  // Constants
+  CSS_VARIABLE_MAP,
+  type CSSVariableName,
 } from './theme-v2.js';
 
 // ============================================================================

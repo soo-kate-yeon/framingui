@@ -194,6 +194,7 @@ export type ListThemesOutput = z.infer<typeof ListThemesOutputSchema>;
  */
 export const PreviewThemeInputSchema = z.object({
   themeId: ThemeIdSchema,
+  includeCSS: z.boolean().optional().default(false),
 });
 
 export type PreviewThemeInput = z.infer<typeof PreviewThemeInputSchema>;
@@ -229,6 +230,7 @@ export const PreviewThemeOutputSchema = z.object({
       typography: z.unknown().optional(),
     })
   ),
+  css: z.string().optional(),
   error: z.string().optional(),
 });
 

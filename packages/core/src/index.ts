@@ -50,6 +50,10 @@ export {
   type EffectsTokens,
   type AIContext,
   type DarkModeOverrides,
+  // CSS Variable Mapping
+  CSS_VARIABLE_MAP,
+  getWhiteColor,
+  type CSSVariableName,
   // Deprecated (kept for backward compatibility)
   isBuiltinTheme,
   generateCSSVariables,

@@ -1,6 +1,6 @@
 /**
  * @tekton-ui/ui - Theme Loader
- * SPEC-UI-001: linear-minimal-v1.json → CSS Variables Converter
+ * SPEC-UI-001: Theme JSON → CSS Variables Converter
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
@@ -11,10 +11,12 @@
  *
  * Converts Tekton theme JSON files to CSS Variables for runtime theming.
  * Supports OKLCH color format and semantic token resolution.
+ *
+ * v0.5.0: ThemeDefinition v2.1 정렬 + 페이지 시맨틱 변수 추가
  */
 
 /**
- * Theme Definition (mirrors @tekton-ui/core ThemeDefinition)
+ * Theme Definition (aligned with @tekton-ui/core ThemeV2 v2.1)
  */
 export interface ThemeDefinition {
   id: string;
@@ -23,10 +25,11 @@ export interface ThemeDefinition {
   tokens: {
     atomic: {
       color: {
-        brand: Record<string, OKLCHColor>;
-        neutral: Record<string, OKLCHColor>;
+        brand?: Record<string, OKLCHColor>;
+        neutral?: Record<string, OKLCHColor>;
         accent?: Record<string, OKLCHColor>;
-        white: OKLCHColor;
+        /** @deprecated v2.1에서는 neutral.white 사용. 하위 호환성을 위해 유지 */
+        white?: OKLCHColor;
       };
       spacing: Record<string, string>;
       radius: Record<string, string>;
@@ -70,7 +73,7 @@ export interface ThemeDefinition {
 }
 
 /**
- * OKLCH Color Format (used by linear-minimal-v1)
+ * OKLCH Color Format
  */
 export interface OKLCHColor {
   l: number; // Lightness (0-1)
@@ -112,11 +115,30 @@ export function resolveSemanticToken(
 }
 
 /**
+ * 테마에서 white 색상을 안전하게 가져오기
+ * v2.1: neutral.white → v1: color.white → 폴백: 순백색
+ */
+function getWhiteColor(theme: ThemeDefinition): OKLCHColor {
+  const { color } = theme.tokens.atomic;
+  // v2.1: neutral.white
+  if (color.neutral && 'white' in color.neutral) {
+    return color.neutral.white as OKLCHColor;
+  }
+  // v1: color.white
+  if (color.white) {
+    return color.white;
+  }
+  // 폴백
+  return { l: 1, c: 0, h: 0 };
+}
+
+/**
  * Convert theme JSON to CSS Variables string
- * Maps linear-minimal-v1.json structure to --tekton-* variables
+ * 컴포넌트 변수 + 페이지 시맨틱 변수를 모두 생성
  */
 export function themeToCSS(theme: ThemeDefinition): string {
   const { tokens } = theme;
+  const white = getWhiteColor(theme);
 
   // Resolve semantic tokens
   const resolveColor = (ref: string): string => {
@@ -127,55 +149,80 @@ export function themeToCSS(theme: ThemeDefinition): string {
     return String(resolved);
   };
 
+  // 텍스트 색상 해상도 헬퍼
+  const textPrimary = tokens.semantic.text
+    ? resolveColor(tokens.semantic.text.primary)
+    : tokens.atomic.color.neutral?.[900]
+      ? oklchToCSS(tokens.atomic.color.neutral[900])
+      : oklchToCSS({ l: 0.12, c: 0.01, h: 0 });
+  const textSecondary = tokens.semantic.text
+    ? resolveColor(tokens.semantic.text.secondary)
+    : tokens.atomic.color.neutral?.[500]
+      ? oklchToCSS(tokens.atomic.color.neutral[500])
+      : oklchToCSS({ l: 0.58, c: 0.02, h: 0 });
+  const textTertiary = tokens.semantic.text?.muted
+    ? resolveColor(tokens.semantic.text.muted)
+    : tokens.atomic.color.neutral?.[400]
+      ? oklchToCSS(tokens.atomic.color.neutral[400])
+      : oklchToCSS({ l: 0.72, c: 0.02, h: 0 });
+
   const css = `
 :root, [data-theme="${theme.id}"] {
   /* ========================================
-     Tekton Background Tokens
-     From: linear-minimal-v1.json → tokens.semantic.background
+     Component Tokens (@tekton-ui/ui 컴포넌트용)
      ======================================== */
   --tekton-bg-background: ${resolveColor(tokens.semantic.background.canvas)};
-  --tekton-bg-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
+  --tekton-bg-foreground: ${textPrimary};
 
   --tekton-bg-card: ${resolveColor(tokens.semantic.background.surface.default)};
-  --tekton-bg-card-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
+  --tekton-bg-card-foreground: ${textPrimary};
 
   --tekton-bg-popover: ${resolveColor(tokens.semantic.background.surface.default)};
-  --tekton-bg-popover-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
+  --tekton-bg-popover-foreground: ${textPrimary};
 
   --tekton-bg-primary: ${resolveColor(tokens.semantic.background.brand.default)};
-  --tekton-bg-primary-foreground: ${oklchToCSS(tokens.atomic.color.white)};
+  --tekton-bg-primary-foreground: ${oklchToCSS(white)};
 
   --tekton-bg-secondary: ${resolveColor(tokens.semantic.background.surface.emphasis)};
-  --tekton-bg-secondary-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
+  --tekton-bg-secondary-foreground: ${textPrimary};
 
   --tekton-bg-muted: ${resolveColor(tokens.semantic.background.surface.subtle)};
-  --tekton-bg-muted-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.secondary) : oklchToCSS(tokens.atomic.color.neutral[500])};
+  --tekton-bg-muted-foreground: ${textSecondary};
 
   --tekton-bg-accent: ${resolveColor(tokens.semantic.background.surface.emphasis)};
-  --tekton-bg-accent-foreground: ${tokens.semantic.text ? resolveColor(tokens.semantic.text.primary) : oklchToCSS(tokens.atomic.color.neutral[900])};
+  --tekton-bg-accent-foreground: ${textPrimary};
 
   --tekton-bg-destructive: ${oklchToCSS({ l: 0.5, c: 0.2, h: 30 })}; /* Default red */
-  --tekton-bg-destructive-foreground: ${oklchToCSS(tokens.atomic.color.white)};
+  --tekton-bg-destructive-foreground: ${oklchToCSS(white)};
 
   /* ========================================
-     Tekton Border Tokens
-     From: linear-minimal-v1.json → tokens.semantic.border
+     Border Tokens
      ======================================== */
   --tekton-border-default: ${resolveColor(tokens.semantic.border.default.default)};
   --tekton-border-input: ${resolveColor(tokens.semantic.border.default.subtle)};
   --tekton-border-ring: ${resolveColor(tokens.semantic.background.brand.default)};
 
   /* ========================================
-     Tekton Radius Tokens
-     From: linear-minimal-v1.json → tokens.atomic.radius
+     Page Semantic Tokens (페이지 템플릿 인라인 스타일용)
+     ======================================== */
+  --tekton-bg-canvas: ${resolveColor(tokens.semantic.background.canvas)};
+  --tekton-bg-surface: ${resolveColor(tokens.semantic.background.surface.default)};
+  --tekton-text-primary: ${textPrimary};
+  --tekton-text-secondary: ${textSecondary};
+  --tekton-text-tertiary: ${textTertiary};
+  --tekton-action-primary: ${textPrimary};
+  --tekton-action-primary-text: ${oklchToCSS(white)};
+  --tekton-border-emphasis: ${resolveColor(tokens.semantic.border.default.emphasis)};
+
+  /* ========================================
+     Radius Tokens
      ======================================== */
   ${Object.entries(tokens.atomic.radius)
     .map(([key, val]) => `--tekton-radius-${key}: ${val};`)
     .join('\n  ')}
 
   /* ========================================
-     Tekton Spacing Tokens
-     From: linear-minimal-v1.json → tokens.atomic.spacing
+     Spacing Tokens
      ======================================== */
   ${Object.entries(tokens.atomic.spacing)
     .map(([key, val]) => `--tekton-spacing-${key}: ${val};`)

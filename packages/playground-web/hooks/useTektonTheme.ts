@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { previewTheme } from '@/lib/mcp-client';
 
+import { injectThemeCSS, type ThemeDefinition } from '@tekton-ui/ui';
+
 interface UseTektonThemeOptions {
   /** MCP 서버 연결 실패 시 적용할 폴백 CSS 변수 */
   fallback?: Record<string, string>;
@@ -18,15 +20,9 @@ interface UseTektonThemeResult {
 /**
  * Tekton MCP 서버에서 테마를 로드하고 CSS 변수로 적용하는 훅
  *
- * @example
- * ```tsx
- * const { loaded, error } = useTektonTheme("neutral-workspace", {
- *   fallback: {
- *     "--tekton-bg-canvas": "#FDFCFB",
- *     "--tekton-text-primary": "#171717",
- *   },
- * });
- * ```
+ * 두 가지 CSS 변수 체계를 모두 설정:
+ * 1. 컴포넌트 변수 (--tekton-bg-card 등) — @tekton-ui/ui 컴포넌트용
+ * 2. 페이지 변수 (--tekton-bg-canvas 등) — 페이지 템플릿 인라인 스타일용
  */
 export function useTektonTheme(
   themeId: string,
@@ -47,19 +43,10 @@ export function useTektonTheme(
         }
 
         if (response.result?.success && response.result.theme) {
-          const { tokens } = response.result.theme;
-          const root = document.documentElement;
-          const allTokens: Record<string, unknown> = {
-            ...(tokens.atomic as Record<string, unknown>),
-            ...(tokens.semantic as Record<string, unknown>),
-            ...((tokens.component as Record<string, unknown>) ?? {}),
-          };
+          const theme = response.result.theme as ThemeDefinition;
 
-          Object.entries(allTokens).forEach(([key, value]) => {
-            if (typeof value === 'string') {
-              root.style.setProperty(key, value);
-            }
-          });
+          // CSS 변수 주입 (컴포넌트 + 페이지 변수 모두 v0.5.0에서 네이티브 생성)
+          injectThemeCSS(theme);
         } else {
           applyFallback();
           setError(response.result?.error ?? response.error?.message ?? '테마 로드 실패');

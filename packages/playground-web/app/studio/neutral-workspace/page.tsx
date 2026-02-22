@@ -1,26 +1,12 @@
 'use client';
 
-import {
-  DollarSign,
-  Users,
-  Activity,
-  Search,
-  ChevronDown,
-  Menu,
-  ChevronRight,
-  User,
-  CreditCard,
-  Bell,
-  Globe,
-  ShieldCheck,
-  LogOut,
-  ExternalLink,
-  X,
-} from 'lucide-react';
+import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
+import { ComponentGallery } from '@/components/studio/ComponentGallery';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -32,15 +18,55 @@ import {
 } from 'recharts';
 
 const NEUTRAL_HUMANISM_FALLBACK: Record<string, string> = {
+  // 페이지 템플릿 변수 (인라인 스타일용)
   '--tekton-bg-canvas': '#F9F7F2',
   '--tekton-bg-surface': '#FDFCFA',
   '--tekton-text-primary': '#1F1E1C',
   '--tekton-text-secondary': '#6B665E',
+  '--tekton-text-tertiary': '#A8A29E',
   '--tekton-border-default': '#EAE6DA',
+  '--tekton-border-emphasis': '#D5D0C4',
   '--tekton-action-primary': '#1F1E1C',
   '--tekton-action-primary-text': '#FDFCFA',
+
+  // 컴포넌트 변수 (@tekton-ui/ui 컴포넌트용)
+  '--tekton-bg-background': '#F9F7F2',
+  '--tekton-bg-foreground': '#1F1E1C',
+  '--tekton-bg-card': '#FDFCFA',
+  '--tekton-bg-card-foreground': '#1F1E1C',
+  '--tekton-bg-popover': '#FDFCFA',
+  '--tekton-bg-popover-foreground': '#1F1E1C',
+  '--tekton-bg-primary': '#1F1E1C',
+  '--tekton-bg-primary-foreground': '#FDFCFA',
+  '--tekton-bg-secondary': '#EAE6DA',
+  '--tekton-bg-secondary-foreground': '#1F1E1C',
+  '--tekton-bg-muted': '#F3F0E8',
+  '--tekton-bg-muted-foreground': '#6B665E',
+  '--tekton-bg-accent': '#EAE6DA',
+  '--tekton-bg-accent-foreground': '#1F1E1C',
+  '--tekton-bg-destructive': '#E54D2E',
+  '--tekton-bg-destructive-foreground': '#FDFCFA',
+  '--tekton-border-input': '#F3F0E8',
+  '--tekton-border-ring': '#1F1E1C',
+
+  // 공유 토큰 (컴포넌트 + 페이지)
+  '--tekton-radius-sm': '6px',
   '--tekton-radius-md': '8px',
   '--tekton-radius-lg': '12px',
+  '--tekton-radius-xl': '16px',
+  '--tekton-radius-none': '0',
+  '--tekton-radius-full': '9999px',
+  '--tekton-spacing-0': '0',
+  '--tekton-spacing-1': '4px',
+  '--tekton-spacing-2': '8px',
+  '--tekton-spacing-3': '12px',
+  '--tekton-spacing-4': '16px',
+  '--tekton-spacing-5': '20px',
+  '--tekton-spacing-6': '24px',
+  '--tekton-spacing-8': '32px',
+  '--tekton-spacing-10': '40px',
+  '--tekton-spacing-12': '48px',
+  '--tekton-spacing-16': '64px',
 };
 
 /**
@@ -48,7 +74,7 @@ const NEUTRAL_HUMANISM_FALLBACK: Record<string, string> = {
  * Replicating the Minimal Workspace IA with the Neutral Workspace theme.
  */
 export default function NeutralHumanismDemo() {
-  const [currentView, setCurrentView] = useState<'overview' | 'customers' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('neutral-workspace', {
     fallback: NEUTRAL_HUMANISM_FALLBACK,
@@ -57,129 +83,101 @@ export default function NeutralHumanismDemo() {
 
   return (
     <div
-      className={`min-h-screen bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
       {/* Preview Banner */}
       <PreviewBanner templateId="neutral-workspace" templateName="Neutral Workspace" />
 
-      {/* Header - Adjusted for banner */}
-      <header className="border-b border-[var(--tekton-border-default)] sticky top-12 bg-[var(--tekton-bg-surface)]/80 backdrop-blur-md z-40 mt-12">
-        <div className="flex h-16 items-center px-4 md:px-6 gap-4">
-          {/* Mobile Menu */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
-            >
-              <Menu size={20} />
-            </button>
-          </div>
-
-          {/* Team Switcher Simulation - Hidden on Mobile */}
-          <button className="hidden md:flex w-56 h-9 items-center justify-between border border-[var(--tekton-border-default)] rounded-[var(--tekton-radius-md)] px-3 bg-[var(--tekton-bg-surface)] hover:bg-[var(--tekton-bg-canvas)] transition-colors">
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-[var(--tekton-action-primary)]"></div>
-              <span className="text-sm font-medium">Neutral Org</span>
-            </div>
-            <ChevronDown size={14} className="text-[var(--tekton-text-secondary)]" />
-          </button>
-
-          {/* Nav - Hidden on Mobile */}
-          <nav className="hidden lg:flex items-center gap-6 ml-4">
-            <button
-              onClick={() => setCurrentView('overview')}
-              className={`text-sm font-medium transition-colors ${currentView === 'overview' ? 'text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)]'}`}
-            >
-              {locale === 'ko' ? '개요' : 'Overview'}
-            </button>
-            <button
-              onClick={() => setCurrentView('customers')}
-              className={`text-sm font-medium transition-colors ${currentView === 'customers' ? 'text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)]'}`}
-            >
-              {locale === 'ko' ? '고객' : 'Customers'}
-            </button>
-            <button
-              onClick={() => setCurrentView('settings')}
-              className={`text-sm font-medium transition-colors ${currentView === 'settings' ? 'text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)]'}`}
-            >
-              {locale === 'ko' ? '설정' : 'Settings'}
-            </button>
-          </nav>
-
-          <div className="ml-auto flex items-center gap-2 md:gap-4">
-            <div className="relative group">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-[var(--tekton-text-secondary)] group-focus-within:text-[var(--tekton-text-primary)] transition-colors" />
-              <input
-                className="h-9 w-9 md:w-64 rounded-[var(--tekton-radius-md)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] pl-9 md:pr-4 py-2 text-sm outline-none placeholder:text-[var(--tekton-text-secondary)] focus:ring-1 focus:ring-[var(--tekton-text-primary)] transition-all cursor-pointer md:cursor-text"
-                placeholder={locale === 'ko' ? '워크스페이스 검색...' : 'Search workspace...'}
-              />
-            </div>
-            <button className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border border-[var(--tekton-border-default)] flex-shrink-0">
-              <img src="https://github.com/shadcn.png" alt="User" />
-            </button>
+      {/* Local Sidebar (Desktop) */}
+      <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
+        <div className="p-6">
+          <Link
+            href="/studio"
+            className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
+          >
+            <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
+              tekton/ui
+            </span>
+            <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-6 px-1">
+            <div className="w-6 h-6 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+            <span className="font-bold tracking-tight truncate">Neutral Org</span>
           </div>
         </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-4 flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('page')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '페이지 예시' : 'Page Example'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'page' ? 'opacity-100' : ''}`}
+            />
+          </button>
+          <button
+            onClick={() => setActiveTab('component')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
+            />
+          </button>
+        </nav>
+      </aside>
+
+      {/* Mobile Header (replaces sidebar on small screens) */}
+      <header className="md:hidden shrink-0 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] flex items-center justify-between px-4 h-14 z-40 relative">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+          <span className="font-bold tracking-tight text-sm">Neutral Org</span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 -mr-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </header>
 
-      {/* Main Content */}
-      <main className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8 min-h-[calc(100vh-64px)]">
-        {currentView === 'overview' && <OverviewDashboard />}
-        {currentView === 'customers' && <CustomersView />}
-        {currentView === 'settings' && <SettingsView />}
-      </main>
-
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-50 md:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="fixed inset-y-0 left-0 w-[300px] sm:w-[400px] bg-[var(--tekton-bg-surface)] border-r border-[var(--tekton-border-default)] shadow-2xl z-50 md:hidden">
-            <div className="px-6 py-6 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-canvas)] flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[var(--tekton-action-primary)]"></div>
-                <span className="font-bold tracking-tight">Neutral Org</span>
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <nav className="flex flex-col gap-2 px-4 pt-6">
-              <button
-                onClick={() => {
-                  setCurrentView('overview');
-                  setMobileMenuOpen(false);
-                }}
-                className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${currentView === 'overview' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
-              >
-                Overview
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentView('customers');
-                  setMobileMenuOpen(false);
-                }}
-                className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${currentView === 'customers' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
-              >
-                Customers
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentView('settings');
-                  setMobileMenuOpen(false);
-                }}
-                className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${currentView === 'settings' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
-              >
-                Settings
-              </button>
-            </nav>
-          </div>
-        </>
+        <div className="md:hidden absolute inset-x-0 top-[104px] bottom-0 bg-[var(--tekton-bg-surface)] z-50 overflow-y-auto shadow-xl">
+          <nav className="flex flex-col gap-2 p-4">
+            <button
+              onClick={() => {
+                setActiveTab('page');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '페이지 예시' : 'Page Example'}
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('component');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
+          </nav>
+        </div>
       )}
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-24 relative">
+        <div className="max-w-[1200px] mx-auto">
+          {activeTab === 'page' && <OverviewDashboard />}
+          {activeTab === 'component' && <ComponentGallery />}
+        </div>
+      </main>
     </div>
   );
 }
@@ -340,212 +338,5 @@ function OverviewChart() {
         </AreaChart>
       </ResponsiveContainer>
     </div>
-  );
-}
-
-function CustomersView() {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Active Customers</h2>
-        <div className="flex items-center gap-2">
-          <button className="h-9 px-4 py-2 bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:opacity-90">
-            Add Customer
-          </button>
-        </div>
-      </div>
-
-      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-canvas)]/30">
-                <th className="p-4 font-semibold text-[var(--tekton-text-primary)]">Customer</th>
-                <th className="p-4 font-semibold text-[var(--tekton-text-primary)]">Status</th>
-                <th className="p-4 font-semibold text-[var(--tekton-text-primary)]">Plan</th>
-                <th className="p-4 font-semibold text-[var(--tekton-text-primary)]">Revenue</th>
-                <th className="p-4 font-semibold text-[var(--tekton-text-primary)] text-right">
-                  Activity
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--tekton-border-default)] opacity-90">
-              {[
-                {
-                  name: 'Olivia Martin',
-                  email: 'olivia.martin@email.com',
-                  status: 'Active',
-                  plan: 'Enterprise',
-                  revenue: '$2,400.00',
-                  last: '2h ago',
-                },
-                {
-                  name: 'Jackson Lee',
-                  email: 'jackson.lee@email.com',
-                  status: 'Active',
-                  plan: 'Professional',
-                  revenue: '$1,200.00',
-                  last: '5h ago',
-                },
-                {
-                  name: 'Isabella Nguyen',
-                  email: 'isabella.nguyen@email.com',
-                  status: 'Inactive',
-                  plan: 'Starter',
-                  revenue: '$400.00',
-                  last: '2d ago',
-                },
-                {
-                  name: 'William Kim',
-                  email: 'will@email.com',
-                  status: 'Active',
-                  plan: 'Enterprise',
-                  revenue: '$3,600.00',
-                  last: '1h ago',
-                },
-                {
-                  name: 'Sofia Davis',
-                  email: 'sofia.davis@email.com',
-                  status: 'Active',
-                  plan: 'Professional',
-                  revenue: '$900.00',
-                  last: '4h ago',
-                },
-                {
-                  name: 'Sarah Linn',
-                  email: 'sarah@email.com',
-                  status: 'Active',
-                  plan: 'Enterprise',
-                  revenue: '$4,800.00',
-                  last: '12m ago',
-                },
-              ].map((customer) => (
-                <tr
-                  key={customer.email}
-                  className="hover:bg-[var(--tekton-bg-canvas)] transition-colors group"
-                >
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[var(--tekton-bg-canvas)] border border-[var(--tekton-border-default)] flex items-center justify-center font-bold text-[var(--tekton-text-secondary)]">
-                        {customer.name[0]}
-                      </div>
-                      <div>
-                        <div className="font-medium">{customer.name}</div>
-                        <div className="text-xs text-[var(--tekton-text-secondary)]">
-                          {customer.email}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        customer.status === 'Active'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                          : 'bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-secondary)] border border-[var(--tekton-border-default)]'
-                      }`}
-                    >
-                      {customer.status}
-                    </div>
-                  </td>
-                  <td className="p-4 text-[var(--tekton-text-secondary)]">{customer.plan}</td>
-                  <td className="p-4 font-medium">{customer.revenue}</td>
-                  <td className="p-4 text-right text-[var(--tekton-text-secondary)]">
-                    {customer.last}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingsView() {
-  return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-32">
-      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Workspace Settings</h2>
-
-      <div className="space-y-6">
-        <section>
-          <h3 className="text-sm font-bold text-[var(--tekton-text-secondary)] uppercase tracking-widest mb-4 px-1">
-            Identity & Security
-          </h3>
-          <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] overflow-hidden">
-            <SettingItem
-              icon={<User size={18} />}
-              label="Profile Information"
-              value="Neutral Workspace"
-            />
-            <SettingItem
-              icon={<CreditCard size={18} />}
-              label="Credits & Billing"
-              value="On-demand"
-            />
-            <SettingItem icon={<ShieldCheck size={18} />} label="Auth & Security" />
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-sm font-bold text-[var(--tekton-text-secondary)] uppercase tracking-widest mb-4 px-1">
-            Engagement
-          </h3>
-          <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] overflow-hidden">
-            <SettingItem icon={<Bell size={18} />} label="Email Notifications" value="Standard" />
-            <SettingItem
-              icon={<Globe size={18} />}
-              label="Language / Region"
-              value="Global (Auto)"
-            />
-          </div>
-        </section>
-
-        <div className="pt-4">
-          <button className="w-full flex items-center justify-center gap-2 h-11 rounded-[var(--tekton-radius-lg)] bg-[var(--tekton-bg-canvas)] border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold hover:bg-rose-50 hover:text-rose-700 hover:border-rose-100 transition-all group">
-            <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
-            Log Out of Workspace
-          </button>
-        </div>
-
-        <div className="flex justify-center pt-8">
-          <a
-            href="https://example.com"
-            className="flex items-center gap-1.5 text-xs text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
-          >
-            Documentation <ExternalLink size={12} />
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingItem({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value?: string;
-}) {
-  return (
-    <button className="w-full flex items-center justify-between p-4 hover:bg-[var(--tekton-bg-canvas)] transition-colors border-b border-[var(--tekton-border-default)] last:border-0 group text-left">
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-canvas)] border border-[var(--tekton-border-default)] group-hover:bg-[var(--tekton-bg-surface)] transition-colors text-[var(--tekton-text-secondary)]">
-          {icon}
-        </div>
-        <span className="font-medium">{label}</span>
-      </div>
-      <div className="flex items-center gap-3">
-        {value && <span className="text-sm text-[var(--tekton-text-secondary)]">{value}</span>}
-        <ChevronRight
-          size={16}
-          className="text-[var(--tekton-text-secondary)] opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"
-        />
-      </div>
-    </button>
   );
 }

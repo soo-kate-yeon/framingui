@@ -258,8 +258,10 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- After list-themes to inspect a specific theme\n' +
           '- When user wants to see color palettes, typography, or spacing tokens\n' +
           '- To understand theme structure before using in generate-blueprint or get-screen-generation-context\n' +
-          '- When user asks about theme customization options\n\n' +
-          'RETURNS: Complete theme data including colors, typography, spacing, and component tokens',
+          '- When user asks about theme customization options\n' +
+          '- When includeCSS=true, also returns pre-generated CSS variables via themeToCSS()\n\n' +
+          'RETURNS: Complete theme data including colors, typography, spacing, and component tokens. ' +
+          'Optionally includes CSS variables string when includeCSS is true.',
         inputSchema: {
           type: 'object',
           properties: {
@@ -267,6 +269,13 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'string',
               description: 'Theme ID to preview (lowercase alphanumeric with hyphens)',
               pattern: '^[a-z0-9-]+$',
+            },
+            includeCSS: {
+              type: 'boolean',
+              description:
+                'When true, includes pre-generated CSS variables string in the response. ' +
+                'Uses themeToCSS() from @tekton-ui/ui to convert theme tokens to CSS custom properties. ' +
+                'Default: false',
             },
           },
           required: ['themeId'],

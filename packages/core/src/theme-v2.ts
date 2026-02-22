@@ -362,6 +362,105 @@ export function themeExistsV2(themeId: string): boolean {
 }
 
 // ============================================================================
+// CSS Variable Mapping - 단일 진실 원천
+// ============================================================================
+
+/**
+ * Semantic 토큰 → CSS 변수명 매핑
+ * themeToCSS (ui 패키지)와 페이지 템플릿이 동일한 매핑을 참조
+ *
+ * 'component' 변수: @tekton-ui/ui 컴포넌트가 참조
+ * 'page' 변수: 페이지 템플릿 인라인 스타일이 참조
+ */
+export const CSS_VARIABLE_MAP = {
+  // 컴포넌트 변수 (shadcn 호환)
+  'bg-background': { ref: 'semantic.background.canvas', type: 'component' as const },
+  'bg-foreground': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'atomic.color.neutral.900',
+    type: 'component' as const,
+  },
+  'bg-card': { ref: 'semantic.background.surface.default', type: 'component' as const },
+  'bg-card-foreground': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'atomic.color.neutral.900',
+    type: 'component' as const,
+  },
+  'bg-popover': { ref: 'semantic.background.surface.default', type: 'component' as const },
+  'bg-popover-foreground': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'atomic.color.neutral.900',
+    type: 'component' as const,
+  },
+  'bg-primary': { ref: 'semantic.background.brand.default', type: 'component' as const },
+  'bg-primary-foreground': { ref: '_white', type: 'component' as const },
+  'bg-secondary': { ref: 'semantic.background.surface.emphasis', type: 'component' as const },
+  'bg-secondary-foreground': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'atomic.color.neutral.900',
+    type: 'component' as const,
+  },
+  'bg-muted': { ref: 'semantic.background.surface.subtle', type: 'component' as const },
+  'bg-muted-foreground': {
+    ref: 'semantic.text.secondary',
+    fallbackRef: 'atomic.color.neutral.500',
+    type: 'component' as const,
+  },
+  'bg-accent': { ref: 'semantic.background.surface.emphasis', type: 'component' as const },
+  'bg-accent-foreground': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'atomic.color.neutral.900',
+    type: 'component' as const,
+  },
+  'bg-destructive': { ref: '_destructive', type: 'component' as const },
+  'bg-destructive-foreground': { ref: '_white', type: 'component' as const },
+  'border-default': { ref: 'semantic.border.default.default', type: 'component' as const },
+  'border-input': { ref: 'semantic.border.default.subtle', type: 'component' as const },
+  'border-ring': { ref: 'semantic.background.brand.default', type: 'component' as const },
+
+  // 페이지 변수 (인라인 스타일 호환)
+  'bg-canvas': { ref: 'semantic.background.canvas', type: 'page' as const },
+  'bg-surface': { ref: 'semantic.background.surface.default', type: 'page' as const },
+  'text-primary': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'atomic.color.neutral.900',
+    type: 'page' as const,
+  },
+  'text-secondary': {
+    ref: 'semantic.text.secondary',
+    fallbackRef: 'atomic.color.neutral.500',
+    type: 'page' as const,
+  },
+  'text-tertiary': {
+    ref: 'semantic.text.muted',
+    fallbackRef: 'atomic.color.neutral.400',
+    type: 'page' as const,
+  },
+  'action-primary': {
+    ref: 'semantic.text.primary',
+    fallbackRef: 'semantic.background.brand.default',
+    type: 'page' as const,
+  },
+  'action-primary-text': { ref: '_white', type: 'page' as const },
+  'border-emphasis': { ref: 'semantic.border.default.emphasis', type: 'page' as const },
+} as const;
+
+export type CSSVariableName = keyof typeof CSS_VARIABLE_MAP;
+
+/**
+ * 테마에서 white 색상을 안전하게 가져오기
+ * v2.1 스키마에서 white는 neutral.white에 위치
+ */
+export function getWhiteColor(theme: ThemeV2): OKLCHColorV2 {
+  const neutral = theme.tokens.atomic.color.neutral;
+  if (neutral && 'white' in neutral) {
+    return neutral.white as OKLCHColorV2;
+  }
+  // 최종 폴백: 순백색
+  return { l: 1, c: 0, h: 0 };
+}
+
+// ============================================================================
 // Color Utilities
 // ============================================================================
 
