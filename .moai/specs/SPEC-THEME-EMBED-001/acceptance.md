@@ -37,11 +37,11 @@ Feature: 번들된 테마 로드
     Then ThemeV2 객체가 반환됨
     And theme.id가 "blue-bottle-v2"임
 
-  Scenario: equinox-fitness-v1 테마 로드
+  Scenario: dark-boldness-v1 테마 로드
     Given @tekton/core 패키지가 설치되어 있음
-    When loadThemeV2("equinox-fitness-v1") 함수를 호출함
+    When loadThemeV2("dark-boldness-v1") 함수를 호출함
     Then ThemeV2 객체가 반환됨
-    And theme.id가 "equinox-fitness-v1"임
+    And theme.id가 "dark-boldness-v1"임
 ```
 
 #### Scenario 2: 존재하지 않는 테마 처리
@@ -87,7 +87,7 @@ Feature: 테마 목록 조회
     And 배열에 "linear-minimal-v1" 테마가 포함됨
     And 배열에 "atlantic-magazine-v1" 테마가 포함됨
     And 배열에 "blue-bottle-v2" 테마가 포함됨
-    And 배열에 "equinox-fitness-v1" 테마가 포함됨
+    And 배열에 "dark-boldness-v1" 테마가 포함됨
 ```
 
 ---
@@ -127,7 +127,7 @@ Feature: npm 패키지 구조 검증
     When npm pack --dry-run 명령을 실행함
     Then 출력에 "themes/atlantic-magazine-v1.json"이 포함됨
     And 출력에 "themes/blue-bottle-v2.json"이 포함됨
-    And 출력에 "themes/equinox-fitness-v1.json"이 포함됨
+    And 출력에 "themes/dark-boldness-v1.json"이 포함됨
     And 출력에 "themes/linear-minimal-v1.json"이 포함됨
 
   Scenario: tarball 설치 후 테마 로드
@@ -188,10 +188,10 @@ describe('loadThemeV2', () => {
       expect(theme?.id).toBe('blue-bottle-v2');
     });
 
-    it('should load equinox-fitness-v1 theme', () => {
-      const theme = loadThemeV2('equinox-fitness-v1');
+    it('should load dark-boldness-v1 theme', () => {
+      const theme = loadThemeV2('dark-boldness-v1');
       expect(theme).not.toBeNull();
-      expect(theme?.id).toBe('equinox-fitness-v1');
+      expect(theme?.id).toBe('dark-boldness-v1');
     });
   });
 
@@ -235,7 +235,7 @@ describe('listThemesV2', () => {
     expect(ids).toContain('linear-minimal-v1');
     expect(ids).toContain('atlantic-magazine-v1');
     expect(ids).toContain('blue-bottle-v2');
-    expect(ids).toContain('equinox-fitness-v1');
+    expect(ids).toContain('dark-boldness-v1');
   });
 
   it('should return valid ThemeMetaV2 objects', () => {
@@ -259,7 +259,7 @@ describe('themeExistsV2', () => {
     expect(themeExistsV2('linear-minimal-v1')).toBe(true);
     expect(themeExistsV2('atlantic-magazine-v1')).toBe(true);
     expect(themeExistsV2('blue-bottle-v2')).toBe(true);
-    expect(themeExistsV2('equinox-fitness-v1')).toBe(true);
+    expect(themeExistsV2('dark-boldness-v1')).toBe(true);
   });
 
   it('should return false for non-existent theme', () => {

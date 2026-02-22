@@ -2,7 +2,7 @@
 
 > **날짜**: 2026-02-02
 > **Phase**: 1-4 통합 (Phase 5 제외)
-> **테스트 케이스**: Equinox Fitness V2 Settings Page
+> **테스트 케이스**: Dark Boldness V2 Settings Page
 
 ---
 
@@ -10,8 +10,8 @@
 
 | 항목 | 값 |
 |------|-----|
-| 페이지 URL | http://localhost:3001/studio/equinox-fitness-v2/settings |
-| 테마 | equinox-fitness-v2 |
+| 페이지 URL | http://localhost:3001/studio/dark-boldness-v2/settings |
+| 테마 | dark-boldness-v2 |
 | 목적 | Phase 1-4 워크플로우 E2E 검증 |
 | 생성 파일 | 3개 (screen definition, page.tsx, integration test) |
 
@@ -48,7 +48,7 @@
 ```json
 {
   "id": "settings-page",
-  "themeId": "equinox-fitness-v2",
+  "themeId": "dark-boldness-v2",
   "shell": "shell.web.app",
   "page": "page.settings",
   "sections": [...]
@@ -235,7 +235,7 @@ Phase 2: Schema Validation
     → Required fields 확인
     ↓
 Screen Definition 생성
-    → themeId: equinox-fitness-v2
+    → themeId: dark-boldness-v2
     → sections: 4개 (header, account, subscription, actions)
     ↓
 Phase 4: Recipe Resolver
@@ -249,7 +249,7 @@ React 코드 생성
     → 테마 일관성 100%
     → 레시피 적용률 30.4%
     ↓
-✅ 완료: /studio/equinox-fitness-v2/settings
+✅ 완료: /studio/dark-boldness-v2/settings
 ```
 
 ---
@@ -260,7 +260,7 @@ React 코드 생성
 
 1. **Phase 1-4 통합 성공**: 전체 워크플로우가 end-to-end로 작동
 2. **레시피 자동 적용**: 수동 className 작성 불필요
-3. **테마 일관성**: equinox-fitness-v2 디자인 원칙 100% 준수
+3. **테마 일관성**: dark-boldness-v2 디자인 원칙 100% 준수
 4. **Schema 준수**: JSON Schema 기반 검증 완료
 
 ### 개선 가능 영역

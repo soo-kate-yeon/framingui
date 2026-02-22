@@ -29,8 +29,8 @@
     "themeId": {
       "type": "string",
       "pattern": "^[a-z0-9-]+$",
-      "description": "Theme ID for recipe mapping (e.g., 'equinox-fitness')",
-      "examples": ["equinox-fitness", "square-minimalism", "platform-minimal"]
+      "description": "Theme ID for recipe mapping (e.g., 'dark-boldness')",
+      "examples": ["dark-boldness", "square-minimalism", "platform-minimal"]
     },
     "shell": {
       "$ref": "#/definitions/shellToken"
@@ -167,7 +167,7 @@
     {
       "id": "fitness-dashboard",
       "name": "Fitness Dashboard",
-      "themeId": "equinox-fitness",
+      "themeId": "dark-boldness",
       "shell": "shell.web.dashboard",
       "page": "page.dashboard",
       "sections": [

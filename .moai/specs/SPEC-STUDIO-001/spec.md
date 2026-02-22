@@ -96,19 +96,19 @@ Live Demo는 단순 프리뷰가 아닌, **실제 사용 시나리오를 보여�
 ├── /dashboard/customers (고객 관리)
 └── /docs                (문서 사이트)
 
-/studio/equinox-fitness-v2/
+/studio/dark-boldness-v2/
 ├── /                    (피트니스 앱 메인)
 ├── /dashboard           (운동 대시보드)
 ├── /dashboard/settings  (설정)
 └── /docs                (문서)
 
-/studio/neutral-humanism/
+/studio/neutral-workspace/
 ├── /                    (포트폴리오 메인)
 ├── /blog                (블로그)
 ├── /contact             (문의)
 └── /docs                (문서)
 
-/studio/round-minimal/
+/studio/pebble/
 ├── /                    (미니멀 앱 메인)
 └── /docs                (문서)
 

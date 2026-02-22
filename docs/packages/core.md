@@ -35,10 +35,10 @@ import { loadTheme, listThemes, themeExists } from '@tekton-ui/core';
 
 // 사용 가능한 테마 목록 조회
 const themes = listThemes();
-// => [{ id: 'neutral-humanism', name: '...', ... }, ...]
+// => [{ id: 'neutral-workspace', name: '...', ... }, ...]
 
 // 특정 테마 로딩
-const theme = loadTheme('neutral-humanism');
+const theme = loadTheme('neutral-workspace');
 if (theme) {
   console.log(theme.brandTone); // 테마 브랜드 톤
   console.log(theme.designDNA); // 디자인 DNA 정보
@@ -51,10 +51,10 @@ const exists = themeExists('minimal-workspace'); // true
 **내장 테마 목록:**
 
 - `classic-magazine` - 클래식 매거진 스타일
-- `equinox-fitness` - 피트니스/웰빙 테마
+- `dark-boldness` - 피트니스/웰빙 테마
 - `minimal-workspace` - 미니멀 워크스페이스
-- `neutral-humanism` - 뉴트럴 휴머니즘
-- `round-minimal` - 라운드 미니멀
+- `neutral-workspace` - 뉴트럴 휴머니즘
+- `pebble` - 라운드 미니멀
 - `square-minimalism` - 스퀘어 미니멀리즘
 
 ### 2. 3-Layer 토큰 시스템

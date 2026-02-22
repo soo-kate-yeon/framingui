@@ -102,10 +102,10 @@ npx @anthropic-ai/mcp-inspector node dist/index.js
    ```typescript
    export const PREMIUM_THEMES = [
      'classic-magazine',
-     'equinox-fitness',
+     'dark-boldness',
      'minimal-workspace',
-     'neutral-humanism',
-     'round-minimal',
+     'neutral-workspace',
+     'pebble',
      'square-minimalism',
    ];
    ```
@@ -311,7 +311,7 @@ ls packages/ui/themes/*.json | wc -l  # → 6개 확인
 
 **결과:**
 - ✅ PREMIUM_THEMES 배열: 6개 (실재 테마만)
-- ✅ 테마 JSON 파일: 6개 (classic-magazine, equinox-fitness, minimal-workspace, neutral-humanism, round-minimal, square-minimalism)
+- ✅ 테마 JSON 파일: 6개 (classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism)
 - ✅ README.md: "6 OKLCH-based themes" 표시
 - ✅ "Free Themes" 섹션 제거됨
 

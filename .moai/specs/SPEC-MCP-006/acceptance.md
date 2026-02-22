@@ -95,10 +95,10 @@ Scenario: PREMIUM_THEMES 배열 정확성
   When PREMIUM_THEMES 배열을 확인하면
   Then 정확히 6개 테마만 포함되어 있다
   And "classic-magazine"이 포함되어 있다
-  And "equinox-fitness"이 포함되어 있다
+  And "dark-boldness"이 포함되어 있다
   And "minimal-workspace"이 포함되어 있다
-  And "neutral-humanism"이 포함되어 있다
-  And "round-minimal"이 포함되어 있다
+  And "neutral-workspace"이 포함되어 있다
+  And "pebble"이 포함되어 있다
   And "square-minimalism"이 포함되어 있다
   And "calm-wellness"이 포함되어 있지 않다
   And "dynamic-fitness"이 포함되어 있지 않다

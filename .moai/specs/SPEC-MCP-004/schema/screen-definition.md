@@ -209,7 +209,7 @@ When `themeId` is specified, component variants are automatically mapped to them
 
 ```json
 {
-  "themeId": "equinox-fitness-v2",
+  "themeId": "dark-boldness-v2",
   "sections": [
     {
       "components": [

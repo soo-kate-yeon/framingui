@@ -38,7 +38,7 @@ npm 패키지 `@tekton/core`에 테마 파일을 내장하고, ESM 호환 로더
 - [ ] **Task 1.2**: 테마 파일 복사
   - `atlantic-magazine-v1.json`
   - `blue-bottle-v2.json`
-  - `equinox-fitness-v1.json`
+  - `dark-boldness-v1.json`
   - `linear-minimal-v1.json`
 - [ ] **Task 1.3**: JSON 유효성 검증
 

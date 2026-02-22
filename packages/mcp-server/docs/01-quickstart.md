@@ -130,10 +130,10 @@ You: "Build a dashboard screen"
 | Theme ID            | Description                      |
 | ------------------- | -------------------------------- |
 | `classic-magazine`  | Classic magazine editorial style |
-| `equinox-fitness`   | Fitness & wellness               |
+| `dark-boldness`     | Fitness & wellness               |
 | `minimal-workspace` | Minimal clean workspace          |
-| `neutral-humanism`  | Neutral humanist design          |
-| `round-minimal`     | Rounded minimal style            |
+| `neutral-workspace` | Neutral humanist design          |
+| `pebble`            | Rounded minimal style            |
 | `square-minimalism` | Square minimalist design         |
 
 > **Note**: All themes require a valid license. Use `whoami` to check your accessible themes.

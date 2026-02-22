@@ -150,10 +150,10 @@ Tekton provides 6 premium themes. All themes require authentication.
 | Theme ID            | Name              | Style                             |
 | ------------------- | ----------------- | --------------------------------- |
 | `classic-magazine`  | Classic Magazine  | Editorial with serif typography   |
-| `equinox-fitness`   | Equinox Fitness   | Fitness & wellness, energetic     |
+| `dark-boldness`     | Dark Boldness     | Fitness & wellness, energetic     |
 | `minimal-workspace` | Minimal Workspace | Clean, minimal, workspace-focused |
-| `neutral-humanism`  | Neutral Humanism  | Warm neutral tones, humanist      |
-| `round-minimal`     | Round Minimal     | Soft rounded corners, minimal     |
+| `neutral-workspace` | Neutral Workspace | Warm neutral tones, humanist      |
+| `pebble`            | Pebble            | Soft rounded corners, minimal     |
 | `square-minimalism` | Square Minimalism | Sharp edges, bold minimalism      |
 
 ### Theme Data Structure (v2.1)

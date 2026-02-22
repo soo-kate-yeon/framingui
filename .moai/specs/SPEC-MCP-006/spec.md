@@ -29,7 +29,7 @@ Tekton MCP 서버의 사용자 온보딩 실패 문제를 전면 개선한다. �
 
 ### 근본 원인 1: Free 테마 제로
 
-- 현재 6개 테마가 JSON 파일로 실제 존재한다: `classic-magazine`, `equinox-fitness`, `minimal-workspace`, `neutral-humanism`, `round-minimal`, `square-minimalism`
+- 현재 6개 테마가 JSON 파일로 실제 존재한다: `classic-magazine`, `dark-boldness`, `minimal-workspace`, `neutral-workspace`, `pebble`, `square-minimalism`
 - SPEC-DEPLOY-001에 의해 **모든 테마가 인증 필수**로 전환되었다
 - 그러나 인증 안내가 어디에도 없어 사용자가 인증 없이 테마 접근을 시도하고 실패한다
 
@@ -93,7 +93,7 @@ capabilities: {
 
 **U-003**: 테마 관련 데이터는 **항상** 실제 존재하는 테마만 참조해야 한다.
 
-- 실재 테마: `classic-magazine`, `equinox-fitness`, `minimal-workspace`, `neutral-humanism`, `round-minimal`, `square-minimalism`
+- 실재 테마: `classic-magazine`, `dark-boldness`, `minimal-workspace`, `neutral-workspace`, `pebble`, `square-minimalism`
 - 총 6개
 
 ---
@@ -139,10 +139,10 @@ capabilities: {
 ```typescript
 export const PREMIUM_THEMES = [
   'classic-magazine',
-  'equinox-fitness',
+  'dark-boldness',
   'minimal-workspace',
-  'neutral-humanism',
-  'round-minimal',
+  'neutral-workspace',
+  'pebble',
   'square-minimalism',
 ];
 ```
@@ -238,10 +238,10 @@ TEKTON-GUIDE.md 템플릿에 다음 섹션 추가:
 ```typescript
 export const PREMIUM_THEMES = [
   'classic-magazine',
-  'equinox-fitness',
+  'dark-boldness',
   'minimal-workspace',
-  'neutral-humanism',
-  'round-minimal',
+  'neutral-workspace',
+  'pebble',
   'square-minimalism',
 ];
 ```

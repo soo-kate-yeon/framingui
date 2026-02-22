@@ -94,7 +94,7 @@ Current State:
 .moai/themes/generated/          <- 현재 테마 위치 (npm 패키지에 포함 안됨)
 ├── atlantic-magazine-v1.json
 ├── blue-bottle-v2.json
-├── equinox-fitness-v1.json
+├── dark-boldness-v1.json
 └── linear-minimal-v1.json
 
 packages/core/
@@ -110,7 +110,7 @@ packages/core/
 ├── themes/                     <- 테마 파일 이동 위치 (NEW)
 │   ├── atlantic-magazine-v1.json
 │   ├── blue-bottle-v2.json
-│   ├── equinox-fitness-v1.json
+│   ├── dark-boldness-v1.json
 │   └── linear-minimal-v1.json
 ├── dist/
 └── package.json
@@ -155,7 +155,7 @@ packages/core/
 
 **ASSUMPTION-004**: 기본 제공 테마 4개가 MVP에 충분함
 - **Confidence**: High - 다양한 브랜드 톤 커버
-- **Evidence**: atlantic-magazine, blue-bottle, equinox-fitness, linear-minimal
+- **Evidence**: atlantic-magazine, blue-bottle, dark-boldness, linear-minimal
 - **Risk if Wrong**: 추가 테마 생성 필요
 - **Validation**: 사용자 피드백 수집
 
@@ -238,7 +238,7 @@ cp -r .moai/themes/generated/* packages/core/themes/
 파일 목록:
 - `atlantic-magazine-v1.json`
 - `blue-bottle-v2.json`
-- `equinox-fitness-v1.json`
+- `dark-boldness-v1.json`
 - `linear-minimal-v1.json`
 
 ### 5.2 Theme Loader Modification
@@ -294,7 +294,7 @@ packages/core/ (npm package root)
 ├── themes/                  <- npm 패키지에 포함
 │   ├── atlantic-magazine-v1.json
 │   ├── blue-bottle-v2.json
-│   ├── equinox-fitness-v1.json
+│   ├── dark-boldness-v1.json
 │   └── linear-minimal-v1.json
 ├── package.json
 └── README.md
@@ -323,7 +323,7 @@ npm pack --dry-run
 - `dist/**`
 - `themes/atlantic-magazine-v1.json`
 - `themes/blue-bottle-v2.json`
-- `themes/equinox-fitness-v1.json`
+- `themes/dark-boldness-v1.json`
 - `themes/linear-minimal-v1.json`
 - `README.md`
 
@@ -423,7 +423,7 @@ const __dirname = typeof import.meta !== 'undefined'
 describe('theme-v2 with bundled themes', () => {
   it('should load atlantic-magazine-v1 theme');
   it('should load blue-bottle-v2 theme');
-  it('should load equinox-fitness-v1 theme');
+  it('should load dark-boldness-v1 theme');
   it('should load linear-minimal-v1 theme');
   it('should return null for non-existent theme');
   it('should list all 4 bundled themes');

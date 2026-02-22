@@ -38,9 +38,9 @@ describe('previewThemeTool', () => {
   });
 
   it('should include OKLCH color tokens', async () => {
-    setupAuth(['equinox-fitness']);
+    setupAuth(['dark-boldness']);
     const result = await previewThemeTool({
-      themeId: 'equinox-fitness',
+      themeId: 'dark-boldness',
     });
 
     expect(result.success).toBe(true);

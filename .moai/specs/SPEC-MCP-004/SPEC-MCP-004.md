@@ -524,7 +524,7 @@ Phase 3 (Template Matcher) provides structure recommendations when a template ma
   ],
 
   "themeRecipes": {
-    "themeId": "equinox-fitness-v2",
+    "themeId": "dark-boldness-v2",
     "availableRecipes": {
       "card": ["default", "glass", "outlined"],
       "button": ["primary", "secondary", "ghost"],
@@ -727,7 +727,7 @@ interface VariantMapping {
 {
   "type": "card",
   "variant": "glass",
-  "themeId": "equinox-fitness-v2"
+  "themeId": "dark-boldness-v2"
 }
 ```
 
@@ -932,7 +932,7 @@ MCP 도구는 **"재료"**를 제공하고, **"요리"**는 코딩 에이전트�
   "success": true,
   "outputPath": "app/studio/equinox/dashboard/page.tsx",
   "blueprint": { "id": "...", "components": [...] },
-  "theme": { "id": "equinox-fitness-v2", "appliedRecipes": 8 },
+  "theme": { "id": "dark-boldness-v2", "appliedRecipes": 8 },
   "code": "import React from 'react';\n...",
   "stats": {
     "components": 12,

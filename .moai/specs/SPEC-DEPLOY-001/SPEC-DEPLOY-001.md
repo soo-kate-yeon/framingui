@@ -334,7 +334,7 @@ pnpm install  ✅
   },
   "licenses": [
     {
-      "themeId": "equinox-fitness-v2",
+      "themeId": "dark-boldness-v2",
       "tier": "single",
       "isActive": true,
       "expiresAt": null
@@ -342,7 +342,7 @@ pnpm install  ✅
   ],
   "themes": {
     "free": ["minimal-starter", "basic-dashboard"],
-    "licensed": ["equinox-fitness-v2"]
+    "licensed": ["dark-boldness-v2"]
   }
 }
 ```
@@ -406,7 +406,7 @@ Paddle 결제를 통한 테마 라이선스 구매 및 자동 활성화
   data: {
     id: "txn_xxx",
     customer_id: "ctm_xxx",
-    custom_data: { userId: "uuid", themeId: "equinox-fitness-v2" },
+    custom_data: { userId: "uuid", themeId: "dark-boldness-v2" },
     items: [{ price: { product_id: "pro_xxx" } }]
   }
 }

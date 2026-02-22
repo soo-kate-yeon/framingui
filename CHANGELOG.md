@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **테마 데이터 정비**: 13개 → 6개 (SPEC-MCP-006)
   - `PREMIUM_THEMES` 배열을 실제 존재하는 6개 테마로 축소
-    - `classic-magazine`, `equinox-fitness`, `minimal-workspace`, `neutral-humanism`, `round-minimal`, `square-minimalism`
+    - `classic-magazine`, `dark-boldness`, `minimal-workspace`, `neutral-workspace`, `pebble`, `square-minimalism`
   - 가상 테마 7개 제거: `calm-wellness`, `dynamic-fitness`, `korean-fintech`, `media-streaming`, `premium-editorial`, `saas-dashboard`, `warm-humanist`
   - README.md 정확성 개선:
     - "13 built-in themes" → "6 OKLCH-based themes"

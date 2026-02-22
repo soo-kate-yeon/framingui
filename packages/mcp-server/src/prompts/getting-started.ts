@@ -60,10 +60,10 @@ Use MCP tools to discover themes:
 
 **Available themes (all require license):**
 - classic-magazine - Classic magazine style
-- equinox-fitness - Fitness & wellness
+- dark-boldness - Fitness & wellness
 - minimal-workspace - Minimal workspace
-- neutral-humanism - Neutral humanism
-- round-minimal - Round minimal
+- neutral-workspace - Neutral humanism
+- pebble - Round minimal
 - square-minimalism - Square minimalism
 
 ## Step 4: Check Component Availability

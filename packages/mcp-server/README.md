@@ -47,10 +47,10 @@ TEKTON_API_URL=https://tekton-ui.com  # or http://localhost:3000 for dev
 **All Themes** (Requires valid API key and license):
 
 - `classic-magazine` - Classic magazine style
-- `equinox-fitness` - Fitness & wellness
+- `dark-boldness` - Fitness & wellness
 - `minimal-workspace` - Minimal workspace
-- `neutral-humanism` - Neutral humanism
-- `round-minimal` - Round minimal
+- `neutral-workspace` - Neutral humanism
+- `pebble` - Round minimal
 - `square-minimalism` - Square minimalism
 
 **Note:** All 6 themes require authentication. No free themes are available.
@@ -861,10 +861,10 @@ packages/mcp-server/
 ## Built-in Themes (6 Total)
 
 1. `classic-magazine` - Classic magazine style
-2. `equinox-fitness` - Fitness & wellness
+2. `dark-boldness` - Fitness & wellness
 3. `minimal-workspace` - Minimal workspace
-4. `neutral-humanism` - Neutral humanism
-5. `round-minimal` - Round minimal
+4. `neutral-workspace` - Neutral humanism
+5. `pebble` - Round minimal
 6. `square-minimalism` - Square minimalism
 
 **CSS Format**: All color values use OKLCH format for perceptual uniformity

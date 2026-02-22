@@ -1,13 +1,13 @@
 {
   "$schema": "../screen-definition.schema.json",
-  "_comment": "Theme-integrated example with equinox-fitness - matches @tekton/core ScreenDefinitionSchema",
+  "_comment": "Theme-integrated example with dark-boldness - matches @tekton/core ScreenDefinitionSchema",
 
   "id": "fitness-dashboard",
   "name": "Fitness Performance Dashboard",
   "description": "Elite workout stats dashboard with True Black canvas",
   "shell": "shell.web.dashboard",
   "page": "page.dashboard",
-  "themeId": "equinox-fitness",
+  "themeId": "dark-boldness",
 
   "sections": [
     {

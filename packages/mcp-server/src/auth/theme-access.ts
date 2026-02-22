@@ -9,10 +9,10 @@
  */
 export const PREMIUM_THEMES = [
   'classic-magazine',
-  'equinox-fitness',
+  'dark-boldness',
   'minimal-workspace',
-  'neutral-humanism',
-  'round-minimal',
+  'neutral-workspace',
+  'pebble',
   'square-minimalism',
 ];
 
