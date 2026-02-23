@@ -1,0 +1,168 @@
+{
+  "id": "dark-boldness",
+  "name": "Dark Boldness",
+  "schemaVersion": "2.1",
+  "brandTone": "elite",
+  "designDNA": {
+    "moodKeywords": ["pitch-black", "razor-sharp", "elite", "high-performance"],
+    "targetEmotion": "ambition",
+    "visualAtmosphere": "luxury night gym",
+    "principles": [
+      "True Black (#000000) Canvas",
+      "0px Radius (Absolute Precision)",
+      "Typography as Hierarchy"
+    ]
+  },
+  "tokens": {
+    "atomic": {
+      "color": {
+        "brand": {
+          "100": {
+            "l": 0.95,
+            "c": 0.05,
+            "h": 0
+          },
+          "500": {
+            "l": 1,
+            "c": 0,
+            "h": 0
+          },
+          "900": {
+            "l": 0,
+            "c": 0,
+            "h": 0
+          }
+        },
+        "neutral": {
+          "black": {
+            "l": 0,
+            "c": 0,
+            "h": 0
+          },
+          "950": {
+            "l": 0.05,
+            "c": 0.01,
+            "h": 0
+          },
+          "900": {
+            "l": 0.1,
+            "c": 0.01,
+            "h": 0
+          },
+          "800": {
+            "l": 0.2,
+            "c": 0.01,
+            "h": 0
+          },
+          "500": {
+            "l": 0.5,
+            "c": 0.01,
+            "h": 0
+          },
+          "200": {
+            "l": 0.8,
+            "c": 0.01,
+            "h": 0
+          },
+          "100": {
+            "l": 0.9,
+            "c": 0.01,
+            "h": 0
+          },
+          "white": {
+            "l": 1,
+            "c": 0,
+            "h": 0
+          }
+        },
+        "accent": {
+          "electricBlue": {
+            "l": 0.6,
+            "c": 0.2,
+            "h": 210
+          },
+          "kineticOrange": {
+            "l": 0.6,
+            "c": 0.2,
+            "h": 30
+          }
+        }
+      },
+      "radius": {
+        "none": "0px",
+        "sm": "0px",
+        "md": "0px",
+        "lg": "0px",
+        "xl": "0px",
+        "full": "0px",
+        "circle": "50%"
+      },
+      "spacing": {
+        "4": "1rem",
+        "6": "1.5rem",
+        "8": "2rem",
+        "12": "3rem",
+        "24": "6rem"
+      }
+    },
+    "semantic": {
+      "background": {
+        "canvas": "atomic.color.neutral.black",
+        "surface": {
+          "subtle": "atomic.color.neutral.950",
+          "default": "atomic.color.neutral.900",
+          "emphasis": "atomic.color.neutral.800"
+        },
+        "brand": {
+          "subtle": "atomic.color.brand.100",
+          "default": "atomic.color.brand.500",
+          "emphasis": "atomic.color.brand.900"
+        }
+      },
+      "border": {
+        "default": {
+          "subtle": "atomic.color.neutral.800",
+          "default": "atomic.color.neutral.500",
+          "emphasis": "atomic.color.neutral.200"
+        }
+      },
+      "text": {
+        "primary": "atomic.color.neutral.white",
+        "secondary": "atomic.color.neutral.200",
+        "muted": "atomic.color.neutral.500"
+      }
+    },
+    "recipes": {
+      "card": {
+        "glass": "bg-neutral-900/50 backdrop-blur-md border-b border-white/10",
+        "outlined": "bg-transparent border border-neutral-800",
+        "minimal": "bg-black border-none",
+        "poster": "relative w-full overflow-hidden bg-neutral-900"
+      },
+      "button": {
+        "primary": "bg-white text-black h-12 px-8 uppercase tracking-widest text-xs font-bold hover:bg-neutral-200 transition-colors rounded-none",
+        "secondary": "bg-transparent border border-white/30 text-white h-12 px-8 uppercase tracking-widest text-xs font-bold hover:bg-white/10 transition-colors rounded-none",
+        "ghost": "bg-transparent text-neutral-400 h-10 px-4 uppercase tracking-widest text-[10px] font-bold hover:text-white transition-colors rounded-none"
+      },
+      "input": {
+        "architectural": "w-full bg-transparent border-b border-neutral-800 py-4 text-white placeholder:text-neutral-600 focus:border-white focus:outline-none rounded-none transition-colors text-sm"
+      },
+      "badge": {
+        "neutral": "inline-flex items-center rounded-none border border-neutral-800 bg-neutral-900 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-400 tracking-wide",
+        "accent": "inline-flex items-center rounded-none bg-white text-black px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide"
+      },
+      "typography": {
+        "hero": "text-5xl font-bold uppercase tracking-tighter text-white leading-none",
+        "eyebrow": "text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2 block",
+        "body": "text-sm font-normal text-neutral-400 leading-relaxed",
+        "label": "text-xs font-bold uppercase tracking-widest text-neutral-500"
+      },
+      "layout": {
+        "section": "py-24 px-6",
+        "container": "px-6",
+        "grid": "gap-x-8 gap-y-12",
+        "stack": "flex flex-col gap-6"
+      }
+    }
+  }
+}
