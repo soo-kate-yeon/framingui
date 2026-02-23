@@ -22,6 +22,7 @@ import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 const DEMO_ROUTES: Record<string, string> = {
   'square-minimalism': '/studio/square-minimalism',
   'dark-boldness': '/studio/dark-boldness',
+  'editorial-tech': '/studio/editorial-tech',
   pebble: '/studio/pebble',
   'classic-magazine': '/studio/classic-magazine',
   'neutral-workspace': '/studio/neutral-workspace',
