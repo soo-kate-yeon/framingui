@@ -3,14 +3,18 @@
  * [SPEC-UI-003][TAG-UI003-046]
  *
  * 템플릿 그리드 레이아웃 갤러리 (i18n 지원)
+ * - 클라이언트 사이드 selection mode state 관리
+ * - StudioPageHeader + SelectionTopBar 내부 렌더링
  */
 
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
-import { SelectionBar } from './SelectionBar';
+import { SelectionTopBar } from './SelectionTopBar';
 import { TemplateModal } from './TemplateModal';
+import { StudioPageHeader } from './StudioPageHeader';
 import { getTemplateData } from '../../data/templates';
 import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
 
@@ -33,7 +37,7 @@ interface TemplateGalleryProps {
   templates: Template[];
   /** 추가 className */
   className?: string;
-  /** 선택 모드 (double 패키지) */
+  /** 선택 모드 (double 패키지) - 서버 prop 초기값 */
   selectionMode?: 'double';
 }
 
@@ -46,14 +50,33 @@ export function TemplateGallery({
   className = '',
   selectionMode,
 }: TemplateGalleryProps) {
+  const router = useRouter();
   const { locale } = useStudioLanguage();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // 클라이언트 사이드 selection mode state (서버 prop을 초기값으로 사용)
+  const [internalSelectionMode, setInternalSelectionMode] = useState(selectionMode);
 
   // Modal State
   const [activeModalId, setActiveModalId] = useState<string | null>(null);
 
-  const maxSelection = selectionMode === 'double' ? 2 : 0;
-  const isSelectionMode = !!selectionMode;
+  const maxSelection = internalSelectionMode === 'double' ? 2 : 0;
+  const isSelectionMode = !!internalSelectionMode;
+
+  // 모달에서 "Get 2 templates" 클릭 시 selection mode 진입
+  const handleEnterSelectionMode = () => {
+    setActiveModalId(null); // 모달 닫기
+    setInternalSelectionMode('double');
+    setSelectedIds([]); // 선택 초기화
+    router.replace('/studio?plan=double', { scroll: false }); // URL 동기화
+  };
+
+  // selection mode 해제
+  const handleExitSelectionMode = () => {
+    setInternalSelectionMode(undefined);
+    setSelectedIds([]);
+    router.replace('/studio', { scroll: false }); // URL 정리
+  };
 
   // 선택 모드: 카드 클릭 = 선택/해제 토글
   const handleCardClick = (templateId: string) => {
@@ -105,7 +128,7 @@ export function TemplateGallery({
 
   // 선택된 템플릿 이름 목록
   const selectedNames = selectedIds
-    .map((id) => templates.find((t) => t.id === id)?.name)
+    .map((id) => templates.find((tmpl) => tmpl.id === id)?.name)
     .filter(Boolean) as string[];
 
   // Modal Data
@@ -113,34 +136,52 @@ export function TemplateGallery({
 
   return (
     <>
-      <div
-        className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-0 ${isSelectionMode ? 'pb-32' : ''} ${className}`}
-      >
-        {templates.map((template) => {
-          const description =
-            locale === 'ko' && template.descriptionKo
-              ? template.descriptionKo
-              : template.description;
+      {/* Selection mode: 상단 sticky 바 */}
+      {isSelectionMode && (
+        <SelectionTopBar
+          selectedTemplates={selectedIds}
+          selectedNames={selectedNames}
+          maxSelection={maxSelection}
+          onExit={handleExitSelectionMode}
+        />
+      )}
 
-          const isSelected = selectedIds.includes(template.id);
-          const selectionDisabled = !isSelected && selectedIds.length >= maxSelection;
+      {/* Header - selection mode에 따라 반응 */}
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
+        <StudioPageHeader selectionMode={internalSelectionMode} />
 
-          return (
-            <TemplateCard
-              key={template.id}
-              id={template.id}
-              name={template.name}
-              description={description}
-              thumbnail={template.thumbnail}
-              category={template.category}
-              price={template.price}
-              onClick={() => handleCardClick(template.id)}
-              selectionMode={isSelectionMode}
-              isSelected={isSelected}
-              selectionDisabled={selectionDisabled}
-            />
-          );
-        })}
+        {/* Template Grid */}
+        <div className="mt-12 flex flex-col">
+          <div
+            className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-0 ${className}`}
+          >
+            {templates.map((template) => {
+              const description =
+                locale === 'ko' && template.descriptionKo
+                  ? template.descriptionKo
+                  : template.description;
+
+              const isSelected = selectedIds.includes(template.id);
+              const selectionDisabled = !isSelected && selectedIds.length >= maxSelection;
+
+              return (
+                <TemplateCard
+                  key={template.id}
+                  id={template.id}
+                  name={template.name}
+                  description={description}
+                  thumbnail={template.thumbnail}
+                  category={template.category}
+                  price={template.price}
+                  onClick={() => handleCardClick(template.id)}
+                  selectionMode={isSelectionMode}
+                  isSelected={isSelected}
+                  selectionDisabled={selectionDisabled}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* 모달 렌더링 */}
@@ -149,15 +190,7 @@ export function TemplateGallery({
           template={activeTemplateData}
           isOpen={!!activeModalId}
           onClose={() => setActiveModalId(null)}
-        />
-      )}
-
-      {/* 선택 모드일 때만 하단 바 표시 */}
-      {isSelectionMode && (
-        <SelectionBar
-          selectedTemplates={selectedIds}
-          selectedNames={selectedNames}
-          maxSelection={maxSelection}
+          onSelectDouble={handleEnterSelectionMode}
         />
       )}
     </>

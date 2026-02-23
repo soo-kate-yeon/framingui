@@ -28,15 +28,13 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const galleryItems = await loadThemes();
 
   return (
-    <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-      {/* Header with i18n support */}
-      <StudioPageHeader selectionMode={selectionMode} />
-
-      {/* Real Theme Gallery */}
-      <div className="mt-12 flex flex-col">
-        {galleryItems && galleryItems.length > 0 ? (
-          <TemplateGallery templates={galleryItems} selectionMode={selectionMode} />
-        ) : (
+    <>
+      {galleryItems && galleryItems.length > 0 ? (
+        <TemplateGallery templates={galleryItems} selectionMode={selectionMode} />
+      ) : (
+        <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
+          {/* empty state에서만 StudioPageHeader 직접 렌더링 */}
+          <StudioPageHeader selectionMode={selectionMode} />
           <div className="text-center py-24">
             <p className="text-lg font-medium text-neutral-600 mb-4">
               No themes found or error loading themes
@@ -45,8 +43,8 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
               Check browser console and server terminal for errors
             </p>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }

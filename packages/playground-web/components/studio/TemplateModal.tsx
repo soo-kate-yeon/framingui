@@ -11,13 +11,15 @@ interface TemplateModalProps {
   template: TemplateData;
   isOpen: boolean;
   onClose: () => void;
+  /** Double 패키지 선택 모드 진입 콜백 */
+  onSelectDouble?: () => void;
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function TemplateModal({ template, isOpen, onClose }: TemplateModalProps) {
+export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: TemplateModalProps) {
   const { locale } = useStudioLanguage();
   const [activeChipIdx, setActiveChipIdx] = useState(0);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
@@ -120,7 +122,10 @@ export function TemplateModal({ template, isOpen, onClose }: TemplateModalProps)
                 </div>
 
                 <div className="flex flex-col gap-3 justify-center pt-2">
-                  <button className="group flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors text-left w-fit">
+                  <button
+                    onClick={onSelectDouble}
+                    className="group flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors text-left w-fit"
+                  >
                     <span className="underline underline-offset-4">Get 2 templates at $99</span>
                     <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase group-hover:bg-emerald-100 transition-colors">
                       Save 16%

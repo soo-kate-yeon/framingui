@@ -56,11 +56,7 @@ export interface TemplateData {
  * @returns Supabase Storage 공개 URL
  */
 export function getScreenshotUrl(templateId: string, filename: string): string {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) {
-    return `/placeholder-${filename}`;
-  }
-  return `${supabaseUrl}/storage/v1/object/public/templates/${templateId}/${filename}`;
+  return `/screenshots/${templateId}/${filename}`;
 }
 
 // ============================================================================
@@ -119,10 +115,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '날카로운 모서리와 높은 대비가 특징인 미니멀리즘 디자인 시스템이에요. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 앱을 빠르게 만들 수 있어요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('square-minimalism', 'hero.png'),
       getScreenshotUrl('square-minimalism', 'dashboard.png'),
       getScreenshotUrl('square-minimalism', 'components.png'),
-      getScreenshotUrl('square-minimalism', 'auth.png'),
     ],
     features: [
       {
@@ -260,10 +254,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '지적인 명확성과 여유로운 레이아웃을 결합한 우아한 디자인 시스템입니다. 크고 깔끔한 헤딩과 넉넉한 여백을 우선시하여 이성적인 "빈 캔버스" 같은 분위기를 조성합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('editorial-tech', 'hero.png'),
-      getScreenshotUrl('editorial-tech', 'articles.png'),
-      getScreenshotUrl('editorial-tech', 'typography.png'),
-      getScreenshotUrl('editorial-tech', 'layout.png'),
+      getScreenshotUrl('editorial-tech', 'dashboard.png'),
+      getScreenshotUrl('editorial-tech', 'components.png'),
     ],
     features: [
       {
@@ -354,10 +346,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스와 웰니스 브랜드를 위한 디자인 시스템이에요. 역동적인 비주얼과 매력적인 인터랙션으로 사용자에게 동기를 부여해요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('dark-boldness', 'hero.png'),
-      getScreenshotUrl('dark-boldness', 'workouts.png'),
-      getScreenshotUrl('dark-boldness', 'profile.png'),
-      getScreenshotUrl('dark-boldness', 'plans.png'),
+      getScreenshotUrl('dark-boldness', 'dashboard.png'),
+      getScreenshotUrl('dark-boldness', 'components.png'),
     ],
     features: [
       {
@@ -495,10 +485,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 만드는 미니멀 디자인 시스템이에요. 소비자 대상 앱에 접근하기 쉽고 편안해요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('pebble', 'hero.png'),
-      getScreenshotUrl('pebble', 'features.png'),
-      getScreenshotUrl('pebble', 'auth.png'),
       getScreenshotUrl('pebble', 'dashboard.png'),
+      getScreenshotUrl('pebble', 'components.png'),
     ],
     features: [
       {
@@ -636,10 +624,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심 웹사이트를 위한 디자인 시스템이에요. 가독성과 편집 디자인의 전통을 이어가요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('classic-magazine', 'hero.png'),
-      getScreenshotUrl('classic-magazine', 'articles.png'),
-      getScreenshotUrl('classic-magazine', 'detail.png'),
-      getScreenshotUrl('classic-magazine', 'sidebar.png'),
+      getScreenshotUrl('classic-magazine', 'dashboard.png'),
+      getScreenshotUrl('classic-magazine', 'components.png'),
     ],
     features: [
       {
@@ -777,10 +763,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '사람 중심의 따뜻한 디자인과 중립적인 컬러로 접근성과 가독성을 최우선으로 하는 디자인 시스템이에요. 모든 사용자에게 편안한 경험을 제공해요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('neutral-workspace', 'hero.png'),
-      getScreenshotUrl('neutral-workspace', 'features.png'),
-      getScreenshotUrl('neutral-workspace', 'form.png'),
-      getScreenshotUrl('neutral-workspace', 'cards.png'),
+      getScreenshotUrl('neutral-workspace', 'dashboard.png'),
+      getScreenshotUrl('neutral-workspace', 'components.png'),
     ],
     features: [
       {
@@ -918,10 +902,8 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '생산성과 집중력을 극대화하는 미니멀 워크스페이스 디자인 시스템이에요. 불필요한 요소를 없애서 작업에만 몰입할 수 있도록 설계했어요.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('minimal-workspace', 'workspace.png'),
-      getScreenshotUrl('minimal-workspace', 'sidebar.png'),
-      getScreenshotUrl('minimal-workspace', 'editor.png'),
-      getScreenshotUrl('minimal-workspace', 'settings.png'),
+      getScreenshotUrl('minimal-workspace', 'dashboard.png'),
+      getScreenshotUrl('minimal-workspace', 'components.png'),
     ],
     features: [
       {

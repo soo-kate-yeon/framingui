@@ -118,10 +118,6 @@ export function PricingPage() {
    * - 로그인 됨: /studio로 바로 리디렉션 (결제 없이)
    */
   const handleBetaAccess = () => {
-    if (!user) {
-      router.push('/auth/login');
-      return;
-    }
     router.push('/studio');
   };
 
@@ -181,7 +177,7 @@ export function PricingPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/auth/signup')}
-              className="h-9 px-5 rounded-full text-sm font-medium bg-neutral-900 text-white hover:bg-neutral-800 transition-colors"
+              className="h-9 px-5 rounded-full text-sm font-medium bg-neutral-950 text-white hover:bg-neutral-800 transition-colors"
             >
               {content.nav.getStarted}
             </button>
@@ -213,10 +209,8 @@ export function PricingPage() {
             return (
               <FadeIn key={planId} delay={index * 0.1} className="h-full">
                 <div
-                  className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-lg ${
-                    planData.featured
-                      ? 'border-neutral-900 ring-2 ring-neutral-900'
-                      : 'border-neutral-200'
+                  className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-sm ${
+                    planData.featured ? 'border-neutral-950' : 'border-neutral-200'
                   }`}
                 >
                   {/* 배지 */}
@@ -224,7 +218,7 @@ export function PricingPage() {
                     <div
                       className={`absolute -top-3 left-6 px-3 py-1 text-xs font-semibold rounded-full ${
                         planData.featured
-                          ? 'bg-neutral-900 text-white'
+                          ? 'bg-neutral-950 text-white'
                           : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
                       }`}
                     >
@@ -280,10 +274,6 @@ export function PricingPage() {
                         if (planId === 'single') {
                           handleBetaAccess();
                         } else if (planId === 'double') {
-                          if (!user) {
-                            router.push('/auth/login');
-                            return;
-                          }
                           router.push('/studio?plan=double');
                         } else {
                           handleCheckout('creator');
@@ -291,8 +281,8 @@ export function PricingPage() {
                       }}
                       className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${
                         planData.featured
-                          ? 'bg-neutral-900 text-white hover:bg-neutral-800'
-                          : 'bg-neutral-100 text-neutral-900 hover:bg-neutral-200'
+                          ? 'bg-neutral-950 text-white hover:bg-neutral-800'
+                          : 'bg-neutral-100 text-neutral-950 hover:bg-neutral-200'
                       }`}
                     >
                       {planId === 'single' ? 'Get Beta Access - FREE' : planContent.cta}
@@ -323,7 +313,7 @@ export function PricingPage() {
           </FadeIn>
 
           <FadeIn delay={0.1}>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-xl border border-neutral-200">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-neutral-200">
