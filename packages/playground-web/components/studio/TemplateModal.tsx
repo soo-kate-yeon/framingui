@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 import { TemplateData } from '../../data/templates';
 import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { TemplateThumbnail } from './TemplateThumbnail';
 
 // ============================================================================
 // Types
@@ -22,16 +23,7 @@ interface TemplateModalProps {
 export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: TemplateModalProps) {
   const { locale } = useStudioLanguage();
   const [activeChipIdx, setActiveChipIdx] = useState(0);
-  const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
-
-  const prevImage = () => {
-    setCurrentImageIdx((prev) => (prev === 0 ? template.screenshots.length - 1 : prev - 1));
-  };
-
-  const nextImage = () => {
-    setCurrentImageIdx((prev) => (prev === template.screenshots.length - 1 ? 0 : prev + 1));
-  };
 
   const handleClose = () => {
     setIsClosing(true);
@@ -145,59 +137,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
 
             {/* Right: Media */}
             <div className="flex flex-col gap-4">
-              {/* Simple Carousel */}
-              <div className="relative w-full aspect-[4/3] bg-neutral-100 rounded-2xl border border-neutral-200 overflow-hidden group">
-                <img
-                  key={currentImageIdx} // Force re-render on change to re-trigger onError if needed
-                  src={template.screenshots[currentImageIdx]}
-                  alt={`${template.name} preview ${currentImageIdx + 1}`}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    // Render fallback placeholder styled like Supabase storage misses
-                    const placeholder = document.createElement('div');
-                    placeholder.className =
-                      'absolute inset-0 w-full h-full flex flex-col items-center justify-center bg-neutral-100 z-0';
-                    placeholder.innerHTML = `
-                      <span class="text-xs text-neutral-500 uppercase tracking-widest font-medium mb-1">Screenshot ${currentImageIdx + 1}</span>
-                      <span class="text-[10px] text-neutral-400">Placeholder</span>
-                    `;
-                    e.currentTarget.parentElement?.appendChild(placeholder);
-                  }}
-                />
-
-                {/* Controls */}
-                {template.screenshots.length > 1 && (
-                  <>
-                    <button
-                      onClick={prevImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-neutral-950 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
-                      aria-label="Previous image"
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-neutral-950 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
-                      aria-label="Next image"
-                    >
-                      <ChevronRight size={20} />
-                    </button>
-                  </>
-                )}
-              </div>
-
-              {/* Dot Indicators */}
-              <div className="flex justify-center gap-2 mt-2 pt-2">
-                {template.screenshots.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setCurrentImageIdx(idx)}
-                    className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIdx ? 'bg-neutral-900 w-4' : 'bg-neutral-300 hover:bg-neutral-400'}`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
+              <TemplateThumbnail templateId={template.id} />
             </div>
           </section>
 

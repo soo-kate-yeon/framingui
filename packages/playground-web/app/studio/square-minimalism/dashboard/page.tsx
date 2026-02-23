@@ -8,13 +8,13 @@ import { TrendingUp } from 'lucide-react';
  */
 export default function SquareDashboardPage() {
   return (
-    <div className="p-12 max-w-[1600px] mx-auto">
+    <div className="p-4 sm:p-8 md:p-12 max-w-[1600px] mx-auto">
       {/* [Template] Section: Hero / Stats */}
-      <header className="mb-12">
+      <header className="mb-8 md:mb-12">
         <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
           Tekton Studio
         </span>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-6">
+        <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-4 md:mb-6">
           OVERVIEW
         </h1>
         <p className="text-sm md:text-base text-neutral-500 max-w-2xl leading-relaxed">
@@ -23,16 +23,16 @@ export default function SquareDashboardPage() {
       </header>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12">
         <StatCard title="Total Revenue" value="$48,290" trend="+12.5%" />
         <StatCard title="Active Users" value="2,490" trend="+5.2%" />
         <StatCard title="Bounce Rate" value="12%" trend="-2.1%" />
         <StatCard title="Avg. Session" value="4m 32s" trend="+0.8%" />
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
         {/* [Template] Main Chart Area (represented by glass card) */}
-        <div className="col-span-8 bg-white/60 backdrop-blur-xl border border-white/40 p-8 h-[400px] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+        <div className="lg:col-span-8 bg-white/60 backdrop-blur-xl border border-white/40 p-6 md:p-8 h-[280px] md:h-[400px] flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-lg font-semibold tracking-tight">Revenue Trend</h3>
@@ -73,7 +73,7 @@ export default function SquareDashboardPage() {
         </div>
 
         {/* [Template] Side Panel / Activity */}
-        <div className="col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
           <div className="bg-white border border-neutral-200 p-6 h-full">
             <h3 className="text-sm font-bold uppercase tracking-widest mb-6">Recent Activity</h3>
             <div className="space-y-6">
@@ -101,7 +101,9 @@ function StatCard({ title, value, trend }: { title: string; value: string; trend
         {title}
       </div>
       <div className="flex justify-between items-end">
-        <div className="text-3xl font-bold tracking-tight">{value}</div>
+        <div className="text-xl md:text-3xl font-bold tracking-tight tabular-nums truncate">
+          {value}
+        </div>
         <div
           className={`text-xs font-bold ${isPositive ? 'text-green-600' : 'text-red-600'} flex items-center gap-1`}
         >

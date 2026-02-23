@@ -11,7 +11,7 @@ export default function EquinoxDashboardPage() {
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-12 space-y-12 md:space-y-16 pb-32">
       {/* Hero / Continuing Section */}
-      <section className="relative h-[400px] w-full bg-neutral-900 border border-white/5 overflow-hidden flex items-center p-12 group cursor-pointer">
+      <section className="relative h-[260px] md:h-[400px] w-full bg-neutral-900 border border-white/5 overflow-hidden flex items-center p-6 md:p-12 group cursor-pointer">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
 
@@ -19,7 +19,7 @@ export default function EquinoxDashboardPage() {
           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mb-4 block">
             Continue Watching
           </span>
-          <h2 className="text-5xl font-black uppercase tracking-tighter mb-4 leading-none">
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4 leading-none">
             Hypertrophy
             <br />
             Volume III

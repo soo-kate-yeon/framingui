@@ -184,7 +184,7 @@ function OverviewDashboard() {
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         {[
           {
             title: 'Total Revenue',
@@ -198,17 +198,19 @@ function OverviewDashboard() {
         ].map((stat) => (
           <div
             key={stat.title}
-            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] border-t-2 border-t-[var(--tekton-border-emphasis)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm"
+            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] border-t-2 border-t-[var(--tekton-border-emphasis)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm min-w-0"
           >
-            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-              <h3 className="tracking-widest uppercase text-xs font-bold text-[var(--tekton-text-secondary)]">
+            <div className="p-4 md:p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-widest uppercase text-[10px] md:text-xs font-bold text-[var(--tekton-text-secondary)] truncate pr-2">
                 {stat.title}
               </h3>
-              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)]" />
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)] shrink-0" />
             </div>
-            <div className="p-6 pt-0">
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-[var(--tekton-text-secondary)]">{stat.sub}</p>
+            <div className="px-4 md:px-6 pb-4 md:pb-6 pt-0">
+              <div className="text-lg md:text-2xl font-bold tabular-nums truncate">
+                {stat.value}
+              </div>
+              <p className="text-xs text-[var(--tekton-text-secondary)] truncate">{stat.sub}</p>
             </div>
           </div>
         ))}
@@ -247,15 +249,17 @@ function OverviewDashboard() {
                 { name: 'William Kim', email: 'will@email.com', amount: '+$99.00' },
                 { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
               ].map((user) => (
-                <div key={user.email} className="flex items-center">
+                <div key={user.email} className="flex items-center gap-3 min-w-0">
                   <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-[var(--tekton-bg-canvas)] items-center justify-center border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold">
                     {user.name[0]}
                   </span>
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.name}</p>
-                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                    <p className="text-xs text-[var(--tekton-text-secondary)] truncate">
+                      {user.email}
+                    </p>
                   </div>
-                  <div className="ml-auto font-medium">{user.amount}</div>
+                  <div className="shrink-0 font-medium text-sm tabular-nums">{user.amount}</div>
                 </div>
               ))}
             </div>

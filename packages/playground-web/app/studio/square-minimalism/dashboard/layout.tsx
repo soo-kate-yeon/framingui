@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-[#F0F0F0] font-sans selection:bg-neutral-900 selection:text-white flex">
       {/* [Template] Sidebar */}
-      <aside className="w-[280px] bg-white border-r border-neutral-200 flex flex-col fixed h-full z-20">
+      <aside className="hidden md:flex w-[280px] bg-white border-r border-neutral-200 flex-col fixed h-full z-20">
         <div className="p-8 border-b border-neutral-100">
           <div className="text-xl font-bold tracking-tighter">TEKTON</div>
           <span className="text-[10px] uppercase tracking-widest text-neutral-400 mt-1 block">
@@ -56,9 +56,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </aside>
 
       {/* [Template] Main Content Area */}
-      <main className="flex-1 ml-[280px]">
+      <main className="flex-1 md:ml-[280px] min-w-0">
         {/* [Template] Top Header (Shared) */}
-        <header className="h-[80px] bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-10 px-8 flex items-center justify-between">
+        <header className="h-[60px] md:h-[80px] bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-10 px-4 md:px-8 flex items-center justify-between">
           <div className="flex items-center gap-4 text-sm text-neutral-500">
             <span>Dashboard</span>
             <span className="text-neutral-300">/</span>
@@ -67,8 +67,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </span>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="relative">
+          <div className="flex items-center gap-3 md:gap-6">
+            <div className="relative hidden md:block">
               <Search className="w-4 h-4 absolute left-0 top-1/2 -translate-y-1/2 text-neutral-400" />
               {/* [Recipe] Input Architectural */}
               <input
@@ -81,7 +81,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <Bell className="w-5 h-5 text-neutral-600" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center text-xs font-bold">
+            <div className="w-8 h-8 bg-neutral-900 text-white flex items-center justify-center text-xs font-bold shrink-0">
               SY
             </div>
           </div>

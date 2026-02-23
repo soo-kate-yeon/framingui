@@ -221,7 +221,7 @@ function OverviewDashboard() {
       </div>
 
       {/* KPIs — 넓은 갭 */}
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
         {[
           {
             title: 'Total Revenue',
@@ -235,17 +235,21 @@ function OverviewDashboard() {
         ].map((stat) => (
           <div
             key={stat.title}
-            className="rounded-2xl border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)]"
+            className="rounded-2xl border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] min-w-0"
           >
-            <div className="p-7 flex flex-row items-center justify-between pb-3">
-              <h3 className="tracking-tight text-sm font-medium text-[var(--tekton-text-secondary)]">
+            <div className="p-4 lg:p-7 flex flex-row items-center justify-between pb-2 lg:pb-3">
+              <h3 className="tracking-tight text-xs lg:text-sm font-medium text-[var(--tekton-text-secondary)] truncate pr-2">
                 {stat.title}
               </h3>
-              <stat.icon className="h-4 w-4 text-[var(--tekton-text-tertiary)]" />
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-tertiary)] shrink-0" />
             </div>
-            <div className="px-7 pb-7">
-              <div className="text-3xl font-bold tracking-tight">{stat.value}</div>
-              <p className="text-xs text-[var(--tekton-text-secondary)] mt-1">{stat.sub}</p>
+            <div className="px-4 lg:px-7 pb-4 lg:pb-7">
+              <div className="text-xl lg:text-3xl font-bold tracking-tight tabular-nums">
+                {stat.value}
+              </div>
+              <p className="text-xs text-[var(--tekton-text-secondary)] mt-1 truncate">
+                {stat.sub}
+              </p>
             </div>
           </div>
         ))}
@@ -282,15 +286,17 @@ function OverviewDashboard() {
                 { name: 'William Kim', email: 'will@email.com', amount: '+$99.00' },
                 { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
               ].map((user) => (
-                <div key={user.email} className="flex items-center">
-                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 bg-[var(--tekton-bg-muted)] items-center justify-center text-[var(--tekton-text-secondary)] text-sm font-bold">
+                <div key={user.email} className="flex items-center gap-3 min-w-0">
+                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-[var(--tekton-bg-muted)] items-center justify-center text-[var(--tekton-text-secondary)] text-sm font-bold">
                     {user.name[0]}
                   </span>
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.name}</p>
-                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <p className="text-sm font-medium leading-none truncate">{user.name}</p>
+                    <p className="text-xs text-[var(--tekton-text-secondary)] truncate">
+                      {user.email}
+                    </p>
                   </div>
-                  <div className="ml-auto font-semibold tabular-nums">{user.amount}</div>
+                  <div className="shrink-0 font-semibold tabular-nums text-sm">{user.amount}</div>
                 </div>
               ))}
             </div>
