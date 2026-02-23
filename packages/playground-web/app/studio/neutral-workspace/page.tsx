@@ -172,7 +172,7 @@ export default function NeutralHumanismDemo() {
       )}
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-24 relative">
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-8 relative">
         <div className="max-w-[1200px] mx-auto">
           {activeTab === 'page' && <OverviewDashboard />}
           {activeTab === 'component' && <ComponentGallery />}
@@ -269,6 +269,74 @@ function OverviewDashboard() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Transactions Table */}
+      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="font-semibold leading-none tracking-tight">Recent Transactions</h3>
+          <p className="text-sm text-[var(--tekton-text-secondary)]">
+            A summary of your latest transactions.
+          </p>
+        </div>
+        <div className="px-6 pb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--tekton-border-default)]">
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Invoice
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Status
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Method
+                  </th>
+                  <th className="text-right font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { invoice: 'INV-001', status: 'Paid', method: 'Credit Card', amount: '$250.00' },
+                  { invoice: 'INV-002', status: 'Pending', method: 'PayPal', amount: '$150.00' },
+                  {
+                    invoice: 'INV-003',
+                    status: 'Paid',
+                    method: 'Bank Transfer',
+                    amount: '$350.00',
+                  },
+                  { invoice: 'INV-004', status: 'Paid', method: 'Credit Card', amount: '$450.00' },
+                  { invoice: 'INV-005', status: 'Refunded', method: 'PayPal', amount: '$550.00' },
+                ].map((tx) => (
+                  <tr
+                    key={tx.invoice}
+                    className="border-b border-[var(--tekton-border-default)] last:border-0"
+                  >
+                    <td className="py-3 font-medium">{tx.invoice}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex items-center rounded-[var(--tekton-radius-full)] px-2.5 py-0.5 text-xs font-medium ${
+                          tx.status === 'Paid'
+                            ? 'bg-green-100 text-green-800'
+                            : tx.status === 'Pending'
+                              ? 'bg-yellow-100 text-yellow-800'
+                              : 'bg-red-100 text-red-800'
+                        }`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--tekton-text-secondary)]">{tx.method}</td>
+                    <td className="py-3 text-right font-medium">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

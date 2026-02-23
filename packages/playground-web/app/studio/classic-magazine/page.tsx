@@ -1,225 +1,395 @@
 'use client';
 
+import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Search, Menu } from 'lucide-react';
-import { articles } from '@/lib/data/articles';
+import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
+import { ComponentGallery } from '@/components/studio/ComponentGallery';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
 
-/**
- * Classic Magazine - Main Page
- *
- * Theme: "Classic Magazine"
- *
- * Rules applied:
- * 1. Radius: 0px (Absolute)
- * 2. Typography: Serif Headlines (Merriweather), Sans Meta
- * 3. Borders: Divider lines (border-b, border-t), High contrast
- */
+const CLASSIC_MAGAZINE_FALLBACK: Record<string, string> = {
+  '--tekton-bg-canvas': '#FFFFFF',
+  '--tekton-bg-surface': '#FAFAFA',
+  '--tekton-text-primary': '#1A1A1A',
+  '--tekton-text-secondary': '#666666',
+  '--tekton-text-tertiary': '#999999',
+  '--tekton-border-default': '#E5E5E5',
+  '--tekton-border-emphasis': '#000000',
+  '--tekton-action-primary': '#1A1A1A',
+  '--tekton-action-primary-text': '#FFFFFF',
+
+  '--tekton-bg-background': '#FFFFFF',
+  '--tekton-bg-foreground': '#1A1A1A',
+  '--tekton-bg-card': '#FAFAFA',
+  '--tekton-bg-card-foreground': '#1A1A1A',
+  '--tekton-bg-popover': '#FAFAFA',
+  '--tekton-bg-popover-foreground': '#1A1A1A',
+  '--tekton-bg-primary': '#1A1A1A',
+  '--tekton-bg-primary-foreground': '#FFFFFF',
+  '--tekton-bg-secondary': '#F5F5F5',
+  '--tekton-bg-secondary-foreground': '#1A1A1A',
+  '--tekton-bg-muted': '#F5F5F5',
+  '--tekton-bg-muted-foreground': '#666666',
+  '--tekton-bg-accent': '#F5F5F5',
+  '--tekton-bg-accent-foreground': '#1A1A1A',
+  '--tekton-bg-destructive': '#DC2626',
+  '--tekton-bg-destructive-foreground': '#FFFFFF',
+  '--tekton-border-input': '#E5E5E5',
+  '--tekton-border-ring': '#1A1A1A',
+
+  '--tekton-radius-sm': '0px',
+  '--tekton-radius-md': '0px',
+  '--tekton-radius-lg': '0px',
+  '--tekton-radius-xl': '0px',
+  '--tekton-radius-none': '0px',
+  '--tekton-radius-full': '0px',
+  '--tekton-spacing-0': '0',
+  '--tekton-spacing-1': '4px',
+  '--tekton-spacing-2': '8px',
+  '--tekton-spacing-3': '12px',
+  '--tekton-spacing-4': '16px',
+  '--tekton-spacing-5': '20px',
+  '--tekton-spacing-6': '24px',
+  '--tekton-spacing-8': '32px',
+  '--tekton-spacing-10': '40px',
+  '--tekton-spacing-12': '48px',
+  '--tekton-spacing-16': '64px',
+};
+
 export default function ClassicMagazineDemo() {
+  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { loaded: themeLoaded } = useTektonTheme('classic-magazine', {
+    fallback: CLASSIC_MAGAZINE_FALLBACK,
+  });
   const { locale } = useStudioLanguage();
 
-  // 메인 기사 (첫 번째) - 항상 존재한다고 가정
-  const featuredArticle = articles[0]!;
-
-  // 서브 기사들 (2-3번째)
-  const subArticles = articles.slice(1, 3);
-
-  // 사이드바 Editor's Picks (3-6번째)
-  const editorsPicks = articles.slice(2, 6);
-
   return (
-    <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
-      {/* Preview Banner */}
+    <div
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+    >
       <PreviewBanner templateId="classic-magazine" templateName="Classic Magazine" />
 
-      {/* Header (Newsstand Style) - Adjusted for banner */}
-      <header className="border-b-4 border-black sticky top-12 bg-white z-40 mt-12">
-        {/* Top Utility Bar */}
-        <div className="border-b border-neutral-200 py-2 px-6 flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-          <div className="flex gap-4">
-            <span>
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+      <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
+        <div className="p-6">
+          <Link
+            href="/studio"
+            className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
+          >
+            <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
+              tekton/ui
             </span>
-            <span className="text-neutral-300">|</span>
-            <span>Vol. 132, No. 42</span>
-          </div>
-          <div className="flex gap-4">
-            <button className="hover:text-black">{locale === 'ko' ? '구독' : 'Subscribe'}</button>
-            <button className="hover:text-black">{locale === 'ko' ? '로그인' : 'Log In'}</button>
+            <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-6 px-1">
+            <div className="w-6 h-6 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+            <span className="font-display font-bold tracking-tight truncate">Times Org</span>
           </div>
         </div>
 
-        {/* Main Masthead */}
-        <div className="py-6 md:py-8 text-center relative px-6 group">
-          <button className="absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 p-2 hover:bg-neutral-100 transition-colors">
-            <Menu className="w-5 h-5 md:w-6 md:h-6" />
+        <nav className="flex-1 px-4 flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('page')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '페이지 예시' : 'Page Example'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'page' ? 'opacity-100' : ''}`}
+            />
           </button>
-
-          <h1 className="font-serif text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-none scale-y-90 px-12 sm:px-16 md:px-20">
-            The Tekton Times
-          </h1>
-
-          <button className="absolute right-2 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 p-2 hover:bg-neutral-100 transition-colors">
-            <Search className="w-5 h-5 md:w-6 md:h-6" />
+          <button
+            onClick={() => setActiveTab('component')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
+            />
           </button>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="border-t border-black py-3 flex justify-center gap-8 md:gap-12 overflow-x-auto px-6 scrollbar-hide">
-          {(locale === 'ko'
-            ? ['세계', '기술', '디자인', '문화', '비즈니스', '오피니언', '여행']
-            : ['World', 'Technology', 'Design', 'Culture', 'Business', 'Opinion', 'Travel']
-          ).map((item) => (
-            <button
-              key={item}
-              className="text-sm font-bold uppercase tracking-widest hover:underline decoration-2 underline-offset-4 whitespace-nowrap"
-            >
-              {item}
-            </button>
-          ))}
         </nav>
+      </aside>
+
+      <header className="md:hidden shrink-0 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] flex items-center justify-between px-4 h-14 z-40 relative">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+          <span className="font-display font-bold tracking-tight text-sm">Times Org</span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 -mr-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </header>
 
-      {/* Main Content Grid */}
-      <main className="max-w-[1400px] mx-auto p-6 md:p-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Left Column (Main Story) */}
-          <div className="lg:col-span-8">
-            {/* Featured Article (Hero) */}
-            <article className="mb-12 border-b border-neutral-200 pb-12">
-              <Link href={`/studio/classic-magazine/article/${featuredArticle.id}`}>
-                <div className="flex flex-col md:flex-row gap-8 mb-6">
-                  <div className="flex-1">
-                    <span className="font-sans text-xs font-bold uppercase tracking-widest text-red-700 mb-3 block">
-                      {featuredArticle.category}
-                    </span>
-                    <h2 className="font-serif text-4xl md:text-6xl font-bold leading-tight mb-4 hover:underline decoration-4 underline-offset-4 cursor-pointer">
-                      {featuredArticle.title}
-                    </h2>
-                    <p className="font-serif text-xl text-neutral-600 leading-relaxed mb-6">
-                      {featuredArticle.subtitle}
-                    </p>
-                    <div className="flex items-center gap-3 text-xs font-sans uppercase tracking-widest text-neutral-400">
-                      <span className="text-black font-bold">By {featuredArticle.author.name}</span>
-                      <span>•</span>
-                      <span>{featuredArticle.readTime} Min Read</span>
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/3 aspect-[3/4] bg-neutral-100 border border-neutral-200 relative">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="font-serif italic text-2xl text-neutral-300">(Image)</span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </article>
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute inset-x-0 top-[104px] bottom-0 bg-[var(--tekton-bg-surface)] z-50 overflow-y-auto shadow-xl">
+          <nav className="flex flex-col gap-2 p-4">
+            <button
+              onClick={() => {
+                setActiveTab('page');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '페이지 예시' : 'Page Example'}
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('component');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
+          </nav>
+        </div>
+      )}
 
-            {/* Sub Stories Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-12">
-              {subArticles.map((article) => (
-                <article key={article.id} className="border-b border-neutral-200 pb-8">
-                  <Link href={`/studio/classic-magazine/article/${article.id}`}>
-                    <div className="aspect-video bg-neutral-100 mb-4 border border-neutral-200 relative">
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="font-serif italic text-2xl text-neutral-300">(Image)</span>
-                      </div>
-                    </div>
-                    <h3 className="font-serif text-2xl font-bold leading-tight mb-2 hover:underline decoration-2 cursor-pointer">
-                      {article.title}
-                    </h3>
-                    <p className="font-serif text-neutral-600 leading-relaxed text-sm line-clamp-3">
-                      {article.subtitle}
-                    </p>
-                  </Link>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          {/* Right Column (Sidebar / Feed) */}
-          <div className="lg:col-span-4 pl-0 lg:pl-12 lg:border-l border-neutral-200">
-            {/* Section Header */}
-            <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-8">
-              <h3 className="font-sans text-sm font-bold uppercase tracking-widest">
-                {locale === 'ko' ? '에디터 추천' : "Editor's Picks"}
-              </h3>
-              <button className="text-xs font-bold uppercase hover:underline">
-                {locale === 'ko' ? '모두 보기' : 'View All'}
-              </button>
-            </div>
-
-            {/* List Items (Recipe: card.compact) */}
-            <div className="space-y-6">
-              {editorsPicks.map((article, index) => (
-                <article key={article.id} className="flex gap-4 group cursor-pointer group">
-                  <Link
-                    href={`/studio/classic-magazine/article/${article.id}`}
-                    className="flex gap-4 w-full"
-                  >
-                    <span className="font-serif text-4xl font-bold text-neutral-200 group-hover:text-black transition-colors">
-                      {index + 1}
-                    </span>
-                    <div className="flex-1 border-b border-neutral-100 pb-6 group-last:border-none">
-                      <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1 block">
-                        {article.category}
-                      </span>
-                      <h4 className="font-serif text-lg font-bold leading-snug group-hover:underline decoration-2">
-                        {article.title}
-                      </h4>
-                    </div>
-                  </Link>
-                </article>
-              ))}
-            </div>
-
-            {/* Ad / Promo Area */}
-            <div className="mt-12 bg-neutral-900 text-white p-8 text-center border-4 border-double border-neutral-700">
-              <h4 className="font-serif text-2xl font-bold mb-4 font-italic">
-                {locale === 'ko' ? '"시대를 초월한 디자인"' : '"Timeless Design"'}
-              </h4>
-              <p className="font-serif text-sm text-neutral-400 mb-6 italic">
-                {locale === 'ko'
-                  ? '디지털 에디션을 구독하고 아카이브에 무제한으로 액세스하세요.'
-                  : 'Subscribe to the digital edition for unlimited access to our archives.'}
-              </p>
-              <button className="w-full bg-white text-black h-12 uppercase font-bold tracking-widest text-xs hover:bg-neutral-200 transition-colors">
-                {locale === 'ko' ? '지금 구독하기' : 'Subscribe Now'}
-              </button>
-            </div>
-          </div>
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-8 relative">
+        <div className="max-w-[1200px] mx-auto">
+          {activeTab === 'page' && <OverviewDashboard />}
+          {activeTab === 'component' && <ComponentGallery />}
         </div>
       </main>
+    </div>
+  );
+}
 
-      <footer className="bg-neutral-100 border-t border-neutral-200 py-24 mt-24">
-        <div className="max-w-[1400px] mx-auto px-6 text-center">
-          <h2 className="font-serif text-4xl font-black tracking-tighter mb-8 scale-y-90">
-            The Tekton Times
-          </h2>
-          <div className="flex justify-center gap-8 mb-12">
-            <Link
-              href="/studio/classic-magazine/docs"
-              className="text-xs font-bold uppercase tracking-widest hover:underline"
-            >
-              {locale === 'ko' ? '문서' : 'Documentation'}
-            </Link>
-            <a href="#" className="text-xs font-bold uppercase tracking-widest hover:underline">
-              {locale === 'ko' ? '개인정보 보호정책' : 'Privacy Policy'}
-            </a>
-            <a href="#" className="text-xs font-bold uppercase tracking-widest hover:underline">
-              {locale === 'ko' ? '이용약관' : 'Terms of Service'}
-            </a>
+function OverviewDashboard() {
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 className="text-2xl md:text-3xl font-display font-bold tracking-tight">Dashboard</h2>
+        <div className="flex items-center gap-2">
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-[var(--tekton-radius-md)] text-xs font-bold uppercase tracking-wider hover:bg-[var(--tekton-bg-canvas)] transition-colors">
+            Download Export
+          </button>
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)] rounded-[var(--tekton-radius-md)] text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-opacity">
+            New Project
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
+        {[
+          {
+            title: 'Total Revenue',
+            value: '$45,231.89',
+            icon: DollarSign,
+            sub: '+20.1% from last month',
+          },
+          { title: 'Subscriptions', value: '+2,350', icon: Users, sub: '+180.1% from last month' },
+          { title: 'Sales', value: '+12,234', icon: CreditCard, sub: '+19.2% from last month' },
+          { title: 'Active Now', value: '+573', icon: Activity, sub: '+201 since last hour' },
+        ].map((stat) => (
+          <div
+            key={stat.title}
+            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] border-t-2 border-t-[var(--tekton-border-emphasis)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm"
+          >
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-widest uppercase text-xs font-bold text-[var(--tekton-text-secondary)]">
+                {stat.title}
+              </h3>
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)]" />
+            </div>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-[var(--tekton-text-secondary)]">{stat.sub}</p>
+            </div>
           </div>
-          <p className="font-serif text-sm text-neutral-500 italic">
-            © 2026 Tekton Design System. All rights reserved.
+        ))}
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] border-t-2 border-t-[var(--tekton-border-emphasis)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm overflow-hidden">
+          <div className="flex flex-col space-y-1.5 p-6 pb-2">
+            <h3 className="font-serif text-lg font-semibold leading-none tracking-tight">
+              Revenue Overview
+            </h3>
+            <p className="text-xs uppercase tracking-wider text-[var(--tekton-text-secondary)]">
+              Growth metrics for the past 12 months
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <OverviewChart />
+          </div>
+        </div>
+
+        <div className="lg:col-span-3 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] border-t-2 border-t-[var(--tekton-border-emphasis)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="font-serif text-lg font-semibold leading-none tracking-tight">
+              Recent Activity
+            </h3>
+            <p className="text-xs uppercase tracking-wider text-[var(--tekton-text-secondary)]">
+              24 new sales recorded today
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <div className="space-y-8">
+              {[
+                { name: 'Olivia Martin', email: 'olivia.martin@email.com', amount: '+$1,999.00' },
+                { name: 'Jackson Lee', email: 'jackson.lee@email.com', amount: '+$39.00' },
+                { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', amount: '+$299.00' },
+                { name: 'William Kim', email: 'will@email.com', amount: '+$99.00' },
+                { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
+              ].map((user) => (
+                <div key={user.email} className="flex items-center">
+                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-[var(--tekton-bg-canvas)] items-center justify-center border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold">
+                    {user.name[0]}
+                  </span>
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
+                  </div>
+                  <div className="ml-auto font-medium">{user.amount}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] border-t-2 border-t-[var(--tekton-border-emphasis)] bg-[var(--tekton-bg-surface)] shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="font-serif text-lg font-semibold leading-none tracking-tight">
+            Recent Transactions
+          </h3>
+          <p className="text-xs uppercase tracking-wider text-[var(--tekton-text-secondary)]">
+            A summary of your latest transactions
           </p>
         </div>
-      </footer>
+        <div className="px-6 pb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-[var(--tekton-border-emphasis)]">
+                  <th className="text-left text-xs font-bold uppercase tracking-wider text-[var(--tekton-text-secondary)] pb-3">
+                    Invoice
+                  </th>
+                  <th className="text-left text-xs font-bold uppercase tracking-wider text-[var(--tekton-text-secondary)] pb-3">
+                    Status
+                  </th>
+                  <th className="text-left text-xs font-bold uppercase tracking-wider text-[var(--tekton-text-secondary)] pb-3">
+                    Method
+                  </th>
+                  <th className="text-right text-xs font-bold uppercase tracking-wider text-[var(--tekton-text-secondary)] pb-3">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { invoice: 'INV-001', status: 'Paid', method: 'Credit Card', amount: '$250.00' },
+                  { invoice: 'INV-002', status: 'Pending', method: 'PayPal', amount: '$150.00' },
+                  {
+                    invoice: 'INV-003',
+                    status: 'Paid',
+                    method: 'Bank Transfer',
+                    amount: '$350.00',
+                  },
+                  { invoice: 'INV-004', status: 'Paid', method: 'Credit Card', amount: '$450.00' },
+                  { invoice: 'INV-005', status: 'Refunded', method: 'PayPal', amount: '$550.00' },
+                ].map((tx) => (
+                  <tr
+                    key={tx.invoice}
+                    className="border-b border-[var(--tekton-border-default)] last:border-0"
+                  >
+                    <td className="py-3 font-medium">{tx.invoice}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex items-center rounded-[var(--tekton-radius-full)] px-2.5 py-0.5 text-xs font-medium ${tx.status === 'Paid' ? 'bg-green-100 text-green-800' : tx.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--tekton-text-secondary)]">{tx.method}</td>
+                    <td className="py-3 text-right font-medium">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OverviewChart() {
+  const chartData = [
+    { month: 'Jan', value: 120 },
+    { month: 'Feb', value: 150 },
+    { month: 'Mar', value: 180 },
+    { month: 'Apr', value: 160 },
+    { month: 'May', value: 210 },
+    { month: 'Jun', value: 250 },
+    { month: 'Jul', value: 230 },
+    { month: 'Aug', value: 280 },
+    { month: 'Sep', value: 320 },
+    { month: 'Oct', value: 300 },
+    { month: 'Nov', value: 340 },
+    { month: 'Dec', value: 380 },
+  ];
+
+  return (
+    <div className="w-full mt-8">
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="classicColorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#1A1A1A" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#1A1A1A" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="4 4" stroke="#E5E5E5" vertical={false} />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#666666', fontSize: 12 }}
+            dy={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#666666', fontSize: 12 }}
+            dx={-10}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#FAFAFA',
+              border: '1px solid #E5E5E5',
+              borderRadius: '0px',
+              padding: '8px 12px',
+            }}
+            labelStyle={{ color: '#1A1A1A', fontWeight: 600 }}
+            itemStyle={{ color: '#666666' }}
+          />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#1A1A1A"
+            strokeWidth={3}
+            fill="url(#classicColorValue)"
+            dot={{ fill: '#1A1A1A', r: 4 }}
+            activeDot={{ r: 6, fill: '#1A1A1A' }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }

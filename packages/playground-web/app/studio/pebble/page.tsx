@@ -1,307 +1,385 @@
 'use client';
 
-import {
-  Home,
-  Compass,
-  Plus,
-  Bell,
-  MessageCircle,
-  Search,
-  ChevronDown,
-  MoreHorizontal,
-  Share2,
-  ArrowUpRight,
-} from 'lucide-react';
+import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
+import { ComponentGallery } from '@/components/studio/ComponentGallery';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
 
-const ROUND_MINIMAL_FALLBACK: Record<string, string> = {
-  '--tekton-bg-canvas': '#F3F5F7', // Cool gray background
+const PEBBLE_FALLBACK: Record<string, string> = {
+  '--tekton-bg-canvas': '#F3F5F7',
   '--tekton-bg-surface': '#FFFFFF',
   '--tekton-text-primary': '#111827',
   '--tekton-text-secondary': '#6B7280',
+  '--tekton-text-tertiary': '#9CA3AF',
   '--tekton-border-default': '#E5E7EB',
-  '--tekton-primary': '#E60023', // Pinterest Red-ish (or Brand Blue based on previous file) -> Let's stick to the JSON's "brand" which was blue-ish in previous file, but "Pinterest" implies red. I'll stick to a neutral/brand generic or the JSON's defined brand (blue 500). Let's use neutral dark for primary UI and a brand color for accents.
-  '--tekton-radius-xl': '24px',
-  '--tekton-radius-2xl': '32px',
+  '--tekton-border-emphasis': '#D1D5DB',
+  '--tekton-action-primary': '#3B82F6',
+  '--tekton-action-primary-text': '#FFFFFF',
+
+  '--tekton-bg-background': '#F3F5F7',
+  '--tekton-bg-foreground': '#111827',
+  '--tekton-bg-card': '#FFFFFF',
+  '--tekton-bg-card-foreground': '#111827',
+  '--tekton-bg-popover': '#FFFFFF',
+  '--tekton-bg-popover-foreground': '#111827',
+  '--tekton-bg-primary': '#3B82F6',
+  '--tekton-bg-primary-foreground': '#FFFFFF',
+  '--tekton-bg-secondary': '#E5E7EB',
+  '--tekton-bg-secondary-foreground': '#111827',
+  '--tekton-bg-muted': '#E5E7EB',
+  '--tekton-bg-muted-foreground': '#6B7280',
+  '--tekton-bg-accent': '#DBEAFE',
+  '--tekton-bg-accent-foreground': '#1E40AF',
+  '--tekton-bg-destructive': '#EF4444',
+  '--tekton-bg-destructive-foreground': '#FFFFFF',
+  '--tekton-border-input': '#E5E7EB',
+  '--tekton-border-ring': '#3B82F6',
+
+  '--tekton-radius-sm': '12px',
+  '--tekton-radius-md': '16px',
+  '--tekton-radius-lg': '24px',
+  '--tekton-radius-xl': '32px',
+  '--tekton-radius-none': '0',
   '--tekton-radius-full': '9999px',
+  '--tekton-spacing-0': '0',
+  '--tekton-spacing-1': '4px',
+  '--tekton-spacing-2': '8px',
+  '--tekton-spacing-3': '12px',
+  '--tekton-spacing-4': '16px',
+  '--tekton-spacing-5': '20px',
+  '--tekton-spacing-6': '24px',
+  '--tekton-spacing-8': '32px',
+  '--tekton-spacing-10': '40px',
+  '--tekton-spacing-12': '48px',
+  '--tekton-spacing-16': '64px',
 };
 
-// Mock Data for Pins
-const PINS = [
-  {
-    id: 1,
-    title: 'Minimalist Workspace Desk Setup',
-    image:
-      'https://images.unsplash.com/photo-1493934558415-9d19f0b2b4d2?auto=format&fit=crop&w=800&q=80',
-    height: 400,
-  },
-  {
-    id: 2,
-    title: 'Abstract 3D Shapes',
-    image:
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80',
-    height: 600,
-  },
-  {
-    id: 3,
-    title: 'Swiss Style Typography',
-    image:
-      'https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=800&q=80',
-    height: 300,
-  },
-  {
-    id: 4,
-    title: 'Modern Interior Design',
-    image:
-      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80',
-    height: 500,
-  },
-  {
-    id: 5,
-    title: 'Ceramic Textures',
-    image:
-      'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=800&q=80',
-    height: 350,
-  },
-  {
-    id: 6,
-    title: 'Architectural Details',
-    image:
-      'https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&w=800&q=80',
-    height: 450,
-  },
-  {
-    id: 7,
-    title: 'Gradient Grids',
-    image:
-      'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80',
-    height: 400,
-  },
-  {
-    id: 8,
-    title: 'Neon Light Experiment',
-    image:
-      'https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=800&q=80',
-    height: 550,
-  },
-  {
-    id: 9,
-    title: 'Plant Aesthetics',
-    image:
-      'https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?auto=format&fit=crop&w=800&q=80',
-    height: 300,
-  },
-  {
-    id: 10,
-    title: 'Tech Gadgets Flatlay',
-    image:
-      'https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?auto=format&fit=crop&w=800&q=80',
-    height: 400,
-  },
-  {
-    id: 11,
-    title: 'Coffee Culture',
-    image:
-      'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&w=800&q=80',
-    height: 350,
-  },
-  {
-    id: 12,
-    title: 'Urban Photography',
-    image:
-      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=800&q=80',
-    height: 500,
-  },
-];
-
-const CATEGORIES = {
-  en: [
-    'All',
-    'UI Design',
-    'Interior',
-    'Photography',
-    'Typography',
-    'Branding',
-    'Fashion',
-    'Architecture',
-    'Art',
-    'Travel',
-    'Food',
-  ],
-  ko: [
-    '전체',
-    'UI 디자인',
-    '인테리어',
-    '사진',
-    '타이포그래피',
-    '브랜딩',
-    '패션',
-    '건축',
-    '아트',
-    '여행',
-    '음식',
-  ],
-};
-
-export default function RoundMinimalTemplate() {
+export default function PebbleDemo() {
+  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('pebble', {
-    fallback: ROUND_MINIMAL_FALLBACK,
+    fallback: PEBBLE_FALLBACK,
   });
   const { locale } = useStudioLanguage();
-  const [selectedCategory, setSelectedCategory] = useState('All');
 
   return (
-    <>
-      {/* Preview Banner */}
+    <div
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+    >
       <PreviewBanner templateId="pebble" templateName="Pebble" />
 
-      {/* Fixed height container to allow inner scrolling - Adjusted for banner */}
-      <div
-        className={`flex h-[calc(100vh-3rem)] mt-12 bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 ${themeLoaded ? 'opacity-100' : 'opacity-0'} overflow-hidden`}
-      >
-        {/* Left Sidebar (Collapsed) - Desktop Only */}
-        <aside className="w-[88px] hidden md:flex flex-col items-center py-6 bg-[var(--tekton-bg-surface)] border-r border-transparent h-full shrink-0 overflow-y-auto no-scrollbar">
-          <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center mb-8 cursor-pointer hover:bg-red-700 transition-colors shrink-0">
-            <span className="font-bold text-lg">P</span>
+      <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
+        <div className="p-6">
+          <Link
+            href="/studio"
+            className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
+          >
+            <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
+              tekton/ui
+            </span>
+            <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-6 px-1">
+            <div className="w-6 h-6 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+            <span className="font-bold tracking-tight truncate">Pebble Co.</span>
           </div>
+        </div>
+        <nav className="flex-1 px-4 flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('page')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '페이지 예시' : 'Page Example'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'page' ? 'opacity-100' : ''}`}
+            />
+          </button>
+          <button
+            onClick={() => setActiveTab('component')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
+            />
+          </button>
+        </nav>
+      </aside>
 
-          <nav className="flex flex-col gap-6 w-full items-center flex-1">
-            <SidebarItem icon={<Home size={24} />} active />
-            <SidebarItem icon={<Compass size={24} />} />
-            <SidebarItem icon={<Plus size={24} />} />
-          </nav>
+      <header className="md:hidden shrink-0 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] flex items-center justify-between px-4 h-14 z-40 relative">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+          <span className="font-bold tracking-tight text-sm">Pebble Co.</span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 -mr-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </header>
 
-          <div className="mt-auto flex flex-col gap-6 items-center w-full">
-            <SidebarItem icon={<Bell size={24} />} />
-            <SidebarItem icon={<MessageCircle size={24} />} />
-            <div className="w-8 h-8 rounded-full bg-neutral-200 overflow-hidden cursor-pointer hover:ring-4 hover:ring-neutral-100 transition-all">
-              <img src="https://github.com/shadcn.png" alt="User" />
-            </div>
-            <button className="text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] p-3 rounded-full transition-colors">
-              <ChevronDown size={20} />
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute inset-x-0 top-[104px] bottom-0 bg-[var(--tekton-bg-surface)] z-50 overflow-y-auto shadow-xl">
+          <nav className="flex flex-col gap-2 p-4">
+            <button
+              onClick={() => {
+                setActiveTab('page');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '페이지 예시' : 'Page Example'}
             </button>
-          </div>
-        </aside>
-
-        {/* Main Content Area */}
-        <main className="flex-1 w-full h-full flex flex-col min-w-0 overflow-hidden">
-          {/* Header Section (Static) */}
-          <header className="bg-[var(--tekton-bg-surface)]/95 backdrop-blur-md z-40 pt-4 pb-2 px-4 shadow-[0_4px_20px_rgba(0,0,0,0.02)] shrink-0">
-            {/* Top Bar: Mobile Logo + Search + Profile */}
-            <div className="flex items-center gap-4 mb-4">
-              {/* Mobile Menu Button / Logo */}
-              <div className="md:hidden w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center flex-shrink-0">
-                <span className="font-bold">P</span>
-              </div>
-
-              {/* Search Bar (Pill) */}
-              <div className="flex-1 relative group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--tekton-text-secondary)] group-focus-within:text-[var(--tekton-text-primary)] transition-colors">
-                  <Search size={20} strokeWidth={2.5} />
-                </div>
-                <input
-                  type="text"
-                  placeholder={locale === 'ko' ? '아이디어 검색...' : 'Search for ideas...'}
-                  className="w-full h-12 rounded-[var(--tekton-radius-full)] bg-[var(--tekton-bg-canvas)] pl-12 pr-6 text-lg placeholder:text-neutral-400 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:bg-white border-2 border-transparent focus:border-blue-200 transition-all"
-                />
-              </div>
-
-              {/* Right Actions (Desktop & Mobile) */}
-              <div className="flex items-center gap-2">
-                <div className="md:hidden w-10 h-10 rounded-full bg-neutral-200 overflow-hidden">
-                  <img src="https://github.com/shadcn.png" alt="User" />
-                </div>
-              </div>
-            </div>
-
-            {/* Category Chips (Scrollable) */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar pl-1">
-              {CATEGORIES[locale].map((cat, idx) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(CATEGORIES.en[idx] || 'All')}
-                  className={`px-4 py-2.5 rounded-[16px] font-semibold text-sm whitespace-nowrap transition-all ${
-                    selectedCategory === CATEGORIES.en[idx]
-                      ? 'bg-black text-white hover:bg-neutral-800'
-                      : 'bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] hover:bg-neutral-200'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </header>
-
-          {/* Masonry Grid Content (Scrollable) */}
-          <div className="p-4 md:p-6 lg:px-12 flex-1 overflow-y-auto custom-scrollbar">
-            <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 pb-20">
-              {PINS.map((pin) => (
-                <div
-                  key={pin.id}
-                  className="break-inside-avoid mb-4 group relative rounded-[var(--tekton-radius-xl)] overflow-hidden cursor-zoom-in"
-                >
-                  <img
-                    src={pin.image}
-                    alt={pin.title}
-                    className="w-full object-cover rounded-[var(--tekton-radius-xl)]"
-                    style={{ height: 'auto', minHeight: pin.height / 2 }} // approximate ratio aspect
-                  />
-
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between p-4">
-                    <div className="flex justify-end">
-                      <button className="bg-red-600 text-white px-4 py-2 rounded-[var(--tekton-radius-full)] font-bold shadow-sm hover:bg-red-700 transition-colors">
-                        {locale === 'ko' ? '저장' : 'Save'}
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
-                        <ArrowUpRight size={16} />
-                      </button>
-                      <div className="flex gap-2">
-                        <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
-                          <Share2 size={16} />
-                        </button>
-                        <button className="w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white text-black transition-colors">
-                          <MoreHorizontal size={16} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Mobile Bottom Nav */}
-          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[var(--tekton-border-default)] px-6 py-3 flex justify-between items-center z-50">
-            <Home size={28} className="text-black" />
-            <Search size={28} className="text-neutral-400" />
-            <Plus size={28} className="text-neutral-400" />
-            <MessageCircle size={28} className="text-neutral-400" />
-            <div className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden">
-              <img src="https://github.com/shadcn.png" alt="User" />
-            </div>
+            <button
+              onClick={() => {
+                setActiveTab('component');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
           </nav>
-        </main>
-      </div>
-    </>
+        </div>
+      )}
+
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-8 relative">
+        <div className="max-w-[1200px] mx-auto">
+          {activeTab === 'page' && <OverviewDashboard />}
+          {activeTab === 'component' && <ComponentGallery />}
+        </div>
+      </main>
+    </div>
   );
 }
 
-function SidebarItem({ icon, active }: { icon: React.ReactNode; active?: boolean }) {
+function OverviewDashboard() {
   return (
-    <button
-      className={`w-14 h-14 rounded-[var(--tekton-radius-full)] flex items-center justify-center transition-all ${
-        active
-          ? 'bg-black text-white hover:bg-neutral-800 shadow-md'
-          : 'text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] hover:text-[var(--tekton-text-primary)]'
-      }`}
-    >
-      {icon}
-    </button>
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
+        <div className="flex items-center gap-2">
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:bg-[var(--tekton-bg-canvas)] transition-colors">
+            Download Export
+          </button>
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:opacity-90 transition-opacity">
+            New Project
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
+        {[
+          {
+            title: 'Total Revenue',
+            value: '$45,231.89',
+            icon: DollarSign,
+            sub: '+20.1% from last month',
+          },
+          { title: 'Subscriptions', value: '+2,350', icon: Users, sub: '+180.1% from last month' },
+          { title: 'Sales', value: '+12,234', icon: CreditCard, sub: '+19.2% from last month' },
+          { title: 'Active Now', value: '+573', icon: Activity, sub: '+201 since last hour' },
+        ].map((stat) => (
+          <div
+            key={stat.title}
+            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm"
+          >
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium">{stat.title}</h3>
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)]" />
+            </div>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-[var(--tekton-text-secondary)]">{stat.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm overflow-hidden">
+          <div className="flex flex-col space-y-1.5 p-6 pb-2">
+            <h3 className="font-semibold leading-none tracking-tight">Revenue Overview</h3>
+            <p className="text-xs text-[var(--tekton-text-secondary)]">
+              Growth metrics for the past 12 months.
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <OverviewChart />
+          </div>
+        </div>
+        <div className="lg:col-span-3 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="font-semibold leading-none tracking-tight">Recent Activity</h3>
+            <p className="text-sm text-[var(--tekton-text-secondary)]">
+              24 new sales recorded today.
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <div className="space-y-8">
+              {[
+                { name: 'Olivia Martin', email: 'olivia.martin@email.com', amount: '+$1,999.00' },
+                { name: 'Jackson Lee', email: 'jackson.lee@email.com', amount: '+$39.00' },
+                { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', amount: '+$299.00' },
+                { name: 'William Kim', email: 'will@email.com', amount: '+$99.00' },
+                { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
+              ].map((user) => (
+                <div key={user.email} className="flex items-center">
+                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-[var(--tekton-bg-canvas)] items-center justify-center border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold">
+                    {user.name[0]}
+                  </span>
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
+                  </div>
+                  <div className="ml-auto font-medium">{user.amount}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="font-semibold leading-none tracking-tight">Recent Transactions</h3>
+          <p className="text-sm text-[var(--tekton-text-secondary)]">
+            A summary of your latest transactions.
+          </p>
+        </div>
+        <div className="px-6 pb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--tekton-border-default)]">
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Invoice
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Status
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Method
+                  </th>
+                  <th className="text-right font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { invoice: 'INV-001', status: 'Paid', method: 'Credit Card', amount: '$250.00' },
+                  { invoice: 'INV-002', status: 'Pending', method: 'PayPal', amount: '$150.00' },
+                  {
+                    invoice: 'INV-003',
+                    status: 'Paid',
+                    method: 'Bank Transfer',
+                    amount: '$350.00',
+                  },
+                  { invoice: 'INV-004', status: 'Paid', method: 'Credit Card', amount: '$450.00' },
+                  { invoice: 'INV-005', status: 'Refunded', method: 'PayPal', amount: '$550.00' },
+                ].map((tx) => (
+                  <tr
+                    key={tx.invoice}
+                    className="border-b border-[var(--tekton-border-default)] last:border-0"
+                  >
+                    <td className="py-3 font-medium">{tx.invoice}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex items-center rounded-[var(--tekton-radius-full)] px-2.5 py-0.5 text-xs font-medium ${tx.status === 'Paid' ? 'bg-green-100 text-green-800' : tx.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--tekton-text-secondary)]">{tx.method}</td>
+                    <td className="py-3 text-right font-medium">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OverviewChart() {
+  const chartData = [
+    { month: 'Jan', value: 120 },
+    { month: 'Feb', value: 150 },
+    { month: 'Mar', value: 180 },
+    { month: 'Apr', value: 160 },
+    { month: 'May', value: 210 },
+    { month: 'Jun', value: 250 },
+    { month: 'Jul', value: 230 },
+    { month: 'Aug', value: 280 },
+    { month: 'Sep', value: 320 },
+    { month: 'Oct', value: 300 },
+    { month: 'Nov', value: 340 },
+    { month: 'Dec', value: 380 },
+  ];
+
+  return (
+    <div className="w-full mt-8">
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="pebbleColorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="4 4" stroke="#E5E7EB" vertical={false} />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#6B7280', fontSize: 12 }}
+            dy={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#6B7280', fontSize: 12 }}
+            dx={-10}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E5E7EB',
+              borderRadius: '16px',
+              padding: '8px 12px',
+            }}
+            labelStyle={{ color: '#111827', fontWeight: 600 }}
+            itemStyle={{ color: '#6B7280' }}
+          />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#3B82F6"
+            strokeWidth={3}
+            fill="url(#pebbleColorValue)"
+            dot={{ fill: '#3B82F6', r: 4 }}
+            activeDot={{ r: 6, fill: '#3B82F6' }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
   );
 }

@@ -22,7 +22,7 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      'inline-flex h-10 items-center justify-center rounded-[var(--tekton-radius-md)] bg-[var(--tekton-bg-muted)] p-1 text-[var(--tekton-bg-muted-foreground)]',
+      'inline-flex h-10 items-center justify-center rounded-[var(--tekton-radius-xl)] bg-[var(--tekton-bg-muted)] p-1 text-[var(--tekton-bg-muted-foreground)]',
       className
     )}
     {...props}
@@ -37,7 +37,7 @@ const TabsTrigger = React.forwardRef<
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-sm)] px-[var(--tekton-spacing-3)] py-1.5 text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[var(--tekton-bg-background)] data-[state=active]:text-[var(--tekton-bg-foreground)] data-[state=active]:shadow-sm',
+      'inline-flex items-center justify-center whitespace-nowrap rounded-[var(--tekton-radius-xl)] px-[var(--tekton-spacing-3)] py-1.5 text-sm font-medium ring-offset-[var(--tekton-bg-background)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--tekton-border-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[var(--tekton-bg-background)] data-[state=active]:text-[var(--tekton-bg-foreground)] data-[state=active]:shadow-sm',
       className
     )}
     {...props}

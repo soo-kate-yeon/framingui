@@ -129,7 +129,7 @@ describe('Button', () => {
     it('uses Tekton radius tokens', () => {
       const { container } = render(<Button>Radius</Button>);
       const button = container.querySelector('button');
-      expect(button?.className).toContain('rounded-[var(--tekton-radius-md)]');
+      expect(button?.className).toContain('rounded-[var(--tekton-radius-xl)]');
     });
 
     it('uses Tekton color tokens for variants', () => {

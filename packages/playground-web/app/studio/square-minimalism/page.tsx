@@ -1,503 +1,385 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Search, ShoppingBag, Menu, ArrowRight, X, ChevronRight, ChevronLeft } from 'lucide-react';
+import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
+import { useState } from 'react';
+import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
+import { ComponentGallery } from '@/components/studio/ComponentGallery';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
 
-const SQUARE_MINIMAL_FALLBACK = {
+const SQUARE_MINIMALISM_FALLBACK: Record<string, string> = {
   '--tekton-bg-canvas': '#FFFFFF',
   '--tekton-bg-surface': '#F9F9F9',
-  '--tekton-text-primary': '#000000',
-  '--tekton-text-secondary': '#666666',
+  '--tekton-text-primary': '#1A1A1A',
+  '--tekton-text-secondary': '#737373',
+  '--tekton-text-tertiary': '#A3A3A3',
   '--tekton-border-default': '#E5E5E5',
+  '--tekton-border-emphasis': '#D4D4D4',
+  '--tekton-action-primary': '#000000',
+  '--tekton-action-primary-text': '#FFFFFF',
+
+  '--tekton-bg-background': '#FFFFFF',
+  '--tekton-bg-foreground': '#1A1A1A',
+  '--tekton-bg-card': '#F9F9F9',
+  '--tekton-bg-card-foreground': '#1A1A1A',
+  '--tekton-bg-popover': '#F9F9F9',
+  '--tekton-bg-popover-foreground': '#1A1A1A',
+  '--tekton-bg-primary': '#000000',
+  '--tekton-bg-primary-foreground': '#FFFFFF',
+  '--tekton-bg-secondary': '#F5F5F5',
+  '--tekton-bg-secondary-foreground': '#1A1A1A',
+  '--tekton-bg-muted': '#F5F5F5',
+  '--tekton-bg-muted-foreground': '#737373',
+  '--tekton-bg-accent': '#F5F5F5',
+  '--tekton-bg-accent-foreground': '#1A1A1A',
+  '--tekton-bg-destructive': '#DC2626',
+  '--tekton-bg-destructive-foreground': '#FFFFFF',
+  '--tekton-border-input': '#E5E5E5',
+  '--tekton-border-ring': '#000000',
+
+  '--tekton-radius-sm': '0px',
+  '--tekton-radius-md': '0px',
+  '--tekton-radius-lg': '0px',
+  '--tekton-radius-xl': '0px',
   '--tekton-radius-none': '0px',
+  '--tekton-radius-full': '0px',
+  '--tekton-spacing-0': '0',
+  '--tekton-spacing-1': '4px',
+  '--tekton-spacing-2': '8px',
+  '--tekton-spacing-3': '12px',
+  '--tekton-spacing-4': '16px',
+  '--tekton-spacing-5': '20px',
+  '--tekton-spacing-6': '24px',
+  '--tekton-spacing-8': '32px',
+  '--tekton-spacing-10': '40px',
+  '--tekton-spacing-12': '48px',
+  '--tekton-spacing-16': '64px',
 };
 
-const CATEGORIES = {
-  en: ['All', 'Outerwear', 'Tops', 'Bottoms', 'Accessories', 'Footwear'],
-  ko: ['전체', '아우터', '상의', '하의', '액세서리', '신발'],
-};
-
-const ALL_PRODUCTS = [
-  // Page 1
-  {
-    id: 1,
-    title: 'Minimal Shell Jacket',
-    category: 'Outerwear',
-    price: '$295.00',
-    image:
-      'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 2,
-    title: 'Boxy Cotton Tee',
-    category: 'Tops',
-    price: '$45.00',
-    image:
-      'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 3,
-    title: 'Pleated Wool Trousers',
-    category: 'Bottoms',
-    price: '$180.00',
-    image:
-      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 4,
-    title: 'Cashmere Scarf',
-    category: 'Accessories',
-    price: '$120.00',
-    image:
-      'https://images.unsplash.com/photo-1520903923011-807d9bb60b23?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 5,
-    title: 'Leather Chelsea Boots',
-    category: 'Footwear',
-    price: '$350.00',
-    image:
-      'https://images.unsplash.com/photo-1638247025967-b4e38f787b76?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 6,
-    title: 'Oversized Poplin Shirt',
-    category: 'Tops',
-    price: '$85.00',
-    image:
-      'https://images.unsplash.com/photo-1598033129183-c4f50c717658?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 7,
-    title: 'Technical Knit Sweater',
-    category: 'Tops',
-    price: '$145.00',
-    image:
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 8,
-    title: 'Cargo Utility Pants',
-    category: 'Bottoms',
-    price: '$130.00',
-    image:
-      'https://images.unsplash.com/photo-1517423568366-8b83523034fd?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 9,
-    title: 'Canvas Tote Bag',
-    category: 'Accessories',
-    price: '$60.00',
-    image:
-      'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80',
-  },
-
-  // Page 2
-  {
-    id: 10,
-    title: 'Hooded Parka',
-    category: 'Outerwear',
-    price: '$420.00',
-    image:
-      'https://images.unsplash.com/photo-1539533377285-b3df044f15df?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 11,
-    title: 'Relaxed Linen Shirt',
-    category: 'Tops',
-    price: '$95.00',
-    image:
-      'https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 12,
-    title: 'Tapered Chinos',
-    category: 'Bottoms',
-    price: '$110.00',
-    image:
-      'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 13,
-    title: 'Structured Bucket Hat',
-    category: 'Accessories',
-    price: '$55.00',
-    image:
-      'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 14,
-    title: 'Minimal Leather Sneakers',
-    category: 'Footwear',
-    price: '$220.00',
-    image:
-      'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 15,
-    title: 'Quilted Down Vest',
-    category: 'Outerwear',
-    price: '$180.00',
-    image:
-      'https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 16,
-    title: 'Merino Turtleneck',
-    category: 'Tops',
-    price: '$110.00',
-    image:
-      'https://images.unsplash.com/photo-1556905055-8f358a7a4bb4?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 17,
-    title: 'Selvedge Denim Jacket',
-    category: 'Outerwear',
-    price: '$240.00',
-    image:
-      'https://images.unsplash.com/photo-1576995811123-5399567c9b01?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 18,
-    title: 'Smooth Leather Belt',
-    category: 'Accessories',
-    price: '$75.00',
-    image:
-      'https://images.unsplash.com/photo-1554992257-233bb963666d?auto=format&fit=crop&w=600&q=80',
-  },
-
-  // Page 3
-  {
-    id: 19,
-    title: 'Double Breasted Trench',
-    category: 'Outerwear',
-    price: '$450.00',
-    image:
-      'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 20,
-    title: 'Mock Neck Long Sleeve',
-    category: 'Tops',
-    price: '$65.00',
-    image:
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 21,
-    title: 'Straight Leg Jeans',
-    category: 'Bottoms',
-    price: '$150.00',
-    image:
-      'https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 22,
-    title: 'Fisherman Beanie',
-    category: 'Accessories',
-    price: '$35.00',
-    image:
-      'https://images.unsplash.com/photo-1576871337632-b9aef4c17ab9?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 23,
-    title: 'Technical Mesh Sandals',
-    category: 'Footwear',
-    price: '$140.00',
-    image:
-      'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 24,
-    title: 'MA-1 Bomber Jacket',
-    category: 'Outerwear',
-    price: '$280.00',
-    image:
-      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 25,
-    title: 'Chunky Knit Cardigan',
-    category: 'Tops',
-    price: '$195.00',
-    image:
-      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 26,
-    title: 'A-Line Midi Skirt',
-    category: 'Bottoms',
-    price: '$135.00',
-    image:
-      'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=600&q=80',
-  },
-  {
-    id: 27,
-    title: 'Architectural Crossbody',
-    category: 'Accessories',
-    price: '$220.00',
-    image:
-      'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80',
-  },
-];
-
-const ITEMS_PER_PAGE = 9;
-
-export default function SquareMinimalismEcom() {
+export default function SquareMinimalismDemo() {
+  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('square-minimalism', {
-    fallback: SQUARE_MINIMAL_FALLBACK,
+    fallback: SQUARE_MINIMALISM_FALLBACK,
   });
   const { locale } = useStudioLanguage();
 
-  const [selectedCategory, setSelectedCategory] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Filter and Paginate Logic
-  const filteredProducts = useMemo(() => {
-    if (selectedCategory === 0) {
-      return ALL_PRODUCTS;
-    }
-    const categoryName = CATEGORIES.en[selectedCategory];
-    return ALL_PRODUCTS.filter((p) => p.category === categoryName);
-  }, [selectedCategory]);
-
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [filteredProducts, currentPage]);
-
-  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
   return (
     <div
-      className={`flex flex-col min-h-screen bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-700 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      {/* Preview Banner */}
       <PreviewBanner templateId="square-minimalism" templateName="Square Minimalism" />
 
-      {/* Top Navigation - Architectural & Sticky - Adjusted for banner */}
-      <nav className="sticky top-12 w-full h-20 bg-white/95 backdrop-blur-md z-40 px-6 md:px-12 flex items-center justify-between border-b border-[var(--tekton-border-default)] mt-12">
-        <div className="flex items-center gap-12">
-          <div className="text-2xl font-black tracking-tighter uppercase leading-none border-2 border-black px-2 py-1">
-            AX
-          </div>
-
-          {/* Desktop Menu Links */}
-          <div className="hidden lg:flex items-center gap-8">
-            {(locale === 'ko'
-              ? ['컬렉션', '아카이브', '프로젝트', '스튜디오', '스토어']
-              : ['Collections', 'Archive', 'Projects', 'Studio', 'Store']
-            ).map((item) => (
-              <button
-                key={item}
-                className="text-xs font-bold uppercase tracking-[0.2em] hover:text-neutral-400 transition-colors"
-              >
-                {item}
-              </button>
-            ))}
+      <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
+        <div className="p-6">
+          <Link
+            href="/studio"
+            className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
+          >
+            <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
+              tekton/ui
+            </span>
+            <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-6 px-1">
+            <div className="w-6 h-6 bg-[var(--tekton-action-primary)] shadow-sm"></div>
+            <span className="font-bold tracking-tight truncate">Square Lab</span>
           </div>
         </div>
-
-        <div className="flex items-center gap-6">
-          <button className="p-2 hover:bg-neutral-50 transition-colors">
-            <Search size={20} />
-          </button>
-          <button className="p-2 hover:bg-neutral-50 transition-colors relative">
-            <ShoppingBag size={20} />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-black"></span>
+        <nav className="flex-1 px-4 flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('page')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '페이지 예시' : 'Page Example'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'page' ? 'opacity-100' : ''}`}
+            />
           </button>
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2 hover:bg-neutral-50 transition-colors"
+            onClick={() => setActiveTab('component')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
           >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            <span>{locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
+            />
           </button>
+        </nav>
+      </aside>
+
+      <header className="md:hidden shrink-0 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] flex items-center justify-between px-4 h-14 z-40 relative">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 bg-[var(--tekton-action-primary)] shadow-sm"></div>
+          <span className="font-bold tracking-tight text-sm">Square Lab</span>
         </div>
-      </nav>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 -mr-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </header>
 
-      {/* Main Content Layout */}
-      <div className="flex flex-1">
-        {/* Left Sidebar - Categories (Clothing Concept) */}
-        <aside className="hidden lg:block w-72 h-[calc(100vh-80px)] sticky top-20 p-12 overflow-y-auto border-r border-[var(--tekton-border-default)]">
-          <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-neutral-400 mb-10">
-            {locale === 'ko' ? '카테고리' : 'Categories'}
-          </h3>
-          <nav className="flex flex-col gap-6">
-            {CATEGORIES[locale].map((cat, idx) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(idx);
-                  setCurrentPage(1);
-                }}
-                className={`text-left text-sm font-bold uppercase tracking-widest transition-all ${
-                  selectedCategory === idx
-                    ? 'text-black translate-x-2'
-                    : 'text-neutral-400 hover:text-black hover:translate-x-1'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </nav>
-
-          <div className="mt-24 pt-12 border-t border-neutral-100">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-neutral-300 mb-4">
-              {locale === 'ko' ? '뉴스레터' : 'Newsletter'}
-            </h4>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={locale === 'ko' ? '이메일@스토어-AX.COM' : 'EMAIL@STORE-AX.COM'}
-                className="w-full bg-transparent border-b border-black py-2 text-[10px] font-bold tracking-widest outline-none placeholder:text-neutral-200"
-              />
-              <button className="absolute right-0 bottom-2">
-                <ArrowRight size={14} />
-              </button>
-            </div>
-          </div>
-        </aside>
-
-        {/* Right Content - Product Gallery Grid */}
-        <main className="flex-1 p-6 md:p-12 overflow-y-auto">
-          {/* Section Header */}
-          <div className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-neutral-400 mb-2 block">
-                {locale === 'ko' ? '시즌 24' : "Season' 24"}
-              </span>
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
-                {selectedCategory === 0
-                  ? locale === 'ko'
-                    ? '신상품'
-                    : 'New Arrivals'
-                  : CATEGORIES[locale][selectedCategory]}
-              </h2>
-            </div>
-            <div className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-              {locale === 'ko'
-                ? `총 ${filteredProducts.length}개 중 ${paginatedProducts.length}개 표시`
-                : `Showing ${paginatedProducts.length} of ${filteredProducts.length} Items`}
-            </div>
-          </div>
-
-          {/* Gallery Grid (Strict Radius 0) */}
-          {paginatedProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-12 gap-y-20">
-              {paginatedProducts.map((product) => (
-                <div key={product.id} className="group cursor-pointer">
-                  {/* Image Container (Radius 0) */}
-                  <div className="aspect-[3/4] bg-neutral-100 mb-6 relative overflow-hidden">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
-
-                    {/* Overlay Info */}
-                    <div className="absolute top-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="bg-black text-white px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
-                        {locale === 'ko' ? '한정판' : 'Limited Edition'}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Typography (Gutter as Divider) */}
-                  <div className="space-y-1">
-                    <div className="flex justify-between items-start">
-                      <span className="text-[10px] font-mono text-neutral-300">
-                        {product.category}
-                      </span>
-                      <span className="text-xs font-bold tracking-widest">{product.price}</span>
-                    </div>
-                    <h4 className="text-lg font-black tracking-tight uppercase group-hover:underline underline-offset-4 decoration-2">
-                      {product.title}
-                    </h4>
-                    <div className="pt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button className="text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 group/btn">
-                        {locale === 'ko' ? '제품 보기' : 'Discover Piece'}{' '}
-                        <ArrowRight
-                          size={12}
-                          className="group-hover/btn:translate-x-1 transition-transform"
-                        />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="h-96 flex items-center justify-center border border-dashed border-neutral-200">
-              <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">
-                {locale === 'ko' ? '이 섹션에 아이템이 없습니다' : 'No items found in this section'}
-              </p>
-            </div>
-          )}
-
-          {/* Pagination - Minimal & Functional */}
-          {totalPages > 1 && (
-            <div className="mt-32 pt-12 border-t-2 border-black flex justify-between items-center text-xs font-bold uppercase tracking-[0.2em]">
-              <button
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className={`flex items-center gap-2 transition-colors ${currentPage === 1 ? 'text-neutral-200 cursor-not-allowed' : 'text-neutral-400 hover:text-black'}`}
-              >
-                <ChevronLeft size={16} /> {locale === 'ko' ? '이전' : 'Prev'}
-              </button>
-              <div className="flex gap-6">
-                {[...Array(totalPages)].map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`transition-all ${currentPage === i + 1 ? 'text-black underline underline-offset-8 decoration-2' : 'text-neutral-300 hover:text-neutral-600'}`}
-                  >
-                    {(i + 1).toString().padStart(2, '0')}
-                  </button>
-                ))}
-              </div>
-              <button
-                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
-                className={`flex items-center gap-2 transition-colors ${currentPage === totalPages ? 'text-neutral-200 cursor-not-allowed' : 'text-neutral-400 hover:text-black'}`}
-              >
-                {locale === 'ko' ? '다음' : 'Next'} <ChevronRight size={16} />
-              </button>
-            </div>
-          )}
-        </main>
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-white z-[60] p-12 flex flex-col pt-32">
-          <button
-            onClick={() => setIsMenuOpen(false)}
-            className="absolute top-8 right-12 text-black"
-          >
-            <X size={32} />
-          </button>
-          <nav className="flex flex-col gap-8">
-            {CATEGORIES[locale].map((cat, idx) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(idx);
-                  setCurrentPage(1);
-                  setIsMenuOpen(false);
-                }}
-                className="text-4xl font-black uppercase tracking-tighter text-left"
-              >
-                {cat}
-              </button>
-            ))}
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute inset-x-0 top-[104px] bottom-0 bg-[var(--tekton-bg-surface)] z-50 overflow-y-auto shadow-xl">
+          <nav className="flex flex-col gap-2 p-4">
+            <button
+              onClick={() => {
+                setActiveTab('page');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '페이지 예시' : 'Page Example'}
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('component');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
           </nav>
         </div>
       )}
+
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-8 relative">
+        <div className="max-w-[1200px] mx-auto">
+          {activeTab === 'page' && <OverviewDashboard />}
+          {activeTab === 'component' && <ComponentGallery />}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function OverviewDashboard() {
+  return (
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
+        <div className="flex items-center gap-2">
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:bg-[var(--tekton-bg-canvas)] transition-colors">
+            Download Export
+          </button>
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:opacity-90 transition-opacity">
+            New Project
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
+        {[
+          {
+            title: 'Total Revenue',
+            value: '$45,231.89',
+            icon: DollarSign,
+            sub: '+20.1% from last month',
+          },
+          { title: 'Subscriptions', value: '+2,350', icon: Users, sub: '+180.1% from last month' },
+          { title: 'Sales', value: '+12,234', icon: CreditCard, sub: '+19.2% from last month' },
+          { title: 'Active Now', value: '+573', icon: Activity, sub: '+201 since last hour' },
+        ].map((stat) => (
+          <div
+            key={stat.title}
+            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm"
+          >
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium">{stat.title}</h3>
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)]" />
+            </div>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-[var(--tekton-text-secondary)]">{stat.sub}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm overflow-hidden">
+          <div className="flex flex-col space-y-1.5 p-6 pb-2">
+            <h3 className="font-semibold leading-none tracking-tight">Revenue Overview</h3>
+            <p className="text-xs text-[var(--tekton-text-secondary)]">
+              Growth metrics for the past 12 months.
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <OverviewChart />
+          </div>
+        </div>
+        <div className="lg:col-span-3 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="font-semibold leading-none tracking-tight">Recent Activity</h3>
+            <p className="text-sm text-[var(--tekton-text-secondary)]">
+              24 new sales recorded today.
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <div className="space-y-8">
+              {[
+                { name: 'Olivia Martin', email: 'olivia.martin@email.com', amount: '+$1,999.00' },
+                { name: 'Jackson Lee', email: 'jackson.lee@email.com', amount: '+$39.00' },
+                { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', amount: '+$299.00' },
+                { name: 'William Kim', email: 'will@email.com', amount: '+$99.00' },
+                { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
+              ].map((user) => (
+                <div key={user.email} className="flex items-center">
+                  <span className="relative flex shrink-0 overflow-hidden h-9 w-9 bg-[var(--tekton-bg-canvas)] items-center justify-center border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold">
+                    {user.name[0]}
+                  </span>
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
+                  </div>
+                  <div className="ml-auto font-medium">{user.amount}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="font-semibold leading-none tracking-tight">Recent Transactions</h3>
+          <p className="text-sm text-[var(--tekton-text-secondary)]">
+            A summary of your latest transactions.
+          </p>
+        </div>
+        <div className="px-6 pb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--tekton-border-default)]">
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Invoice
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Status
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Method
+                  </th>
+                  <th className="text-right font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { invoice: 'INV-001', status: 'Paid', method: 'Credit Card', amount: '$250.00' },
+                  { invoice: 'INV-002', status: 'Pending', method: 'PayPal', amount: '$150.00' },
+                  {
+                    invoice: 'INV-003',
+                    status: 'Paid',
+                    method: 'Bank Transfer',
+                    amount: '$350.00',
+                  },
+                  { invoice: 'INV-004', status: 'Paid', method: 'Credit Card', amount: '$450.00' },
+                  { invoice: 'INV-005', status: 'Refunded', method: 'PayPal', amount: '$550.00' },
+                ].map((tx) => (
+                  <tr
+                    key={tx.invoice}
+                    className="border-b border-[var(--tekton-border-default)] last:border-0"
+                  >
+                    <td className="py-3 font-medium">{tx.invoice}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex items-center rounded-[var(--tekton-radius-full)] px-2.5 py-0.5 text-xs font-medium ${tx.status === 'Paid' ? 'bg-green-100 text-green-800' : tx.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--tekton-text-secondary)]">{tx.method}</td>
+                    <td className="py-3 text-right font-medium">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OverviewChart() {
+  const chartData = [
+    { month: 'Jan', value: 120 },
+    { month: 'Feb', value: 150 },
+    { month: 'Mar', value: 180 },
+    { month: 'Apr', value: 160 },
+    { month: 'May', value: 210 },
+    { month: 'Jun', value: 250 },
+    { month: 'Jul', value: 230 },
+    { month: 'Aug', value: 280 },
+    { month: 'Sep', value: 320 },
+    { month: 'Oct', value: 300 },
+    { month: 'Nov', value: 340 },
+    { month: 'Dec', value: 380 },
+  ];
+
+  return (
+    <div className="w-full mt-8">
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="squareColorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#1A1A1A" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#1A1A1A" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="4 4" stroke="#E5E5E5" vertical={false} />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#737373', fontSize: 12 }}
+            dy={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#737373', fontSize: 12 }}
+            dx={-10}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#F9F9F9',
+              border: '1px solid #E5E5E5',
+              borderRadius: '0px',
+              padding: '8px 12px',
+            }}
+            labelStyle={{ color: '#1A1A1A', fontWeight: 600 }}
+            itemStyle={{ color: '#737373' }}
+          />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#1A1A1A"
+            strokeWidth={3}
+            fill="url(#squareColorValue)"
+            dot={{ fill: '#1A1A1A', r: 4 }}
+            activeDot={{ r: 6, fill: '#1A1A1A' }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }

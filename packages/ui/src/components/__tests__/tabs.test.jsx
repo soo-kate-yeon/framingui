@@ -152,7 +152,7 @@ describe('Tabs', () => {
     it('uses Tekton radius tokens', () => {
       const { container } = renderTabs();
       const tabsList = container.querySelector('[role="tablist"]');
-      expect(tabsList?.className).toContain('rounded-[var(--tekton-radius-md)]');
+      expect(tabsList?.className).toContain('rounded-[var(--tekton-radius-xl)]');
     });
     it('uses Tekton color tokens for active state', () => {
       renderTabs();

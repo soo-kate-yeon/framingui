@@ -23,7 +23,16 @@ interface StudioLayoutProps {
 
 function StudioLayoutContent({ children }: StudioLayoutProps) {
   const pathname = usePathname();
-  const isDemoPage = pathname?.startsWith('/studio/neutral-workspace');
+  const templateSlugs = [
+    'neutral-workspace',
+    'classic-magazine',
+    'dark-boldness',
+    'minimal-workspace',
+    'pebble',
+    'square-minimalism',
+    'editorial-tech',
+  ];
+  const isDemoPage = templateSlugs.some((slug) => pathname?.startsWith(`/studio/${slug}`));
 
   return (
     <div className="flex h-screen overflow-hidden bg-white selection:bg-neutral-950 selection:text-white font-sans text-neutral-950">

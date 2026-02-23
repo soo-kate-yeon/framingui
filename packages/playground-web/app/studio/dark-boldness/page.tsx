@@ -1,338 +1,385 @@
 'use client';
 
+import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Play, Info, ChevronRight, Star } from 'lucide-react';
+import { useTektonTheme } from '@/hooks/useTektonTheme';
+import { PreviewBanner } from '@/components/studio/PreviewBanner';
 import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
+import { ComponentGallery } from '@/components/studio/ComponentGallery';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts';
 
-/**
- * Dark Boldness V2 - MasterClass Inspired Landing Page
- * Theme: Elite luxury night gym / Media Streaming
- * Design DNA: True Black (#000000), 0px Radius, Immersive Media
- */
-export default function EquinoxFitnessLanding() {
+const DARK_BOLDNESS_FALLBACK: Record<string, string> = {
+  '--tekton-bg-canvas': '#000000',
+  '--tekton-bg-surface': '#0D0D0D',
+  '--tekton-text-primary': '#FFFFFF',
+  '--tekton-text-secondary': '#A3A3A3',
+  '--tekton-text-tertiary': '#666666',
+  '--tekton-border-default': '#262626',
+  '--tekton-border-emphasis': '#404040',
+  '--tekton-action-primary': '#FFFFFF',
+  '--tekton-action-primary-text': '#000000',
+
+  '--tekton-bg-background': '#000000',
+  '--tekton-bg-foreground': '#FFFFFF',
+  '--tekton-bg-card': '#0D0D0D',
+  '--tekton-bg-card-foreground': '#FFFFFF',
+  '--tekton-bg-popover': '#0D0D0D',
+  '--tekton-bg-popover-foreground': '#FFFFFF',
+  '--tekton-bg-primary': '#FFFFFF',
+  '--tekton-bg-primary-foreground': '#000000',
+  '--tekton-bg-secondary': '#1A1A1A',
+  '--tekton-bg-secondary-foreground': '#FFFFFF',
+  '--tekton-bg-muted': '#1A1A1A',
+  '--tekton-bg-muted-foreground': '#A3A3A3',
+  '--tekton-bg-accent': '#1A1A1A',
+  '--tekton-bg-accent-foreground': '#FFFFFF',
+  '--tekton-bg-destructive': '#DC2626',
+  '--tekton-bg-destructive-foreground': '#FFFFFF',
+  '--tekton-border-input': '#262626',
+  '--tekton-border-ring': '#FFFFFF',
+
+  '--tekton-radius-sm': '0px',
+  '--tekton-radius-md': '0px',
+  '--tekton-radius-lg': '0px',
+  '--tekton-radius-xl': '0px',
+  '--tekton-radius-none': '0px',
+  '--tekton-radius-full': '0px',
+  '--tekton-spacing-0': '0',
+  '--tekton-spacing-1': '4px',
+  '--tekton-spacing-2': '8px',
+  '--tekton-spacing-3': '12px',
+  '--tekton-spacing-4': '16px',
+  '--tekton-spacing-5': '20px',
+  '--tekton-spacing-6': '24px',
+  '--tekton-spacing-8': '32px',
+  '--tekton-spacing-10': '40px',
+  '--tekton-spacing-12': '48px',
+  '--tekton-spacing-16': '64px',
+};
+
+export default function DarkBoldnessDemo() {
+  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { loaded: themeLoaded } = useTektonTheme('dark-boldness', {
+    fallback: DARK_BOLDNESS_FALLBACK,
+  });
   const { locale } = useStudioLanguage();
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans selection:bg-white selection:text-black scroll-smooth">
-      {/* Immersive Hero Section */}
-      <section className="relative h-screen w-full flex flex-col justify-end pb-24 px-8 md:px-16 overflow-hidden">
-        {/* Background "Video" Placeholder / Image */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent z-10" />
-          {/* Placeholder for high-end fitness video/imagery */}
-          <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center grayscale opacity-50 scale-105 animate-pulse-slow" />
-        </div>
+    <div
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+    >
+      <PreviewBanner templateId="dark-boldness" templateName="Dark Boldness" />
 
-        <div className="relative z-20 max-w-4xl">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="bg-white text-black px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter">
-              {locale === 'ko' ? '오리지널 시리즈' : 'Original Series'}
+      <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
+        <div className="p-6">
+          <Link
+            href="/studio"
+            className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
+          >
+            <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
+              tekton/ui
             </span>
-            <span className="text-neutral-400 text-[10px] uppercase tracking-widest font-bold">
-              {locale === 'ko' ? 'Equinox 마스터시리즈' : 'Equinox MasterSeries'}
-            </span>
+            <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-6 px-1">
+            <div className="w-6 h-6 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+            <span className="font-bold tracking-tight truncate">Elite Org</span>
           </div>
+        </div>
+        <nav className="flex-1 px-4 flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('page')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '페이지 예시' : 'Page Example'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'page' ? 'opacity-100' : ''}`}
+            />
+          </button>
+          <button
+            onClick={() => setActiveTab('component')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
+            />
+          </button>
+        </nav>
+      </aside>
 
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-            {locale === 'ko' ? (
-              <>
-                엘리트 퍼포먼스의
-                <br />
-                예술
-              </>
-            ) : (
-              <>
-                The Art of
-                <br />
-                Elite Performance
-              </>
-            )}
-          </h1>
+      <header className="md:hidden shrink-0 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] flex items-center justify-between px-4 h-14 z-40 relative">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+          <span className="font-bold tracking-tight text-sm">Elite Org</span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 -mr-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </header>
 
-          <p className="text-lg md:text-xl text-neutral-200 max-w-2xl mb-10 leading-relaxed font-light">
-            {locale === 'ko'
-              ? '세계 최고의 엘리트 트레이너들과 함께 인간 잠재력의 정점에 도달하는 데 필요한 규율, 기술, 마인드셋을 발견하세요.'
-              : "Join the world's most elite trainers as they reveal the discipline, technique, and mindset required to reach the absolute pinnacle of human potential."}
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link
-              href="/studio/dark-boldness/dashboard"
-              className="bg-white text-black h-12 md:h-14 px-8 md:px-12 uppercase tracking-[0.2em] text-[10px] md:text-xs font-black hover:bg-neutral-200 transition-all flex items-center justify-center gap-3 active:scale-95"
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute inset-x-0 top-[104px] bottom-0 bg-[var(--tekton-bg-surface)] z-50 overflow-y-auto shadow-xl">
+          <nav className="flex flex-col gap-2 p-4">
+            <button
+              onClick={() => {
+                setActiveTab('page');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
             >
-              <Play fill="currentColor" size={16} />
-              {locale === 'ko' ? '트레이닝 시작' : 'Start Training'}
-            </Link>
-            <button className="bg-neutral-900/80 backdrop-blur-md border border-white/20 text-white h-12 md:h-14 px-8 md:px-12 uppercase tracking-[0.2em] text-[10px] md:text-xs font-black hover:bg-white/10 transition-all flex items-center justify-center gap-3 active:scale-95">
-              <Info size={16} />
-              {locale === 'ko' ? '미리보기' : 'Preview Trailer'}
+              {locale === 'ko' ? '페이지 예시' : 'Page Example'}
             </button>
-          </div>
+            <button
+              onClick={() => {
+                setActiveTab('component');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
+          </nav>
         </div>
+      )}
 
-        {/* Vertical Indicator */}
-        <div className="absolute right-16 bottom-24 hidden lg:flex flex-col items-center gap-4">
-          <div className="h-24 w-[1px] bg-gradient-to-b from-transparent via-white to-transparent" />
-          <span className="[writing-mode:vertical-lr] text-[10px] uppercase tracking-[0.3em] font-bold text-neutral-500">
-            {locale === 'ko' ? '스크롤하여 탐색' : 'Scroll to Explore'}
-          </span>
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-8 relative">
+        <div className="max-w-[1200px] mx-auto">
+          {activeTab === 'page' && <OverviewDashboard />}
+          {activeTab === 'component' && <ComponentGallery />}
         </div>
-      </section>
-
-      {/* Content Discovery Rows */}
-      <main className="relative z-20 -mt-12 space-y-20 pb-32">
-        <ContentRow
-          title={locale === 'ko' ? '전설적인 강사진' : 'Legendary Instructors'}
-          items={[
-            {
-              title: 'Peak Power',
-              instructor: 'Marcus Thorne',
-              image:
-                'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=1000',
-            },
-            {
-              title: 'Metabolic Flow',
-              instructor: 'Elena Vance',
-              image:
-                'https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&q=80&w=1000',
-            },
-            {
-              title: 'Hypertrophy V2',
-              instructor: 'Julian Cross',
-              image:
-                'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=1000',
-            },
-            {
-              title: 'Cognitive Endurance',
-              instructor: 'Sarah Linn',
-              image:
-                'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=1000',
-            },
-          ]}
-        />
-
-        <ContentRow
-          title={locale === 'ko' ? '근력 & 컨디셔닝' : 'Strength & Conditioning'}
-          subtitle={
-            locale === 'ko'
-              ? '평범함의 한계를 넘어서세요.'
-              : 'Push beyond the threshold of ordinary.'
-          }
-          items={[
-            {
-              title: 'Barbell Masterclass',
-              instructor: 'Iron Team',
-              image:
-                'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&q=80&w=1000',
-            },
-            {
-              title: 'Olympic Lifting',
-              instructor: 'K. Sato',
-              image:
-                'https://images.unsplash.com/photo-1599058917232-d750c1859d7c?auto=format&fit=crop&q=80&w=1000',
-            },
-            {
-              title: 'The Vertical Jump',
-              instructor: 'Air Crew',
-              image:
-                'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?auto=format&fit=crop&q=80&w=1000',
-            },
-            {
-              title: 'Endurance Protocol',
-              instructor: 'Miles',
-              image:
-                'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?auto=format&fit=crop&q=80&w=1000',
-            },
-          ]}
-        />
-
-        {/* Featured "Ad" section */}
-        <section className="px-4 md:px-16">
-          <div className="bg-neutral-900 min-h-[400px] w-full relative flex items-center p-8 md:p-12 overflow-hidden border border-white/5">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-30 mix-blend-overlay" />
-            <div className="relative z-10 max-w-xl">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mb-4 block">
-                {locale === 'ko' ? '제한된 등록' : 'Limited Enrollment'}
-              </span>
-              <h2 className="text-2xl md:text-4xl font-bold uppercase tracking-tighter mb-4 italic">
-                {locale === 'ko' ? '10주 트랜스포메이션' : 'The 10-Week Transformation'}
-              </h2>
-              <p className="text-neutral-300 text-xs md:text-sm mb-8 leading-relaxed">
-                {locale === 'ko'
-                  ? '과학적 신체 구성 접근법. 지름길 없이 오직 데이터 기반 프로그래밍으로 근본적인 변화를 준비한 분들을 위한 프로그램입니다.'
-                  : 'A scientific approach to body composition. No shortcuts. Just data-driven programming for those ready to commit to radical change.'}
-              </p>
-              <button className="text-[10px] font-black uppercase tracking-[0.2em] bg-white text-black h-10 px-8 hover:bg-neutral-200 transition-colors">
-                {locale === 'ko' ? '지금 신청하기' : 'Apply Now'}
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <ContentRow
-          title={locale === 'ko' ? '회복 & 웰니스' : 'Recovery & Wellness'}
-          items={[
-            {
-              title: 'Sleep Sanctuary',
-              instructor: 'Dr. Aris',
-              image:
-                'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=2040&auto=format&fit=crop',
-            },
-            {
-              title: 'Dynamic Mobility',
-              instructor: 'L. Reed',
-              image:
-                'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?q=80&w=1926&auto=format&fit=crop',
-            },
-            {
-              title: 'Breathwork Mastery',
-              instructor: 'Zen Center',
-              image:
-                'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1999&auto=format&fit=crop',
-            },
-            {
-              title: 'Nutrition for Pros',
-              instructor: 'M. Galt',
-              image:
-                'https://images.unsplash.com/photo-1490818387583-1baba5e638af?q=80&w=2064&auto=format&fit=crop',
-            },
-          ]}
-        />
       </main>
-
-      {/* Footer */}
-      <footer className="py-24 px-8 md:px-16 border-t border-neutral-900 bg-black">
-        <div className="flex flex-col md:flex-row justify-between gap-12">
-          <div className="max-w-xs">
-            <div className="text-2xl font-black tracking-tighter mb-6">EQUINOX</div>
-            <p className="text-neutral-400 text-[10px] leading-relaxed uppercase tracking-wider">
-              {locale === 'ko'
-                ? '탁월함을 추구하는 이들을 위해 제작되었습니다. 엘리트 운동가를 위한 독점 트레이닝 방법론.'
-                : 'Built for those who demand excellence. Proprietary training methodologies for the elite mover.'}
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
-            <FooterCol
-              title={locale === 'ko' ? '플랫폼' : 'Platform'}
-              links={
-                locale === 'ko'
-                  ? ['발견하기', '대시보드', '시리즈', '트레이너']
-                  : ['Discovery', 'Dashboard', 'Series', 'Trainers']
-              }
-            />
-            <FooterCol
-              title={locale === 'ko' ? '스튜디오' : 'Studio'}
-              links={
-                locale === 'ko'
-                  ? ['Tekton 소개', 'MCP 통합', '디자인 DNA']
-                  : ['About Tekton', 'MCP Integration', 'Design DNA']
-              }
-            />
-            <FooterCol
-              title={locale === 'ko' ? '법적 고지' : 'Legal'}
-              links={
-                locale === 'ko' ? ['개인정보', '이용약관', '지원'] : ['Privacy', 'Terms', 'Support']
-              }
-            />
-          </div>
-        </div>
-        <div className="mt-20 md:mt-24 pt-8 border-t border-neutral-900 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-neutral-600 font-bold uppercase tracking-[0.2em] text-center md:text-left">
-          <span>© 2026 Tekton Studio x Equinox</span>
-          <span className="flex gap-4">
-            <Link href="/studio/dark-boldness/docs" className="hover:text-white transition-colors">
-              {locale === 'ko' ? '문서' : 'Docs'}
-            </Link>
-            <span>{locale === 'ko' ? '스키마 v2.2' : 'Schema v2.2'}</span>
-          </span>
-        </div>
-      </footer>
     </div>
   );
 }
 
-function ContentRow({
-  title,
-  subtitle,
-  items,
-}: {
-  title: string;
-  subtitle?: string;
-  items: { title: string; instructor: string; image: string }[];
-}) {
-  const { locale } = useStudioLanguage();
-
+function OverviewDashboard() {
   return (
-    <section className="px-4 md:px-16">
-      <div className="flex justify-between items-end mb-8">
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold uppercase tracking-tighter mb-1 text-white">
-            {title}
-          </h2>
-          {subtitle && (
-            <p className="text-neutral-400 text-[10px] md:text-xs uppercase tracking-widest">
-              {subtitle}
-            </p>
-          )}
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
+        <div className="flex items-center gap-2">
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:bg-[var(--tekton-bg-canvas)] transition-colors">
+            Download Export
+          </button>
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:opacity-90 transition-opacity">
+            New Project
+          </button>
         </div>
-        <Link
-          href="#"
-          className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400 hover:text-white flex items-center gap-1 transition-colors whitespace-nowrap"
-        >
-          {locale === 'ko' ? '모두 보기' : 'View All'} <ChevronRight size={12} />
-        </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {items.map((item, idx) => (
-          <div key={idx} className="group cursor-pointer">
-            <div className="aspect-[16/9] w-full bg-neutral-900 overflow-hidden relative mb-4">
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0 opacity-70 group-hover:opacity-100"
-              />
-              <div className="absolute inset-x-0 bottom-0 p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black to-transparent">
-                <button className="w-full bg-white text-black py-2 text-[10px] font-black uppercase tracking-widest">
-                  {locale === 'ko' ? '빠른 미리보기' : 'Quick Preview'}
-                </button>
-              </div>
-              <div className="absolute top-2 right-2 flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={8} fill="white" className="text-white opacity-40" />
-                ))}
-              </div>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
+        {[
+          {
+            title: 'Total Revenue',
+            value: '$45,231.89',
+            icon: DollarSign,
+            sub: '+20.1% from last month',
+          },
+          { title: 'Subscriptions', value: '+2,350', icon: Users, sub: '+180.1% from last month' },
+          { title: 'Sales', value: '+12,234', icon: CreditCard, sub: '+19.2% from last month' },
+          { title: 'Active Now', value: '+573', icon: Activity, sub: '+201 since last hour' },
+        ].map((stat) => (
+          <div
+            key={stat.title}
+            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm"
+          >
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium">{stat.title}</h3>
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)]" />
             </div>
-            <h3 className="text-sm font-bold uppercase tracking-tight mb-1 group-hover:text-white transition-colors">
-              {item.title}
-            </h3>
-            <p className="text-[10px] text-neutral-400 uppercase tracking-widest leading-none">
-              {item.instructor}
-            </p>
+            <div className="p-6 pt-0">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-xs text-[var(--tekton-text-secondary)]">{stat.sub}</p>
+            </div>
           </div>
         ))}
       </div>
-    </section>
+
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm overflow-hidden">
+          <div className="flex flex-col space-y-1.5 p-6 pb-2">
+            <h3 className="font-semibold leading-none tracking-tight">Revenue Overview</h3>
+            <p className="text-xs text-[var(--tekton-text-secondary)]">
+              Growth metrics for the past 12 months.
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <OverviewChart />
+          </div>
+        </div>
+        <div className="lg:col-span-3 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm">
+          <div className="flex flex-col space-y-1.5 p-6">
+            <h3 className="font-semibold leading-none tracking-tight">Recent Activity</h3>
+            <p className="text-sm text-[var(--tekton-text-secondary)]">
+              24 new sales recorded today.
+            </p>
+          </div>
+          <div className="p-6 pt-0">
+            <div className="space-y-8">
+              {[
+                { name: 'Olivia Martin', email: 'olivia.martin@email.com', amount: '+$1,999.00' },
+                { name: 'Jackson Lee', email: 'jackson.lee@email.com', amount: '+$39.00' },
+                { name: 'Isabella Nguyen', email: 'isabella.nguyen@email.com', amount: '+$299.00' },
+                { name: 'William Kim', email: 'will@email.com', amount: '+$99.00' },
+                { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
+              ].map((user) => (
+                <div key={user.email} className="flex items-center">
+                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-[var(--tekton-bg-canvas)] items-center justify-center border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold">
+                    {user.name[0]}
+                  </span>
+                  <div className="ml-4 space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
+                  </div>
+                  <div className="ml-auto font-medium">{user.amount}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="font-semibold leading-none tracking-tight">Recent Transactions</h3>
+          <p className="text-sm text-[var(--tekton-text-secondary)]">
+            A summary of your latest transactions.
+          </p>
+        </div>
+        <div className="px-6 pb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--tekton-border-default)]">
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Invoice
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Status
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Method
+                  </th>
+                  <th className="text-right font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { invoice: 'INV-001', status: 'Paid', method: 'Credit Card', amount: '$250.00' },
+                  { invoice: 'INV-002', status: 'Pending', method: 'PayPal', amount: '$150.00' },
+                  {
+                    invoice: 'INV-003',
+                    status: 'Paid',
+                    method: 'Bank Transfer',
+                    amount: '$350.00',
+                  },
+                  { invoice: 'INV-004', status: 'Paid', method: 'Credit Card', amount: '$450.00' },
+                  { invoice: 'INV-005', status: 'Refunded', method: 'PayPal', amount: '$550.00' },
+                ].map((tx) => (
+                  <tr
+                    key={tx.invoice}
+                    className="border-b border-[var(--tekton-border-default)] last:border-0"
+                  >
+                    <td className="py-3 font-medium">{tx.invoice}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex items-center rounded-[var(--tekton-radius-full)] px-2.5 py-0.5 text-xs font-medium ${tx.status === 'Paid' ? 'bg-green-900/30 text-green-400' : tx.status === 'Pending' ? 'bg-yellow-900/30 text-yellow-400' : 'bg-red-900/30 text-red-400'}`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--tekton-text-secondary)]">{tx.method}</td>
+                    <td className="py-3 text-right font-medium">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: string[] }) {
+function OverviewChart() {
+  const chartData = [
+    { month: 'Jan', value: 120 },
+    { month: 'Feb', value: 150 },
+    { month: 'Mar', value: 180 },
+    { month: 'Apr', value: 160 },
+    { month: 'May', value: 210 },
+    { month: 'Jun', value: 250 },
+    { month: 'Jul', value: 230 },
+    { month: 'Aug', value: 280 },
+    { month: 'Sep', value: 320 },
+    { month: 'Oct', value: 300 },
+    { month: 'Nov', value: 340 },
+    { month: 'Dec', value: 380 },
+  ];
+
   return (
-    <div className="flex flex-col gap-4">
-      <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-neutral-300">
-        {title}
-      </h4>
-      <div className="flex flex-col gap-2">
-        {links.map((link) => (
-          <Link
-            key={link}
-            href="#"
-            className="text-[10px] uppercase tracking-[0.2em] text-neutral-500 hover:text-white transition-colors"
-          >
-            {link}
-          </Link>
-        ))}
-      </div>
+    <div className="w-full mt-8">
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+          <defs>
+            <linearGradient id="darkColorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.15} />
+              <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="4 4" stroke="#262626" vertical={false} />
+          <XAxis
+            dataKey="month"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#A3A3A3', fontSize: 12 }}
+            dy={10}
+          />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: '#A3A3A3', fontSize: 12 }}
+            dx={-10}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: '#0D0D0D',
+              border: '1px solid #262626',
+              borderRadius: '0px',
+              padding: '8px 12px',
+            }}
+            labelStyle={{ color: '#FFFFFF', fontWeight: 600 }}
+            itemStyle={{ color: '#A3A3A3' }}
+          />
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#FFFFFF"
+            strokeWidth={3}
+            fill="url(#darkColorValue)"
+            dot={{ fill: '#FFFFFF', r: 4 }}
+            activeDot={{ r: 6, fill: '#FFFFFF' }}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }

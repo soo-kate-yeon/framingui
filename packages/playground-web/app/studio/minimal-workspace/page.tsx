@@ -1,24 +1,12 @@
 'use client';
 
-import {
-  DollarSign,
-  Users,
-  Activity,
-  Search,
-  ChevronDown,
-  Menu,
-  ChevronRight,
-  User,
-  CreditCard,
-  Bell,
-  Globe,
-  ShieldCheck,
-  Smartphone,
-  LogOut,
-  X,
-} from 'lucide-react';
+import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
+import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/studio/PreviewBanner';
+import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
+import { ComponentGallery } from '@/components/studio/ComponentGallery';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -28,163 +16,174 @@ import {
   CartesianGrid,
   Tooltip,
 } from 'recharts';
-/**
- * Minimal Workspace Landing Page
- * Theme: Modern SaaS Dashboard
- */
+
+const MINIMAL_WORKSPACE_FALLBACK: Record<string, string> = {
+  '--tekton-bg-canvas': '#FFFFFF',
+  '--tekton-bg-surface': '#FFFFFF',
+  '--tekton-text-primary': '#09090B',
+  '--tekton-text-secondary': '#71717A',
+  '--tekton-text-tertiary': '#A1A1AA',
+  '--tekton-border-default': '#E4E4E7',
+  '--tekton-border-emphasis': '#D4D4D8',
+  '--tekton-action-primary': '#18181B',
+  '--tekton-action-primary-text': '#FAFAFA',
+
+  '--tekton-bg-background': '#FFFFFF',
+  '--tekton-bg-foreground': '#09090B',
+  '--tekton-bg-card': '#FFFFFF',
+  '--tekton-bg-card-foreground': '#09090B',
+  '--tekton-bg-popover': '#FFFFFF',
+  '--tekton-bg-popover-foreground': '#09090B',
+  '--tekton-bg-primary': '#18181B',
+  '--tekton-bg-primary-foreground': '#FAFAFA',
+  '--tekton-bg-secondary': '#F4F4F5',
+  '--tekton-bg-secondary-foreground': '#18181B',
+  '--tekton-bg-muted': '#F4F4F5',
+  '--tekton-bg-muted-foreground': '#71717A',
+  '--tekton-bg-accent': '#F4F4F5',
+  '--tekton-bg-accent-foreground': '#18181B',
+  '--tekton-bg-destructive': '#EF4444',
+  '--tekton-bg-destructive-foreground': '#FAFAFA',
+  '--tekton-border-input': '#E4E4E7',
+  '--tekton-border-ring': '#18181B',
+
+  '--tekton-radius-sm': '6px',
+  '--tekton-radius-md': '6px',
+  '--tekton-radius-lg': '8px',
+  '--tekton-radius-xl': '12px',
+  '--tekton-radius-none': '0',
+  '--tekton-radius-full': '9999px',
+  '--tekton-spacing-0': '0',
+  '--tekton-spacing-1': '4px',
+  '--tekton-spacing-2': '8px',
+  '--tekton-spacing-3': '12px',
+  '--tekton-spacing-4': '16px',
+  '--tekton-spacing-5': '20px',
+  '--tekton-spacing-6': '24px',
+  '--tekton-spacing-8': '32px',
+  '--tekton-spacing-10': '40px',
+  '--tekton-spacing-12': '48px',
+  '--tekton-spacing-16': '64px',
+};
+
 export default function MinimalWorkspaceDemo() {
-  const [currentView, setCurrentView] = useState<'overview' | 'customers' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { loaded: themeLoaded } = useTektonTheme('minimal-workspace', {
+    fallback: MINIMAL_WORKSPACE_FALLBACK,
+  });
+  const { locale } = useStudioLanguage();
 
   return (
-    <div className="min-h-screen bg-white text-neutral-950 font-sans selection:bg-neutral-100">
-      {/* Preview Banner */}
+    <div
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--tekton-bg-canvas)] text-[var(--tekton-text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+    >
       <PreviewBanner templateId="minimal-workspace" templateName="Minimal Workspace" />
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/50 z-50 md:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="fixed inset-y-0 left-0 w-[300px] sm:w-[400px] bg-white border-r border-neutral-200 shadow-2xl z-50 md:hidden">
-            <div className="px-6 py-6 border-b border-neutral-100 bg-neutral-50/30 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-neutral-900"></div>
-                <span className="font-bold tracking-tight">Acme Inc.</span>
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 -mr-2 text-neutral-500 hover:text-neutral-950 transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <nav className="flex flex-col gap-2 px-4 pt-6">
-              <button
-                onClick={() => {
-                  setCurrentView('overview');
-                  setMobileMenuOpen(false);
-                }}
-                className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'overview' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
-              >
-                Overview
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentView('customers');
-                  setMobileMenuOpen(false);
-                }}
-                className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'customers' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
-              >
-                Customers
-              </button>
-              <button
-                onClick={() => {
-                  setCurrentView('settings');
-                  setMobileMenuOpen(false);
-                }}
-                className={`text-sm font-medium px-4 py-3 rounded-xl transition-colors text-left ${currentView === 'settings' ? 'bg-neutral-100 text-neutral-950' : 'text-neutral-500 hover:text-neutral-950 hover:bg-neutral-50'}`}
-              >
-                Settings
-              </button>
-            </nav>
+      <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
+        <div className="p-6">
+          <Link
+            href="/studio"
+            className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
+          >
+            <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
+              tekton/ui
+            </span>
+            <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
+          </Link>
+          <div className="flex items-center gap-3 mb-6 px-1">
+            <div className="w-6 h-6 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+            <span className="font-bold tracking-tight truncate">Acme Inc.</span>
           </div>
-        </>
+        </div>
+        <nav className="flex-1 px-4 flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('page')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '페이지 예시' : 'Page Example'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'page' ? 'opacity-100' : ''}`}
+            />
+          </button>
+          <button
+            onClick={() => setActiveTab('component')}
+            className={`text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+          >
+            <span>{locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}</span>
+            <ChevronRight
+              size={16}
+              className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
+            />
+          </button>
+        </nav>
+      </aside>
+
+      <header className="md:hidden shrink-0 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] flex items-center justify-between px-4 h-14 z-40 relative">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[var(--tekton-action-primary)] shadow-sm"></div>
+          <span className="font-bold tracking-tight text-sm">Acme Inc.</span>
+        </div>
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-2 -mr-2 text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] transition-colors"
+        >
+          {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+      </header>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden absolute inset-x-0 top-[104px] bottom-0 bg-[var(--tekton-bg-surface)] z-50 overflow-y-auto shadow-xl">
+          <nav className="flex flex-col gap-2 p-4">
+            <button
+              onClick={() => {
+                setActiveTab('page');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'page' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '페이지 예시' : 'Page Example'}
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('component');
+                setMobileMenuOpen(false);
+              }}
+              className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
+            >
+              {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
+          </nav>
+        </div>
       )}
 
-      {/* Header - Adjusted for banner */}
-      <div>
-        {/* Header */}
-        <header className="border-b border-neutral-200 sticky top-12 bg-white/80 backdrop-blur-md z-40 mt-12">
-          <div className="flex h-16 items-center px-4 md:px-6 gap-4">
-            {/* Mobile Menu */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setMobileMenuOpen(true)}
-                className="p-2 -ml-2 text-neutral-500 hover:text-neutral-950 transition-colors"
-              >
-                <Menu size={20} />
-              </button>
-            </div>
-
-            {/* Team Switcher Simulation - Hidden on Mobile */}
-            <button className="hidden md:flex w-56 h-9 items-center justify-between border border-neutral-200 rounded-md px-3 hover:bg-neutral-100 transition-colors">
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-neutral-900"></div>
-                <span className="text-sm font-medium">Acme Inc.</span>
-              </div>
-              <ChevronDown size={14} className="text-neutral-500" />
-            </button>
-
-            {/* Nav - Hidden on Mobile */}
-            <nav className="hidden lg:flex items-center gap-6 ml-4">
-              <button
-                onClick={() => setCurrentView('overview')}
-                className={`text-sm font-medium transition-colors ${currentView === 'overview' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
-              >
-                Overview
-              </button>
-              <button
-                onClick={() => setCurrentView('customers')}
-                className={`text-sm font-medium transition-colors ${currentView === 'customers' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
-              >
-                Customers
-              </button>
-              <button
-                onClick={() => setCurrentView('settings')}
-                className={`text-sm font-medium transition-colors ${currentView === 'settings' ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'}`}
-              >
-                Settings
-              </button>
-            </nav>
-
-            <div className="ml-auto flex items-center gap-2 md:gap-4">
-              {/* Search - Icon only on small mobile, expanded on Tablet/Desktop */}
-              <div className="relative group">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-neutral-500 group-focus-within:text-neutral-950 transition-colors" />
-                <input
-                  className="h-9 w-9 md:w-64 rounded-md border border-neutral-200 bg-white pl-9 md:pr-4 py-2 text-sm outline-none placeholder:text-neutral-500 focus:ring-1 focus:ring-neutral-950 transition-all cursor-pointer md:cursor-text"
-                  placeholder="Search..."
-                />
-              </div>
-              <button className="w-8 h-8 md:w-9 md:h-9 rounded-full overflow-hidden border border-neutral-200 flex-shrink-0">
-                <img src="https://github.com/shadcn.png" alt="User" />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-6 md:space-y-8 min-h-[calc(100vh-64px)]">
-          {currentView === 'overview' && <OverviewDashboard />}
-          {currentView === 'customers' && <CustomersView />}
-          {currentView === 'settings' && <SettingsView />}
-        </main>
-      </div>
+      <main className="flex-1 overflow-y-auto h-full p-4 md:p-8 lg:p-12 pb-8 relative">
+        <div className="max-w-[1200px] mx-auto">
+          {activeTab === 'page' && <OverviewDashboard />}
+          {activeTab === 'component' && <ComponentGallery />}
+        </div>
+      </main>
     </div>
   );
 }
 
-// Placeholder Components for different views
 function OverviewDashboard() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
         <div className="flex items-center gap-2">
-          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-white border border-neutral-200 rounded-md text-sm font-medium hover:bg-neutral-100 transition-colors">
-            Download
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:bg-[var(--tekton-bg-canvas)] transition-colors">
+            Download Export
           </button>
-          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-neutral-900 text-white rounded-md text-sm font-medium hover:bg-neutral-900/90 transition-colors">
-            New Report
+          <button className="flex-1 sm:flex-none h-9 px-4 py-2 bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)] rounded-[var(--tekton-radius-md)] text-sm font-medium hover:opacity-90 transition-opacity">
+            New Project
           </button>
         </div>
       </div>
 
-      {/* Dashboard KPIs Section */}
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-4 whitespace-nowrap">
         {[
           {
             title: 'Total Revenue',
@@ -192,43 +191,44 @@ function OverviewDashboard() {
             icon: DollarSign,
             sub: '+20.1% from last month',
           },
-          { title: 'Subscriptions', value: '+2350', icon: Users, sub: '+180.1% from last month' },
-          { title: 'Sales', value: '+12,234', icon: CreditCard, sub: '+19% from last month' },
+          { title: 'Subscriptions', value: '+2,350', icon: Users, sub: '+180.1% from last month' },
+          { title: 'Sales', value: '+12,234', icon: CreditCard, sub: '+19.2% from last month' },
           { title: 'Active Now', value: '+573', icon: Activity, sub: '+201 since last hour' },
         ].map((stat) => (
           <div
             key={stat.title}
-            className="rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm"
+            className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm"
           >
             <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
               <h3 className="tracking-tight text-sm font-medium">{stat.title}</h3>
-              <stat.icon className="h-4 w-4 text-neutral-500" />
+              <stat.icon className="h-4 w-4 text-[var(--tekton-text-secondary)]" />
             </div>
             <div className="p-6 pt-0">
               <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-neutral-500">{stat.sub}</p>
+              <p className="text-xs text-[var(--tekton-text-secondary)]">{stat.sub}</p>
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
-        {/* Custom SVG Overview Chart */}
-        <div className="lg:col-span-4 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm overflow-hidden">
+        <div className="lg:col-span-4 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm overflow-hidden">
           <div className="flex flex-col space-y-1.5 p-6 pb-2">
-            <h3 className="font-semibold leading-none tracking-tight">Overview</h3>
-            <p className="text-xs text-neutral-500">Revenue growth over the last 12 months.</p>
+            <h3 className="font-semibold leading-none tracking-tight">Revenue Overview</h3>
+            <p className="text-xs text-[var(--tekton-text-secondary)]">
+              Growth metrics for the past 12 months.
+            </p>
           </div>
           <div className="p-6 pt-0">
             <OverviewChart />
           </div>
         </div>
-
-        {/* Recent Sales - Now wider and cleaner */}
-        <div className="lg:col-span-3 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm">
+        <div className="lg:col-span-3 rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] shadow-sm">
           <div className="flex flex-col space-y-1.5 p-6">
-            <h3 className="font-semibold leading-none tracking-tight">Recent Sales</h3>
-            <p className="text-sm text-neutral-500">You made 265 sales this month.</p>
+            <h3 className="font-semibold leading-none tracking-tight">Recent Activity</h3>
+            <p className="text-sm text-[var(--tekton-text-secondary)]">
+              24 new sales recorded today.
+            </p>
           </div>
           <div className="p-6 pt-0">
             <div className="space-y-8">
@@ -240,17 +240,78 @@ function OverviewDashboard() {
                 { name: 'Sofia Davis', email: 'sofia.davis@email.com', amount: '+$39.00' },
               ].map((user) => (
                 <div key={user.email} className="flex items-center">
-                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-neutral-100 items-center justify-center border border-neutral-200">
+                  <span className="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 bg-[var(--tekton-bg-canvas)] items-center justify-center border border-[var(--tekton-border-default)] text-[var(--tekton-text-secondary)] font-bold">
                     {user.name[0]}
                   </span>
                   <div className="ml-4 space-y-1">
                     <p className="text-sm font-medium leading-none">{user.name}</p>
-                    <p className="text-sm text-neutral-500">{user.email}</p>
+                    <p className="text-sm text-[var(--tekton-text-secondary)]">{user.email}</p>
                   </div>
                   <div className="ml-auto font-medium">{user.amount}</div>
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-[var(--tekton-radius-lg)] border border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] shadow-sm">
+        <div className="flex flex-col space-y-1.5 p-6">
+          <h3 className="font-semibold leading-none tracking-tight">Recent Transactions</h3>
+          <p className="text-sm text-[var(--tekton-text-secondary)]">
+            A summary of your latest transactions.
+          </p>
+        </div>
+        <div className="px-6 pb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-[var(--tekton-border-default)]">
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Invoice
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Status
+                  </th>
+                  <th className="text-left font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Method
+                  </th>
+                  <th className="text-right font-medium text-[var(--tekton-text-secondary)] pb-3">
+                    Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { invoice: 'INV-001', status: 'Paid', method: 'Credit Card', amount: '$250.00' },
+                  { invoice: 'INV-002', status: 'Pending', method: 'PayPal', amount: '$150.00' },
+                  {
+                    invoice: 'INV-003',
+                    status: 'Paid',
+                    method: 'Bank Transfer',
+                    amount: '$350.00',
+                  },
+                  { invoice: 'INV-004', status: 'Paid', method: 'Credit Card', amount: '$450.00' },
+                  { invoice: 'INV-005', status: 'Refunded', method: 'PayPal', amount: '$550.00' },
+                ].map((tx) => (
+                  <tr
+                    key={tx.invoice}
+                    className="border-b border-[var(--tekton-border-default)] last:border-0"
+                  >
+                    <td className="py-3 font-medium">{tx.invoice}</td>
+                    <td className="py-3">
+                      <span
+                        className={`inline-flex items-center rounded-[var(--tekton-radius-full)] px-2.5 py-0.5 text-xs font-medium ${tx.status === 'Paid' ? 'bg-green-100 text-green-800' : tx.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
+                      >
+                        {tx.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-[var(--tekton-text-secondary)]">{tx.method}</td>
+                    <td className="py-3 text-right font-medium">{tx.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -279,252 +340,46 @@ function OverviewChart() {
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
-            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#171717" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="#171717" stopOpacity={0} />
+            <linearGradient id="minimalColorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#18181B" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="#18181B" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="0" stroke="#f5f5f5" vertical={false} />
+          <CartesianGrid strokeDasharray="4 4" stroke="#E4E4E7" vertical={false} />
           <XAxis
             dataKey="month"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#a3a3a3', fontSize: 12 }}
+            tick={{ fill: '#71717A', fontSize: 12 }}
             dy={10}
           />
           <YAxis
             axisLine={false}
             tickLine={false}
-            tick={{ fill: '#a3a3a3', fontSize: 12 }}
+            tick={{ fill: '#71717A', fontSize: 12 }}
             dx={-10}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '8px',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid #E4E4E7',
+              borderRadius: '6px',
               padding: '8px 12px',
             }}
-            labelStyle={{ color: '#171717', fontWeight: 600 }}
-            itemStyle={{ color: '#737373' }}
+            labelStyle={{ color: '#09090B', fontWeight: 600 }}
+            itemStyle={{ color: '#71717A' }}
           />
           <Area
             type="monotone"
             dataKey="value"
-            stroke="#171717"
+            stroke="#18181B"
             strokeWidth={3}
-            fill="url(#colorValue)"
-            dot={{ fill: '#171717', r: 4 }}
-            activeDot={{ r: 6, fill: '#171717' }}
+            fill="url(#minimalColorValue)"
+            dot={{ fill: '#18181B', r: 4 }}
+            activeDot={{ r: 6, fill: '#18181B' }}
           />
         </AreaChart>
       </ResponsiveContainer>
     </div>
-  );
-}
-
-function CustomersView() {
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Customers</h2>
-        <div className="flex items-center gap-2">
-          <button className="h-9 px-4 py-2 bg-neutral-900 text-white rounded-md text-sm font-medium hover:bg-neutral-900/90 transition-colors">
-            Add Customer
-          </button>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/50">
-                <th className="p-4 font-semibold text-neutral-700">Customer</th>
-                <th className="p-4 font-semibold text-neutral-700">Status</th>
-                <th className="p-4 font-semibold text-neutral-700">Subscription</th>
-                <th className="p-4 font-semibold text-neutral-700">Revenue</th>
-                <th className="p-4 font-semibold text-neutral-700 text-right">Last Visit</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-100">
-              {[
-                {
-                  name: 'Olivia Martin',
-                  email: 'olivia.martin@email.com',
-                  status: 'Active',
-                  plan: 'Enterprise',
-                  revenue: '$2,400.00',
-                  last: '2h ago',
-                },
-                {
-                  name: 'Jackson Lee',
-                  email: 'jackson.lee@email.com',
-                  status: 'Active',
-                  plan: 'Professional',
-                  revenue: '$1,200.00',
-                  last: '5h ago',
-                },
-                {
-                  name: 'Isabella Nguyen',
-                  email: 'isabella.nguyen@email.com',
-                  status: 'Inactive',
-                  plan: 'Starter',
-                  revenue: '$400.00',
-                  last: '2d ago',
-                },
-                {
-                  name: 'William Kim',
-                  email: 'will@email.com',
-                  status: 'Active',
-                  plan: 'Enterprise',
-                  revenue: '$3,600.00',
-                  last: '1h ago',
-                },
-                {
-                  name: 'Sofia Davis',
-                  email: 'sofia.davis@email.com',
-                  status: 'Active',
-                  plan: 'Professional',
-                  revenue: '$900.00',
-                  last: '4h ago',
-                },
-                {
-                  name: 'Julian Cross',
-                  email: 'julian@email.com',
-                  status: 'Inactive',
-                  plan: 'Starter',
-                  revenue: '$400.00',
-                  last: '1w ago',
-                },
-                {
-                  name: 'Sarah Linn',
-                  email: 'sarah@email.com',
-                  status: 'Active',
-                  plan: 'Enterprise',
-                  revenue: '$4,800.00',
-                  last: '12m ago',
-                },
-              ].map((customer) => (
-                <tr key={customer.email} className="hover:bg-neutral-50/80 transition-colors group">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center font-bold text-neutral-600">
-                        {customer.name[0]}
-                      </div>
-                      <div>
-                        <div className="font-medium text-neutral-900">{customer.name}</div>
-                        <div className="text-xs text-neutral-500">{customer.email}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        customer.status === 'Active'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                          : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
-                      }`}
-                    >
-                      {customer.status}
-                    </div>
-                  </td>
-                  <td className="p-4 text-neutral-600 font-medium">{customer.plan}</td>
-                  <td className="p-4 font-mono font-medium text-neutral-900">{customer.revenue}</td>
-                  <td className="p-4 text-right text-neutral-500">{customer.last}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingsView() {
-  return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-32">
-      <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Settings</h2>
-
-      <div className="space-y-6">
-        <section>
-          <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4 px-1">
-            Account & Profile
-          </h3>
-          <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden">
-            <SettingItem
-              icon={<User size={18} />}
-              label="Personal Information"
-              value="Olivia Martin"
-            />
-            <SettingItem
-              icon={<CreditCard size={18} />}
-              label="Billing & Subscription"
-              value="Enterprise Plan"
-            />
-            <SettingItem icon={<ShieldCheck size={18} />} label="Security & Password" />
-          </div>
-        </section>
-
-        <section>
-          <h3 className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-4 px-1">
-            Preferences
-          </h3>
-          <div className="rounded-xl border border-neutral-200 bg-white overflow-hidden">
-            <SettingItem icon={<Bell size={18} />} label="Notifications" value="All enabled" />
-            <SettingItem
-              icon={<Globe size={18} />}
-              label="Language & Region"
-              value="English (US)"
-            />
-            <SettingItem
-              icon={<Smartphone size={18} />}
-              label="Mobile Devices"
-              value="2 connected"
-            />
-          </div>
-        </section>
-
-        <div className="pt-4">
-          <button className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-neutral-50 border border-neutral-200 text-neutral-600 font-medium hover:bg-red-50 hover:text-red-700 hover:border-red-100 transition-all group">
-            <LogOut size={18} className="group-hover:translate-x-0.5 transition-transform" />
-            Sign Out of Workspace
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SettingItem({
-  icon,
-  label,
-  value,
-  color,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value?: string;
-  color?: string;
-}) {
-  return (
-    <button className="w-full flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors border-b border-neutral-100 last:border-0 group text-left">
-      <div className="flex items-center gap-3">
-        <div
-          className={`p-2 rounded-lg bg-neutral-100 border border-neutral-100 group-hover:bg-white group-hover:border-neutral-200 transition-colors ${color ? color : 'text-neutral-600'}`}
-        >
-          {icon}
-        </div>
-        <span className="font-medium text-neutral-900">{label}</span>
-      </div>
-      <div className="flex items-center gap-3">
-        {value && <span className="text-sm text-neutral-500">{value}</span>}
-        <ChevronRight
-          size={16}
-          className="text-neutral-400 group-hover:text-neutral-900 group-hover:translate-x-0.5 transition-all"
-        />
-      </div>
-    </button>
   );
 }
