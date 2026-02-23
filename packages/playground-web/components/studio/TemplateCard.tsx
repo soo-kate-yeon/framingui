@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { Heart, ArrowRight, ExternalLink, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { TemplateThumbnail } from './TemplateThumbnail';
 
 // ============================================================================
 // Demo App Routes (데모 앱이 있는 테마만 정의)
@@ -139,8 +140,8 @@ export function TemplateCard({
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            {/* Empty placeholder */}
+          <div className="w-full h-full">
+            <TemplateThumbnail templateId={id} />
           </div>
         )}
 
