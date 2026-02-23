@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-[#F0F0F0] font-sans selection:bg-neutral-900 selection:text-white flex">
+    <div className="min-h-screen bg-[#F0F0F0] font-sans selection:bg-neutral-900 selection:text-white flex flex-col md:flex-row">
       {/* [Template] Sidebar */}
       <aside className="hidden md:flex w-[280px] bg-white border-r border-neutral-200 flex-col fixed h-full z-20">
         <div className="p-8 border-b border-neutral-100">

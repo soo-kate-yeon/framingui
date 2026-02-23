@@ -9,9 +9,9 @@ import Link from 'next/link';
  */
 export default function EquinoxDashboardPage() {
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-12 space-y-12 md:space-y-16 pb-32">
+    <div className="min-h-screen bg-black text-white space-y-12 md:space-y-16 pb-32">
       {/* Hero / Continuing Section */}
-      <section className="relative h-[260px] md:h-[400px] w-full bg-neutral-900 border border-white/5 overflow-hidden flex items-center p-6 md:p-12 group cursor-pointer">
+      <section className="relative w-full bg-neutral-900 border border-white/5 overflow-hidden flex items-center group cursor-pointer h-[260px] sm:h-[320px] md:h-[400px] p-4 sm:p-8 md:p-12">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700" />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
 
@@ -45,15 +45,17 @@ export default function EquinoxDashboardPage() {
       </section>
 
       {/* Stats Row - Glass Cards mini */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatMini label="Active Streak" value="18d" />
-        <StatMini label="Weekly Target" value="85%" isProgress />
-        <StatMini label="Total Hours" value="124h" />
-        <StatMini label="Achievements" value="12" />
+      <div className="px-4 md:p-0">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <StatMini label="Active Streak" value="18d" />
+          <StatMini label="Weekly Target" value="85%" isProgress />
+          <StatMini label="Total Hours" value="124h" />
+          <StatMini label="Achievements" value="12" />
+        </div>
       </div>
 
       {/* Library Sections */}
-      <div className="space-y-16">
+      <div className="space-y-16 px-4 md:p-0">
         <LibraryRow
           title="Your Favorites"
           items={[

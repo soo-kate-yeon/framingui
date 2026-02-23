@@ -244,7 +244,7 @@ function OverviewDashboard() {
               <stat.icon className="h-4 w-4 text-[var(--tekton-text-tertiary)] shrink-0" />
             </div>
             <div className="px-4 lg:px-7 pb-4 lg:pb-7">
-              <div className="text-xl lg:text-3xl font-bold tracking-tight tabular-nums">
+              <div className="text-xl lg:text-3xl font-bold tracking-tight tabular-nums truncate">
                 {stat.value}
               </div>
               <p className="text-xs text-[var(--tekton-text-secondary)] mt-1 truncate">

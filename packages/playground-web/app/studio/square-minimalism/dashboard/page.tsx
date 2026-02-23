@@ -96,16 +96,16 @@ export default function SquareDashboardPage() {
 function StatCard({ title, value, trend }: { title: string; value: string; trend: string }) {
   const isPositive = trend.startsWith('+');
   return (
-    <div className="bg-white p-6 border-l-2 border-transparent hover:border-neutral-900 transition-all group cursor-default">
+    <div className="bg-white p-6 border-l-2 border-transparent hover:border-neutral-900 transition-all group cursor-default min-w-0">
       <div className="text-xs font-bold uppercase tracking-widest text-neutral-400 mb-2 group-hover:text-neutral-600">
         {title}
       </div>
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-end gap-2">
         <div className="text-xl md:text-3xl font-bold tracking-tight tabular-nums truncate">
           {value}
         </div>
         <div
-          className={`text-xs font-bold ${isPositive ? 'text-green-600' : 'text-red-600'} flex items-center gap-1`}
+          className={`text-xs font-bold ${isPositive ? 'text-green-600' : 'text-red-600'} flex items-center gap-1 shrink-0`}
         >
           {isPositive ? <TrendingUp size={12} /> : <TrendingUp size={12} className="rotate-180" />}
           {trend}
