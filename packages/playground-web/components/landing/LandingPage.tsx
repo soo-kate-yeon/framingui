@@ -65,9 +65,27 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
+      {/* Beta Open Banner */}
+      <div className="fixed top-0 left-0 right-0 z-[60] h-10 bg-neutral-950 text-white flex items-center justify-between px-4 sm:px-6">
+        <p className="text-xs sm:text-sm font-medium flex-1">
+          <span className="sm:hidden">Beta Open — 지금 신청하세요</span>
+          <span className="hidden sm:inline">
+            🎉 Beta Open — tekton/ui 베타 서비스를 시작합니다. 지금 신청하세요.
+          </span>
+        </p>
+        <a
+          href="https://tally.so/r/7R2kz6"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-4 px-3 sm:px-4 py-1.5 text-xs font-bold bg-white text-neutral-950 rounded-full hover:bg-neutral-200 transition-colors whitespace-nowrap shrink-0"
+        >
+          베타 신청
+        </a>
+      </div>
+
       {/* Top Nav Bar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-10 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
             ? 'bg-white/80 backdrop-blur-md border-b border-neutral-200'
             : 'bg-transparent border-b border-transparent'
@@ -104,7 +122,7 @@ export function LandingPage() {
       </nav>
 
       {/* Header / Hero Section */}
-      <header className="container mx-auto px-6 md:px-8 pt-20 pb-20 md:pt-32 md:pb-32 text-center max-w-5xl">
+      <header className="container mx-auto px-6 md:px-8 pt-28 pb-20 md:pt-40 md:pb-32 text-center max-w-5xl">
         <FadeIn delay={0.1}>
           <div className="mb-8 flex justify-center items-center gap-4">
             <div className="text-2xl font-bold tracking-tighter">{content.hero.brandName}</div>
