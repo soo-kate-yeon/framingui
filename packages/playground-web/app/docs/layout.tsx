@@ -9,12 +9,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Book, Rocket, Download, Cpu, ChevronRight, Menu, X } from 'lucide-react';
+import { Book, Rocket, Download, Cpu, Box, ChevronRight, Menu, X } from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/docs', label: 'Overview', icon: Book },
   { href: '/docs/quick-start', label: 'Quick Start', icon: Rocket },
   { href: '/docs/installation', label: 'Installation', icon: Download },
+  { href: '/docs/api', label: 'API Reference', icon: Box },
   { href: '/docs/mcp', label: 'MCP Integration', icon: Cpu },
 ];
 
