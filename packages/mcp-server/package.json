@@ -51,8 +51,8 @@
     "@babel/parser": "^7.28.6",
     "@babel/traverse": "^7.28.6",
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "@tekton-ui/core": "^0.3.4",
-    "@tekton-ui/ui": "^0.4.1"
+    "@tekton-ui/core": "workspace:*",
+    "@tekton-ui/ui": "workspace:*"
   },
   "devDependencies": {
     "@babel/types": "^7.28.6",
