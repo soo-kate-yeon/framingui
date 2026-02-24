@@ -4,11 +4,73 @@ import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'tekton/ui - Agentic Styling Engine',
+    default: 'tekton/ui - Agent-First Design System',
     template: '%s | tekton/ui',
   },
   description:
-    'The first design system AI agents can actually understand. Structured tokens and layout logic for production-ready UI.',
+    'The first design system AI agents can actually understand. 0% hallucination, production-ready UI with structured tokens.',
+  metadataBase: new URL('https://tekton-ui.com'),
+  openGraph: {
+    title: 'tekton/ui - Agent-First Design System',
+    description: 'The first design system AI agents can actually understand. 0% hallucination by design.',
+    url: 'https://tekton-ui.com',
+    siteName: 'tekton/ui',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'tekton/ui - Agent-First Design System',
+    description: 'The first design system AI agents can actually understand.',
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+};
+
+// JSON-LD Structured Data for Search Results
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'tekton/ui',
+  description: 'Agent-First Design System. 0% hallucination, production-ready UI.',
+  url: 'https://tekton-ui.com',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://tekton-ui.com/docs?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+  sameAs: [
+    'https://github.com/soo-kate-yeon/tekton',
+  ],
+};
+
+const siteNavigation = {
+  '@context': 'https://schema.org',
+  '@type': 'SiteNavigationElement',
+  name: 'Main Navigation',
+  hasPart: [
+    {
+      '@type': 'WebPage',
+      name: 'Pricing',
+      url: 'https://tekton-ui.com/pricing',
+    },
+    {
+      '@type': 'WebPage',
+      name: 'See Demo',
+      url: 'https://tekton-ui.com/studio',
+    },
+    {
+      '@type': 'WebPage',
+      name: 'Templates Gallery',
+      url: 'https://tekton-ui.com/studio',
+    },
+    {
+      '@type': 'WebPage',
+      name: 'Documentation',
+      url: 'https://tekton-ui.com/docs',
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -18,6 +80,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNavigation) }}
+        />
+      </head>
       <body className="antialiased">
         <Providers>{children}</Providers>
       </body>
