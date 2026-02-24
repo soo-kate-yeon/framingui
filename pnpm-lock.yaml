@@ -177,11 +177,11 @@ importers:
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
       '@tekton-ui/core':
-        specifier: ^0.3.4
-        version: 0.3.4
+        specifier: workspace:*
+        version: link:../core
       '@tekton-ui/ui':
-        specifier: ^0.4.1
-        version: 0.4.1(883d942f6df9be89f8b1aee0a3a6f958)
+        specifier: workspace:*
+        version: link:../ui
     devDependencies:
       '@babel/types':
         specifier: ^7.28.6
@@ -2983,50 +2983,6 @@ packages:
     resolution: {integrity: sha512-vXBxa+qeyveVO7OA0jX1z+DeyCA4JKnThKv411jd5SORpBKgkcVnYKCiBgECvADvniBX7tobwBmg01qq9JmMJw==}
     peerDependencies:
       react: ^18 || ^19
-
-  '@tekton-ui/core@0.3.4':
-    resolution: {integrity: sha512-pSeq95bmN0CvexuwSDt3zWcJcjtW0gU/VKHT6uwjBRHTRYhqUvJeyFp7xWNtCqY2ocA4YVpH+9cDhvzrqbe3iw==}
-    engines: {node: '>=20.0.0'}
-
-  '@tekton-ui/tokens@0.3.3':
-    resolution: {integrity: sha512-9qgLjK0OZYLiD52CWlQUqW7d9efvHZtt3CJOIICmJfgXrMh7rW8NyRnHWgqV4dSWUH3PXS3/SCfDUMTSoUPKIA==}
-    engines: {node: '>=20.0.0'}
-
-  '@tekton-ui/ui@0.4.1':
-    resolution: {integrity: sha512-5mfeq61lCXsOm3i+wZKpqx0Zd1PaqxvxAgQVoYhit5gjqIsHaPRnoxOJSs03onV6AwV2WrYYjyD7iL1CIHYS3Q==}
-    peerDependencies:
-      '@hookform/resolvers': ^3.0.0
-      '@radix-ui/react-alert-dialog': ^1.0.0
-      '@radix-ui/react-avatar': ^1.0.0
-      '@radix-ui/react-checkbox': ^1.0.0
-      '@radix-ui/react-dialog': ^1.0.0
-      '@radix-ui/react-dropdown-menu': ^2.0.0
-      '@radix-ui/react-label': ^2.0.0
-      '@radix-ui/react-navigation-menu': ^1.0.0
-      '@radix-ui/react-popover': ^1.0.0
-      '@radix-ui/react-progress': ^1.0.0
-      '@radix-ui/react-radio-group': ^1.0.0
-      '@radix-ui/react-scroll-area': ^1.0.0
-      '@radix-ui/react-select': ^2.0.0
-      '@radix-ui/react-separator': ^1.0.0
-      '@radix-ui/react-slider': ^1.0.0
-      '@radix-ui/react-slot': ^1.0.0
-      '@radix-ui/react-switch': ^1.0.0
-      '@radix-ui/react-tabs': ^1.0.0
-      '@radix-ui/react-toast': ^1.0.0
-      '@radix-ui/react-tooltip': ^1.0.0
-      class-variance-authority: ^0.7.0
-      clsx: ^2.0.0
-      cmdk: ^1.0.0
-      date-fns: ^3.0.0 || ^4.0.0
-      framer-motion: ^11.0.0 || ^12.0.0
-      lucide-react: ^0.200.0
-      react: ^18.0.0 || ^19.0.0
-      react-day-picker: ^9.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-      react-hook-form: ^7.0.0
-      tailwind-merge: ^2.0.0
-      zod: ^3.20.0
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -8703,48 +8659,6 @@ snapshots:
       '@tanstack/query-core': 5.90.20
       react: 19.2.3
 
-  '@tekton-ui/core@0.3.4':
-    dependencies:
-      zod: 3.25.76
-
-  '@tekton-ui/tokens@0.3.3': {}
-
-  '@tekton-ui/ui@0.4.1(883d942f6df9be89f8b1aee0a3a6f958)':
-    dependencies:
-      '@hookform/resolvers': 3.10.0(react-hook-form@7.71.1(react@19.2.3))
-      '@radix-ui/react-alert-dialog': 1.1.15(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-avatar': 1.1.11(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-dropdown-menu': 2.1.16(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-label': 2.1.8(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-navigation-menu': 1.2.14(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-popover': 1.1.15(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-progress': 1.1.8(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-radio-group': 1.3.8(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-scroll-area': 1.2.10(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-select': 2.2.6(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-separator': 1.1.8(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-slider': 1.3.6(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-slot': 1.2.4(@types/react@18.2.79)(react@19.2.3)
-      '@radix-ui/react-switch': 1.2.6(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-tabs': 1.1.13(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-toast': 1.2.15(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      '@tekton-ui/tokens': 0.3.3
-      class-variance-authority: 0.7.1
-      clsx: 2.1.1
-      cmdk: 1.1.1(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      date-fns: 4.1.0
-      framer-motion: 12.34.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      lucide-react: 0.563.0(react@19.2.3)
-      react: 19.2.3
-      react-day-picker: 9.13.2(react@19.2.3)
-      react-dom: 19.2.3(react@19.2.3)
-      react-hook-form: 7.71.1(react@19.2.3)
-      tailwind-merge: 2.6.0
-      zod: 3.25.76
-
   '@testing-library/dom@10.4.0':
     dependencies:
       '@babel/code-frame': 7.28.6
@@ -10063,8 +9977,8 @@ snapshots:
       '@next/eslint-plugin-next': 16.1.4
       eslint: 9.39.2(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@1.21.7))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-react: 7.37.5(eslint@9.39.2(jiti@1.21.7))
       eslint-plugin-react-hooks: 7.0.1(eslint@9.39.2(jiti@1.21.7))
@@ -10086,7 +10000,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@1.21.7)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -10097,22 +10011,22 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7)):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3)
       eslint: 9.39.2(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@1.21.7))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -10123,7 +10037,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.2(jiti@1.21.7)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@1.21.7))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7)))(eslint@9.39.2(jiti@1.21.7))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
