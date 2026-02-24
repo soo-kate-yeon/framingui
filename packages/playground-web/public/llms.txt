@@ -1,0 +1,60 @@
+# tekton/ui - Agentic Design System
+
+> The design system built for AI agents. 0% hallucination by design.
+
+## Overview
+
+tekton/ui provides structured design constraints that LLMs can parse and follow,
+generating production-ready UI with consistent colors, typography, and spacing.
+
+## Quick Start
+
+```bash
+npx @tekton-ui/mcp-server init
+```
+
+## Packages
+
+- @tekton-ui/core: Token generation, OKLCH utilities
+- @tekton-ui/ui: 30+ React components
+- @tekton-ui/tokens: Raw design tokens
+- @tekton-ui/mcp-server: AI tool integration
+
+## Available Themes (7)
+
+1. square-minimalism - Clean geometric design
+2. editorial-tech - Airy, typography-first
+3. pebble - Soft, rounded minimal
+4. neutral-workspace - Warm humanist tones
+5. minimal-workspace - Ultra-clean workspace
+6. dark-boldness - Bold dark mode
+7. classic-magazine - Editorial print style
+
+## MCP Tools
+
+- list-themes: Get all themes
+- preview-theme: Get theme tokens
+- list-components: Browse components
+- generate-blueprint: Natural language → UI
+- export-production: Generate production code
+
+## Key Features
+
+- OKLCH color system (perceptually uniform)
+- Fluid typography scales
+- Consistent spacing tokens
+- 30+ accessible components
+- MCP protocol support
+
+## Documentation
+
+- /docs - Overview
+- /docs/quick-start - 5 minute guide
+- /docs/installation - Package setup
+- /docs/mcp - AI tool integration
+
+## Links
+
+- Website: https://tekton-ui.com
+- Studio: https://tekton-ui.com/studio
+- Beta: https://tally.so/r/7R2kz6
