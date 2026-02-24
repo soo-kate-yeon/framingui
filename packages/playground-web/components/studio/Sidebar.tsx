@@ -12,7 +12,17 @@
 
 'use client';
 
-import { Layout, User, LogIn, LogOut, ChevronLeft, ChevronRight, Menu, X } from 'lucide-react';
+import {
+  Layout,
+  User,
+  LogIn,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+  MessageSquare,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
@@ -45,6 +55,13 @@ const NAV_ITEMS: NavItem[] = [
     label: 'Explore',
     href: '/studio',
     icon: Layout,
+    requireAuth: false,
+  },
+  {
+    id: 'feedback',
+    label: 'Feedback',
+    href: '/studio/feedback',
+    icon: MessageSquare,
     requireAuth: false,
   },
   {

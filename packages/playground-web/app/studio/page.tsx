@@ -8,6 +8,7 @@
 
 import { TemplateGallery } from '../../components/studio/TemplateGallery';
 import { StudioPageHeader } from '../../components/studio/StudioPageHeader';
+import { FeedbackFloatingButton } from '../../components/studio/FeedbackFloatingButton';
 import { loadThemes } from './actions';
 import type { Metadata } from 'next';
 
@@ -45,6 +46,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
           </div>
         </div>
       )}
+      <FeedbackFloatingButton />
     </>
   );
 }
