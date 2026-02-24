@@ -68,9 +68,10 @@ export function LandingPage() {
       {/* Beta Open Banner */}
       <div className="fixed top-0 left-0 right-0 z-[60] h-10 bg-neutral-950 text-white flex items-center justify-between px-4 sm:px-6">
         <p className="text-xs sm:text-sm font-medium flex-1">
-          <span className="sm:hidden">Beta Open — 지금 신청하세요</span>
+          <span className="sm:hidden">Beta is now open — Apply now</span>
           <span className="hidden sm:inline">
-            🎉 Beta Open — tekton/ui 베타 서비스를 시작합니다. 지금 신청하세요.
+            🎉 tekton/ui Beta is now open — Be the first to experience the agent-first design
+            system.
           </span>
         </p>
         <a
@@ -79,7 +80,7 @@ export function LandingPage() {
           rel="noopener noreferrer"
           className="ml-4 px-3 sm:px-4 py-1.5 text-xs font-bold bg-white text-neutral-950 rounded-full hover:bg-neutral-200 transition-colors whitespace-nowrap shrink-0"
         >
-          베타 신청
+          Apply for Beta
         </a>
       </div>
 
