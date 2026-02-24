@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
+        url: 'https://tekton-ui.com/og-image.png',
         width: 1200,
         height: 630,
         alt: 'tekton/ui - Agent-First Design System',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'tekton/ui - Agent-First Design System',
     description: 'The first design system AI agents can actually understand.',
-    images: ['/og-image.png'],
+    images: ['https://tekton-ui.com/og-image.png'],
   },
   icons: {
     icon: '/favicon.ico',
