@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://tekton-ui.com'),
   openGraph: {
     title: 'tekton/ui - Agent-First Design System',
-    description: 'The first design system AI agents can actually understand. 0% hallucination by design.',
+    description:
+      'The first design system AI agents can actually understand. 0% hallucination by design.',
     url: 'https://tekton-ui.com',
     siteName: 'tekton/ui',
     type: 'website',
@@ -32,8 +33,8 @@ export const metadata: Metadata = {
     images: ['https://tekton-ui.com/og-image.png'],
   },
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: '/favicon.png',
+    apple: '/favicon.png',
   },
 };
 
@@ -49,9 +50,7 @@ const jsonLd = {
     target: 'https://tekton-ui.com/docs?q={search_term_string}',
     'query-input': 'required name=search_term_string',
   },
-  sameAs: [
-    'https://github.com/soo-kate-yeon/tekton',
-  ],
+  sameAs: ['https://github.com/soo-kate-yeon/tekton'],
 };
 
 const siteNavigation = {

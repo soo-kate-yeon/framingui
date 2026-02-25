@@ -474,24 +474,23 @@ AI automatically:
 
 You don't need to use tekton-ui's token generator—MCP works with any design token format.
 
-### From Figma Tokens
+### From Existing Design Tokens
 
-If you use the Figma Tokens plugin:
+If you already have design tokens (from Figma Tokens plugin or other sources):
 
 ```bash
-# Export tokens from Figma as JSON
-# Place in project root as design-tokens.json
-
-# Configure MCP to read Figma format
+# Export your tokens as JSON
+# Structure them following W3C Design Token format
+# Or use tekton-ui templates as a starting point
 ```
 
 ```json
 // .claude/mcp.json
 {
   "servers": {
-    "tekton-design-tokens": {
+    "tekton": {
       "command": "npx",
-      "args": ["@tekton/mcp-server", "--format", "figma"],
+      "args": ["@tekton-ui/mcp-server"],
       "env": {
         "TEKTON_TOKEN_PATH": "./design-tokens.json"
       }

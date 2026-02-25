@@ -122,7 +122,7 @@ Claude: [Queries your design tokens via MCP]
 | **Brand Consistency** | ⚠️ Manual tweaking required | ✅ Automatic (AI reads tokens) |
 | **Deployment** | ✅ One-click to Vercel | ❌ Use your existing deployment |
 | **Accessibility** | ⚠️ Depends on shadcn defaults | ✅ WCAG built into token generation |
-| **Cost** | 💰 Paid (free tier limited) | 💰 Free (open-source) |
+| **Cost** | 💰 Paid (free tier limited) | 💰 Beta free (first template) |
 | **Learning Curve** | ✅ Low (visual interface) | ⚠️ Medium (requires MCP setup) |
 | **Iteration Speed** | ✅ Fast (visual edits) | ⚠️ Medium (prompt-based) |
 | **Code Quality** | ⚠️ Generic, may need cleanup | ✅ On-brand from the start |
@@ -220,25 +220,20 @@ With tekton-ui:
 **Setup workflow:**
 
 ```bash
-# Convert existing design system to tekton tokens
-npx @tekton/cli import-figma ./design-tokens.json
-
-# Or manually define your brand
-npx @tekton/cli init
-# Enter your brand colors, spacing, typography
-
-# Configure MCP
-# .claude/mcp.json
+# Pick a template at tekton-ui.com/studio
+# Then configure MCP in your project:
+# .claude/mcp.json (or cursor settings)
 {
   "servers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"]
+      "args": ["@tekton-ui/mcp-server"]
     }
   }
 }
 
-# AI now generates using YOUR design system
+# AI now generates using the template's design system
+# Tokens include: colors, spacing, typography, elevation, motion
 ```
 
 **Result:** Every component AI generates matches your brand identity.
@@ -362,12 +357,11 @@ TEKTON_BRAND=clientB npm run build  # Uses clientB tokens
 **tekton-ui workflow (connected):**
 
 ```
-1. Designer creates mockup in Figma
-2. Export Figma tokens (Figma Tokens plugin)
-3. Import into tekton-ui: npx @tekton/cli import-figma
-4. AI generates components using Figma tokens
-5. Components match Figma exactly
-6. Designer updates Figma tokens → Re-import → Done
+1. Choose a tekton template that matches your design direction
+2. Customize the design tokens (colors, spacing, typography)
+3. AI generates components using your tokens
+4. Components match your design system consistently
+5. Update tokens → All components update automatically
 ```
 
 **Design-dev handoff:**
@@ -383,9 +377,8 @@ Traditional workflow:
 - Misses 3 instances → visual bugs
 
 tekton-ui workflow:
-- Designer exports updated tokens from Figma
-- Developer runs: npx @tekton/cli import-figma
-- All components update automatically (they reference tokens, not colors)
+- Developer updates the token value in one place
+- All components reference tokens, not hardcoded colors
 - Zero bugs
 ```
 
