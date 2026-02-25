@@ -16,10 +16,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const { slug } = await params;
   const post = getBlogPost(slug);
 
-  if (!post) { return {}; }
+  if (!post) {
+    return {};
+  }
 
   const fm = post.frontmatter.en;
   const url = `https://tekton-ui.com/blog/${slug}`;
+
+  const ogImage = fm.coverImage || 'https://tekton-ui.com/og-image.png';
 
   return {
     title: `${fm.title} | Tekton Blog`,
@@ -33,13 +37,13 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       modifiedTime: fm.updatedAt || fm.date,
       authors: [fm.author.name],
       tags: fm.tags,
-      ...(fm.coverImage && { images: [{ url: fm.coverImage }] }),
+      images: [{ url: ogImage }],
     },
     twitter: {
       card: 'summary_large_image',
       title: fm.title,
       description: fm.description,
-      ...(fm.coverImage && { images: [fm.coverImage] }),
+      images: [ogImage],
     },
     alternates: {
       canonical: url,
@@ -55,7 +59,9 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = getBlogPost(slug);
 
-  if (!post) { notFound(); }
+  if (!post) {
+    notFound();
+  }
 
   const enRelated = getRelatedPosts(slug, 'en');
   const koRelated = getRelatedPosts(slug, 'ko');
@@ -79,7 +85,10 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
       <BreadcrumbJsonLd
         items={[
           { name: 'Blog', url: 'https://tekton-ui.com/blog' },
-          { name: fm.category, url: `https://tekton-ui.com/blog/tag/${fm.tags[0]?.toLowerCase() || ''}` },
+          {
+            name: fm.category,
+            url: `https://tekton-ui.com/blog/tag/${fm.tags[0]?.toLowerCase() || ''}`,
+          },
           { name: fm.title, url },
         ]}
       />

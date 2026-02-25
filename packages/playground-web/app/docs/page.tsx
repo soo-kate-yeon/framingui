@@ -9,6 +9,18 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Documentation | tekton/ui',
   description: 'The agentic design system. 0% hallucination, production-ready UI.',
+  openGraph: {
+    title: 'Documentation | tekton/ui',
+    description: 'The agentic design system. 0% hallucination, production-ready UI.',
+    url: 'https://tekton-ui.com/docs',
+    images: [{ url: 'https://tekton-ui.com/og-image.png' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Documentation | tekton/ui',
+    description: 'The agentic design system. 0% hallucination, production-ready UI.',
+    images: ['https://tekton-ui.com/og-image.png'],
+  },
 };
 
 const CARDS = [
@@ -47,8 +59,8 @@ export default function DocsPage() {
           tekton/ui Documentation
         </h1>
         <p className="text-xl text-neutral-600 leading-relaxed max-w-2xl">
-          The agentic design system. A complete token architecture that AI agents 
-          can actually follow. <strong>0% hallucination by design.</strong>
+          The agentic design system. A complete token architecture that AI agents can actually
+          follow. <strong>0% hallucination by design.</strong>
         </p>
       </header>
 
@@ -68,9 +80,7 @@ export default function DocsPage() {
                 <h3 className="font-semibold text-neutral-900 group-hover:text-neutral-700">
                   {card.title}
                 </h3>
-                <p className="text-sm text-neutral-500 mt-1">
-                  {card.description}
-                </p>
+                <p className="text-sm text-neutral-500 mt-1">{card.description}</p>
               </div>
             </div>
           </Link>
@@ -82,15 +92,14 @@ export default function DocsPage() {
         <h2 className="text-2xl font-bold text-neutral-900">What is tekton/ui?</h2>
         <div className="space-y-4 text-neutral-600 leading-relaxed">
           <p>
-            tekton/ui is an <strong>agentic design system</strong> — built not for humans, 
-            but for AI agents. Traditional design systems provide guidelines that humans 
-            interpret. tekton/ui provides structured constraints that LLMs can parse and follow.
+            tekton/ui is an <strong>agentic design system</strong> — built not for humans, but for
+            AI agents. Traditional design systems provide guidelines that humans interpret.
+            tekton/ui provides structured constraints that LLMs can parse and follow.
           </p>
           <p>
-            The result: when you ask Claude Code, Cursor, or any MCP-compatible tool to 
-            build UI with tekton, it generates production-ready code with consistent 
-            colors, typography, spacing, and components. No more random hex codes. 
-            No more magic numbers.
+            The result: when you ask Claude Code, Cursor, or any MCP-compatible tool to build UI
+            with tekton, it generates production-ready code with consistent colors, typography,
+            spacing, and components. No more random hex codes. No more magic numbers.
           </p>
         </div>
       </section>
@@ -101,23 +110,33 @@ export default function DocsPage() {
         <ul className="space-y-3 text-neutral-600">
           <li className="flex items-start gap-3">
             <span className="text-neutral-400">→</span>
-            <span><strong>OKLCH Color System</strong> — Perceptually uniform, semantic color tokens</span>
+            <span>
+              <strong>OKLCH Color System</strong> — Perceptually uniform, semantic color tokens
+            </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-neutral-400">→</span>
-            <span><strong>Typography Scales</strong> — Fluid, responsive type system</span>
+            <span>
+              <strong>Typography Scales</strong> — Fluid, responsive type system
+            </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-neutral-400">→</span>
-            <span><strong>Spacing Tokens</strong> — Consistent rhythm across all components</span>
+            <span>
+              <strong>Spacing Tokens</strong> — Consistent rhythm across all components
+            </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-neutral-400">→</span>
-            <span><strong>30+ Components</strong> — Buttons, cards, forms, navigation, and more</span>
+            <span>
+              <strong>30+ Components</strong> — Buttons, cards, forms, navigation, and more
+            </span>
           </li>
           <li className="flex items-start gap-3">
             <span className="text-neutral-400">→</span>
-            <span><strong>MCP Protocol</strong> — Native integration with AI coding tools</span>
+            <span>
+              <strong>MCP Protocol</strong> — Native integration with AI coding tools
+            </span>
           </li>
         </ul>
       </section>
