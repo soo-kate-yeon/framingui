@@ -1,0 +1,338 @@
+---
+title: Card
+description: Composable card container with header, content, and footer sections using Tekton design tokens
+category: components
+---
+
+# Card
+
+A composable card container component with header, content, and footer sections. Built with Tekton design tokens for consistent styling and visual hierarchy.
+
+## Overview
+
+The Card component provides a flexible container for grouping related content. It's composed of multiple sub-components (CardHeader, CardContent, CardFooter, etc.) that can be combined to create various card layouts.
+
+**Key Features:**
+- Composable architecture with 6 sub-components
+- Semantic HTML structure for accessibility
+- Flexible layout options (header, content, footer)
+- Consistent styling via Tekton tokens
+- Built-in shadow and border styling
+- Responsive design support
+
+## Installation
+
+```bash
+npm install @tekton-ui/ui
+```
+
+## Basic Usage
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@tekton-ui/ui';
+import { Button } from '@tekton-ui/ui';
+
+export default function Example() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Card Title</CardTitle>
+        <CardDescription>Card description goes here.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>Card content goes here.</p>
+      </CardContent>
+      <CardFooter>
+        <Button>Action</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+## Variants
+
+### Basic Card
+
+Simple card with only content.
+
+```tsx
+import { Card, CardContent } from '@tekton-ui/ui';
+
+export default function BasicExample() {
+  return (
+    <Card className="w-[350px]">
+      <CardContent className="pt-6">
+        <p>A simple card with just content.</p>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Card with Header
+
+Card with title and description.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription } from '@tekton-ui/ui';
+
+export default function HeaderExample() {
+  return (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Notifications</CardTitle>
+        <CardDescription>You have 3 unread messages.</CardDescription>
+      </CardHeader>
+    </Card>
+  );
+}
+```
+
+### Card with Footer Actions
+
+Card with action buttons in footer.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@tekton-ui/ui';
+import { Button } from '@tekton-ui/ui';
+
+export default function FooterExample() {
+  return (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Confirm Action</CardTitle>
+        <CardDescription>Are you sure you want to continue?</CardDescription>
+      </CardHeader>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancel</Button>
+        <Button>Confirm</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+### Dashboard Card
+
+Card for displaying metrics and statistics.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+
+export default function DashboardExample() {
+  return (
+    <Card className="w-[350px]">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+        <span className="text-2xl">💰</span>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">$45,231.89</div>
+        <p className="text-xs text-[var(--tekton-bg-muted-foreground)]">
+          +20.1% from last month
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Notification Card
+
+Card with multiple notification items.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@tekton-ui/ui';
+import { Button } from '@tekton-ui/ui';
+
+export default function NotificationExample() {
+  return (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Notifications</CardTitle>
+        <CardDescription>You have 3 unread messages.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        <div className="flex items-start space-x-4 rounded-md border p-4">
+          <span className="text-2xl">📧</span>
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-medium leading-none">New message</p>
+            <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
+              You have a new message from John
+            </p>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button className="w-full">Mark all as read</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+### Interactive Card
+
+Card with hover effects for clickable content.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@tekton-ui/ui';
+
+export default function InteractiveExample() {
+  return (
+    <Card className="w-[350px] cursor-pointer transition-all hover:shadow-lg hover:scale-105">
+      <CardHeader>
+        <CardTitle>Interactive Card</CardTitle>
+        <CardDescription>Hover to see the effect</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>This card has hover effects and is clickable.</p>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Form Card
+
+Card containing a form with inputs.
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@tekton-ui/ui';
+import { Button } from '@tekton-ui/ui';
+import { Input } from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+
+export default function FormExample() {
+  return (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Create Account</CardTitle>
+        <CardDescription>Enter your email below to create your account.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" placeholder="Enter your name" />
+            </div>
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="Enter your email" />
+            </div>
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline">Cancel</Button>
+        <Button>Create</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+## Props/API
+
+### Card
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Card content |
+
+### CardHeader
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Header content |
+
+### CardTitle
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Title text |
+
+### CardDescription
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Description text |
+
+### CardContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Main content |
+
+### CardFooter
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Footer content (typically buttons) |
+
+All components extend standard HTML div attributes.
+
+## Design Tokens
+
+```json
+{
+  "bg": {
+    "card": "var(--tekton-bg-card)",
+    "cardForeground": "var(--tekton-bg-card-foreground)",
+    "mutedForeground": "var(--tekton-bg-muted-foreground)"
+  },
+  "spacing": {
+    "2": "var(--tekton-spacing-2)",
+    "6": "var(--tekton-spacing-6)"
+  },
+  "radius": {
+    "lg": "var(--tekton-radius-lg)"
+  },
+  "border": {
+    "default": "var(--tekton-border-default)"
+  },
+  "shadow": {
+    "sm": "shadow-sm"
+  }
+}
+```
+
+## Best Practices
+
+### ✅ DO
+
+- Use CardHeader for consistent title and description layout
+- Combine CardFooter with Button components for actions
+- Apply width constraints (e.g., `w-[350px]`) for predictable layouts
+- Use CardDescription for secondary information below titles
+- Group related cards in responsive grids for dashboard layouts
+
+### ❌ DON'T
+
+- Don't nest Card components inside each other (creates visual confusion)
+- Avoid very wide cards without content constraints (hard to read)
+- Don't put too much content in a single card (break into multiple cards)
+- Avoid missing CardHeader when title is important for context
+- Don't use Card for simple dividers (use Separator component instead)
+
+## Accessibility Notes
+
+- Card uses semantic `<div>` elements with proper hierarchy
+- CardTitle renders as `<h3>` for proper heading structure
+- Interactive cards should include `role="button"` and keyboard handlers
+- Use sufficient color contrast for CardDescription text
+- Ensure card content is keyboard navigable when interactive
+
+## Related Components
+
+- [Button](./button.mdx) - For card footer actions
+- [Input](./input.mdx) - For form cards
+- [Dialog](./dialog.mdx) - Alternative container for focused content

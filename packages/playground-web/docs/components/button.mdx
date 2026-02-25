@@ -1,0 +1,240 @@
+---
+title: Button
+description: Versatile button component with multiple variants, sizes, and Tekton token integration for consistent styling
+category: components
+---
+
+# Button
+
+A versatile button component with multiple variants, sizes, and full Tekton design token integration for consistent styling across your application.
+
+## Overview
+
+The Button component is a foundational UI element that supports various visual styles (variants) and sizes. Built on Radix UI's Slot primitive, it enables composition patterns while maintaining accessibility standards.
+
+**Key Features:**
+- 6 visual variants (default, destructive, outline, secondary, ghost, link)
+- 4 size options (default, sm, lg, icon)
+- Full keyboard and screen reader accessibility
+- Composition support via `asChild` prop
+- 100% Tekton token compliance
+- TypeScript support with type inference
+
+## Installation
+
+```bash
+npm install @tekton-ui/ui
+```
+
+## Basic Usage
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function Example() {
+  return <Button>Click me</Button>;
+}
+```
+
+## Variants
+
+### Default Variant
+
+Primary button for main actions.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function DefaultExample() {
+  return <Button variant="default">Default Button</Button>;
+}
+```
+
+### Destructive Variant
+
+For dangerous or irreversible actions.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function DestructiveExample() {
+  return <Button variant="destructive">Delete Account</Button>;
+}
+```
+
+### Outline Variant
+
+Subtle button with border styling.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function OutlineExample() {
+  return <Button variant="outline">Outline Button</Button>;
+}
+```
+
+### Secondary Variant
+
+For less prominent actions.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function SecondaryExample() {
+  return <Button variant="secondary">Secondary Action</Button>;
+}
+```
+
+### Ghost Variant
+
+Minimal styling with hover effects.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function GhostExample() {
+  return <Button variant="ghost">Ghost Button</Button>;
+}
+```
+
+### Link Variant
+
+Styled as a hyperlink.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function LinkExample() {
+  return <Button variant="link">Learn More</Button>;
+}
+```
+
+### Small Size
+
+Compact button for tight spaces.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function SmallExample() {
+  return <Button size="sm">Small Button</Button>;
+}
+```
+
+### Large Size
+
+Prominent button for emphasis.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function LargeExample() {
+  return <Button size="lg">Large Button</Button>;
+}
+```
+
+### Icon Size
+
+Square button for icon-only usage.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function IconExample() {
+  return (
+    <Button size="icon" aria-label="Search">
+      🔍
+    </Button>
+  );
+}
+```
+
+### Disabled State
+
+Non-interactive button state.
+
+```tsx
+import { Button } from '@tekton-ui/ui';
+
+export default function DisabledExample() {
+  return <Button disabled>Disabled Button</Button>;
+}
+```
+
+## Props/API
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'destructive' \| 'outline' \| 'secondary' \| 'ghost' \| 'link'` | `'default'` | Visual style variant |
+| `size` | `'default' \| 'sm' \| 'lg' \| 'icon'` | `'default'` | Size variant |
+| `asChild` | `boolean` | `false` | Render as child component using Radix Slot |
+| `disabled` | `boolean` | `false` | Disable button interaction |
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |
+| `onClick` | `(event: MouseEvent) => void` | `undefined` | Click event handler |
+
+All standard HTML button attributes are supported via rest props.
+
+## Design Tokens
+
+```json
+{
+  "bg": {
+    "primary": "var(--tekton-bg-primary)",
+    "primaryForeground": "var(--tekton-bg-primary-foreground)",
+    "destructive": "var(--tekton-bg-destructive)",
+    "destructiveForeground": "var(--tekton-bg-destructive-foreground)",
+    "secondary": "var(--tekton-bg-secondary)",
+    "secondaryForeground": "var(--tekton-bg-secondary-foreground)",
+    "accent": "var(--tekton-bg-accent)",
+    "accentForeground": "var(--tekton-bg-accent-foreground)",
+    "background": "var(--tekton-bg-background)"
+  },
+  "spacing": {
+    "2": "var(--tekton-spacing-2)",
+    "3": "var(--tekton-spacing-3)",
+    "4": "var(--tekton-spacing-4)",
+    "8": "var(--tekton-spacing-8)"
+  },
+  "radius": {
+    "xl": "var(--tekton-radius-xl)"
+  },
+  "border": {
+    "input": "var(--tekton-border-input)",
+    "ring": "var(--tekton-border-ring)"
+  }
+}
+```
+
+## Best Practices
+
+### ✅ DO
+
+- Use `variant="destructive"` for dangerous actions like delete or remove
+- Include `aria-label` for icon-only buttons to maintain accessibility
+- Use `size="icon"` for square icon buttons to maintain proper dimensions
+- Prefer `asChild` when wrapping navigation links for semantic HTML
+- Use `type="submit"` explicitly in forms to prevent accidental submissions
+
+### ❌ DON'T
+
+- Don't use multiple buttons with `variant="default"` in the same context (creates visual hierarchy confusion)
+- Avoid very long text in buttons (use concise action verbs)
+- Don't disable buttons without providing visual feedback about why
+- Avoid using `variant="link"` for primary actions (use actual links or default variant)
+- Don't nest interactive elements inside buttons (violates HTML semantics)
+
+## Accessibility Notes
+
+- All variants include proper focus-visible ring styles for keyboard navigation
+- Disabled buttons have `pointer-events-none` and reduced opacity
+- Icon buttons require `aria-label` for screen reader users
+- Button uses semantic `<button>` element by default
+- Focus ring uses 2px ring with offset for clear visibility
+
+## Related Components
+
+- [Input](./input.mdx) - Form input component
+- [Dialog](./dialog.mdx) - Modal dialog component that uses Button triggers
+- [Card](./card.mdx) - Card component with Button in footer actions

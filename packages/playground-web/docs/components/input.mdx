@@ -1,0 +1,311 @@
+---
+title: Input
+description: Accessible text input component supporting multiple types, states, and full Tekton token integration
+category: components
+---
+
+# Input
+
+An accessible text input component supporting multiple input types (text, email, password, number, etc.) with full Tekton design token integration for consistent styling.
+
+## Overview
+
+The Input component provides a foundation for form data entry. Built with accessibility in mind, it supports all native HTML input types and states while maintaining consistent styling through Tekton tokens.
+
+**Key Features:**
+- Supports all HTML input types (text, email, password, number, tel, url, date, etc.)
+- Built-in focus and disabled states
+- Accessible with proper ARIA attributes
+- File input support
+- 100% Tekton token compliance
+- TypeScript support with full type inference
+
+## Installation
+
+```bash
+npm install @tekton-ui/ui
+```
+
+## Basic Usage
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function Example() {
+  return <Input placeholder="Enter text..." />;
+}
+```
+
+## Variants
+
+### Default Text Input
+
+Standard text input field.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function DefaultExample() {
+  return <Input type="text" placeholder="Enter text..." />;
+}
+```
+
+### Email Input
+
+Email input with browser validation.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function EmailExample() {
+  return <Input type="email" placeholder="email@example.com" />;
+}
+```
+
+### Password Input
+
+Password input with masked characters.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function PasswordExample() {
+  return <Input type="password" placeholder="Enter password" />;
+}
+```
+
+### Number Input
+
+Numeric input with keyboard optimization.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function NumberExample() {
+  return <Input type="number" placeholder="0" />;
+}
+```
+
+### Search Input
+
+Search input with semantic type.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function SearchExample() {
+  return <Input type="search" placeholder="Search..." />;
+}
+```
+
+### Date Input
+
+Date picker input.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function DateExample() {
+  return <Input type="date" />;
+}
+```
+
+### Disabled State
+
+Non-editable input state.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+
+export default function DisabledExample() {
+  return <Input disabled placeholder="Disabled input" value="Cannot edit" />;
+}
+```
+
+### With Label
+
+Input with associated label for accessibility.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+
+export default function WithLabelExample() {
+  return (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="email">Email</Label>
+      <Input type="email" id="email" placeholder="email@example.com" />
+    </div>
+  );
+}
+```
+
+### With Helper Text
+
+Input with descriptive helper text.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+
+export default function WithHelperTextExample() {
+  return (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="email">Email</Label>
+      <Input type="email" id="email" placeholder="email@example.com" />
+      <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
+        We'll never share your email.
+      </p>
+    </div>
+  );
+}
+```
+
+### With Error State
+
+Input showing validation error.
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+
+export default function WithErrorExample() {
+  return (
+    <div className="grid w-full max-w-sm items-center gap-1.5">
+      <Label htmlFor="email">Email</Label>
+      <Input
+        type="email"
+        id="email"
+        placeholder="email@example.com"
+        className="border-[var(--tekton-bg-destructive)]"
+        aria-invalid="true"
+        aria-describedby="email-error"
+      />
+      <p id="email-error" className="text-sm text-[var(--tekton-bg-destructive)]">
+        Please enter a valid email address.
+      </p>
+    </div>
+  );
+}
+```
+
+## Props/API
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'text' \| 'email' \| 'password' \| 'number' \| 'tel' \| 'url' \| 'search' \| 'date' \| 'time' \| 'file'` | `'text'` | HTML input type |
+| `placeholder` | `string` | `undefined` | Placeholder text |
+| `disabled` | `boolean` | `false` | Disable input interaction |
+| `value` | `string` | `undefined` | Controlled value |
+| `defaultValue` | `string` | `undefined` | Uncontrolled default value |
+| `onChange` | `(event: ChangeEvent) => void` | `undefined` | Change event handler |
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `id` | `string` | `undefined` | HTML id attribute (for label association) |
+| `name` | `string` | `undefined` | Form field name |
+| `required` | `boolean` | `false` | Required field validation |
+| `aria-invalid` | `boolean` | `false` | Indicates validation error state |
+| `aria-describedby` | `string` | `undefined` | Associates error/helper text |
+
+All standard HTML input attributes are supported via rest props.
+
+## Design Tokens
+
+```json
+{
+  "bg": {
+    "background": "var(--tekton-bg-background)",
+    "mutedForeground": "var(--tekton-bg-muted-foreground)",
+    "destructive": "var(--tekton-bg-destructive)"
+  },
+  "spacing": {
+    "2": "var(--tekton-spacing-2)",
+    "3": "var(--tekton-spacing-3)"
+  },
+  "radius": {
+    "md": "var(--tekton-radius-md)"
+  },
+  "border": {
+    "input": "var(--tekton-border-input)",
+    "ring": "var(--tekton-border-ring)"
+  }
+}
+```
+
+## Best Practices
+
+### ✅ DO
+
+- Always associate inputs with labels using `htmlFor` and `id` attributes
+- Use semantic input types (email, tel, url) for browser validation and mobile keyboard optimization
+- Include `aria-invalid` and `aria-describedby` for error states
+- Provide clear placeholder text that describes expected format
+- Use `required` attribute for required fields to enable browser validation
+
+### ❌ DON'T
+
+- Don't use placeholder text as a replacement for labels (accessibility issue)
+- Avoid very wide inputs without width constraints (poor UX)
+- Don't forget to handle both controlled and uncontrolled input patterns
+- Avoid custom validation without proper ARIA error messaging
+- Don't disable inputs without clear visual indication of why
+
+## Accessibility Notes
+
+- Input has proper focus-visible ring styles for keyboard navigation
+- Disabled inputs have `cursor-not-allowed` and reduced opacity
+- All input types support browser-native keyboard accessibility
+- File inputs have proper file button styling
+- Placeholder text uses muted foreground color for sufficient contrast
+- Focus ring uses 2px ring with offset for clear visibility
+
+## Common Patterns
+
+### Controlled Input
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+import { useState } from 'react';
+
+export default function ControlledExample() {
+  const [value, setValue] = useState('');
+
+  return (
+    <Input
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+      placeholder="Controlled input"
+    />
+  );
+}
+```
+
+### Form Integration
+
+```tsx
+import { Input } from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+import { Button } from '@tekton-ui/ui';
+
+export default function FormExample() {
+  return (
+    <form className="grid w-full max-w-sm gap-4">
+      <div className="grid gap-2">
+        <Label htmlFor="name">Name</Label>
+        <Input id="name" placeholder="John Doe" required />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" type="email" placeholder="john@example.com" required />
+      </div>
+      <Button type="submit">Submit</Button>
+    </form>
+  );
+}
+```
+
+## Related Components
+
+- [Label](./label.mdx) - For input labels
+- [Button](./button.mdx) - For form submission
+- [Card](./card.mdx) - For form containers
+- [Dialog](./dialog.mdx) - For forms in modal dialogs

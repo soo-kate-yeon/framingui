@@ -1,0 +1,450 @@
+---
+title: Select
+description: Accessible dropdown select component built on Radix UI with keyboard navigation and Tekton token integration
+category: components
+---
+
+# Select
+
+An accessible dropdown select component built on Radix UI primitives with full keyboard navigation, search functionality, and Tekton design token integration.
+
+## Overview
+
+The Select component provides a rich dropdown selection experience. Built on Radix UI's Select primitive, it offers advanced features like keyboard navigation, grouping, disabled items, and proper accessibility support.
+
+**Key Features:**
+- Full keyboard navigation (arrow keys, type-ahead, Enter/Space)
+- Grouping support with labels
+- Disabled items support
+- Scrollable long lists with scroll buttons
+- Portal rendering for proper z-index stacking
+- Animated open/close transitions
+- Composable API with 9 sub-components
+- TypeScript support with full type inference
+
+## Installation
+
+```bash
+npm install @tekton-ui/ui
+```
+
+## Basic Usage
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+
+export default function Example() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+        <SelectItem value="orange">Orange</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+## Variants
+
+### Basic Select
+
+Simple dropdown with options.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+
+export default function BasicExample() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+        <SelectItem value="orange">Orange</SelectItem>
+        <SelectItem value="grape">Grape</SelectItem>
+        <SelectItem value="mango">Mango</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### With Label
+
+Select with associated label for accessibility.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+
+export default function WithLabelExample() {
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="fruit-select">Favorite Fruit</Label>
+      <Select>
+        <SelectTrigger id="fruit-select" className="w-[180px]">
+          <SelectValue placeholder="Select a fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="orange">Orange</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+```
+
+### Grouped Options
+
+Select with categorized options.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+
+export default function GroupedExample() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a food" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Fruits</SelectLabel>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="orange">Orange</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Vegetables</SelectLabel>
+          <SelectItem value="carrot">Carrot</SelectItem>
+          <SelectItem value="potato">Potato</SelectItem>
+          <SelectItem value="tomato">Tomato</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### With Disabled Items
+
+Select with some options disabled.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+
+export default function DisabledItemsExample() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana" disabled>
+          Banana (Out of stock)
+        </SelectItem>
+        <SelectItem value="orange">Orange</SelectItem>
+        <SelectItem value="grape" disabled>
+          Grape (Out of stock)
+        </SelectItem>
+        <SelectItem value="mango">Mango</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### Disabled Select
+
+Entire select component disabled.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+
+export default function DisabledExample() {
+  return (
+    <Select disabled>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a fruit" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="apple">Apple</SelectItem>
+        <SelectItem value="banana">Banana</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### Form Example
+
+Multiple selects in a form layout.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+import { Label } from '@tekton-ui/ui';
+
+export default function FormExample() {
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+      <div className="grid gap-2">
+        <Label htmlFor="country">Country</Label>
+        <Select>
+          <SelectTrigger id="country">
+            <SelectValue placeholder="Select a country" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="us">United States</SelectItem>
+            <SelectItem value="uk">United Kingdom</SelectItem>
+            <SelectItem value="ca">Canada</SelectItem>
+            <SelectItem value="au">Australia</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="language">Language</Label>
+        <Select>
+          <SelectTrigger id="language">
+            <SelectValue placeholder="Select a language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="es">Spanish</SelectItem>
+            <SelectItem value="fr">French</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+}
+```
+
+### Long List with Scroll
+
+Select with many options and scroll buttons.
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@tekton-ui/ui';
+
+export default function LongListExample() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select a number" />
+      </SelectTrigger>
+      <SelectContent>
+        {Array.from({ length: 50 }, (_, i) => (
+          <SelectItem key={i} value={`item-${i}`}>
+            Item {i + 1}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+## Props/API
+
+### Select
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | `undefined` | Controlled selected value |
+| `defaultValue` | `string` | `undefined` | Uncontrolled default value |
+| `onValueChange` | `(value: string) => void` | `undefined` | Callback when value changes |
+| `disabled` | `boolean` | `false` | Disable entire select |
+| `name` | `string` | `undefined` | Form field name |
+| `required` | `boolean` | `false` | Required field validation |
+
+### SelectTrigger
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Trigger content (typically SelectValue) |
+| `id` | `string` | `undefined` | HTML id for label association |
+
+### SelectValue
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `placeholder` | `string` | `undefined` | Text shown when no value selected |
+
+### SelectContent
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Select options |
+| `position` | `'popper' \| 'item-aligned'` | `'popper'` | Positioning strategy |
+
+### SelectGroup
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | `undefined` | Grouped items |
+
+### SelectLabel
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Label text |
+
+### SelectItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Item value (must be unique) |
+| `disabled` | `boolean` | `false` | Disable this item |
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `children` | `ReactNode` | `undefined` | Item display text |
+
+## Design Tokens
+
+```json
+{
+  "bg": {
+    "background": "var(--tekton-bg-background)",
+    "popover": "var(--tekton-bg-popover)",
+    "popoverForeground": "var(--tekton-bg-popover-foreground)",
+    "accent": "var(--tekton-bg-accent)",
+    "accentForeground": "var(--tekton-bg-accent-foreground)",
+    "mutedForeground": "var(--tekton-bg-muted-foreground)",
+    "muted": "var(--tekton-bg-muted)"
+  },
+  "spacing": {
+    "2": "var(--tekton-spacing-2)",
+    "3": "var(--tekton-spacing-3)"
+  },
+  "radius": {
+    "sm": "var(--tekton-radius-sm)",
+    "md": "var(--tekton-radius-md)"
+  },
+  "border": {
+    "input": "var(--tekton-border-input)",
+    "default": "var(--tekton-border-default)",
+    "ring": "var(--tekton-border-ring)"
+  }
+}
+```
+
+## Best Practices
+
+### ✅ DO
+
+- Always use SelectValue with placeholder for clear UX
+- Associate selects with labels using `htmlFor` and `id`
+- Use SelectGroup and SelectLabel for categorizing many options
+- Provide clear, concise option text (avoid very long labels)
+- Use controlled state when select value affects other UI
+
+### ❌ DON'T
+
+- Don't use selects for fewer than 3 options (use radio buttons instead)
+- Avoid nested selects or very deep option hierarchies
+- Don't forget placeholder text (users need context)
+- Avoid disabling items without explaining why
+- Don't use select for navigation (use proper links/buttons)
+
+## Accessibility Notes
+
+- Select uses proper ARIA roles and attributes
+- Keyboard navigation: Arrow keys to navigate, Enter/Space to select
+- Type-ahead search: Type characters to jump to matching options
+- Disabled items are properly marked with `aria-disabled`
+- Selected item shows checkmark icon indicator
+- Focus management handled automatically
+- Screen reader announces selected value and total options
+
+## Controlled vs Uncontrolled
+
+### Controlled Select
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@tekton-ui/ui';
+import { useState } from 'react';
+
+export default function ControlledExample() {
+  const [value, setValue] = useState('');
+
+  return (
+    <Select value={value} onValueChange={setValue}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select..." />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="option1">Option 1</SelectItem>
+        <SelectItem value="option2">Option 2</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+## Related Components
+
+- [Input](./input.mdx) - For text input fields
+- [Button](./button.mdx) - For action buttons
+- [Dialog](./dialog.mdx) - For forms in modal dialogs
