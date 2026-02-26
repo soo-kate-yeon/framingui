@@ -1,0 +1,203 @@
+---
+title: "Design Tokens Best Practices: Building Scalable Design Systems"
+description: "Master design tokens with proven best practices for naming, structure, and multi-platform distribution in modern design systems."
+date: "2026-02-26"
+author: "tekton team"
+tags: ["design-tokens", "design-system", "css", "scalability", "best-practices"]
+---
+
+# Design Tokens Best Practices: Building Scalable Design Systems
+
+Design tokens are the foundation of any scalable design system. Get them right, and your entire UI ecosystem becomes maintainable. Get them wrong, and you'll be refactoring for months.
+
+## What Are Design Tokens?
+
+Design tokens are the atomic values of your design system—colors, typography, spacing, shadows, and more—stored as platform-agnostic data. They bridge the gap between design and development.
+
+```json
+{
+  "color": {
+    "primary": {
+      "value": "oklch(0.55 0.15 250)",
+      "type": "color"
+    }
+  }
+}
+```
+
+## Best Practice #1: Use a Three-Tier Token Structure
+
+The most effective token architecture uses three tiers:
+
+### Tier 1: Primitive Tokens (Raw Values)
+```typescript
+const primitives = {
+  blue: {
+    50: 'oklch(0.97 0.02 250)',
+    100: 'oklch(0.93 0.04 250)',
+    500: 'oklch(0.55 0.15 250)',
+    900: 'oklch(0.25 0.10 250)',
+  }
+}
+```
+
+### Tier 2: Semantic Tokens (Purpose-Based)
+```typescript
+const semantic = {
+  color: {
+    primary: primitives.blue[500],
+    primaryHover: primitives.blue[600],
+    background: primitives.neutral[50],
+  }
+}
+```
+
+### Tier 3: Component Tokens (Specific Use)
+```typescript
+const component = {
+  button: {
+    background: semantic.color.primary,
+    hoverBackground: semantic.color.primaryHover,
+  }
+}
+```
+
+This structure enables theming at the semantic layer while keeping component tokens stable.
+
+## Best Practice #2: Naming Conventions That Scale
+
+Good token names are predictable, discoverable, and self-documenting.
+
+### Use This Pattern:
+```
+[category]-[property]-[variant]-[state]
+```
+
+### Examples:
+```css
+--color-background-surface
+--color-background-surface-hover
+--color-text-primary
+--color-text-secondary
+--spacing-component-gap
+--radius-button-default
+```
+
+### Avoid:
+- `--blue-500` (primitive in component code)
+- `--btn-bg` (abbreviations reduce clarity)
+- `--color1` (meaningless names)
+
+## Best Practice #3: Design for Dark Mode from Day One
+
+Don't bolt on dark mode later. Structure your tokens to support themes from the start:
+
+```typescript
+const themes = {
+  light: {
+    color: {
+      background: primitives.neutral[50],
+      foreground: primitives.neutral[900],
+      primary: primitives.blue[500],
+    }
+  },
+  dark: {
+    color: {
+      background: primitives.neutral[950],
+      foreground: primitives.neutral[50],
+      primary: primitives.blue[400],
+    }
+  }
+}
+```
+
+The key insight: semantic token names stay the same, only values change.
+
+## Best Practice #4: Use OKLCH for Color Tokens
+
+OKLCH (Oklab Lightness Chroma Hue) produces perceptually uniform color scales:
+
+```typescript
+// Consistent perceived lightness across hues
+const colors = {
+  primary: 'oklch(0.55 0.15 250)', // Blue
+  success: 'oklch(0.55 0.15 145)', // Green
+  warning: 'oklch(0.55 0.15 85)',  // Yellow
+  error: 'oklch(0.55 0.15 25)',    // Red
+}
+```
+
+Unlike HSL, OKLCH ensures your green and blue at the same lightness value actually *look* equally bright.
+
+## Best Practice #5: Single Source of Truth
+
+Store tokens in one place, transform for multiple platforms:
+
+```
+tokens/
+├── colors.json      # Source of truth
+├── spacing.json
+└── typography.json
+
+output/
+├── css/variables.css
+├── js/tokens.ts
+├── ios/Tokens.swift
+└── android/tokens.xml
+```
+
+Tools like Style Dictionary, Tokens Studio, or tekton/ui's built-in transformer handle this automatically.
+
+## Best Practice #6: Document with Real Examples
+
+Every token should show its intended use:
+
+```typescript
+/**
+ * Primary action color
+ * @usage Buttons, links, active states
+ * @contrast Meets WCAG AA on background-surface
+ * @example <Button variant="primary">Save</Button>
+ */
+export const colorPrimary = 'oklch(0.55 0.15 250)';
+```
+
+## Best Practice #7: Version Your Tokens
+
+Treat tokens like an API. Breaking changes need major version bumps:
+
+```json
+{
+  "version": "2.0.0",
+  "breaking": [
+    "Renamed color-accent to color-primary",
+    "Removed spacing-xs (use spacing-1 instead)"
+  ]
+}
+```
+
+## Common Mistakes to Avoid
+
+1. **Too many tokens** — Start with ~50, grow to ~200 max
+2. **Inconsistent naming** — Establish conventions early, enforce them
+3. **Hardcoded values in components** — Always reference tokens
+4. **Forgetting states** — Include hover, focus, active, disabled
+5. **Platform-specific tokens** — Keep the source platform-agnostic
+
+## Measuring Token Health
+
+Track these metrics:
+- **Token coverage**: % of hardcoded values vs. tokens
+- **Token usage**: Dead tokens waste cognitive load
+- **Naming consistency**: Automated linting catches violations
+
+## Get Started with tekton/ui
+
+tekton/ui provides a complete design token infrastructure out of the box:
+
+- Three-tier token architecture
+- OKLCH color system
+- Multi-platform export
+- AI-ready MCP integration
+
+[Start building with tokens →](/docs/tokens)

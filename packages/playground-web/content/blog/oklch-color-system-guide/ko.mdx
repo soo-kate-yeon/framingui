@@ -1,0 +1,246 @@
+---
+title: "OKLCH 색상 시스템 가이드: CSS 색상의 미래"
+description: "현대 CSS를 변화시키는 지각적으로 균일한 색상 공간 OKLCH를 배우세요. 접근성 높고 생생한 색상 팔레트를 만드세요."
+date: "2026-02-26"
+author: "tekton team"
+tags: ["oklch", "css", "color-system", "accessibility", "design-tokens"]
+---
+
+# OKLCH 색상 시스템 가이드: CSS 색상의 미래
+
+OKLCH는 HSL 이후 CSS 색상 명세에서 가장 중요한 발전입니다. 지각적으로 균일한 색상을 만들고, 접근성을 쉽게 하며, 더 생생한 팔레트를 생성합니다. 알아야 할 모든 것을 정리했습니다.
+
+## OKLCH란?
+
+OKLCH는 **O**klab **L**ightness(밝기) **C**hroma(채도) **H**ue(색상)의 약자로, 인간이 실제로 색상을 보는 방식을 모델링한 지각적으로 균일한 색상 공간입니다.
+
+```css
+/* OKLCH 문법 */
+color: oklch(L C H);
+color: oklch(L C H / alpha);
+
+/* 예시 */
+color: oklch(0.65 0.15 250); /* 생생한 파랑 */
+```
+
+- **L (Lightness)**: 0 ~ 1 — 색상이 얼마나 밝게 보이는지
+- **C (Chroma)**: 0 ~ ~0.4 — 색상 강도/채도
+- **H (Hue)**: 0 ~ 360 — 색상환에서의 위치
+
+## OKLCH가 HSL보다 나은 이유
+
+### HSL의 문제점
+
+HSL에서 "50% 밝기"는 색상마다 같은 의미가 아닙니다:
+
+```css
+/* HSL: 같은 밝기, 다른 인지 명도 */
+.yellow { background: hsl(60, 100%, 50%); }  /* 밝아 보임 */
+.blue { background: hsl(240, 100%, 50%); }   /* 어두워 보임 */
+```
+
+50% 밝기의 노랑은 50% 밝기의 파랑보다 훨씬 밝게 보입니다. 뇌가 다르게 인식하기 때문입니다.
+
+### OKLCH는 이것을 해결합니다
+
+```css
+/* OKLCH: 같은 밝기 = 같은 인지 명도 */
+.yellow { background: oklch(0.75 0.15 85); }
+.blue { background: oklch(0.75 0.15 250); }
+```
+
+이제 두 색상은 동일한 인지 명도를 갖습니다. 이것이 "지각적 균일성"입니다.
+
+## OKLCH로 색상 팔레트 만들기
+
+### 일관된 스케일 생성하기
+
+밝기만 변경하여 10단계 색상 스케일을 생성합니다:
+
+```typescript
+const generateScale = (hue: number, chroma: number) => ({
+  50: `oklch(0.97 ${chroma * 0.1} ${hue})`,
+  100: `oklch(0.93 ${chroma * 0.2} ${hue})`,
+  200: `oklch(0.87 ${chroma * 0.4} ${hue})`,
+  300: `oklch(0.78 ${chroma * 0.6} ${hue})`,
+  400: `oklch(0.68 ${chroma * 0.8} ${hue})`,
+  500: `oklch(0.58 ${chroma} ${hue})`,
+  600: `oklch(0.50 ${chroma} ${hue})`,
+  700: `oklch(0.42 ${chroma * 0.9} ${hue})`,
+  800: `oklch(0.33 ${chroma * 0.8} ${hue})`,
+  900: `oklch(0.25 ${chroma * 0.7} ${hue})`,
+  950: `oklch(0.18 ${chroma * 0.5} ${hue})`,
+});
+
+// Primary 팔레트 생성
+const primary = generateScale(250, 0.15); // 파랑 계열
+```
+
+### 시맨틱 색상 조화
+
+시맨틱 색상 간에 밝기와 채도를 일관되게 유지합니다:
+
+```typescript
+const semanticColors = {
+  primary: 'oklch(0.55 0.15 250)',   // 파랑
+  success: 'oklch(0.55 0.15 145)',   // 초록
+  warning: 'oklch(0.55 0.15 85)',    // 노랑-주황
+  error: 'oklch(0.55 0.15 25)',      // 빨강
+  info: 'oklch(0.55 0.15 220)',      // 청록
+};
+```
+
+이 모든 색상은 UI에서 동일한 시각적 "무게"를 갖습니다.
+
+## 접근성을 위한 OKLCH
+
+### 예측 가능한 대비율
+
+OKLCH 밝기는 지각적으로 균일하므로 대비를 더 정확하게 계산할 수 있습니다:
+
+```typescript
+// 간단한 대비 추정
+const estimateContrast = (l1: number, l2: number) => {
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  return (lighter + 0.05) / (darker + 0.05);
+};
+
+// WCAG AA는 텍스트에 4.5:1 요구
+// 배경: oklch(0.98 ...)
+// 텍스트: oklch(0.35 ...) → 좋은 대비!
+```
+
+### 접근성 높은 팔레트 만들기
+
+접근성을 내장한 팔레트를 정의합니다:
+
+```typescript
+const palette = {
+  // 배경 색상 (높은 밝기)
+  surface: 'oklch(0.98 0.01 250)',
+  surfaceHover: 'oklch(0.95 0.02 250)',
+  
+  // 텍스트 색상 (대비를 위한 낮은 밝기)
+  textPrimary: 'oklch(0.20 0.02 250)',
+  textSecondary: 'oklch(0.40 0.02 250)',
+  
+  // 인터랙티브 (중간 밝기)
+  interactive: 'oklch(0.50 0.15 250)',
+  interactiveHover: 'oklch(0.45 0.17 250)',
+};
+```
+
+## 실용적인 OKLCH 패턴
+
+### OKLCH로 다크 모드 만들기
+
+밝기 값을 반전시켜 팔레트를 뒤집습니다:
+
+```typescript
+const lightTheme = {
+  background: 'oklch(0.98 0.01 250)',
+  foreground: 'oklch(0.20 0.02 250)',
+  primary: 'oklch(0.50 0.15 250)',
+};
+
+const darkTheme = {
+  background: 'oklch(0.15 0.02 250)',
+  foreground: 'oklch(0.90 0.01 250)',
+  primary: 'oklch(0.65 0.15 250)', // 어두운 배경에서 약간 더 밝게
+};
+```
+
+### 호버 상태
+
+예측 가능한 호버 효과를 위해 밝기를 조정합니다:
+
+```css
+.button {
+  background: oklch(0.55 0.15 250);
+}
+
+.button:hover {
+  background: oklch(0.50 0.17 250); /* 더 어둡고, 약간 더 많은 채도 */
+}
+
+.button:active {
+  background: oklch(0.45 0.18 250); /* 더욱 어둡게 */
+}
+```
+
+### 포커스 링
+
+높은 채도의 색상은 포커스 상태에 적합합니다:
+
+```css
+.button:focus-visible {
+  outline: 2px solid oklch(0.65 0.25 250);
+  outline-offset: 2px;
+}
+```
+
+## 브라우저 지원
+
+OKLCH는 모든 최신 브라우저에서 지원됩니다:
+
+- Chrome 111+ (2023년 3월)
+- Firefox 113+ (2023년 5월)
+- Safari 15.4+ (2022년 3월)
+- Edge 111+ (2023년 3월)
+
+구형 브라우저를 위한 폴백:
+
+```css
+.button {
+  /* 구형 브라우저용 폴백 */
+  background: #3b82f6;
+  /* 최신 브라우저는 이것을 사용 */
+  background: oklch(0.55 0.15 250);
+}
+```
+
+## tekton/ui에서의 OKLCH
+
+tekton/ui는 OKLCH를 네이티브 색상 시스템으로 사용합니다:
+
+```typescript
+// tekton/ui 토큰 구조
+import { colors } from '@tekton-ui/tokens';
+
+// 모든 색상이 OKLCH로 정의됨
+console.log(colors.primary[500]);
+// → "oklch(0.55 0.15 250)"
+```
+
+### 색상 조작
+
+```typescript
+import { adjustLightness, adjustChroma } from '@tekton-ui/color';
+
+const base = 'oklch(0.55 0.15 250)';
+const lighter = adjustLightness(base, 0.1);  // oklch(0.65 0.15 250)
+const darker = adjustLightness(base, -0.1);  // oklch(0.45 0.15 250)
+const muted = adjustChroma(base, -0.05);     // oklch(0.55 0.10 250)
+```
+
+## 빠른 참조
+
+| 용도 | L | C | 참고 |
+|------|---|---|------|
+| 배경 | 0.95-0.99 | 0.01-0.02 | 미묘한 틴트가 있는 거의 흰색 |
+| 표면 | 0.90-0.95 | 0.02-0.03 | 카드, 모달 |
+| 텍스트 | 0.15-0.40 | 0.01-0.03 | 밝은 배경에서 높은 대비 |
+| 인터랙티브 | 0.45-0.60 | 0.12-0.18 | 버튼, 링크 |
+| 강조 | 0.60-0.70 | 0.20-0.30 | 포커스 링, 하이라이트 |
+
+## 오늘부터 OKLCH 시작하기
+
+색상 시스템을 현대화할 준비가 되셨나요? tekton/ui가 제공하는 것들:
+
+- 사전 구축된 OKLCH 팔레트
+- 색상 조작 유틸리티
+- 자동 대비 검사
+- 다크 모드 지원
+
+[OKLCH 토큰 살펴보기 →](/docs/tokens/colors)
