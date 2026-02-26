@@ -1,5 +1,5 @@
 /**
- * Tailwind CSS Configuration for @tekton-ui/ui
+ * Tailwind CSS Configuration for @framingui/ui
  * [SPEC-UI-001] shadcn-ui Fork & Token Integration
  */
 

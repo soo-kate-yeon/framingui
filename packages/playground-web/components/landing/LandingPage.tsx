@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from 'framer-motion';
 import { Accordion } from './Accordion';
-import { Button } from '@tekton-ui/ui';
+import { Button } from '@framingui/ui';
 import { Footer } from '../shared/Footer';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLandingContent } from '../../data/i18n/landing';
@@ -70,7 +70,7 @@ export function LandingPage() {
         <p className="text-xs sm:text-sm font-medium flex-1">
           <span className="sm:hidden">Beta is now open — Apply now</span>
           <span className="hidden sm:inline">
-            🎉 tekton/ui Beta is now open — Be the first to experience the agent-first design
+            🎉 framingui Beta is now open — Be the first to experience the agent-first design
             system.
           </span>
         </p>

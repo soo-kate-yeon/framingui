@@ -1,11 +1,11 @@
-# @tekton-ui/ui
+# @framingui/ui
 
 > 30+ 프로덕션 레디 React 컴포넌트 라이브러리. Radix UI + Tailwind CSS 기반입니다.
 
 ## 설치
 
 ```bash
-npm install @tekton-ui/ui
+npm install @framingui/ui
 ```
 
 ### Peer Dependencies
@@ -33,8 +33,8 @@ const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    // @tekton-ui/ui 컴포넌트 경로 추가
-    './node_modules/@tekton-ui/ui/dist/**/*.{js,mjs}',
+    // @framingui/ui 컴포넌트 경로 추가
+    './node_modules/@framingui/ui/dist/**/*.{js,mjs}',
   ],
   plugins: [
     require('tailwindcss-animate'), // Dialog, Popover 애니메이션에 필요
@@ -50,7 +50,7 @@ export default config;
 
 ```css
 /* globals.css */
-@import '@tekton-ui/ui/styles';
+@import '@framingui/ui/styles';
 
 @tailwind base;
 @tailwind components;
@@ -60,7 +60,7 @@ export default config;
 ### 3. 컴포넌트 사용
 
 ```tsx
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
 
 export default function HomePage() {
   return (
@@ -140,7 +140,7 @@ export default function HomePage() {
 ### Button
 
 ```tsx
-import { Button } from '@tekton-ui/ui';
+import { Button } from '@framingui/ui';
 
 function ButtonExamples() {
   return (
@@ -173,7 +173,7 @@ import {
   CardContent,
   CardFooter,
   Button,
-} from '@tekton-ui/ui';
+} from '@framingui/ui';
 
 function ProfileCard() {
   return (
@@ -204,7 +204,7 @@ import {
   DialogDescription,
   DialogFooter,
   Button,
-} from '@tekton-ui/ui';
+} from '@framingui/ui';
 
 function ConfirmDialog() {
   return (
@@ -271,7 +271,7 @@ function ConfirmDialog() {
 ### 템플릿 사용 예시
 
 ```tsx
-import { LoginTemplateComponent, templateRegistry } from '@tekton-ui/ui';
+import { LoginTemplateComponent, templateRegistry } from '@framingui/ui';
 
 // 컴포넌트로 직접 사용
 function LoginPage() {
@@ -295,12 +295,12 @@ const loginTemplate = templateRegistry.get('auth.login');
 
 ## 테마 시스템
 
-`@tekton-ui/ui`는 CSS Variables 기반 3-layer 아키텍처를 통해 테마를 관리합니다.
+`@framingui/ui`는 CSS Variables 기반 3-layer 아키텍처를 통해 테마를 관리합니다.
 
 ### 테마 적용
 
 ```tsx
-import { themeToCSS, injectThemeCSS } from '@tekton-ui/ui';
+import { themeToCSS, injectThemeCSS } from '@framingui/ui';
 
 // 테마 CSS 생성
 const css = themeToCSS(themeData);
@@ -344,7 +344,7 @@ import {
   scaleVariants,
   useMotionSafe,
   getMotionTransition,
-} from '@tekton-ui/ui';
+} from '@framingui/ui';
 import { motion } from 'framer-motion';
 
 function AnimatedCard() {
@@ -378,7 +378,7 @@ function AnimatedCard() {
 
 ```bash
 # 접근성 테스트 실행
-pnpm --filter @tekton-ui/ui test:a11y
+pnpm --filter @framingui/ui test:a11y
 ```
 
 ---
@@ -386,7 +386,7 @@ pnpm --filter @tekton-ui/ui test:a11y
 ## 유틸리티 함수
 
 ```tsx
-import { cn } from '@tekton-ui/ui';
+import { cn } from '@framingui/ui';
 
 // cn() - clsx + tailwind-merge
 // 조건부 클래스 병합 및 Tailwind 충돌 해결
@@ -394,7 +394,7 @@ import { cn } from '@tekton-ui/ui';
 ```
 
 ```tsx
-import { tokenVars, isTokenReference, extractTokenName } from '@tekton-ui/ui';
+import { tokenVars, isTokenReference, extractTokenName } from '@framingui/ui';
 
 // 토큰 CSS 변수 참조
 const bgColor = tokenVars.bg.surface.default;
@@ -409,10 +409,10 @@ isTokenReference('16px'); // false
 
 ## 다른 패키지와의 관계
 
-- **[@tekton-ui/tokens](./tokens.md)**: 직접 의존합니다. 컴포넌트 스타일에 사용되는 토큰 타입을 제공합니다.
-- **[@tekton-ui/core](./core.md)**: 스크린 생성 파이프라인에서 ui 컴포넌트를 참조합니다.
-- **[@tekton-ui/styled](./styled.md)**: 동일한 토큰 체계를 공유합니다. styled-components 프로젝트에서 ui 컴포넌트와 함께 사용할 수 있습니다.
-- **[@tekton-ui/mcp-server](./mcp-server.md)**: MCP 서버가 ui 패키지의 컴포넌트 및 템플릿 정보를 AI에게 제공합니다.
+- **[@framingui/tokens](./tokens.md)**: 직접 의존합니다. 컴포넌트 스타일에 사용되는 토큰 타입을 제공합니다.
+- **[@framingui/core](./core.md)**: 스크린 생성 파이프라인에서 ui 컴포넌트를 참조합니다.
+- **[@framingui/styled](./styled.md)**: 동일한 토큰 체계를 공유합니다. styled-components 프로젝트에서 ui 컴포넌트와 함께 사용할 수 있습니다.
+- **[@framingui/mcp-server](./mcp-server.md)**: MCP 서버가 ui 패키지의 컴포넌트 및 템플릿 정보를 AI에게 제공합니다.
 
 ---
 

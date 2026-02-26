@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - SafeArea Utilities Tests
+ * @framingui/core - SafeArea Utilities Tests
  * Comprehensive tests for SafeArea calculation and application utilities
  * [SPEC-LAYOUT-004] [MILESTONE-7]
  */

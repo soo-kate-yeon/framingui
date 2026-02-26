@@ -9,7 +9,7 @@ import { exec } from 'node:child_process';
 import { saveCredentials } from './credentials.js';
 
 const LOGIN_TIMEOUT_MS = 5 * 60 * 1000; // 5분
-const DEFAULT_API_URL = 'https://tekton-ui.com';
+const DEFAULT_API_URL = 'https://framingui.com';
 
 /**
  * 플랫폼별 브라우저 열기

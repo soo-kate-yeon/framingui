@@ -53,7 +53,7 @@ Result: Every output looks like "generic SaaS UI template #47."
 - **The Problem**: AI tools generate based on training data patterns, not your brand identity
 - **Why It Happens**: AI lacks context about your design system, so it defaults to generic patterns
 - **The Solution**: Provide design system context to AI through structured design tokens
-- **How tekton-ui Helps**: Makes your design system machine-readable so AI generates on-brand UI
+- **How framingui Helps**: Makes your design system machine-readable so AI generates on-brand UI
 - **Result**: Consistent, branded interfaces without manually fixing every component AI generates
 
 ## The Anatomy of Generic AI UI
@@ -544,9 +544,9 @@ export function ProfileCard({ user }) {
 - Semantic color for growth (not hardcoded `green-600`)
 - Uses brand-specific components (`StatCard`, `StatLabel`, `StatValue`)
 
-## How tekton-ui Makes Your UI Consistent
+## How framingui Makes Your UI Consistent
 
-tekton-ui solves the generic AI problem with three layers:
+framingui solves the generic AI problem with three layers:
 
 ### Layer 1: Deterministic Token Generation
 
@@ -616,7 +616,7 @@ Now AI knows:
 Connect AI directly to your design system.
 
 ```bash
-# Install tekton-ui
+# Install framingui
 npm install @tekton/core @tekton/mcp-server
 
 # Initialize design tokens
@@ -660,14 +660,14 @@ Every component AI generates:
 
 **Project:** SaaS analytics dashboard
 
-**Before tekton-ui (generic AI output):**
+**Before framingui (generic AI output):**
 - 47 unique color values in codebase (should be 12 tokens)
 - 28 different spacing values (should be 9 tokens)
 - Inconsistent button styles across 15 components
 - 3 different "primary blue" colors (`#3B82F6`, `#2563EB`, `#1D4ED8`)
 - Time spent fixing AI output: 2-3 hours per day
 
-**After tekton-ui (design system context):**
+**After framingui (design system context):**
 - 12 color tokens used consistently (100% compliance)
 - 9 spacing tokens from semantic scale
 - All buttons use component variants (primary, ghost, link)
@@ -676,15 +676,15 @@ Every component AI generates:
 
 **Developer testimonial:**
 
-> "Before tekton-ui, I spent half my time fixing what AI generated—replacing hardcoded colors, adjusting spacing, making buttons consistent. Now AI generates production-ready code that matches our design system exactly. I went from fighting AI to trusting it."
+> "Before framingui, I spent half my time fixing what AI generated—replacing hardcoded colors, adjusting spacing, making buttons consistent. Now AI generates production-ready code that matches our design system exactly. I went from fighting AI to trusting it."
 >
 > — Sarah Chen, Indie Developer
 
 ## FAQ
 
-### Can I use tekton-ui with my existing design system?
+### Can I use framingui with my existing design system?
 
-Yes! tekton-ui integrates with:
+Yes! framingui integrates with:
 - **Figma Tokens**: Import token JSON from Figma Tokens plugin
 - **Style Dictionary**: Point MCP to your Style Dictionary output
 - **Tailwind CSS**: Extract tokens from `tailwind.config.js`
@@ -692,7 +692,7 @@ Yes! tekton-ui integrates with:
 
 ### Does this work with all AI tools?
 
-tekton-ui's MCP server works with:
+framingui's MCP server works with:
 - **Claude Code** (official support)
 - **Cursor** (experimental MCP support)
 - **Cline / Windsurf** (community support)
@@ -700,7 +700,7 @@ tekton-ui's MCP server works with:
 
 For AI tools without MCP support, you can:
 - Copy token JSON into prompts (manual but effective)
-- Use tekton-ui's code validation tool to check AI output
+- Use framingui's code validation tool to check AI output
 - Generate initial components with MCP-enabled tools, then iterate elsewhere
 
 ### Will AI still make design mistakes?
@@ -718,11 +718,11 @@ AI with design system context makes fewer mistakes, but it's not perfect:
 - ⚠️ Component composition issues (nesting errors)
 - ⚠️ Business logic bugs (unrelated to design)
 
-tekton-ui solves **design consistency**, not all possible bugs.
+framingui solves **design consistency**, not all possible bugs.
 
 ### How much does it cost?
 
-tekton-ui is **open-source and free**:
+framingui is **open-source and free**:
 - MIT license
 - No usage limits
 - No API keys required (MCP runs locally)
@@ -730,7 +730,7 @@ tekton-ui is **open-source and free**:
 
 ### Can this enforce design system compliance automatically?
 
-Yes! tekton-ui includes build-time validation:
+Yes! framingui includes build-time validation:
 
 ```typescript
 // esbuild.config.js
@@ -757,7 +757,7 @@ Build fails if any component violates your design system. Works for both AI-gene
 
 Ready to stop generating generic UI?
 
-### Step 1: Install tekton-ui
+### Step 1: Install framingui
 
 ```bash
 npm install @tekton/core @tekton/mcp-server
@@ -809,11 +809,11 @@ Beta features:
 
 **Resources:**
 
-- [Documentation](https://tekton-ui.com/docs) — Complete setup guides
-- [Component Catalog](https://tekton-ui.com/components) — Browse available components
-- [MCP Integration](https://tekton-ui.com/docs/mcp) — Connect AI tools
-- [GitHub](https://github.com/tekton-ui) — Open-source repository
+- [Documentation](https://framingui.com/docs) — Complete setup guides
+- [Component Catalog](https://framingui.com/components) — Browse available components
+- [MCP Integration](https://framingui.com/docs/mcp) — Connect AI tools
+- [GitHub](https://github.com/framingui) — Open-source repository
 
 ---
 
-*Built with [tekton-ui](https://tekton-ui.com) — Stop generating generic UI. Generate your brand.*
+*Built with [framingui](https://framingui.com) — Stop generating generic UI. Generate your brand.*

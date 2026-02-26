@@ -43,7 +43,7 @@ export type WhoamiOutput = z.infer<typeof WhoamiOutputSchema>;
 // ============================================================================
 
 /**
- * Layout types from @tekton-ui/core LAYOUTS
+ * Layout types from @framingui/core LAYOUTS
  */
 export const LayoutTypeSchema = z.enum([
   'single-column',
@@ -55,7 +55,7 @@ export const LayoutTypeSchema = z.enum([
 ]);
 
 /**
- * ComponentNode schema - recursive structure from @tekton-ui/core
+ * ComponentNode schema - recursive structure from @framingui/core
  */
 const ComponentNodeSchema: z.ZodType<{
   type: string;
@@ -136,7 +136,7 @@ export const GenerateBlueprintOutputSchema = z.object({
       themeId: z.string(),
       iconLibrary: z.string(), // SPEC-ICON-001: Icon library used
       layout: LayoutTypeSchema,
-      components: z.array(ComponentNodeSchema), // ComponentNode[] from @tekton-ui/core
+      components: z.array(ComponentNodeSchema), // ComponentNode[] from @framingui/core
       timestamp: z.number(),
     })
   ),
@@ -253,7 +253,7 @@ export type ExportFormat = z.infer<typeof ExportFormatSchema>;
  * SPEC: E-003 Screen Export Request
  */
 export const ExportScreenInputSchema = z.object({
-  blueprint: z.unknown(), // Blueprint from @tekton-ui/core (accept any object for flexibility)
+  blueprint: z.unknown(), // Blueprint from @framingui/core (accept any object for flexibility)
   format: ExportFormatSchema,
 });
 
@@ -274,7 +274,7 @@ export const ExportScreenOutputSchema = z.object({
 
 /**
  * Export component resolution tier
- * - tier1: Copy from @tekton-ui/ui (fast, deterministic)
+ * - tier1: Copy from @framingui/ui (fast, deterministic)
  * - tier2: Generate with LLM (flexible, customizable)
  * - auto: Automatically choose based on component availability
  */
@@ -1115,7 +1115,7 @@ export type GenerationOptions = z.infer<typeof GenerationOptionsSchema>;
  * SPEC-LAYOUT-002: Generate production code from screen definition
  */
 export const GenerateScreenInputSchema = z.object({
-  screenDefinition: z.unknown(), // Accept any object - will be validated by @tekton-ui/core
+  screenDefinition: z.unknown(), // Accept any object - will be validated by @framingui/core
   outputFormat: OutputFormatSchema,
   options: GenerationOptionsSchema.optional(),
 });
@@ -1222,7 +1222,7 @@ export const ValidateEnvironmentInputSchema = z.object({
     .boolean()
     .optional()
     .default(true)
-    .describe('Also validate Tailwind CSS configuration for @tekton-ui/ui compatibility'),
+    .describe('Also validate Tailwind CSS configuration for @framingui/ui compatibility'),
 });
 
 export type ValidateEnvironmentInput = z.infer<typeof ValidateEnvironmentInputSchema>;
@@ -1253,7 +1253,7 @@ export const ValidateEnvironmentOutputSchema = z.object({
       fixes: z.array(z.string()),
     })
     .optional()
-    .describe('Tailwind CSS configuration validation for @tekton-ui/ui compatibility'),
+    .describe('Tailwind CSS configuration validation for @framingui/ui compatibility'),
   error: z.string().optional(),
 });
 

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Page Layout Token Tests
+ * @framingui/core - Page Layout Token Tests
  * Test suite for page layout token definitions
  * [SPEC-LAYOUT-001] [PHASE-4]
  */

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Switch Component Tests
+ * @framingui/ui - Switch Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Switch component
  */
 

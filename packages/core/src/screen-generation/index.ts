@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Screen Generation Module
+ * @framingui/core - Screen Generation Module
  * Declarative screen definition system with layout tokens
  * [SPEC-LAYOUT-002] [PHASE-1] [PHASE-2] [PHASE-3]
  *

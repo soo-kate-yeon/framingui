@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Shell Token Tests
+ * @framingui/core - Shell Token Tests
  * Tests for concrete Shell Token definitions
  * [SPEC-LAYOUT-001] [PHASE-3]
  */

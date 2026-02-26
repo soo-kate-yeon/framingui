@@ -2,7 +2,7 @@
  * List Components MCP Tool (SPEC-MCP-003)
  * [TAG-MCP003-006] List all available UI components
  *
- * Lists all UI components from @tekton-ui/ui with metadata
+ * Lists all UI components from @framingui/ui with metadata
  * including category, tier, and variant information
  */
 

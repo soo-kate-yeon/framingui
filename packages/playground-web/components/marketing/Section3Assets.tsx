@@ -246,7 +246,7 @@ export const VerificationLogicAsset = () => {
           <CheckItem label="Scanning design tokens" delay={1} />
           <CheckItem label="Validating React 19 compatibility" delay={2} />
           <CheckItem label="Constraint check: 'marketing-hero'" delay={3} />
-          <CheckItem label="Linting @tekton-ui/core" delay={4} />
+          <CheckItem label="Linting @framingui/core" delay={4} />
           <CheckItem label="Accessibility (WCAG 2.1) Audit" delay={5} />
         </div>
 

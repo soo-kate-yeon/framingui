@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/tokens - Token Type Definitions Tests (TAG-002)
+ * @framingui/tokens - Token Type Definitions Tests (TAG-002)
  * Specification tests that define expected token type behavior
  * [SPEC-STYLED-001] [REQ-STY-001, REQ-STY-002, REQ-STY-003, REQ-STY-004]
  */

@@ -1,5 +1,5 @@
 {
-  "name": "@tekton-ui/styled",
+  "name": "@framingui/styled",
   "version": "0.3.3",
   "description": "Token-enforced styled-components wrapper with compile-time and runtime validation",
   "type": "module",
@@ -34,7 +34,7 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@tekton-ui/tokens": "workspace:*",
+    "@framingui/tokens": "workspace:*",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {

@@ -4,7 +4,7 @@
  * SPEC-DEPLOY-001: 인증된 사용자의 라이선스 보유 테마만 반환
  */
 
-import { listThemes } from '@tekton-ui/core';
+import { listThemes } from '@framingui/core';
 import type { ListThemesOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 import { getAccessibleThemes } from '../auth/state.js';
@@ -16,7 +16,7 @@ import { getAccessibleThemes } from '../auth/state.js';
  */
 export async function listThemesTool(): Promise<ListThemesOutput> {
   try {
-    // @tekton-ui/core에서 전체 테마 로드
+    // @framingui/core에서 전체 테마 로드
     const allThemes = listThemes();
     const allThemeIds = allThemes.map(theme => theme.id);
 

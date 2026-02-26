@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - SafeArea Utilities
+ * @framingui/core - SafeArea Utilities
  * SafeArea calculation and application utilities for mobile platforms
  * [SPEC-LAYOUT-004] [MILESTONE-3]
  */

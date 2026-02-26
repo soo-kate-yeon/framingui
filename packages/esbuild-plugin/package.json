@@ -1,5 +1,5 @@
 {
-  "name": "@tekton-ui/esbuild-plugin",
+  "name": "@framingui/esbuild-plugin",
   "version": "0.3.3",
   "description": "esbuild plugin for build-time token compliance validation",
   "type": "module",

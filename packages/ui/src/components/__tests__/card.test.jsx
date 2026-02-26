@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Card Component Tests
+ * @framingui - Card Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Card component
  */
 import { render, screen } from '@testing-library/react';

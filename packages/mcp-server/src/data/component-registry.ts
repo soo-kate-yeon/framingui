@@ -1,6 +1,6 @@
 /**
  * Component Registry (SPEC-MCP-003)
- * Static component metadata from @tekton-ui/ui
+ * Static component metadata from @framingui/ui
  *
  * This registry provides metadata for all UI components
  * organized by tier (1: Core, 2: Complex, 3: Advanced)
@@ -10,7 +10,7 @@ import type { ComponentMeta } from '../schemas/mcp-schemas.js';
 
 /**
  * All component metadata organized by tier
- * Data extracted from @tekton-ui/ui exports
+ * Data extracted from @framingui/ui exports
  */
 export const COMPONENT_CATALOG: ComponentMeta[] = [
   // ========================================

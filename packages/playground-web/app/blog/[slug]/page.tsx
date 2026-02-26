@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 
   const fm = post.frontmatter.en;
-  const url = `https://tekton-ui.com/blog/${slug}`;
+  const url = `https://framingui.com/blog/${slug}`;
 
   const ogImage = fm.coverImage || '/og-image.png';
 
@@ -74,7 +74,7 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
   const koRelated = getRelatedPosts(slug, 'ko');
 
   const fm = post.frontmatter.en;
-  const url = `https://tekton-ui.com/blog/${slug}`;
+  const url = `https://framingui.com/blog/${slug}`;
 
   return (
     <>
@@ -91,10 +91,10 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
       />
       <BreadcrumbJsonLd
         items={[
-          { name: 'Blog', url: 'https://tekton-ui.com/blog' },
+          { name: 'Blog', url: 'https://framingui.com/blog' },
           {
             name: fm.category,
-            url: `https://tekton-ui.com/blog/tag/${fm.tags[0]?.toLowerCase() || ''}`,
+            url: `https://framingui.com/blog/tag/${fm.tags[0]?.toLowerCase() || ''}`,
           },
           { name: fm.title, url },
         ]}

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Signup Screen Template
+ * @framingui/core - Signup Screen Template
  * [SPEC-UI-002] [TAG-UI002-025] auth.signup
  *
  * Design Reference: Claude.ai Signup Page

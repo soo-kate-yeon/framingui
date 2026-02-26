@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Avatar Component Tests
+ * @framingui/ui - Avatar Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Avatar component
  */
 

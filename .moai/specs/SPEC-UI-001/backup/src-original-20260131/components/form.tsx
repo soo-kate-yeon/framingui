@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Form Component
+ * @framingui - Form Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  */
 

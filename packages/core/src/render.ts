@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Render Module
+ * @framingui/core - Render Module
  * Template-based JSX generation (no AST dependencies)
  * Target: 300 LOC
  */

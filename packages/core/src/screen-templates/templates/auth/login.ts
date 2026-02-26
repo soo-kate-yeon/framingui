@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Login Screen Template
+ * @framingui/core - Login Screen Template
  * [SPEC-UI-002] [TAG-UI002-024] auth.login
  *
  * Design Reference: Claude.ai Login Page

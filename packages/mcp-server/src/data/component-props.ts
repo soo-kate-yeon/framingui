@@ -1,6 +1,6 @@
 /**
  * Shared Component Props Data Module
- * 실제 @tekton-ui/ui 컴포넌트에서 추출한 Tier 1 (15개 core) props/variants 데이터
+ * 실제 @framingui/ui 컴포넌트에서 추출한 Tier 1 (15개 core) props/variants 데이터
  *
  * 사용처:
  * - preview-component.ts: 컴포넌트 상세 정보 제공
@@ -63,7 +63,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Usage',
-        code: `import { Button } from '@tekton-ui/ui';\n\n<Button variant="default">Click me</Button>`,
+        code: `import { Button } from '@framingui/ui';\n\n<Button variant="default">Click me</Button>`,
         description: 'Simple button with default variant',
       },
       {
@@ -105,7 +105,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Input',
-        code: `import { Input } from '@tekton-ui/ui';\n\n<Input type="email" placeholder="Enter your email" />`,
+        code: `import { Input } from '@framingui/ui';\n\n<Input type="email" placeholder="Enter your email" />`,
         description: 'Simple email input',
       },
     ],
@@ -128,7 +128,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'With Input',
-        code: `import { Label, Input } from '@tekton-ui/ui';\n\n<Label htmlFor="email">Email</Label>\n<Input id="email" type="email" />`,
+        code: `import { Label, Input } from '@framingui/ui';\n\n<Label htmlFor="email">Email</Label>\n<Input id="email" type="email" />`,
         description: 'Label paired with input',
       },
     ],
@@ -152,7 +152,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Card',
-        code: `import { Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';\n\n<Card>\n  <CardHeader>\n    <CardTitle>Card Title</CardTitle>\n  </CardHeader>\n  <CardContent>Card content here</CardContent>\n</Card>`,
+        code: `import { Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';\n\n<Card>\n  <CardHeader>\n    <CardTitle>Card Title</CardTitle>\n  </CardHeader>\n  <CardContent>Card content here</CardContent>\n</Card>`,
         description: 'Card with header and content',
       },
     ],
@@ -182,7 +182,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Status Badge',
-        code: `import { Badge } from '@tekton-ui/ui';\n\n<Badge variant="secondary">Active</Badge>`,
+        code: `import { Badge } from '@framingui/ui';\n\n<Badge variant="secondary">Active</Badge>`,
         description: 'Badge for status display',
       },
     ],
@@ -206,7 +206,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'With Fallback',
-        code: `import { Avatar, AvatarImage, AvatarFallback } from '@tekton-ui/ui';\n\n<Avatar>\n  <AvatarImage src="/avatar.jpg" alt="User" />\n  <AvatarFallback>CN</AvatarFallback>\n</Avatar>`,
+        code: `import { Avatar, AvatarImage, AvatarFallback } from '@framingui/ui';\n\n<Avatar>\n  <AvatarImage src="/avatar.jpg" alt="User" />\n  <AvatarFallback>CN</AvatarFallback>\n</Avatar>`,
         description: 'Avatar with image and fallback initials',
       },
     ],
@@ -266,7 +266,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Checkbox',
-        code: `import { Checkbox } from '@tekton-ui/ui';\n\n<Checkbox id="terms" />\n<label htmlFor="terms">Accept terms</label>`,
+        code: `import { Checkbox } from '@framingui/ui';\n\n<Checkbox id="terms" />\n<label htmlFor="terms">Accept terms</label>`,
         description: 'Checkbox with label',
       },
     ],
@@ -303,7 +303,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic RadioGroup',
-        code: `import { RadioGroup, RadioGroupItem } from '@tekton-ui/ui';\nimport { Label } from '@tekton-ui/ui';\n\n<RadioGroup defaultValue="option-1">\n  <div className="flex items-center space-x-2">\n    <RadioGroupItem value="option-1" id="option-1" />\n    <Label htmlFor="option-1">Option 1</Label>\n  </div>\n</RadioGroup>`,
+        code: `import { RadioGroup, RadioGroupItem } from '@framingui/ui';\nimport { Label } from '@framingui/ui';\n\n<RadioGroup defaultValue="option-1">\n  <div className="flex items-center space-x-2">\n    <RadioGroupItem value="option-1" id="option-1" />\n    <Label htmlFor="option-1">Option 1</Label>\n  </div>\n</RadioGroup>`,
         description: 'Radio group with labeled options',
       },
     ],
@@ -339,7 +339,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Switch',
-        code: `import { Switch } from '@tekton-ui/ui';\nimport { Label } from '@tekton-ui/ui';\n\n<div className="flex items-center space-x-2">\n  <Switch id="airplane-mode" />\n  <Label htmlFor="airplane-mode">Airplane Mode</Label>\n</div>`,
+        code: `import { Switch } from '@framingui/ui';\nimport { Label } from '@framingui/ui';\n\n<div className="flex items-center space-x-2">\n  <Switch id="airplane-mode" />\n  <Label htmlFor="airplane-mode">Airplane Mode</Label>\n</div>`,
         description: 'Toggle switch with label',
       },
     ],
@@ -375,7 +375,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Textarea',
-        code: `import { Textarea } from '@tekton-ui/ui';\n\n<Textarea placeholder="Type your message here." />`,
+        code: `import { Textarea } from '@framingui/ui';\n\n<Textarea placeholder="Type your message here." />`,
         description: 'Simple textarea',
       },
     ],
@@ -398,7 +398,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Card Skeleton',
-        code: `import { Skeleton } from '@tekton-ui/ui';\n\n<div className="space-y-2">\n  <Skeleton className="h-4 w-[250px]" />\n  <Skeleton className="h-4 w-[200px]" />\n</div>`,
+        code: `import { Skeleton } from '@framingui/ui';\n\n<div className="space-y-2">\n  <Skeleton className="h-4 w-[250px]" />\n  <Skeleton className="h-4 w-[200px]" />\n</div>`,
         description: 'Loading skeleton placeholders',
       },
     ],
@@ -422,7 +422,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Scrollable Content',
-        code: `import { ScrollArea } from '@tekton-ui/ui';\n\n<ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">\n  Long scrollable content here...\n</ScrollArea>`,
+        code: `import { ScrollArea } from '@framingui/ui';\n\n<ScrollArea className="h-[200px] w-[350px] rounded-md border p-4">\n  Long scrollable content here...\n</ScrollArea>`,
         description: 'Scrollable container with custom scrollbar',
       },
     ],
@@ -453,7 +453,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Form',
-        code: `import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@tekton-ui/ui';\nimport { useForm } from 'react-hook-form';\n\nconst form = useForm();\n\n<Form {...form}>\n  <FormField\n    control={form.control}\n    name="username"\n    render={({ field }) => (\n      <FormItem>\n        <FormLabel>Username</FormLabel>\n        <FormControl>\n          <Input {...field} />\n        </FormControl>\n        <FormMessage />\n      </FormItem>\n    )}\n  />\n</Form>`,
+        code: `import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@framingui/ui';\nimport { useForm } from 'react-hook-form';\n\nconst form = useForm();\n\n<Form {...form}>\n  <FormField\n    control={form.control}\n    name="username"\n    render={({ field }) => (\n      <FormItem>\n        <FormLabel>Username</FormLabel>\n        <FormControl>\n          <Input {...field} />\n        </FormControl>\n        <FormMessage />\n      </FormItem>\n    )}\n  />\n</Form>`,
         description: 'Form with validation and error messages',
       },
     ],
@@ -505,7 +505,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Select',
-        code: `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@tekton-ui/ui';\n\n<Select>\n  <SelectTrigger className="w-[180px]">\n    <SelectValue placeholder="Select a fruit" />\n  </SelectTrigger>\n  <SelectContent>\n    <SelectItem value="apple">Apple</SelectItem>\n    <SelectItem value="banana">Banana</SelectItem>\n  </SelectContent>\n</Select>`,
+        code: `import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@framingui/ui';\n\n<Select>\n  <SelectTrigger className="w-[180px]">\n    <SelectValue placeholder="Select a fruit" />\n  </SelectTrigger>\n  <SelectContent>\n    <SelectItem value="apple">Apple</SelectItem>\n    <SelectItem value="banana">Banana</SelectItem>\n  </SelectContent>\n</Select>`,
         description: 'Select dropdown with options',
       },
     ],
@@ -544,7 +544,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     examples: [
       {
         title: 'Basic Dialog',
-        code: `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@tekton-ui/ui';\n\n<Dialog>\n  <DialogTrigger asChild>\n    <Button>Open</Button>\n  </DialogTrigger>\n  <DialogContent>\n    <DialogHeader>\n      <DialogTitle>Dialog Title</DialogTitle>\n    </DialogHeader>\n  </DialogContent>\n</Dialog>`,
+        code: `import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@framingui/ui';\n\n<Dialog>\n  <DialogTrigger asChild>\n    <Button>Open</Button>\n  </DialogTrigger>\n  <DialogContent>\n    <DialogHeader>\n      <DialogTitle>Dialog Title</DialogTitle>\n    </DialogHeader>\n  </DialogContent>\n</Dialog>`,
         description: 'Modal dialog with trigger button',
       },
     ],

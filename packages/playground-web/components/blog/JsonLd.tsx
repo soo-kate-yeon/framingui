@@ -35,7 +35,7 @@ export function BlogPostingJsonLd({
     publisher: {
       '@type': 'Organization',
       name: 'Tekton',
-      url: 'https://tekton-ui.com',
+      url: 'https://framingui.com',
     },
     mainEntityOfPage: {
       '@type': 'WebPage',

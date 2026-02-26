@@ -6,8 +6,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Components | tekton/ui',
-  description: 'Browse all tekton/ui components with examples.',
+  title: 'Components | framingui',
+  description: 'Browse all framingui components with examples.',
 };
 
 const COMPONENTS = [

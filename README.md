@@ -1228,7 +1228,7 @@ For detailed implementation status, see:
 
 **Phase F (Current) - Layout System & UI Package:** 🚧 In Progress
 
-- ✅ **@tekton/ui Package**: 19개 React 컴포넌트 구현
+- ✅ **@framingui Package**: 19개 React 컴포넌트 구현
   - Primitives (14개): Avatar, Badge, Button, Checkbox, Heading, Image, Input, Link, List, Progress, Radio, Slider, Switch, Text
   - Components (5개): Dropdown, Form, Modal, Table, Tabs
   - 테스트 커버리지: 98.93%, WCAG 2.1 AA 준수

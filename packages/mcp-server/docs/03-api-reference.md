@@ -147,7 +147,7 @@ Preview an icon library and retrieve its configuration.
 
 ### list-components
 
-List all available UI components from `@tekton-ui/ui`.
+List all available UI components from `@framingui/ui`.
 
 **Input**:
 

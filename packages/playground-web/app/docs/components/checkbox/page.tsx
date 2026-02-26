@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Checkbox | tekton/ui',
+  title: 'Checkbox | framingui',
   description: 'Checkbox component for boolean inputs with label support and accessible design.',
 };
 
@@ -25,7 +25,7 @@ export default function CheckboxPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Import</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-          {`import { Checkbox } from '@tekton-ui/ui';`}
+          {`import { Checkbox } from '@framingui/ui';`}
         </pre>
       </section>
 

@@ -1,5 +1,5 @@
 {
-  "name": "@tekton-ui/tokens",
+  "name": "@framingui/tokens",
   "version": "0.3.3",
   "description": "TypeScript token type definitions with compile-time enforcement",
   "type": "module",

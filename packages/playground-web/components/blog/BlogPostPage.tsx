@@ -58,7 +58,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
     router.push('/blog');
   };
 
-  const postUrl = `https://tekton-ui.com/blog/${post.slug}`;
+  const postUrl = `https://framingui.com/blog/${post.slug}`;
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>

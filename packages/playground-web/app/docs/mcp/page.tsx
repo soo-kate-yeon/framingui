@@ -5,8 +5,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'MCP Integration | tekton/ui',
-  description: 'Integrate tekton/ui with Claude Code, Cursor, and other MCP tools.',
+  title: 'MCP Integration | framingui',
+  description: 'Integrate framingui with Claude Code, Cursor, and other MCP tools.',
 };
 
 export default function MCPPage() {
@@ -17,7 +17,7 @@ export default function MCPPage() {
           MCP Integration
         </h1>
         <p className="text-xl text-neutral-600">
-          Connect tekton/ui with Claude Code, Cursor, Windsurf, and other MCP-compatible tools.
+          Connect framingui with Claude Code, Cursor, Windsurf, and other MCP-compatible tools.
         </p>
       </header>
 
@@ -26,7 +26,7 @@ export default function MCPPage() {
         <h2 className="text-2xl font-bold text-neutral-900">What is MCP?</h2>
         <p className="text-neutral-600 leading-relaxed">
           MCP (Model Context Protocol) is a standard for connecting AI tools with external 
-          data sources and capabilities. tekton/ui provides an MCP server that gives AI 
+          data sources and capabilities. framingui provides an MCP server that gives AI 
           agents access to design tokens, components, and theme information.
         </p>
       </section>
@@ -57,7 +57,7 @@ export default function MCPPage() {
           <div className="space-y-2">
             <h3 className="font-semibold text-neutral-700">1. Run the init command</h3>
             <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-              <code>npx @tekton-ui/mcp-server init</code>
+              <code>npx @framingui/mcp-server init</code>
             </pre>
             <p className="text-sm text-neutral-500">
               This creates a .mcp.json file in your project root.

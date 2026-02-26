@@ -6,7 +6,7 @@
 ## Start Here
 - docs/README.md — Documentation hub and learning paths.
 - docs/guides/getting-started.md — Install, generate tokens, export, and WCAG basics.
-- docs/packages/README.md — Overview of all `@tekton-ui/*` packages.
+- docs/packages/README.md — Overview of all `@framingui/*` packages.
 - docs/api/README.md — API reference for token generation, schemas, and validation.
 - docs/architecture/README.md — System architecture, data flow, and performance.
 
@@ -18,12 +18,12 @@
 
 ## Packages
 - docs/packages/README.md — Package map and dependency graph.
-- docs/packages/core.md — `@tekton-ui/core` pipeline and APIs.
-- docs/packages/ui.md — `@tekton-ui/ui` React component library.
-- docs/packages/tokens.md — `@tekton-ui/tokens` token type system.
-- docs/packages/styled.md — `@tekton-ui/styled` token-enforced styling.
-- docs/packages/esbuild-plugin.md — `@tekton-ui/esbuild-plugin` build-time checks.
-- docs/packages/mcp-server.md — `@tekton-ui/mcp-server` AI tooling integration.
+- docs/packages/core.md — `@framingui/core` pipeline and APIs.
+- docs/packages/ui.md — `@framingui/ui` React component library.
+- docs/packages/tokens.md — `@framingui/tokens` token type system.
+- docs/packages/styled.md — `@framingui/styled` token-enforced styling.
+- docs/packages/esbuild-plugin.md — `@framingui/esbuild-plugin` build-time checks.
+- docs/packages/mcp-server.md — `@framingui/mcp-server` AI tooling integration.
 
 ## API / Technical Reference
 - docs/api/README.md — Full API reference.

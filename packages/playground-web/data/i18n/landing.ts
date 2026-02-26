@@ -67,20 +67,20 @@ export interface LandingContent {
 export const landingContent: Record<GlobalLocale, LandingContent> = {
   en: {
     nav: {
-      brandName: 'tekton/ui',
+      brandName: 'framingui',
       pricing: 'Pricing',
       docs: 'Docs',
       tryStudio: 'Try Studio',
       getStarted: 'Sign up',
     },
     hero: {
-      brandName: 'tekton/ui',
+      brandName: 'framingui',
       title: {
         part1: 'Agent-first',
         part2: 'Design System',
       },
       description:
-        'tekton/ui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
+        'framingui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
       buttons: {
         tryStudio: 'Try Studio Free',
         getStarted: 'Sign up',
@@ -101,7 +101,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'Fully Responsive Layout Tokens',
           content:
-            'Go beyond basic grids. tekton/ui defines structured tokens for Shells (app frames), Pages (content layouts), and Sections (content blocks) that auto-adapt across Mobile, Tablet, and Desktop breakpoints. Your agent knows exactly how to scale.',
+            'Go beyond basic grids. framingui defines structured tokens for Shells (app frames), Pages (content layouts), and Sections (content blocks) that auto-adapt across Mobile, Tablet, and Desktop breakpoints. Your agent knows exactly how to scale.',
         },
         {
           title: 'Built on 30+ shadcn/ui Components',
@@ -122,7 +122,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'Works Everywhere MCP Runs',
           content:
-            'Not locked to one platform. Claude Code, Cursor, Windsurf, OpenAI Codex — if it supports MCP, tekton/ui works. One npx command and your agent has full design capabilities.',
+            'Not locked to one platform. Claude Code, Cursor, Windsurf, OpenAI Codex — if it supports MCP, framingui works. One npx command and your agent has full design capabilities.',
         },
         {
           title: 'Import a System, Not Just a Screen',
@@ -143,7 +143,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'Reliable Code, Every Single Time',
           content:
-            'Raw LLMs guess at styles and layouts — tekton/ui eliminates that. A semantic scoring algorithm places components using weighted rules, producing code that follows strict design constraints instead of hallucinating CSS.',
+            'Raw LLMs guess at styles and layouts — framingui eliminates that. A semantic scoring algorithm places components using weighted rules, producing code that follows strict design constraints instead of hallucinating CSS.',
         },
         {
           title: 'Safety Protocols Built In',
@@ -155,7 +155,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     faq: {
       title: 'Frequently Asked Questions',
-      subtitle: 'Everything you need to know about tekton/ui.',
+      subtitle: 'Everything you need to know about framingui.',
       items: [
         {
           title: 'How do I use the templates?',
@@ -163,9 +163,9 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
             'Pick a template, install the MCP server with one command, and your AI coding tool is ready to generate production UI. During beta, your first template is free.',
         },
         {
-          title: 'Is tekton/ui free?',
+          title: 'Is framingui free?',
           content:
-            'tekton/ui requires a paid license. You need to purchase at least one template to unlock MCP server access and start generating production UI with your agent.',
+            'framingui requires a paid license. You need to purchase at least one template to unlock MCP server access and start generating production UI with your agent.',
         },
         {
           title: 'Can I use it for app development?',
@@ -175,7 +175,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'Can I apply it to an existing project?',
           content:
-            'Yes! Run npx @tekton-ui/mcp-server init in your project root. It auto-detects your framework, installs dependencies, and configures everything — without breaking your existing code.',
+            'Yes! Run npx @framingui/mcp-server init in your project root. It auto-detects your framework, installs dependencies, and configures everything — without breaking your existing code.',
         },
         {
           title: 'Is there a Figma import feature?',
@@ -187,20 +187,20 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
   },
   ko: {
     nav: {
-      brandName: 'tekton/ui',
+      brandName: 'framingui',
       pricing: '가격',
       docs: '문서',
       tryStudio: 'Studio 체험',
       getStarted: '가입하기',
     },
     hero: {
-      brandName: 'tekton/ui',
+      brandName: 'framingui',
       title: {
         part1: '에이전트를 위한',
         part2: '에이전트-퍼스트 디자인 시스템',
       },
       description:
-        'tekton/ui는 AI 에이전트가 진짜로 이해할 수 있는 첫 번째 디자인 시스템이에요. 구조화된 토큰과 레이아웃 로직으로 에이전트가 전문적이고 바로 쓸 수 있는 UI를 코드베이스에 직접 만들어줘요. Figma도, 추측도 필요 없어요.',
+        'framingui는 AI 에이전트가 진짜로 이해할 수 있는 첫 번째 디자인 시스템이에요. 구조화된 토큰과 레이아웃 로직으로 에이전트가 전문적이고 바로 쓸 수 있는 UI를 코드베이스에 직접 만들어줘요. Figma도, 추측도 필요 없어요.',
       buttons: {
         tryStudio: '무료로 Studio 체험하기',
         getStarted: '가입하기',
@@ -221,7 +221,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: '완전 반응형 레이아웃 토큰',
           content:
-            '기본 그리드를 넘어서요. tekton/ui는 Shells(앱 프레임), Pages(콘텐츠 레이아웃), Sections(콘텐츠 블록)을 위한 토큰을 제공해요. 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되죠. 에이전트가 정확히 어떻게 확장할지 알고 있어요.',
+            '기본 그리드를 넘어서요. framingui는 Shells(앱 프레임), Pages(콘텐츠 레이아웃), Sections(콘텐츠 블록)을 위한 토큰을 제공해요. 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되죠. 에이전트가 정확히 어떻게 확장할지 알고 있어요.',
         },
         {
           title: '30개 이상의 shadcn/ui 컴포넌트 기반',
@@ -242,7 +242,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'MCP가 실행되는 모든 곳에서 작동해요',
           content:
-            '하나의 플랫폼에 묶이지 않아요. Claude Code, Cursor, Windsurf, OpenAI Codex처럼 MCP를 지원하는 곳이라면 tekton/ui가 다 작동해요. npx 명령 하나로 에이전트가 완전한 디자인 기능을 갖출 수 있어요.',
+            '하나의 플랫폼에 묶이지 않아요. Claude Code, Cursor, Windsurf, OpenAI Codex처럼 MCP를 지원하는 곳이라면 framingui가 다 작동해요. npx 명령 하나로 에이전트가 완전한 디자인 기능을 갖출 수 있어요.',
         },
         {
           title: '화면 하나가 아니라 시스템 전체를 가져와요',
@@ -263,7 +263,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: '매번 믿을 수 있는 코드',
           content:
-            '일반 LLM은 스타일과 레이아웃을 추측해요. tekton/ui는 이걸 없앴어요. 시맨틱 스코어링 알고리즘이 규칙 기반으로 컴포넌트를 배치해서, CSS를 만들어내는 대신 정확한 디자인 제약을 따르는 코드를 생성해요.',
+            '일반 LLM은 스타일과 레이아웃을 추측해요. framingui는 이걸 없앴어요. 시맨틱 스코어링 알고리즘이 규칙 기반으로 컴포넌트를 배치해서, CSS를 만들어내는 대신 정확한 디자인 제약을 따르는 코드를 생성해요.',
         },
         {
           title: '안전장치가 내장되어 있어요',
@@ -275,7 +275,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     faq: {
       title: '자주 묻는 질문',
-      subtitle: 'tekton/ui에 대해 알아야 할 모든 것.',
+      subtitle: 'framingui에 대해 알아야 할 모든 것.',
       items: [
         {
           title: '템플릿은 어떻게 사용하나요?',
@@ -283,9 +283,9 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
             '템플릿을 고르고, 명령어 하나로 MCP 서버를 설치하면 AI 코딩 도구에서 바로 프로덕션 UI를 만들 수 있어요. 베타 기간에는 첫 번째 템플릿이 무료예요.',
         },
         {
-          title: 'tekton/ui는 무료인가요?',
+          title: 'framingui는 무료인가요?',
           content:
-            'tekton/ui는 유료예요. MCP 서버에 접근하고 에이전트로 실제 사용 가능한 UI를 만들려면 최소 템플릿 하나는 구매하셔야 해요.',
+            'framingui는 유료예요. MCP 서버에 접근하고 에이전트로 실제 사용 가능한 UI를 만들려면 최소 템플릿 하나는 구매하셔야 해요.',
         },
         {
           title: '앱 개발에 사용할 수 있나요?',
@@ -295,7 +295,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: '기존 프로젝트에 적용할 수 있나요?',
           content:
-            '물론이죠! 프로젝트 루트에서 npx @tekton-ui/mcp-server init을 실행해보세요. 프레임워크를 자동으로 인식하고 필요한 패키지를 설치한 뒤 모든 걸 세팅해줘요. 기존 코드는 건드리지 않아요.',
+            '물론이죠! 프로젝트 루트에서 npx @framingui/mcp-server init을 실행해보세요. 프레임워크를 자동으로 인식하고 필요한 패키지를 설치한 뒤 모든 걸 세팅해줘요. 기존 코드는 건드리지 않아요.',
         },
         {
           title: 'Figma 가져오기 기능이 있나요?',

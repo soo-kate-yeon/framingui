@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Dropdown Component Tests
+ * @framingui - Dropdown Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

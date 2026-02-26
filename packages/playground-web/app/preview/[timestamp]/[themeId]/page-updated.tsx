@@ -10,7 +10,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { fetchBlueprint } from '@/lib/mcp-client';
-import { loadTheme } from '@tekton-ui/core';
+import { loadTheme } from '@framingui/core';
 import { notFound } from 'next/navigation';
 import { ThemeProvider } from '@/components/theme';
 import { BlueprintRenderer } from '@/components/renderer';

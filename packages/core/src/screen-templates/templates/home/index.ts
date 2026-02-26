@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Home Templates Export
+ * @framingui/core - Home Templates Export
  * [SPEC-UI-002] Home Screen Templates (1)
  */
 

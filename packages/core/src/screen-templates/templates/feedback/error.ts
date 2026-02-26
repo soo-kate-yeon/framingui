@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Error Screen Template
+ * @framingui/core - Error Screen Template
  * [SPEC-UI-002] [TAG-UI002-032] feedback.error
  */
 

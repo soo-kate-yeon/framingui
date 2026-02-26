@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Loading Template
+ * @framingui/ui - Loading Template
  * SPEC-UI-002: Feedback Screen Template
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

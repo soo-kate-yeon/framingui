@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     description:
       'Insights on AI-powered development, design systems, and modern web engineering from the Tekton team.',
     type: 'website',
-    url: 'https://tekton-ui.com/blog',
+    url: 'https://framingui.com/blog',
     images: [
       {
         url: '/og-image.png',
         width: 962,
         height: 422,
-        alt: 'Tekton UI - Agent-First Design System',
+        alt: 'FramingUI - Agent-First Design System',
       },
     ],
   },

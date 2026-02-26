@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Login Template Tests
+ * @framingui/ui - Login Template Tests
  * SPEC-UI-001 Phase 3: Login Template Unit Tests
  */
 

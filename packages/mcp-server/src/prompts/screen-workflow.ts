@@ -164,7 +164,7 @@ The 4-step workflow ensures:
 
 **Tailwind Validation Checks:**
 - ✅ tailwind.config.{ts,js,mjs,cjs} exists
-- ✅ @tekton-ui/ui content paths included
+- ✅ @framingui/ui content paths included
 - ✅ tailwindcss-animate plugin configured
 
 **When to use:**
@@ -208,15 +208,15 @@ User: "Create a login page with email/password fields"
 **Code generation fails in Step 3:**
 - Ensure Screen Definition passed validation in Step 2
 - Check that the outputFormat is one of: tailwind, css-in-js, react
-- Verify @tekton-ui/core is properly installed
+- Verify @framingui/core is properly installed
 
 **Missing dependencies:**
 - Always run Step 4 to verify environment
 - Show install commands to user
-- Check Tailwind config includes @tekton-ui/ui paths
+- Check Tailwind config includes @framingui/ui paths
 
 **Components render without styles:**
-- Verify Tailwind content paths include @tekton-ui/ui
+- Verify Tailwind content paths include @framingui/ui
 - Check tailwindcss-animate plugin is configured
 - Run validate-environment to diagnose
 

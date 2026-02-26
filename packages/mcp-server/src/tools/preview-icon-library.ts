@@ -4,7 +4,7 @@
  * [SPEC-ICON-001]
  */
 
-import { loadIconLibrary, iconLibraryExists } from '@tekton-ui/core';
+import { loadIconLibrary, iconLibraryExists } from '@framingui/core';
 import type { PreviewIconLibraryInput, PreviewIconLibraryOutput } from '../schemas/mcp-schemas.js';
 import { info, error as logError } from '../utils/logger.js';
 

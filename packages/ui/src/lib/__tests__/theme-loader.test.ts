@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Theme Loader Tests
+ * @framingui/ui - Theme Loader Tests
  * SPEC-UI-001: Verify linear-minimal-v1.json → CSS Variables conversion
  */
 

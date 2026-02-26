@@ -88,7 +88,7 @@ Feature: list-components Tool
 
   Scenario: List all components successfully
     Given the MCP server is running
-    And @tekton/ui has 30+ registered components
+    And @framingui has 30+ registered components
     When I call list-components with category='all'
     Then the response should have success=true
     And the response should contain 30+ components
@@ -125,7 +125,7 @@ Feature: preview-component Tool
     And the component name should be 'Button'
     And the component should have props array with at least 3 props
     And the component should have variants array
-    And the importStatement should contain '@tekton/ui'
+    And the importStatement should contain '@framingui'
 
   Scenario: Preview component with sub-components
     Given the MCP server is running
@@ -305,7 +305,7 @@ Feature: MCP Server Integration
 - [ ] Examples provided in README
 
 ### Integration
-- [ ] Works with existing @tekton/ui
+- [ ] Works with existing @framingui
 - [ ] Uses existing templateRegistry
 - [ ] Follows MCP JSON-RPC 2.0 protocol
 - [ ] Error messages are helpful

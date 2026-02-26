@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Screen Definition Validation
+ * @framingui/core - Screen Definition Validation
  * Zod-based runtime validation for screen definitions
  * [SPEC-LAYOUT-002] [PHASE-1]
  */

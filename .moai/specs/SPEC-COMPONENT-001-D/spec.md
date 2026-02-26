@@ -21,11 +21,11 @@ tags: ["SPEC-COMPONENT-001-D", "Export-Pipeline", "Hybrid-System", "LLM-Generati
 
 ## Executive Summary
 
-**Purpose**: Implement the hybrid export pipeline that intelligently routes component exports between Tier 1 (copy from @tekton/ui) and Tier 2 (LLM generation), while generating theme CSS Variables from token definitions.
+**Purpose**: Implement the hybrid export pipeline that intelligently routes component exports between Tier 1 (copy from @framingui) and Tier 2 (LLM generation), while generating theme CSS Variables from token definitions.
 
 **Scope**: Design and implement:
 1. CSS Variables generator (Theme → CSS)
-2. Tier 1 resolver (copy from @tekton/ui)
+2. Tier 1 resolver (copy from @framingui)
 3. Tier 2 LLM generator (schema + examples → LLM → code)
 4. Validation & retry logic for LLM outputs
 5. Hybrid routing in export-screen tool
@@ -79,7 +79,7 @@ export async function exportScreen(input: ExportScreenInput): Promise<ExportScre
 │  │ 2. For each component in blueprint         │       │
 │  │                                             │       │
 │  │   IF component in COMPONENT_CATALOG         │       │
-│  │   ├─ Tier 1: Copy from @tekton/ui          │       │
+│  │   ├─ Tier 1: Copy from @framingui          │       │
 │  │   │  - Read source file                    │       │
 │  │   │  - Apply prop transformations          │       │
 │  │   │  - Return code                         │       │
@@ -340,7 +340,7 @@ export interface CoreResolverOptions {
 }
 
 /**
- * Resolve Tier 1 components by copying from @tekton/ui
+ * Resolve Tier 1 components by copying from @framingui
  * Implements requirement E-002
  */
 export async function resolveFromUI(
@@ -749,7 +749,7 @@ export default function Screen() {
 ### Internal Dependencies
 - **SPEC-COMPONENT-001-A**: Uses CSS generator
 - **SPEC-COMPONENT-001-B**: Uses component schemas
-- **SPEC-COMPONENT-001-C**: Copies from @tekton/ui
+- **SPEC-COMPONENT-001-C**: Copies from @framingui
 
 ### External Dependencies
 - **@anthropic-ai/sdk**: ^0.40.0 - Claude API
@@ -780,7 +780,7 @@ export default function Screen() {
 
 ### Implementation Success
 - [x] CSS generation produces valid CSS for all themes
-- [x] Tier 1 export correctly copies from @tekton/ui
+- [x] Tier 1 export correctly copies from @framingui
 - [x] Tier 2 LLM generation achieves 90%+ validation success
 - [x] Validation retry loop works correctly
 - [x] Hybrid routing works for mixed component lists

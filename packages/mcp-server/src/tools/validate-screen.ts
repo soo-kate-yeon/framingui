@@ -57,7 +57,7 @@ function generateSuggestions(errors: string[]): ValidationSuggestion[] {
         field: 'components',
         message: error,
         suggestion:
-          'Component type must be one of: Button, Input, Text, Heading, Card, Modal, etc. See @tekton-ui/core COMPONENT_CATALOG',
+          'Component type must be one of: Button, Input, Text, Heading, Card, Modal, etc. See @framingui/core COMPONENT_CATALOG',
       });
     }
 
@@ -88,8 +88,8 @@ export async function validateScreenTool(
   try {
     const { screenDefinition, strictMode = false } = input;
 
-    // Import validation from @tekton-ui/core
-    const { validateScreenDefinition } = await import('@tekton-ui/core');
+    // Import validation from @framingui/core
+    const { validateScreenDefinition } = await import('@framingui/core');
 
     // Run validation
     const validation = validateScreenDefinition(screenDefinition);

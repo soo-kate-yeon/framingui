@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - DropdownMenu Component Tests
+ * @framingui/ui - DropdownMenu Component Tests
  */
 
 import { render, screen, waitFor } from '@testing-library/react';

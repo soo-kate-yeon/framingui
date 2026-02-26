@@ -1,7 +1,7 @@
 {
-  "name": "@tekton-ui/ui",
+  "name": "@framingui/ui",
   "version": "0.6.0",
-  "description": "Tekton UI Reference Component Library",
+  "description": "FramingUI Reference Component Library",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
   "exports": {
@@ -48,7 +48,7 @@
     "accessibility"
   ],
   "dependencies": {
-    "@tekton-ui/tokens": "workspace:*"
+    "@framingui/tokens": "workspace:*"
   },
   "peerDependencies": {
     "@hookform/resolvers": "^3.0.0",

@@ -7,24 +7,24 @@ import { Rocket, Download, Cpu, Palette, SwatchBook } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Documentation | tekton/ui',
+  title: 'Documentation | framingui',
   description: 'The agentic design system. 0% hallucination, production-ready UI.',
   openGraph: {
-    title: 'Documentation | tekton/ui',
+    title: 'Documentation | framingui',
     description: 'The agentic design system. 0% hallucination, production-ready UI.',
-    url: 'https://tekton-ui.com/docs',
+    url: 'https://framingui.com/docs',
     images: [
       {
         url: '/og-image.png',
         width: 962,
         height: 422,
-        alt: 'Tekton UI - Agent-First Design System',
+        alt: 'FramingUI - Agent-First Design System',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Documentation | tekton/ui',
+    title: 'Documentation | framingui',
     description: 'The agentic design system. 0% hallucination, production-ready UI.',
     images: ['/og-image.png'],
   },
@@ -69,7 +69,7 @@ export default function DocsPage() {
       {/* Hero */}
       <header className="space-y-4">
         <h1 className="text-4xl font-bold tracking-tight text-neutral-900">
-          tekton/ui Documentation
+          framingui Documentation
         </h1>
         <p className="text-xl text-neutral-600 leading-relaxed max-w-2xl">
           The agentic design system. A complete token architecture that AI agents can actually
@@ -102,12 +102,12 @@ export default function DocsPage() {
 
       {/* What is tekton */}
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold text-neutral-900">What is tekton/ui?</h2>
+        <h2 className="text-2xl font-bold text-neutral-900">What is framingui?</h2>
         <div className="space-y-4 text-neutral-600 leading-relaxed">
           <p>
-            tekton/ui is an <strong>agentic design system</strong> — built not for humans, but for
+            framingui is an <strong>agentic design system</strong> — built not for humans, but for
             AI agents. Traditional design systems provide guidelines that humans interpret.
-            tekton/ui provides structured constraints that LLMs can parse and follow.
+            framingui provides structured constraints that LLMs can parse and follow.
           </p>
           <p>
             The result: when you ask Claude Code, Cursor, or any MCP-compatible tool to build UI

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Token Resolution Tests
+ * @framingui/core - Token Resolution Tests
  * Test-First: Define expected behavior for token resolution and fallback logic
  * [SPEC-COMPONENT-001-A] [TOKEN-RESOLUTION]
  */

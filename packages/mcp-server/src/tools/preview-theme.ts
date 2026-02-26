@@ -4,9 +4,9 @@
  * SPEC-DEPLOY-001: 인증된 사용자의 라이선스 보유 테마만 접근 가능
  */
 
-import { loadTheme, listThemes } from '@tekton-ui/core';
-import type { ThemeV2 } from '@tekton-ui/core';
-import { themeToCSS, type ThemeDefinition } from '@tekton-ui/ui';
+import { loadTheme, listThemes } from '@framingui/core';
+import type { ThemeV2 } from '@framingui/core';
+import { themeToCSS, type ThemeDefinition } from '@framingui/ui';
 import type { PreviewThemeInput, PreviewThemeOutput } from '../schemas/mcp-schemas.js';
 import { createThemeNotFoundError, extractErrorMessage } from '../utils/error-handler.js';
 import { getAuthData } from '../auth/state.js';
@@ -139,11 +139,11 @@ export async function previewThemeTool(input: PreviewThemeInput): Promise<Previe
     if (!licensedThemes.includes(themeId)) {
       return {
         success: false,
-        error: `Theme "${themeId}" is not included in your license. Please purchase this theme at https://tekton-ui.com.`,
+        error: `Theme "${themeId}" is not included in your license. Please purchase this theme at https://framingui.com.`,
       };
     }
 
-    // @tekton-ui/core에서 테마 로드
+    // @framingui/core에서 테마 로드
     const theme = loadTheme(themeId);
 
     if (!theme) {

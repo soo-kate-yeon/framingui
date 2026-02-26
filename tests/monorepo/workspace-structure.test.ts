@@ -64,7 +64,7 @@ describe('RED Phase: Monorepo Workspace Structure', () => {
       expect(existsSync(packageFile)).toBe(true);
 
       const pkg = JSON.parse(readFileSync(packageFile, 'utf-8'));
-      expect(pkg.name).toBe('@tekton-ui/core');
+      expect(pkg.name).toBe('@framingui/core');
     });
 
     it('should have @tekton/mcp-server package', () => {
@@ -75,7 +75,7 @@ describe('RED Phase: Monorepo Workspace Structure', () => {
       expect(existsSync(packageFile)).toBe(true);
 
       const pkg = JSON.parse(readFileSync(packageFile, 'utf-8'));
-      expect(pkg.name).toBe('@tekton-ui/mcp-server');
+      expect(pkg.name).toBe('@framingui/mcp-server');
     });
 
     it('should configure proper exports in each package', () => {

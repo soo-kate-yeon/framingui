@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Progress Component Tests
+ * @framingui - Progress Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

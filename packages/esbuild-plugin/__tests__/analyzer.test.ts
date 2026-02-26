@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/esbuild-plugin - Analyzer Tests
+ * @framingui/esbuild-plugin - Analyzer Tests
  * [SPEC-STYLED-001] Tests for TAG-007: AST Analysis Logic
  * REQ-STY-007: Scan all .tsx/.ts files for hardcoded style values
  */

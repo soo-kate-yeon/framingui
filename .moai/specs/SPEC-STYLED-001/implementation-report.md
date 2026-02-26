@@ -189,7 +189,7 @@ Total: 2 violation(s)
 
 ### ⏸️ TAG-009 to TAG-011: Primitive Components
 **Status**: Deferred
-**Reason**: Existing `@tekton/ui` components work with Tailwind CSS. Token enforcement infrastructure is complete. Migration can happen incrementally as needed.
+**Reason**: Existing `@framingui` components work with Tailwind CSS. Token enforcement infrastructure is complete. Migration can happen incrementally as needed.
 
 **Future Work**:
 - Migrate existing primitives (Button, Input, etc.) to use `@tekton/styled`
@@ -216,7 +216,7 @@ Total: 2 violation(s)
 
 ### Existing Packages (Regression Testing)
 - ✅ **@tekton/core**: 1351/1351 tests passing
-- ✅ **@tekton/ui**: 273/273 tests passing
+- ✅ **@framingui**: 273/273 tests passing
 
 ### Total Coverage
 - **New Tests Created**: 80+ specification tests
@@ -292,7 +292,7 @@ Total: 2 violation(s)
     ↓
 @tekton/styled (Runtime Enforcement)
     ↓
-@tekton/ui (Components - Future Migration)
+@framingui (Components - Future Migration)
     ↓
 @tekton/esbuild-plugin (Build-Time Validation)
 ```

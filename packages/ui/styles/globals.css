@@ -1,13 +1,13 @@
 /**
- * @tekton/ui - Global Styles
+ * @framingui - Global Styles
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
- * This file provides base styles for Tekton UI components.
+ * This file provides base styles for FramingUI components.
  * Theme-specific CSS Variables are loaded dynamically via theme-loader.ts
  *
  * Usage in Next.js:
  * ```tsx
- * import '@tekton/ui/styles/globals.css';
+ * import '@framingui/styles/globals.css';
  * ```
  */
 

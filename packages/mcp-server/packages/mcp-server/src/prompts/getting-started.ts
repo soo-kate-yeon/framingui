@@ -14,7 +14,7 @@ export function getGettingStartedPrompt() {
         role: 'user',
         content: {
           type: 'text',
-          text: `# Getting Started with Tekton UI
+          text: `# Getting Started with FramingUI
 
 ## Step 1: Authentication (Required)
 

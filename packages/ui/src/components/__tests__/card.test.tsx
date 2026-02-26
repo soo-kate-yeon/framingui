@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Card Component Tests
+ * @framingui/ui - Card Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Card component
  */
 

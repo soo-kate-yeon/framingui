@@ -4,8 +4,8 @@ import { resolve } from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      '@tekton-ui/ui': resolve(__dirname, '../ui/src/index.ts'),
-      '@tekton-ui/core': resolve(__dirname, '../core/src/index.ts'),
+      '@framingui/ui': resolve(__dirname, '../ui/src/index.ts'),
+      '@framingui/core': resolve(__dirname, '../core/src/index.ts'),
     },
   },
   test: {

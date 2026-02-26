@@ -137,7 +137,7 @@ Successfully added comprehensive test suite for @tekton/esbuild-plugin, resolvin
 | Package | Test Files | Tests Passing | Status |
 |---------|-----------|---------------|--------|
 | @tekton/core | 32 | 1351 | ✅ |
-| @tekton/ui | 22 | 273 | ✅ |
+| @framingui | 22 | 273 | ✅ |
 | @tekton/tokens | 1 | 23 | ✅ |
 | @tekton/styled | 2 | 57 (1 skipped) | ✅ |
 | **@tekton/esbuild-plugin** | **3** | **117** | ✅ |

@@ -25,7 +25,7 @@ What if AI could read your design system and generate perfectly on-brand code ev
 ## TL;DR
 
 - **Model Context Protocol (MCP)** lets AI tools access your design tokens programmatically
-- **tekton-ui** provides an MCP server that exposes your design system to Claude Code, Cursor, and other MCP-compatible tools
+- **framingui** provides an MCP server that exposes your design system to Claude Code, Cursor, and other MCP-compatible tools
 - Setup takes **5 minutes** and works with any design token format (CSS variables, Tailwind, styled-components)
 - Result: AI generates code using your actual design tokens instead of hardcoded values
 - No more manual token replacement—AI understands your design system from the start
@@ -81,18 +81,18 @@ Model Context Protocol is Anthropic's open standard for connecting AI tools to e
 **Time wasted per component:** 0 minutes
 **Result:** 100% token compliance, zero manual replacement
 
-## Setting Up tekton-ui with MCP
+## Setting Up framingui with MCP
 
 ### Prerequisites
 
 - Node.js 20+ installed
 - Claude Code, Cursor, or any MCP-compatible AI tool
-- A project with design tokens (or generate them with tekton-ui)
+- A project with design tokens (or generate them with framingui)
 
-### Step 1: Install tekton-ui
+### Step 1: Install framingui
 
 ```bash
-# Install tekton-ui core packages
+# Install framingui core packages
 npm install @tekton/core @tekton/mcp-server
 
 # Or with yarn
@@ -104,10 +104,10 @@ pnpm add @tekton/core @tekton/mcp-server
 
 ### Step 2: Generate Design Tokens (Optional)
 
-If you don't have design tokens yet, tekton-ui can generate them:
+If you don't have design tokens yet, framingui can generate them:
 
 ```bash
-# Initialize tekton-ui with interactive prompts
+# Initialize framingui with interactive prompts
 npx @tekton/cli init
 
 # Follow prompts:
@@ -302,7 +302,7 @@ Notice:
 
 ### Pattern 1: Component Knowledge Integration
 
-tekton-ui's MCP server exposes not just tokens but **component knowledge**—semantic metadata about when and how to use components.
+framingui's MCP server exposes not just tokens but **component knowledge**—semantic metadata about when and how to use components.
 
 **Query component metadata:**
 
@@ -472,7 +472,7 @@ AI automatically:
 
 ## Integrating with Existing Design Systems
 
-You don't need to use tekton-ui's token generator—MCP works with any design token format.
+You don't need to use framingui's token generator—MCP works with any design token format.
 
 ### From Existing Design Tokens
 
@@ -481,7 +481,7 @@ If you already have design tokens (from Figma Tokens plugin or other sources):
 ```bash
 # Export your tokens as JSON
 # Structure them following W3C Design Token format
-# Or use tekton-ui templates as a starting point
+# Or use framingui templates as a starting point
 ```
 
 ```json
@@ -490,7 +490,7 @@ If you already have design tokens (from Figma Tokens plugin or other sources):
   "servers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton-ui/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_TOKEN_PATH": "./design-tokens.json"
       }
@@ -624,7 +624,7 @@ This makes MCP server return an error if AI tries to generate code without token
 
 ### Can I use MCP with AI tools other than Claude?
 
-Yes! MCP is an open standard. Any tool that supports Model Context Protocol can connect to tekton-ui's MCP server. Currently supported:
+Yes! MCP is an open standard. Any tool that supports Model Context Protocol can connect to framingui's MCP server. Currently supported:
 
 - Claude Code (official)
 - Cursor (experimental MCP support)
@@ -641,11 +641,11 @@ MCP reads tokens on-demand, so AI always sees the latest values. No need to rest
 
 ### Can AI generate new tokens via MCP?
 
-Not yet. MCP currently provides read-only access to design tokens. Token generation still requires using tekton-ui CLI or your existing design system workflow. Bi-directional MCP (read + write) is planned for a future release.
+Not yet. MCP currently provides read-only access to design tokens. Token generation still requires using framingui CLI or your existing design system workflow. Bi-directional MCP (read + write) is planned for a future release.
 
 ### Does this work with component libraries like shadcn/ui?
 
-Yes! tekton-ui's MCP server includes component knowledge for shadcn/ui components. When you ask AI to generate a component, it automatically:
+Yes! framingui's MCP server includes component knowledge for shadcn/ui components. When you ask AI to generate a component, it automatically:
 
 1. Queries available shadcn components via MCP
 2. Selects the appropriate component variant
@@ -698,13 +698,13 @@ Configure MCP to load it:
 
 Now AI will understand your custom components and use them in generated code.
 
-## Get Started with tekton-ui MCP
+## Get Started with framingui MCP
 
 Ready to connect your design system to AI?
 
 ### Option 1: Try the Playground
 
-Visit [tekton-ui.com/studio](https://tekton-ui.com/studio) to:
+Visit [framingui.com/studio](https://framingui.com/studio) to:
 - Generate design tokens from pre-built archetypes
 - Preview components with your tokens
 - Test MCP integration in the browser
@@ -712,7 +712,7 @@ Visit [tekton-ui.com/studio](https://tekton-ui.com/studio) to:
 ### Option 2: Install in Your Project
 
 ```bash
-# Install tekton-ui
+# Install framingui
 npm install @tekton/core @tekton/mcp-server
 
 # Initialize design tokens
@@ -739,15 +739,15 @@ Beta features include:
 
 **Documentation:**
 
-- [MCP Integration Guide](https://tekton-ui.com/docs/mcp) — Complete setup documentation
-- [API Reference](https://tekton-ui.com/docs/api) — MCP server API specification
-- [Component Knowledge](https://tekton-ui.com/docs/components) — Available components and metadata
+- [MCP Integration Guide](https://framingui.com/docs/mcp) — Complete setup documentation
+- [API Reference](https://framingui.com/docs/api) — MCP server API specification
+- [Component Knowledge](https://framingui.com/docs/components) — Available components and metadata
 
 **Community:**
 
-- [GitHub Discussions](https://github.com/tekton-ui/discussions) — Ask questions
-- [Discord](https://tekton-ui.com/discord) — Real-time help from the community
+- [GitHub Discussions](https://github.com/framingui/discussions) — Ask questions
+- [Discord](https://framingui.com/discord) — Real-time help from the community
 
 ---
 
-*Built with [tekton-ui](https://tekton-ui.com) — AI-powered design systems with MCP integration.*
+*Built with [framingui](https://framingui.com) — AI-powered design systems with MCP integration.*

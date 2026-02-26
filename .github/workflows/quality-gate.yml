@@ -77,7 +77,7 @@ jobs:
 
       - name: Run TypeScript compiler
         run: |
-          # Type check core packages (mcp-server has separate build with @tekton/ui)
+          # Type check core packages (mcp-server has separate build with @framingui)
           pnpm exec tsc --build packages/core packages/tokens packages/styled packages/esbuild-plugin --force
 
       - name: Upload type check errors

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Toast Component Tests
+ * @framingui/ui - Toast Component Tests
  */
 
 import { render, screen } from '@testing-library/react';

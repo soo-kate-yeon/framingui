@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Tooltip Component Tests
+ * @framingui/ui - Tooltip Component Tests
  */
 
 import { render, screen, waitFor } from '@testing-library/react';

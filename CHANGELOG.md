@@ -9,10 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **@tekton-ui/mcp-server**: @babel/parser와 @babel/traverse를 dependencies로 이동하여 런타임 오류 해결
+- **@framingui/mcp-server**: @babel/parser와 @babel/traverse를 dependencies로 이동하여 런타임 오류 해결
   - dependency-extractor가 런타임에 이 패키지들을 사용하므로 devDependencies에서 dependencies로 이동
   - "Cannot find package '@babel/parser'" 오류 해결
-- **@tekton-ui/ui**: React 19 지원 추가
+- **@framingui/ui**: React 19 지원 추가
   - peerDependencies를 `^18.0.0 || ^19.0.0`으로 확장
   - React 버전 충돌 경고 해결
 
@@ -100,7 +100,7 @@ npx @anthropic-ai/mcp-inspector node dist/index.js
 # → Prompts 탭: 2개 프롬프트 (tekton-getting-started, tekton-screen-workflow)
 
 # init 워크플로우 테스트
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 # → 8단계 완료 확인
 # → CLAUDE.md, AGENTS.md 생성 확인
 # → 인증 안내 메시지 확인
@@ -121,19 +121,19 @@ npx @tekton-ui/mcp-server init
 1. 패키지 업데이트:
 
    ```bash
-   pnpm update @tekton-ui/mcp-server @tekton-ui/ui @tekton-ui/core @tekton-ui/tokens
+   pnpm update @framingui/mcp-server @framingui/ui @framingui/core @framingui/tokens
    ```
 
 2. 기존 프로젝트에 CLAUDE.md/AGENTS.md 추가 (선택사항):
 
    ```bash
-   npx @tekton-ui/mcp-server init
+   npx @framingui/mcp-server init
    # → Step 7/8에서 자동 생성
    ```
 
 3. MCP Prompts 확인 (선택사항):
    ```bash
-   npx @anthropic-ai/mcp-inspector node node_modules/@tekton-ui/mcp-server/dist/index.js
+   npx @anthropic-ai/mcp-inspector node node_modules/@framingui/mcp-server/dist/index.js
    ```
 
 ### Breaking Changes
@@ -303,7 +303,7 @@ No migration needed for v0.1.0 (initial release)
 
 ### Added
 
-- **@tekton/ui Package**: 19개 프로덕션 레디 React 컴포넌트
+- **@framingui Package**: 19개 프로덕션 레디 React 컴포넌트
   - **Primitives (14개)**: Avatar, Badge, Button, Checkbox, Heading, Image, Input, Link, List, Progress, Radio, Slider, Switch, Text
   - **Components (5개)**: Dropdown, Form, Modal, Table, Tabs
   - WCAG 2.1 AA 접근성 준수

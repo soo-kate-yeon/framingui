@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Account/Profile Screen Template
+ * @framingui/core - Account/Profile Screen Template
  * [SPEC-UI-002] [TAG-UI002-030] account.profile
  *
  * Design Reference: Claude.ai Profile Page (Claude Web 155.png)

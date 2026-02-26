@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Screen Templates Module
+ * @framingui/core - Screen Templates Module
  * AI-Native Design Library - 12 P0 Screen Templates
  * [SPEC-UI-002]
  *
@@ -110,7 +110,7 @@ export const allTemplates = [
  *
  * @example
  * ```typescript
- * import { registerAllTemplates } from '@tekton-ui/core/screen-templates';
+ * import { registerAllTemplates } from '@framingui/core/screen-templates';
  *
  * registerAllTemplates();
  * ```

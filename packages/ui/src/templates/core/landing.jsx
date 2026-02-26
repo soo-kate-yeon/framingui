@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Landing Template
+ * @framingui - Landing Template
  * SPEC-UI-002: Core Screen Template
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

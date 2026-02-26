@@ -347,7 +347,7 @@ Environment Variables: (나중에 설정)
 
 1. 프로젝트 설정 > Domains 탭
 2. "Add" 버튼 클릭
-3. 도메인 입력: `tekton-ui.com`
+3. 도메인 입력: `framingui.com`
 4. "Add" 클릭
 
 **Step 2: DNS 설정**
@@ -374,8 +374,8 @@ TTL: 3600
 
 ```bash
 # DNS 전파 확인 (10-30분 소요)
-dig tekton-ui.com
-dig www.tekton-ui.com
+dig framingui.com
+dig www.framingui.com
 
 # 또는 온라인 도구 사용:
 # https://dnschecker.org
@@ -394,7 +394,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=[Supabase Anon Key]
 SUPABASE_SERVICE_ROLE_KEY=[Supabase Service Role Key]
 
 # App
-NEXT_PUBLIC_APP_URL=https://tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://framingui.com
 
 # Feature Flags
 NEXT_PUBLIC_ENABLE_AUTH=true
@@ -414,7 +414,7 @@ NEXT_PUBLIC_ENABLE_PAYMENTS=false
 
 develop 브랜치에서:
 ```
-NEXT_PUBLIC_APP_URL=https://dev.tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://dev.framingui.com
 NEXT_PUBLIC_PADDLE_ENVIRONMENT=sandbox
 ```
 
@@ -439,10 +439,10 @@ git push origin master
 
 ```bash
 # SSL 인증서 확인 (자동 발급)
-curl -I https://tekton-ui.com
+curl -I https://framingui.com
 
 # 브라우저에서 접속
-open https://tekton-ui.com
+open https://framingui.com
 ```
 
 ### 3.6 Preview 배포 설정 (선택사항)
@@ -450,14 +450,14 @@ open https://tekton-ui.com
 1. 프로젝트 설정 > Git 탭
 2. "Production Branch": `master`
 3. "Preview Branches": `develop`
-4. develop 브랜치를 dev.tekton-ui.com으로 설정:
-   - Settings > Domains > Add Domain > `dev.tekton-ui.com`
+4. develop 브랜치를 dev.framingui.com으로 설정:
+   - Settings > Domains > Add Domain > `dev.framingui.com`
 
 ### 3.7 검증
 
-- [ ] https://tekton-ui.com 접속 가능
+- [ ] https://framingui.com 접속 가능
 - [ ] SSL 인증서 정상 (자물쇠 아이콘)
-- [ ] www.tekton-ui.com → tekton-ui.com 리다이렉트
+- [ ] www.framingui.com → framingui.com 리다이렉트
 - [ ] /studio 페이지 접근 가능
 - [ ] Vercel Analytics 작동 확인
 
@@ -483,7 +483,7 @@ open https://tekton-ui.com
 - [ ] @tekton npm organization 생성
 - [ ] NPM_TOKEN GitHub Secret 등록
 - [ ] Vercel 프로젝트 생성
-- [ ] tekton-ui.com 도메인 연결
+- [ ] framingui.com 도메인 연결
 - [ ] Vercel 환경변수 설정
 
 ### 최종 검증
@@ -496,7 +496,7 @@ pnpm --filter "./packages/*" build
 pnpm --filter @tekton/tokens publish --dry-run
 
 # Vercel 도메인 접속
-curl -I https://tekton-ui.com
+curl -I https://framingui.com
 ```
 
 ---

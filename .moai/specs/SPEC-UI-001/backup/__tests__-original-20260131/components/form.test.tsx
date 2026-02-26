@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Form Component Tests
+ * @framingui - Form Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

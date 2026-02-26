@@ -16,7 +16,7 @@ Implement 4 new MCP tools for component and template discovery in the tekton-mcp
 
 ### Scope
 - 4 new tools: list-components, preview-component, list-screen-templates, preview-screen-template
-- Integration with existing @tekton/ui components and Template Registry
+- Integration with existing @framingui components and Template Registry
 - Comprehensive test suite with 85% coverage target
 
 ### Priority
@@ -58,7 +58,7 @@ HIGH - Enables AI agents to effectively discover and utilize UI components
 
 **Acceptance Criteria:**
 - All 30+ components are registered
-- Metadata is accurate and up-to-date with @tekton/ui
+- Metadata is accurate and up-to-date with @framingui
 - Categories match the tiered structure (15 core, 10 complex, 5 advanced)
 
 **Files to Create:**
@@ -121,7 +121,7 @@ HIGH - Enables AI agents to effectively discover and utilize UI components
 
 **Tasks:**
 - [ ] [TAG-MCP003-008] Implement list-screen-templates tool function
-- [ ] Integrate with templateRegistry from @tekton/ui
+- [ ] Integrate with templateRegistry from @framingui
 - [ ] Support category filtering (auth/dashboard/form/marketing/feedback/all)
 - [ ] Support search functionality
 - [ ] Return template counts by category
@@ -216,7 +216,7 @@ HIGH - Enables AI agents to effectively discover and utilize UI components
 ```typescript
 // Two-tier metadata approach:
 // 1. Static metadata (component-registry.ts) for basic info
-// 2. Dynamic extraction from @tekton/ui for detailed props
+// 2. Dynamic extraction from @framingui for detailed props
 
 // Static metadata example
 export const COMPONENT_REGISTRY = {
@@ -239,7 +239,7 @@ export const COMPONENT_REGISTRY = {
       internal: [],
       external: ['@radix-ui/react-slot'],
     },
-    importStatement: "import { Button, buttonVariants } from '@tekton/ui';",
+    importStatement: "import { Button, buttonVariants } from '@framingui';",
     examples: [
       {
         title: 'Basic Usage',
@@ -256,7 +256,7 @@ export const COMPONENT_REGISTRY = {
 
 ```typescript
 // Direct integration with existing templateRegistry
-import { templateRegistry, type ScreenTemplate } from '@tekton/ui';
+import { templateRegistry, type ScreenTemplate } from '@framingui';
 
 export async function listScreenTemplatesTool(
   input: ListScreenTemplatesInput
@@ -293,7 +293,7 @@ export async function listScreenTemplatesTool(
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Component metadata out of sync with @tekton/ui | Medium | Automated sync script, version tracking |
+| Component metadata out of sync with @framingui | Medium | Automated sync script, version tracking |
 | Template Registry not initialized | High | Lazy initialization, error handling |
 | Breaking existing tools | High | Comprehensive regression tests |
 | Large response payload | Low | Pagination support, selective fields |
@@ -305,7 +305,7 @@ export async function listScreenTemplatesTool(
 ### External Dependencies
 - @modelcontextprotocol/sdk: ^1.25.3 (existing)
 - zod: ^3.23.8 (existing)
-- @tekton/ui: workspace:* (for template registry)
+- @framingui: workspace:* (for template registry)
 
 ### Internal Dependencies
 - packages/mcp-server/src/utils/error-handler.ts (existing)
@@ -317,9 +317,9 @@ export async function listScreenTemplatesTool(
 ## 6. Execution Notes
 
 ### Before Implementation
-1. Ensure @tekton/ui is built and templates are registered
+1. Ensure @framingui is built and templates are registered
 2. Review existing MCP tool patterns in SPEC-MCP-002
-3. Verify template registry exports from @tekton/ui
+3. Verify template registry exports from @framingui
 
 ### During Implementation
 1. Follow existing code patterns from list-themes.ts, preview-theme.ts

@@ -200,13 +200,13 @@ OKLCH는 모든 최신 브라우저에서 지원됩니다:
 }
 ```
 
-## tekton/ui에서의 OKLCH
+## framingui에서의 OKLCH
 
-tekton/ui는 OKLCH를 네이티브 색상 시스템으로 사용합니다:
+framingui는 OKLCH를 네이티브 색상 시스템으로 사용합니다:
 
 ```typescript
-// tekton/ui 토큰 구조
-import { colors } from '@tekton-ui/tokens';
+// framingui 토큰 구조
+import { colors } from '@framingui/tokens';
 
 // 모든 색상이 OKLCH로 정의됨
 console.log(colors.primary[500]);
@@ -216,7 +216,7 @@ console.log(colors.primary[500]);
 ### 색상 조작
 
 ```typescript
-import { adjustLightness, adjustChroma } from '@tekton-ui/color';
+import { adjustLightness, adjustChroma } from '@framingui/color';
 
 const base = 'oklch(0.55 0.15 250)';
 const lighter = adjustLightness(base, 0.1);  // oklch(0.65 0.15 250)
@@ -236,7 +236,7 @@ const muted = adjustChroma(base, -0.05);     // oklch(0.55 0.10 250)
 
 ## 오늘부터 OKLCH 시작하기
 
-색상 시스템을 현대화할 준비가 되셨나요? tekton/ui가 제공하는 것들:
+색상 시스템을 현대화할 준비가 되셨나요? framingui가 제공하는 것들:
 
 - 사전 구축된 OKLCH 팔레트
 - 색상 조작 유틸리티

@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Modal Component
+ * @framingui - Modal Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  */
 

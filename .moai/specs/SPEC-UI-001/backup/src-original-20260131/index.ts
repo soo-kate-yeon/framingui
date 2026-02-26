@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Component Library Index
+ * @framingui - Component Library Index
  * [SPEC-COMPONENT-001-C]
  */
 

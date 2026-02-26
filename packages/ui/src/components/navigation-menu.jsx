@@ -7,7 +7,7 @@
  * WHY: Accessible horizontal navigation with keyboard support
  * IMPACT: Improves navigation UX and accessibility compliance
  *
- * @tekton/ui - NavigationMenu Component
+ * @framingui - NavigationMenu Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * Pattern: @radix-ui/react-navigation-menu + CVA + Tekton tokens

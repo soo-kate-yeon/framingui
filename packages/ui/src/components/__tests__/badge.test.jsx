@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Badge Component Tests
+ * @framingui - Badge Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Badge component
  */
 import { render, screen } from '@testing-library/react';

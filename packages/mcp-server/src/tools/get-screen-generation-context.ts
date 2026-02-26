@@ -3,8 +3,8 @@
  * SPEC-MCP-004 Phase 3.5: Provides complete context for AI agents to generate screen definitions
  */
 
-import { loadTheme } from '@tekton-ui/core';
-import { templateRegistry } from '@tekton-ui/ui';
+import { loadTheme } from '@framingui/core';
+import { templateRegistry } from '@framingui/ui';
 import type {
   GetScreenGenerationContextInput,
   GetScreenGenerationContextOutput,
@@ -127,9 +127,9 @@ function getComponentInfo(componentIds: string[]): ContextComponentInfo[] {
       // subComponents가 있으면 import에 함께 포함
       let importStatement: string;
       if (propsData?.subComponents && propsData.subComponents.length > 0) {
-        importStatement = `import { ${component.name}, ${propsData.subComponents.join(', ')} } from '@tekton-ui/ui';`;
+        importStatement = `import { ${component.name}, ${propsData.subComponents.join(', ')} } from '@framingui/ui';`;
       } else {
-        importStatement = `import { ${component.name} } from '@tekton-ui/ui';`;
+        importStatement = `import { ${component.name} } from '@framingui/ui';`;
       }
 
       components.push({

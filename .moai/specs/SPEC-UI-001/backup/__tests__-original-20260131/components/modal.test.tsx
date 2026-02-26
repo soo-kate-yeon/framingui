@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Modal Component Tests
+ * @framingui - Modal Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

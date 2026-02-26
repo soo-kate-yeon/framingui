@@ -82,7 +82,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => {
       {
         name: 'getting-started',
         description:
-          'Complete getting started guide for Tekton UI including authentication, theme exploration, and screen generation workflow',
+          'Complete getting started guide for FramingUI including authentication, theme exploration, and screen generation workflow',
         arguments: [],
       },
       {
@@ -274,7 +274,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'boolean',
               description:
                 'When true, includes pre-generated CSS variables string in the response. ' +
-                'Uses themeToCSS() from @tekton-ui/ui to convert theme tokens to CSS custom properties. ' +
+                'Uses themeToCSS() from @framingui/ui to convert theme tokens to CSS custom properties. ' +
                 'Default: false',
             },
           },
@@ -361,7 +361,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'list-components',
         description:
-          'List all available UI components from @tekton-ui/ui with metadata.\n\n' +
+          'List all available UI components from @framingui/ui with metadata.\n\n' +
           'WHEN TO CALL:\n' +
           '- When user asks which components are available\n' +
           '- Before calling preview-component to select a component\n' +
@@ -563,7 +563,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- validate-environment also checks Tailwind CSS config\n\n' +
           'CRITICAL:\n' +
           '- This workflow prevents "Module not found" errors at runtime\n' +
-          '- Tailwind validation prevents invisible/unstyled @tekton-ui/ui components\n' +
+          '- Tailwind validation prevents invisible/unstyled @framingui/ui components\n' +
           '- Never deliver code without informing user about dependencies',
         inputSchema: {
           type: 'object',
@@ -596,12 +596,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'validate-environment',
         description:
-          '[WORKFLOW STEP 3/3 - Optional] Validate user environment: NPM packages + Tailwind CSS configuration for @tekton-ui/ui.\n\n' +
+          '[WORKFLOW STEP 3/3 - Optional] Validate user environment: NPM packages + Tailwind CSS configuration for @framingui/ui.\n\n' +
           'WHEN TO CALL:\n' +
           '- After writing React code, to verify required packages are installed\n' +
           '- When user wants to check if their project has required packages\n' +
           '- Before running generated code to ensure all dependencies are available\n' +
-          '- To verify Tailwind CSS is configured correctly for @tekton-ui/ui components\n\n' +
+          '- To verify Tailwind CSS is configured correctly for @framingui/ui components\n\n' +
           'RETURNS:\n' +
           '- installed: Packages already in package.json with versions\n' +
           '- missing: Packages that need to be installed\n' +
@@ -609,7 +609,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n\n' +
           'TAILWIND VALIDATION (checkTailwind=true by default):\n' +
           '- Checks if tailwind.config.{ts,js,mjs,cjs} exists\n' +
-          '- Verifies @tekton-ui/ui content paths are included (prevents missing styles)\n' +
+          '- Verifies @framingui/ui content paths are included (prevents missing styles)\n' +
           '- Verifies tailwindcss-animate plugin is configured (required for Dialog, Popover animations)\n' +
           '- Returns actionable issues[] and fixes[] for each problem found\n\n' +
           'EXAMPLE WORKFLOW:\n' +
@@ -634,7 +634,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             checkTailwind: {
               type: 'boolean',
               description:
-                'Also validate Tailwind CSS configuration for @tekton-ui/ui compatibility (default: true)',
+                'Also validate Tailwind CSS configuration for @framingui/ui compatibility (default: true)',
             },
           },
           required: ['projectPath', 'requiredPackages'],

@@ -51,7 +51,7 @@ AI-Native Design Library로서 코딩 에이전트가 실제로 사용 가능한
 
 - SPEC-UI-001 - shadcn-ui Fork 및 Token 통합 (완료)
 - `@tekton/tokens` - 레이아웃 토큰 타입 정의
-- `@tekton/ui` - shadcn-ui 기반 컴포넌트 (30개)
+- `@framingui` - shadcn-ui 기반 컴포넌트 (30개)
 - `linear-minimal-v1.json` - 기존 테마 파일
 
 ---
@@ -60,7 +60,7 @@ AI-Native Design Library로서 코딩 에이전트가 실제로 사용 가능한
 
 ```
 Current System:
-  - @tekton/ui: shadcn-ui 기반 30개 컴포넌트 구현 완료 (SPEC-UI-001)
+  - @framingui: shadcn-ui 기반 30개 컴포넌트 구현 완료 (SPEC-UI-001)
   - @tekton/tokens: TokenReference 타입 및 CSS Variable 매핑
   - linear-minimal-v1 테마: CSS Variable 기반 테마 시스템
   - 기존 화면 템플릿 시스템: 없음 (신규 구축)

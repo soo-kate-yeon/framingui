@@ -152,17 +152,17 @@ export const PREMIUM_THEMES = [
 
 | 패키지                      | 현재 버전 | 목표 버전 |
 | --------------------------- | --------- | --------- |
-| `@tekton-ui/tokens`         | 0.3.1     | 0.3.2     |
-| `@tekton-ui/core`           | 0.3.1     | 0.3.2     |
-| `@tekton-ui/ui`             | 0.3.1     | 0.3.2     |
-| `@tekton-ui/styled`         | 0.3.1     | 0.3.2     |
-| `@tekton-ui/esbuild-plugin` | 0.3.1     | 0.3.2     |
-| `@tekton-ui/mcp-server`     | 0.3.1     | 0.3.2     |
+| `@framingui/tokens`         | 0.3.1     | 0.3.2     |
+| `@framingui/core`           | 0.3.1     | 0.3.2     |
+| `@framingui/ui`             | 0.3.1     | 0.3.2     |
+| `@framingui/styled`         | 0.3.1     | 0.3.2     |
+| `@framingui/esbuild-plugin` | 0.3.1     | 0.3.2     |
+| `@framingui/mcp-server`     | 0.3.1     | 0.3.2     |
 
 ### 10단계: 빌드 검증 [Priority High]
 
 ```bash
-pnpm --filter @tekton-ui/mcp-server build
+pnpm --filter @framingui/mcp-server build
 ```
 
 TypeScript 컴파일 에러 0개 확인.

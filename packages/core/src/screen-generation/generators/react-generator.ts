@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - React Component Generator
+ * @framingui/core - React Component Generator
  * Generates React functional components from ResolvedScreen
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

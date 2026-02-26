@@ -135,7 +135,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "description": "Component type from @tekton/ui",
+          "description": "Component type from @framingui",
           "examples": ["card", "button", "text", "input", "badge", "progress", "table", "chart"]
         },
         "variant": {

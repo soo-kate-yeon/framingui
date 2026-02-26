@@ -27,13 +27,13 @@ Tekton MCP Server is a **stdio-based MCP protocol** server that integrates with 
 Run this in your project directory:
 
 ```bash
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 ```
 
 This automatically:
 
 1. Detects your framework (Next.js / Vite)
-2. Installs `@tekton-ui/ui` and `tailwindcss-animate`
+2. Installs `@framingui/ui` and `tailwindcss-animate`
 3. Configures Tailwind CSS (content paths + animate plugin)
 4. Adds CSS token imports to `globals.css`
 5. Registers MCP server in `.mcp.json`
@@ -49,7 +49,7 @@ Add to your project's `.mcp.json`:
     "tekton": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tekton-ui/mcp-server"]
+      "args": ["-y", "@framingui/mcp-server"]
     }
   }
 }
@@ -60,12 +60,12 @@ Add to your project's `.mcp.json`:
 All themes require authentication. Log in via browser OAuth:
 
 ```bash
-npx @tekton-ui/mcp-server login
+npx @framingui/mcp-server login
 ```
 
 This will:
 
-1. Open your browser to `tekton-ui.com/mcp/auth`
+1. Open your browser to `framingui.com/mcp/auth`
 2. Complete the OAuth flow
 3. Save credentials to `~/.tekton/credentials.json`
 
@@ -74,7 +74,7 @@ This will:
 ### Verify Authentication
 
 ```bash
-npx @tekton-ui/mcp-server status
+npx @framingui/mcp-server status
 ```
 
 ## First Use
@@ -142,11 +142,11 @@ You: "Build a dashboard screen"
 
 | Command                            | Description             |
 | ---------------------------------- | ----------------------- |
-| `npx @tekton-ui/mcp-server init`   | One-line project setup  |
-| `npx @tekton-ui/mcp-server login`  | Browser OAuth login     |
-| `npx @tekton-ui/mcp-server logout` | Clear saved credentials |
-| `npx @tekton-ui/mcp-server status` | Check auth status       |
-| `npx @tekton-ui/mcp-server`        | Start MCP stdio server  |
+| `npx @framingui/mcp-server init`   | One-line project setup  |
+| `npx @framingui/mcp-server login`  | Browser OAuth login     |
+| `npx @framingui/mcp-server logout` | Clear saved credentials |
+| `npx @framingui/mcp-server status` | Check auth status       |
+| `npx @framingui/mcp-server`        | Start MCP stdio server  |
 
 ## Troubleshooting
 
@@ -154,7 +154,7 @@ You: "Build a dashboard screen"
 
 ```bash
 # Log in first
-npx @tekton-ui/mcp-server login
+npx @framingui/mcp-server login
 
 # Or set API key directly
 export TEKTON_API_KEY=tk_live_xxx...
@@ -168,7 +168,7 @@ Your AI assistant must call `whoami` before any other tool. Simply ask it to che
 
 1. Ensure `.mcp.json` exists in your project root
 2. Restart your AI assistant after adding `.mcp.json`
-3. Check that `npx @tekton-ui/mcp-server` runs without errors
+3. Check that `npx @framingui/mcp-server` runs without errors
 
 ## Next Steps
 

@@ -129,7 +129,7 @@ $ node test-render-fix.mjs
 Generated code:
 ──────────────────────────────────────────────────
 import React from "react";
-import { Card } from "@tekton/ui";
+import { Card } from "@framingui";
 function GeneratedComponent() {
   return <Card variant="elevated" />;
 }
@@ -149,7 +149,7 @@ $ curl -X POST http://localhost:3000/tools/knowledge.renderScreen \
 {
   "success": true,
   "filePath": "src/app/test-dashboard/page.tsx",
-  "code": "import React from \"react\";\nimport { Card } from \"@tekton/ui\";\nfunction GeneratedComponent() {\n  return <Card variant=\"elevated\" padding=\"large\" />;\n}\nexport default GeneratedComponent;\n"
+  "code": "import React from \"react\";\nimport { Card } from \"@framingui\";\nfunction GeneratedComponent() {\n  return <Card variant=\"elevated\" padding=\"large\" />;\n}\nexport default GeneratedComponent;\n"
 }
 ```
 
@@ -159,7 +159,7 @@ $ curl -X POST http://localhost:3000/tools/knowledge.renderScreen \
 $ cat src/app/test-dashboard/page.tsx
 
 import React from "react";
-import { Card } from "@tekton/ui";
+import { Card } from "@framingui";
 function GeneratedComponent() {
   return <Card variant="elevated" padding="large" />;
 }

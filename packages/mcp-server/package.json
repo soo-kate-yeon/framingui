@@ -1,5 +1,5 @@
 {
-  "name": "@tekton-ui/mcp-server",
+  "name": "@framingui/mcp-server",
   "version": "0.5.0",
   "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
@@ -51,8 +51,8 @@
     "@babel/parser": "^7.28.6",
     "@babel/traverse": "^7.28.6",
     "@modelcontextprotocol/sdk": "^1.26.0",
-    "@tekton-ui/core": "workspace:*",
-    "@tekton-ui/ui": "workspace:*"
+    "@framingui/core": "workspace:*",
+    "@framingui/ui": "workspace:*"
   },
   "devDependencies": {
     "@babel/types": "^7.28.6",

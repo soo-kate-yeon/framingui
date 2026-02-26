@@ -23,8 +23,8 @@
 ### AC-1.4: Vercel Deployment
 - **Given** Vercel 프로젝트가 설정되었을 때
 - **When** master 브랜치에 푸시하면
-- **Then** tekton-ui.com으로 접속 시 Next.js 앱이 정상 로딩된다
-- **Verify**: `curl -I https://tekton-ui.com` 응답 코드 200, SSL 유효
+- **Then** framingui.com으로 접속 시 Next.js 앱이 정상 로딩된다
+- **Verify**: `curl -I https://framingui.com` 응답 코드 200, SSL 유효
 
 ---
 
@@ -139,12 +139,12 @@
 - **Verify**: Playwright E2E 테스트 통과
 
 ### AC-5.2: Performance
-- **Given** tekton-ui.com이 프로덕션 배포된 후
+- **Given** framingui.com이 프로덕션 배포된 후
 - **When** Lighthouse 테스트를 실행하면
 - **Then** Performance 80+, Accessibility 90+ 점수를 달성한다
 
 ### AC-5.3: SSL & Domain
-- **Given** tekton-ui.com 도메인이 설정된 후
+- **Given** framingui.com 도메인이 설정된 후
 - **When** HTTPS로 접속하면
 - **Then** 유효한 SSL 인증서와 함께 정상 로딩된다
-- **Verify**: `curl -vI https://tekton-ui.com 2>&1 | grep "SSL certificate verify ok"`
+- **Verify**: `curl -vI https://framingui.com 2>&1 | grep "SSL certificate verify ok"`

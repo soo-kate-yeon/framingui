@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Textarea | tekton/ui',
+  title: 'Textarea | framingui',
   description:
     'Textarea component for multi-line text input with auto-resize and character count support.',
 };
@@ -25,7 +25,7 @@ export default function TextareaPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Import</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-          {`import { Textarea } from '@tekton-ui/ui';`}
+          {`import { Textarea } from '@framingui/ui';`}
         </pre>
       </section>
 

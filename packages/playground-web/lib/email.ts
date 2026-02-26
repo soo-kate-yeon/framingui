@@ -26,7 +26,7 @@ export async function sendFeedbackRequestEmail(
 
   try {
     const { data, error } = await resend.emails.send({
-      from: 'tekton <no-reply@tekton-ui.com>',
+      from: 'tekton <no-reply@framingui.com>',
       to: [to],
       subject: "How's your tekton experience so far?",
       html: feedbackRequestEmailTemplate(userName),

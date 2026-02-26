@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Tailwind CSS Generator
+ * @framingui/core - Tailwind CSS Generator
  * Generates Tailwind class names and configuration from ResolvedScreen
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

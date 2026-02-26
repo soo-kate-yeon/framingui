@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/esbuild-plugin - Violation Reporter
+ * @framingui/esbuild-plugin - Violation Reporter
  * [SPEC-STYLED-001] [TAG-008]
  * Build reporting system with violation details
  */

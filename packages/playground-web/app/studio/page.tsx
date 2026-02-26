@@ -2,7 +2,7 @@
  * Explore Page (Studio Home)
  * [SPEC-UI-003][TAG-UI003-037]
  *
- * Function: Lists ACTUAL themes from .moai/themes/generated via @tekton-ui/core
+ * Function: Lists ACTUAL themes from .moai/themes/generated via @framingui/core
  * Uses Server Action for safe filesystem access
  */
 

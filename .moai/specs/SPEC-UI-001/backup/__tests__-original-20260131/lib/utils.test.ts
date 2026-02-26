@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Utility Functions Tests
+ * @framingui - Utility Functions Tests
  * [SPEC-COMPONENT-001-C]
  */
 

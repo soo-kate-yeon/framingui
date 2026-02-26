@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Card Component Tests
+ * @framingui - Card Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

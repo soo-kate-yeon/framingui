@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - CSS Variables Generator
+ * @framingui/core - CSS Variables Generator
  * Generates CSS Variables from 3-layer token architecture
  * [SPEC-COMPONENT-001-A] [CSS-GENERATION]
  */

@@ -24,7 +24,7 @@ shadcn-ui Fork & Token Integration을 위한 7일간의 구현 계획입니다.
 
 | Task | 설명 | 우선순위 | 의존성 |
 |------|------|----------|--------|
-| T1.1 | 기존 @tekton/ui 백업 및 정리 | P0 | - |
+| T1.1 | 기존 @framingui 백업 및 정리 | P0 | - |
 | T1.2 | shadcn-ui 컴포넌트 구조 복사 | P0 | T1.1 |
 | T1.3 | Tekton Token CSS Variable 매핑 파일 생성 | P0 | - |
 | T1.4 | package.json 의존성 업데이트 | P0 | T1.2 |

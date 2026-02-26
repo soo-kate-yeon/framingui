@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Template Registry
+ * @framingui/core - Template Registry
  * Singleton pattern for managing screen templates
  * [SPEC-UI-002] [TAG-UI002-004]
  */

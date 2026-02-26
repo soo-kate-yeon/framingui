@@ -38,7 +38,7 @@ Primitive Components는 단일 책임을 가진 핵심 UI 빌딩 블록입니다
 ### 사용 예시
 
 ```tsx
-import { Button } from '@tekton/ui';
+import { Button } from '@framingui';
 
 // Variants
 <Button variant="default">Default</Button>
@@ -108,7 +108,7 @@ import { Button } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { Input } from '@tekton/ui';
+import { Input } from '@framingui';
 
 // Basic usage
 <Input type="text" placeholder="Enter text..." />
@@ -168,7 +168,7 @@ const [value, setValue] = useState('');
 ### 사용 예시
 
 ```tsx
-import { Checkbox } from '@tekton/ui';
+import { Checkbox } from '@framingui';
 
 // Basic checkbox
 <label>
@@ -237,7 +237,7 @@ const [checked, setChecked] = useState(false);
 ### 사용 예시
 
 ```tsx
-import { RadioGroup, RadioGroupItem } from '@tekton/ui';
+import { RadioGroup, RadioGroupItem } from '@framingui';
 
 // Basic usage
 <RadioGroup defaultValue="option1">
@@ -302,7 +302,7 @@ const [value, setValue] = useState('option1');
 ### 사용 예시
 
 ```tsx
-import { Switch } from '@tekton/ui';
+import { Switch } from '@framingui';
 
 // Basic switch
 <label>
@@ -366,7 +366,7 @@ const [enabled, setEnabled] = useState(false);
 ### 사용 예시
 
 ```tsx
-import { Slider } from '@tekton/ui';
+import { Slider } from '@framingui';
 
 // Basic slider
 <label htmlFor="volume" id="volume-label">Volume</label>
@@ -435,7 +435,7 @@ const [value, setValue] = useState([50]);
 ### 사용 예시
 
 ```tsx
-import { Text } from '@tekton/ui';
+import { Text } from '@framingui';
 
 // Sizes
 <Text size="xs">Extra small text</Text>
@@ -494,7 +494,7 @@ import { Text } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { Heading } from '@tekton/ui';
+import { Heading } from '@framingui';
 
 // Hierarchical headings
 <Heading level={1}>Heading 1</Heading>
@@ -548,7 +548,7 @@ import { Heading } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { Badge } from '@tekton/ui';
+import { Badge } from '@framingui';
 
 // Variants
 <Badge variant="default">Default</Badge>
@@ -627,7 +627,7 @@ import { Badge } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { Avatar, AvatarImage, AvatarFallback } from '@tekton/ui';
+import { Avatar, AvatarImage, AvatarFallback } from '@framingui';
 
 // Basic avatar with image and fallback
 <Avatar>
@@ -687,7 +687,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { Progress } from '@tekton/ui';
+import { Progress } from '@framingui';
 
 // Basic progress
 <Progress value={50} aria-label="Upload progress" />
@@ -744,7 +744,7 @@ useEffect(() => {
 ### 사용 예시
 
 ```tsx
-import { Link } from '@tekton/ui';
+import { Link } from '@framingui';
 
 // Variants
 <Link href="/home" variant="default">Default Link</Link>
@@ -802,7 +802,7 @@ import { Link } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { Image } from '@tekton/ui';
+import { Image } from '@framingui';
 
 // Basic image
 <Image
@@ -879,7 +879,7 @@ import { Image } from '@tekton/ui';
 ### 사용 예시
 
 ```tsx
-import { List, ListItem } from '@tekton/ui';
+import { List, ListItem } from '@framingui';
 
 // Unordered list (default)
 <List as="ul">
@@ -937,7 +937,7 @@ import { List, ListItem } from '@tekton/ui';
 
 ```css
 /* styles/theme.css */
-@import '@tekton/ui/styles';
+@import '@framingui/styles';
 
 :root {
   /* Atomic Layer - 기본 색상 및 값 */

@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Theme Guides | tekton/ui Docs',
+  title: 'Theme Guides | framingui Docs',
   description:
-    'Theme-specific implementation guides for all tekton/ui templates, including token strategy, layout patterns, and component usage.',
+    'Theme-specific implementation guides for all framingui templates, including token strategy, layout patterns, and component usage.',
 };
 
 const THEMES = [
@@ -50,7 +50,7 @@ export default function ThemeGuidesPage() {
       <header className="space-y-4">
         <h1 className="text-4xl font-bold tracking-tight text-neutral-900">Theme Guides</h1>
         <p className="text-xl text-neutral-600 leading-relaxed max-w-2xl">
-          Theme-specific implementation notes for each tekton/ui template. Use this index to jump
+          Theme-specific implementation notes for each framingui template. Use this index to jump
           into token strategy, layout decisions, and component-level recommendations.
         </p>
       </header>

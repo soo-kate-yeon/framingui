@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Touch Target Utilities
+ * @framingui/core - Touch Target Utilities
  * Validation and application utilities for accessible touch targets
  * [SPEC-LAYOUT-004] [MILESTONE-5]
  *

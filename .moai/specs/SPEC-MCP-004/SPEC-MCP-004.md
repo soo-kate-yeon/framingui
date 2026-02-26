@@ -246,7 +246,7 @@ Document `screenDefinition` schema with clear examples and validation rules.
       "properties": {
         "type": {
           "type": "string",
-          "description": "Component type from @tekton/ui"
+          "description": "Component type from @framingui"
         },
         "variant": { "type": "string" },
         "slot": { "type": "string" },
@@ -666,7 +666,7 @@ Phase 3 (Template Matcher) provides structure recommendations when a template ma
 - **validate-screen-definition**:
   - Zod-based schema validation
   - Token validation (shells, pages, sections)
-  - Component type validation against @tekton/ui catalog
+  - Component type validation against @framingui catalog
   - Levenshtein distance-based suggestions ("Did you mean X?")
   - Semantic error messages with expected values
   - Improvement suggestions (maintainability, consistency)

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - XL/2XL Breakpoint Tests
+ * @framingui/core - XL/2XL Breakpoint Tests
  * Verify all layout tokens have xl and 2xl responsive configurations
  * [SPEC-LAYOUT-003] [PHASE-4]
  */

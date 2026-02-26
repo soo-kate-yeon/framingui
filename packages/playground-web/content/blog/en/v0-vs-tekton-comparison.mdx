@@ -1,6 +1,6 @@
 ---
-title: "v0 vs. tekton-ui: Which AI UI Generator Should You Use?"
-description: "v0 vs tekton-ui: A fair comparison. When to use each AI UI tool and how they solve different problems."
+title: "v0 vs. framingui: Which AI UI Generator Should You Use?"
+description: "v0 vs framingui: A fair comparison. When to use each AI UI tool and how they solve different problems."
 date: "2026-02-25"
 author:
   name: "Tekton Team"
@@ -16,7 +16,7 @@ published: true
 
 ## The Honest Truth About AI UI Generators
 
-Both [v0 by Vercel](https://v0.dev) and [tekton-ui](https://tekton-ui.com) help you generate UI with AI. But they solve **different problems** for **different users**.
+Both [v0 by Vercel](https://v0.dev) and [framingui](https://framingui.com) help you generate UI with AI. But they solve **different problems** for **different users**.
 
 This isn't a "which one is better" article. It's a guide to help you choose the right tool for your situation.
 
@@ -29,7 +29,7 @@ This isn't a "which one is better" article. It's a guide to help you choose the 
 - Prefer shadcn/ui components (already integrated)
 - Value speed over brand consistency
 
-**Choose tekton-ui if you:**
+**Choose framingui if you:**
 - Have (or want) a custom design system
 - Need AI to generate on-brand components consistently
 - Use AI tools like Claude Code or Cursor for development
@@ -38,8 +38,8 @@ This isn't a "which one is better" article. It's a guide to help you choose the 
 
 **Use both together:**
 - Prototype with v0's visual interface
-- Export components and add tekton-ui tokens for brand consistency
-- Use v0 for exploration, tekton-ui for production
+- Export components and add framingui tokens for brand consistency
+- Use v0 for exploration, framingui for production
 
 ## What is v0?
 
@@ -76,9 +76,9 @@ You: Export code
 v0: [Provides complete React component with shadcn imports]
 ```
 
-## What is tekton-ui?
+## What is framingui?
 
-tekton-ui is a design system generator that makes AI understand your brand. It creates machine-readable design tokens and component knowledge that AI tools can query.
+framingui is a design system generator that makes AI understand your brand. It creates machine-readable design tokens and component knowledge that AI tools can query.
 
 **Core Features:**
 - Design token generation: Create accessible color palettes and spacing scales
@@ -87,13 +87,13 @@ tekton-ui is a design system generator that makes AI understand your brand. It c
 - Token enforcement: Prevent hardcoded values at compile-time
 - Framework agnostic: Works with any React setup, not just Next.js
 
-**What tekton-ui is great at:**
+**What framingui is great at:**
 - **Brand consistency**: AI generates components matching your design system
 - **Design system creation**: Build and maintain tokens scientifically (OKLCH, WCAG)
 - **AI tool integration**: Works with Claude Code, Cursor, and other MCP-compatible tools
 - **Enforcement**: Automatically prevent design system violations
 
-**Example tekton-ui workflow:**
+**Example framingui workflow:**
 
 ```
 # Setup (one-time)
@@ -112,7 +112,7 @@ Claude: [Queries your design tokens via MCP]
 
 ## Side-by-Side Comparison
 
-| Feature | v0 | tekton-ui |
+| Feature | v0 | framingui |
 |---------|-------|-----------|
 | **Visual Preview** | ✅ Real-time preview | ❌ No visual interface (code-only) |
 | **Design System** | ❌ Generic (shadcn defaults) | ✅ Custom (your brand) |
@@ -135,7 +135,7 @@ Claude: [Queries your design tokens via MCP]
 
 **You have no design system yet. You need to ship fast.**
 
-**Recommendation: v0 for MVP, then tekton-ui for scale**
+**Recommendation: v0 for MVP, then framingui for scale**
 
 **Phase 1 (Weeks 1-2): Prototype with v0**
 
@@ -149,13 +149,13 @@ Use v0 to:
 
 **Why v0 wins here:**
 - Visual preview gets stakeholder buy-in faster
-- No design system = nothing for tekton-ui to enforce yet
+- No design system = nothing for framingui to enforce yet
 - shadcn/ui is good enough for MVPs
 
-**Phase 2 (Weeks 3-4): Build design system with tekton-ui**
+**Phase 2 (Weeks 3-4): Build design system with framingui**
 
 ```
-Use tekton-ui to:
+Use framingui to:
 - Generate brand-specific color palettes
 - Create semantic spacing and typography scales
 - Convert v0 components to use design tokens
@@ -171,7 +171,7 @@ Use tekton-ui to:
   <p className="text-gray-600">Description</p>
 </Card>
 
-// After (tekton-ui tokens)
+// After (framingui tokens)
 <Card
   style={{
     padding: tokens.spacing[6],
@@ -190,15 +190,15 @@ Use tekton-ui to:
 </Card>
 ```
 
-**Result:** Fast MVP with v0, sustainable codebase with tekton-ui.
+**Result:** Fast MVP with v0, sustainable codebase with framingui.
 
 ### Scenario 2: You Have an Existing Design System
 
 **You have Figma designs, brand guidelines, and color palettes.**
 
-**Recommendation: tekton-ui only (v0 will fight your design system)**
+**Recommendation: framingui only (v0 will fight your design system)**
 
-**Why tekton-ui wins:**
+**Why framingui wins:**
 
 v0 outputs shadcn/ui components with default styling. To match your brand:
 
@@ -210,9 +210,9 @@ v0 outputs shadcn/ui components with default styling. To match your brand:
 
 **Time per component:** 10-20 minutes
 
-With tekton-ui:
+With framingui:
 
-1. Generate component with Claude Code (tekton-ui MCP enabled)
+1. Generate component with Claude Code (framingui MCP enabled)
 2. Done (AI uses your design tokens automatically)
 
 **Time per component:** 0 minutes
@@ -220,14 +220,14 @@ With tekton-ui:
 **Setup workflow:**
 
 ```bash
-# Pick a template at tekton-ui.com/studio
+# Pick a template at framingui.com/studio
 # Then configure MCP in your project:
 # .claude/mcp.json (or cursor settings)
 {
   "servers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton-ui/mcp-server"]
+      "args": ["@framingui/mcp-server"]
     }
   }
 }
@@ -273,9 +273,9 @@ Learn:
 - How props are passed
 ```
 
-**When to switch to tekton-ui:**
+**When to switch to framingui:**
 
-Once you understand React and component patterns, move to tekton-ui to learn:
+Once you understand React and component patterns, move to framingui to learn:
 - Design system architecture
 - Token-based styling
 - OKLCH color spaces
@@ -285,9 +285,9 @@ Once you understand React and component patterns, move to tekton-ui to learn:
 
 **You build white-label software. Each client needs custom branding.**
 
-**Recommendation: tekton-ui (v0 doesn't support multi-brand)**
+**Recommendation: framingui (v0 doesn't support multi-brand)**
 
-**Why tekton-ui wins:**
+**Why framingui wins:**
 
 v0 outputs one design (shadcn defaults). To support multiple brands:
 
@@ -296,7 +296,7 @@ v0 outputs one design (shadcn defaults). To support multiple brands:
 - ❌ Manually swap styles at build time
 - ❌ High risk of brand-specific bugs
 
-tekton-ui supports multi-brand out of the box:
+framingui supports multi-brand out of the box:
 
 ```typescript
 // Brand A (fintech - professional dark)
@@ -339,9 +339,9 @@ TEKTON_BRAND=clientB npm run build  # Uses clientB tokens
 
 **You have designers who create mockups in Figma.**
 
-**Recommendation: tekton-ui (Figma → Tokens → AI)**
+**Recommendation: framingui (Figma → Tokens → AI)**
 
-**Why tekton-ui wins:**
+**Why framingui wins:**
 
 **v0 workflow (disconnected):**
 
@@ -354,7 +354,7 @@ TEKTON_BRAND=clientB npm run build  # Uses clientB tokens
 6. Repeat steps 2-5
 ```
 
-**tekton-ui workflow (connected):**
+**framingui workflow (connected):**
 
 ```
 1. Choose a tekton template that matches your design direction
@@ -376,7 +376,7 @@ Traditional workflow:
 - Manually updates each one
 - Misses 3 instances → visual bugs
 
-tekton-ui workflow:
+framingui workflow:
 - Developer updates the token value in one place
 - All components reference tokens, not hardcoded colors
 - Zero bugs
@@ -388,13 +388,13 @@ tekton-ui workflow:
 
 **You're creating a reusable component library for your team.**
 
-**Recommendation: tekton-ui (v0 generates app code, not libraries)**
+**Recommendation: framingui (v0 generates app code, not libraries)**
 
-**Why tekton-ui wins:**
+**Why framingui wins:**
 
 v0 generates application code (pages, features, layouts). It's not designed for component library development.
 
-tekton-ui generates:
+framingui generates:
 - Design tokens (consumable by any framework)
 - Component contracts (validation rules)
 - Semantic metadata (when to use what)
@@ -439,7 +439,7 @@ Your component library now includes everything AI needs to use it correctly.
 
 **Yes! Here's how:**
 
-### Workflow 1: Prototype in v0, Productionize with tekton-ui
+### Workflow 1: Prototype in v0, Productionize with framingui
 
 ```
 1. Rapid prototype in v0
@@ -448,16 +448,16 @@ Your component library now includes everything AI needs to use it correctly.
 
 2. Export v0 component code
 
-3. Replace v0 Tailwind classes with tekton-ui tokens
+3. Replace v0 Tailwind classes with framingui tokens
    → Before: className="bg-blue-500 p-4"
    → After: style={{ background: tokens.bg.primary, padding: tokens.spacing[4] }}
 
-4. Continue development with tekton-ui MCP
+4. Continue development with framingui MCP
    → AI generates new components on-brand
    → Enforce token compliance at build time
 ```
 
-### Workflow 2: Use v0 for Inspiration, Generate with tekton-ui
+### Workflow 2: Use v0 for Inspiration, Generate with framingui
 
 ```
 1. Generate layout ideas in v0
@@ -468,13 +468,13 @@ Your component library now includes everything AI needs to use it correctly.
 
 3. Prompt Claude Code with screenshot
    → "Generate this layout using our design tokens"
-   → Claude queries tekton-ui MCP
+   → Claude queries framingui MCP
    → Claude generates on-brand version
 
 4. Result: v0 design + your brand tokens
 ```
 
-### Workflow 3: v0 for Pages, tekton-ui for Components
+### Workflow 3: v0 for Pages, framingui for Components
 
 ```
 Use v0 for:
@@ -482,7 +482,7 @@ Use v0 for:
 - Internal tools (doesn't need heavy branding)
 - Prototypes and demos
 
-Use tekton-ui for:
+Use framingui for:
 - Customer-facing product (needs brand consistency)
 - Component library (needs design system)
 - Multi-brand features (needs token swapping)
@@ -507,7 +507,7 @@ Use tekton-ui for:
 - Custom deployment
 - SLA guarantees
 
-### tekton-ui Pricing
+### framingui Pricing
 
 **Open Source (Free):**
 - Unlimited token generation
@@ -529,7 +529,7 @@ Use tekton-ui for:
 
 ## Migration Guides
 
-### From v0 to tekton-ui
+### From v0 to framingui
 
 Already using v0? Here's how to migrate:
 
@@ -550,7 +550,7 @@ export function PricingCard() {
 }
 ```
 
-**Step 2: Initialize tekton-ui**
+**Step 2: Initialize framingui**
 
 ```bash
 npx @tekton/cli init
@@ -615,9 +615,9 @@ export default {
 };
 ```
 
-### From tekton-ui to v0
+### From framingui to v0
 
-Need to use v0 after using tekton-ui?
+Need to use v0 after using framingui?
 
 **Use case:** You want v0's visual editor for a specific feature.
 
@@ -627,24 +627,24 @@ Need to use v0 after using tekton-ui?
 1. Generate initial layout in v0
 2. Export v0 code
 3. Replace v0 classes with tekton tokens (see migration above)
-4. Continue with tekton-ui MCP for new components
+4. Continue with framingui MCP for new components
 ```
 
-**Or:** Use v0 for one-off prototypes, tekton-ui for production.
+**Or:** Use v0 for one-off prototypes, framingui for production.
 
 ## FAQ
 
-### Is v0 better than tekton-ui?
+### Is v0 better than framingui?
 
 Neither is "better"—they solve different problems:
 - **v0**: Visual prototyping and rapid iteration
-- **tekton-ui**: Design system creation and AI integration
+- **framingui**: Design system creation and AI integration
 
 Choose based on your needs (see decision guide at top).
 
-### Can I use shadcn/ui with tekton-ui?
+### Can I use shadcn/ui with framingui?
 
-Yes! tekton-ui works with any component library:
+Yes! framingui works with any component library:
 
 ```bash
 # Install shadcn components
@@ -664,9 +664,9 @@ import { tokens } from '@/design-system/tokens';
 
 shadcn components + tekton tokens = best of both worlds.
 
-### Does tekton-ui have a visual interface like v0?
+### Does framingui have a visual interface like v0?
 
-Not yet. tekton-ui currently focuses on:
+Not yet. framingui currently focuses on:
 - CLI for token generation
 - MCP for AI integration
 - Code-first workflow
@@ -680,7 +680,7 @@ Not yet. tekton-ui currently focuses on:
 
 No. v0 generates shadcn/ui components with default styling. You must manually apply your design tokens after export.
 
-tekton-ui solves this with MCP—AI reads your design system programmatically.
+framingui solves this with MCP—AI reads your design system programmatically.
 
 ### Which one is faster for prototyping?
 
@@ -689,7 +689,7 @@ tekton-ui solves this with MCP—AI reads your design system programmatically.
 - No setup required (just start prompting)
 - Shareable links (collaborate without Git)
 
-**tekton-ui** is faster for production development:
+**framingui** is faster for production development:
 - No token replacement (AI uses tokens from start)
 - No design drift (automatic compliance)
 - No manual cleanup (on-brand first time)
@@ -698,17 +698,17 @@ tekton-ui solves this with MCP—AI reads your design system programmatically.
 
 No. v0 is a closed-source, hosted service by Vercel.
 
-tekton-ui is open-source and self-hosted (runs on your machine).
+framingui is open-source and self-hosted (runs on your machine).
 
 ## Final Recommendation
 
-**For most teams:** Start with v0 for prototyping, migrate to tekton-ui for production.
+**For most teams:** Start with v0 for prototyping, migrate to framingui for production.
 
-**If you already have a design system:** Use tekton-ui exclusively.
+**If you already have a design system:** Use framingui exclusively.
 
-**If you're learning:** Use v0 to learn, then level up to tekton-ui.
+**If you're learning:** Use v0 to learn, then level up to framingui.
 
-**If you're building a product company:** Invest in tekton-ui for long-term consistency.
+**If you're building a product company:** Invest in framingui for long-term consistency.
 
 ---
 
@@ -718,16 +718,16 @@ tekton-ui is open-source and self-hosted (runs on your machine).
 
 Visit [v0.dev](https://v0.dev) and start generating UI instantly.
 
-### Try tekton-ui
+### Try framingui
 
 ```bash
 npm install @tekton/core @tekton/mcp-server
 npx @tekton/cli init
 ```
 
-Configure MCP in Claude Code or Cursor (see [setup guide](https://tekton-ui.com/docs/mcp)).
+Configure MCP in Claude Code or Cursor (see [setup guide](https://framingui.com/docs/mcp)).
 
-### Join tekton-ui Beta
+### Join framingui Beta
 
 Get early access to visual editor and advanced features:
 
@@ -737,13 +737,13 @@ Get early access to visual editor and advanced features:
 
 **Resources:**
 
-- [tekton-ui Documentation](https://tekton-ui.com/docs) — Complete setup guides
+- [framingui Documentation](https://framingui.com/docs) — Complete setup guides
 - [v0 Documentation](https://v0.dev/docs) — Vercel's official docs
-- [Component Comparison](https://tekton-ui.com/vs/v0) — Detailed feature matrix
-- [Migration Guide](https://tekton-ui.com/docs/migration/v0) — Step-by-step v0 → tekton-ui
+- [Component Comparison](https://framingui.com/vs/v0) — Detailed feature matrix
+- [Migration Guide](https://framingui.com/docs/migration/v0) — Step-by-step v0 → framingui
 
 ---
 
-*This is an independent comparison. We respect v0 and recommend it for many use cases. tekton-ui exists to solve a specific problem—design system consistency—that v0 wasn't designed to address.*
+*This is an independent comparison. We respect v0 and recommend it for many use cases. framingui exists to solve a specific problem—design system consistency—that v0 wasn't designed to address.*
 
-*Built with [tekton-ui](https://tekton-ui.com) — When brand consistency matters.*
+*Built with [framingui](https://framingui.com) — When brand consistency matters.*

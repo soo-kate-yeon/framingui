@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Link Component Tests
+ * @framingui - Link Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

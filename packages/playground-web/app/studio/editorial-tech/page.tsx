@@ -29,7 +29,7 @@ const EDITORIAL_TECH_FALLBACK: Record<string, string> = {
   '--tekton-action-primary': '#0A0A0A',
   '--tekton-action-primary-text': '#FFFFFF',
 
-  // 컴포넌트 변수 (@tekton-ui/ui 컴포넌트용)
+  // 컴포넌트 변수 (@framingui/ui 컴포넌트용)
   '--tekton-bg-background': '#FFFFFF',
   '--tekton-bg-foreground': '#0A0A0A',
   '--tekton-bg-card': '#FFFFFF',
@@ -96,7 +96,7 @@ export default function EditorialTechDemo() {
             className="inline-flex items-center gap-2 mb-12 hover:opacity-70 transition-opacity"
           >
             <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
-              tekton/ui
+              framingui
             </span>
             <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
           </Link>

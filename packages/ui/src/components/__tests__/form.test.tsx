@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Form Component Tests
+ * @framingui/ui - Form Component Tests
  */
 
 import { render, screen } from '@testing-library/react';

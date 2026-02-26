@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Screen Resolver
+ * @framingui/core - Screen Resolver
  * Main entry point for resolving screen definitions to complete screen structures
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

@@ -1,11 +1,11 @@
-# @tekton-ui/styled
+# @framingui/styled
 
 > styled-components 래퍼. 디자인 토큰 사용을 강제하여 하드코딩을 방지합니다.
 
 ## 설치
 
 ```bash
-npm install @tekton-ui/styled styled-components
+npm install @framingui/styled styled-components
 ```
 
 ### Peer Dependencies
@@ -20,11 +20,11 @@ npm install @tekton-ui/styled styled-components
 
 ## 핵심 역할
 
-`@tekton-ui/styled`는 styled-components의 **drop-in replacement**입니다. 기존 styled-components API와 100% 호환되면서도, 하드코딩된 디자인 값(색상, 간격 등)을 사용하면 런타임에서 즉시 오류를 발생시킵니다.
+`@framingui/styled`는 styled-components의 **drop-in replacement**입니다. 기존 styled-components API와 100% 호환되면서도, 하드코딩된 디자인 값(색상, 간격 등)을 사용하면 런타임에서 즉시 오류를 발생시킵니다.
 
 **왜 필요한가?**
 
-디자인 시스템에서 가장 흔한 문제는 개발자가 토큰 대신 하드코딩된 값을 사용하는 것입니다. `#ff0000`이나 `16px` 같은 값이 코드에 들어가면, 테마 변경이나 디자인 일관성 유지가 불가능해집니다. `@tekton-ui/styled`는 이 문제를 근본적으로 방지합니다.
+디자인 시스템에서 가장 흔한 문제는 개발자가 토큰 대신 하드코딩된 값을 사용하는 것입니다. `#ff0000`이나 `16px` 같은 값이 코드에 들어가면, 테마 변경이나 디자인 일관성 유지가 불가능해집니다. `@framingui/styled`는 이 문제를 근본적으로 방지합니다.
 
 ---
 
@@ -32,7 +32,7 @@ npm install @tekton-ui/styled styled-components
 
 ### 거부되는 값
 
-`@tekton-ui/styled`는 다음과 같은 하드코딩된 값을 감지하면 오류를 발생시킵니다.
+`@framingui/styled`는 다음과 같은 하드코딩된 값을 감지하면 오류를 발생시킵니다.
 
 **색상 값:**
 
@@ -87,10 +87,10 @@ styled.div`
 
 ## tokens 접근자
 
-`tokens` 객체는 Proxy 기반으로 구현되어 있으며, 프로퍼티 접근 경로가 자동으로 CSS 변수 참조(`var(--tekton-...)`)로 변환됩니다. `@tekton-ui/tokens`의 `TektonTokens` 인터페이스 타입이 적용되어 IDE 자동완성이 지원됩니다.
+`tokens` 객체는 Proxy 기반으로 구현되어 있으며, 프로퍼티 접근 경로가 자동으로 CSS 변수 참조(`var(--tekton-...)`)로 변환됩니다. `@framingui/tokens`의 `TektonTokens` 인터페이스 타입이 적용되어 IDE 자동완성이 지원됩니다.
 
 ```typescript
-import { tokens } from '@tekton-ui/styled';
+import { tokens } from '@framingui/styled';
 
 // 배경 색상
 tokens.bg.surface.default; // => 'var(--tekton-bg-surface-default)'
@@ -131,7 +131,7 @@ tokens.motion.easing.standard; // => 'var(--tekton-motion-easing-standard)'
 ### 올바른 사용
 
 ```typescript
-import { styled, tokens } from '@tekton-ui/styled';
+import { styled, tokens } from '@framingui/styled';
 
 const Container = styled.div`
   background: ${tokens.bg.surface.default};
@@ -167,7 +167,7 @@ const PrimaryButton = styled.button`
 ### 잘못된 사용 (오류 발생)
 
 ```typescript
-import { styled, tokens } from '@tekton-ui/styled';
+import { styled, tokens } from '@framingui/styled';
 
 // 색상 하드코딩 - 런타임 오류 발생
 const BadContainer = styled.div`
@@ -191,7 +191,7 @@ const BadCard = styled.div`
 수동으로 템플릿 문자열을 검증하고 싶을 때 사용합니다.
 
 ```typescript
-import { validateNoHardcodedValues } from '@tekton-ui/styled';
+import { validateNoHardcodedValues } from '@framingui/styled';
 
 // 유효한 CSS - 오류 없음
 validateNoHardcodedValues`
@@ -213,7 +213,7 @@ validateNoHardcodedValues`
 styled-components의 `css`와 `createGlobalStyle`도 그대로 사용할 수 있습니다.
 
 ```typescript
-import { css, createGlobalStyle, tokens } from '@tekton-ui/styled';
+import { css, createGlobalStyle, tokens } from '@framingui/styled';
 
 // css 헬퍼
 const flexCenter = css`
@@ -236,7 +236,7 @@ const GlobalStyle = createGlobalStyle`
 
 ## 기존 프로젝트에서 마이그레이션
 
-styled-components에서 `@tekton-ui/styled`로의 마이그레이션은 import 경로만 변경하면 됩니다.
+styled-components에서 `@framingui/styled`로의 마이그레이션은 import 경로만 변경하면 됩니다.
 
 ```typescript
 // 변경 전
@@ -248,7 +248,7 @@ const Box = styled.div`
 `;
 
 // 변경 후
-import { styled, tokens } from '@tekton-ui/styled';
+import { styled, tokens } from '@framingui/styled';
 
 const Box = styled.div`
   background: ${tokens.bg.surface.default};
@@ -260,9 +260,9 @@ const Box = styled.div`
 
 ## 다른 패키지와의 관계
 
-- **[@tekton-ui/tokens](./tokens.md)**: `tokens` 접근자의 타입 정의를 `TektonTokens` 인터페이스에서 가져옵니다.
-- **[@tekton-ui/esbuild-plugin](./esbuild-plugin.md)**: 런타임 검증(styled)과 빌드 타임 검증(esbuild-plugin)은 동일한 규칙을 적용하지만 서로 다른 시점에서 동작합니다. 두 패키지를 함께 사용하면 더 강력한 토큰 강제가 가능합니다.
-- **[@tekton-ui/ui](./ui.md)**: ui 컴포넌트와 함께 사용할 때, 커스텀 styled 컴포넌트도 동일한 토큰 체계를 따르게 됩니다.
+- **[@framingui/tokens](./tokens.md)**: `tokens` 접근자의 타입 정의를 `TektonTokens` 인터페이스에서 가져옵니다.
+- **[@framingui/esbuild-plugin](./esbuild-plugin.md)**: 런타임 검증(styled)과 빌드 타임 검증(esbuild-plugin)은 동일한 규칙을 적용하지만 서로 다른 시점에서 동작합니다. 두 패키지를 함께 사용하면 더 강력한 토큰 강제가 가능합니다.
+- **[@framingui/ui](./ui.md)**: ui 컴포넌트와 함께 사용할 때, 커스텀 styled 컴포넌트도 동일한 토큰 체계를 따르게 됩니다.
 
 ---
 

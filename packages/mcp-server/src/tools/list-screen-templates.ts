@@ -6,7 +6,7 @@
  * with category filtering and search capabilities
  */
 
-import { templateRegistry } from '@tekton-ui/ui';
+import { templateRegistry } from '@framingui/ui';
 import type {
   ListScreenTemplatesInput,
   ListScreenTemplatesOutput,

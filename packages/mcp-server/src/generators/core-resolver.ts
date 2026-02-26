@@ -3,7 +3,7 @@
  * SPEC-COMPONENT-001-D: Hybrid Export System
  *
  * Tier 1: UI 라이브러리에서 컴포넌트 코드를 직접 가져옴
- * - @tekton-ui/ui 패키지의 실제 구현을 참조
+ * - @framingui/ui 패키지의 실제 구현을 참조
  * - 사전 정의된 컴포넌트 템플릿 제공
  */
 
@@ -28,10 +28,10 @@ export interface ComponentResolutionResult {
 
 /**
  * Tier 1 예제 컴포넌트
- * @tekton-ui/ui 컴포넌트를 사용하는 예제 코드
+ * @framingui/ui 컴포넌트를 사용하는 예제 코드
  */
 const TIER1_EXAMPLES: Record<string, string> = {
-  Button: `import { Button } from '@tekton-ui/ui';
+  Button: `import { Button } from '@framingui/ui';
 
 export function ButtonExample() {
   return (
@@ -46,7 +46,7 @@ export function ButtonExample() {
   );
 }`,
 
-  Input: `import { Input } from '@tekton-ui/ui';
+  Input: `import { Input } from '@framingui/ui';
 
 export function InputExample() {
   return (
@@ -66,8 +66,8 @@ export function InputExample() {
   CardDescription,
   CardContent,
   CardFooter,
-} from '@tekton-ui/ui';
-import { Button } from '@tekton-ui/ui';
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
 
 export function CardExample() {
   return (
@@ -87,7 +87,7 @@ export function CardExample() {
   );
 }`,
 
-  Avatar: `import { Avatar, AvatarImage, AvatarFallback } from '@tekton-ui/ui';
+  Avatar: `import { Avatar, AvatarImage, AvatarFallback } from '@framingui/ui';
 
 export function AvatarExample() {
   return (
@@ -103,7 +103,7 @@ export function AvatarExample() {
   );
 }`,
 
-  Badge: `import { Badge } from '@tekton-ui/ui';
+  Badge: `import { Badge } from '@framingui/ui';
 
 export function BadgeExample() {
   return (
@@ -116,7 +116,7 @@ export function BadgeExample() {
   );
 }`,
 
-  Checkbox: `import { Checkbox } from '@tekton-ui/ui';
+  Checkbox: `import { Checkbox } from '@framingui/ui';
 
 export function CheckboxExample() {
   return (
@@ -127,7 +127,7 @@ export function CheckboxExample() {
   );
 }`,
 
-  Progress: `import { Progress } from '@tekton-ui/ui';
+  Progress: `import { Progress } from '@framingui/ui';
 
 export function ProgressExample() {
   return (
@@ -139,7 +139,7 @@ export function ProgressExample() {
   );
 }`,
 
-  Switch: `import { Switch } from '@tekton-ui/ui';
+  Switch: `import { Switch } from '@framingui/ui';
 
 export function SwitchExample() {
   return (
@@ -150,7 +150,7 @@ export function SwitchExample() {
   );
 }`,
 
-  Slider: `import { Slider } from '@tekton-ui/ui';
+  Slider: `import { Slider } from '@framingui/ui';
 
 export function SliderExample() {
   return (
@@ -169,8 +169,8 @@ export function SliderExample() {
   ModalDescription,
   ModalFooter,
   ModalClose,
-} from '@tekton-ui/ui';
-import { Button } from '@tekton-ui/ui';
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
 
 export function ModalExample() {
   return (
@@ -205,8 +205,8 @@ export function ModalExample() {
   DropdownContent,
   DropdownItem,
   DropdownSeparator,
-} from '@tekton-ui/ui';
-import { Button } from '@tekton-ui/ui';
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
 
 export function DropdownExample() {
   return (
@@ -224,7 +224,7 @@ export function DropdownExample() {
   );
 }`,
 
-  Tabs: `import { Tabs, TabsList, TabsTrigger, TabsContent } from '@tekton-ui/ui';
+  Tabs: `import { Tabs, TabsList, TabsTrigger, TabsContent } from '@framingui/ui';
 
 export function TabsExample() {
   return (
@@ -250,7 +250,7 @@ export function TabsExample() {
   TableRow,
   TableHead,
   TableCell,
-} from '@tekton-ui/ui';
+} from '@framingui/ui';
 
 export function TableExample() {
   return (
@@ -284,9 +284,9 @@ export function TableExample() {
   FormLabel,
   FormControl,
   FormMessage,
-} from '@tekton-ui/ui';
-import { Input } from '@tekton-ui/ui';
-import { Button } from '@tekton-ui/ui';
+} from '@framingui/ui';
+import { Input } from '@framingui/ui';
+import { Button } from '@framingui/ui';
 
 export function FormExample() {
   return (
@@ -309,7 +309,7 @@ export function FormExample() {
   );
 }`,
 
-  Text: `import { Text } from '@tekton-ui/ui';
+  Text: `import { Text } from '@framingui/ui';
 
 export function TextExample() {
   return (
@@ -323,7 +323,7 @@ export function TextExample() {
   );
 }`,
 
-  Heading: `import { Heading } from '@tekton-ui/ui';
+  Heading: `import { Heading } from '@framingui/ui';
 
 export function HeadingExample() {
   return (
@@ -336,7 +336,7 @@ export function HeadingExample() {
   );
 }`,
 
-  Link: `import { Link } from '@tekton-ui/ui';
+  Link: `import { Link } from '@framingui/ui';
 
 export function LinkExample() {
   return (
@@ -347,7 +347,7 @@ export function LinkExample() {
   );
 }`,
 
-  List: `import { List, ListItem } from '@tekton-ui/ui';
+  List: `import { List, ListItem } from '@framingui/ui';
 
 export function ListExample() {
   return (
@@ -359,7 +359,7 @@ export function ListExample() {
   );
 }`,
 
-  Image: `import { Image } from '@tekton-ui/ui';
+  Image: `import { Image } from '@framingui/ui';
 
 export function ImageExample() {
   return (
@@ -371,7 +371,7 @@ export function ImageExample() {
   );
 }`,
 
-  RadioGroup: `import { RadioGroup, RadioGroupItem } from '@tekton-ui/ui';
+  RadioGroup: `import { RadioGroup, RadioGroupItem } from '@framingui/ui';
 
 export function RadioGroupExample() {
   return (
@@ -390,7 +390,7 @@ export function RadioGroupExample() {
 };
 
 /**
- * @tekton-ui/ui에서 지원하는 컴포넌트 목록
+ * @framingui/ui에서 지원하는 컴포넌트 목록
  */
 export const TIER1_COMPONENTS = Object.keys(TIER1_EXAMPLES);
 
@@ -426,14 +426,14 @@ export function getTier1Example(componentName: string): ComponentResolutionResul
 }
 
 /**
- * @tekton-ui/ui 패키지에서 실제 컴포넌트 소스 코드 가져오기
+ * @framingui/ui 패키지에서 실제 컴포넌트 소스 코드 가져오기
  *
  * @param componentName - 컴포넌트 이름
  * @returns 컴포넌트 소스 코드
  */
 export function getTier1Source(componentName: string): ComponentResolutionResult {
   try {
-    // @tekton-ui/ui 패키지 경로 탐색
+    // @framingui/ui 패키지 경로 탐색
     const uiPackagePath = resolve(__dirname, '../../../../ui/src');
 
     // 컴포넌트 파일 매핑

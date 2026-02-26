@@ -84,7 +84,7 @@ useEffect(() => {
 }, [theme]);
 
 // [TAG-007] 필요한 CSS Variable만 로드
-import '@tekton/ui/styles/button.css'; // 컴포넌트별 분리
+import '@framingui/styles/button.css'; // 컴포넌트별 분리
 
 // [TAG-008] ScreenTemplate 토큰 바인딩 유지
 export const LoginTemplate: ScreenTemplate = {
@@ -541,7 +541,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 **해결 방법:**
 1. Tailwind CSS 설치:
    ```bash
-   pnpm add -D tailwindcss postcss autoprefixer --filter @tekton/ui
+   pnpm add -D tailwindcss postcss autoprefixer --filter @framingui
    ```
 
 2. `tailwind.config.ts` 생성:

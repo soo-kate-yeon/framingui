@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Token Binding Resolver
+ * @framingui/core - Token Binding Resolver
  * Resolves token bindings with template variable substitution
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

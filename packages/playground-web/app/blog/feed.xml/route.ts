@@ -1,7 +1,7 @@
 import { Feed } from 'feed';
 import { getAllBlogPosts } from '@/lib/blog';
 
-const SITE_URL = 'https://tekton-ui.com';
+const SITE_URL = 'https://framingui.com';
 
 export async function GET() {
   const posts = getAllBlogPosts('en');

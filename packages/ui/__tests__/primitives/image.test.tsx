@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Image Component Tests
+ * @framingui - Image Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

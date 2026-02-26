@@ -1,24 +1,24 @@
-# tekton/ui - Agentic Design System
+# framingui - Agentic Design System
 
 > The design system built for AI agents. 0% hallucination by design.
 
 ## Overview
 
-tekton/ui provides structured design constraints that LLMs can parse and follow,
+framingui provides structured design constraints that LLMs can parse and follow,
 generating production-ready UI with consistent colors, typography, and spacing.
 
 ## Quick Start
 
 ```bash
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 ```
 
 ## Packages
 
-- @tekton-ui/core: Token generation, OKLCH utilities
-- @tekton-ui/ui: 30+ React components
-- @tekton-ui/tokens: Raw design tokens
-- @tekton-ui/mcp-server: AI tool integration
+- @framingui/core: Token generation, OKLCH utilities
+- @framingui/ui: 30+ React components
+- @framingui/tokens: Raw design tokens
+- @framingui/mcp-server: AI tool integration
 
 ## Available Themes (7)
 
@@ -55,6 +55,6 @@ npx @tekton-ui/mcp-server init
 
 ## Links
 
-- Website: https://tekton-ui.com
-- Studio: https://tekton-ui.com/studio
+- Website: https://framingui.com
+- Studio: https://framingui.com/studio
 - Beta: https://tally.so/r/7R2kz6

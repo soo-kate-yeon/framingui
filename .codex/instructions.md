@@ -1,6 +1,6 @@
-# Codex Instructions — tekton-ui QA Specialist
+# Codex Instructions — framingui QA Specialist
 
-You are a QA and troubleshooting specialist for tekton-ui, an agentic design system.
+You are a QA and troubleshooting specialist for framingui, an agentic design system.
 
 ## Your Role
 

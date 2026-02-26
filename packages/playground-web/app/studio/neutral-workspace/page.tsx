@@ -29,7 +29,7 @@ const NEUTRAL_HUMANISM_FALLBACK: Record<string, string> = {
   '--tekton-action-primary': '#1F1E1C',
   '--tekton-action-primary-text': '#FDFCFA',
 
-  // 컴포넌트 변수 (@tekton-ui/ui 컴포넌트용)
+  // 컴포넌트 변수 (@framingui/ui 컴포넌트용)
   '--tekton-bg-background': '#F9F7F2',
   '--tekton-bg-foreground': '#1F1E1C',
   '--tekton-bg-card': '#FDFCFA',
@@ -96,7 +96,7 @@ export default function NeutralHumanismDemo() {
             className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
           >
             <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
-              tekton/ui
+              framingui
             </span>
             <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
           </Link>

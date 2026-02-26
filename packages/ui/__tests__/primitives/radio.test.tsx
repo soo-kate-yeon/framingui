@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Radio Component Tests
+ * @framingui - Radio Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

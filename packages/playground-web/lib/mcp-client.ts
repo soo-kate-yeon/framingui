@@ -4,7 +4,7 @@
  */
 
 import { BlueprintSchema, type Blueprint } from './schemas';
-import type { PreviewThemeOutput, ListThemesOutput } from '@tekton-ui/mcp-server/schemas';
+import type { PreviewThemeOutput, ListThemesOutput } from '@framingui/mcp-server/schemas';
 
 const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'http://localhost:3000';
 

@@ -38,8 +38,8 @@ The MCP server supports optional API key authentication to enable access to prem
 # Required for premium theme access
 TEKTON_API_KEY=tk_live_xxx...
 
-# Optional: API endpoint (defaults to https://tekton-ui.com)
-TEKTON_API_URL=https://tekton-ui.com  # or http://localhost:3000 for dev
+# Optional: API endpoint (defaults to https://framingui.com)
+TEKTON_API_URL=https://framingui.com  # or http://localhost:3000 for dev
 ```
 
 ### Theme Access
@@ -77,18 +77,18 @@ TEKTON_API_URL=https://tekton-ui.com  # or http://localhost:3000 for dev
 
 ## Quick Start: `init` Command
 
-프로젝트에 Tekton UI를 한 줄로 설정합니다.
+프로젝트에 FramingUI를 한 줄로 설정합니다.
 
 ```bash
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 ```
 
 자동으로 수행되는 작업:
 
 1. **프로젝트 감지** - Next.js / Vite 자동 인식
-2. **패키지 설치** - `@tekton-ui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지: pnpm/yarn/bun/npm)
+2. **패키지 설치** - `@framingui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지: pnpm/yarn/bun/npm)
 3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
-4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
+4. **CSS 토큰 임포트** - `globals.css`에 `@import '@framingui/ui/styles'` 추가
 5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
 6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
 7. **AI 에이전트 가이드** - `CLAUDE.md` 및 `AGENTS.md`에 Tekton 워크플로우 섹션 추가
@@ -100,8 +100,8 @@ npx @tekton-ui/mcp-server init
 
 | Command                          | Description           |
 | -------------------------------- | --------------------- |
-| `npx @tekton-ui/mcp-server`      | MCP stdio 서버 시작   |
-| `npx @tekton-ui/mcp-server init` | 프로젝트 초기 설정    |
+| `npx @framingui/mcp-server`      | MCP stdio 서버 시작   |
+| `npx @framingui/mcp-server init` | 프로젝트 초기 설정    |
 | `tekton-mcp login`               | 브라우저 OAuth 로그인 |
 | `tekton-mcp logout`              | 로그아웃              |
 | `tekton-mcp status`              | 인증 상태 확인        |
@@ -134,7 +134,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
     "tekton": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tekton-ui/mcp-server"]
+      "args": ["-y", "@framingui/mcp-server"]
     }
   }
 }
@@ -414,7 +414,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 
 **Tool**: `list-components`
 
-**Description**: List all available UI components from @tekton/ui component catalog
+**Description**: List all available UI components from @framingui component catalog
 
 **Input**:
 
@@ -524,7 +524,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
         "description": "Red destructive action"
       }
     ],
-    "importStatement": "import { Button } from '@tekton/ui';",
+    "importStatement": "import { Button } from '@framingui';",
     "dependencies": {
       "internal": [],
       "external": ["@radix-ui/react-slot"]
@@ -532,7 +532,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
     "examples": [
       {
         "title": "Basic Usage",
-        "code": "import { Button } from '@tekton/ui';\n\n<Button variant=\"default\">Click me</Button>",
+        "code": "import { Button } from '@framingui';\n\n<Button variant=\"default\">Click me</Button>",
         "description": "Simple button with default variant"
       }
     ],
@@ -606,7 +606,7 @@ The MCP server provides 2 built-in prompts that work across all MCP clients:
 
 ### 1. getting-started
 
-**Purpose**: Complete onboarding guide for Tekton UI
+**Purpose**: Complete onboarding guide for FramingUI
 
 **Content**:
 
@@ -711,7 +711,7 @@ The MCP server provides 2 built-in prompts that work across all MCP clients:
       "slots": ["logo", "footer", "socialLogin"]
     },
     "requiredComponents": ["Input", "Button", "Card", "Form", "Label"],
-    "importStatement": "import { LoginTemplate } from '@tekton/ui';",
+    "importStatement": "import { LoginTemplate } from '@framingui';",
     "exampleProps": {
       "texts": {
         "title": "Welcome Back",
@@ -914,7 +914,7 @@ All MCP tools reuse `@tekton/core` functions:
 
 **Component & Template Discovery** (SPEC-MCP-003):
 
-- `templateRegistry` from `@tekton/ui` - Template metadata and search
+- `templateRegistry` from `@framingui` - Template metadata and search
 - Component metadata registry - Static component catalog with 30+ components
 - Component type definitions - TypeScript interfaces for props and variants
 - Template structure definitions - Skeleton, layout, and customization schemas

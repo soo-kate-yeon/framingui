@@ -13,7 +13,7 @@ export function generateClaudeMdSection(framework: Framework): string {
   const importPath = framework === 'nextjs' ? 'app/page.tsx' : 'src/App.tsx';
 
   return `
-## Tekton UI Workflow (Claude Code)
+## FramingUI Workflow (Claude Code)
 
 ### MCP Server Connection
 
@@ -53,7 +53,7 @@ tekton-mcp login
 
 \`\`\`tsx
 // ${importPath}
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
 
 export default function Page() {
   return (
@@ -120,7 +120,7 @@ These prompts work across all MCP clients, not just Claude Code.
 
 **Missing styles:**
 - Run \`validate-environment\` to check Tailwind config
-- Verify \`@tekton-ui/ui\` content paths are included
+- Verify \`@framingui/ui\` content paths are included
 - Check \`tailwindcss-animate\` plugin is configured
 
 **Component not found:**
@@ -137,7 +137,7 @@ export function generateAgentsMdSection(framework: Framework): string {
   const importPath = framework === 'nextjs' ? 'app/page.tsx' : 'src/App.tsx';
 
   return `
-## Tekton UI Workflow (AI Agents)
+## FramingUI Workflow (AI Agents)
 
 ### Overview
 
@@ -145,9 +145,9 @@ Tekton MCP server provides 15 tools for screen generation via Model Context Prot
 
 ### Prerequisites
 
-1. **MCP Server Running:** Ensure \`@tekton-ui/mcp-server\` is running and connected
+1. **MCP Server Running:** Ensure \`@framingui/mcp-server\` is running and connected
 2. **Authentication:** User must run \`tekton-mcp login\` before generating screens
-3. **Project Setup:** \`@tekton-ui/ui\` and \`tailwindcss-animate\` must be installed
+3. **Project Setup:** \`@framingui/ui\` and \`tailwindcss-animate\` must be installed
 
 ### Required Authentication Flow
 
@@ -252,7 +252,7 @@ Before generating screens, explore available resources:
 
 \`\`\`tsx
 // ${importPath}
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
 
 export default function Page() {
   return (
@@ -294,7 +294,7 @@ These provide context to help you guide users effectively.
 
 **Missing styles (runtime):**
 - Run \`validate-environment\` to diagnose
-- Check Tailwind config includes \`@tekton-ui/ui\` content paths
+- Check Tailwind config includes \`@framingui/ui\` content paths
 - Check \`tailwindcss-animate\` plugin is configured
 
 ### Best Practices

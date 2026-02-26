@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - List Component
+ * @framingui - List Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

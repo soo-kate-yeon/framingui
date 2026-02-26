@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Success Screen Template
+ * @framingui/core - Success Screen Template
  * [SPEC-UI-002] [TAG-UI002-035] feedback.success
  */
 

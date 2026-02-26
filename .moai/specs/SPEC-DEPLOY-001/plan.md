@@ -32,7 +32,7 @@ Phase 1 (인프라) ──► Phase 2 (인증) ──► Phase 3 (결제) ──
 | M1 | @tekton npm org 생성 | P1 | npm 계정 인증 필요 |
 | M2 | NPM_TOKEN 발급 → GitHub Secrets 등록 | P1 | npm 계정 인증 필요 |
 | M3 | Vercel 프로젝트 생성 | P1 | Vercel 계정 인증 필요 |
-| M4 | tekton-ui.com DNS 설정 | P1 | 도메인 레지스트라 접근 필요 |
+| M4 | framingui.com DNS 설정 | P1 | 도메인 레지스트라 접근 필요 |
 | M5 | Vercel 환경변수 설정 | P1 | Vercel Dashboard 접근 필요 |
 | M6 | Paddle 계정 생성 + Product 설정 | P3 | Paddle 계정 인증 필요 |
 | M7 | Paddle 웹훅 URL + 시크릿 설정 | P3 | Paddle Dashboard 접근 필요 |
@@ -88,7 +88,7 @@ supabase db push
 1. Vercel 프로젝트 생성 (Import from GitHub)
 2. Root Directory: `packages/playground-web`
 3. Framework Preset: Next.js
-4. tekton-ui.com 도메인 연결
+4. framingui.com 도메인 연결
 5. 환경변수 설정
 
 ---
@@ -229,7 +229,7 @@ supabase db push
 ### Step 5.2: Staging Verification
 
 **체크리스트**:
-- [ ] dev.tekton-ui.com 접속 확인
+- [ ] dev.framingui.com 접속 확인
 - [ ] OAuth 로그인 (Google, GitHub)
 - [ ] Paddle Sandbox 결제
 - [ ] API Key 발급 + MCP 서버 인증
@@ -240,7 +240,7 @@ supabase db push
 **체크리스트**:
 - [ ] master 머지
 - [ ] Vercel Production 빌드 성공
-- [ ] tekton-ui.com SSL 확인
+- [ ] framingui.com SSL 확인
 - [ ] Paddle Production 전환
 - [ ] npm v0.2.0 태그 + publish
 - [ ] 전체 여정 수동 검증

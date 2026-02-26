@@ -39,7 +39,7 @@
 | @tekton/core | 219.2 kB | 255 |
 | @tekton/esbuild-plugin | 27.4 kB | 16 |
 | @tekton/styled | 5.0 kB | 19 |
-| @tekton/ui | 197.2 kB | 344 |
+| @framingui | 197.2 kB | 344 |
 | @tekton/mcp-server | 130.6 kB | 179 |
 
 ### Part B: Paddle 결제 연동 (Phase 3)
@@ -149,7 +149,7 @@ Vercel 배포 시에도 동일한 환경변수를 Dashboard > Settings > Environ
 
 ### 5. Phase 1 잔여 (선택)
 
-- [ ] 커스텀 도메인 설정 (tekton-ui.com → Vercel)
+- [ ] 커스텀 도메인 설정 (framingui.com → Vercel)
 - [ ] Lighthouse CI 워크플로우 활성화 (`.github/workflows/lighthouse-ci.yml` 이미 존재)
 
 ---

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Settings/Preferences Screen Template
+ * @framingui/core - Settings/Preferences Screen Template
  * [SPEC-UI-002] [TAG-UI002-029] settings.preferences
  *
  * Design Reference: Claude.ai Settings Page

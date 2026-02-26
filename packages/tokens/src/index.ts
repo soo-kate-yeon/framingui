@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/tokens - Token Type Definitions Package
+ * @framingui/tokens - Token Type Definitions Package
  * [SPEC-STYLED-001] [TAG-002]
  * [SPEC-UI-001] [TAG-018] Motion tokens 추가
  */

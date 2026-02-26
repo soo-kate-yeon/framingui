@@ -149,7 +149,7 @@ Updated `vitest.config.ts` to support workspace packages:
 ```typescript
 resolve: {
   alias: {
-    '@tekton/ui': resolve(__dirname, '../ui/src/index.ts'),
+    '@framingui': resolve(__dirname, '../ui/src/index.ts'),
     '@tekton/core': resolve(__dirname, '../core/src/index.ts'),
   },
 }
@@ -157,7 +157,7 @@ resolve: {
 
 ## Mock Strategy
 
-For template-related tests, implemented comprehensive mocks for `@tekton/ui` templateRegistry:
+For template-related tests, implemented comprehensive mocks for `@framingui` templateRegistry:
 
 - Mock data includes all 13 templates
 - Supports `getAll()`, `getByCategory()`, `search()`, and `get()` methods
@@ -181,7 +181,7 @@ For template-related tests, implemented comprehensive mocks for `@tekton/ui` tem
 ### Optional Enhancements:
 
 1. Consider adding performance benchmarks for response times
-2. Add integration tests with real @tekton/ui package
+2. Add integration tests with real @framingui package
 3. Increase list-components.ts coverage from 83.33% to 85%+ by adding error path tests
 
 ## Conclusion

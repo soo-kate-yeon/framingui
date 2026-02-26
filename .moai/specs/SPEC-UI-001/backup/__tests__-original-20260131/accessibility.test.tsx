@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Comprehensive Accessibility Tests
+ * @framingui - Comprehensive Accessibility Tests
  * [SPEC-COMPONENT-001-C] [TASK-18]
  *
  * Tests all 20 components for WCAG 2.1 AA compliance using axe-core

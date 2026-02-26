@@ -32,7 +32,7 @@ Module not found: Can't resolve './theme.js'
 ```typescript
 const nextConfig: NextConfig = {
   // Workspace 패키지 transpile
-  transpilePackages: ['@tekton/core', '@tekton/ui'],
+  transpilePackages: ['@tekton/core', '@framingui'],
   webpack: config => {
     // pnpm symlink를 따라가지 않고 package.json exports 사용
     config.resolve.symlinks = false;
@@ -71,7 +71,7 @@ Cannot find module '@tekton/core' or its corresponding type declarations
 {
   "compilerOptions": {
     "paths": {
-      // @tekton/core, @tekton/ui paths 제거!
+      // @tekton/core, @framingui paths 제거!
       // pnpm이 자동으로 해석함
       "@/*": ["./*"],
       "@/components/*": ["./components/*"],
@@ -206,7 +206,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   // pnpm workspace 패키지 처리
-  transpilePackages: ['@tekton/core', '@tekton/ui'],
+  transpilePackages: ['@tekton/core', '@framingui'],
   webpack: config => {
     // symlink 비활성화 - package.json exports 사용
     config.resolve.symlinks = false;

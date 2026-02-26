@@ -103,14 +103,14 @@ import { tokens } from '@/design-system/tokens';
 
 You're going to create a professional color palette, spacing scale, and typography system—without touching Figma.
 
-#### Step 1: Install tekton-ui (5 minutes)
+#### Step 1: Install framingui (5 minutes)
 
 ```bash
 # Create a new Next.js project (or use existing)
 npx create-next-app@latest my-app
 cd my-app
 
-# Install tekton-ui
+# Install framingui
 npm install @tekton/core
 
 # Or with yarn
@@ -172,11 +172,11 @@ Don't know? Pick from these proven color psychology guidelines:
 **Question 7: Framework?**
 
 - Select your framework (Next.js, Vite, Remix, etc.)
-- tekton-ui auto-detects this if possible
+- framingui auto-detects this if possible
 
 #### Step 3: Review Generated Tokens (5 minutes)
 
-tekton-ui just generated:
+framingui just generated:
 
 ```
 my-app/
@@ -211,7 +211,7 @@ Open `tokens.css`:
 
 **What just happened:**
 
-1. tekton-ui generated a 10-step color scale from your primary color
+1. framingui generated a 10-step color scale from your primary color
 2. Every color automatically passes WCAG AA contrast requirements
 3. Spacing scale follows a mathematical progression (not arbitrary)
 4. Component tokens map to semantic use cases
@@ -372,7 +372,7 @@ Now make AI tools generate components using your design tokens automatically.
 #### Step 6: Install MCP Server (5 minutes)
 
 ```bash
-# Install tekton-ui MCP server
+# Install framingui MCP server
 npm install @tekton/mcp-server
 ```
 
@@ -668,7 +668,7 @@ export function Button({ children, variant = 'primary' }) {
 
 ### Pattern 2: The Color Palette Validator
 
-Not sure if your colors work together? tekton-ui validates automatically:
+Not sure if your colors work together? framingui validates automatically:
 
 ```bash
 npx @tekton/cli validate
@@ -756,14 +756,14 @@ AI understands design best practices, you don't need to.
 - Inconsistent button styles (users reported "looks unfinished")
 - 4 hours/week tweaking styles
 
-**After tekton-ui:**
+**After framingui:**
 - 12 color tokens (100% compliance)
 - 9 spacing values (mathematical scale)
 - Consistent components (users commented "looks very professional")
 - 0 hours/week on styles (tokens enforce themselves)
 
 **Quote:**
-> "I'm not a designer, but my SaaS looks like I hired one. tekton-ui gave me a design system I could trust."
+> "I'm not a designer, but my SaaS looks like I hired one. framingui gave me a design system I could trust."
 > — Alex, Indie SaaS Developer
 
 ### Case Study 2: E-commerce Store (1 developer, 2 months)
@@ -773,13 +773,13 @@ AI understands design best practices, you don't need to.
 - Every page looked different
 - Failed WCAG contrast checks (lawsuit risk)
 
-**After tekton-ui:**
+**After framingui:**
 - Generated WCAG AAA color palette (automatic)
 - Consistent product cards, buttons, inputs
 - Passed accessibility audit (saved legal fees)
 
 **Quote:**
-> "tekton-ui generated accessible colors I never would have figured out on my own. It literally saved my business from an ADA lawsuit."
+> "framingui generated accessible colors I never would have figured out on my own. It literally saved my business from an ADA lawsuit."
 > — Jordan, E-commerce Founder
 
 ### Case Study 3: Freelance Developer (5 clients)
@@ -789,7 +789,7 @@ AI understands design best practices, you don't need to.
 - Hard to maintain consistency across projects
 - Clients requested "make it match our brand" (nightmare)
 
-**After tekton-ui:**
+**After framingui:**
 - Created one design system template
 - Customize per client: `npx @tekton/cli init --brand clientA`
 - Generate brand-specific tokens in 10 minutes
@@ -803,7 +803,7 @@ AI understands design best practices, you don't need to.
 
 ### I'm not a designer. Can I really do this?
 
-Yes. tekton-ui is designed for non-designers. You answer simple questions (what color represents your brand?), and tekton-ui handles the design math:
+Yes. framingui is designed for non-designers. You answer simple questions (what color represents your brand?), and framingui handles the design math:
 
 - Color theory (complementary colors, shades, tints)
 - Accessibility (WCAG contrast requirements)
@@ -814,7 +814,7 @@ Yes. tekton-ui is designed for non-designers. You answer simple questions (what 
 
 ### How much does this cost?
 
-tekton-ui is **in beta** with your first template free. Pick a template, install with one command, and start building. No subscription during beta.
+framingui is **in beta** with your first template free. Pick a template, install with one command, and start building. No subscription during beta.
 
 You'll spend money on:
 - AI tool subscription (Claude, Cursor, etc.) — optional but recommended
@@ -855,19 +855,19 @@ All their changes flow through tokens—no code changes needed.
 
 ### Do I need to learn OKLCH color space?
 
-No. tekton-ui handles OKLCH internally. You can provide colors as:
+No. framingui handles OKLCH internally. You can provide colors as:
 - Hex: `#3B82F6`
 - RGB: `rgb(59, 130, 246)`
 - HSL: `hsl(217, 91%, 60%)`
 
-tekton-ui converts to OKLCH automatically and generates WCAG-compliant scales.
+framingui converts to OKLCH automatically and generates WCAG-compliant scales.
 
 ### What if I'm using Tailwind CSS?
 
-tekton-ui integrates with Tailwind:
+framingui integrates with Tailwind:
 
 ```javascript
-// tailwind.config.js (generated by tekton-ui)
+// tailwind.config.js (generated by framingui)
 module.exports = {
   theme: {
     extend: {
@@ -924,7 +924,7 @@ MCP server currently generates React components, but tokens work everywhere.
 Use this to verify your setup:
 
 **Token Generation:**
-- [ ] Installed tekton-ui
+- [ ] Installed framingui
 - [ ] Generated color palette (WCAG validated)
 - [ ] Created spacing scale
 - [ ] Defined typography scale
@@ -959,7 +959,7 @@ Use this to verify your setup:
 ### 15-Minute Quick Start
 
 ```bash
-# 1. Install tekton-ui
+# 1. Install framingui
 npm install @tekton/core
 
 # 2. Generate design tokens
@@ -996,10 +996,10 @@ Get early access to:
 - Priority support
 
 **Resources:**
-- [Documentation](https://tekton-ui.com/docs) — Complete guides
-- [Component Templates](https://tekton-ui.com/templates) — Copy-paste components
-- [GitHub](https://github.com/tekton-ui) — Open-source repository
-- [Discord](https://tekton-ui.com/discord) — Community help
+- [Documentation](https://framingui.com/docs) — Complete guides
+- [Component Templates](https://framingui.com/templates) — Copy-paste components
+- [GitHub](https://github.com/framingui) — Open-source repository
+- [Discord](https://framingui.com/discord) — Community help
 
 ---
 
@@ -1009,7 +1009,7 @@ You don't need a design team to build professional UIs. You need a **system**.
 
 Design systems aren't just for enterprise teams with dedicated designers. They're for **solo developers who want to ship fast without sacrificing quality**.
 
-With tekton-ui:
+With framingui:
 - 2 hours to create a design system
 - 0 hours to maintain (tokens enforce themselves)
 - ∞ value from consistent, accessible, on-brand UI
@@ -1018,4 +1018,4 @@ Stop tweaking styles. Start building.
 
 ---
 
-*Built with [tekton-ui](https://tekton-ui.com) — Design systems for developers who code alone.*
+*Built with [framingui](https://framingui.com) — Design systems for developers who code alone.*

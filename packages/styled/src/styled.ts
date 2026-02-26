@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/styled - Token-Enforced Styled Function
+ * @framingui/styled - Token-Enforced Styled Function
  * [SPEC-STYLED-001] [TAG-004]
  * styled-components wrapper with token enforcement
  * REQ-STY-001, REQ-STY-002, REQ-STY-006, REQ-STY-013, REQ-STY-015, REQ-STY-016, REQ-STY-018
@@ -9,7 +9,7 @@ import baseStyled, {
   css as baseCss,
   createGlobalStyle as baseCreateGlobalStyle,
 } from 'styled-components';
-import type { TokenReference } from '@tekton-ui/tokens';
+import type { TokenReference } from '@framingui/tokens';
 import { validateNoHardcodedValues } from './validation.js';
 
 /**

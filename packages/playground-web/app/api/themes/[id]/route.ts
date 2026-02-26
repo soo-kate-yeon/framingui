@@ -7,13 +7,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { loadTheme } from '@tekton-ui/core';
+import { loadTheme } from '@framingui/core';
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 
-    // @tekton-ui/core로 테마 로드
+    // @framingui/core로 테마 로드
     const theme = loadTheme(id);
 
     if (!theme) {

@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Progress Component Tests
+ * @framingui - Progress Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Progress component
  */
 import { render, screen } from '@testing-library/react';

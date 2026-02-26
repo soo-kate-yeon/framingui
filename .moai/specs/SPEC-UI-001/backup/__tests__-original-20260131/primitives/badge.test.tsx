@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Badge Component Tests
+ * @framingui - Badge Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Theme Loader
+ * @framingui/ui - Theme Loader
  * SPEC-UI-001: Theme JSON → CSS Variables Converter
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
@@ -16,7 +16,7 @@
  */
 
 /**
- * Theme Definition (aligned with @tekton-ui/core ThemeV2 v2.1)
+ * Theme Definition (aligned with @framingui/core ThemeV2 v2.1)
  */
 export interface ThemeDefinition {
   id: string;
@@ -169,7 +169,7 @@ export function themeToCSS(theme: ThemeDefinition): string {
   const css = `
 :root, [data-theme="${theme.id}"] {
   /* ========================================
-     Component Tokens (@tekton-ui/ui 컴포넌트용)
+     Component Tokens (@framingui/ui 컴포넌트용)
      ======================================== */
   --tekton-bg-background: ${resolveColor(tokens.semantic.background.canvas)};
   --tekton-bg-foreground: ${textPrimary};
@@ -239,7 +239,7 @@ export function themeToCSS(theme: ThemeDefinition): string {
  *
  * ```tsx
  * import theme from '@/.moai/themes/generated/linear-minimal-v1.json';
- * import { injectThemeCSS } from '@tekton-ui/ui/lib/theme-loader';
+ * import { injectThemeCSS } from '@framingui/ui/lib/theme-loader';
  *
  * // In layout or app component
  * useEffect(() => {

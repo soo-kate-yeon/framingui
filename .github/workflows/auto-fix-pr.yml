@@ -123,7 +123,7 @@ jobs:
           echo "Building workspace dependencies for type resolution..."
           pnpm --filter @tekton/tokens build || true
           pnpm --filter @tekton/core build || true
-          pnpm --filter @tekton/ui build || true
+          pnpm --filter @framingui build || true
 
           echo "Running TypeScript compiler to check for auto-fixable issues..."
           # tsc --build는 incremental build로 의존성 순서를 자동 해결

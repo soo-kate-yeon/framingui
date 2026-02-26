@@ -1,12 +1,12 @@
 /**
- * @tekton-ui/ui API Reference
+ * @framingui/ui API Reference
  */
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '@tekton-ui/ui API | tekton/ui',
-  description: 'API reference for @tekton-ui/ui components.',
+  title: '@framingui/ui API | framingui',
+  description: 'API reference for @framingui/ui components.',
 };
 
 const COMPONENTS = [
@@ -45,7 +45,7 @@ export default function UIAPIPage() {
       <header className="space-y-4">
         <div className="text-sm font-medium text-neutral-500">API Reference</div>
         <h1 className="text-4xl font-bold tracking-tight text-neutral-900 font-mono">
-          @tekton-ui/ui
+          @framingui/ui
         </h1>
         <p className="text-xl text-neutral-600">
           30+ accessible React components built on Radix UI primitives.
@@ -56,7 +56,7 @@ export default function UIAPIPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Installation</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-          <code>npm install @tekton-ui/ui</code>
+          <code>npm install @framingui/ui</code>
         </pre>
       </section>
 
@@ -64,7 +64,7 @@ export default function UIAPIPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Quick Usage</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { Button, Card, Input } from '@tekton-ui/ui';
+{`import { Button, Card, Input } from '@framingui/ui';
 
 export function LoginForm() {
   return (
@@ -106,7 +106,7 @@ export function LoginForm() {
           Primary action component with multiple variants and sizes.
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { Button } from '@tekton-ui/ui';
+{`import { Button } from '@framingui/ui';
 
 // Variants
 <Button variant="default">Default</Button>
@@ -169,7 +169,7 @@ export function LoginForm() {
           Container component for grouping related content.
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@tekton-ui/ui';
+{`import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@framingui/ui';
 
 <Card>
   <CardHeader>

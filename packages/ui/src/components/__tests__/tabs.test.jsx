@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Tabs Component Tests
+ * @framingui - Tabs Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Tabs component
  */
 import { render, screen } from '@testing-library/react';

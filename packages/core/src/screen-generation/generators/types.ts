@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Generator Type Definitions
+ * @framingui/core - Generator Type Definitions
  * Common types and interfaces for code generators
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

@@ -87,7 +87,7 @@ export default function DarkBoldnessDemo() {
             className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
           >
             <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">
-              tekton/ui
+              framingui
             </span>
             <span className="text-xs font-medium text-[var(--tekton-text-secondary)]">studio</span>
           </Link>

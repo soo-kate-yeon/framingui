@@ -5,8 +5,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Quick Start | tekton/ui',
-  description: 'Get started with tekton/ui in 5 minutes.',
+  title: 'Quick Start | framingui',
+  description: 'Get started with framingui in 5 minutes.',
 };
 
 export default function QuickStartPage() {
@@ -17,7 +17,7 @@ export default function QuickStartPage() {
           Quick Start
         </h1>
         <p className="text-xl text-neutral-600">
-          Get tekton/ui running in your project in under 5 minutes.
+          Get framingui running in your project in under 5 minutes.
         </p>
       </header>
 
@@ -31,7 +31,7 @@ export default function QuickStartPage() {
           The fastest way to get started is with our MCP init command:
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-          <code>npx @tekton-ui/mcp-server init</code>
+          <code>npx @framingui/mcp-server init</code>
         </pre>
         <p className="text-sm text-neutral-500">
           This automatically detects your project (Next.js/Vite), installs dependencies, 

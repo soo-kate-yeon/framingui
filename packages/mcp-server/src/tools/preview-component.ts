@@ -51,8 +51,8 @@ export async function previewComponentTool(
       variants: includeExamples && details?.variants ? details.variants : undefined,
       subComponents: details?.subComponents,
       importStatement: details?.subComponents
-        ? `import { ${componentMeta.name}, ${details.subComponents.join(', ')} } from '@tekton-ui/ui';`
-        : `import { ${componentMeta.name} } from '@tekton-ui/ui';`,
+        ? `import { ${componentMeta.name}, ${details.subComponents.join(', ')} } from '@framingui/ui';`
+        : `import { ${componentMeta.name} } from '@framingui/ui';`,
       dependencies: includeDependencies ? details?.dependencies : undefined,
       examples: includeExamples && details?.examples ? details.examples : undefined,
       accessibility: details?.accessibility,

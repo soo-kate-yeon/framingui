@@ -21,7 +21,7 @@ Tekton requires authentication before using any tools.
 ### 1. Login
 
 ```bash
-npx @tekton-ui/mcp-server login
+npx @framingui/mcp-server login
 ```
 
 Opens your browser for OAuth. Credentials are saved to `~/.tekton/credentials.json`.
@@ -171,7 +171,7 @@ Each theme provides:
 
 ## Component Catalog
 
-30+ built-in components from `@tekton-ui/ui`:
+30+ built-in components from `@framingui/ui`:
 
 ### Core Components (Tier 1)
 
@@ -274,7 +274,7 @@ You: "Show me the login template"
 
 ### "Authentication required"
 
-Run `npx @tekton-ui/mcp-server login` or set `TEKTON_API_KEY` environment variable.
+Run `npx @framingui/mcp-server login` or set `TEKTON_API_KEY` environment variable.
 
 ### "whoami required"
 
@@ -290,7 +290,7 @@ Run `validate-environment` after generating code to check for missing dependenci
 
 ### Tailwind styles not showing
 
-Run `validate-environment` with `checkTailwind: true` to verify your `tailwind.config` has `@tekton-ui/ui` content paths and the `tailwindcss-animate` plugin.
+Run `validate-environment` with `checkTailwind: true` to verify your `tailwind.config` has `@framingui/ui` content paths and the `tailwindcss-animate` plugin.
 
 ---
 

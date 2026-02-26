@@ -52,7 +52,7 @@ Tekton 프로젝트는 다음과 같은 환경변수 카테고리를 사용합�
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 프로덕션 Anon Key | 스테이징 Anon Key | 로컬 Anon Key | 공개 가능한 클라이언트 키 |
 | `SUPABASE_SERVICE_ROLE_KEY` | 프로덕션 Service Key | 스테이징 Service Key | 로컬 Service Key | ⚠️ 서버 전용, 절대 노출 금지 |
 | **앱 설정** | | | | |
-| `NEXT_PUBLIC_APP_URL` | `https://tekton-ui.com` | `https://dev.tekton-ui.com` | `http://localhost:3001` | 애플리케이션 기본 URL |
+| `NEXT_PUBLIC_APP_URL` | `https://framingui.com` | `https://dev.framingui.com` | `http://localhost:3001` | 애플리케이션 기본 URL |
 | **Paddle 결제 (Phase 3)** | | | | |
 | `PADDLE_API_KEY` | 프로덕션 API Key | Sandbox API Key | Sandbox API Key | ⚠️ 서버 전용 |
 | `PADDLE_WEBHOOK_SECRET` | 프로덕션 Secret | Sandbox Secret | Sandbox Secret | ⚠️ 서버 전용 |
@@ -70,14 +70,14 @@ Tekton 프로젝트는 다음과 같은 환경변수 카테고리를 사용합�
 
 ### 2.2 환경별 우선순위
 
-**Production (tekton-ui.com):**
+**Production (framingui.com):**
 - 실제 사용자 데이터 처리
 - 프로덕션 Supabase 프로젝트 사용
 - Paddle 프로덕션 환경 사용
 - 디버그 모드 비활성화
 - 모든 기능 활성화
 
-**Preview (dev.tekton-ui.com):**
+**Preview (dev.framingui.com):**
 - 내부 테스트 및 QA 환경
 - 별도 Staging Supabase 프로젝트 사용 (권장)
 - Paddle Sandbox 환경 사용
@@ -129,7 +129,7 @@ Sensitive: ☑ Encrypted (자동 체크)
 ```bash
 # 4. App URL
 Variable Name: NEXT_PUBLIC_APP_URL
-Value: https://tekton-ui.com
+Value: https://framingui.com
 Environments: ☑ Production
 ```
 
@@ -214,7 +214,7 @@ Sensitive: ☑ Encrypted
 ```bash
 # 4. Preview App URL
 Variable Name: NEXT_PUBLIC_APP_URL
-Value: https://dev.tekton-ui.com
+Value: https://dev.framingui.com
 Environments: ☑ Preview
 ```
 

@@ -12,8 +12,8 @@ import {
   COMPONENT_CATALOG,
   iconLibraryExists,
   listIconLibraries,
-} from '@tekton-ui/core';
-import type { ComponentNode } from '@tekton-ui/core';
+} from '@framingui/core';
+import type { ComponentNode } from '@framingui/core';
 import type {
   GenerateBlueprintInput,
   GenerateBlueprintOutput,
@@ -147,7 +147,7 @@ export async function generateBlueprintTool(
     // Generate timestamp for blueprint ID
     const timestamp = Date.now();
 
-    // SPEC: U-003 @tekton-ui/core Integration - Use createBlueprint from @tekton-ui/core
+    // SPEC: U-003 @framingui/core Integration - Use createBlueprint from @framingui/core
     const blueprint = createBlueprint({
       name,
       themeId: input.themeId,
@@ -161,7 +161,7 @@ export async function generateBlueprintTool(
       timestamp,
     };
 
-    // SPEC: U-003 @tekton-ui/core Integration - Use validateBlueprint from @tekton-ui/core
+    // SPEC: U-003 @framingui/core Integration - Use validateBlueprint from @framingui/core
     const validation = validateBlueprint(blueprint);
 
     // SPEC: S-003 Blueprint Validation Result - Return errors without saving if invalid

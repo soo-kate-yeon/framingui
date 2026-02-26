@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { rmSync, existsSync } from 'fs';
 import { BlueprintStorage } from '../../src/storage/blueprint-storage.js';
-import type { Blueprint } from '@tekton-ui/core';
+import type { Blueprint } from '@framingui/core';
 
 describe('BlueprintStorage', () => {
   const testStorageDir = '.tekton-test/storage';

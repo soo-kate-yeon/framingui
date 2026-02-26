@@ -1,6 +1,6 @@
 /**
  * tekton-mcp init 명령어
- * 프로젝트에 Tekton UI 디자인 시스템을 한 줄로 설정
+ * 프로젝트에 FramingUI 디자인 시스템을 한 줄로 설정
  */
 
 import fs from 'node:fs';
@@ -12,9 +12,9 @@ import { generateClaudeMdSection, generateAgentsMdSection } from './agent-md-tem
 
 // ─── 상수 ──────────────────────────────────────────────
 
-const TEKTON_UI_CONTENT_PATH = './node_modules/@tekton-ui/ui/dist/**/*.{js,mjs}';
-const TEKTON_STYLE_IMPORT = "@import '@tekton-ui/ui/styles';";
-const PACKAGES_TO_INSTALL = ['@tekton-ui/ui', 'tailwindcss-animate'];
+const TEKTON_UI_CONTENT_PATH = './node_modules/@framingui/ui/dist/**/*.{js,mjs}';
+const TEKTON_STYLE_IMPORT = "@import '@framingui/ui/styles';";
+const PACKAGES_TO_INSTALL = ['@framingui/ui', 'tailwindcss-animate'];
 
 // ─── 유틸리티 ──────────────────────────────────────────
 
@@ -110,8 +110,8 @@ function setupTailwind(cwd: string): void {
     const configPath = path.join(cwd, configName);
     let content = fs.readFileSync(configPath, 'utf-8');
 
-    // content 배열에 @tekton-ui/ui 경로 추가
-    if (!content.includes('@tekton-ui/ui')) {
+    // content 배열에 @framingui/ui 경로 추가
+    if (!content.includes('@framingui/ui')) {
       content = content.replace(/(content\s*:\s*\[)/, `$1\n    '${TEKTON_UI_CONTENT_PATH}',`);
     }
 
@@ -193,7 +193,7 @@ function setupMCP(cwd: string): void {
   const tektonServer = {
     type: 'stdio' as const,
     command: 'npx',
-    args: ['-y', '@tekton-ui/mcp-server'],
+    args: ['-y', '@framingui/mcp-server'],
   };
 
   if (fileExists(mcpPath)) {
@@ -250,7 +250,7 @@ function setupAgentMd(cwd: string, framework: Framework): void {
 
   if (fileExists(claudeMdPath)) {
     const existingContent = fs.readFileSync(claudeMdPath, 'utf-8');
-    if (existingContent.includes('## Tekton UI Workflow')) {
+    if (existingContent.includes('## FramingUI Workflow')) {
       logDetail('CLAUDE.md (이미 Tekton 섹션 존재, skip)');
     } else {
       fs.appendFileSync(claudeMdPath, `\n${claudeSection}`, 'utf-8');
@@ -267,7 +267,7 @@ function setupAgentMd(cwd: string, framework: Framework): void {
 
   if (fileExists(agentsMdPath)) {
     const existingContent = fs.readFileSync(agentsMdPath, 'utf-8');
-    if (existingContent.includes('## Tekton UI Workflow')) {
+    if (existingContent.includes('## FramingUI Workflow')) {
       logDetail('AGENTS.md (이미 Tekton 섹션 존재, skip)');
     } else {
       fs.appendFileSync(agentsMdPath, `\n${agentsSection}`, 'utf-8');
@@ -285,7 +285,7 @@ function printSuccess(): void {
   console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Tekton UI 설정 완료!
+  FramingUI 설정 완료!
 
   다음 단계:
   1. 먼저 인증하세요: tekton-mcp login
@@ -304,7 +304,7 @@ export async function initCommand(): Promise<void> {
   const cwd = process.cwd();
   const totalSteps = 8;
 
-  console.log('\n@tekton-ui/mcp-server init\n');
+  console.log('\n@framingui/mcp-server init\n');
 
   // package.json 확인
   if (!fileExists(path.join(cwd, 'package.json'))) {

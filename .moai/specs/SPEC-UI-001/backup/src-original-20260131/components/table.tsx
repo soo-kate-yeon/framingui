@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Table Component
+ * @framingui - Table Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  */
 

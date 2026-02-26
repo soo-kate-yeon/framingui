@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Dialog Component Tests
+ * @framingui/ui - Dialog Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Dialog component
  */
 

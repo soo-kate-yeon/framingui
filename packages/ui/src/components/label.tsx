@@ -5,7 +5,7 @@
  *
  * WHY: 코드 품질 및 추적성을 보장
  * IMPACT: TAG 누락 시 요구사항 추적 불가
- * @tekton-ui/ui - Label Component
+ * @framingui/ui - Label Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  */
 

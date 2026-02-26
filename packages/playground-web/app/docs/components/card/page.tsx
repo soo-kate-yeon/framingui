@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Card | tekton/ui',
+  title: 'Card | framingui',
   description: 'Card component for grouping related content.',
 };
 
@@ -31,7 +31,7 @@ export default function CardPage() {
   CardDescription, 
   CardContent, 
   CardFooter 
-} from '@tekton-ui/ui';`}
+} from '@framingui/ui';`}
         </pre>
       </section>
 

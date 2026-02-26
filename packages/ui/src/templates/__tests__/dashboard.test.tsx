@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Dashboard Template Tests
+ * @framingui/ui - Dashboard Template Tests
  * SPEC-UI-001 Phase 3: Dashboard Template Unit Tests
  */
 

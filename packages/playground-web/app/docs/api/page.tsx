@@ -7,21 +7,21 @@ import type { Metadata } from 'next';
 import { Box, Layers } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'API Reference | tekton/ui',
-  description: 'API documentation for tekton/ui packages.',
+  title: 'API Reference | framingui',
+  description: 'API documentation for framingui packages.',
 };
 
 const PACKAGES = [
   {
     href: '/docs/api/core',
     icon: Box,
-    name: '@tekton-ui/core',
+    name: '@framingui/core',
     description: 'Token generation, OKLCH utilities, theme parsing',
   },
   {
     href: '/docs/api/ui',
     icon: Layers,
-    name: '@tekton-ui/ui',
+    name: '@framingui/ui',
     description: '30+ React components with theme support',
   },
 ];
@@ -34,7 +34,7 @@ export default function APIPage() {
           API Reference
         </h1>
         <p className="text-xl text-neutral-600">
-          Complete API documentation for tekton/ui packages.
+          Complete API documentation for framingui packages.
         </p>
       </header>
 

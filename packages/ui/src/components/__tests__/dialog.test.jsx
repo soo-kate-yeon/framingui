@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Dialog Component Tests
+ * @framingui - Dialog Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Dialog component
  */
 import { render, screen, waitFor } from '@testing-library/react';

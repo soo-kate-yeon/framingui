@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Layout Resolver Tests
+ * @framingui/core - Layout Resolver Tests
  * Test suite for layout resolver with comprehensive coverage
  * [SPEC-LAYOUT-001] [PHASE-7]
  */

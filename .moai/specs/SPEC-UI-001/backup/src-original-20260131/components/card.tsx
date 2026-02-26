@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Card Component
+ * @framingui - Card Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  */
 

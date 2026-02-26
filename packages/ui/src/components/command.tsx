@@ -7,7 +7,7 @@
  * WHY: Provides keyboard-first command palette for quick actions
  * IMPACT: Improves productivity with keyboard shortcuts
  *
- * @tekton-ui/ui - Command Component
+ * @framingui/ui - Command Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * Pattern: cmdk library + CVA + Tekton tokens

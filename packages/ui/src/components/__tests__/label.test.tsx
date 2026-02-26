@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Label Component Tests
+ * @framingui/ui - Label Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Label component
  */
 

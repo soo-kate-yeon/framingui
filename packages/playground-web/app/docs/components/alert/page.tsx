@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Alert | tekton/ui',
+  title: 'Alert | framingui',
   description:
     'Alert component for displaying important messages, warnings, errors, and success states.',
 };
@@ -25,7 +25,7 @@ export default function AlertPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Import</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-          {`import { Alert, AlertTitle, AlertDescription } from '@tekton-ui/ui';`}
+          {`import { Alert, AlertTitle, AlertDescription } from '@framingui/ui';`}
         </pre>
       </section>
 

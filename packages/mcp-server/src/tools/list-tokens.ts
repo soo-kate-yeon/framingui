@@ -28,7 +28,7 @@ function applyFilter(tokens: TokenMetadata[], filter?: string): TokenMetadata[] 
 }
 
 /**
- * List available layout tokens from @tekton-ui/core
+ * List available layout tokens from @framingui/core
  *
  * @param input - Token type filter and optional pattern filter
  * @returns Categorized list of available tokens
@@ -37,13 +37,13 @@ export async function listTokensTool(input: ListTokensInput): Promise<ListTokens
   try {
     const { tokenType = 'all', filter } = input;
 
-    // Import token getters from @tekton-ui/core
+    // Import token getters from @framingui/core
     const {
       getAllShellTokens,
       getAllMobileShellTokens,
       getAllPageLayoutTokens,
       getAllSectionPatternTokens,
-    } = await import('@tekton-ui/core');
+    } = await import('@framingui/core');
 
     // Get tokens based on type
     let shells: TokenMetadata[] = [];

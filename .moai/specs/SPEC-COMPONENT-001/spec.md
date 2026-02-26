@@ -77,7 +77,7 @@ tags: ["SPEC-COMPONENT-001", "Master-SPEC", "Component-System", "Token", "CSS-Va
 sub_specs:
   - SPEC-COMPONENT-001-A  # Token System
   - SPEC-COMPONENT-001-B  # Component Schemas
-  - SPEC-COMPONENT-001-C  # @tekton/ui Library
+  - SPEC-COMPONENT-001-C  # @framingui Library
   - SPEC-COMPONENT-001-D  # Export Pipeline
 ---
 
@@ -100,7 +100,7 @@ sub_specs:
 
 1. **[SPEC-COMPONENT-001-A](../SPEC-COMPONENT-001-A/spec.md)**: 3-Layer Token System Architecture
 2. **[SPEC-COMPONENT-001-B](../SPEC-COMPONENT-001-B/spec.md)**: Component Interface & Schema Definition
-3. **[SPEC-COMPONENT-001-C](../SPEC-COMPONENT-001-C/spec.md)**: @tekton/ui Reference Implementation Library
+3. **[SPEC-COMPONENT-001-C](../SPEC-COMPONENT-001-C/spec.md)**: @framingui Reference Implementation Library
 4. **[SPEC-COMPONENT-001-D](../SPEC-COMPONENT-001-D/spec.md)**: Hybrid Export System & Generation Pipeline
 
 **Priority**: HIGH - Foundational architecture for scalable design system code generation.
@@ -161,12 +161,12 @@ sub_specs:
 
 ---
 
-### SPEC-COMPONENT-001-C: @tekton/ui Reference Implementation Library
+### SPEC-COMPONENT-001-C: @framingui Reference Implementation Library
 
 **Purpose**: High-quality reference implementations for Tier 1 components
 
 **Key Deliverables**:
-- @tekton/ui package with 20 components
+- @framingui package with 20 components
 - Radix UI primitive wrappers
 - CVA-based variant management
 - CSS Variables integration
@@ -188,7 +188,7 @@ sub_specs:
 
 **Key Deliverables**:
 - CSS Variables generator (Theme → CSS)
-- Tier 1 resolver (copy from @tekton/ui)
+- Tier 1 resolver (copy from @framingui)
 - Tier 2 LLM generator (schema + examples → code)
 - Validation & retry logic
 - Hybrid routing in export-screen tool
@@ -239,7 +239,7 @@ sub_specs:
 ### Phase C: Reference Library (SPEC-001-C)
 **Timeline**: Week 2-4
 **Effort**: Very Large (20 implementations)
-**Milestone**: @tekton/ui package ready for production
+**Milestone**: @framingui package ready for production
 
 **Completion Criteria**:
 - ✅ All 20 components implemented
@@ -273,7 +273,7 @@ SPEC-001-A (Token System)
     ↓
 SPEC-001-B (Component Schemas) ← depends on token types
     ↓
-SPEC-001-C (@tekton/ui) ← depends on tokens + schemas
+SPEC-001-C (@framingui) ← depends on tokens + schemas
     ↓
 SPEC-001-D (Export Pipeline) ← depends on all above
 ```

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Resolver Error Handling Tests
+ * @framingui/core - Resolver Error Handling Tests
  * Phase A: Error handling tests for coverage improvement
  * [SPEC-LAYOUT-002] [PHASE-2]
  *

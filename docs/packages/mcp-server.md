@@ -1,21 +1,21 @@
-# @tekton-ui/mcp-server
+# @framingui/mcp-server
 
 > Claude Code용 MCP 서버. AI가 Tekton 디자인 시스템을 직접 활용하여 스크린을 생성합니다.
 
 ## 설치
 
 ```bash
-npm install @tekton-ui/mcp-server
+npm install @framingui/mcp-server
 ```
 
 ### CLI 실행
 
 ```bash
 # npx로 즉시 실행
-npx @tekton-ui/mcp-server
+npx @framingui/mcp-server
 
 # 또는 전역 설치 후 실행
-npm install -g @tekton-ui/mcp-server
+npm install -g @framingui/mcp-server
 tekton-mcp
 ```
 
@@ -23,31 +23,31 @@ tekton-mcp
 
 ## Quick Start: `init` 명령어
 
-프로젝트에 Tekton UI를 한 줄로 설정합니다.
+프로젝트에 FramingUI를 한 줄로 설정합니다.
 
 ```bash
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 ```
 
 이 명령어는 다음을 자동으로 수행합니다:
 
 1. **프로젝트 감지** - Next.js / Vite 자동 인식
-2. **패키지 설치** - `@tekton-ui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지)
+2. **패키지 설치** - `@framingui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지)
 3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
-4. **CSS 토큰 임포트** - `globals.css`에 `@import '@tekton-ui/ui/styles'` 추가
+4. **CSS 토큰 임포트** - `globals.css`에 `@import '@framingui/ui/styles'` 추가
 5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
 6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
 7. **AI 에이전트 가이드** - `CLAUDE.md` 및 `AGENTS.md`에 Tekton 워크플로우 섹션 추가
 8. **완료 안내** - 인증 필요성 및 다음 단계 안내
 
 ```
-@tekton-ui/mcp-server init
+@framingui/mcp-server init
 
 [1/8] 프로젝트 감지 중...
       Next.js 프로젝트
 
 [2/8] 패키지 설치 중...
-      pnpm add @tekton-ui/ui tailwindcss-animate
+      pnpm add @framingui/ui tailwindcss-animate
 
 [3/8] Tailwind CSS 설정 중...
       tailwind.config.ts 업데이트 완료
@@ -69,7 +69,7 @@ npx @tekton-ui/mcp-server init
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  Tekton UI 설정 완료!
+  FramingUI 설정 완료!
 
   다음 단계:
   1. 먼저 인증하세요: tekton-mcp login
@@ -88,7 +88,7 @@ npx @tekton-ui/mcp-server init
 
 ## 핵심 역할
 
-`@tekton-ui/mcp-server`는 **MCP Protocol (JSON-RPC 2.0)**을 통해 Claude Code에 16개의 디자인 시스템 도구와 2개의 MCP Prompts를 제공합니다.
+`@framingui/mcp-server`는 **MCP Protocol (JSON-RPC 2.0)**을 통해 Claude Code에 16개의 디자인 시스템 도구와 2개의 MCP Prompts를 제공합니다.
 
 AI 에이전트가 이 서버를 통해 다음 작업을 수행할 수 있습니다:
 
@@ -110,7 +110,7 @@ AI 에이전트가 이 서버를 통해 다음 작업을 수행할 수 있습니
     "tekton": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tekton-ui/mcp-server"]
+      "args": ["-y", "@framingui/mcp-server"]
     }
   }
 }
@@ -239,7 +239,7 @@ MCP 서버는 모든 MCP 클라이언트에서 사용 가능한 2개의 내장 �
 
 ### 1. getting-started
 
-**목적:** Tekton UI 온보딩 완전 가이드
+**목적:** FramingUI 온보딩 완전 가이드
 
 **내용:**
 
@@ -279,7 +279,7 @@ MCP 서버는 API 키 기반 인증을 지원합니다.
 
 ```bash
 export TEKTON_API_KEY=your-api-key-here
-npx @tekton-ui/mcp-server
+npx @framingui/mcp-server
 ```
 
 **방법 2: CLI 로그인**
@@ -322,7 +322,7 @@ API 키 없이도 서버를 시작할 수 있지만, 도구 호출 시 인증이
 `checkTailwind: true` (기본값)으로 설정하면 다음을 추가로 검증합니다:
 
 - `tailwind.config.{ts,js,mjs,cjs}` 파일 존재 여부
-- `@tekton-ui/ui` content 경로 포함 여부 (누락 시 스타일 미적용)
+- `@framingui/ui` content 경로 포함 여부 (누락 시 스타일 미적용)
 - `tailwindcss-animate` 플러그인 설정 여부 (Dialog, Popover 애니메이션에 필요)
 
 ---
@@ -343,9 +343,9 @@ Inspector가 실행되면 브라우저에서 각 도구를 개별적으로 호�
 
 ## 다른 패키지와의 관계
 
-- **[@tekton-ui/core](./core.md)**: MCP 서버의 핵심 엔진입니다. 테마 로딩, 블루프린트 생성, 스크린 코드 생성 등 모든 핵심 기능은 core 패키지에서 가져옵니다.
-- **[@tekton-ui/ui](./ui.md)**: 컴포넌트 카탈로그와 스크린 템플릿 정보를 ui 패키지에서 가져와 AI에게 제공합니다.
-- **[@tekton-ui/tokens](./tokens.md)**: 토큰 목록 조회 시 tokens 패키지의 타입 정의를 참조합니다.
+- **[@framingui/core](./core.md)**: MCP 서버의 핵심 엔진입니다. 테마 로딩, 블루프린트 생성, 스크린 코드 생성 등 모든 핵심 기능은 core 패키지에서 가져옵니다.
+- **[@framingui/ui](./ui.md)**: 컴포넌트 카탈로그와 스크린 템플릿 정보를 ui 패키지에서 가져와 AI에게 제공합니다.
+- **[@framingui/tokens](./tokens.md)**: 토큰 목록 조회 시 tokens 패키지의 타입 정의를 참조합니다.
 
 ---
 

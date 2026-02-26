@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Table Component Tests
+ * @framingui - Table Component Tests
  */
 import { render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';

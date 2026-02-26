@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Input Component Tests
+ * @framingui/ui - Input Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Input component
  */
 

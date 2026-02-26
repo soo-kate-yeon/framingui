@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Textarea Component Tests
+ * @framingui - Textarea Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Textarea component
  */
 import { render, screen } from '@testing-library/react';

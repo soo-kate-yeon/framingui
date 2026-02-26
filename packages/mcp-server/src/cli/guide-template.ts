@@ -12,7 +12,7 @@ export function generateGuide(framework: Framework): string {
   const importExample =
     framework === 'nextjs'
       ? `// app/page.tsx
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
 
 export default function HomePage() {
   return (
@@ -27,7 +27,7 @@ export default function HomePage() {
   );
 }`
       : `// src/App.tsx
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@tekton-ui/ui';
+import { Button, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
 
 function App() {
   return (
@@ -44,7 +44,7 @@ function App() {
 
 export default App;`;
 
-  return `# Tekton UI Guide
+  return `# FramingUI Guide
 
 > AI-powered design system for building production-ready UIs.
 
@@ -141,7 +141,7 @@ Sidebar, Breadcrumb, Command, Calendar, Form
 ### Usage
 
 \`\`\`tsx
-import { Button, Dialog, DialogTrigger, DialogContent } from '@tekton-ui/ui';
+import { Button, Dialog, DialogTrigger, DialogContent } from '@framingui/ui';
 \`\`\`
 
 ---
@@ -173,7 +173,7 @@ import { Button, Dialog, DialogTrigger, DialogContent } from '@tekton-ui/ui';
 ### Applying a Theme
 
 \`\`\`tsx
-import { themeToCSS, injectThemeCSS } from '@tekton-ui/ui';
+import { themeToCSS, injectThemeCSS } from '@framingui/ui';
 
 // Inject theme CSS at runtime
 injectThemeCSS(themeData);
@@ -184,7 +184,7 @@ injectThemeCSS(themeData);
 ## Utility: cn()
 
 \`\`\`tsx
-import { cn } from '@tekton-ui/ui';
+import { cn } from '@framingui/ui';
 
 <div className={cn('p-4 bg-white', isActive && 'bg-blue-500', className)} />
 \`\`\`
@@ -193,7 +193,7 @@ import { cn } from '@tekton-ui/ui';
 
 ## Links
 
-- [npm: @tekton-ui/ui](https://www.npmjs.com/package/@tekton-ui/ui)
-- [npm: @tekton-ui/mcp-server](https://www.npmjs.com/package/@tekton-ui/mcp-server)
+- [npm: @framingui/ui](https://www.npmjs.com/package/@framingui/ui)
+- [npm: @framingui/mcp-server](https://www.npmjs.com/package/@framingui/mcp-server)
 `;
 }

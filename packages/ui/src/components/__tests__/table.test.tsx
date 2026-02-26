@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Table Component Tests
+ * @framingui/ui - Table Component Tests
  */
 
 import { render, screen } from '@testing-library/react';

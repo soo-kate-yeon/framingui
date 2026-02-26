@@ -1,4 +1,4 @@
-# Phase 1 Setup Guide — tekton-ui Marketing
+# Phase 1 Setup Guide — framingui Marketing
 
 > 목표: 최소 파이프라인 구축 → 첫 수동 사이클 가능한 상태
 > 예상 소요: 2~3시간 (API 신청 대기 제외)
@@ -91,16 +91,16 @@ git push -u origin main
 > 개인 계정이면 먼저 전환 필요.
 
 ### Step 5: 블로그 환경 확인 (15분)
-tekton-ui.com에 /blog 경로가 있는지 확인:
+framingui.com에 /blog 경로가 있는지 확인:
 - **이미 있는 경우**: CMS API 키 확인 → .env에 입력
 - **없는 경우**: 옵션 선택
-  - A) tekton-ui.com/blog 경로로 Next.js MDX 블로그 추가
-  - B) Ghost CMS 별도 서브도메인 (blog.tekton-ui.com)
+  - A) framingui.com/blog 경로로 Next.js MDX 블로그 추가
+  - B) Ghost CMS 별도 서브도메인 (blog.framingui.com)
   - C) 초기엔 블로그 없이 X/Threads만 → Phase 2에서 추가
 
 ### Step 6: Google Search Console 연결 (15분)
 1. https://search.google.com/search-console 접속
-2. tekton-ui.com 속성 추가 (DNS 인증 또는 HTML 태그)
+2. framingui.com 속성 추가 (DNS 인증 또는 HTML 태그)
 3. API 접근용 Service Account 생성:
    - Google Cloud Console → IAM → Service Account
    - JSON 키 다운로드 → credentials/gsc-service-account.json

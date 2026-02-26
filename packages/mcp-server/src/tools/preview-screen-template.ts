@@ -10,7 +10,7 @@
  * - Example props
  */
 
-import { templateRegistry } from '@tekton-ui/ui';
+import { templateRegistry } from '@framingui/ui';
 import type {
   PreviewScreenTemplateInput,
   PreviewScreenTemplateOutput,
@@ -86,7 +86,7 @@ export async function previewScreenTemplateTool(
     };
 
     // Build import statement
-    const importStatement = `import { ${template.name}Template } from '@tekton-ui/ui';`;
+    const importStatement = `import { ${template.name}Template } from '@framingui/ui';`;
 
     return {
       success: true,

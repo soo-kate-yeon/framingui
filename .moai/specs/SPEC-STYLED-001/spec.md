@@ -217,7 +217,7 @@ const GoodComponent = styled.div`
 - **Rationale**: Enable runtime theme switching
 - **Acceptance**: Output uses `var(--tekton-*)` format
 
-**REQ-STY-005**: The system shall always maintain backward compatibility with existing @tekton/ui components
+**REQ-STY-005**: The system shall always maintain backward compatibility with existing @framingui components
 - **Rationale**: Gradual migration path required
 - **Acceptance**: Existing components continue to work
 
@@ -874,7 +874,7 @@ packages/
 // Example: Creating a Card component with token enforcement
 
 import { styled, tokens } from '@tekton/styled';
-import { Box, Text, Heading } from '@tekton/ui';
+import { Box, Text, Heading } from '@framingui';
 
 // Using styled wrapper - tokens enforced
 const StyledCard = styled.div`

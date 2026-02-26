@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/styled - Token-Enforced Styled Components
+ * @framingui/styled - Token-Enforced Styled Components
  * [SPEC-STYLED-001]
  */
 

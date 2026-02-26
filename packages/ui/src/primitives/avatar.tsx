@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Avatar Component
+ * @framingui - Avatar Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Layout Token Validation Tests
+ * @framingui/core - Layout Token Validation Tests
  * Test-First: Define expected behavior for layout token validation
  * [SPEC-LAYOUT-001] [PHASE-2]
  */

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/esbuild-plugin - Code Analyzer
+ * @framingui/esbuild-plugin - Code Analyzer
  * [SPEC-STYLED-001] [TAG-007]
  * AST analysis for hardcoded value detection
  */

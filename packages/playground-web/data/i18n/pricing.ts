@@ -198,7 +198,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         {
           title: 'How do I use the templates?',
           content:
-            'After purchasing a template (1 free during beta), run "npx @tekton-ui/mcp-server init" in your project. This installs the MCP server, sets up design tokens, configures Tailwind CSS, and registers the server with your AI coding tool — all in one command. Then just ask your AI agent to generate screens using your chosen theme.',
+            'After purchasing a template (1 free during beta), run "npx @framingui/mcp-server init" in your project. This installs the MCP server, sets up design tokens, configures Tailwind CSS, and registers the server with your AI coding tool — all in one command. Then just ask your AI agent to generate screens using your chosen theme.',
         },
         {
           title: 'What happens after my update period ends?',
@@ -331,7 +331,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         {
           title: '템플릿은 어떻게 사용하는 건가요?',
           content:
-            '템플릿을 구매하면 (베타 기간에는 1개 무료) 프로젝트에서 "npx @tekton-ui/mcp-server init" 명령을 실행하세요. MCP 서버 설치, 디자인 토큰 설정, Tailwind CSS 구성, AI 코딩 도구 연결까지 한 번에 처리돼요. 이후에는 AI 에이전트에게 선택한 테마로 화면을 만들어달라고 요청하면 끝이에요.',
+            '템플릿을 구매하면 (베타 기간에는 1개 무료) 프로젝트에서 "npx @framingui/mcp-server init" 명령을 실행하세요. MCP 서버 설치, 디자인 토큰 설정, Tailwind CSS 구성, AI 코딩 도구 연결까지 한 번에 처리돼요. 이후에는 AI 에이전트에게 선택한 테마로 화면을 만들어달라고 요청하면 끝이에요.',
         },
         {
           title: '업데이트 기간이 끝나면 어떻게 되나요?',

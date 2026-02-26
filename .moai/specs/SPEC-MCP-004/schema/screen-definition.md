@@ -175,7 +175,7 @@ Components define individual UI elements.
 
 | Field | Required | Type | Description |
 |-------|----------|------|-------------|
-| `type` | ✅ | string | Component type from @tekton/ui |
+| `type` | ✅ | string | Component type from @framingui |
 | `variant` | ❌ | string | Style variant (maps to theme recipe) |
 | `slot` | ❌ | string | Layout slot (main, sidebar, header, footer) |
 | `props` | ❌ | object | Component props |
@@ -298,4 +298,4 @@ See the `examples/` directory for complete examples:
 
 - **SPEC-MCP-004**: Tekton MCP Workflow Optimization
 - **SPEC-LAYOUT-001**: Layout Token Specification
-- **@tekton/ui**: Component library documentation
+- **@framingui**: Component library documentation

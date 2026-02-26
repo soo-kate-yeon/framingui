@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/esbuild-plugin - Reporter Tests
+ * @framingui/esbuild-plugin - Reporter Tests
  * [SPEC-STYLED-001] Tests for TAG-008: Build Reporting System
  * REQ-STY-008: Report file location, line number, and violation type
  * REQ-STY-009: Fail build when compliance < 100%

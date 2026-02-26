@@ -50,7 +50,7 @@
 |---|-----------|-------|-----------------|--------|
 | 2.1 | Code with framer-motion | `import { motion } from 'framer-motion'` | `external: ["framer-motion"]` | Pending |
 | 2.2 | Code with @radix-ui | `import { Slot } from '@radix-ui/react-slot'` | `external: ["@radix-ui/react-slot"]` | Pending |
-| 2.3 | Code with @tekton/ui | `import { Card } from '@tekton/ui'` | `internal: ["@tekton/ui"]` | Pending |
+| 2.3 | Code with @framingui | `import { Card } from '@framingui'` | `internal: ["@framingui"]` | Pending |
 | 2.4 | Code with multiple deps | Multiple imports | All deps extracted | Pending |
 | 2.5 | Code without external deps | Only @tekton imports | `external: []` | Pending |
 | 2.6 | Install commands generated | 3 external deps | All 4 package managers covered | Pending |

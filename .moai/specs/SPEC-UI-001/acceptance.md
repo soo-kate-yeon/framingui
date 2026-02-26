@@ -146,12 +146,12 @@ Feature: playground-web 연동
 
   Scenario: 컴포넌트 import
     Given playground-web의 dashboard 페이지에서
-    When "@tekton/ui"에서 Button을 import하면
+    When "@framingui"에서 Button을 import하면
     Then 컴파일 오류 없이 import되어야 한다
     And 컴포넌트가 정상적으로 렌더링되어야 한다
 
   Scenario: 스타일 적용
-    Given playground-web에서 @tekton/ui 컴포넌트를 사용할 때
+    Given playground-web에서 @framingui 컴포넌트를 사용할 때
     When 페이지를 로드하면
     Then Token CSS Variable이 적용된 스타일이 표시되어야 한다
     And 기존 Tailwind 클래스와 충돌이 없어야 한다
@@ -165,11 +165,11 @@ Feature: playground-web 연동
 
 | 항목 | 명령어 | 기준 |
 |------|--------|------|
-| TypeScript | `pnpm --filter @tekton/ui type-check` | 오류 0개 |
-| Lint | `pnpm --filter @tekton/ui lint` | 경고 0개 |
-| Build | `pnpm --filter @tekton/ui build` | 성공 |
-| Test | `pnpm --filter @tekton/ui test` | 통과율 100% |
-| Coverage | `pnpm --filter @tekton/ui test:coverage` | 85% 이상 |
+| TypeScript | `pnpm --filter @framingui type-check` | 오류 0개 |
+| Lint | `pnpm --filter @framingui lint` | 경고 0개 |
+| Build | `pnpm --filter @framingui build` | 성공 |
+| Test | `pnpm --filter @framingui test` | 통과율 100% |
+| Coverage | `pnpm --filter @framingui test:coverage` | 85% 이상 |
 
 ### QG-002: 번들 크기
 
@@ -363,7 +363,7 @@ SPEC-UI-001이 완료되려면 다음 조건을 모두 충족해야 합니다:
 
 ### Phase 1 검증 (Day 2)
 
-- [ ] `pnpm --filter @tekton/ui type-check` 통과
+- [ ] `pnpm --filter @framingui type-check` 통과
 - [ ] `packages/ui/src/lib/tokens.ts` 파일 존재
 - [ ] `packages/ui/src/lib/theme-loader.ts` 파일 존재 (linear-minimal-v1 연동)
 - [ ] shadcn-ui 유틸리티 함수 (`cn()`) 동작
@@ -372,7 +372,7 @@ SPEC-UI-001이 완료되려면 다음 조건을 모두 충족해야 합니다:
 
 - [ ] 25개 컴포넌트 파일 존재
 - [ ] 각 컴포넌트 `var(--tekton-*)` 패턴 사용
-- [ ] `pnpm --filter @tekton/ui test` 통과
+- [ ] `pnpm --filter @framingui test` 통과
 - [ ] 커버리지 85% 이상
 
 ### Phase 3 검증 (Day 7)

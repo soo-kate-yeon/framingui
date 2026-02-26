@@ -7,7 +7,7 @@
  * WHY: Provides hierarchical navigation context for users
  * IMPACT: Improves navigation UX and site structure understanding
  *
- * @tekton/ui - Breadcrumb Component
+ * @framingui - Breadcrumb Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * Pattern: Semantic HTML + CVA + Tekton tokens

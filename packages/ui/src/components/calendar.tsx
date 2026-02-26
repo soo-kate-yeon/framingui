@@ -7,7 +7,7 @@
  * WHY: Provides accessible date selection with keyboard navigation
  * IMPACT: Improves date input UX and accessibility compliance
  *
- * @tekton-ui/ui - Calendar Component
+ * @framingui/ui - Calendar Component
  * SPEC-UI-001: shadcn-ui Fork & Token Integration
  *
  * Pattern: react-day-picker v9 + Tekton tokens

@@ -1,6 +1,6 @@
 /**
  * Tailwind Config Reader
- * SPEC-MCP-005: Tailwind CSS 설정 파일을 읽고 @tekton-ui/ui 호환성 검증
+ * SPEC-MCP-005: Tailwind CSS 설정 파일을 읽고 @framingui/ui 호환성 검증
  */
 
 import * as fs from 'fs';
@@ -27,10 +27,10 @@ const TAILWIND_CONFIG_FILES = [
 ];
 
 /**
- * @tekton-ui/ui content 경로 패턴
+ * @framingui/ui content 경로 패턴
  * monorepo: ../../packages/ui/src/ 또는 packages/ui/src/
- * standalone: node_modules/@tekton-ui/ui/
- * 직접 참조: @tekton-ui/ui
+ * standalone: node_modules/@framingui/ui/
+ * 직접 참조: @framingui/ui
  */
 const UI_CONTENT_PATTERNS = [/packages\/ui\/src\//, /node_modules\/@tekton\/ui\//, /@tekton\/ui/];
 
@@ -43,7 +43,7 @@ const UI_CONTENT_PATTERNS = [/packages\/ui\/src\//, /node_modules\/@tekton\/ui\/
 const ANIMATE_PLUGIN_PATTERNS = [/tailwindcss-animate/];
 
 /**
- * Tailwind 설정 파일을 찾아서 읽고 @tekton-ui/ui 호환성을 검증
+ * Tailwind 설정 파일을 찾아서 읽고 @framingui/ui 호환성을 검증
  *
  * @param projectPath - 프로젝트 루트 경로
  * @returns TailwindConfigReadResult
@@ -79,7 +79,7 @@ export function readTailwindConfig(projectPath: string): TailwindConfigReadResul
     // 설정 파일 읽기
     const rawContent = fs.readFileSync(configPath, 'utf-8');
 
-    // content 배열에서 @tekton-ui/ui 경로 확인
+    // content 배열에서 @framingui/ui 경로 확인
     const hasUiContentPath = UI_CONTENT_PATTERNS.some(pattern => pattern.test(rawContent));
 
     // tailwindcss-animate 플러그인 확인

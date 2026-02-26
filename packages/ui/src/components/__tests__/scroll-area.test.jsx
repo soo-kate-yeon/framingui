@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - ScrollArea Component Tests
+ * @framingui - ScrollArea Component Tests
  */
 import { render } from '@testing-library/react';
 import { axe } from 'vitest-axe';

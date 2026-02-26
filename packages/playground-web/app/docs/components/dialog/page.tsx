@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Dialog | tekton/ui',
+  title: 'Dialog | framingui',
   description: 'Modal dialog component for focused interactions.',
 };
 
@@ -33,7 +33,7 @@ export default function DialogPage() {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from '@tekton-ui/ui';`}
+} from '@framingui/ui';`}
         </pre>
       </section>
 

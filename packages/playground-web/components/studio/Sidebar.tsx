@@ -98,7 +98,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
           ============================================================================ */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-neutral-200 z-50 flex items-center justify-between px-6 transition-colors">
         <Link href="/studio" onClick={closeMobileMenu} className="flex items-center gap-2">
-          <span className="text-xl font-bold tracking-tighter text-neutral-950">tekton/ui</span>
+          <span className="text-xl font-bold tracking-tighter text-neutral-950">framingui</span>
           <span className="text-xs font-medium text-neutral-500">studio</span>
         </Link>
         <button
@@ -217,7 +217,7 @@ export function Sidebar({ className = '' }: SidebarProps) {
             <div className="flex items-center justify-between">
               <div>
                 <div className="text-2xl font-bold tracking-tighter text-neutral-950">
-                  tekton/ui
+                  framingui
                 </div>
                 <span className="text-xs font-medium text-neutral-500 mt-1 block">studio</span>
               </div>

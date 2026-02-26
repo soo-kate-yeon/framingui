@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Input | tekton/ui',
+  title: 'Input | framingui',
   description: 'Input component for text entry.',
 };
 
@@ -24,7 +24,7 @@ export default function InputPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Import</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-{`import { Input } from '@tekton-ui/ui';`}
+{`import { Input } from '@framingui/ui';`}
         </pre>
       </section>
 
@@ -56,7 +56,7 @@ export default function InputPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">With Label</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { Label } from '@tekton-ui/ui';
+{`import { Label } from '@framingui/ui';
 
 <div className="space-y-2">
   <Label htmlFor="email">Email</Label>

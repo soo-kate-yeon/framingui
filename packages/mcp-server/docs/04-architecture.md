@@ -69,7 +69,7 @@ graph TB
     end
 
     subgraph "External"
-        TektonAPI[tekton-ui.com/api/mcp/verify]
+        TektonAPI[framingui.com/api/mcp/verify]
         Credentials[~/.tekton/credentials.json]
         ThemeFiles[.moai/themes/generated/]
         ComponentFiles[.moai/components/]
@@ -102,7 +102,7 @@ sequenceDiagram
     participant User
     participant CLI as tekton-mcp CLI
     participant Browser
-    participant API as tekton-ui.com
+    participant API as framingui.com
     participant Creds as ~/.tekton/credentials.json
     participant MCP as MCP Server
     participant AI as AI Assistant
@@ -110,7 +110,7 @@ sequenceDiagram
     Note over User,AI: One-time Login
     User->>CLI: tekton-mcp login
     CLI->>CLI: Start localhost callback server
-    CLI->>Browser: Open tekton-ui.com/mcp/auth
+    CLI->>Browser: Open framingui.com/mcp/auth
     Browser->>API: OAuth flow
     API-->>Browser: Redirect to localhost/callback?key=...&email=...
     Browser->>CLI: Callback with API key
@@ -157,7 +157,7 @@ packages/mcp-server/
 │   │   └── agent-md-templates.ts  # CLAUDE.md/AGENTS.md templates
 │   │
 │   ├── auth/                 # Authentication layer
-│   │   ├── verify.ts         # API key verification (tekton-ui.com)
+│   │   ├── verify.ts         # API key verification (framingui.com)
 │   │   ├── guard.ts          # requireAuth() + requireWhoami() guards
 │   │   ├── state.ts          # Auth data & whoamiCompleted state
 │   │   ├── cache.ts          # Verification cache (5-min TTL)
@@ -247,7 +247,7 @@ graph TD
 | ---------------------- | ---------------------------------------------------------------------- |
 | `cli/login.ts`         | Browser OAuth flow: localhost callback server → save credentials       |
 | `cli/credentials.ts`   | Read/write `~/.tekton/credentials.json`                                |
-| `auth/verify.ts`       | `verifyApiKey()`: GET `tekton-ui.com/api/mcp/verify` with Bearer token |
+| `auth/verify.ts`       | `verifyApiKey()`: GET `framingui.com/api/mcp/verify` with Bearer token |
 | `auth/guard.ts`        | `requireAuth()` and `requireWhoami()` — throws if not met              |
 | `auth/state.ts`        | In-memory auth state: `authData`, `whoamiCompleted` flag               |
 | `auth/cache.ts`        | API key verification cache (5-minute TTL)                              |

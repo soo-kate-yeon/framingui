@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Skeleton Component Tests
+ * @framingui - Skeleton Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Skeleton component
  */
 import { render } from '@testing-library/react';

@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Input Component Tests
+ * @framingui - Input Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Input component
  */
 import { render, screen } from '@testing-library/react';

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Checkbox Component Tests
+ * @framingui/ui - Checkbox Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Checkbox component
  */
 

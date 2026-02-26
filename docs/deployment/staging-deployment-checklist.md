@@ -57,8 +57,8 @@ pnpm dev
 
 **브랜치 전략:**
 ```
-master    → Production (tekton-ui.com)
-develop   → Preview (dev.tekton-ui.com)
+master    → Production (framingui.com)
+develop   → Preview (dev.framingui.com)
 feature/* → Preview (auto-generated URL)
 ```
 
@@ -73,7 +73,7 @@ feature/* → Preview (auto-generated URL)
 | `NEXT_PUBLIC_SUPABASE_URL` | 프로덕션 Supabase URL | 스테이징 Supabase URL | Supabase 프로젝트 URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | 프로덕션 Anon Key | 스테이징 Anon Key | 공개 가능한 클라이언트 키 |
 | `SUPABASE_SERVICE_ROLE_KEY` | 프로덕션 Service Key | 스테이징 Service Key | 서버 전용, 절대 노출 금지 |
-| `NEXT_PUBLIC_APP_URL` | `https://tekton-ui.com` | `https://dev.tekton-ui.com` | 앱 기본 URL |
+| `NEXT_PUBLIC_APP_URL` | `https://framingui.com` | `https://dev.framingui.com` | 앱 기본 URL |
 | `NEXT_PUBLIC_ENABLE_AUTH` | `true` | `true` | 인증 기능 활성화 |
 | `NEXT_PUBLIC_ENABLE_PAYMENTS` | `true` | `false` | 결제 기능 (Staging에서는 비활성화) |
 | `NEXT_PUBLIC_ENABLE_MCP_EXPORT` | `true` | `true` | MCP Export 기능 |
@@ -103,7 +103,7 @@ feature/* → Preview (auto-generated URL)
    - **Sensitive** 플래그 활성화 (자동 암호화)
 
 4. Variable Name: `NEXT_PUBLIC_APP_URL`
-   - Value: `https://tekton-ui.com`
+   - Value: `https://framingui.com`
    - Environment: **Production** 체크
 
 5. Variable Name: `NEXT_PUBLIC_ENABLE_AUTH`
@@ -131,14 +131,14 @@ feature/* → Preview (auto-generated URL)
 NEXT_PUBLIC_SUPABASE_URL=https://your-staging-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-staging-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-staging-service-role-key
-NEXT_PUBLIC_APP_URL=https://dev.tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://dev.framingui.com
 ```
 
 옵션 2: Production Supabase 재사용 (간단하지만 권장하지 않음)
 ```bash
 # Production과 동일한 Supabase 키 사용
-# 단, APP_URL은 반드시 dev.tekton-ui.com으로 설정
-NEXT_PUBLIC_APP_URL=https://dev.tekton-ui.com
+# 단, APP_URL은 반드시 dev.framingui.com으로 설정
+NEXT_PUBLIC_APP_URL=https://dev.framingui.com
 ```
 
 ### 2.3 환경변수 보안 검증
@@ -177,12 +177,12 @@ git push -u origin develop
 - [ ] 빌드 로그에서 에러 없음 확인
 - [ ] Preview URL 생성 확인 (예: `tekton-playground-web-git-develop-username.vercel.app`)
 
-### 3.2 커스텀 도메인 연결 (dev.tekton-ui.com)
+### 3.2 커스텀 도메인 연결 (dev.framingui.com)
 
 **Vercel Dashboard → Project Settings → Domains:**
 
 1. "Add Domain" 클릭
-2. `dev.tekton-ui.com` 입력
+2. `dev.framingui.com` 입력
 3. DNS 레코드 추가:
    ```
    Type: CNAME
@@ -190,13 +190,13 @@ git push -u origin develop
    Value: cname.vercel-dns.com
    ```
 4. **Git Branch 매핑:**
-   - Domain: `dev.tekton-ui.com`
+   - Domain: `dev.framingui.com`
    - Git Branch: `develop`
    - "Assign" 클릭
 
 **검증:**
 - [ ] DNS 전파 완료 (5분~1시간 소요)
-- [ ] `https://dev.tekton-ui.com` 접속 가능
+- [ ] `https://dev.framingui.com` 접속 가능
 - [ ] SSL 인증서 자동 발급 확인 (자물쇠 아이콘)
 
 ### 3.3 Preview 배포 기능 테스트
@@ -413,7 +413,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ### 5.1 Staging 환경 기능 테스트
 
-**dev.tekton-ui.com 접속 후 체크리스트:**
+**dev.framingui.com 접속 후 체크리스트:**
 
 - [ ] **홈페이지 로딩**: 3초 이내 First Contentful Paint
 - [ ] **Google OAuth 로그인**: Staging Supabase 연결 정상
@@ -448,7 +448,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 3. Vercel 자동 배포 확인:
    - [ ] Vercel Dashboard → Deployments에서 새 배포 시작
    - [ ] GitHub Actions Quality Gate 통과 후 배포 진행
-   - [ ] `dev.tekton-ui.com`에 변경사항 반영 (2~3분 소요)
+   - [ ] `dev.framingui.com`에 변경사항 반영 (2~3분 소요)
 
 **Pull Request 시나리오:**
 
@@ -488,7 +488,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 3. Rollback 수행:
    - [ ] Vercel Dashboard → Deployments → 이전 성공 배포 선택
    - [ ] "Promote to Production" (또는 "Redeploy") 클릭
-   - [ ] `dev.tekton-ui.com`에 이전 버전 복구 확인
+   - [ ] `dev.framingui.com`에 이전 버전 복구 확인
 
 ### 5.4 모니터링 설정 확인
 
@@ -513,7 +513,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 - [x] Vercel 프로젝트 설정 완료
 - [x] Production 환경변수 설정 완료
 - [x] Preview 환경변수 설정 완료
-- [x] develop 브랜치 → dev.tekton-ui.com 배포 성공
+- [x] develop 브랜치 → dev.framingui.com 배포 성공
 - [x] Pull Request Preview URL 자동 생성 확인
 - [x] Lighthouse CI 워크플로우 추가
 - [x] 성능 목표 달성 (Performance 80+, Accessibility 90+)

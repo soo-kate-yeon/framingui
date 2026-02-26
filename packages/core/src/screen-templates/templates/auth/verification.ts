@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Email Verification Screen Template
+ * @framingui/core - Email Verification Screen Template
  * [SPEC-UI-002] [TAG-UI002-027] auth.verification
  *
  * Design Reference: Claude.ai Email Verification

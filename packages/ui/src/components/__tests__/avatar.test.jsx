@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Avatar Component Tests
+ * @framingui - Avatar Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Avatar component
  */
 import { render, screen, waitFor } from '@testing-library/react';

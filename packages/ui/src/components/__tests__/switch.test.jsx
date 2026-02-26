@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Switch Component Tests
+ * @framingui - Switch Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Switch component
  */
 import { render, screen } from '@testing-library/react';

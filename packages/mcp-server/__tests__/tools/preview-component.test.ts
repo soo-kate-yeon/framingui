@@ -94,7 +94,7 @@ describe('previewComponentTool', () => {
       // Assert
       expect(result.success).toBe(true);
       expect(result.component?.importStatement).toBeDefined();
-      expect(result.component?.importStatement).toContain('@tekton-ui/ui');
+      expect(result.component?.importStatement).toContain('@framingui/ui');
       expect(result.component?.importStatement).toContain('Button');
     });
 

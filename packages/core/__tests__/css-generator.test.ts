@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - CSS Generator Tests
+ * @framingui/core - CSS Generator Tests
  * Test-First: Define expected behavior for CSS Variables generation
  * [SPEC-COMPONENT-001-A] [CSS-GENERATION]
  */

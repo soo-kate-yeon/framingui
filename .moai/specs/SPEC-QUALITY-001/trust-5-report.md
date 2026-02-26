@@ -3,7 +3,7 @@
 **SPEC ID**: SPEC-QUALITY-001
 **생성일**: 2026-01-31
 **작성자**: soo-kate-yeon
-**프로젝트**: @tekton/ui
+**프로젝트**: @framingui
 **상태**: ✅ PASSED
 
 ---

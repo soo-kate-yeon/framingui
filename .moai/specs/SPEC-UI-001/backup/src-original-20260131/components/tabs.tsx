@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Tabs Component
+ * @framingui - Tabs Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  */
 

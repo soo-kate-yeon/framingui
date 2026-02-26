@@ -65,7 +65,7 @@ WebView Studio는 Tekton Design System의 웹 기반 테마 커스터마이징 �
 
 ```
 Current System:
-  - @tekton/ui: shadcn-ui 기반 30개 컴포넌트 (SPEC-UI-001)
+  - @framingui: shadcn-ui 기반 30개 컴포넌트 (SPEC-UI-001)
   - @tekton/core: 12개 ScreenTemplate (SPEC-UI-002)
   - CSS Variables: --tekton-* 패턴 기반 테마 시스템
   - 기존 WebView Studio: 없음 (신규 구축)

@@ -82,7 +82,7 @@ Screen Template 시스템의 설계 원칙, 아키텍처 패턴, 확장 전략�
                     │ composed of
                     ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              @tekton/ui Components                           │
+│              @framingui Components                           │
 │  Button, Card, Form, Input, Table, Tabs, etc.               │
 └───────────────────┬─────────────────────────────────────────┘
                     │ styled with
@@ -243,7 +243,7 @@ export const MyTemplate: ScreenTemplate = {
 템플릿을 `TemplateRegistry`에 등록합니다.
 
 ```typescript
-import { TemplateRegistry } from '@tekton/ui/templates/registry';
+import { TemplateRegistry } from '@framingui/templates/registry';
 import { MyTemplate } from './my-template';
 
 TemplateRegistry.register(MyTemplate);

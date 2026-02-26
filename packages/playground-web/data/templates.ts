@@ -68,9 +68,9 @@ const SHARED_HOW_TO_USE = [
     step: 1,
     title: 'Install Tekton Design System',
     titleKo: 'Tekton 디자인 시스템 설치',
-    description: 'Install the Tekton UI package using pnpm in your project.',
-    descriptionKo: '프로젝트에 pnpm을 사용하여 Tekton UI 패키지를 설치합니다.',
-    code: 'pnpm add @tekton-ui/ui @tekton-ui/tokens',
+    description: 'Install the FramingUI package using pnpm in your project.',
+    descriptionKo: '프로젝트에 pnpm을 사용하여 FramingUI 패키지를 설치합니다.',
+    code: 'pnpm add @framingui/ui @framingui/tokens',
   },
   {
     step: 2,
@@ -78,7 +78,7 @@ const SHARED_HOW_TO_USE = [
     titleKo: '테마 토큰 설정',
     description: 'Import and apply the theme tokens in your application root or layout file.',
     descriptionKo: '애플리케이션 루트 또는 레이아웃 파일에서 테마 토큰을 가져와 적용합니다.',
-    code: 'import "@tekton-ui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with: square-minimalism, neutral-workspace, etc.',
+    code: 'import "@framingui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with: square-minimalism, neutral-workspace, etc.',
   },
   {
     step: 3,
@@ -86,7 +86,7 @@ const SHARED_HOW_TO_USE = [
     titleKo: '컴포넌트 가져오기',
     description: 'Import and use Tekton components in your React application.',
     descriptionKo: 'React 애플리케이션에서 Tekton 컴포넌트를 가져와 사용합니다.',
-    code: 'import { Button, Card, Input } from "@tekton-ui/ui";\n\nexport default function App() {\n  return <Button>Get Started</Button>;\n}',
+    code: 'import { Button, Card, Input } from "@framingui/ui";\n\nexport default function App() {\n  return <Button>Get Started</Button>;\n}',
   },
   {
     step: 4,

@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Template Registry Tests
+ * @framingui/ui - Template Registry Tests
  * SPEC-UI-001 Phase 3: Template Registry Unit Tests
  */
 

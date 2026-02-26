@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Slider Component
+ * @framingui - Slider Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

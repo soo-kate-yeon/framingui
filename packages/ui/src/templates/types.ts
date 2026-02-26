@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Screen Template Types
+ * @framingui/ui - Screen Template Types
  * SPEC-UI-001 Phase 3: Screen Template System Foundation
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

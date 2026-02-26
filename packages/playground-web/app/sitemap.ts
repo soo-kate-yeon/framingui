@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllBlogSlugs } from '@/lib/blog';
 
-const SITE_URL = 'https://tekton-ui.com';
+const SITE_URL = 'https://framingui.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [

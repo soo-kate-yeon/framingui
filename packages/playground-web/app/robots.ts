@@ -25,6 +25,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
       },
     ],
-    sitemap: 'https://tekton-ui.com/sitemap.xml',
+    sitemap: 'https://framingui.com/sitemap.xml',
   };
 }

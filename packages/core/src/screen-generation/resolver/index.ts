@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Screen Resolver Module
+ * @framingui/core - Screen Resolver Module
  * Barrel export for screen resolution pipeline
  * [SPEC-LAYOUT-002] [PHASE-2]
  */

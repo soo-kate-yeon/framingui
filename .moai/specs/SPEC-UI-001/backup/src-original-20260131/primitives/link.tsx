@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Link Component
+ * @framingui - Link Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

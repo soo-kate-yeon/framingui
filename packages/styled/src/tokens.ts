@@ -1,11 +1,11 @@
 /**
- * @tekton-ui/styled - Token Accessor
+ * @framingui/styled - Token Accessor
  * [SPEC-STYLED-001] [TAG-003]
  * Proxy-based token accessor that returns CSS variable references
  * REQ-STY-010: Return CSS variable references for token access
  */
 
-import type { TektonTokens } from '@tekton-ui/tokens';
+import type { TektonTokens } from '@framingui/tokens';
 
 /**
  * Token accessor that returns CSS variable references

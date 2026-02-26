@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Settings Templates Export
+ * @framingui/core - Settings Templates Export
  * [SPEC-UI-002] Settings Screen Templates (1)
  */
 

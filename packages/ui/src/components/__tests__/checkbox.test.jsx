@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Checkbox Component Tests
+ * @framingui - Checkbox Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Checkbox component
  */
 import { render, screen } from '@testing-library/react';

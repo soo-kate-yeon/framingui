@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Dropdown Component
+ * @framingui - Dropdown Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

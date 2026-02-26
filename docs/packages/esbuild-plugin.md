@@ -1,11 +1,11 @@
-# @tekton-ui/esbuild-plugin
+# @framingui/esbuild-plugin
 
 > 빌드 타임 토큰 준수 검증 esbuild 플러그인. AST 분석으로 하드코딩된 값을 자동 감지합니다.
 
 ## 설치
 
 ```bash
-npm install @tekton-ui/esbuild-plugin -D
+npm install @framingui/esbuild-plugin -D
 ```
 
 ### Peer Dependencies
@@ -20,9 +20,9 @@ npm install @tekton-ui/esbuild-plugin -D
 
 ## 핵심 역할
 
-`@tekton-ui/esbuild-plugin`은 빌드 시 코드에서 **하드코딩된 디자인 값을 자동으로 감지**합니다.
+`@framingui/esbuild-plugin`은 빌드 시 코드에서 **하드코딩된 디자인 값을 자동으로 감지**합니다.
 
-[`@tekton-ui/styled`](./styled.md)가 런타임에서 하드코딩을 방지한다면, 이 플러그인은 **빌드 타임**에서 동일한 역할을 수행합니다. Babel AST parser를 사용하여 styled-components 템플릿 리터럴을 분석하고, 토큰이 아닌 원시 값이 사용된 곳을 정확하게 보고합니다.
+[`@framingui/styled`](./styled.md)가 런타임에서 하드코딩을 방지한다면, 이 플러그인은 **빌드 타임**에서 동일한 역할을 수행합니다. Babel AST parser를 사용하여 styled-components 템플릿 리터럴을 분석하고, 토큰이 아닌 원시 값이 사용된 곳을 정확하게 보고합니다.
 
 **주요 특징:**
 
@@ -113,7 +113,7 @@ interface TektonPluginOptions {
 
 ```typescript
 import * as esbuild from 'esbuild';
-import { tektonPlugin } from '@tekton-ui/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 await esbuild.build({
   entryPoints: ['src/index.tsx'],
@@ -128,7 +128,7 @@ await esbuild.build({
 ### 개발 모드 (경고만 표시)
 
 ```typescript
-import { tektonPlugin } from '@tekton-ui/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 tektonPlugin({
   strict: false, // 빌드 실패하지 않음
@@ -139,7 +139,7 @@ tektonPlugin({
 ### 프로덕션 모드 (빌드 실패)
 
 ```typescript
-import { tektonPlugin } from '@tekton-ui/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 tektonPlugin({
   strict: true, // 위반 시 빌드 실패
@@ -153,7 +153,7 @@ tektonPlugin({
 기존 프로젝트에 도입할 때는 낮은 threshold로 시작하여 점차 올리는 전략을 사용할 수 있습니다.
 
 ```typescript
-import { tektonPlugin } from '@tekton-ui/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 tektonPlugin({
   strict: true,
@@ -170,7 +170,7 @@ tektonPlugin({
 ### 특정 디렉토리만 분석
 
 ```typescript
-import { tektonPlugin } from '@tekton-ui/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 tektonPlugin({
   include: [/src\/components\/.*\.tsx$/], // components 디렉토리만
@@ -230,8 +230,8 @@ Compliance: 85%
 
 ## 다른 패키지와의 관계
 
-- **[@tekton-ui/styled](./styled.md)**: styled가 **런타임**에서 하드코딩을 방지하고, esbuild-plugin은 **빌드 타임**에서 방지합니다. 두 패키지를 함께 사용하면 이중 보호가 가능합니다.
-- **[@tekton-ui/tokens](./tokens.md)**: 간격 자동 제안 스케일이 tokens 패키지의 `SpacingTokens` 정의와 일치합니다.
+- **[@framingui/styled](./styled.md)**: styled가 **런타임**에서 하드코딩을 방지하고, esbuild-plugin은 **빌드 타임**에서 방지합니다. 두 패키지를 함께 사용하면 이중 보호가 가능합니다.
+- **[@framingui/tokens](./tokens.md)**: 간격 자동 제안 스케일이 tokens 패키지의 `SpacingTokens` 정의와 일치합니다.
 
 ---
 

@@ -9,7 +9,7 @@
 
 ## 📋 Phase 5.2 목표
 
-- ✅ develop 브랜치를 dev.tekton-ui.com에 자동 배포
+- ✅ develop 브랜치를 dev.framingui.com에 자동 배포
 - ✅ Vercel Preview 환경 구성
 - ✅ 환경변수 설정 검증 (Production vs Staging)
 - ✅ 성능 테스트 준비 (Lighthouse CI)
@@ -73,7 +73,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-production-service-role-key  # ⚠️ Sensitive
 
 # 앱 설정
-NEXT_PUBLIC_APP_URL=https://tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://framingui.com
 
 # Feature Flags
 NEXT_PUBLIC_ENABLE_AUTH=true
@@ -99,7 +99,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-staging-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-staging-service-role-key  # ⚠️ Sensitive
 
 # 앱 설정
-NEXT_PUBLIC_APP_URL=https://dev.tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://dev.framingui.com
 
 # Feature Flags
 NEXT_PUBLIC_ENABLE_AUTH=true
@@ -136,12 +136,12 @@ git push -u origin develop
 - develop 브랜치 배포 시작 확인
 - Preview URL 생성 확인
 
-### Step 4: 커스텀 도메인 연결 (dev.tekton-ui.com)
+### Step 4: 커스텀 도메인 연결 (dev.framingui.com)
 
 **Vercel Dashboard → Project → Settings → Domains:**
 
 1. "Add Domain" 클릭
-2. `dev.tekton-ui.com` 입력
+2. `dev.framingui.com` 입력
 3. DNS 레코드 추가:
    ```
    Type: CNAME
@@ -149,13 +149,13 @@ git push -u origin develop
    Value: cname.vercel-dns.com
    ```
 4. **Git Branch 매핑:**
-   - Domain: `dev.tekton-ui.com`
+   - Domain: `dev.framingui.com`
    - Git Branch: `develop`
    - "Assign" 클릭
 
 **DNS 전파 대기:**
 - 5분~1시간 소요
-- `https://dev.tekton-ui.com` 접속 가능 확인
+- `https://dev.framingui.com` 접속 가능 확인
 - SSL 인증서 자동 발급 확인
 
 ---
@@ -181,7 +181,7 @@ git push -u origin develop
 
 - [ ] develop 브랜치 생성 및 push 완료
 - [ ] develop → Preview 자동 배포 확인
-- [ ] `dev.tekton-ui.com` 도메인 연결 완료
+- [ ] `dev.framingui.com` 도메인 연결 완료
 - [ ] DNS 전파 완료 및 SSL 인증서 발급
 
 ### 성능 테스트
@@ -193,7 +193,7 @@ git push -u origin develop
 
 ### 기능 테스트
 
-- [ ] `https://dev.tekton-ui.com` 접속 가능
+- [ ] `https://dev.framingui.com` 접속 가능
 - [ ] Google OAuth 로그인 테스트
 - [ ] GitHub OAuth 로그인 테스트
 - [ ] Design Token 생성 기능 테스트
@@ -226,7 +226,7 @@ git push -u origin develop
 
 ```
 ┌──────────────┐
-│  develop     │ ──push──> Preview (dev.tekton-ui.com)
+│  develop     │ ──push──> Preview (dev.framingui.com)
 │  브랜치      │           ├─ E2E 테스트 자동 실행
 └──────────────┘           ├─ Lighthouse CI 실행
                            └─ Staging 환경변수 사용
@@ -245,7 +245,7 @@ git push -u origin develop
        │ PR 승인 + Merge
        ▼
 ┌──────────────┐
-│  master      │ ──push──> Production (tekton-ui.com)
+│  master      │ ──push──> Production (framingui.com)
 │  브랜치      │           ├─ 모든 Quality Gates 통과 확인
 └──────────────┘           ├─ Production 환경변수 사용
                            └─ Vercel Analytics 활성화
@@ -258,7 +258,7 @@ git push -u origin develop
 ### Phase 5.3 작업 항목
 
 1. **Production 도메인 연결**
-   - `tekton-ui.com` DNS 설정
+   - `framingui.com` DNS 설정
    - SSL 인증서 자동 발급 확인
 
 2. **Production 배포 테스트**
@@ -322,11 +322,11 @@ A: GitHub Actions 워크플로우 확인:
 2. "Lighthouse CI" 워크플로우 선택
 3. 실패 시 로그 확인
 
-**Q: dev.tekton-ui.com 도메인이 연결되지 않습니다.**
+**Q: dev.framingui.com 도메인이 연결되지 않습니다.**
 
 A: DNS 전파 시간 필요 (5분~1시간). DNS 레코드 확인:
 ```bash
-dig dev.tekton-ui.com CNAME
+dig dev.framingui.com CNAME
 ```
 
 ---
@@ -340,7 +340,7 @@ dig dev.tekton-ui.com CNAME
 | 설정된 환경변수 (Production) | 8개 |
 | 설정된 환경변수 (Preview) | 8개 |
 | 생성된 브랜치 | 1개 (develop) |
-| 연결된 도메인 | 1개 (dev.tekton-ui.com) |
+| 연결된 도메인 | 1개 (dev.framingui.com) |
 | 설정된 성능 목표 | 8개 지표 |
 
 ---
@@ -352,7 +352,7 @@ dig dev.tekton-ui.com CNAME
 - [x] Vercel 프로젝트 생성 및 설정 완료
 - [x] Production/Preview 환경변수 설정 완료
 - [x] develop 브랜치 생성 및 자동 배포 확인
-- [x] dev.tekton-ui.com 도메인 연결 완료
+- [x] dev.framingui.com 도메인 연결 완료
 - [x] Lighthouse CI 워크플로우 추가 완료
 - [x] 성능 목표 설정 완료
 - [x] 관련 문서 작성 완료

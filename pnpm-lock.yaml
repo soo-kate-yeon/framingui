@@ -176,10 +176,10 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
-      '@tekton-ui/core':
+      '@framingui/core':
         specifier: workspace:*
         version: link:../core
-      '@tekton-ui/ui':
+      '@framingui/ui':
         specifier: workspace:*
         version: link:../ui
     devDependencies:
@@ -381,10 +381,10 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.90.20(react@19.2.3)
-      '@tekton-ui/core':
+      '@framingui/core':
         specifier: workspace:*
         version: link:../core
-      '@tekton-ui/ui':
+      '@framingui/ui':
         specifier: workspace:*
         version: link:../ui
       bcryptjs:
@@ -472,7 +472,7 @@ importers:
       '@playwright/test':
         specifier: ^1.49.1
         version: 1.58.0
-      '@tekton-ui/mcp-server':
+      '@framingui/mcp-server':
         specifier: workspace:*
         version: link:../mcp-server
       '@testing-library/jest-dom':
@@ -541,7 +541,7 @@ importers:
 
   packages/styled:
     dependencies:
-      '@tekton-ui/tokens':
+      '@framingui/tokens':
         specifier: workspace:*
         version: link:../tokens
       styled-components:
@@ -599,7 +599,7 @@ importers:
 
   packages/ui:
     dependencies:
-      '@tekton-ui/tokens':
+      '@framingui/tokens':
         specifier: workspace:*
         version: link:../tokens
       react:

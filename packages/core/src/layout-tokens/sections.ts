@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Section Pattern Token Definitions
+ * @framingui/core - Section Pattern Token Definitions
  * Concrete Section Pattern Token implementations for layout primitives
  * [SPEC-LAYOUT-001] [PHASE-5]
  */

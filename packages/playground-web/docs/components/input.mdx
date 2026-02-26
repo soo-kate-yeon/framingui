@@ -23,13 +23,13 @@ The Input component provides a foundation for form data entry. Built with access
 ## Installation
 
 ```bash
-npm install @tekton-ui/ui
+npm install @framingui/ui
 ```
 
 ## Basic Usage
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function Example() {
   return <Input placeholder="Enter text..." />;
@@ -43,7 +43,7 @@ export default function Example() {
 Standard text input field.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function DefaultExample() {
   return <Input type="text" placeholder="Enter text..." />;
@@ -55,7 +55,7 @@ export default function DefaultExample() {
 Email input with browser validation.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function EmailExample() {
   return <Input type="email" placeholder="email@example.com" />;
@@ -67,7 +67,7 @@ export default function EmailExample() {
 Password input with masked characters.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function PasswordExample() {
   return <Input type="password" placeholder="Enter password" />;
@@ -79,7 +79,7 @@ export default function PasswordExample() {
 Numeric input with keyboard optimization.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function NumberExample() {
   return <Input type="number" placeholder="0" />;
@@ -91,7 +91,7 @@ export default function NumberExample() {
 Search input with semantic type.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function SearchExample() {
   return <Input type="search" placeholder="Search..." />;
@@ -103,7 +103,7 @@ export default function SearchExample() {
 Date picker input.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function DateExample() {
   return <Input type="date" />;
@@ -115,7 +115,7 @@ export default function DateExample() {
 Non-editable input state.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 
 export default function DisabledExample() {
   return <Input disabled placeholder="Disabled input" value="Cannot edit" />;
@@ -127,8 +127,8 @@ export default function DisabledExample() {
 Input with associated label for accessibility.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
-import { Label } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
+import { Label } from '@framingui/ui';
 
 export default function WithLabelExample() {
   return (
@@ -145,8 +145,8 @@ export default function WithLabelExample() {
 Input with descriptive helper text.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
-import { Label } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
+import { Label } from '@framingui/ui';
 
 export default function WithHelperTextExample() {
   return (
@@ -166,8 +166,8 @@ export default function WithHelperTextExample() {
 Input showing validation error.
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
-import { Label } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
+import { Label } from '@framingui/ui';
 
 export default function WithErrorExample() {
   return (
@@ -263,7 +263,7 @@ All standard HTML input attributes are supported via rest props.
 ### Controlled Input
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
 import { useState } from 'react';
 
 export default function ControlledExample() {
@@ -282,9 +282,9 @@ export default function ControlledExample() {
 ### Form Integration
 
 ```tsx
-import { Input } from '@tekton-ui/ui';
-import { Label } from '@tekton-ui/ui';
-import { Button } from '@tekton-ui/ui';
+import { Input } from '@framingui/ui';
+import { Label } from '@framingui/ui';
+import { Button } from '@framingui/ui';
 
 export default function FormExample() {
   return (

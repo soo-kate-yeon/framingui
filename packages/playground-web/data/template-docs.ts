@@ -124,10 +124,10 @@ const SHARED_INSTALLATION: InstallationStep[] = [
     title: 'Install Tekton Design System',
     titleKo: 'Tekton 디자인 시스템 설치',
     description:
-      'Install the Tekton UI package and tokens using your preferred package manager (pnpm, npm, or yarn).',
+      'Install the FramingUI package and tokens using your preferred package manager (pnpm, npm, or yarn).',
     descriptionKo:
-      '선호하는 패키지 매니저(pnpm, npm, yarn)를 사용하여 Tekton UI 패키지와 토큰을 설치합니다.',
-    code: 'pnpm add @tekton-ui/ui @tekton-ui/tokens\n# or\nnpm install @tekton-ui/ui @tekton-ui/tokens\n# or\nyarn add @tekton-ui/ui @tekton-ui/tokens',
+      '선호하는 패키지 매니저(pnpm, npm, yarn)를 사용하여 FramingUI 패키지와 토큰을 설치합니다.',
+    code: 'pnpm add @framingui/ui @framingui/tokens\n# or\nnpm install @framingui/ui @framingui/tokens\n# or\nyarn add @framingui/ui @framingui/tokens',
     language: 'bash',
   },
   {
@@ -138,7 +138,7 @@ const SHARED_INSTALLATION: InstallationStep[] = [
       'Import the theme-specific CSS tokens in your root layout or _app file. This applies all design tokens globally.',
     descriptionKo:
       '루트 레이아웃 또는 _app 파일에서 테마별 CSS 토큰을 가져옵니다. 모든 디자인 토큰이 전역으로 적용됩니다.',
-    code: 'import "@tekton-ui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with your template:\n// square-minimalism, dark-boldness, pebble,\n// classic-magazine, neutral-workspace, minimal-workspace',
+    code: 'import "@framingui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with your template:\n// square-minimalism, dark-boldness, pebble,\n// classic-magazine, neutral-workspace, minimal-workspace',
     language: 'tsx',
   },
   {
@@ -146,10 +146,10 @@ const SHARED_INSTALLATION: InstallationStep[] = [
     title: 'Use Components',
     titleKo: '컴포넌트 사용',
     description:
-      'Import and use Tekton UI components in your React application. All components are fully typed with TypeScript.',
+      'Import and use FramingUI components in your React application. All components are fully typed with TypeScript.',
     descriptionKo:
-      'React 애플리케이션에서 Tekton UI 컴포넌트를 가져와 사용합니다. 모든 컴포넌트는 TypeScript로 완벽하게 타입이 지정되어 있습니다.',
-    code: 'import { Button, Card, Input } from "@tekton-ui/ui";\n\nexport default function App() {\n  return (\n    <Card>\n      <Input placeholder="Enter your email" />\n      <Button>Get Started</Button>\n    </Card>\n  );\n}',
+      'React 애플리케이션에서 FramingUI 컴포넌트를 가져와 사용합니다. 모든 컴포넌트는 TypeScript로 완벽하게 타입이 지정되어 있습니다.',
+    code: 'import { Button, Card, Input } from "@framingui/ui";\n\nexport default function App() {\n  return (\n    <Card>\n      <Input placeholder="Enter your email" />\n      <Button>Get Started</Button>\n    </Card>\n  );\n}',
     language: 'tsx',
   },
 ];
@@ -393,7 +393,7 @@ export const TEMPLATE_DOCS: Record<string, TemplateDocsData> = {
         titleKo: '대시보드 카드 레이아웃',
         description: 'Create a metrics dashboard with square cards and clear data hierarchy.',
         descriptionKo: '정사각형 카드와 명확한 데이터 계층 구조를 가진 메트릭 대시보드를 만듭니다.',
-        code: `import { Card, CardHeader, CardContent } from "@tekton-ui/ui";
+        code: `import { Card, CardHeader, CardContent } from "@framingui/ui";
 
 export function MetricsDashboard() {
   return (
@@ -443,7 +443,7 @@ export function MetricsDashboard() {
         titleKo: '날카로운 모서리를 가진 히어로 섹션',
         description: 'A bold hero section showcasing the zero-radius aesthetic.',
         descriptionKo: '제로 반경 미학을 보여주는 대담한 히어로 섹션입니다.',
-        code: `import { Button } from "@tekton-ui/ui";
+        code: `import { Button } from "@framingui/ui";
 
 export function HeroSection() {
   return (
@@ -699,7 +699,7 @@ export function HeroSection() {
         titleKo: '운동 진행 대시보드',
         description: 'Visualize daily workout goals with vibrant progress bars.',
         descriptionKo: '비비드한 프로그레스 바로 일일 운동 목표를 시각화합니다.',
-        code: `import { ProgressBar, Card } from "@tekton-ui/ui";
+        code: `import { ProgressBar, Card } from "@framingui/ui";
 
 export function WorkoutDashboard() {
   return (
@@ -909,7 +909,7 @@ export function WorkoutDashboard() {
         titleKo: '부드러운 모서리를 가진 프로필 카드',
         description: 'User profile card showcasing the friendly rounded aesthetic.',
         descriptionKo: '친근한 둥근 미학을 보여주는 사용자 프로필 카드입니다.',
-        code: `import { RoundedCard, Avatar, Button } from "@tekton-ui/ui";
+        code: `import { RoundedCard, Avatar, Button } from "@framingui/ui";
 
 export function UserProfile() {
   return (
@@ -1132,7 +1132,7 @@ export function UserProfile() {
         titleKo: '잡지 아티클 레이아웃',
         description: 'Full editorial article with drop cap, pull quote, and sidebar.',
         descriptionKo: '드롭 캡, 인용구, 사이드바가 포함된 완전한 편집 아티클입니다.',
-        code: `import { ArticleHeader, PullQuote } from "@tekton-ui/ui";
+        code: `import { ArticleHeader, PullQuote } from "@framingui/ui";
 
 export function MagazineArticle() {
   return (
@@ -1367,7 +1367,7 @@ export function MagazineArticle() {
         titleKo: '접근 가능한 환자 폼',
         description: 'Healthcare form with clear labels, error handling, and help text.',
         descriptionKo: '명확한 레이블, 오류 처리, 도움말 텍스트가 있는 헬스케어 폼입니다.',
-        code: `import { AccessibleForm, Button } from "@tekton-ui/ui";
+        code: `import { AccessibleForm, Button } from "@framingui/ui";
 
 export function PatientForm() {
   const [errors, setErrors] = useState({});
@@ -1577,7 +1577,7 @@ export function PatientForm() {
         titleKo: '코드 에디터 레이아웃',
         description: 'IDE-style layout with sidebar, editor, and status bar.',
         descriptionKo: '사이드바, 에디터, 상태바가 있는 IDE 스타일 레이아웃입니다.',
-        code: `import { Sidebar, Editor, StatusBar } from "@tekton-ui/ui";
+        code: `import { Sidebar, Editor, StatusBar } from "@framingui/ui";
 
 export function CodeEditor() {
   return (

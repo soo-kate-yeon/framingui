@@ -4,31 +4,31 @@ import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'tekton/ui - Agent-First Design System',
-    template: '%s | tekton/ui',
+    default: 'framingui - Agent-First Design System',
+    template: '%s | framingui',
   },
   description:
     'The first design system AI agents can actually understand. 0% hallucination, production-ready UI with structured tokens.',
-  metadataBase: new URL('https://tekton-ui.com'),
+  metadataBase: new URL('https://framingui.com'),
   openGraph: {
-    title: 'tekton/ui - Agent-First Design System',
+    title: 'framingui - Agent-First Design System',
     description:
       'The first design system AI agents can actually understand. 0% hallucination by design.',
-    url: 'https://tekton-ui.com',
-    siteName: 'tekton/ui',
+    url: 'https://framingui.com',
+    siteName: 'framingui',
     type: 'website',
     images: [
       {
         url: '/og-image.png',
         width: 962,
         height: 422,
-        alt: 'tekton/ui - Agent-First Design System',
+        alt: 'framingui - Agent-First Design System',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'tekton/ui - Agent-First Design System',
+    title: 'framingui - Agent-First Design System',
     description: 'The first design system AI agents can actually understand.',
     images: ['/og-image.png'],
   },
@@ -42,12 +42,12 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'tekton/ui',
+  name: 'framingui',
   description: 'Agent-First Design System. 0% hallucination, production-ready UI.',
-  url: 'https://tekton-ui.com',
+  url: 'https://framingui.com',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://tekton-ui.com/docs?q={search_term_string}',
+    target: 'https://framingui.com/docs?q={search_term_string}',
     'query-input': 'required name=search_term_string',
   },
   sameAs: ['https://github.com/soo-kate-yeon/tekton'],
@@ -61,22 +61,22 @@ const siteNavigation = {
     {
       '@type': 'WebPage',
       name: 'Pricing',
-      url: 'https://tekton-ui.com/pricing',
+      url: 'https://framingui.com/pricing',
     },
     {
       '@type': 'WebPage',
       name: 'See Demo',
-      url: 'https://tekton-ui.com/studio',
+      url: 'https://framingui.com/studio',
     },
     {
       '@type': 'WebPage',
       name: 'Templates Gallery',
-      url: 'https://tekton-ui.com/studio',
+      url: 'https://framingui.com/studio',
     },
     {
       '@type': 'WebPage',
       name: 'Documentation',
-      url: 'https://tekton-ui.com/docs',
+      url: 'https://framingui.com/docs',
     },
   ],
 };

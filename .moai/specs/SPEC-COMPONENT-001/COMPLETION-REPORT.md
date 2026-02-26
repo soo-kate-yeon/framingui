@@ -508,7 +508,7 @@ As specified in Optional Requirements, these enhancements are deferred:
 ### Phase D Key Achievements
 
 - ✅ **CSS Variables Generator**: Theme → CSS conversion with all token layers
-- ✅ **Tier 1 Core Resolver**: 20 components from @tekton/ui
+- ✅ **Tier 1 Core Resolver**: 20 components from @framingui
 - ✅ **Tier 2 LLM Generator**: Claude API with validation & retry (max 3 attempts)
 - ✅ **Hybrid Export Tool**: Automatic Tier 1/2 routing
 - ✅ **Test Suite**: 43 tests covering all export scenarios
@@ -534,7 +534,7 @@ As specified in Optional Requirements, these enhancements are deferred:
 ### Technical Achievements
 
 **3-Tier Export System**:
-- **Tier 1**: Copy from @tekton/ui (20 core components)
+- **Tier 1**: Copy from @framingui (20 core components)
 - **Tier 2**: LLM generation with validation (custom components)
 - **CSS Layer**: Theme token → CSS Variables conversion
 
@@ -563,7 +563,7 @@ As specified in Optional Requirements, these enhancements are deferred:
 
 #### Implementation Success ✅
 - ✅ CSS generation produces valid CSS for all themes
-- ✅ Tier 1 export correctly copies from @tekton/ui
+- ✅ Tier 1 export correctly copies from @framingui
 - ✅ Tier 2 LLM generation achieves 90%+ validation success
 - ✅ Validation retry loop works correctly
 - ✅ Hybrid routing works for mixed component lists

@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Avatar Component
+ * @framingui - Avatar Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

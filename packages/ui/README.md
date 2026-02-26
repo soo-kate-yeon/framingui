@@ -1,10 +1,10 @@
-# @tekton/ui
+# @framingui
 
-Tekton UI Reference Component Library - High-quality, accessible React components with CSS Variables theming.
+FramingUI Reference Component Library - High-quality, accessible React components with CSS Variables theming.
 
 ## Overview
 
-@tekton/ui provides 20 production-ready components + 13 screen templates built with:
+@framingui provides 20 production-ready components + 13 screen templates built with:
 
 - **Screen Templates (NEW)**: 13 full-page layouts for rapid development
 - **React 19** - Latest React features with Server Components support
@@ -16,9 +16,9 @@ Tekton UI Reference Component Library - High-quality, accessible React component
 ## Installation
 
 ```bash
-pnpm add @tekton/ui
+pnpm add @framingui
 # or
-yarn add @tekton/ui
+yarn add @framingui
 ```
 
 ## Quick Start
@@ -26,14 +26,14 @@ yarn add @tekton/ui
 ### Import Components
 
 ```tsx
-import { Button, Input, Card } from '@tekton/ui';
-import '@tekton/ui/styles';
+import { Button, Input, Card } from '@framingui';
+import '@framingui/styles';
 
 export default function App() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Welcome to Tekton UI</CardTitle>
+        <CardTitle>Welcome to FramingUI</CardTitle>
         <CardDescription>Build accessible UIs faster</CardDescription>
       </CardHeader>
       <CardContent>
@@ -52,7 +52,7 @@ export default function App() {
 Import the CSS Variables template and customize:
 
 ```css
-@import '@tekton/ui/styles';
+@import '@framingui/styles';
 
 :root {
   /* Button Tokens */
@@ -110,7 +110,7 @@ Complex components built from primitives:
 ### Button
 
 ```tsx
-import { Button } from '@tekton/ui';
+import { Button } from '@framingui';
 
 // Variants
 <Button variant="default">Default</Button>
@@ -143,7 +143,7 @@ import { Button } from '@tekton/ui';
 ### Input
 
 ```tsx
-import { Input } from '@tekton/ui';
+import { Input } from '@framingui';
 
 // Basic usage
 <Input type="text" placeholder="Enter text..." />
@@ -167,7 +167,7 @@ import { Input } from '@tekton/ui';
 ### Card
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@tekton/ui';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@framingui';
 
 <Card>
   <CardHeader>
@@ -188,8 +188,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 ### Form
 
 ```tsx
-import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage } from '@tekton/ui';
-import { Input } from '@tekton/ui';
+import { Form, FormField, FormLabel, FormControl, FormDescription, FormMessage } from '@framingui';
+import { Input } from '@framingui';
 
 <Form
   onSubmit={e => {
@@ -221,8 +221,8 @@ import {
   ModalDescription,
   ModalFooter,
   ModalClose,
-} from '@tekton/ui';
-import { Button } from '@tekton/ui';
+} from '@framingui';
+import { Button } from '@framingui';
 
 <Modal>
   <ModalTrigger asChild>
@@ -255,8 +255,8 @@ import {
   DropdownContent,
   DropdownItem,
   DropdownSeparator,
-} from '@tekton/ui';
-import { Button } from '@tekton/ui';
+} from '@framingui';
+import { Button } from '@framingui';
 
 <Dropdown>
   <DropdownTrigger asChild>
@@ -277,7 +277,7 @@ import { Button } from '@tekton/ui';
 ### Tabs
 
 ```tsx
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@tekton/ui';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@framingui';
 
 <Tabs defaultValue="tab1">
   <TabsList>
@@ -302,7 +302,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@tekton/ui';
 ### Checkbox
 
 ```tsx
-import { Checkbox } from '@tekton/ui';
+import { Checkbox } from '@framingui';
 
 // Basic checkbox
 <label>
@@ -328,7 +328,7 @@ import { Checkbox } from '@tekton/ui';
 ### RadioGroup
 
 ```tsx
-import { RadioGroup, RadioGroupItem } from '@tekton/ui';
+import { RadioGroup, RadioGroupItem } from '@framingui';
 
 <RadioGroup defaultValue="option1">
   <div>
@@ -351,7 +351,7 @@ import { RadioGroup, RadioGroupItem } from '@tekton/ui';
 ### Switch
 
 ```tsx
-import { Switch } from '@tekton/ui';
+import { Switch } from '@framingui';
 
 <label>
   <Switch id="notifications" />
@@ -372,7 +372,7 @@ import { Switch } from '@tekton/ui';
 ### Slider
 
 ```tsx
-import { Slider } from '@tekton/ui';
+import { Slider } from '@framingui';
 
 // Basic slider
 <label htmlFor="volume" id="volume-label">Volume</label>
@@ -402,7 +402,7 @@ import { Slider } from '@tekton/ui';
 ### Progress
 
 ```tsx
-import { Progress } from '@tekton/ui';
+import { Progress } from '@framingui';
 
 <Progress value={50} aria-label="Upload progress" />
 <Progress value={75} aria-label="Loading" />
@@ -419,7 +419,7 @@ import { Progress } from '@tekton/ui';
 ### Avatar
 
 ```tsx
-import { Avatar, AvatarImage, AvatarFallback } from '@tekton/ui';
+import { Avatar, AvatarImage, AvatarFallback } from '@framingui';
 
 <Avatar>
   <AvatarImage src="https://example.com/avatar.jpg" alt="John Doe" />
@@ -432,7 +432,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@tekton/ui';
 ### Badge
 
 ```tsx
-import { Badge } from '@tekton/ui';
+import { Badge } from '@framingui';
 
 <Badge variant="default">Default</Badge>
 <Badge variant="primary">Primary</Badge>
@@ -450,7 +450,7 @@ import { Badge } from '@tekton/ui';
 ### Text
 
 ```tsx
-import { Text } from '@tekton/ui';
+import { Text } from '@framingui';
 
 // Sizes
 <Text size="xs">Extra small text</Text>
@@ -475,7 +475,7 @@ import { Text } from '@tekton/ui';
 ### Heading
 
 ```tsx
-import { Heading } from '@tekton/ui';
+import { Heading } from '@framingui';
 
 <Heading level={1}>Heading 1</Heading>
 <Heading level={2}>Heading 2</Heading>
@@ -499,7 +499,7 @@ import { Heading } from '@tekton/ui';
 ### Link
 
 ```tsx
-import { Link } from '@tekton/ui';
+import { Link } from '@framingui';
 
 <Link href="/home" variant="default">Default Link</Link>
 <Link href="/about" variant="muted">Muted Link</Link>
@@ -517,7 +517,7 @@ import { Link } from '@tekton/ui';
 ### List
 
 ```tsx
-import { List, ListItem } from '@tekton/ui';
+import { List, ListItem } from '@framingui';
 
 // Unordered list
 <List as="ul">
@@ -543,7 +543,7 @@ import { List, ListItem } from '@tekton/ui';
 ### Image
 
 ```tsx
-import { Image } from '@tekton/ui';
+import { Image } from '@framingui';
 
 <Image
   src="https://example.com/image.jpg"
@@ -577,7 +577,7 @@ import {
   TableHead,
   TableCell,
   TableCaption,
-} from '@tekton/ui';
+} from '@framingui';
 
 <Table>
   <TableCaption>List of users</TableCaption>
@@ -644,7 +644,7 @@ Powered by class-variance-authority:
 Works out of the box with sensible defaults:
 
 ```tsx
-import { Button } from '@tekton/ui';
+import { Button } from '@framingui';
 
 <Button>Just works</Button>;
 ```
@@ -670,7 +670,7 @@ Screen Templates provide pre-built, theme-aware full-screen layouts that combine
 ### Quick Start
 
 ```tsx
-import { templateRegistry } from '@tekton/ui/templates';
+import { templateRegistry } from '@framingui/templates';
 
 // Get all templates
 const allTemplates = templateRegistry.getAll(); // 13 templates
@@ -692,7 +692,7 @@ import {
   SignupTemplate,
   ForgotPasswordTemplate,
   VerificationTemplate,
-} from '@tekton/ui/templates/auth';
+} from '@framingui/templates/auth';
 ```
 
 - **LoginTemplate** (`auth.login`) - Centered login card with email/password
@@ -703,7 +703,7 @@ import {
 #### Core Templates (3)
 
 ```tsx
-import { LandingTemplate, PreferencesTemplate, ProfileTemplate } from '@tekton/ui/templates/core';
+import { LandingTemplate, PreferencesTemplate, ProfileTemplate } from '@framingui/templates/core';
 ```
 
 - **LandingTemplate** (`home.landing`) - Full-width landing page with CTA
@@ -719,7 +719,7 @@ import {
   EmptyTemplate,
   ConfirmationTemplate,
   SuccessTemplate,
-} from '@tekton/ui/templates/feedback';
+} from '@framingui/templates/feedback';
 ```
 
 - **LoadingTemplate** (`feedback.loading`) - Loading skeleton state
@@ -731,7 +731,7 @@ import {
 #### Dashboard Template (1)
 
 ```tsx
-import { DashboardTemplate } from '@tekton/ui/templates/dashboard';
+import { DashboardTemplate } from '@framingui/templates/dashboard';
 ```
 
 - **DashboardTemplate** (`dashboard.overview`) - Dashboard layout with sidebar
@@ -749,7 +749,7 @@ import { DashboardTemplate } from '@tekton/ui/templates/dashboard';
 The `TemplateRegistry` provides centralized template management:
 
 ```tsx
-import { templateRegistry } from '@tekton/ui/templates/registry';
+import { templateRegistry } from '@framingui/templates/registry';
 
 // Get all templates
 const allTemplates = templateRegistry.getAll(); // 13 templates
@@ -789,7 +789,7 @@ const formsTemplates = templateRegistry.findByRequiredComponents(['Button', 'Inp
 
 ## CSS Variables Reference
 
-@tekton/ui uses a 3-layer CSS Variables architecture:
+@framingui uses a 3-layer CSS Variables architecture:
 
 ### Layer 1: Atomic Tokens
 
@@ -880,7 +880,7 @@ const formsTemplates = templateRegistry.findByRequiredComponents(['Button', 'Inp
 
 ```css
 /* dark-theme.css */
-@import '@tekton/ui/styles';
+@import '@framingui/styles';
 
 :root {
   /* Atomic Layer */
@@ -1052,7 +1052,7 @@ pnpm test:coverage
 All components are fully typed with TypeScript 5.7+:
 
 ```tsx
-import { Button, ButtonProps } from '@tekton/ui';
+import { Button, ButtonProps } from '@framingui';
 
 // Type-safe props
 const MyButton: React.FC<ButtonProps> = props => {
@@ -1107,7 +1107,7 @@ MIT License - see [LICENSE](./LICENSE) for details
 
 ## Links
 
-- **Documentation**: [Tekton UI Guide](https://github.com/tektoncd/tekton)
+- **Documentation**: [FramingUI Guide](https://github.com/tektoncd/tekton)
 - **Radix UI**: [https://www.radix-ui.com/](https://www.radix-ui.com/)
 - **WCAG 2.1**: [https://www.w3.org/WAI/WCAG21/quickref/](https://www.w3.org/WAI/WCAG21/quickref/)
 - **React 19**: [https://react.dev/](https://react.dev/)

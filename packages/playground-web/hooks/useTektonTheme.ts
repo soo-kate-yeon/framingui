@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { previewTheme } from '@/lib/mcp-client';
 
-import { injectThemeCSS, type ThemeDefinition } from '@tekton-ui/ui';
+import { injectThemeCSS, type ThemeDefinition } from '@framingui/ui';
 
 interface UseTektonThemeOptions {
   /** MCP 서버 연결 실패 시 적용할 폴백 CSS 변수 */
@@ -21,7 +21,7 @@ interface UseTektonThemeResult {
  * Tekton MCP 서버에서 테마를 로드하고 CSS 변수로 적용하는 훅
  *
  * 두 가지 CSS 변수 체계를 모두 설정:
- * 1. 컴포넌트 변수 (--tekton-bg-card 등) — @tekton-ui/ui 컴포넌트용
+ * 1. 컴포넌트 변수 (--tekton-bg-card 등) — @framingui/ui 컴포넌트용
  * 2. 페이지 변수 (--tekton-bg-canvas 등) — 페이지 템플릿 인라인 스타일용
  */
 export function useTektonTheme(

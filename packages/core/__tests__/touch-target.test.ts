@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Touch Target Utilities Tests
+ * @framingui/core - Touch Target Utilities Tests
  * Comprehensive tests for accessible touch target validation and utilities
  * [SPEC-LAYOUT-004] [MILESTONE-7]
  */

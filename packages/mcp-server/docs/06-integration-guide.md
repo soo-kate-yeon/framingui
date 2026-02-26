@@ -27,7 +27,7 @@ Add to your project root `.mcp.json`:
     "tekton": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tekton-ui/mcp-server"]
+      "args": ["-y", "@framingui/mcp-server"]
     }
   }
 }
@@ -41,7 +41,7 @@ Add to your project root `.mcp.json`:
     "tekton": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tekton-ui/mcp-server"],
+      "args": ["-y", "@framingui/mcp-server"],
       "env": {
         "TEKTON_API_KEY": "tk_live_xxx..."
       }
@@ -59,7 +59,7 @@ Add to your project root `.mcp.json`:
 ### Setup
 
 1. **Install**: Add `.mcp.json` to your project root (see above)
-2. **Login**: Run `npx @tekton-ui/mcp-server login`
+2. **Login**: Run `npx @framingui/mcp-server login`
 3. **Restart**: Restart Claude Code to detect the new MCP server
 4. **Verify**: Ask Claude "Check my Tekton account" → triggers `whoami`
 
@@ -106,7 +106,7 @@ Most clients support a JSON config format similar to:
     "tekton": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@tekton-ui/mcp-server"]
+      "args": ["-y", "@framingui/mcp-server"]
     }
   }
 }
@@ -121,7 +121,7 @@ Check your client's documentation for the exact config file location.
 The `init` command configures an existing project for Tekton:
 
 ```bash
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 ```
 
 ### What It Does
@@ -129,9 +129,9 @@ npx @tekton-ui/mcp-server init
 | Step | Action                                                                 |
 | ---- | ---------------------------------------------------------------------- |
 | 1    | **Detect framework**: Next.js or Vite                                  |
-| 2    | **Install packages**: `@tekton-ui/ui`, `tailwindcss-animate`           |
+| 2    | **Install packages**: `@framingui/ui`, `tailwindcss-animate`           |
 | 3    | **Configure Tailwind**: Add content paths and animate plugin           |
-| 4    | **Setup CSS**: Add `@import '@tekton-ui/ui/styles'` to `globals.css`   |
+| 4    | **Setup CSS**: Add `@import '@framingui/ui/styles'` to `globals.css`   |
 | 5    | **Register MCP**: Create/update `.mcp.json` with Tekton server         |
 | 6    | **Generate guide**: Create `TEKTON-GUIDE.md`                           |
 | 7    | **Update AI config**: Add Tekton workflow to `CLAUDE.md` / `AGENTS.md` |
@@ -153,7 +153,7 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 | Variable         | Required    | Default                 | Description                                     |
 | ---------------- | ----------- | ----------------------- | ----------------------------------------------- |
 | `TEKTON_API_KEY` | Conditional | —                       | API key. Not needed if using `tekton-mcp login` |
-| `TEKTON_API_URL` | No          | `https://tekton-ui.com` | API endpoint                                    |
+| `TEKTON_API_URL` | No          | `https://framingui.com` | API endpoint                                    |
 
 ### Credential Precedence
 
@@ -167,14 +167,14 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 ### Server Not Detected by AI Client
 
 1. Check `.mcp.json` exists in your project root
-2. Verify `npx @tekton-ui/mcp-server` runs without errors in terminal
+2. Verify `npx @framingui/mcp-server` runs without errors in terminal
 3. Restart your AI client
 
 ### "Authentication required" After Login
 
 - Verify credentials exist: `cat ~/.tekton/credentials.json`
-- Check API key validity: `npx @tekton-ui/mcp-server status`
-- Re-login: `npx @tekton-ui/mcp-server login`
+- Check API key validity: `npx @framingui/mcp-server status`
+- Re-login: `npx @framingui/mcp-server login`
 
 ### "whoami required"
 

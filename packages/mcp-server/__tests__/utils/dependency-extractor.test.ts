@@ -24,16 +24,16 @@ describe('extractDependencies', () => {
   describe('내부 패키지 추출', () => {
     it('@tekton 패키지를 internal로 추출해야 함', () => {
       const code = `
-        import { Button } from '@tekton-ui/ui';
-        import { resolveScreen } from '@tekton-ui/core';
+        import { Button } from '@framingui/ui';
+        import { resolveScreen } from '@framingui/core';
       `;
       const result = extractDependencies(code);
 
-      expect(result.internal).toContain('@tekton-ui/ui');
-      expect(result.internal).toContain('@tekton-ui/core');
+      expect(result.internal).toContain('@framingui/ui');
+      expect(result.internal).toContain('@framingui/core');
       expect(result.internal).toHaveLength(2);
-      expect(result.external).not.toContain('@tekton-ui/ui');
-      expect(result.external).not.toContain('@tekton-ui/core');
+      expect(result.external).not.toContain('@framingui/ui');
+      expect(result.external).not.toContain('@framingui/core');
     });
   });
 
@@ -94,13 +94,13 @@ describe('extractDependencies', () => {
   describe('서브패스에서 패키지 이름 추출', () => {
     it('서브패스 import에서 패키지 이름을 추출해야 함', () => {
       const code = `
-        import { Button } from '@tekton-ui/ui/components/Button';
+        import { Button } from '@framingui/ui/components/Button';
         import { motion } from 'framer-motion/dist/framer-motion';
       `;
       const result = extractDependencies(code);
 
-      expect(result.internal).toContain('@tekton-ui/ui');
-      expect(result.internal).not.toContain('@tekton-ui/ui/components/Button');
+      expect(result.internal).toContain('@framingui/ui');
+      expect(result.internal).not.toContain('@framingui/ui/components/Button');
       expect(result.external).toContain('framer-motion');
       expect(result.external).not.toContain('framer-motion/dist/framer-motion');
     });
@@ -190,7 +190,7 @@ describe('extractDependencies', () => {
       expect(result.notes).toBeDefined();
       expect(result.notes?.length).toBeGreaterThan(0);
       expect(result.notes).toContain('framer-motion requires React 18+ for concurrent features');
-      expect(result.notes).toContain('@radix-ui/react-slot is a peer dependency of @tekton-ui/ui');
+      expect(result.notes).toContain('@radix-ui/react-slot is a peer dependency of @framingui/ui');
     });
 
     it('노트가 없는 패키지의 경우 undefined여야 함', () => {
@@ -260,13 +260,13 @@ describe('extractDependencies', () => {
       const code = `
         import { motion } from 'framer-motion';
         import { AnimatePresence } from 'framer-motion';
-        import { Button } from '@tekton-ui/ui';
-        import { Card } from '@tekton-ui/ui/components/Card';
+        import { Button } from '@framingui/ui';
+        import { Card } from '@framingui/ui/components/Card';
       `;
       const result = extractDependencies(code);
 
       expect(result.external).toEqual(['framer-motion']);
-      expect(result.internal).toEqual(['@tekton-ui/ui']);
+      expect(result.internal).toEqual(['@framingui/ui']);
     });
 
     it('정렬된 결과를 반환해야 함', () => {
@@ -303,8 +303,8 @@ describe('extractDependencies', () => {
         import { Slot } from '@radix-ui/react-slot';
 
         // 내부 패키지
-        import { Button } from '@tekton-ui/ui/components/Button';
-        import { resolveScreen } from '@tekton-ui/core';
+        import { Button } from '@framingui/ui/components/Button';
+        import { resolveScreen } from '@framingui/core';
 
         // 내장 모듈 (제외되어야 함)
         import fs from 'fs';
@@ -323,7 +323,7 @@ describe('extractDependencies', () => {
       const result = extractDependencies(code);
 
       expect(result.external).toEqual(['@radix-ui/react-slot', 'framer-motion', 'zod']);
-      expect(result.internal).toEqual(['@tekton-ui/core', '@tekton-ui/ui']);
+      expect(result.internal).toEqual(['@framingui/core', '@framingui/ui']);
       expect(result.installCommands.npm).toBe('npm install @radix-ui/react-slot framer-motion zod');
       expect(result.compatibility).toBeDefined();
       expect(result.notes).toBeDefined();
@@ -333,7 +333,7 @@ describe('extractDependencies', () => {
       const code = `
         import type { ComponentType } from 'react';
         import { useState } from 'react';
-        import type { User } from '@tekton-ui/core/types';
+        import type { User } from '@framingui/core/types';
         import { motion } from 'framer-motion';
 
         interface Props {
@@ -348,13 +348,13 @@ describe('extractDependencies', () => {
       const result = extractDependencies(code);
 
       expect(result.external).toEqual(['framer-motion', 'react']);
-      expect(result.internal).toEqual(['@tekton-ui/core']);
+      expect(result.internal).toEqual(['@framingui/core']);
     });
 
     it('JSX 코드를 올바르게 파싱해야 함', () => {
       const code = `
         import { motion } from 'framer-motion';
-        import { Button } from '@tekton-ui/ui';
+        import { Button } from '@framingui/ui';
 
         export default function App() {
           return (
@@ -367,7 +367,7 @@ describe('extractDependencies', () => {
       const result = extractDependencies(code);
 
       expect(result.external).toEqual(['framer-motion']);
-      expect(result.internal).toEqual(['@tekton-ui/ui']);
+      expect(result.internal).toEqual(['@framingui/ui']);
     });
   });
 });

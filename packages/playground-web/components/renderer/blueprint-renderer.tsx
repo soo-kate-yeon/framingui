@@ -2,7 +2,7 @@
  * BlueprintRenderer
  * SPEC-PLAYGROUND-001 Milestone 5: Blueprint Renderer
  *
- * Recursively renders ComponentNode tree using @tekton-ui/ui components
+ * Recursively renders ComponentNode tree using @framingui/ui components
  */
 
 import { resolveComponent } from './component-resolver';
@@ -15,7 +15,7 @@ export interface BlueprintRendererProps {
 /**
  * Renders a single ComponentNode
  * Handles:
- * - Component resolution from @tekton-ui/ui
+ * - Component resolution from @framingui/ui
  * - Props passing
  * - Recursive rendering of children
  * - Unknown component fallback
@@ -23,7 +23,7 @@ export interface BlueprintRendererProps {
 export function BlueprintRenderer({ node }: BlueprintRendererProps) {
   const { type, props, children } = node;
 
-  // Resolve component from @tekton-ui/ui
+  // Resolve component from @framingui/ui
   const Component = resolveComponent(type);
 
   // Unknown component fallback
@@ -41,7 +41,7 @@ export function BlueprintRenderer({ node }: BlueprintRendererProps) {
       >
         <strong>Unknown Component:</strong> {type}
         <div style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
-          Component "{type}" is not available in @tekton-ui/ui
+          Component "{type}" is not available in @framingui/ui
         </div>
       </div>
     );

@@ -36,8 +36,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
       '@/lib': path.resolve(__dirname, './lib'),
       '@/components': path.resolve(__dirname, './components'),
-      '@tekton-ui/ui': path.resolve(__dirname, '../ui/dist/index.mjs'),
-      '@tekton-ui/core': path.resolve(__dirname, '../core/dist/index.js'),
+      '@framingui/ui': path.resolve(__dirname, '../ui/dist/index.mjs'),
+      '@framingui/core': path.resolve(__dirname, '../core/dist/index.js'),
     },
   },
 });

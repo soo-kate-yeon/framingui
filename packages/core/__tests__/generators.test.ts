@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Generator Tests
+ * @framingui/core - Generator Tests
  * Test suite for code generators (CSS-in-JS, Tailwind, React)
  * [SPEC-LAYOUT-002] [PHASE-3]
  */

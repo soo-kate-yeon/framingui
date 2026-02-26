@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Layout Token Validation
+ * @framingui/core - Layout Token Validation
  * Zod-based runtime validation for 4-layer layout token architecture
  * [SPEC-LAYOUT-001] [PHASE-2]
  */

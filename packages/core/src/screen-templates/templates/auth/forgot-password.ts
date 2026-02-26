@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Forgot Password Screen Template
+ * @framingui/core - Forgot Password Screen Template
  * [SPEC-UI-002] [TAG-UI002-026] auth.forgot-password
  *
  * Design Reference: Claude.ai / Reference Image (Lovable Web 335.png)

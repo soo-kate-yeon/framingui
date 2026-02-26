@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Token Validation
+ * @framingui/core - Token Validation
  * Runtime validation using Zod schemas for 3-layer token architecture
  * [SPEC-COMPONENT-001-A] [TOKEN-VALIDATION]
  */

@@ -82,7 +82,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-production-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-production-service-role-key
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://framingui.com
 
 # Paddle (SPEC-DEPLOY-001 Phase 3)
 PADDLE_API_KEY=your-production-paddle-api-key
@@ -107,7 +107,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-staging-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-staging-service-role-key
 
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://dev.tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://dev.framingui.com
 
 # Paddle Sandbox
 PADDLE_API_KEY=your-sandbox-paddle-api-key
@@ -138,7 +138,7 @@ NEXT_PUBLIC_ENABLE_PAYMENTS=true
 **Vercel Dashboard → Project Settings → Domains:**
 
 1. "Add Domain" 클릭
-2. `tekton-ui.com` 입력
+2. `framingui.com` 입력
 3. DNS 설정 안내에 따라 다음 레코드 추가:
 
 ```
@@ -158,7 +158,7 @@ Value: cname.vercel-dns.com
 **develop 브랜치 전용 서브도메인:**
 
 1. "Add Domain" 클릭
-2. `dev.tekton-ui.com` 입력
+2. `dev.framingui.com` 입력
 3. DNS 레코드 추가:
 
 ```
@@ -168,14 +168,14 @@ Value: cname.vercel-dns.com
 ```
 
 4. **Git Branch 매핑:**
-   - Domain: `dev.tekton-ui.com`
+   - Domain: `dev.framingui.com`
    - Git Branch: `develop`
 
 ### 4.3 도메인 리다이렉트
 
 **www → apex 리다이렉트:**
 
-Vercel은 자동으로 `www.tekton-ui.com` → `tekton-ui.com` 리다이렉트를 생성합니다.
+Vercel은 자동으로 `www.framingui.com` → `framingui.com` 리다이렉트를 생성합니다.
 
 ---
 
@@ -185,7 +185,7 @@ Vercel은 자동으로 `www.tekton-ui.com` → `tekton-ui.com` 리다이렉트�
 
 ```
 ┌──────────────┐
-│  develop     │ ──push──> Preview (dev.tekton-ui.com)
+│  develop     │ ──push──> Preview (dev.framingui.com)
 │  브랜치      │           ├─ E2E 테스트 자동 실행
 └──────────────┘           └─ Staging 환경변수 사용
 
@@ -201,7 +201,7 @@ Vercel은 자동으로 `www.tekton-ui.com` → `tekton-ui.com` 리다이렉트�
        │ PR 승인 + Merge
        ▼
 ┌──────────────┐
-│  master      │ ──push──> Production (tekton-ui.com)
+│  master      │ ──push──> Production (framingui.com)
 │  브랜치      │           ├─ 모든 Quality Gates 통과 확인
 └──────────────┘           ├─ Production 환경변수 사용
                            └─ Vercel Analytics 활성화
@@ -226,7 +226,7 @@ Vercel은 다음 GitHub Actions 워크플로우가 성공할 때까지 배포를
 
 ### 6.1 Production 배포 후 체크리스트
 
-- [ ] `https://tekton-ui.com` 접속 가능
+- [ ] `https://framingui.com` 접속 가능
 - [ ] SSL 인증서 정상 (자동 발급)
 - [ ] Google OAuth 로그인 정상 동작
 - [ ] GitHub OAuth 로그인 정상 동작
@@ -237,7 +237,7 @@ Vercel은 다음 GitHub Actions 워크플로우가 성공할 때까지 배포를
 
 ### 6.2 Preview 배포 후 체크리스트
 
-- [ ] `https://dev.tekton-ui.com` 접속 가능
+- [ ] `https://dev.framingui.com` 접속 가능
 - [ ] Staging Supabase 연결 확인
 - [ ] Paddle Sandbox 환경 사용 확인
 - [ ] E2E 테스트 전체 통과

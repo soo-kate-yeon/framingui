@@ -9,7 +9,7 @@ import { create } from '@storybook/theming/create';
 
 export default create({
   base: 'light',
-  brandTitle: 'Tekton UI',
+  brandTitle: 'FramingUI',
   brandUrl: 'https://github.com/tektonlabs/tekton',
   brandTarget: '_blank',
 

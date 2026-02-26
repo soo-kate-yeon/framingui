@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Separator Component Tests
+ * @framingui - Separator Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Separator component
  */
 import { render } from '@testing-library/react';

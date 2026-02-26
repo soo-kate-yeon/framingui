@@ -60,7 +60,7 @@ const COMPATIBILITY_MAP: Record<string, { react?: string; node?: string }> = {
  */
 const COMPATIBILITY_NOTES: Record<string, string> = {
   'framer-motion': 'framer-motion requires React 18+ for concurrent features',
-  '@radix-ui/react-slot': '@radix-ui/react-slot is a peer dependency of @tekton-ui/ui',
+  '@radix-ui/react-slot': '@radix-ui/react-slot is a peer dependency of @framingui/ui',
   '@radix-ui/react-dialog': '@radix-ui/react-dialog requires peer dependencies: react, react-dom',
   next: 'Next.js requires peer dependencies: react, react-dom',
   'lucide-react': 'lucide-react is compatible with React 16.x, 17.x, 18.x, and 19.x',
@@ -80,7 +80,7 @@ function isBuiltIn(source: string): boolean {
  * Examples:
  * - 'framer-motion' -> 'framer-motion'
  * - '@radix-ui/react-slot' -> '@radix-ui/react-slot'
- * - '@tekton-ui/ui/components/Button' -> '@tekton-ui/ui'
+ * - '@framingui/ui/components/Button' -> '@framingui/ui'
  */
 function extractPackageName(source: string): string {
   if (source.startsWith('@')) {
@@ -199,7 +199,7 @@ export function extractDependencies(generatedCode: string): Dependencies {
         const packageName = extractPackageName(source);
 
         // Categorize as internal or external
-        if (packageName.startsWith('@tekton-ui/')) {
+        if (packageName.startsWith('@framingui/')) {
           internalSet.add(packageName);
         } else {
           externalSet.add(packageName);
@@ -219,7 +219,7 @@ export function extractDependencies(generatedCode: string): Dependencies {
 
             const packageName = extractPackageName(source);
 
-            if (packageName.startsWith('@tekton-ui/')) {
+            if (packageName.startsWith('@framingui/')) {
               internalSet.add(packageName);
             } else {
               externalSet.add(packageName);

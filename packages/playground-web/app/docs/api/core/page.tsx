@@ -1,12 +1,12 @@
 /**
- * @tekton-ui/core API Reference
+ * @framingui/core API Reference
  */
 
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '@tekton-ui/core API | tekton/ui',
-  description: 'API reference for @tekton-ui/core package.',
+  title: '@framingui/core API | framingui',
+  description: 'API reference for @framingui/core package.',
 };
 
 export default function CoreAPIPage() {
@@ -15,7 +15,7 @@ export default function CoreAPIPage() {
       <header className="space-y-4">
         <div className="text-sm font-medium text-neutral-500">API Reference</div>
         <h1 className="text-4xl font-bold tracking-tight text-neutral-900 font-mono">
-          @tekton-ui/core
+          @framingui/core
         </h1>
         <p className="text-xl text-neutral-600">
           Token generation, OKLCH color utilities, and theme parsing.
@@ -26,7 +26,7 @@ export default function CoreAPIPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Installation</h2>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
-          <code>npm install @tekton-ui/core</code>
+          <code>npm install @framingui/core</code>
         </pre>
       </section>
 
@@ -37,7 +37,7 @@ export default function CoreAPIPage() {
           Generate CSS custom properties from a theme configuration.
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { generateTokens } from '@tekton-ui/core';
+{`import { generateTokens } from '@framingui/core';
 
 const tokens = generateTokens({
   theme: 'editorial-tech',
@@ -82,7 +82,7 @@ const tokens = generateTokens({
           Parse a theme JSON file and validate its structure.
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { parseTheme } from '@tekton-ui/core';
+{`import { parseTheme } from '@framingui/core';
 
 const theme = parseTheme(themeJson);
 
@@ -101,7 +101,7 @@ const theme = parseTheme(themeJson);
           Convert OKLCH color values to hex format.
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { oklchToHex } from '@tekton-ui/core';
+{`import { oklchToHex } from '@framingui/core';
 
 const hex = oklchToHex({ l: 0.55, c: 0.15, h: 250 });
 // Returns: '#4a6fd4'`}
@@ -115,7 +115,7 @@ const hex = oklchToHex({ l: 0.55, c: 0.15, h: 250 });
           Check color contrast ratio for WCAG compliance.
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
-{`import { validateWCAG } from '@tekton-ui/core';
+{`import { validateWCAG } from '@framingui/core';
 
 const result = validateWCAG({
   foreground: { l: 0.2, c: 0, h: 0 },

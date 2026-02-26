@@ -1,5 +1,5 @@
 {
-  "name": "@tekton-ui/playground-web",
+  "name": "@framingui/playground-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -39,8 +39,8 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.94.1",
     "@tanstack/react-query": "^5.62.11",
-    "@tekton-ui/core": "workspace:*",
-    "@tekton-ui/ui": "workspace:*",
+    "@framingui/core": "workspace:*",
+    "@framingui/ui": "workspace:*",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
-    "@tekton-ui/mcp-server": "workspace:*",
+    "@framingui/mcp-server": "workspace:*",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",

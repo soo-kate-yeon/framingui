@@ -28,7 +28,7 @@ AI-Native Design Library로서 코딩 에이전트가 실제로 사용 가능한
 | 의존성 | 버전 | 상태 | 비고 |
 |--------|------|------|------|
 | SPEC-UI-001 | 1.0.0 | ✅ 완료 | shadcn-ui Fork 및 Token 통합 |
-| @tekton/ui | 0.1.0 | ✅ 사용 가능 | shadcn-ui 기반 30개 컴포넌트 |
+| @framingui | 0.1.0 | ✅ 사용 가능 | shadcn-ui 기반 30개 컴포넌트 |
 | @tekton/tokens | 0.1.0 | ✅ 사용 가능 | TokenReference 타입 정의 |
 | React | 18/19 | ✅ 사용 가능 | Peer dependency |
 | TypeScript | 5.7+ | ✅ 사용 가능 | 타입 시스템 |

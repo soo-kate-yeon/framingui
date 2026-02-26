@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Radio Component
+ * @framingui - Radio Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

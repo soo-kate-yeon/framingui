@@ -6,7 +6,7 @@ Welcome to the Tekton documentation! This guide will help you find the informati
 
 - Tekton docs are organized into guides, API reference, architecture, and package-level documentation.
 - Start from `docs/guides/getting-started.md`, then move to `docs/api/README.md` for exact function-level details.
-- Package docs under `docs/packages/` describe the `@tekton-ui/*` ecosystem and dependency flow.
+- Package docs under `docs/packages/` describe the `@framingui/*` ecosystem and dependency flow.
 - Architecture docs explain the 3-layer design system pipeline and performance constraints.
 - Use this page as the routing hub before diving into specialized docs.
 

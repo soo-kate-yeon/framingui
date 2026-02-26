@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Label Component Tests
+ * @framingui - Label Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Label component
  */
 import { render, screen } from '@testing-library/react';

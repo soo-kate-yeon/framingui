@@ -27,12 +27,12 @@ dependencies:
 
 ### Purpose
 
-Extend the tekton-mcp-server with 4 new MCP tools for component and template discovery, enabling AI agents to efficiently discover, preview, and utilize UI components and screen templates from the @tekton/ui library.
+Extend the tekton-mcp-server with 4 new MCP tools for component and template discovery, enabling AI agents to efficiently discover, preview, and utilize UI components and screen templates from the @framingui library.
 
 ### Scope
 
 - Add 4 new MCP tools to the existing tekton-mcp-server (packages/mcp-server/)
-- Integrate with existing 30+ components and 13 templates from @tekton/ui
+- Integrate with existing 30+ components and 13 templates from @framingui
 - Maintain compatibility with existing 9 MCP tools
 - Follow established MCP patterns from SPEC-MCP-002
 
@@ -62,7 +62,7 @@ Extend the tekton-mcp-server with 4 new MCP tools for component and template dis
 ```
 Current System:
   - tekton-mcp-server: v2.0.0 with 9 registered tools
-  - @tekton/ui: 30+ components, 13 templates
+  - @framingui: 30+ components, 13 templates
   - @tekton/core: Theme loading, token management
   - Template Registry: Singleton pattern for template management
 
@@ -115,7 +115,7 @@ Existing MCP Tools (9 tools - KEEP ALL):
 
 | ID | Requirement | TAG |
 |----|-------------|-----|
-| E-001 | **WHEN** list-components is called **THEN** return all components from @tekton/ui with metadata | [TAG-MCP003-006] |
+| E-001 | **WHEN** list-components is called **THEN** return all components from @framingui with metadata | [TAG-MCP003-006] |
 | E-002 | **WHEN** preview-component is called with valid componentId **THEN** return component details including props, variants, and usage | [TAG-MCP003-007] |
 | E-003 | **WHEN** list-screen-templates is called **THEN** return all templates from Template Registry | [TAG-MCP003-008] |
 | E-004 | **WHEN** preview-screen-template is called with valid templateId **THEN** return template skeleton, slots, and customization boundaries | [TAG-MCP003-009] |
@@ -158,7 +158,7 @@ Existing MCP Tools (9 tools - KEEP ALL):
 // packages/mcp-server/src/tools/list-components.ts
 
 /**
- * List all available UI components from @tekton/ui
+ * List all available UI components from @framingui
  * [TAG-MCP003-006]
  */
 
@@ -264,7 +264,7 @@ export const PreviewComponentOutputSchema = z.object({
 
     // Dependencies
     dependencies: z.object({
-      internal: z.array(z.string()),  // Other @tekton/ui components
+      internal: z.array(z.string()),  // Other @framingui components
       external: z.array(z.string()),  // External packages (radix, etc.)
     }).optional(),
 
@@ -461,8 +461,8 @@ packages/mcp-server/
 ### 6.1 Template Registry Integration
 
 ```typescript
-// Use existing templateRegistry from @tekton/ui
-import { templateRegistry } from '@tekton/ui';
+// Use existing templateRegistry from @framingui
+import { templateRegistry } from '@framingui';
 
 // list-screen-templates implementation
 export async function listScreenTemplatesTool(input: ListScreenTemplatesInput) {
@@ -490,7 +490,7 @@ export async function listScreenTemplatesTool(input: ListScreenTemplatesInput) {
 ### 6.2 Component Metadata Source
 
 ```typescript
-// Static component metadata (generated from @tekton/ui exports)
+// Static component metadata (generated from @framingui exports)
 export const COMPONENT_METADATA: ComponentMeta[] = [
   // Tier 1: Core Components (15)
   { id: 'button', name: 'Button', category: 'core', tier: 1, description: 'Interactive button with variants', variantsCount: 6, hasSubComponents: false },

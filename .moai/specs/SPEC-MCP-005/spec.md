@@ -270,7 +270,7 @@ Returns: Components, schema, templates, examples, theme recipes, and contextual 
 
 ```json
 {
-  "code": "import { Card } from '@tekton/ui';\nimport { motion } from 'framer-motion';\n...",
+  "code": "import { Card } from '@framingui';\nimport { motion } from 'framer-motion';\n...",
 
   "dependencies": {
     "external": [
@@ -279,7 +279,7 @@ Returns: Components, schema, templates, examples, theme recipes, and contextual 
       "lucide-react"
     ],
     "internal": [
-      "@tekton/ui",
+      "@framingui",
       "@tekton/tokens"
     ],
     "installCommands": {
@@ -294,7 +294,7 @@ Returns: Components, schema, templates, examples, theme recipes, and contextual 
     },
     "notes": [
       "framer-motion requires React 18+ for concurrent features",
-      "@radix-ui/react-slot is a peer dependency of @tekton/ui"
+      "@radix-ui/react-slot is a peer dependency of @framingui"
     ]
   }
 }

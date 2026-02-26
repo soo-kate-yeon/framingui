@@ -29,7 +29,7 @@ shadcn-ui 컴포넌트를 Tekton Design System으로 Fork하여 `@tekton/tokens`
 ### 범위
 
 - Week 1 (7일): shadcn-ui Fork, Token 통합, Screen Template 시스템 기초
-- 약 30개 shadcn-ui 컴포넌트를 `@tekton/ui`로 마이그레이션
+- 약 30개 shadcn-ui 컴포넌트를 `@framingui`로 마이그레이션
 - Tekton CSS Variable (`--tekton-*`) 기반 스타일링
 - Linear Minimal 테마 적용 검증
 
@@ -37,7 +37,7 @@ shadcn-ui 컴포넌트를 Tekton Design System으로 Fork하여 `@tekton/tokens`
 
 | 결과물 | 설명 |
 |--------|------|
-| `@tekton/ui` 리팩토링 | shadcn-ui 기반 30개 컴포넌트 |
+| `@framingui` 리팩토링 | shadcn-ui 기반 30개 컴포넌트 |
 | Token CSS Variables | `--tekton-*` 변수 매핑 (linear-minimal-v1 테마 연동) |
 | ScreenTemplate 타입 | 화면 템플릿 타입 시스템 |
 | Pilot Templates | Login, Dashboard 템플릿 2개 |
@@ -55,7 +55,7 @@ shadcn-ui 컴포넌트를 Tekton Design System으로 Fork하여 `@tekton/tokens`
 
 ```
 Current System:
-  - @tekton/ui: Radix UI 기반 커스텀 컴포넌트 (14 primitives + 6 components)
+  - @framingui: Radix UI 기반 커스텀 컴포넌트 (14 primitives + 6 components)
   - @tekton/tokens: TokenReference 타입 정의 (`var(--tekton-${string})`)
   - 현재 컴포넌트들은 Tailwind 클래스 하드코딩
   - shadcn-ui 패턴과 불일치
@@ -83,7 +83,7 @@ Target Architecture:
 |----|------|------|----------|
 | A-001 | shadcn-ui 컴포넌트 구조가 Tekton에 적합 | 업계 표준, 커뮤니티 검증, Radix 기반 | 컴포넌트 매핑 분석 |
 | A-002 | CSS Variable 기반 테마 시스템이 런타임 변경 지원 | CSS Custom Properties 표준 | 테마 스위칭 테스트 |
-| A-003 | 기존 @tekton/ui 사용처가 제한적 | playground-web만 사용 | import 분석 |
+| A-003 | 기존 @framingui 사용처가 제한적 | playground-web만 사용 | import 분석 |
 | A-004 | 30개 컴포넌트로 MVP 12개 화면 구현 가능 | shadcn-ui 문서 분석 | 화면별 컴포넌트 매핑 |
 | A-005 | linear-minimal-v1 테마의 토큰이 CSS Variable로 매핑 가능 | 기존 테마 JSON 구조 분석 | 토큰 매핑 검증 |
 

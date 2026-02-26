@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Dashboard Template
+ * @framingui - Dashboard Template
  * SPEC-UI-001 Phase 3: Dashboard Screen Template
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함

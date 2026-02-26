@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Theme Module v2.1
+ * @framingui/core - Theme Module v2.1
  * Load and manage v2.1 theme definitions from .moai/themes/generated/
  * [SPEC-LAYOUT-002] [THEME-V2]
  */
@@ -369,7 +369,7 @@ export function themeExistsV2(themeId: string): boolean {
  * Semantic 토큰 → CSS 변수명 매핑
  * themeToCSS (ui 패키지)와 페이지 템플릿이 동일한 매핑을 참조
  *
- * 'component' 변수: @tekton-ui/ui 컴포넌트가 참조
+ * 'component' 변수: @framingui/ui 컴포넌트가 참조
  * 'page' 변수: 페이지 템플릿 인라인 스타일이 참조
  */
 export const CSS_VARIABLE_MAP = {

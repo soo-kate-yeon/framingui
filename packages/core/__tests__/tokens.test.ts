@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Token Type System Tests
+ * @framingui/core - Token Type System Tests
  * Test-First: Define expected behavior for 3-layer token architecture
  */
 

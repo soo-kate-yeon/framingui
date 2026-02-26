@@ -5,7 +5,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Select | tekton/ui',
+  title: 'Select | framingui',
   description: 'Dropdown select component for choosing from options.',
 };
 
@@ -32,7 +32,7 @@ export default function SelectPage() {
   SelectItem,
   SelectGroup,
   SelectLabel,
-} from '@tekton-ui/ui';`}
+} from '@framingui/ui';`}
         </pre>
       </section>
 
@@ -239,7 +239,7 @@ function ProfileForm() {
         </p>
         <pre className="bg-neutral-100 text-neutral-700 p-4 rounded-lg overflow-x-auto text-sm">
 {`// Use Combobox for searchable select
-import { Combobox } from '@tekton-ui/ui';
+import { Combobox } from '@framingui/ui';
 
 // See Combobox documentation for usage`}
         </pre>

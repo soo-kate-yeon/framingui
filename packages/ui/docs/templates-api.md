@@ -1,6 +1,6 @@
 # Templates API Reference
 
-Complete API documentation for the `@tekton/ui` Screen Template System.
+Complete API documentation for the `@framingui` Screen Template System.
 
 ## Table of Contents
 
@@ -269,7 +269,7 @@ Centralized template management API.
 Register a new template in the registry.
 
 ```typescript
-import { TemplateRegistry } from '@tekton/ui/templates/registry';
+import { TemplateRegistry } from '@framingui/templates/registry';
 import { MyCustomTemplate } from './my-template';
 
 TemplateRegistry.register(MyCustomTemplate);
@@ -349,7 +349,7 @@ console.log(`Total templates: ${allTemplates.length}`);
 Convenience function to get and render a template.
 
 ```typescript
-import { getTemplate } from '@tekton/ui/templates';
+import { getTemplate } from '@framingui/templates';
 
 // Get template component
 const LoginTemplate = getTemplate('login-minimal');
@@ -396,7 +396,7 @@ const LoginTemplate = getTemplate('login-minimal');
 **Usage:**
 
 ```typescript
-import { LoginTemplate } from '@tekton/ui/templates/auth/login';
+import { LoginTemplate } from '@framingui/templates/auth/login';
 
 <LoginTemplate
   slots={{
@@ -435,7 +435,7 @@ import { LoginTemplate } from '@tekton/ui/templates/auth/login';
 **Usage:**
 
 ```typescript
-import { DashboardTemplate } from '@tekton/ui/templates/dashboard/overview';
+import { DashboardTemplate } from '@framingui/templates/dashboard/overview';
 
 <DashboardTemplate
   slots={{

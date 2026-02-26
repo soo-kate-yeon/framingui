@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/ui - Sheet Component Tests
+ * @framingui/ui - Sheet Component Tests
  */
 
 import { render, screen, waitFor } from '@testing-library/react';

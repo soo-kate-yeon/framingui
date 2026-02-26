@@ -1,18 +1,18 @@
-# @tekton-ui/core
+# @framingui/core
 
 > 디자인 시스템 파이프라인 엔진. Theme -> Token -> Blueprint -> Screen 생성 전체 흐름을 담당합니다.
 
 ## 설치
 
 ```bash
-npm install @tekton-ui/core
+npm install @framingui/core
 ```
 
 ---
 
 ## 핵심 역할
 
-`@tekton-ui/core`는 Tekton 디자인 시스템의 **두뇌** 역할을 합니다. 테마 로딩부터 스크린 코드 생성까지, 디자인 시스템 파이프라인의 모든 단계를 처리합니다.
+`@framingui/core`는 Tekton 디자인 시스템의 **두뇌** 역할을 합니다. 테마 로딩부터 스크린 코드 생성까지, 디자인 시스템 파이프라인의 모든 단계를 처리합니다.
 
 **주요 특징:**
 
@@ -31,7 +31,7 @@ npm install @tekton-ui/core
 테마를 로딩하고 관리하는 기능을 제공합니다. 테마 파일은 `.moai/themes/generated/` 디렉토리에서 JSON 형식으로 관리됩니다.
 
 ```typescript
-import { loadTheme, listThemes, themeExists } from '@tekton-ui/core';
+import { loadTheme, listThemes, themeExists } from '@framingui/core';
 
 // 사용 가능한 테마 목록 조회
 const themes = listThemes();
@@ -71,7 +71,7 @@ import {
   resolveWithFallback,
   validateTheme,
   generateThemeCSS,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 // 토큰 해석 - 참조 체인을 따라가며 최종 값 반환
 const value = resolveToken(themeTokens, 'bg-primary');
@@ -98,7 +98,7 @@ const css = generateThemeCSS(theme);
 JSON 기반 UI 정의를 생성하고 검증합니다.
 
 ```typescript
-import { createBlueprint, validateBlueprint, LAYOUTS, COMPONENT_CATALOG } from '@tekton-ui/core';
+import { createBlueprint, validateBlueprint, LAYOUTS, COMPONENT_CATALOG } from '@framingui/core';
 
 // 블루프린트 생성
 const blueprint = createBlueprint({
@@ -147,7 +147,7 @@ import {
   SHELL_MOBILE_DETAIL,
   getShellToken,
   getAllShellTokens,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 const shell = SHELL_WEB_DASHBOARD;
 // => { id: 'SHELL_WEB_DASHBOARD', regions: [...], config: {...} }
@@ -168,7 +168,7 @@ import {
   PAGE_WIZARD,
   PAGE_ONBOARDING,
   getPageLayoutToken,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 const page = PAGE_DASHBOARD;
 // => { id: 'PAGE_DASHBOARD', purpose: 'dashboard', sections: [...] }
@@ -194,7 +194,7 @@ import {
   SECTION_SIDEBAR_RIGHT,
   SECTION_CONTAINER,
   getSectionCSS,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 // 섹션 패턴의 CSS 코드 가져오기
 const css = getSectionCSS(SECTION_GRID_3);
@@ -212,7 +212,7 @@ import {
   BREAKPOINT_XL, // 1280px
   BREAKPOINT_2XL, // 1536px
   getBreakpointMediaQuery,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 const query = getBreakpointMediaQuery(BREAKPOINT_MD);
 // => '@media (min-width: 768px)'
@@ -223,7 +223,7 @@ const query = getBreakpointMediaQuery(BREAKPOINT_MD);
 Screen Definition JSON에서 실제 React 컴포넌트 코드를 생성합니다.
 
 ```typescript
-import { validateScreenDefinition, resolveScreen, generateReactComponent } from '@tekton-ui/core';
+import { validateScreenDefinition, resolveScreen, generateReactComponent } from '@framingui/core';
 
 // 스크린 정의 검증
 const screenDef = {
@@ -273,7 +273,7 @@ import {
   searchIconsByTag,
   getIconsByCategory,
   generateImportStatement,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 // 사용 가능한 아이콘 라이브러리 목록
 const libraries = listIconLibraries();
@@ -294,7 +294,7 @@ const importCode = generateImportStatement('lucide', 'ArrowRight', 'react');
 
 ## 컴포넌트 스키마
 
-`@tekton-ui/core`는 모든 UI 컴포넌트의 스키마를 정의합니다. Primitive 컴포넌트와 Composed 컴포넌트로 분류됩니다.
+`@framingui/core`는 모든 UI 컴포넌트의 스키마를 정의합니다. Primitive 컴포넌트와 Composed 컴포넌트로 분류됩니다.
 
 ```typescript
 import {
@@ -303,7 +303,7 @@ import {
   ALL_COMPONENTS, // 전체 컴포넌트
   getComponentSchema, // 특정 컴포넌트 스키마 조회
   validateComponentSchema,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 // 컴포넌트 스키마 조회
 const buttonSchema = getComponentSchema('button');
@@ -331,7 +331,7 @@ import {
   // Touch Target
   validateTouchTarget,
   applyMinTouchTarget,
-} from '@tekton-ui/core';
+} from '@framingui/core';
 
 // Safe Area 인셋 가져오기
 const insets = getSafeAreaInsets('iphone-14');
@@ -344,10 +344,10 @@ const isValid = validateTouchTarget({ width: 44, height: 44 });
 
 ## 다른 패키지와의 관계
 
-- **[@tekton-ui/tokens](./tokens.md)**: core가 정의하는 토큰 시스템의 타입은 tokens 패키지에서 가져옵니다.
-- **[@tekton-ui/ui](./ui.md)**: core에서 생성한 블루프린트와 스크린 정의를 ui 컴포넌트로 렌더링합니다.
-- **[@tekton-ui/mcp-server](./mcp-server.md)**: core의 모든 기능을 MCP 도구로 노출하여 AI 에이전트가 활용할 수 있게 합니다.
-- **[@tekton-ui/styled](./styled.md)**: core의 토큰 시스템과 동일한 토큰 이름 체계를 공유합니다.
+- **[@framingui/tokens](./tokens.md)**: core가 정의하는 토큰 시스템의 타입은 tokens 패키지에서 가져옵니다.
+- **[@framingui/ui](./ui.md)**: core에서 생성한 블루프린트와 스크린 정의를 ui 컴포넌트로 렌더링합니다.
+- **[@framingui/mcp-server](./mcp-server.md)**: core의 모든 기능을 MCP 도구로 노출하여 AI 에이전트가 활용할 수 있게 합니다.
+- **[@framingui/styled](./styled.md)**: core의 토큰 시스템과 동일한 토큰 이름 체계를 공유합니다.
 
 ---
 

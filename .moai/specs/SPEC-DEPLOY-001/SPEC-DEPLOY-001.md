@@ -17,7 +17,7 @@
 Tekton의 핵심 개발(디자인 시스템, MCP 서버, Studio 웹앱)은 완료되었지만, **프로덕션 배포를 위한 인프라가 구성되지 않은 상태**입니다:
 
 - MCP 서버가 npm에 퍼블리시되지 않아 외부 사용자가 설치할 수 없음
-- Next.js 앱이 배포되지 않아 tekton-ui.com 도메인이 활용되지 않음
+- Next.js 앱이 배포되지 않아 framingui.com 도메인이 활용되지 않음
 - 인증 시스템이 NextAuth 5 + Supabase Auth 이중 구조로 불안정
 - 결제 시스템이 없어 유료 테마 판매가 불가능
 - MCP 서버가 사용자 라이선스를 확인할 수 없어 무료/유료 테마 구분 불가
@@ -25,7 +25,7 @@ Tekton의 핵심 개발(디자인 시스템, MCP 서버, Studio 웹앱)은 완�
 ## Goals
 
 1. **npm Publishing**: @tekton/* 패키지를 npm에 퍼블리시하여 `npx @tekton/mcp-server`로 설치 가능하게
-2. **Web Deployment**: Next.js 앱을 Vercel에 배포하고 tekton-ui.com 도메인 연결
+2. **Web Deployment**: Next.js 앱을 Vercel에 배포하고 framingui.com 도메인 연결
 3. **Auth Consolidation**: Supabase Auth로 단일화하여 안정적인 인증 제공
 4. **Payment Integration**: Paddle을 통한 테마 라이선스 결제 시스템 구축
 5. **MCP Authentication**: API Key 기반 인증으로 구매 테마만 활성화
@@ -48,12 +48,12 @@ Tekton의 핵심 개발(디자인 시스템, MCP 서버, Studio 웹앱)은 완�
 
 ```
 ┌──────────────────────┐    ┌──────────────────────┐    ┌─────────────┐
-│   tekton-ui.com      │    │   npm Registry       │    │   Paddle    │
+│   framingui.com      │    │   npm Registry       │    │   Paddle    │
 │   (Vercel)           │    │   (@tekton/*)        │    │   Billing   │
 │                      │    │                      │    │             │
 │  Next.js 16 App      │    │  @tekton/core        │    │  결제 처리   │
 │  ├─ /studio          │    │  @tekton/tokens      │    │  구독 관리   │
-│  ├─ /auth            │◄──►│  @tekton/ui          │    │  웹훅 전송   │
+│  ├─ /auth            │◄──►│  @framingui          │    │  웹훅 전송   │
 │  ├─ /profile         │    │  @tekton/styled      │    │      │      │
 │  ├─ /api/webhooks ◄──┼────┼──────────────────────┼────┼──────┘      │
 │  ├─ /api/mcp/verify  │    │  @tekton/mcp-server  │    └─────────────┘
@@ -186,7 +186,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
 # App
-NEXT_PUBLIC_APP_URL=https://tekton-ui.com
+NEXT_PUBLIC_APP_URL=https://framingui.com
 
 # Paddle
 PADDLE_API_KEY=
@@ -224,7 +224,7 @@ NEXT_PUBLIC_ENABLE_PAYMENTS=true
      ↓
 @tekton/core    (tokens에 의존)
      ↓
-@tekton/ui      (tokens, core에 의존)
+@framingui      (tokens, core에 의존)
      ↓
 @tekton/styled  (tokens에 의존)
 @tekton/esbuild-plugin (독립)
@@ -237,10 +237,10 @@ NEXT_PUBLIC_ENABLE_PAYMENTS=true
 - [ ] Vercel 프로젝트 생성 (tekton-playground-web)
 - [ ] Root Directory: `packages/playground-web`
 - [ ] Build Command: `cd ../.. && pnpm install && pnpm --filter @tekton/playground-web build`
-- [ ] tekton-ui.com DNS 설정 (A/CNAME 레코드)
-- [ ] www.tekton-ui.com → tekton-ui.com 리다이렉트
+- [ ] framingui.com DNS 설정 (A/CNAME 레코드)
+- [ ] www.framingui.com → framingui.com 리다이렉트
 - [ ] 환경변수 설정 (Vercel Dashboard)
-- [ ] Preview 배포: develop → dev.tekton-ui.com
+- [ ] Preview 배포: develop → dev.framingui.com
 
 ### Tasks
 
@@ -258,7 +258,7 @@ NEXT_PUBLIC_ENABLE_PAYMENTS=true
 - [ ] 3개 테이블 생성 + RLS 정책 활성화
 - [ ] .env.local이 git에 노출되지 않음 확인
 - [ ] 모든 패키지가 `pnpm --filter @tekton/* build` 성공
-- [ ] Vercel에서 tekton-ui.com 접속 가능
+- [ ] Vercel에서 framingui.com 접속 가능
 
 ---
 
@@ -384,7 +384,7 @@ Paddle 결제를 통한 테마 라이선스 구매 및 자동 활성화
 **Paddle 설정 항목**:
 - [ ] Paddle 계정 생성 + Sandbox 환경 구성
 - [ ] 테마별 Product 생성 (single, double, creator 티어)
-- [ ] 웹훅 URL 등록: `https://tekton-ui.com/api/webhooks/paddle`
+- [ ] 웹훅 URL 등록: `https://framingui.com/api/webhooks/paddle`
 - [ ] 웹훅 시크릿 발급 → Vercel 환경변수
 
 **가격 구조** (pricing.md 기준):
@@ -536,7 +536,7 @@ if (apiKey) {
       "args": ["@tekton/mcp-server@latest"],
       "env": {
         "TEKTON_API_KEY": "tk_live_xxxxxxxxxxxx",
-        "TEKTON_API_URL": "https://tekton-ui.com"
+        "TEKTON_API_URL": "https://framingui.com"
       }
     }
   }
@@ -582,7 +582,7 @@ jobs:
       # 의존 순서대로 퍼블리시
       - run: pnpm --filter @tekton/tokens publish --no-git-checks
       - run: pnpm --filter @tekton/core publish --no-git-checks
-      - run: pnpm --filter @tekton/ui publish --no-git-checks
+      - run: pnpm --filter @framingui publish --no-git-checks
       - run: pnpm --filter @tekton/styled publish --no-git-checks
       - run: pnpm --filter @tekton/esbuild-plugin publish --no-git-checks
       - run: pnpm --filter @tekton/mcp-server publish --no-git-checks
@@ -632,7 +632,7 @@ jobs:
 
 ### 5.2 Staging Deployment
 
-- develop 브랜치 → dev.tekton-ui.com
+- develop 브랜치 → dev.framingui.com
 - Paddle Sandbox 환경
 - 전체 E2E 시나리오 실행
 - 성능 테스트 (Lighthouse 80+ 목표)
@@ -640,7 +640,7 @@ jobs:
 ### 5.3 Production Launch
 
 - [ ] master 브랜치 머지 + Vercel Production 배포
-- [ ] tekton-ui.com DNS 전파 확인
+- [ ] framingui.com DNS 전파 확인
 - [ ] Paddle Production 환경 전환
 - [ ] npm v0.2.0 태그 + publish
 - [ ] 모니터링 설정 (Vercel Analytics + Sentry)
@@ -658,7 +658,7 @@ jobs:
 ### Success Criteria
 
 - [ ] 10개 E2E 시나리오 전체 통과
-- [ ] tekton-ui.com 정상 접속 + SSL 인증서
+- [ ] framingui.com 정상 접속 + SSL 인증서
 - [ ] npm install @tekton/mcp-server 정상 설치
 - [ ] Lighthouse Performance 80+, Accessibility 90+
 - [ ] 가입 → MCP 설치까지 전체 여정 30분 이내 완료 가능
@@ -689,7 +689,7 @@ jobs:
 | .env.local 기존 커밋에 노출됨 | High | High | git history 확인 + 모든 키 회전 |
 | NextAuth 제거 시 기존 세션 깨짐 | Medium | Medium | AuthContext가 이미 Supabase 기반이므로 영향 최소 |
 | Paddle 웹훅 지연/누락 | Low | High | Retry 정책 + 수동 라이선스 부여 UI |
-| npm org 이름 충돌 | Low | Medium | 대안 이름 준비 (@tektonui) |
+| npm org 이름 충돌 | Low | Medium | 대안 이름 준비 (@framingui) |
 | MCP 서버 인증 캐시 무효화 문제 | Medium | Low | 5분 TTL + 강제 재검증 옵션 |
 | Vercel 모노레포 빌드 실패 | Medium | Medium | 로컬 빌드 검증 + turbo-ignore |
 
@@ -780,7 +780,7 @@ user_profiles          api_keys           user_licenses
 |---------|---------|-----|--------|
 | @tekton/tokens | 0.2.0 | - | Yes |
 | @tekton/core | 0.2.0 | - | Yes |
-| @tekton/ui | 0.2.0 | - | Yes |
+| @framingui | 0.2.0 | - | Yes |
 | @tekton/styled | 0.2.0 | - | Yes |
 | @tekton/esbuild-plugin | 0.2.0 | - | Yes |
 | @tekton/mcp-server | 0.2.0 | tekton-mcp | Yes |

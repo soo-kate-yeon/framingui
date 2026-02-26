@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Dropdown Component
+ * @framingui - Dropdown Component
  * [SPEC-COMPONENT-001-C] [COMPOSED]
  */
 

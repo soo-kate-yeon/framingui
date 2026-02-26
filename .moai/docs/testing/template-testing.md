@@ -362,10 +362,10 @@ describe('TemplateRegistry Integration', () => {
 
 ### 2. 슬롯과 컴포넌트 통합 테스트
 
-슬롯에 @tekton/ui 컴포넌트를 주입하여 검증합니다.
+슬롯에 @framingui 컴포넌트를 주입하여 검증합니다.
 
 ```typescript
-import { Button, Card } from '@tekton/ui';
+import { Button, Card } from '@framingui';
 
 describe('LoginTemplate with UI Components', () => {
   it('renders with Button in footer slot', () => {

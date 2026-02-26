@@ -114,7 +114,7 @@ TAG 주석 시스템은 **요구사항-구현 추적성(Traceability)**을 보�
 
 ```typescript
 /**
- * @tekton/ui - Button Component
+ * @framingui - Button Component
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
@@ -133,7 +133,7 @@ export function Button({ children, ...props }: ButtonProps) {
 
 ```typescript
 /**
- * @tekton/ui - Utility Functions
+ * @framingui - Utility Functions
  *
  * [TAG-Q-001] 모든 요구사항 TAG 주석 포함
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
@@ -152,7 +152,7 @@ export function cn(...inputs: ClassValue[]): string {
 
 ```typescript
 /**
- * @tekton/ui - vitest-axe Type Declarations
+ * @framingui - vitest-axe Type Declarations
  *
  * [TAG-Q-002] TypeScript strict mode 오류 없이 컴파일
  * [TAG-Q-015] 타입 오류 @ts-ignore로 회피 금지

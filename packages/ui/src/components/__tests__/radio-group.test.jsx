@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - RadioGroup Component Tests
+ * @framingui - RadioGroup Component Tests
  * SPEC-UI-001: Comprehensive test coverage for RadioGroup component
  */
 import { render, screen } from '@testing-library/react';

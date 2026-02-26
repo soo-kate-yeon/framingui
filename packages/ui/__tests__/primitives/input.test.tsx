@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Input Component Tests
+ * @framingui - Input Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Button Component Tests
+ * @framingui - Button Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

@@ -11,12 +11,12 @@ tags: ["SPEC-PLAYGROUND-001", "Implementation", "Plan"]
 
 **Objective**: Build Next.js 16 React playground with timestamp-based preview routing, CSS variable theming, production layouts, and MCP server integration.
 
-**Approach**: Next.js App Router with Server Components for initial render, Client Components for interactivity. CSS variable-based theming (provided by SPEC-COMPONENT-001) for HMR-compatible theme switching. Blueprint validation with Zod for runtime safety. Component rendering using @tekton/ui reference implementations.
+**Approach**: Next.js App Router with Server Components for initial render, Client Components for interactivity. CSS variable-based theming (provided by SPEC-COMPONENT-001) for HMR-compatible theme switching. Blueprint validation with Zod for runtime safety. Component rendering using @framingui reference implementations.
 
 **Estimated Complexity**: Medium - Next.js 16 Server Components are well-documented, CSS variable theming is provided by SPEC-COMPONENT-001, production layout implementation requires careful design.
 
 **Dependencies**:
-- **SPEC-COMPONENT-001** (CRITICAL): Provides @tekton/ui components, 3-Layer Token System, and CSS Variables generation. Must be completed before Milestone 3-5.
+- **SPEC-COMPONENT-001** (CRITICAL): Provides @framingui components, 3-Layer Token System, and CSS Variables generation. Must be completed before Milestone 3-5.
 
 ---
 
@@ -34,13 +34,13 @@ tags: ["SPEC-PLAYGROUND-001", "Implementation", "Plan"]
 3. Install dependencies:
    - Zod (validation)
    - @tekton/core (workspace) - types, schemas, theme loading
-   - @tekton/ui (workspace) - **from SPEC-COMPONENT-001** - UI components
+   - @framingui (workspace) - **from SPEC-COMPONENT-001** - UI components
    - TanStack Query (optional) - data fetching
 4. Set up ESLint and Prettier for code quality
 5. Configure environment variables (MCP_SERVER_URL)
 6. Create basic directory structure (app/, components/, lib/, styles/)
 
-**Dependencies**: None (can proceed independently, but @tekton/ui usage starts at Milestone 3)
+**Dependencies**: None (can proceed independently, but @framingui usage starts at Milestone 3)
 
 **Success Criteria**:
 - Next.js dev server runs without errors
@@ -120,13 +120,13 @@ export default async function PreviewPage({ params }: PageProps) {
 2. Inject pre-generated CSS Variables from theme into document head
 3. Load theme from MCP server using `loadTheme` from `@tekton/core`
 4. Add theme switching UI (`ThemeSwitch.tsx`) for URL parameter changes
-5. Configure global CSS imports for @tekton/ui base styles
+5. Configure global CSS imports for @framingui base styles
 
 **Technical Approach**:
 ```tsx
 // app/layout.tsx
 import { generateThemeCSS } from '@tekton/core';
-import '@tekton/ui/styles/tokens.css';  // Base CSS Variables
+import '@framingui/styles/tokens.css';  // Base CSS Variables
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -156,7 +156,7 @@ export function loadThemeCSS(themeId: string): string {
 
 **Test Coverage**: ≥ 85% for theme integration logic
 
-**Note**: ThemeProvider implementation is provided by SPEC-COMPONENT-001's @tekton/ui package.
+**Note**: ThemeProvider implementation is provided by SPEC-COMPONENT-001's @framingui package.
 
 ---
 
@@ -249,19 +249,19 @@ DashboardLayout.Slot = function Slot({
 
 ---
 
-### Milestone 5: Blueprint Renderer with @tekton/ui Integration
+### Milestone 5: Blueprint Renderer with @framingui Integration
 
 **Priority**: HIGH (Secondary Goal)
 
-**Objective**: Implement BlueprintRenderer that maps blueprint nodes to @tekton/ui components.
+**Objective**: Implement BlueprintRenderer that maps blueprint nodes to @framingui components.
 
 **Dependencies**:
 - Milestone 4 (Production Layouts)
-- **SPEC-COMPONENT-001** (@tekton/ui package with 20 reference components)
+- **SPEC-COMPONENT-001** (@framingui package with 20 reference components)
 
 **Tasks**:
-1. Import all 20 components from `@tekton/ui` (Button, Card, Input, Text, Heading, Image, Link, List, Form, Modal, Tabs, Table, Badge, Avatar, Dropdown, Checkbox, Radio, Switch, Slider, Progress)
-2. Implement `ComponentResolver.tsx` for blueprint node → @tekton/ui component mapping
+1. Import all 20 components from `@framingui` (Button, Card, Input, Text, Heading, Image, Link, List, Form, Modal, Tabs, Table, Badge, Avatar, Dropdown, Checkbox, Radio, Switch, Slider, Progress)
+2. Implement `ComponentResolver.tsx` for blueprint node → @framingui component mapping
 3. Implement `BlueprintRenderer.tsx` for layout + component assembly
 4. Add unknown component placeholder handling
 5. Validate component props with TypeScript using COMPONENT_SCHEMAS from @tekton/core
@@ -270,7 +270,7 @@ DashboardLayout.Slot = function Slot({
 ```tsx
 // components/blueprint/ComponentResolver.tsx
 import type { ComponentNode } from '@tekton/core';
-import * as TektonUI from '@tekton/ui';  // Import from SPEC-COMPONENT-001
+import * as TektonUI from '@framingui';  // Import from SPEC-COMPONENT-001
 
 const COMPONENT_MAP = {
   Button: TektonUI.Button,
@@ -321,7 +321,7 @@ function UnknownComponent({ type }: { type: string }) {
 ```
 
 **Success Criteria**:
-- All 20 @tekton/ui components render correctly with props
+- All 20 @framingui components render correctly with props
 - BlueprintRenderer maps blueprint nodes to components
 - Unknown components render placeholder without crashing
 - Component styles use CSS Variables from SPEC-COMPONENT-001
@@ -531,7 +531,7 @@ HTML streamed to client with CSS variables
 
 ### Internal Dependencies
 - **SPEC-COMPONENT-001** (COMPLETED ✅):
-  - @tekton/ui package with 20 reference components
+  - @framingui package with 20 reference components
   - 3-Layer Token System (Atomic → Semantic → Component)
   - CSS Variables generation pipeline
   - Component Schemas
@@ -553,9 +553,9 @@ HTML streamed to client with CSS variables
 2. **Parallel**: Wait for SPEC-COMPONENT-001 completion
 
 ### Phase 2: Integration (After SPEC-COMPONENT-001)
-3. **Milestone 3**: Theme integration with @tekton/ui
+3. **Milestone 3**: Theme integration with @framingui
 4. **Milestone 4**: Production layouts (custom implementation)
-5. **Milestone 5**: Blueprint renderer with @tekton/ui components
+5. **Milestone 5**: Blueprint renderer with @framingui components
 
 ### Phase 3: Polish
 6. **Milestone 6-7**: Error handling and testing
@@ -571,7 +571,7 @@ HTML streamed to client with CSS variables
 ### Remaining Implementation
 1. **Milestone 3 - Theme Integration**: ThemeProvider, CSS variable injection
 2. **Milestone 4 - Production Layouts**: 6 layout components (Dashboard, Landing, etc.)
-3. **Milestone 5 - Blueprint Renderer**: ComponentResolver, @tekton/ui integration
+3. **Milestone 5 - Blueprint Renderer**: ComponentResolver, @framingui integration
 4. **Milestone 7 - Integration Testing**: Playwright E2E, visual regression, performance
 
 **Recommended Workflow**:
@@ -612,12 +612,12 @@ HTML streamed to client with CSS variables
 - **Milestone 2**: Dynamic Routing - ✅ Completed
 - **Milestone 6**: Error Handling - ✅ Completed (loading.tsx, error.tsx, not-found.tsx)
 - **Ready**: Milestones 3-5, 7 can proceed immediately
-- **Architecture Review**: Confirmed alignment with @tekton/core and @tekton/ui
+- **Architecture Review**: Confirmed alignment with @tekton/core and @framingui
 
 ### 2026-01-25 - Dependency Resolution
 - **Identified**: Component implementation overlap with SPEC-COMPONENT-001
 - **Resolved**: Removed duplicate 20 component implementations
-- **Changed**: Milestone 3 - Now uses @tekton/ui theme system
-- **Changed**: Milestone 5 - Now imports components from @tekton/ui
+- **Changed**: Milestone 3 - Now uses @framingui theme system
+- **Changed**: Milestone 5 - Now imports components from @framingui
 - **Added**: SPEC-COMPONENT-001 as critical blocking dependency
 - **Updated**: Implementation strategy to sequential execution (COMPONENT → PLAYGROUND)

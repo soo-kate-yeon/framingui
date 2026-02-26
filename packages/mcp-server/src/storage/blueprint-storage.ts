@@ -5,7 +5,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
-import type { Blueprint } from '@tekton-ui/core';
+import type { Blueprint } from '@framingui/core';
 import { generateTimestampId, isValidBlueprintId } from './timestamp-manager.js';
 import { createStorageError } from '../utils/error-handler.js';
 

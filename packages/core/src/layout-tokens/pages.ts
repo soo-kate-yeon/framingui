@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Page Layout Token Definitions
+ * @framingui/core - Page Layout Token Definitions
  * Concrete Page Layout Token implementations for various screen purposes
  * [SPEC-LAYOUT-001] [PHASE-4]
  */

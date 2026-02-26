@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Section Pattern Token Tests
+ * @framingui/core - Section Pattern Token Tests
  * Comprehensive tests for 13 section pattern tokens
  * [SPEC-LAYOUT-001] [PHASE-5]
  */

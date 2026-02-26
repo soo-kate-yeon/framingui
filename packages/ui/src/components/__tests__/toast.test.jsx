@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Toast Component Tests
+ * @framingui - Toast Component Tests
  */
 import { render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';

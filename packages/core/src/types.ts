@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Essential Types
+ * @framingui/core - Essential Types
  * Minimal type definitions for the design system pipeline
  * Target: 80 LOC
  */

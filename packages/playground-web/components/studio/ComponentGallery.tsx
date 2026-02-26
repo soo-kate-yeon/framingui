@@ -87,7 +87,7 @@ import {
   CommandItem,
   CommandSeparator,
   Calendar,
-} from '@tekton-ui/ui';
+} from '@framingui/ui';
 import {
   Bell,
   Calculator,

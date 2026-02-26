@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Progress Component
+ * @framingui - Progress Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

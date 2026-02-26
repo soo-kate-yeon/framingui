@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/styled - Runtime Validation
+ * @framingui/styled - Runtime Validation
  * [SPEC-STYLED-001] [TAG-005]
  * Runtime validation for hardcoded values
  * REQ-STY-001, REQ-STY-002, REQ-STY-015, REQ-STY-016, REQ-STY-017

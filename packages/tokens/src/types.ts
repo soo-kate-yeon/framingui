@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/tokens - Token Type Definitions
+ * @framingui/tokens - Token Type Definitions
  * [SPEC-STYLED-001] [TAG-002]
  * TypeScript token type definitions for compile-time enforcement
  */

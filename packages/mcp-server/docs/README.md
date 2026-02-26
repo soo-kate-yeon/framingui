@@ -1,6 +1,6 @@
 # Tekton MCP Server Documentation
 
-Documentation for `@tekton-ui/mcp-server` v0.4.5 — an stdio-based MCP server for AI-driven UI generation.
+Documentation for `@framingui/mcp-server` v0.4.5 — an stdio-based MCP server for AI-driven UI generation.
 
 ## Documents
 
@@ -25,13 +25,13 @@ Documentation for `@tekton-ui/mcp-server` v0.4.5 — an stdio-based MCP server f
 
 ```bash
 # Install & setup
-npx @tekton-ui/mcp-server init
+npx @framingui/mcp-server init
 
 # Authenticate
-npx @tekton-ui/mcp-server login
+npx @framingui/mcp-server login
 
 # Check status
-npx @tekton-ui/mcp-server status
+npx @framingui/mcp-server status
 ```
 
 ## Version History
@@ -43,4 +43,4 @@ npx @tekton-ui/mcp-server status
 
 ---
 
-**Package**: [@tekton-ui/mcp-server](../../README.md) | **Spec**: [SPEC-MCP-002](../../.moai/specs/SPEC-MCP-002/spec.md)
+**Package**: [@framingui/mcp-server](../../README.md) | **Spec**: [SPEC-MCP-002](../../.moai/specs/SPEC-MCP-002/spec.md)

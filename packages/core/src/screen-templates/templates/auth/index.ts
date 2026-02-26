@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Auth Templates Export
+ * @framingui/core - Auth Templates Export
  * [SPEC-UI-002] Auth Screen Templates (4)
  */
 

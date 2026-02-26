@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Template Registry Tests
+ * @framingui - Template Registry Tests
  * SPEC-UI-001 Phase 3: Template Registry Unit Tests
  */
 import { describe, it, expect, beforeEach } from 'vitest';

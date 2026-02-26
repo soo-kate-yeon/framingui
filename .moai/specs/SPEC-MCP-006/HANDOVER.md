@@ -138,7 +138,7 @@ npx @anthropic-ai/mcp-inspector node dist/index.js
 | 단계 | 작업 내용 | 변경 여부 |
 |------|-----------|----------|
 | 1/8 | 프로젝트 감지 (Next.js / Vite) | 동일 |
-| 2/8 | 패키지 설치 (`@tekton-ui/ui`, `@tekton-ui/core`, `@tekton-ui/tokens`) | 동일 |
+| 2/8 | 패키지 설치 (`@framingui/ui`, `@framingui/core`, `@framingui/tokens`) | 동일 |
 | 3/8 | Tailwind CSS 설정 | 동일 |
 | 4/8 | CSS 토큰 임포트 | 동일 |
 | 5/8 | MCP 설정 (.mcp.json) | 동일 |
@@ -158,7 +158,7 @@ npx @anthropic-ai/mcp-inspector node dist/index.js
 
 Before (6단계):
 ```
-✅ Tekton UI setup complete!
+✅ FramingUI setup complete!
 
 Next steps:
 1. Restart Claude Code
@@ -167,7 +167,7 @@ Next steps:
 
 After (8단계):
 ```
-✅ Tekton UI setup complete!
+✅ FramingUI setup complete!
 
 📝 Important: Authentication Required
 All 6 themes require authentication. Please authenticate before generating screens.
@@ -245,7 +245,7 @@ Next steps:
 
 **해결:**
 - Append 전략: 기존 내용 유지, Tekton 섹션을 파일 끝에 추가
-- 구분자: `## Tekton UI Workflow (Claude Code)` / `## Tekton UI Workflow (Generic AI Agents)`
+- 구분자: `## FramingUI Workflow (Claude Code)` / `## FramingUI Workflow (Generic AI Agents)`
 
 **구현:**
 ```typescript
@@ -273,7 +273,7 @@ npx @anthropic-ai/mcp-inspector node dist/index.js
 **결과:**
 - ✅ Tools 탭: 16개 도구 표시
 - ✅ Prompts 탭: 2개 프롬프트 표시
-  - `tekton-getting-started`: Description "Get started with Tekton UI generation workflow"
+  - `tekton-getting-started`: Description "Get started with FramingUI generation workflow"
   - `tekton-screen-workflow`: Description "4-step screen generation workflow guide"
 - ✅ `tekton-getting-started` 호출: 인증 → 테마 탐색 → 화면 생성 전체 가이드 반환
 - ✅ `tekton-screen-workflow` 호출: 4단계 상세 가이드 반환
@@ -286,7 +286,7 @@ npx @anthropic-ai/mcp-inspector node dist/index.js
    ```bash
    npx create-next-app@latest test-project
    cd test-project
-   npx @tekton-ui/mcp-server init
+   npx @framingui/mcp-server init
    ```
    - ✅ 8단계 모두 성공
    - ✅ CLAUDE.md 생성 확인 (Next.js 예제 코드 포함)
@@ -365,19 +365,19 @@ ls packages/ui/themes/*.json | wc -l  # → 6개 확인
 
 1. **패키지 업데이트**
    ```bash
-   pnpm update @tekton-ui/mcp-server @tekton-ui/ui @tekton-ui/core @tekton-ui/tokens
+   pnpm update @framingui/mcp-server @framingui/ui @framingui/core @framingui/tokens
    ```
 
 2. **기존 프로젝트에 CLAUDE.md/AGENTS.md 추가** (선택사항)
    ```bash
    # 프로젝트 루트에서
-   npx @tekton-ui/mcp-server init
+   npx @framingui/mcp-server init
    # → Step 7/8에서 CLAUDE.md, AGENTS.md 자동 생성
    ```
 
 3. **MCP Prompts 확인** (선택사항)
    ```bash
-   npx @anthropic-ai/mcp-inspector node node_modules/@tekton-ui/mcp-server/dist/index.js
+   npx @anthropic-ai/mcp-inspector node node_modules/@framingui/mcp-server/dist/index.js
    # → Prompts 탭에서 2개 프롬프트 확인
    ```
 

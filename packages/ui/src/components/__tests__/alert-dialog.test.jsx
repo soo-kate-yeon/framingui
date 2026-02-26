@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - AlertDialog Component Tests
+ * @framingui - AlertDialog Component Tests
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

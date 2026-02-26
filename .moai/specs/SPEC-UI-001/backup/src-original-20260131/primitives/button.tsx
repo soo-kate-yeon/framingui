@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Button Component
+ * @framingui - Button Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

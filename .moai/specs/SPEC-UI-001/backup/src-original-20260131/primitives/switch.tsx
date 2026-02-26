@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Switch Component
+ * @framingui - Switch Component
  * [SPEC-COMPONENT-001-C] [PRIMITIVE]
  */
 

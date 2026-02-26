@@ -1,18 +1,18 @@
-# @tekton-ui/tokens
+# @framingui/tokens
 
 > TypeScript 타입 정의 패키지. 디자인 토큰의 컴파일 타임 안전성을 제공합니다.
 
 ## 설치
 
 ```bash
-npm install @tekton-ui/tokens
+npm install @framingui/tokens
 ```
 
 ---
 
 ## 핵심 역할
 
-`@tekton-ui/tokens`는 CSS 변수 기반 디자인 토큰의 **TypeScript 타입 정의**를 제공합니다. 이 패키지의 가장 중요한 특징은 다음과 같습니다:
+`@framingui/tokens`는 CSS 변수 기반 디자인 토큰의 **TypeScript 타입 정의**를 제공합니다. 이 패키지의 가장 중요한 특징은 다음과 같습니다:
 
 - **Zero runtime**: 순수 타입만 제공하므로 번들 크기가 **0 바이트**입니다. 빌드 후 JavaScript 코드가 생성되지 않습니다.
 - **컴파일 타임 안전성**: 잘못된 토큰 이름을 사용하면 TypeScript가 빌드 단계에서 오류를 발생시킵니다.
@@ -222,7 +222,7 @@ interface MotionTokens {
 ### 타입 가드로 토큰 값 검증
 
 ```typescript
-import type { TokenReference } from '@tekton-ui/tokens';
+import type { TokenReference } from '@framingui/tokens';
 
 // 커스텀 컴포넌트 props에서 토큰 타입 사용
 interface ThemedBoxProps {
@@ -257,7 +257,7 @@ function ThemedBox({ backgroundColor, textColor, padding }: ThemedBoxProps) {
 ### 전체 토큰 인터페이스 활용
 
 ```typescript
-import type { TektonTokens, BgTokens, FgTokens } from '@tekton-ui/tokens';
+import type { TektonTokens, BgTokens, FgTokens } from '@framingui/tokens';
 
 // 테마 생성 시 타입 안전성 보장
 function createThemeTokens(): Partial<TektonTokens> {
@@ -278,10 +278,10 @@ function createThemeTokens(): Partial<TektonTokens> {
 
 ## 다른 패키지와의 관계
 
-- **[@tekton-ui/styled](./styled.md)**: `TektonTokens` 인터페이스를 사용하여 `tokens` 접근자의 타입을 정의합니다. `tokens.bg.primary.default`와 같은 접근 시 IDE 자동완성을 가능하게 합니다.
-- **[@tekton-ui/ui](./ui.md)**: 컴포넌트 내부에서 tokens 타입을 참조하여 CSS 변수를 사용합니다.
-- **[@tekton-ui/core](./core.md)**: 토큰 해석(resolve) 및 검증 시 타입 정의를 참조합니다.
-- **[@tekton-ui/esbuild-plugin](./esbuild-plugin.md)**: 빌드 시 코드에서 하드코딩된 값을 감지할 때, 토큰 스케일 정보를 참조합니다.
+- **[@framingui/styled](./styled.md)**: `TektonTokens` 인터페이스를 사용하여 `tokens` 접근자의 타입을 정의합니다. `tokens.bg.primary.default`와 같은 접근 시 IDE 자동완성을 가능하게 합니다.
+- **[@framingui/ui](./ui.md)**: 컴포넌트 내부에서 tokens 타입을 참조하여 CSS 변수를 사용합니다.
+- **[@framingui/core](./core.md)**: 토큰 해석(resolve) 및 검증 시 타입 정의를 참조합니다.
+- **[@framingui/esbuild-plugin](./esbuild-plugin.md)**: 빌드 시 코드에서 하드코딩된 값을 감지할 때, 토큰 스케일 정보를 참조합니다.
 
 ---
 

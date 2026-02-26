@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 /**
  * 컴포넌트 노드 스키마
- * @tekton-ui/core ComponentNode 타입과 일치
+ * @framingui/core ComponentNode 타입과 일치
  */
 export const ComponentNodeSchema: z.ZodType<{
   type: string;
@@ -45,7 +45,7 @@ export type LayoutType = z.infer<typeof LayoutTypeSchema>;
 
 /**
  * Blueprint 스키마
- * @tekton-ui/core Blueprint 타입과 일치
+ * @framingui/core Blueprint 타입과 일치
  */
 export const BlueprintSchema = z.object({
   id: z.string().min(1, 'Blueprint ID is required'),

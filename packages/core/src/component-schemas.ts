@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Component Schema Definitions
+ * @framingui/core - Component Schema Definitions
  * Platform-agnostic component interface specifications with token bindings
  * [SPEC-COMPONENT-001-B] [TAG-001] [TAG-002] [TAG-003]
  */

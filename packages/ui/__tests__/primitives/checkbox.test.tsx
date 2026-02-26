@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Checkbox Component Tests
+ * @framingui - Checkbox Component Tests
  * [SPEC-COMPONENT-001-C]
  */
 

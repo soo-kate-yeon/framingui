@@ -27,7 +27,7 @@ What if AI could generate interfaces that actually feel like they belong to your
 - **Agentic design systems** make AI understand your design decisions through machine-readable design tokens and component knowledge
 - **The problem**: Traditional design systems give AI component names, but not the *meaning* behind them
 - **The solution**: Layer design tokens with semantic metadata that AI can reason about
-- **tekton-ui** implements this through a 3-layer architecture: Token Generation → Component Knowledge → AI-Powered Generation
+- **framingui** implements this through a 3-layer architecture: Token Generation → Component Knowledge → AI-Powered Generation
 - Result: AI generates on-brand components automatically, without designers manually templating every variation
 
 ## What is an Agentic Design System?
@@ -211,8 +211,8 @@ When AI receives a prompt like "create a user dashboard," the generation engine:
 4. **Generates React code**: Injects correct tokens and component references
 
 ```typescript
-// What tekton-ui generates with full context
-import { Card, Badge, DataTable, Button } from '@tekton/ui';
+// What framingui generates with full context
+import { Card, Badge, DataTable, Button } from '@framingui';
 import { tokens } from '@tekton/design-tokens';
 
 export function UserDashboard() {
@@ -264,9 +264,9 @@ Notice:
 - Component variants match design intent (primary vs ghost buttons)
 - Layout respects accessibility (proper contrast, focus management)
 
-## How tekton-ui Works
+## How framingui Works
 
-tekton-ui implements this 3-layer architecture end-to-end.
+framingui implements this 3-layer architecture end-to-end.
 
 ### Step 1: Define Your Design Archetype
 
@@ -286,7 +286,7 @@ Start by describing your brand's design personality:
 
 ### Step 2: Generate Design Tokens
 
-tekton-ui generates 100+ tokens automatically:
+framingui generates 100+ tokens automatically:
 
 ```bash
 npx @tekton/cli init --archetype fintech-professional
@@ -322,7 +322,7 @@ npx @tekton/cli init --archetype fintech-professional
 
 ### Step 3: Load Component Knowledge
 
-tekton-ui ships with 20+ components pre-configured with semantic metadata:
+framingui ships with 20+ components pre-configured with semantic metadata:
 
 ```typescript
 import { getAllComponents } from '@tekton/component-knowledge';
@@ -338,7 +338,7 @@ const components = getAllComponents();
 
 ### Step 4: Let AI Generate Screens
 
-Use tekton-ui's MCP (Model Context Protocol) integration:
+Use framingui's MCP (Model Context Protocol) integration:
 
 ```typescript
 import { renderScreen } from '@tekton/studio-mcp';
@@ -380,7 +380,7 @@ The generated component uses your tokens, follows your component contracts, and 
 
 ### Step 5: Token-Enforced Styling (SPEC-STYLED-001)
 
-tekton-ui prevents design drift with **3-layer enforcement**:
+framingui prevents design drift with **3-layer enforcement**:
 
 #### Layer 1: Compile-Time (TypeScript)
 
@@ -461,13 +461,13 @@ The build fails if any component uses hardcoded colors, spacing, or design value
 4. Build fails if any hardcoded values exist (enforced)
 5. Design system stays consistent indefinitely
 
-## Getting Started with tekton-ui
+## Getting Started with framingui
 
 Ready to build your own agentic design system?
 
 ### Option 1: Try the Playground
 
-Visit [tekton-ui.com/studio](https://tekton-ui.com/studio) to:
+Visit [framingui.com/studio](https://framingui.com/studio) to:
 - Generate tokens from pre-built archetypes
 - Preview components with your design system
 - Export tokens in CSS, Tailwind, or JSON
@@ -475,8 +475,8 @@ Visit [tekton-ui.com/studio](https://tekton-ui.com/studio) to:
 ### Option 2: Install Locally
 
 ```bash
-# Install tekton-ui
-npm install @tekton/core @tekton/ui @tekton/styled
+# Install framingui
+npm install @tekton/core @framingui @tekton/styled
 
 # Initialize your design system
 npx @tekton/cli init
@@ -490,7 +490,7 @@ npx @tekton/cli init
 
 ### Option 3: Integrate with AI Tools
 
-tekton-ui works with Claude Code, Cursor, and any tool supporting MCP:
+framingui works with Claude Code, Cursor, and any tool supporting MCP:
 
 ```json
 // .claude/mcp.json
@@ -514,10 +514,10 @@ Now Claude can:
 
 ### Documentation
 
-- [Quick Start Guide](https://tekton-ui.com/docs/quick-start) — Get up and running in 5 minutes
-- [API Reference](https://tekton-ui.com/docs/api) — Complete API documentation
-- [Component Catalog](https://tekton-ui.com/docs/components) — 20+ pre-built components
-- [MCP Integration](https://tekton-ui.com/docs/mcp) — Connect with AI tools
+- [Quick Start Guide](https://framingui.com/docs/quick-start) — Get up and running in 5 minutes
+- [API Reference](https://framingui.com/docs/api) — Complete API documentation
+- [Component Catalog](https://framingui.com/docs/components) — 20+ pre-built components
+- [MCP Integration](https://framingui.com/docs/mcp) — Connect with AI tools
 
 ## FAQ
 
@@ -527,11 +527,11 @@ A regular design system documents design decisions for humans. An agentic design
 
 ### Does this replace designers?
 
-No. Designers still make all creative decisions — color palettes, typography, component variants. tekton-ui simply automates the translation of those decisions into production code. Think of it as a compiler for design systems: designers write the spec, AI generates the implementation.
+No. Designers still make all creative decisions — color palettes, typography, component variants. framingui simply automates the translation of those decisions into production code. Think of it as a compiler for design systems: designers write the spec, AI generates the implementation.
 
 ### What if I already have a design system?
 
-tekton-ui can integrate with existing design systems. You can:
+framingui can integrate with existing design systems. You can:
 1. Import your existing tokens (CSS variables → tekton JSON)
 2. Map your components to ComponentKnowledge format
 3. Use tekton's generation layer on top of your components
@@ -547,7 +547,7 @@ Three mechanisms:
 
 ### Can I use this with Tailwind CSS?
 
-Yes! tekton-ui exports Tailwind-compatible configs:
+Yes! framingui exports Tailwind-compatible configs:
 
 ```javascript
 // tailwind.config.js (generated)
@@ -580,11 +580,11 @@ Then use tokens in your components:
 
 ### Is this only for React?
 
-Currently, yes. tekton-ui generates React components with TypeScript. Support for Vue, Svelte, and other frameworks is on the roadmap. However, the token generation layer (Layer 1) is framework-agnostic and outputs standard CSS variables.
+Currently, yes. framingui generates React components with TypeScript. Support for Vue, Svelte, and other frameworks is on the roadmap. However, the token generation layer (Layer 1) is framework-agnostic and outputs standard CSS variables.
 
 ## Join the Beta
 
-tekton-ui is in public beta. We're looking for design systems teams to try it and provide feedback.
+framingui is in public beta. We're looking for design systems teams to try it and provide feedback.
 
 **Sign up for early access:**
 👉 [https://tally.so/r/7R2kz6](https://tally.so/r/7R2kz6)
@@ -596,4 +596,4 @@ You'll get:
 
 ---
 
-*Built with [tekton-ui](https://tekton-ui.com) — the agentic design system for AI-powered development.*
+*Built with [framingui](https://framingui.com) — the agentic design system for AI-powered development.*

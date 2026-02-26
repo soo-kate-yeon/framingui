@@ -54,7 +54,7 @@ Scenario: 존재하지 않는 프롬프트 요청 시 에러 반환
 ```gherkin
 Scenario: 새 프로젝트에서 init 실행 시 8단계 완료
   Given 새 프로젝트 디렉토리에서 (package.json, next.config.ts 존재)
-  When npx @tekton-ui/mcp-server init을 실행하면
+  When npx @framingui/mcp-server init을 실행하면
   Then 총 8단계가 순차적으로 실행된다
   And [7/8] 단계에서 CLAUDE.md에 Tekton 섹션이 추가된다
   And [7/8] 단계에서 AGENTS.md 파일이 생성된다
@@ -64,7 +64,7 @@ Scenario: 새 프로젝트에서 init 실행 시 8단계 완료
 
 Scenario: 기존 CLAUDE.md가 있는 프로젝트에서 init 실행
   Given 기존 CLAUDE.md가 있는 프로젝트에서 ("# My Project" 내용 포함)
-  When npx @tekton-ui/mcp-server init을 실행하면
+  When npx @framingui/mcp-server init을 실행하면
   Then 기존 CLAUDE.md의 "# My Project" 내용이 유지된다
   And CLAUDE.md 파일 끝에 "## Tekton Design System" 섹션이 추가된다
   And Tekton 섹션에 MCP 도구 목록이 포함되어 있다
@@ -72,13 +72,13 @@ Scenario: 기존 CLAUDE.md가 있는 프로젝트에서 init 실행
 
 Scenario: 기존 AGENTS.md가 있는 프로젝트에서 init 실행
   Given 기존 AGENTS.md가 있는 프로젝트에서 ("# Agent Instructions" 내용 포함)
-  When npx @tekton-ui/mcp-server init을 실행하면
+  When npx @framingui/mcp-server init을 실행하면
   Then 기존 AGENTS.md의 "# Agent Instructions" 내용이 유지된다
   And AGENTS.md 파일 끝에 Tekton 섹션이 추가된다
 
 Scenario: 이미 Tekton 섹션이 있는 CLAUDE.md에서 init 실행
   Given CLAUDE.md에 이미 "## Tekton Design System" 섹션이 있는 프로젝트에서
-  When npx @tekton-ui/mcp-server init을 실행하면
+  When npx @framingui/mcp-server init을 실행하면
   Then CLAUDE.md에 Tekton 섹션이 중복으로 추가되지 않는다
   And "이미 설정됨, skip" 메시지가 출력된다
 ```
@@ -190,7 +190,7 @@ Scenario: 6개 패키지 버전 0.3.2 업데이트 확인
 
 Scenario: MCP 서버 빌드 성공 확인
   Given 모든 수정이 완료된 후
-  When pnpm --filter @tekton-ui/mcp-server build를 실행하면
+  When pnpm --filter @framingui/mcp-server build를 실행하면
   Then 빌드가 성공한다
   And TypeScript 컴파일 에러가 0개이다
   And dist/ 디렉토리에 index.js가 생성된다
@@ -230,7 +230,7 @@ Scenario: TEKTON-GUIDE.md에 워크플로우 섹션 포함
 
 | 항목                          | 기준                                     | 검증 방법                                          |
 | ----------------------------- | ---------------------------------------- | -------------------------------------------------- |
-| TypeScript 컴파일             | 에러 0개                                 | `pnpm --filter @tekton-ui/mcp-server build`        |
+| TypeScript 컴파일             | 에러 0개                                 | `pnpm --filter @framingui/mcp-server build`        |
 | MCP Prompts 응답              | prompts/list, prompts/get 정상 응답      | MCP Inspector 또는 단위 테스트                     |
 | init 명령                     | 8단계 모두 실행                          | 새 프로젝트에서 init 실행 후 파일 확인             |
 | CLAUDE.md 생성                | Tekton 섹션 포함                         | init 후 CLAUDE.md 내용 확인                        |

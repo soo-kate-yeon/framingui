@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Advanced Section Pattern Token Definitions
+ * @framingui/core - Advanced Section Pattern Token Definitions
  * HIGH Priority Advanced Layout Patterns for SPEC-LAYOUT-005
  *
  * Implements 4 advanced section patterns:

@@ -49,8 +49,8 @@ import {
   CardDescription,
   CardContent,
   CardFooter
-} from '@tekton/ui';
-import { Button } from '@tekton/ui';
+} from '@framingui';
+import { Button } from '@framingui';
 
 // Basic card
 <Card>
@@ -243,8 +243,8 @@ import {
   FormControl,
   FormDescription,
   FormMessage
-} from '@tekton/ui';
-import { Input, Button } from '@tekton/ui';
+} from '@framingui';
+import { Input, Button } from '@framingui';
 
 // Basic form
 <Form onSubmit={(e) => {
@@ -429,8 +429,8 @@ import {
   ModalDescription,
   ModalFooter,
   ModalClose
-} from '@tekton/ui';
-import { Button } from '@tekton/ui';
+} from '@framingui';
+import { Button } from '@framingui';
 
 // Basic modal
 <Modal>
@@ -681,8 +681,8 @@ import {
   DropdownContent,
   DropdownItem,
   DropdownSeparator
-} from '@tekton/ui';
-import { Button } from '@tekton/ui';
+} from '@framingui';
+import { Button } from '@framingui';
 
 // Basic dropdown
 <Dropdown>
@@ -862,7 +862,7 @@ const [open, setOpen] = useState(false);
 ### 사용 예시
 
 ```tsx
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@tekton/ui';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@framingui';
 
 // Basic tabs
 <Tabs defaultValue="tab1">
@@ -1067,7 +1067,7 @@ import {
   TableHead,
   TableCell,
   TableCaption
-} from '@tekton/ui';
+} from '@framingui';
 
 // Basic table
 <Table>
@@ -1344,7 +1344,7 @@ Composed 컴포넌트들은 서로 조합하여 사용할 수 있습니다:
 
 ```css
 /* theme.css */
-@import '@tekton/ui/styles';
+@import '@framingui/styles';
 
 :root {
   /* Card */

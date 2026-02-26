@@ -1,5 +1,5 @@
 /**
- * @tekton-ui/core - Screen Definition Type Definitions
+ * @framingui/core - Screen Definition Type Definitions
  * Type-safe screen definition interfaces for declarative screen generation
  * [SPEC-LAYOUT-002] [PHASE-1]
  */

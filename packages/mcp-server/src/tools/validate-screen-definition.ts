@@ -3,7 +3,7 @@
  * SPEC-MCP-004 Phase 3.5: Validates screen definitions with helpful feedback
  */
 
-import { COMPONENT_CATALOG } from '@tekton-ui/core';
+import { COMPONENT_CATALOG } from '@framingui/core';
 import type {
   ValidateScreenDefinitionInput,
   ValidateScreenDefinitionOutput,
@@ -269,7 +269,7 @@ function validateComponentType(
         path,
         code: 'UNKNOWN_COMPONENT',
         message: `Unknown component type: "${type}"`,
-        expected: 'A component from @tekton-ui/ui catalog',
+        expected: 'A component from @framingui/ui catalog',
         received: type,
         suggestion:
           similar.length > 0

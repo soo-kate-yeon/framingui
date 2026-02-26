@@ -1,5 +1,5 @@
 /**
- * @tekton/ui - Button Component Tests
+ * @framingui - Button Component Tests
  * SPEC-UI-001: Comprehensive test coverage for Button component
  */
 import { render, screen } from '@testing-library/react';

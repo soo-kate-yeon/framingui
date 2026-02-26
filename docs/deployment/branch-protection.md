@@ -27,8 +27,8 @@ Branch Protection Rules는 다음을 방지합니다:
 
 | 브랜치 | 배포 환경 | 보호 수준 |
 |--------|----------|----------|
-| `master` | Production (tekton-ui.com) | **엄격** (모든 체크 필수) |
-| `develop` | Preview (dev.tekton-ui.com) | **중간** (기본 체크 필수) |
+| `master` | Production (framingui.com) | **엄격** (모든 체크 필수) |
+| `develop` | Preview (dev.framingui.com) | **중간** (기본 체크 필수) |
 | `feature/**` | PR Preview (unique URL) | **없음** (자유 push 가능) |
 
 ---
@@ -348,7 +348,7 @@ remote: error: At least 1 approving review is required by reviewers with write a
 
 4. develop 브랜치로 머지
    - "Merge pull request" 클릭
-   - Vercel Preview 자동 배포 (dev.tekton-ui.com)
+   - Vercel Preview 자동 배포 (dev.framingui.com)
 
 5. develop에서 충분히 테스트 후 master PR 생성
    - develop → master PR
@@ -356,7 +356,7 @@ remote: error: At least 1 approving review is required by reviewers with write a
    - 팀원 1명 리뷰 및 승인
 
 6. master 브랜치로 머지
-   - Production 배포 (tekton-ui.com)
+   - Production 배포 (framingui.com)
 ```
 
 ### 6.2 긴급 Hotfix 플로우
