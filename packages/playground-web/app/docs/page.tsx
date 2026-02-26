@@ -3,7 +3,7 @@
  */
 
 import Link from 'next/link';
-import { Rocket, Download, Cpu, Palette } from 'lucide-react';
+import { Rocket, Download, Cpu, Palette, SwatchBook } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -48,6 +48,12 @@ const CARDS = [
     icon: Cpu,
     title: 'MCP Integration',
     description: 'Connect with Claude Code, Cursor, Windsurf',
+  },
+  {
+    href: '/docs/themes',
+    icon: SwatchBook,
+    title: 'Theme Guides',
+    description: 'Token, layout, and component guidance for each theme',
   },
   {
     href: '/studio',

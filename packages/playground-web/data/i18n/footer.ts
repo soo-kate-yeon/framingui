@@ -11,6 +11,7 @@ export interface FooterContent {
   copyright: string;
   links: {
     pricing: string;
+    docs: string;
     blog: string;
     terms: string;
     privacy: string;
@@ -30,6 +31,7 @@ export const footerContent: Record<GlobalLocale, FooterContent> = {
     copyright: 'tekton/ui. All rights reserved.',
     links: {
       pricing: 'Pricing',
+      docs: 'Docs',
       blog: 'Blog',
       terms: 'Terms',
       privacy: 'Privacy',
@@ -47,6 +49,7 @@ export const footerContent: Record<GlobalLocale, FooterContent> = {
     copyright: 'tekton/ui. 모든 권리 보유.',
     links: {
       pricing: '가격',
+      docs: '문서',
       blog: '블로그',
       terms: '이용약관',
       privacy: '개인정보처리방침',

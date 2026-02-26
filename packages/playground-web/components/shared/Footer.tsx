@@ -17,6 +17,7 @@ export function Footer({ className = '' }: FooterProps) {
   const LEGAL_LINKS = useMemo(
     () => [
       { href: '/pricing', label: content.links.pricing },
+      { href: '/docs', label: content.links.docs },
       { href: '/blog', label: content.links.blog },
       { href: '/legal/terms-of-service', label: content.links.terms },
       { href: '/legal/privacy-policy', label: content.links.privacy },

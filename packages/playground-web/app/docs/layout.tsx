@@ -9,22 +9,30 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Book, Rocket, Download, Cpu, Box, Layers, ChevronRight, Menu, X } from 'lucide-react';
+import {
+  Book,
+  Rocket,
+  Download,
+  Cpu,
+  Box,
+  Layers,
+  Palette,
+  ChevronRight,
+  Menu,
+  X,
+} from 'lucide-react';
 
 const NAV_ITEMS = [
   { href: '/docs', label: 'Overview', icon: Book },
   { href: '/docs/quick-start', label: 'Quick Start', icon: Rocket },
   { href: '/docs/installation', label: 'Installation', icon: Download },
   { href: '/docs/components', label: 'Components', icon: Layers },
+  { href: '/docs/themes', label: 'Theme Guides', icon: Palette },
   { href: '/docs/api', label: 'API Reference', icon: Box },
   { href: '/docs/mcp', label: 'MCP Integration', icon: Cpu },
 ];
 
-export default function DocsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -111,15 +119,15 @@ export default function DocsLayout({
             </span>
           </Link>
           <nav className="flex items-center gap-6">
-            <Link 
-              href="https://tally.so/r/7R2kz6" 
+            <Link
+              href="https://tally.so/r/7R2kz6"
               target="_blank"
               className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               Get Beta Access
             </Link>
-            <Link 
-              href="/studio" 
+            <Link
+              href="/studio"
               className="text-sm font-medium bg-neutral-900 text-white px-4 py-2 rounded-full hover:bg-neutral-800 transition-colors"
             >
               Open Studio
@@ -145,9 +153,13 @@ export default function DocsLayout({
                       : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                   }`}
                 >
-                  <item.icon className={`w-4 h-4 ${isActive ? 'text-neutral-700' : 'text-neutral-400 group-hover:text-neutral-600'}`} />
+                  <item.icon
+                    className={`w-4 h-4 ${isActive ? 'text-neutral-700' : 'text-neutral-400 group-hover:text-neutral-600'}`}
+                  />
                   {item.label}
-                  <ChevronRight className={`w-3 h-3 ml-auto transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+                  <ChevronRight
+                    className={`w-3 h-3 ml-auto transition-opacity ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                  />
                 </Link>
               );
             })}
@@ -156,9 +168,7 @@ export default function DocsLayout({
 
         {/* Main Content */}
         <main className="flex-1 px-6 md:px-12 py-10 pt-24 md:pt-10">
-          <article className="prose prose-neutral max-w-3xl">
-            {children}
-          </article>
+          <article className="prose prose-neutral max-w-3xl">{children}</article>
         </main>
       </div>
     </div>

@@ -10,6 +10,7 @@ export interface LandingContent {
   nav: {
     brandName: string;
     pricing: string;
+    docs: string;
     tryStudio: string;
     getStarted: string;
   };
@@ -68,6 +69,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     nav: {
       brandName: 'tekton/ui',
       pricing: 'Pricing',
+      docs: 'Docs',
       tryStudio: 'Try Studio',
       getStarted: 'Sign up',
     },
@@ -187,6 +189,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     nav: {
       brandName: 'tekton/ui',
       pricing: '가격',
+      docs: '문서',
       tryStudio: 'Studio 체험',
       getStarted: '가입하기',
     },

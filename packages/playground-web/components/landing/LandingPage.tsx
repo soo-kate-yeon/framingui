@@ -107,6 +107,12 @@ export function LandingPage() {
               {content.nav.pricing}
             </Button>
             <Button
+              onClick={() => router.push('/docs')}
+              className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
+            >
+              {content.nav.docs}
+            </Button>
+            <Button
               onClick={() => router.push('/studio')}
               className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-neutral-100 text-neutral-900 hover:bg-neutral-200 border-none"
             >
