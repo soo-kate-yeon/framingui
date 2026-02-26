@@ -12,14 +12,21 @@ export const metadata: Metadata = {
       'Insights on AI-powered development, design systems, and modern web engineering from the Tekton team.',
     type: 'website',
     url: 'https://tekton-ui.com/blog',
-    images: [{ url: 'https://tekton-ui.com/og-image.png' }],
+    images: [
+      {
+        url: '/og-image.png',
+        width: 962,
+        height: 422,
+        alt: 'Tekton UI - Agent-First Design System',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Blog | Tekton',
     description:
       'Insights on AI-powered development, design systems, and modern web engineering from the Tekton team.',
-    images: ['https://tekton-ui.com/og-image.png'],
+    images: ['/og-image.png'],
   },
   alternates: {
     types: {

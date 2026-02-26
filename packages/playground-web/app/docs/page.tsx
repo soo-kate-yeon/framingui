@@ -13,13 +13,20 @@ export const metadata: Metadata = {
     title: 'Documentation | tekton/ui',
     description: 'The agentic design system. 0% hallucination, production-ready UI.',
     url: 'https://tekton-ui.com/docs',
-    images: [{ url: 'https://tekton-ui.com/og-image.png' }],
+    images: [
+      {
+        url: '/og-image.png',
+        width: 962,
+        height: 422,
+        alt: 'Tekton UI - Agent-First Design System',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Documentation | tekton/ui',
     description: 'The agentic design system. 0% hallucination, production-ready UI.',
-    images: ['https://tekton-ui.com/og-image.png'],
+    images: ['/og-image.png'],
   },
 };
 

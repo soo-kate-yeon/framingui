@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const fm = post.frontmatter.en;
   const url = `https://tekton-ui.com/blog/${slug}`;
 
-  const ogImage = fm.coverImage || 'https://tekton-ui.com/og-image.png';
+  const ogImage = fm.coverImage || '/og-image.png';
 
   return {
     title: `${fm.title} | Tekton Blog`,
@@ -37,7 +37,14 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       modifiedTime: fm.updatedAt || fm.date,
       authors: [fm.author.name],
       tags: fm.tags,
-      images: [{ url: ogImage }],
+      images: [
+        {
+          url: ogImage,
+          width: fm.coverImage ? 1200 : 962,
+          height: fm.coverImage ? 630 : 422,
+          alt: fm.title,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',

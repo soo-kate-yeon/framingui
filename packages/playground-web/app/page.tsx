@@ -24,11 +24,20 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'tekton/ui',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 962,
+        height: 422,
+        alt: 'Tekton UI - Agent-First Design System',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'tekton/ui - Agent-first Design System',
     description: 'The first design system built specifically for AI agents.',
+    images: ['/og-image.png'],
   },
 };
 
