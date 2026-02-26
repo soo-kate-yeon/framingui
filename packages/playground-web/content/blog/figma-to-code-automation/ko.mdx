@@ -1,0 +1,107 @@
+---
+title: "Figma to Code: AI 기반 디자인 자동화"
+description: "AI와 디자인 토큰을 사용해 Figma 디자인을 프로덕션 레디 코드로 변환합니다. 디자인과 개발 사이의 수동 번역은 이제 그만."
+date: "2026-02-26"
+author: "tekton team"
+tags: ["figma", "automation", "ai", "design-tokens"]
+---
+
+# Figma to Code: AI 기반 디자인 자동화
+
+디자인과 개발 사이의 격차는 항상 고통스러웠습니다. AI와 디자인 토큰이 마침내 이 간극을 메우는 방법을 알아보세요.
+
+## 기존 워크플로우 (그리고 왜 망가지는지)
+
+1. 디자이너가 Figma에서 목업 생성
+2. 개발자가 검사하고, 값을 수동으로 추출
+3. 하드코딩된 색상/여백으로 코드 작성
+4. 디자인이 변경되면, 개발자가 다시 모든 것을 추출
+5. 영원히 반복
+
+**문제:** 수동 번역은 오류를 만들고 모든 사람의 속도를 늦춥니다.
+
+## 토큰 기반 워크플로우
+
+토큰 기반 접근법으로:
+
+1. 디자이너가 토큰 인식 Figma 컴포넌트로 작업
+2. AI가 디자인을 읽고, 기존 토큰에 매핑
+3. 실제 디자인 시스템을 사용해 코드 생성
+4. 디자인이 변경되면? AI가 매핑을 업데이트
+
+**결과:** 일관된 코드, 빠른 반복, 행복한 팀.
+
+## 작동 방식
+
+### 1. 토큰 인식 Figma 설정
+
+시맨틱 네이밍으로 Figma 구조화:
+
+```
+Colors/Primary/500 → maps to → tokens.colors.primary[500]
+Spacing/md → maps to → tokens.spacing.md
+```
+
+### 2. AI 추출
+
+AI가 Figma 디자인을 분석할 때:
+
+```typescript
+// AI가 보는 것: #3B82F6 채우기가 있는 사각형
+// AI가 매핑: tokens.colors.primary[500]
+// AI가 생성: className="bg-primary-500"
+```
+
+### 3. 컴포넌트 생성
+
+픽셀 퍼펙트 재현 대신, AI가 시맨틱 코드를 생성:
+
+```tsx
+// 생성된 컴포넌트
+export function FeatureCard() {
+  return (
+    <Card variant="elevated">
+      <CardHeader>
+        <Heading size="lg">{title}</Heading>
+      </CardHeader>
+      <CardBody>
+        <Text color="muted">{description}</Text>
+      </CardBody>
+    </Card>
+  )
+}
+```
+
+## 실제 구현
+
+### tekton/ui와 함께
+
+1. Figma 프레임 내보내기
+2. MCP 컨텍스트와 함께 AI에 제공
+3. 토큰 호환 코드 받기
+
+```bash
+# tekton MCP가 있는 Claude 또는 Cursor에서
+"이 Figma 디자인을 React 컴포넌트로 변환해줘"
+```
+
+AI는 당신의 토큰을 알고, 패턴을 따르고, 일관된 코드를 생성합니다.
+
+## 주요 이점
+
+| 기존 방식 | 토큰 기반 |
+|----------|----------|
+| 컴포넌트당 몇 시간 | 컴포넌트당 몇 분 |
+| 하드코딩된 값 | 시맨틱 토큰 |
+| 수동 업데이트 | AI 지원 변경 |
+| 디자인 드리프트 | 보장된 일관성 |
+
+## 시작하기
+
+Figma-to-code 워크플로우를 자동화할 준비가 되셨나요?
+
+1. [tekton/ui 설정하기](/docs/quick-start)
+2. [MCP 연결하기](/docs/mcp)
+3. 일관된 코드 생성 시작
+
+[무료로 시작하기 →](/pricing)

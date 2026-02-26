@@ -1,0 +1,70 @@
+---
+title: "AI Design Workflow: From Tokens to Production UI"
+description: "Learn how to build a complete AI-powered design workflow using design tokens and MCP integration for consistent UI generation."
+date: "2026-02-26"
+author: "tekton team"
+tags: ["ai", "design-system", "workflow", "mcp"]
+---
+
+# AI Design Workflow: From Tokens to Production UI
+
+Building UI with AI doesn't have to mean inconsistent results. Here's how to create a workflow that produces production-ready components every time.
+
+## The Problem with AI-Generated UI
+
+Most AI coding tools guess at design decisions. Colors, spacing, typography—they hallucinate values that don't match your brand.
+
+**The result?** Hours spent fixing generated code to match your design system.
+
+## A Better Approach: Token-First Design
+
+Instead of letting AI guess, give it the answers upfront:
+
+1. **Define your tokens** — Colors, spacing, typography as structured data
+2. **Connect via MCP** — Make tokens available to AI tools
+3. **Generate with constraints** — AI follows your rules, not its imagination
+
+## Setting Up Your Workflow
+
+### Step 1: Structure Your Tokens
+
+```typescript
+// tokens/colors.ts
+export const colors = {
+  primary: {
+    50: 'oklch(0.97 0.02 250)',
+    500: 'oklch(0.55 0.15 250)',
+    900: 'oklch(0.25 0.10 250)',
+  },
+  // ... more colors
+}
+```
+
+### Step 2: Connect to AI Tools
+
+With tekton/ui's MCP server, your tokens become available to Claude, Cursor, and other AI tools:
+
+```bash
+npx @anthropic-ai/claude-code mcp add tekton
+```
+
+### Step 3: Generate Consistent UI
+
+Now when you ask AI to build a component, it uses your actual design values:
+
+```
+"Create a primary button with hover state"
+```
+
+The AI knows your primary color is `oklch(0.55 0.15 250)`, not some random blue.
+
+## Real Results
+
+Teams using token-first AI workflows report:
+- **70% faster** component development
+- **Zero design inconsistencies** in generated code
+- **Happier designers** (they finally trust the output)
+
+## Get Started
+
+Ready to build your AI design workflow? [Try tekton/ui free →](/pricing)

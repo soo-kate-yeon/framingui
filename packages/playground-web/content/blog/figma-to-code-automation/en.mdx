@@ -1,0 +1,107 @@
+---
+title: "Figma to Code: AI-Powered Design Automation"
+description: "Transform Figma designs into production-ready code using AI and design tokens. No more manual translation between design and development."
+date: "2026-02-26"
+author: "tekton team"
+tags: ["figma", "automation", "ai", "design-tokens"]
+---
+
+# Figma to Code: AI-Powered Design Automation
+
+The gap between design and development has always been painful. Here's how AI and design tokens are finally bridging that divide.
+
+## The Traditional Workflow (And Why It Breaks)
+
+1. Designer creates mockup in Figma
+2. Developer inspects, manually extracts values
+3. Code gets written with hardcoded colors/spacing
+4. Design changes, developer re-extracts everything
+5. Repeat forever
+
+**The problem:** Manual translation creates errors and slows everyone down.
+
+## The Token-Based Workflow
+
+With a token-based approach:
+
+1. Designer works with token-aware Figma components
+2. AI reads the design, maps to existing tokens
+3. Code generates using your actual design system
+4. Design changes? AI updates the mapping
+
+**The result:** Consistent code, faster iteration, happier teams.
+
+## How It Works
+
+### 1. Token-Aware Figma Setup
+
+Structure your Figma with semantic naming:
+
+```
+Colors/Primary/500 → maps to → tokens.colors.primary[500]
+Spacing/md → maps to → tokens.spacing.md
+```
+
+### 2. AI Extraction
+
+When AI analyzes your Figma design:
+
+```typescript
+// AI sees: Rectangle with #3B82F6 fill
+// AI maps: tokens.colors.primary[500]
+// AI generates: className="bg-primary-500"
+```
+
+### 3. Component Generation
+
+Instead of pixel-perfect recreation, AI generates semantic code:
+
+```tsx
+// Generated component
+export function FeatureCard() {
+  return (
+    <Card variant="elevated">
+      <CardHeader>
+        <Heading size="lg">{title}</Heading>
+      </CardHeader>
+      <CardBody>
+        <Text color="muted">{description}</Text>
+      </CardBody>
+    </Card>
+  )
+}
+```
+
+## Real-World Implementation
+
+### With tekton/ui
+
+1. Export your Figma frame
+2. Provide to AI with MCP context
+3. Get token-compliant code
+
+```bash
+# In Claude or Cursor with tekton MCP
+"Convert this Figma design to a React component"
+```
+
+The AI knows your tokens, follows your patterns, generates consistent code.
+
+## Key Benefits
+
+| Traditional | Token-Based |
+|-------------|-------------|
+| Hours per component | Minutes per component |
+| Hardcoded values | Semantic tokens |
+| Manual updates | AI-assisted changes |
+| Design drift | Guaranteed consistency |
+
+## Get Started
+
+Ready to automate your Figma-to-code workflow?
+
+1. [Set up tekton/ui](/docs/quick-start)
+2. [Connect MCP](/docs/mcp)
+3. Start generating consistent code
+
+[Try it free →](/pricing)

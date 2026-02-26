@@ -1,0 +1,123 @@
+---
+title: "MCP Advanced Integration: Building Custom AI Tools"
+description: "Deep dive into Model Context Protocol (MCP) integration for design systems. Build custom tools that connect your tokens to AI."
+date: "2026-02-26"
+author: "tekton team"
+tags: ["mcp", "ai", "integration", "tutorial"]
+---
+
+# MCP Advanced Integration: Building Custom AI Tools
+
+The Model Context Protocol (MCP) is changing how AI tools understand your codebase. Here's how to build custom integrations that make AI truly useful.
+
+## What is MCP?
+
+MCP is a standard protocol that lets AI assistants access external tools and data. Instead of AI guessing about your project, it can query real information.
+
+## Why MCP for Design Systems?
+
+Design systems are perfect for MCP integration:
+
+- **Structured data** — Tokens are already well-organized
+- **Clear constraints** — Rules AI should follow
+- **Predictable outputs** — Consistent component generation
+
+## Building Your MCP Server
+
+### Basic Setup
+
+```typescript
+import { Server } from '@modelcontextprotocol/sdk/server/index.js'
+
+const server = new Server({
+  name: 'my-design-system',
+  version: '1.0.0',
+})
+```
+
+### Exposing Design Tokens
+
+```typescript
+server.setRequestHandler('tools/call', async (request) => {
+  if (request.params.name === 'get-color') {
+    const { colorName } = request.params.arguments
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(tokens.colors[colorName])
+      }]
+    }
+  }
+})
+```
+
+### Registering Tools
+
+```typescript
+server.setRequestHandler('tools/list', async () => ({
+  tools: [{
+    name: 'get-color',
+    description: 'Get a color token value',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        colorName: { type: 'string' }
+      }
+    }
+  }]
+}))
+```
+
+## Advanced Patterns
+
+### Component Generation
+
+Build tools that generate entire components:
+
+```typescript
+{
+  name: 'generate-component',
+  description: 'Generate a component with proper tokens',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      componentType: { enum: ['button', 'card', 'input'] },
+      variant: { type: 'string' }
+    }
+  }
+}
+```
+
+### Theme Switching
+
+Let AI understand your theme system:
+
+```typescript
+{
+  name: 'apply-theme',
+  description: 'Apply a theme to generated code',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      themeName: { type: 'string' }
+    }
+  }
+}
+```
+
+## tekton/ui MCP Server
+
+Don't want to build from scratch? tekton/ui includes a ready-to-use MCP server with:
+
+- All token types exposed
+- Component generation tools
+- Theme management
+- Real-time preview
+
+```bash
+npx @anthropic-ai/claude-code mcp add tekton
+```
+
+## Get Started
+
+[Read the full MCP documentation →](/docs/mcp)
