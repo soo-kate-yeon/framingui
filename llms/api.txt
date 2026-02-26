@@ -1,0 +1,23 @@
+# Tekton API (LLM Context)
+
+## Scope
+Public API surface for token generation, color conversion, schema validation, component presets, and WCAG checks.
+
+## Canonical API Docs
+- docs/api/README.md
+- docs/api/component-schemas.md
+- docs/api/schema-validation.md
+- docs/api/component-knowledge.md
+
+## High-Value Anchors
+- docs/api/README.md#color-conversion-module
+- docs/api/README.md#token-generator-module
+- docs/api/README.md#component-themes-module
+- docs/api/README.md#component-schemas-module
+- docs/api/README.md#schema-validation-module
+- docs/api/README.md#wcag-validator-module
+
+## Package-level API Context
+- docs/packages/core.md
+- docs/packages/tokens.md
+- docs/packages/mcp-server.md

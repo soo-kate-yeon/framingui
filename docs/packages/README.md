@@ -4,6 +4,14 @@ Tekton UI는 **디자인 토큰 기반의 엔드투엔드 UI 디자인 시스템
 
 모든 패키지는 `@tekton-ui` 스코프 아래 npm에 퍼블리시되며, 독립적으로 또는 조합하여 사용할 수 있습니다.
 
+## AI-friendly summary
+
+- Tekton UI is split into six packages: tokens, core, ui, styled, esbuild-plugin, and mcp-server.
+- `tokens` is the foundational type layer; `core` and `styled` build on top; `ui` provides production React components.
+- `mcp-server` exposes Tekton capabilities to AI agents, while `esbuild-plugin` enforces token compliance at build time.
+- Use this page to understand dependency direction before choosing integration points.
+- For implementation details, jump from this page to each package-specific doc.
+
 ---
 
 ## 패키지 의존성 그래프

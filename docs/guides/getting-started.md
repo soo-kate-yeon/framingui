@@ -2,6 +2,14 @@
 
 Complete guide to installing and using Tekton for OKLCH-based design token generation.
 
+## AI-friendly summary
+
+- This guide is the end-to-end onboarding path: install, generate tokens, export formats, and validate accessibility.
+- Core workflows include OKLCH color modeling, scale generation, component preset usage, and dark mode output.
+- It includes practical code snippets for Tailwind and CSS variable integration.
+- WCAG checks and troubleshooting sections are included for production readiness.
+- If you need one document to bootstrap Tekton usage, start here.
+
 ## Table of Contents
 
 - [Installation](#installation)

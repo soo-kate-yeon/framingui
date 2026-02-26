@@ -1,0 +1,20 @@
+# Tekton Components (LLM Context)
+
+## Scope
+Component system docs across package-level UI docs and schema-level API docs.
+
+## Primary Sources
+- docs/packages/ui.md — production React components and usage patterns
+- docs/packages/styled.md — token-safe styled-components wrapper
+- docs/api/component-schemas.md — canonical component schema definitions
+- docs/api/component-knowledge.md — component capability/knowledge model
+- docs/api/schema-validation.md — validation and quality checks for component schemas
+
+## System Entry Points
+- docs/packages/README.md
+- docs/api/README.md#component-schemas-module
+- docs/api/README.md#schema-validation-module
+
+## Notes for Agents
+- Prefer schema-driven reasoning from `docs/api/component-schemas.md`.
+- Validate assumptions against `docs/api/schema-validation.md` when generating component props/structures.

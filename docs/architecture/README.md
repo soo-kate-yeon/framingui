@@ -4,6 +4,14 @@
 **Last Updated**: 2026-01-12
 **Project**: Tekton - OKLCH Design Token Generator
 
+## AI-friendly summary
+
+- Tekton architecture is described as a 3-layer pipeline: Token Generator Engine, Component Theme Mapper, and Framework Adapter.
+- The docs detail data flow from archetype input through OKLCH conversion, gamut clipping, WCAG validation, and export.
+- Performance sections include expected latency, caching behavior, and module-level bottlenecks.
+- Use this doc when you need system-level context, dependency rationale, or architecture decisions.
+- Pair it with API docs for implementation details and with package docs for integration choices.
+
 ---
 
 ## Table of Contents

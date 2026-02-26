@@ -1,0 +1,19 @@
+# Tekton Guides (LLM Context)
+
+## Scope
+Practical onboarding and implementation guidance for using Tekton in real projects.
+
+## Recommended Reading Order
+1. docs/guides/getting-started.md — first-run setup and core usage
+2. docs/guides/responsive-design.md — production UI behavior rules
+3. docs/guides/browser-compatibility.md — cross-browser constraints
+4. docs/guides/pnpm-nextjs-troubleshooting.md — common tooling fixes
+
+## Key Links
+- docs/guides/getting-started.md#installation
+- docs/guides/getting-started.md#basic-usage
+- docs/guides/getting-started.md#exporting-tokens
+- docs/guides/getting-started.md#wcag-compliance-validation
+- docs/guides/responsive-design.md
+- docs/guides/browser-compatibility.md
+- docs/guides/pnpm-nextjs-troubleshooting.md

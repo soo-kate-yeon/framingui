@@ -1,0 +1,68 @@
+# Tekton Docs Index for LLMs
+
+> Canonical AI-readable index for Tekton documentation.
+> All links below point to existing files in this repository.
+
+## Start Here
+- docs/README.md — Documentation hub and learning paths.
+- docs/guides/getting-started.md — Install, generate tokens, export, and WCAG basics.
+- docs/packages/README.md — Overview of all `@tekton-ui/*` packages.
+- docs/api/README.md — API reference for token generation, schemas, and validation.
+- docs/architecture/README.md — System architecture, data flow, and performance.
+
+## Guides
+- docs/guides/getting-started.md — End-to-end onboarding guide.
+- docs/guides/browser-compatibility.md — Browser support and compatibility notes.
+- docs/guides/pnpm-nextjs-troubleshooting.md — pnpm/Next.js troubleshooting.
+- docs/guides/responsive-design.md — Responsive design guidance.
+
+## Packages
+- docs/packages/README.md — Package map and dependency graph.
+- docs/packages/core.md — `@tekton-ui/core` pipeline and APIs.
+- docs/packages/ui.md — `@tekton-ui/ui` React component library.
+- docs/packages/tokens.md — `@tekton-ui/tokens` token type system.
+- docs/packages/styled.md — `@tekton-ui/styled` token-enforced styling.
+- docs/packages/esbuild-plugin.md — `@tekton-ui/esbuild-plugin` build-time checks.
+- docs/packages/mcp-server.md — `@tekton-ui/mcp-server` AI tooling integration.
+
+## API / Technical Reference
+- docs/api/README.md — Full API reference.
+- docs/api/component-knowledge.md — Component knowledge model and semantics.
+- docs/api/component-schemas.md — 20 component schema definitions.
+- docs/api/schema-validation.md — Zod-based schema validation workflow.
+
+## Architecture
+- docs/architecture/README.md — Overall architecture and design patterns.
+- docs/architecture/create-screen-status.md — Screen creation implementation status.
+- docs/architecture/layer2-component-knowledge.md — Layer 2 component knowledge design.
+
+## Deployment & Operations
+- docs/deployment/environment-variables-guide.md — Runtime env var reference.
+- docs/deployment/vercel-setup.md — Vercel deployment setup.
+- docs/deployment/staging-deployment-checklist.md — Staging readiness checklist.
+- docs/deployment/branch-protection.md — GitHub branch protection policy.
+- docs/deployment/SPEC-DEPLOY-001-handover.md — Deployment spec handover.
+- docs/deployment/PHASE-5.2-COMPLETION-REPORT.md — Phase completion report.
+
+## Quality, Security, and Policy
+- docs/quality/tag-system.md — Tagging system and quality workflow.
+- docs/security/PHASE-2-4-SECURITY-REPORT.md — Security phase report.
+- docs/pricing.md — Pricing policy and package tiers.
+- docs/legal/en/privacy-policy.md — Privacy policy (EN).
+- docs/legal/en/terms-of-service.md — Terms of service (EN).
+- docs/legal/en/refund-policy.md — Refund policy (EN).
+- docs/legal/ko/privacy-policy.md — 개인정보처리방침 (KO).
+- docs/legal/ko/terms-of-service.md — 이용약관 (KO).
+- docs/legal/ko/refund-policy.md — 환불 정책 (KO).
+
+## Worktree / Internal Process Docs
+- docs/README-WORKTREE-SYNC.md — Worktree sync documentation entry.
+- docs/worktree-documentation-sync-plan.md — Documentation sync plan.
+- docs/worktree-sync-executive-summary.md — Worktree sync summary.
+- docs/worktree-sync-validation-checklist.md — Sync validation checklist.
+- docs/worktree-sync-visual-overview.md — Sync visual overview.
+- docs/worktree-workflow-guide.md — Worktree workflow guide.
+- docs/worktree-moai-integration.md — MoAI integration with worktree flow.
+
+## Non-Markdown Assets
+- docs/design_token_research.pdf — Design token research reference PDF.

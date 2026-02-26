@@ -2,6 +2,14 @@
 
 Complete reference documentation for all public exports from Tekton.
 
+## AI-friendly summary
+
+- This is the canonical API reference for Tekton’s public exports and module boundaries.
+- It documents schemas, color conversion, scale generation, token generation, component schemas, and WCAG validation.
+- Prefer this page when generating code that depends on exact function names, inputs, and return shapes.
+- Cross-check component-focused logic with `component-schemas.md` and `schema-validation.md`.
+- Treat this document as the source of truth for API-level reasoning.
+
 ## Table of Contents
 
 - [Schemas Module](#schemas-module)
