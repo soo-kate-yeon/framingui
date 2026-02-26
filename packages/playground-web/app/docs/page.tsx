@@ -100,7 +100,7 @@ export default function DocsPage() {
         ))}
       </section>
 
-      {/* What is tekton */}
+      {/* What is FramingUI */}
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">What is framingui?</h2>
         <div className="space-y-4 text-neutral-600 leading-relaxed">
@@ -111,7 +111,7 @@ export default function DocsPage() {
           </p>
           <p>
             The result: when you ask Claude Code, Cursor, or any MCP-compatible tool to build UI
-            with tekton, it generates production-ready code with consistent colors, typography,
+            with FramingUI, it generates production-ready code with consistent colors, typography,
             spacing, and components. No more random hex codes. No more magic numbers.
           </p>
         </div>

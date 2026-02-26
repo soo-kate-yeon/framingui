@@ -3,7 +3,7 @@ title: "What is an Agentic Design System?"
 description: "Agentic design systems combine design tokens with AI to generate on-brand UI—eliminating generic AI interfaces."
 date: "2026-02-25"
 author:
-  name: "Tekton Team"
+  name: "FramingUI Team"
 tags:
   - design-system
   - ai
@@ -122,7 +122,7 @@ Generate design tokens using perceptually uniform color spaces (OKLCH) with buil
 Instead of manually picking colors and hoping they meet WCAG contrast requirements, tokens are **generated algorithmically**:
 
 ```typescript
-import { generateTokensFromArchetype } from '@tekton/token-generator';
+import { generateTokensFromArchetype } from '@framingui/token-generator';
 
 const archetype = {
   name: "professional-dark",
@@ -213,7 +213,7 @@ When AI receives a prompt like "create a user dashboard," the generation engine:
 ```typescript
 // What framingui generates with full context
 import { Card, Badge, DataTable, Button } from '@framingui';
-import { tokens } from '@tekton/design-tokens';
+import { tokens } from '@framingui/design-tokens';
 
 export function UserDashboard() {
   return (
@@ -289,7 +289,7 @@ Start by describing your brand's design personality:
 framingui generates 100+ tokens automatically:
 
 ```bash
-npx @tekton/cli init --archetype fintech-professional
+npx @framingui/cli init --archetype fintech-professional
 
 # Outputs:
 # - tokens.css (CSS custom properties)
@@ -325,7 +325,7 @@ npx @tekton/cli init --archetype fintech-professional
 framingui ships with 20+ components pre-configured with semantic metadata:
 
 ```typescript
-import { getAllComponents } from '@tekton/component-knowledge';
+import { getAllComponents } from '@framingui/component-knowledge';
 
 const components = getAllComponents();
 
@@ -341,7 +341,7 @@ const components = getAllComponents();
 Use framingui's MCP (Model Context Protocol) integration:
 
 ```typescript
-import { renderScreen } from '@tekton/studio-mcp';
+import { renderScreen } from '@framingui/studio-mcp';
 
 const blueprint = {
   blueprintId: "dash-001",
@@ -385,7 +385,7 @@ framingui prevents design drift with **3-layer enforcement**:
 #### Layer 1: Compile-Time (TypeScript)
 
 ```typescript
-import { styled, tokens } from '@tekton/styled';
+import { styled, tokens } from '@framingui/styled';
 
 // ✅ Valid: Token-only styling
 const Card = styled.div`
@@ -417,7 +417,7 @@ const DynamicCard = styled.div`
 
 ```typescript
 // esbuild.config.js
-import { tektonPlugin } from '@tekton/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 export default {
   plugins: [
@@ -476,10 +476,10 @@ Visit [framingui.com/studio](https://framingui.com/studio) to:
 
 ```bash
 # Install framingui
-npm install @tekton/core @framingui @tekton/styled
+npm install @framingui/core @framingui @framingui/styled
 
 # Initialize your design system
-npx @tekton/cli init
+npx @framingui/cli init
 
 # Follow interactive prompts:
 # - Primary color
@@ -498,7 +498,7 @@ framingui works with Claude Code, Cursor, and any tool supporting MCP:
   "servers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_PROJECT_PATH": "."
       }
@@ -536,7 +536,7 @@ framingui can integrate with existing design systems. You can:
 2. Map your components to ComponentKnowledge format
 3. Use tekton's generation layer on top of your components
 
-The token enforcement layer (`@tekton/styled`) works with any React component library.
+The token enforcement layer (`@framingui/styled`) works with any React component library.
 
 ### How does this prevent AI from generating off-brand UI?
 

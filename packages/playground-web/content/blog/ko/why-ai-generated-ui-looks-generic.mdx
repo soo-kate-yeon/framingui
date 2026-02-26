@@ -3,7 +3,7 @@ title: "Why AI-Generated UI Looks Generic (And How to Fix It)"
 description: "Why AI-generated UIs from v0, Cursor, and ChatGPT all look the same—and how design system context fixes the consistency problem."
 date: "2026-02-25"
 author:
-  name: "Tekton Team"
+  name: "FramingUI Team"
 tags:
   - ai
   - design-system
@@ -319,7 +319,7 @@ Connect AI directly to your design system using Model Context Protocol.
   "servers": {
     "design-system": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_PROJECT_PATH": ".",
         "TEKTON_TOKEN_PATH": "./tokens.json"
@@ -553,7 +553,7 @@ framingui solves the generic AI problem with three layers:
 Generate design tokens algorithmically with WCAG compliance built in.
 
 ```typescript
-import { generateTokensFromArchetype } from '@tekton/token-generator';
+import { generateTokensFromArchetype } from '@framingui/token-generator';
 
 const archetype = {
   name: "fintech-professional",
@@ -617,10 +617,10 @@ Connect AI directly to your design system.
 
 ```bash
 # Install framingui
-npm install @tekton/core @tekton/mcp-server
+npm install @framingui/core @framingui/mcp-server
 
 # Initialize design tokens
-npx @tekton/cli init
+npx @framingui/cli init
 
 # Configure MCP
 # .claude/mcp.json
@@ -628,7 +628,7 @@ npx @tekton/cli init
   "servers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"]
+      "args": ["@framingui/mcp-server"]
     }
   }
 }
@@ -734,7 +734,7 @@ Yes! framingui includes build-time validation:
 
 ```typescript
 // esbuild.config.js
-import { tektonPlugin } from '@tekton/esbuild-plugin';
+import { tektonPlugin } from '@framingui/esbuild-plugin';
 
 export default {
   plugins: [
@@ -760,13 +760,13 @@ Ready to stop generating generic UI?
 ### Step 1: Install framingui
 
 ```bash
-npm install @tekton/core @tekton/mcp-server
+npm install @framingui/core @framingui/mcp-server
 ```
 
 ### Step 2: Generate Your Design Tokens
 
 ```bash
-npx @tekton/cli init
+npx @framingui/cli init
 # Interactive prompts for brand personality, colors, spacing
 ```
 
@@ -778,7 +778,7 @@ npx @tekton/cli init
   "servers": {
     "tekton": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"]
+      "args": ["@framingui/mcp-server"]
     }
   }
 }

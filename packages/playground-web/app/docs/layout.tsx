@@ -44,7 +44,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-neutral-200 z-50 flex items-center justify-between px-6">
         <Link href="/docs" onClick={closeMobileMenu} className="flex items-center gap-2">
           <span className="text-xl font-semibold tracking-tight text-neutral-900">
-            tekton<span className="text-neutral-400">/docs</span>
+            framingui<span className="text-neutral-400">/docs</span>
           </span>
         </Link>
         <button
@@ -115,7 +115,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         <div className="max-w-7xl mx-auto px-8 py-4 flex items-center justify-between">
           <Link href="/docs" className="flex items-center gap-2">
             <span className="text-xl font-semibold tracking-tight text-neutral-900">
-              tekton<span className="text-neutral-400">/docs</span>
+              framingui<span className="text-neutral-400">/docs</span>
             </span>
           </Link>
           <nav className="flex items-center gap-6">

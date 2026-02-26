@@ -3,7 +3,7 @@ title: "The Solo Developer's Guide to Building a Design System (Without a Design
 description: "Build a professional design system without a designer. A practical guide for solo developers and indie hackers using design tokens."
 date: "2026-02-25"
 author:
-  name: "Tekton Team"
+  name: "FramingUI Team"
 tags:
   - design-system
   - solo-developer
@@ -111,19 +111,19 @@ npx create-next-app@latest my-app
 cd my-app
 
 # Install framingui
-npm install @tekton/core
+npm install @framingui/core
 
 # Or with yarn
-yarn add @tekton/core
+yarn add @framingui/core
 
 # Or with pnpm
-pnpm add @tekton/core
+pnpm add @framingui/core
 ```
 
 #### Step 2: Answer 7 Simple Questions (10 minutes)
 
 ```bash
-npx @tekton/cli init
+npx @framingui/cli init
 ```
 
 The CLI will ask you questions. Here's how to answer them without design experience:
@@ -373,7 +373,7 @@ Now make AI tools generate components using your design tokens automatically.
 
 ```bash
 # Install framingui MCP server
-npm install @tekton/mcp-server
+npm install @framingui/mcp-server
 ```
 
 #### Step 7: Configure MCP in Your AI Tool (10 minutes)
@@ -387,7 +387,7 @@ Create `.claude/mcp.json`:
   "servers": {
     "design-system": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_PROJECT_PATH": ".",
         "TEKTON_TOKEN_PATH": "./tokens.json"
@@ -406,7 +406,7 @@ Create `.cursor/mcp.json`:
   "mcpServers": {
     "design-system": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_PROJECT_PATH": ".",
         "TEKTON_TOKEN_PATH": "./tokens.json"
@@ -519,14 +519,14 @@ Prevent yourself (or AI) from adding hardcoded values in the future.
 Install esbuild plugin:
 
 ```bash
-npm install @tekton/esbuild-plugin
+npm install @framingui/esbuild-plugin
 ```
 
 Configure build-time validation:
 
 ```typescript
 // next.config.js (for Next.js)
-const { tektonPlugin } = require('@tekton/esbuild-plugin');
+const { tektonPlugin } = require('@framingui/esbuild-plugin');
 
 module.exports = {
   experimental: {
@@ -671,7 +671,7 @@ export function Button({ children, variant = 'primary' }) {
 Not sure if your colors work together? framingui validates automatically:
 
 ```bash
-npx @tekton/cli validate
+npx @framingui/cli validate
 
 ✅ All color combinations pass WCAG AA
 ✅ Primary + background: 8.2:1 contrast (exceeds 4.5:1 requirement)
@@ -791,7 +791,7 @@ AI understands design best practices, you don't need to.
 
 **After framingui:**
 - Created one design system template
-- Customize per client: `npx @tekton/cli init --brand clientA`
+- Customize per client: `npx @framingui/cli init --brand clientA`
 - Generate brand-specific tokens in 10 minutes
 - AI generates on-brand components for each client
 
@@ -960,10 +960,10 @@ Use this to verify your setup:
 
 ```bash
 # 1. Install framingui
-npm install @tekton/core
+npm install @framingui/core
 
 # 2. Generate design tokens
-npx @tekton/cli init
+npx @framingui/cli init
 
 # 3. Use tokens in your app
 import { tokens } from './components/tokens';

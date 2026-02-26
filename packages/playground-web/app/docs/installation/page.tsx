@@ -100,7 +100,7 @@ export default function InstallationPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Tailwind CSS Setup</h2>
         <p className="text-neutral-600">
-          Add tekton to your Tailwind config:
+          Add FramingUI to your Tailwind config:
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto text-sm">
 {`// tailwind.config.ts
@@ -124,7 +124,7 @@ export default config;`}
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Import Styles</h2>
         <p className="text-neutral-600">
-          Add the tekton styles to your global CSS:
+          Add the FramingUI styles to your global CSS:
         </p>
         <pre className="bg-neutral-900 text-neutral-100 p-4 rounded-lg overflow-x-auto">
 {`/* globals.css */

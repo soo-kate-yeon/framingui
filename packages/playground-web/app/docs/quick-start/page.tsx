@@ -47,7 +47,7 @@ export default function QuickStartPage() {
         </h2>
         <p className="text-neutral-600">
           After running init, restart Claude Code, Cursor, or your MCP-compatible tool 
-          to load the tekton server.
+          to load the FramingUI server.
         </p>
       </section>
 

@@ -3,7 +3,7 @@ title: "Design Tokens for AI Code Generation: A Complete MCP Integration Guide"
 description: "Connect your design system to AI tools using MCP. Make Claude and Cursor generate on-brand UI components with design tokens."
 date: "2026-02-25"
 author:
-  name: "Tekton Team"
+  name: "FramingUI Team"
 tags:
   - design-tokens
   - mcp
@@ -93,13 +93,13 @@ Model Context Protocol is Anthropic's open standard for connecting AI tools to e
 
 ```bash
 # Install framingui core packages
-npm install @tekton/core @tekton/mcp-server
+npm install @framingui/core @framingui/mcp-server
 
 # Or with yarn
-yarn add @tekton/core @tekton/mcp-server
+yarn add @framingui/core @framingui/mcp-server
 
 # Or with pnpm
-pnpm add @tekton/core @tekton/mcp-server
+pnpm add @framingui/core @framingui/mcp-server
 ```
 
 ### Step 2: Generate Design Tokens (Optional)
@@ -108,7 +108,7 @@ If you don't have design tokens yet, framingui can generate them:
 
 ```bash
 # Initialize framingui with interactive prompts
-npx @tekton/cli init
+npx @framingui/cli init
 
 # Follow prompts:
 # - Primary color (OKLCH format)
@@ -155,7 +155,7 @@ Create or update your MCP configuration file. The location depends on your AI to
   "servers": {
     "tekton-design-tokens": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_PROJECT_PATH": ".",
         "TEKTON_TOKEN_PATH": "./tokens.json"
@@ -173,7 +173,7 @@ Create or update your MCP configuration file. The location depends on your AI to
   "mcpServers": {
     "tekton-design-tokens": {
       "command": "npx",
-      "args": ["@tekton/mcp-server"],
+      "args": ["@framingui/mcp-server"],
       "env": {
         "TEKTON_PROJECT_PATH": ".",
         "TEKTON_TOKEN_PATH": "./tokens.json"
@@ -211,10 +211,10 @@ Available design tokens:
 
 **In Cursor:**
 
-Type `@tekton` in chat to see available MCP commands:
-- `@tekton/tokens` - List all tokens
-- `@tekton/components` - List component knowledge
-- `@tekton/validate` - Validate code against design system
+Type `@framingui` in chat to see available MCP commands:
+- `@framingui/tokens` - List all tokens
+- `@framingui/components` - List component knowledge
+- `@framingui/validate` - Validate code against design system
 
 ### Step 5: Generate Components with AI
 
@@ -517,7 +517,7 @@ npm run build-tokens
   "servers": {
     "tekton-design-tokens": {
       "command": "npx",
-      "args": ["@tekton/mcp-server", "--format", "style-dictionary"],
+      "args": ["@framingui/mcp-server", "--format", "style-dictionary"],
       "env": {
         "TEKTON_TOKEN_PATH": "./build/tokens.json"
       }
@@ -532,7 +532,7 @@ If you use Tailwind CSS:
 
 ```bash
 # Extract tokens from tailwind.config.js
-npx @tekton/cli extract-tailwind
+npx @framingui/cli extract-tailwind
 
 # Output: tokens.json with Tailwind token mappings
 ```
@@ -567,7 +567,7 @@ module.exports = {
 
 ```bash
 # Verify MCP server starts correctly
-npx @tekton/mcp-server --test
+npx @framingui/mcp-server --test
 
 # Check for errors in AI tool logs
 # Claude Code: Help → Toggle Developer Tools → Console
@@ -713,10 +713,10 @@ Visit [framingui.com/studio](https://framingui.com/studio) to:
 
 ```bash
 # Install framingui
-npm install @tekton/core @tekton/mcp-server
+npm install @framingui/core @framingui/mcp-server
 
 # Initialize design tokens
-npx @tekton/cli init
+npx @framingui/cli init
 
 # Configure MCP (see Step 3 above)
 

@@ -74,7 +74,7 @@ export default function MCPPage() {
           <div className="space-y-2">
             <h3 className="font-semibold text-neutral-700">3. Verify connection</h3>
             <p className="text-neutral-600">
-              Ask your AI: &quot;List available tekton themes&quot; — it should return 7 themes.
+              Ask your AI: &quot;List available FramingUI themes&quot; — it should return 7 themes.
             </p>
           </div>
         </div>
@@ -84,7 +84,7 @@ export default function MCPPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold text-neutral-900">Available MCP Tools</h2>
         <p className="text-neutral-600">
-          The tekton MCP server exposes 16 tools:
+          The FramingUI MCP server exposes 16 tools:
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
