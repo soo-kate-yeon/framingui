@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     title: 'tekton/ui - Agent-first Design System',
     description:
       'The first design system built specifically for AI agents. Generate production-ready UI directly in your codebase.',
+    url: 'https://tekton-ui.com',
     type: 'website',
     locale: 'en_US',
     siteName: 'tekton/ui',
