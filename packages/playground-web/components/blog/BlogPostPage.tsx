@@ -11,6 +11,7 @@ import { BlogHero } from './BlogHero';
 import { TableOfContents } from './TableOfContents';
 import { ShareButtons } from './ShareButtons';
 import { RelatedPosts } from './RelatedPosts';
+import { InlineCTA } from '@/components/shared/InlineCTA';
 import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
 import { getBlogContent } from '@/data/i18n/blog';
 import type { BlogPost, BlogPostSummary } from '@/lib/blog';
@@ -258,6 +259,9 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
                 </ReactMarkdown>
               </div>
             </article>
+
+            {/* Beta CTA */}
+            <InlineCTA variant="card" />
 
             {/* 공유 버튼 */}
             <div className="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800">

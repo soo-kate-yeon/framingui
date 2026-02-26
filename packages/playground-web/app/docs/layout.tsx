@@ -21,6 +21,7 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import { BetaBanner } from '@/components/shared/BetaBanner';
 
 const NAV_ITEMS = [
   { href: '/docs', label: 'Overview', icon: Book },
@@ -40,6 +41,9 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen bg-[#fafafa]">
+      {/* Beta Banner */}
+      <BetaBanner />
+
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white/80 backdrop-blur-md border-b border-neutral-200 z-50 flex items-center justify-between px-6">
         <Link href="/docs" onClick={closeMobileMenu} className="flex items-center gap-2">

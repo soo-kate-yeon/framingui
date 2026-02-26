@@ -1,6 +1,6 @@
 ---
-title: "Design Tokens for AI Code Generation: A Complete MCP Integration Guide"
-description: "Connect your design system to AI tools using MCP. Make Claude and Cursor generate on-brand UI components with design tokens."
+title: "AI 코드 생성을 위한 디자인 토큰: MCP 통합 완벽 가이드"
+description: "MCP를 사용해 디자인 시스템을 AI 도구에 연결하세요. Claude와 Cursor가 디자인 토큰으로 브랜드에 맞는 UI 컴포넌트를 생성하게 만드세요."
 date: "2026-02-25"
 author:
   name: "FramingUI Team"
@@ -14,140 +14,140 @@ coverImage: ""
 published: true
 ---
 
-## The Problem with AI-Generated UI Code
+## AI 생성 UI 코드의 문제점
 
-You've experienced this: you ask Claude to build a user profile card. It generates clean, working code—but with hardcoded colors like `#3B82F6` and arbitrary spacing like `px-4`. When you copy-paste it into your codebase, it doesn't match your design system at all.
+이런 경험 있으실 겁니다. Claude에게 사용자 프로필 카드를 만들어달라고 합니다. 깔끔하고 작동하는 코드가 나오지만 `#3B82F6` 같은 하드코딩된 색상과 `px-4` 같은 임의의 간격이 들어 있습니다. 코드베이스에 복붙하면 디자인 시스템과 전혀 맞지 않습니다.
 
-Why? **AI tools have no context about your design decisions.** They generate based on generic patterns from training data, not your brand's specific tokens, color palettes, or spacing scales.
+왜 그럴까요? **AI 도구는 여러분의 디자인 결정에 대한 컨텍스트가 없습니다.** 브랜드의 특정 토큰, 색상 팔레트, 간격 스케일이 아닌 학습 데이터의 일반적인 패턴을 기반으로 생성합니다.
 
-What if AI could read your design system and generate perfectly on-brand code every single time?
+AI가 디자인 시스템을 읽고 매번 완벽하게 브랜드에 맞는 코드를 생성할 수 있다면요?
 
-## TL;DR
+## 요약
 
-- **Model Context Protocol (MCP)** lets AI tools access your design tokens programmatically
-- **framingui** provides an MCP server that exposes your design system to Claude Code, Cursor, and other MCP-compatible tools
-- Setup takes **5 minutes** and works with any design token format (CSS variables, Tailwind, styled-components)
-- Result: AI generates code using your actual design tokens instead of hardcoded values
-- No more manual token replacement—AI understands your design system from the start
+- **Model Context Protocol (MCP)**은 AI 도구가 디자인 토큰에 프로그래밍 방식으로 접근하게 해줍니다
+- **framingui**는 Claude Code, Cursor 등 MCP 호환 도구에 디자인 시스템을 노출하는 MCP 서버를 제공합니다
+- 설정에 **5분**이 걸리고 모든 디자인 토큰 형식 (CSS 변수, Tailwind, styled-components)과 호환됩니다
+- 결과: AI가 하드코딩된 값 대신 실제 디자인 토큰을 사용해 코드를 생성합니다
+- 더 이상 수동 토큰 교체가 필요 없습니다. AI가 처음부터 디자인 시스템을 이해합니다
 
-## What is Model Context Protocol (MCP)?
+## Model Context Protocol (MCP)란?
 
-Model Context Protocol is Anthropic's open standard for connecting AI tools to external data sources. Think of it as a **USB port for AI assistants**—it provides a standardized way for AI to query information without you copy-pasting context into every prompt.
+Model Context Protocol은 AI 도구를 외부 데이터 소스에 연결하기 위한 Anthropic의 오픈 표준입니다. **AI 어시스턴트를 위한 USB 포트**라고 생각하세요. 매 프롬프트마다 컨텍스트를 복붙하지 않고도 AI가 정보를 쿼리할 수 있는 표준화된 방법을 제공합니다.
 
-### How MCP Works
+### MCP 작동 방식
 
 ```
 ┌─────────────────┐         MCP          ┌─────────────────┐
-│   AI Assistant  │ ◄──────────────────► │   MCP Server    │
-│  (Claude Code)  │   JSON-RPC Protocol  │ (Design Tokens) │
+│   AI 어시스턴트   │ ◄──────────────────► │   MCP 서버      │
+│  (Claude Code)  │   JSON-RPC 프로토콜  │ (디자인 토큰)     │
 └─────────────────┘                       └─────────────────┘
         ▲                                          │
         │                                          │
         │                                          ▼
         │                                  ┌──────────────┐
-        └──────────────────────────────────│ Your Design  │
-                Generates code             │   System     │
-                using real tokens          └──────────────┘
+        └──────────────────────────────────│  디자인       │
+                실제 토큰을 사용해          │   시스템      │
+                코드 생성                  └──────────────┘
 ```
 
-**Key Benefits:**
+**주요 이점:**
 
-1. **Contextual Awareness**: AI reads your design tokens on-demand, always getting the latest values
-2. **No Context Window Waste**: Design tokens don't consume your prompt context—they're fetched externally
-3. **Automatic Updates**: When you change tokens, AI immediately sees the new values (no re-pasting)
-4. **Bi-directional**: AI can both read tokens and validate generated code against your design system
+1. **컨텍스트 인식**: AI가 디자인 토큰을 온디맨드로 읽어 항상 최신 값을 가져옵니다
+2. **컨텍스트 윈도우 낭비 없음**: 디자인 토큰이 프롬프트 컨텍스트를 소비하지 않습니다. 외부에서 가져옵니다
+3. **자동 업데이트**: 토큰을 변경하면 AI가 즉시 새 값을 봅니다 (다시 붙여넣기 불필요)
+4. **양방향**: AI가 토큰을 읽고 생성된 코드를 디자인 시스템에 대해 검증할 수 있습니다
 
-## Why Design Tokens Need MCP Integration
+## 디자인 토큰에 MCP 통합이 필요한 이유
 
-### The Traditional Workflow (Painful)
+### 기존 워크플로우 (고통스러움)
 
-1. Ask AI to generate a component
-2. AI produces code with hardcoded values (`bg-blue-500`, `#3B82F6`, `16px`)
-3. You manually replace all values with design tokens (`bg-primary-500`, `var(--color-primary)`, `spacing-4`)
-4. Repeat for every component AI generates
-5. Design tokens drift as you inevitably miss some replacements
+1. AI에게 컴포넌트 생성 요청
+2. AI가 하드코딩된 값으로 코드 생성 (`bg-blue-500`, `#3B82F6`, `16px`)
+3. 모든 값을 수동으로 디자인 토큰으로 교체 (`bg-primary-500`, `var(--color-primary)`, `spacing-4`)
+4. AI가 생성하는 모든 컴포넌트에 반복
+5. 일부 교체를 놓치면서 디자인 토큰이 점점 어긋남
 
-**Time wasted per component:** 5-10 minutes
-**Result:** Inconsistent token usage, design system violations
+**컴포넌트당 낭비되는 시간:** 5-10분
+**결과:** 일관성 없는 토큰 사용, 디자인 시스템 위반
 
-### The MCP Workflow (Effortless)
+### MCP 워크플로우 (수월함)
 
-1. AI assistant connects to your design tokens via MCP
-2. You ask AI to generate a component
-3. AI queries available tokens (colors, spacing, typography)
-4. AI generates code using your actual tokens from the start
-5. Code is design system compliant immediately
+1. AI 어시스턴트가 MCP로 디자인 토큰에 연결
+2. AI에게 컴포넌트 생성 요청
+3. AI가 사용 가능한 토큰 쿼리 (색상, 간격, 타이포그래피)
+4. AI가 처음부터 실제 토큰을 사용해 코드 생성
+5. 코드가 즉시 디자인 시스템 준수
 
-**Time wasted per component:** 0 minutes
-**Result:** 100% token compliance, zero manual replacement
+**컴포넌트당 낭비되는 시간:** 0분
+**결과:** 100% 토큰 준수, 수동 교체 제로
 
-## Setting Up framingui with MCP
+## framingui와 MCP 설정하기
 
-### Prerequisites
+### 사전 요구사항
 
-- Node.js 20+ installed
-- Claude Code, Cursor, or any MCP-compatible AI tool
-- A project with design tokens (or generate them with framingui)
+- Node.js 20+ 설치됨
+- Claude Code, Cursor 또는 MCP 호환 AI 도구
+- 디자인 토큰이 있는 프로젝트 (또는 framingui로 생성)
 
-### Step 1: Install framingui
+### 1단계: framingui 설치
 
 ```bash
-# Install framingui core packages
+# framingui 코어 패키지 설치
 npm install @framingui/core @framingui/mcp-server
 
-# Or with yarn
+# yarn 사용 시
 yarn add @framingui/core @framingui/mcp-server
 
-# Or with pnpm
+# pnpm 사용 시
 pnpm add @framingui/core @framingui/mcp-server
 ```
 
-### Step 2: Generate Design Tokens (Optional)
+### 2단계: 디자인 토큰 생성 (선택)
 
-If you don't have design tokens yet, framingui can generate them:
+디자인 토큰이 아직 없다면 framingui가 생성할 수 있습니다:
 
 ```bash
-# Initialize framingui with interactive prompts
+# 대화형 프롬프트로 framingui 초기화
 npx @framingui/cli init
 
-# Follow prompts:
-# - Primary color (OKLCH format)
-# - Contrast level (AA or AAA)
-# - Border radius style
-# - Typography scale
+# 프롬프트를 따르세요:
+# - 주요 색상 (OKLCH 형식)
+# - 대비 수준 (AA 또는 AAA)
+# - 보더 레디어스 스타일
+# - 타이포그래피 스케일
 ```
 
-This creates:
-- `tokens.css` - CSS custom properties
-- `tokens.json` - Token metadata for MCP
-- `tailwind.config.js` - Tailwind integration (if detected)
+생성되는 것:
+- `tokens.css` - CSS 커스텀 프로퍼티
+- `tokens.json` - MCP용 토큰 메타데이터
+- `tailwind.config.js` - Tailwind 통합 (감지된 경우)
 
-**Example generated tokens:**
+**생성된 토큰 예시:**
 
 ```css
 /* tokens.css */
 :root {
-  /* Primary color scale */
+  /* 프라이머리 색상 스케일 */
   --color-primary-50: oklch(0.95 0.03 240);
   --color-primary-500: oklch(0.5 0.15 240);
   --color-primary-900: oklch(0.25 0.08 240);
 
-  /* Spacing scale */
+  /* 간격 스케일 */
   --spacing-1: 0.25rem;
   --spacing-4: 1rem;
   --spacing-6: 1.5rem;
 
-  /* Component tokens */
+  /* 컴포넌트 토큰 */
   --button-bg-primary: var(--color-primary-500);
   --button-fg-primary: oklch(0.98 0.01 240);
 }
 ```
 
-### Step 3: Configure MCP Server
+### 3단계: MCP 서버 설정
 
-Create or update your MCP configuration file. The location depends on your AI tool:
+MCP 설정 파일을 생성하거나 업데이트하세요. 위치는 AI 도구에 따라 다릅니다:
 
-**For Claude Code:**
+**Claude Code:**
 
 ```json
 // .claude/mcp.json
@@ -165,7 +165,7 @@ Create or update your MCP configuration file. The location depends on your AI to
 }
 ```
 
-**For Cursor:**
+**Cursor:**
 
 ```json
 // .cursor/mcp.json
@@ -183,50 +183,50 @@ Create or update your MCP configuration file. The location depends on your AI to
 }
 ```
 
-**Configuration Options:**
+**설정 옵션:**
 
-- `TEKTON_PROJECT_PATH`: Root directory of your project (default: current directory)
-- `TEKTON_TOKEN_PATH`: Path to token metadata JSON (default: `./tokens.json`)
-- `TEKTON_STRICT_MODE`: Fail if tokens are missing (default: `false`)
+- `TEKTON_PROJECT_PATH`: 프로젝트 루트 디렉토리 (기본값: 현재 디렉토리)
+- `TEKTON_TOKEN_PATH`: 토큰 메타데이터 JSON 경로 (기본값: `./tokens.json`)
+- `TEKTON_STRICT_MODE`: 토큰이 없으면 실패 (기본값: `false`)
 
-### Step 4: Verify MCP Connection
+### 4단계: MCP 연결 확인
 
-Restart your AI tool and verify the MCP connection:
+AI 도구를 재시작하고 MCP 연결을 확인하세요:
 
-**In Claude Code:**
-
-```
-You: Can you list available design tokens?
-
-Claude: I'll query the tekton design tokens via MCP.
-
-[Claude queries MCP server]
-
-Available design tokens:
-- Color scales: primary (10 steps), success, warning, error
-- Spacing: 1, 2, 3, 4, 6, 8, 12, 16
-- Typography: xs, sm, base, lg, xl, 2xl, 3xl
-- Component tokens: button, card, input, badge
-```
-
-**In Cursor:**
-
-Type `@framingui` in chat to see available MCP commands:
-- `@framingui/tokens` - List all tokens
-- `@framingui/components` - List component knowledge
-- `@framingui/validate` - Validate code against design system
-
-### Step 5: Generate Components with AI
-
-Now AI can generate components using your actual design tokens:
-
-**Prompt:**
+**Claude Code에서:**
 
 ```
-Create a user profile card component using our design tokens
+You: 사용 가능한 디자인 토큰 목록을 보여줘
+
+Claude: MCP로 FramingUI 디자인 토큰을 쿼리하겠습니다.
+
+[Claude가 MCP 서버 쿼리]
+
+사용 가능한 디자인 토큰:
+- 색상 스케일: primary (10단계), success, warning, error
+- 간격: 1, 2, 3, 4, 6, 8, 12, 16
+- 타이포그래피: xs, sm, base, lg, xl, 2xl, 3xl
+- 컴포넌트 토큰: button, card, input, badge
 ```
 
-**AI Response (Before MCP):**
+**Cursor에서:**
+
+채팅에서 `@framingui`를 입력하면 사용 가능한 MCP 명령어가 보입니다:
+- `@framingui/tokens` - 모든 토큰 목록
+- `@framingui/components` - 컴포넌트 지식 목록
+- `@framingui/validate` - 디자인 시스템에 대해 코드 검증
+
+### 5단계: AI로 컴포넌트 생성
+
+이제 AI가 실제 디자인 토큰을 사용해 컴포넌트를 생성할 수 있습니다:
+
+**프롬프트:**
+
+```
+디자인 토큰을 사용해서 사용자 프로필 카드 컴포넌트 만들어줘
+```
+
+**AI 응답 (MCP 없이):**
 
 ```tsx
 export function ProfileCard() {
@@ -243,7 +243,7 @@ export function ProfileCard() {
 }
 ```
 
-**AI Response (With MCP):**
+**AI 응답 (MCP 사용):**
 
 ```tsx
 import { tokens } from '@/design-system/tokens';
@@ -292,43 +292,43 @@ export function ProfileCard() {
 }
 ```
 
-Notice:
-- Zero hardcoded colors or spacing
-- All values reference actual design tokens
-- Component matches your design system exactly
-- No manual token replacement needed
+주목하세요:
+- 하드코딩된 색상이나 간격 없음
+- 모든 값이 실제 디자인 토큰 참조
+- 컴포넌트가 디자인 시스템과 정확히 일치
+- 수동 토큰 교체 불필요
 
-## Advanced MCP Usage Patterns
+## 고급 MCP 사용 패턴
 
-### Pattern 1: Component Knowledge Integration
+### 패턴 1: 컴포넌트 지식 통합
 
-framingui's MCP server exposes not just tokens but **component knowledge**—semantic metadata about when and how to use components.
+framingui의 MCP 서버는 토큰뿐만 아니라 **컴포넌트 지식**도 노출합니다. 컴포넌트를 언제 어떻게 사용하는지에 대한 시맨틱 메타데이터입니다.
 
-**Query component metadata:**
-
-```
-You: What's the difference between primary and ghost button variants?
-
-Claude: [Queries MCP component knowledge]
-
-Button Variants:
-- primary: Main call-to-action, high visual emphasis
-  - Use case: Primary action in a context (max one per screen)
-  - Tokens: button.bg.primary, button.fg.primary
-  - Constraint: Maximum one primary button per viewport
-
-- ghost: Low-emphasis action for secondary operations
-  - Use case: Actions that shouldn't compete with primary CTA
-  - Tokens: button.bg.ghost (transparent), button.fg.ghost
-  - Visual impact: Low (no background fill)
-```
-
-**Component generation with context:**
+**컴포넌트 메타데이터 쿼리:**
 
 ```
-You: Create a modal footer with save and cancel actions
+You: primary 버튼과 ghost 버튼 variant의 차이가 뭐야?
 
-Claude: [Understands from component knowledge that save = primary, cancel = ghost]
+Claude: [MCP 컴포넌트 지식 쿼리]
+
+버튼 Variant:
+- primary: 메인 콜투액션, 높은 시각적 강조
+  - 사용 사례: 컨텍스트 내 주요 액션 (화면당 최대 하나)
+  - 토큰: button.bg.primary, button.fg.primary
+  - 제약: 뷰포트당 최대 하나의 primary 버튼
+
+- ghost: 부수적 작업을 위한 낮은 강조 액션
+  - 사용 사례: primary CTA와 경쟁하면 안 되는 액션
+  - 토큰: button.bg.ghost (투명), button.fg.ghost
+  - 시각적 임팩트: 낮음 (배경 채움 없음)
+```
+
+**컨텍스트를 활용한 컴포넌트 생성:**
+
+```
+You: 저장과 취소 액션이 있는 모달 푸터 만들어줘
+
+Claude: [컴포넌트 지식에서 save = primary, cancel = ghost 이해]
 ```
 
 ```tsx
@@ -356,20 +356,20 @@ export function ModalFooter({ onSave, onCancel }) {
 }
 ```
 
-AI automatically:
-- Places primary button on the right (modal convention)
-- Uses ghost variant for cancel (low emphasis)
-- Applies correct spacing between buttons
-- Respects "max one primary per viewport" constraint
+AI가 자동으로:
+- primary 버튼을 오른쪽에 배치 (모달 관례)
+- cancel에 ghost variant 사용 (낮은 강조)
+- 버튼 사이에 올바른 간격 적용
+- "뷰포트당 최대 하나의 primary" 제약 준수
 
-### Pattern 2: Token Validation
+### 패턴 2: 토큰 검증
 
-Use MCP to validate existing code against your design system:
+MCP를 사용해 기존 코드를 디자인 시스템에 대해 검증하세요:
 
-**Prompt:**
+**프롬프트:**
 
 ```
-Validate this component for token compliance:
+이 컴포넌트의 토큰 준수를 검증해줘:
 
 const Card = () => (
   <div style={{ background: '#ffffff', padding: '16px' }}>
@@ -378,21 +378,21 @@ const Card = () => (
 );
 ```
 
-**AI Response:**
+**AI 응답:**
 
 ```
-Token compliance violations found:
+토큰 준수 위반 발견:
 
-1. Line 2: Hardcoded color `#ffffff`
-   → Replace with: tokens.bg.surface.base
+1. 2번 줄: 하드코딩된 색상 `#ffffff`
+   → 교체: tokens.bg.surface.base
 
-2. Line 2: Hardcoded spacing `16px`
-   → Replace with: tokens.spacing[4]
+2. 2번 줄: 하드코딩된 간격 `16px`
+   → 교체: tokens.spacing[4]
 
-3. Line 3: Hardcoded color `#1a1a1a`
-   → Replace with: tokens.fg.primary
+3. 3번 줄: 하드코딩된 색상 `#1a1a1a`
+   → 교체: tokens.fg.primary
 
-Suggested fix:
+수정 제안:
 ```
 
 ```tsx
@@ -408,17 +408,17 @@ const Card = () => (
 );
 ```
 
-### Pattern 3: Multi-Theme Generation
+### 패턴 3: 멀티 테마 생성
 
-Generate components that work across multiple themes:
+여러 테마에서 작동하는 컴포넌트 생성:
 
-**Prompt:**
+**프롬프트:**
 
 ```
-Create a theme switcher that toggles between light and dark themes
+라이트와 다크 테마를 토글하는 테마 스위처 만들어줘
 ```
 
-**AI Response (queries theme tokens via MCP):**
+**AI 응답 (MCP로 테마 토큰 쿼리):**
 
 ```tsx
 import { tokens } from '@/design-system/tokens';
@@ -452,7 +452,7 @@ export function ThemeSwitcher() {
 ```
 
 ```css
-/* AI knows to generate theme-aware CSS from token metadata */
+/* AI가 토큰 메타데이터에서 테마 인식 CSS 생성 */
 [data-theme='light'] {
   --bg-surface-base: oklch(0.98 0.01 240);
   --fg-primary: oklch(0.25 0.03 240);
@@ -464,24 +464,24 @@ export function ThemeSwitcher() {
 }
 ```
 
-AI automatically:
-- Generates theme-switching logic
-- Uses semantic tokens that adapt to theme
-- Creates corresponding CSS for both themes
-- Respects WCAG contrast requirements in both modes
+AI가 자동으로:
+- 테마 전환 로직 생성
+- 테마에 맞게 적응하는 시맨틱 토큰 사용
+- 양쪽 테마에 해당하는 CSS 생성
+- 양쪽 모드에서 WCAG 대비 요구사항 준수
 
-## Integrating with Existing Design Systems
+## 기존 디자인 시스템과 통합
 
-You don't need to use framingui's token generator—MCP works with any design token format.
+framingui의 토큰 생성기를 사용할 필요 없습니다. MCP는 모든 디자인 토큰 형식과 작동합니다.
 
-### From Existing Design Tokens
+### 기존 디자인 토큰에서
 
-If you already have design tokens (from Figma Tokens plugin or other sources):
+이미 디자인 토큰이 있다면 (Figma Tokens 플러그인이나 다른 소스에서):
 
 ```bash
-# Export your tokens as JSON
-# Structure them following W3C Design Token format
-# Or use framingui templates as a starting point
+# 토큰을 JSON으로 내보내기
+# W3C Design Token 형식을 따라 구조화
+# 또는 framingui 템플릿을 시작점으로 사용
 ```
 
 ```json
@@ -499,17 +499,17 @@ If you already have design tokens (from Figma Tokens plugin or other sources):
 }
 ```
 
-### From Style Dictionary
+### Style Dictionary에서
 
-If you use Style Dictionary:
+Style Dictionary를 사용한다면:
 
 ```bash
-# Build tokens with Style Dictionary
+# Style Dictionary로 토큰 빌드
 npm run build-tokens
 
-# Output: build/tokens.json
+# 출력: build/tokens.json
 
-# Point MCP to Style Dictionary output
+# MCP를 Style Dictionary 출력으로 지정
 ```
 
 ```json
@@ -526,15 +526,15 @@ npm run build-tokens
 }
 ```
 
-### From Tailwind Config
+### Tailwind Config에서
 
-If you use Tailwind CSS:
+Tailwind CSS를 사용한다면:
 
 ```bash
-# Extract tokens from tailwind.config.js
+# tailwind.config.js에서 토큰 추출
 npx @framingui/cli extract-tailwind
 
-# Output: tokens.json with Tailwind token mappings
+# 출력: Tailwind 토큰 매핑이 있는 tokens.json
 ```
 
 ```typescript
@@ -554,26 +554,26 @@ module.exports = {
   },
 };
 
-// MCP automatically reads Tailwind config and exposes as tokens
+// MCP가 자동으로 Tailwind config를 읽고 토큰으로 노출
 ```
 
-## Troubleshooting Common Issues
+## 일반적인 문제 해결
 
-### Issue 1: MCP Server Not Connecting
+### 문제 1: MCP 서버가 연결되지 않음
 
-**Symptom:** AI tool doesn't recognize MCP commands
+**증상:** AI 도구가 MCP 명령어를 인식하지 못함
 
-**Solution:**
+**해결책:**
 
 ```bash
-# Verify MCP server starts correctly
+# MCP 서버가 올바르게 시작되는지 확인
 npx @framingui/mcp-server --test
 
-# Check for errors in AI tool logs
+# AI 도구 로그에서 오류 확인
 # Claude Code: Help → Toggle Developer Tools → Console
-# Cursor: View → Output → Select "MCP Servers"
+# Cursor: View → Output → "MCP Servers" 선택
 
-# Ensure TEKTON_PROJECT_PATH is absolute
+# TEKTON_PROJECT_PATH가 절대 경로인지 확인
 {
   "env": {
     "TEKTON_PROJECT_PATH": "/absolute/path/to/project"
@@ -581,34 +581,34 @@ npx @framingui/mcp-server --test
 }
 ```
 
-### Issue 2: Tokens Not Found
+### 문제 2: 토큰을 찾을 수 없음
 
-**Symptom:** AI says "No tokens available" when querying
+**증상:** AI가 쿼리할 때 "사용 가능한 토큰 없음"이라고 함
 
-**Solution:**
+**해결책:**
 
 ```bash
-# Verify tokens.json exists and is valid JSON
+# tokens.json이 존재하고 유효한 JSON인지 확인
 cat tokens.json | jq
 
-# Check token file path in MCP config
-# Path should be relative to TEKTON_PROJECT_PATH
+# MCP 설정에서 토큰 파일 경로 확인
+# 경로는 TEKTON_PROJECT_PATH에 상대적이어야 함
 ```
 
-### Issue 3: AI Still Generates Hardcoded Values
+### 문제 3: AI가 여전히 하드코딩된 값 생성
 
-**Symptom:** AI generates `#ffffff` instead of token references
+**증상:** AI가 토큰 참조 대신 `#ffffff` 생성
 
-**Solution:**
+**해결책:**
 
-Add explicit instruction in your prompt:
+프롬프트에 명시적 지시 추가:
 
 ```
-Create a card component using ONLY design tokens from the MCP server.
-Do not use any hardcoded colors, spacing, or design values.
+MCP 서버의 디자인 토큰만 사용해서 카드 컴포넌트 만들어줘.
+하드코딩된 색상, 간격, 디자인 값은 사용하지 마.
 ```
 
-Or configure strict mode:
+또는 strict 모드 설정:
 
 ```json
 {
@@ -618,52 +618,52 @@ Or configure strict mode:
 }
 ```
 
-This makes MCP server return an error if AI tries to generate code without tokens.
+이렇게 하면 AI가 토큰 없이 코드를 생성하려 할 때 MCP 서버가 오류를 반환합니다.
 
 ## FAQ
 
-### Can I use MCP with AI tools other than Claude?
+### Claude 외의 AI 도구에서도 MCP를 사용할 수 있나요?
 
-Yes! MCP is an open standard. Any tool that supports Model Context Protocol can connect to framingui's MCP server. Currently supported:
+네! MCP는 오픈 표준입니다. Model Context Protocol을 지원하는 모든 도구가 framingui의 MCP 서버에 연결할 수 있습니다. 현재 지원:
 
-- Claude Code (official)
-- Cursor (experimental MCP support)
-- Cline / Windsurf (community support)
-- Any tool implementing MCP client specification
+- Claude Code (공식)
+- Cursor (실험적 MCP 지원)
+- Cline / Windsurf (커뮤니티 지원)
+- MCP 클라이언트 명세를 구현한 모든 도구
 
-### Does MCP slow down AI responses?
+### MCP가 AI 응답을 느리게 하나요?
 
-No. MCP queries happen in parallel with AI generation and typically complete in <50ms. The AI doesn't wait for MCP—it streams responses while fetching token data.
+아니요. MCP 쿼리는 AI 생성과 병렬로 수행되며 일반적으로 50ms 미만으로 완료됩니다. AI가 MCP를 기다리지 않습니다. 토큰 데이터를 가져오는 동안 응답을 스트리밍합니다.
 
-### What if my tokens change frequently?
+### 토큰이 자주 변경되면요?
 
-MCP reads tokens on-demand, so AI always sees the latest values. No need to restart your AI tool or re-configure MCP when tokens change. Just save your token files and AI will pick up changes on the next query.
+MCP가 토큰을 온디맨드로 읽으므로 AI는 항상 최신 값을 봅니다. 토큰이 변경될 때 AI 도구를 재시작하거나 MCP를 다시 설정할 필요 없습니다. 토큰 파일을 저장하면 AI가 다음 쿼리에서 변경사항을 가져옵니다.
 
-### Can AI generate new tokens via MCP?
+### AI가 MCP로 새 토큰을 생성할 수 있나요?
 
-Not yet. MCP currently provides read-only access to design tokens. Token generation still requires using framingui CLI or your existing design system workflow. Bi-directional MCP (read + write) is planned for a future release.
+아직은 아닙니다. MCP는 현재 디자인 토큰에 대한 읽기 전용 접근을 제공합니다. 토큰 생성은 여전히 framingui CLI나 기존 디자인 시스템 워크플로우를 사용해야 합니다. 양방향 MCP (읽기 + 쓰기)는 향후 릴리스에 계획되어 있습니다.
 
-### Does this work with component libraries like shadcn/ui?
+### shadcn/ui 같은 컴포넌트 라이브러리와 작동하나요?
 
-Yes! framingui's MCP server includes component knowledge for shadcn/ui components. When you ask AI to generate a component, it automatically:
+네! framingui의 MCP 서버는 shadcn/ui 컴포넌트에 대한 컴포넌트 지식을 포함합니다. AI에게 컴포넌트를 생성해달라고 하면 자동으로:
 
-1. Queries available shadcn components via MCP
-2. Selects the appropriate component variant
-3. Applies your design tokens to the component
-4. Follows shadcn's composition patterns
+1. MCP로 사용 가능한 shadcn 컴포넌트 쿼리
+2. 적절한 컴포넌트 variant 선택
+3. 컴포넌트에 디자인 토큰 적용
+4. shadcn의 컴포지션 패턴 따르기
 
-Example:
+예시:
 
 ```
-You: Create a data table with sorting
+You: 정렬 기능이 있는 데이터 테이블 만들어줘
 
-AI: [Queries MCP for DataTable component knowledge]
-    [Generates shadcn Table component with your tokens]
+AI: [MCP로 DataTable 컴포넌트 지식 쿼리]
+    [토큰이 적용된 shadcn Table 컴포넌트 생성]
 ```
 
-### How do I add custom component knowledge?
+### 커스텀 컴포넌트 지식을 어떻게 추가하나요?
 
-Create a `component-knowledge.json` file:
+`component-knowledge.json` 파일을 생성하세요:
 
 ```json
 {
@@ -671,7 +671,7 @@ Create a `component-knowledge.json` file:
     {
       "name": "CustomCard",
       "category": "layout",
-      "purpose": "Displays content in an elevated container",
+      "purpose": "elevated 컨테이너에 콘텐츠 표시",
       "variants": [
         {
           "name": "elevated",
@@ -686,7 +686,7 @@ Create a `component-knowledge.json` file:
 }
 ```
 
-Configure MCP to load it:
+MCP가 로드하도록 설정:
 
 ```json
 {
@@ -696,58 +696,58 @@ Configure MCP to load it:
 }
 ```
 
-Now AI will understand your custom components and use them in generated code.
+이제 AI가 커스텀 컴포넌트를 이해하고 생성된 코드에서 사용합니다.
 
-## Get Started with framingui MCP
+## framingui MCP 시작하기
 
-Ready to connect your design system to AI?
+디자인 시스템을 AI에 연결할 준비가 되셨나요?
 
-### Option 1: Try the Playground
+### 옵션 1: 플레이그라운드 체험
 
-Visit [framingui.com/studio](https://framingui.com/studio) to:
-- Generate design tokens from pre-built archetypes
-- Preview components with your tokens
-- Test MCP integration in the browser
+[framingui.com/studio](https://framingui.com/studio)를 방문해서:
+- 사전 구축된 아키타입에서 디자인 토큰 생성
+- 토큰으로 컴포넌트 미리보기
+- 브라우저에서 MCP 통합 테스트
 
-### Option 2: Install in Your Project
+### 옵션 2: 프로젝트에 설치
 
 ```bash
-# Install framingui
+# framingui 설치
 npm install @framingui/core @framingui/mcp-server
 
-# Initialize design tokens
+# 디자인 토큰 초기화
 npx @framingui/cli init
 
-# Configure MCP (see Step 3 above)
+# MCP 설정 (위의 3단계 참조)
 
-# Start generating on-brand code with AI
+# AI로 브랜드에 맞는 코드 생성 시작
 ```
 
-### Option 3: Join the Beta
+### 옵션 3: 베타 참여
 
-Get early access to advanced MCP features:
+고급 MCP 기능에 조기 접근:
 
-👉 **[Sign up for beta access](https://tally.so/r/7R2kz6)**
+👉 **[베타 액세스 신청](https://tally.so/r/7R2kz6)**
 
-Beta features include:
-- Bi-directional MCP (AI can propose token changes)
-- Visual token editor with AI suggestions
-- Multi-project token synchronization
-- Team collaboration on design systems
-
----
-
-**Documentation:**
-
-- [MCP Integration Guide](https://framingui.com/docs/mcp) — Complete setup documentation
-- [API Reference](https://framingui.com/docs/api) — MCP server API specification
-- [Component Knowledge](https://framingui.com/docs/components) — Available components and metadata
-
-**Community:**
-
-- [GitHub Discussions](https://github.com/framingui/discussions) — Ask questions
-- [Discord](https://framingui.com/discord) — Real-time help from the community
+베타 기능:
+- 양방향 MCP (AI가 토큰 변경 제안 가능)
+- AI 제안이 있는 비주얼 토큰 에디터
+- 다중 프로젝트 토큰 동기화
+- 디자인 시스템에서 팀 협업
 
 ---
 
-*Built with [framingui](https://framingui.com) — AI-powered design systems with MCP integration.*
+**문서:**
+
+- [MCP 통합 가이드](https://framingui.com/docs/mcp) — 완전한 설정 문서
+- [API 레퍼런스](https://framingui.com/docs/api) — MCP 서버 API 명세
+- [컴포넌트 지식](https://framingui.com/docs/components) — 사용 가능한 컴포넌트와 메타데이터
+
+**커뮤니티:**
+
+- [GitHub Discussions](https://github.com/framingui/discussions) — 질문하기
+- [Discord](https://framingui.com/discord) — 커뮤니티에서 실시간 도움
+
+---
+
+*[framingui](https://framingui.com)로 만들었습니다 — MCP 통합이 된 AI 기반 디자인 시스템.*

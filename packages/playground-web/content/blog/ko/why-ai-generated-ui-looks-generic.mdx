@@ -1,6 +1,6 @@
 ---
-title: "Why AI-Generated UI Looks Generic (And How to Fix It)"
-description: "Why AI-generated UIs from v0, Cursor, and ChatGPT all look the same—and how design system context fixes the consistency problem."
+title: "AI 생성 UI가 왜 획일화되어 보이는가 (그리고 해결 방법)"
+description: "v0, Cursor, ChatGPT의 AI 생성 UI가 왜 다 비슷해 보이는지—그리고 디자인 시스템 컨텍스트가 일관성 문제를 어떻게 해결하는지 알아봅니다."
 date: "2026-02-25"
 author:
   name: "FramingUI Team"
@@ -14,81 +14,81 @@ coverImage: ""
 published: true
 ---
 
-## You've Noticed This Too
+## 이것도 눈치채셨죠
 
-Open Twitter. Scroll through indie hacker showcases. Every AI-generated SaaS looks identical:
+트위터를 여세요. 인디 해커 쇼케이스를 스크롤하세요. 모든 AI 생성 SaaS가 똑같이 생겼습니다:
 
-- Same rounded corners
-- Same blue accent color
-- Same card layouts
-- Same button styles
-- Same "clean, modern" aesthetic
+- 같은 둥근 모서리
+- 같은 파란색 액센트
+- 같은 카드 레이아웃
+- 같은 버튼 스타일
+- 같은 "깔끔하고 현대적인" 미학
 
-It's not bad UI—it's actually quite good. But it's **generic**. If you saw three different products side by side, you couldn't tell which was which.
+나쁜 UI가 아닙니다—사실 꽤 괜찮습니다. 하지만 **획일화**되어 있습니다. 세 제품을 나란히 놓으면, 어느 것이 어느 것인지 구분할 수 없습니다.
 
-## The Real Problem: AI Has No Brand Context
+## 진짜 문제: AI에게 브랜드 컨텍스트가 없다
 
-When you prompt an AI to "create a user dashboard," here's what happens:
+"사용자 대시보드 만들어줘"라고 AI에 프롬프트하면 이런 일이 일어납니다:
 
 ```
-Your Prompt → AI's Training Data → Statistical Pattern Matching → Generic Output
+프롬프트 → AI 훈련 데이터 → 통계적 패턴 매칭 → 일반적인 출력
 ```
 
-The AI generates based on **frequency**, not **intention**. It produces what appears most often in its training data:
-- Rounded corners (because everyone uses them)
-- Blue primary colors (most common in SaaS)
-- Tailwind utility classes (popular in open-source projects)
-- Card-based layouts (ubiquitous pattern)
+AI는 **의도**가 아닌 **빈도**를 기반으로 생성합니다. 훈련 데이터에서 가장 자주 나타나는 것을 만들어냅니다:
+- 둥근 모서리 (모두가 쓰니까)
+- 파란색 primary 색상 (SaaS에서 가장 흔함)
+- Tailwind 유틸리티 클래스 (오픈소스에서 인기)
+- 카드 기반 레이아웃 (어디서나 볼 수 있는 패턴)
 
-**What the AI doesn't know:**
-- Your brand personality (playful vs. professional)
-- Your color palette (warm vs. cool tones)
-- Your spacing philosophy (dense vs. spacious)
-- Your component library (custom vs. generic)
+**AI가 모르는 것:**
+- 당신 브랜드의 성격 (장난스러움 vs. 전문적)
+- 당신 색상 팔레트 (따뜻함 vs. 차가움)
+- 당신 간격 철학 (밀도 높음 vs. 여유로움)
+- 당신 컴포넌트 라이브러리 (커스텀 vs. 일반)
 
-Result: Every output looks like "generic SaaS UI template #47."
+결과: 모든 출력이 "일반적인 SaaS UI 템플릿 #47"처럼 보입니다.
 
 ## TL;DR
 
-- **The Problem**: AI tools generate based on training data patterns, not your brand identity
-- **Why It Happens**: AI lacks context about your design system, so it defaults to generic patterns
-- **The Solution**: Provide design system context to AI through structured design tokens
-- **How framingui Helps**: Makes your design system machine-readable so AI generates on-brand UI
-- **Result**: Consistent, branded interfaces without manually fixing every component AI generates
+- **문제**: AI 도구는 브랜드 아이덴티티가 아닌 훈련 데이터 패턴을 기반으로 생성합니다
+- **왜 이런 일이**: AI는 디자인 시스템 컨텍스트가 없어서 일반적인 패턴으로 기본 설정됩니다
+- **해결책**: 구조화된 디자인 토큰으로 AI에게 디자인 시스템 컨텍스트를 제공합니다
+- **framingui의 도움**: 디자인 시스템을 기계 가독형으로 만들어 AI가 브랜드에 맞는 UI를 생성합니다
+- **결과**: AI가 생성하는 모든 컴포넌트를 수동으로 수정하지 않아도 일관되고 브랜드화된 인터페이스
 
-## The Anatomy of Generic AI UI
+## 획일화된 AI UI의 해부학
 
-Let's examine what AI generates without design context.
+디자인 컨텍스트 없이 AI가 생성하는 것을 살펴봅시다.
 
-### Example 1: The Generic Dashboard
+### 예시 1: 일반적인 대시보드
 
-**Prompt:**
+**프롬프트:**
 ```
-Create a user analytics dashboard
+사용자 분석 대시보드 만들어줘
 ```
 
-**AI Output (v0, Claude, ChatGPT):**
+**AI 출력 (v0, Claude, ChatGPT):**
 
 ```tsx
 export function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900 mb-6">대시보드</h1>
 
         <div className="grid grid-cols-3 gap-6">
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-gray-600 text-sm">Total Users</h3>
+            <h3 className="text-gray-600 text-sm">총 사용자</h3>
             <p className="text-3xl font-bold text-gray-900">2,543</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-gray-600 text-sm">Revenue</h3>
+            <h3 className="text-gray-600 text-sm">매출</h3>
             <p className="text-3xl font-bold text-gray-900">$45,231</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-gray-600 text-sm">Growth</h3>
+            <h3 className="text-gray-600 text-sm">성장률</h3>
             <p className="text-3xl font-bold text-green-600">+12.5%</p>
           </div>
         </div>
@@ -98,107 +98,107 @@ export function Dashboard() {
 }
 ```
 
-**What's wrong with this?**
+**이게 뭐가 문제일까요?**
 
-Nothing, technically. It works. But look closer:
+기술적으론 아무것도. 작동합니다. 하지만 자세히 보세요:
 
-- **Hardcoded colors**: `gray-50`, `gray-900`, `green-600` (not your brand colors)
-- **Arbitrary spacing**: `p-6`, `gap-6`, `mb-6` (not your spacing scale)
-- **Generic typography**: `text-2xl`, `text-3xl` (not your type system)
-- **Pattern overuse**: Rounded corners + shadow = seen everywhere
+- **하드코딩된 색상**: `gray-50`, `gray-900`, `green-600` (브랜드 색상 아님)
+- **임의의 간격**: `p-6`, `gap-6`, `mb-6` (간격 스케일 아님)
+- **일반적인 타이포그래피**: `text-2xl`, `text-3xl` (타입 시스템 아님)
+- **패턴 남용**: 둥근 모서리 + 그림자 = 어디서나 봄
 
-If your brand is:
-- **Warm and approachable**: This feels cold (gray palette)
-- **Bold and energetic**: This feels muted (low contrast)
-- **Minimal and sophisticated**: This feels cluttered (shadows + borders)
+만약 당신 브랜드가:
+- **따뜻하고 친근함**: 이건 차갑게 느껴짐 (회색 팔레트)
+- **대담하고 에너지**: 이건 밋밋하게 느껴짐 (낮은 대비)
+- **미니멀하고 세련됨**: 이건 어수선하게 느껴짐 (그림자 + 테두리)
 
-### Example 2: The Same Button, Different Projects
+### 예시 2: 같은 버튼, 다른 프로젝트
 
-AI generates nearly identical buttons across completely different brands:
+AI는 완전히 다른 브랜드에서 거의 동일한 버튼을 생성합니다:
 
 ```tsx
-// E-commerce store prompt
+// 이커머스 스토어 프롬프트
 <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-  Add to Cart
+  장바구니 담기
 </button>
 
-// Healthcare app prompt
+// 헬스케어 앱 프롬프트
 <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-  Book Appointment
+  예약하기
 </button>
 
-// Fintech dashboard prompt
+// 핀테크 대시보드 프롬프트
 <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-  Transfer Funds
+  송금하기
 </button>
 ```
 
-**Same button for:**
-- Buying sneakers
-- Booking a doctor
-- Moving money
+**같은 버튼으로:**
+- 운동화 구매
+- 병원 예약
+- 돈 이체
 
-Does that make sense? Of course not. But AI doesn't know better—it generates the **most statistically likely button** from its training data.
+말이 되나요? 당연히 아닙니다. 하지만 AI는 모릅니다—훈련 데이터에서 **통계적으로 가장 가능성 높은 버튼**을 생성합니다.
 
-## Why This Happens: The AI Training Problem
+## 왜 이런 일이: AI 훈련의 문제
 
-### AI Learns from Open-Source Codebases
+### AI는 오픈소스 코드베이스에서 학습합니다
 
-Most AI training data comes from:
-- **Open-source projects**: Heavily Tailwind-based, generic styling
-- **Tutorial code**: "Beginner-friendly" = minimal customization
-- **UI component libraries**: Designed for broad appeal, not specific brands
+대부분의 AI 훈련 데이터 출처:
+- **오픈소스 프로젝트**: Tailwind 기반이 많고 일반적인 스타일링
+- **튜토리얼 코드**: "초보자 친화적" = 최소한의 커스터마이징
+- **UI 컴포넌트 라이브러리**: 넓은 호소력을 위해 설계, 특정 브랜드용 아님
 
-When you ask AI to generate UI, it's essentially **averaging** all these sources. The result? The most common denominator—generic UI.
+AI에게 UI 생성을 요청하면, 본질적으로 이 모든 소스를 **평균**하는 것입니다. 결과? 가장 공통분모—획일화된 UI.
 
-### AI Doesn't Understand Design Intent
+### AI는 디자인 의도를 이해하지 못합니다
 
-Consider this design token:
+이 디자인 토큰을 보세요:
 
 ```css
 --color-primary: #3B82F6;
 ```
 
-**What a human designer knows:**
-- This blue conveys "trust and professionalism"
-- Use it for primary CTAs only (max one per screen)
-- Pair with neutral grays for balance
-- Reserve for high-priority actions
+**인간 디자이너가 아는 것:**
+- 이 파란색은 "신뢰와 전문성"을 전달
+- primary CTA에만 사용 (화면당 최대 1개)
+- 중립 회색과 균형 맞춰 사용
+- 고우선순위 액션에 사용
 
-**What AI sees:**
-- A hex color value
-- Statistical correlation: "appears with buttons"
-- Pattern: "often used for backgrounds"
+**AI가 보는 것:**
+- 헥스 색상 값
+- 통계적 상관관계: "버튼과 함께 나타남"
+- 패턴: "배경에 자주 사용"
 
-AI applies the token **mechanically**, not **semantically**. It doesn't understand *why* you chose that blue or *when* it should be used.
+AI는 토큰을 **의미론적**이 아닌 **기계적**으로 적용합니다. 그 파란색을 *왜* 선택했는지, *언제* 사용해야 하는지 이해하지 못합니다.
 
-### Context Window Limitations
+### 컨텍스트 윈도우 한계
 
-Even if you paste your entire design system into the prompt, you hit limits:
+전체 디자인 시스템을 프롬프트에 붙여넣어도 한계에 부딪힙니다:
 
-- **Token waste**: Design tokens consume thousands of tokens of context
-- **Context decay**: AI "forgets" tokens from earlier in the conversation
-- **Manual maintenance**: Every new chat requires re-pasting your design system
-- **Version drift**: AI uses old token values unless you update every conversation
+- **토큰 낭비**: 디자인 토큰이 수천 토큰의 컨텍스트를 소비
+- **컨텍스트 소멸**: AI가 대화 앞부분의 토큰을 "잊음"
+- **수동 유지보수**: 새 채팅마다 디자인 시스템 다시 붙여넣기 필요
+- **버전 드리프트**: 모든 대화에서 업데이트하지 않으면 AI가 오래된 토큰 값 사용
 
-## The Solution: Machine-Readable Design Systems
+## 해결책: 기계 가독형 디자인 시스템
 
-To fix generic AI output, we need **three things**:
+획일화된 AI 출력을 고치려면 **세 가지**가 필요합니다:
 
-### 1. Structured Design Tokens
+### 1. 구조화된 디자인 토큰
 
-Transform human-readable documentation into machine-readable data.
+사람 읽는 문서를 기계 가독형 데이터로 변환합니다.
 
-**Before (Human Documentation):**
+**전 (사람용 문서):**
 
 ```markdown
-## Colors
+## 색상
 
-Use our primary blue (#3B82F6) for call-to-action buttons.
-Use gray-900 for headings and gray-600 for body text.
+콜투액션 버튼에는 primary 블루(#3B82F6)를 사용하세요.
+제목에는 gray-900, 본문 텍스트에는 gray-600을 사용하세요.
 ```
 
-**After (Machine-Readable Tokens):**
+**후 (기계 가독형 토큰):**
 
 ```json
 {
@@ -226,25 +226,25 @@ Use gray-900 for headings and gray-600 for body text.
 }
 ```
 
-Now AI can:
-- Query tokens programmatically (no context window waste)
-- Understand semantic meaning ("call-to-action" = primary color)
-- Respect constraints ("max-one-per-viewport")
-- Apply tokens consistently across all generations
+이제 AI가:
+- 토큰을 프로그래밍적으로 쿼리 (컨텍스트 윈도우 낭비 없음)
+- 의미론적 의미 이해 ("call-to-action" = primary 색상)
+- 제약 준수 ("max-one-per-viewport")
+- 모든 생성에서 토큰을 일관되게 적용
 
-### 2. Component Knowledge Graph
+### 2. 컴포넌트 지식 그래프
 
-Tell AI not just *what* components exist, but *when* and *why* to use them.
+AI에게 컴포넌트가 존재하는 것뿐 아니라, *언제*와 *왜* 사용하는지 알려줍니다.
 
-**Before (Component Library Docs):**
+**전 (컴포넌트 라이브러리 문서):**
 
 ```markdown
-## Button
+## 버튼
 
-Available variants: primary, secondary, ghost
+사용 가능한 변형: primary, secondary, ghost
 ```
 
-**After (Component Knowledge):**
+**후 (컴포넌트 지식):**
 
 ```json
 {
@@ -254,7 +254,7 @@ Available variants: primary, secondary, ghost
         {
           "name": "primary",
           "visualImpact": "high",
-          "purpose": "Main call-to-action in a given context",
+          "purpose": "주어진 컨텍스트의 메인 콜투액션",
           "constraints": ["max-one-per-viewport"],
           "tokens": {
             "bg": "button.bg.primary",
@@ -269,7 +269,7 @@ Available variants: primary, secondary, ghost
         {
           "name": "ghost",
           "visualImpact": "low",
-          "purpose": "Low-emphasis secondary action",
+          "purpose": "저강조 보조 액션",
           "tokens": {
             "bg": "transparent",
             "fg": "button.fg.ghost"
@@ -281,37 +281,37 @@ Available variants: primary, secondary, ghost
 }
 ```
 
-Now AI understands:
-- **Primary buttons**: High visual impact, use sparingly (max one per screen)
-- **Ghost buttons**: Low visual impact, use for secondary actions
-- **Slot affinity**: Primary buttons belong in modal footers (0.9 score), not headers (0.2 score)
+이제 AI가 이해합니다:
+- **Primary 버튼**: 높은 시각적 임팩트, 절제해서 사용 (화면당 최대 1개)
+- **Ghost 버튼**: 낮은 시각적 임팩트, 보조 액션에 사용
+- **슬롯 친화도**: Primary 버튼은 모달 푸터에 어울림 (0.9 점수), 헤더에는 아님 (0.2 점수)
 
-Result: AI generates a modal with "Save" as primary button and "Cancel" as ghost—without you specifying.
+결과: AI가 모달을 생성할 때 "저장"은 primary 버튼으로, "취소"는 ghost로—직접 지정하지 않아도.
 
-### 3. AI-Readable Access (MCP)
+### 3. AI 가독형 접근 (MCP)
 
-Connect AI directly to your design system using Model Context Protocol.
+Model Context Protocol로 AI를 디자인 시스템에 직접 연결합니다.
 
-**Traditional Workflow:**
-
-```
-1. Copy design tokens from documentation
-2. Paste into AI prompt
-3. AI generates component
-4. Manually verify token usage
-5. Fix hardcoded values AI missed
-6. Repeat for every component
-```
-
-**MCP Workflow:**
+**기존 워크플로우:**
 
 ```
-1. AI queries design system via MCP
-2. AI generates component with correct tokens
-3. Done
+1. 문서에서 디자인 토큰 복사
+2. AI 프롬프트에 붙여넣기
+3. AI가 컴포넌트 생성
+4. 토큰 사용 수동 검증
+5. AI가 놓친 하드코딩 값 수정
+6. 모든 컴포넌트마다 반복
 ```
 
-**Example MCP Integration:**
+**MCP 워크플로우:**
+
+```
+1. AI가 MCP로 디자인 시스템 쿼리
+2. AI가 올바른 토큰으로 컴포넌트 생성
+3. 끝
+```
+
+**MCP 통합 예시:**
 
 ```json
 // .claude/mcp.json
@@ -329,17 +329,17 @@ Connect AI directly to your design system using Model Context Protocol.
 }
 ```
 
-Now when you prompt:
+이제 프롬프트하면:
 
 ```
-Create a user profile card
+사용자 프로필 카드 만들어줘
 ```
 
-AI automatically:
-1. Queries available components (`Card`, `Avatar`, `Badge`, `Button`)
-2. Fetches token values (colors, spacing, typography)
-3. Checks component constraints (button placement rules)
-4. Generates on-brand code using your actual design tokens
+AI가 자동으로:
+1. 사용 가능한 컴포넌트 쿼리 (`Card`, `Avatar`, `Badge`, `Button`)
+2. 토큰 값 가져오기 (색상, 간격, 타이포그래피)
+3. 컴포넌트 제약 확인 (버튼 배치 규칙)
+4. 실제 디자인 토큰으로 브랜드에 맞는 코드 생성
 
 ```tsx
 import { Card, Avatar, Badge, Button } from '@/components';
@@ -386,34 +386,34 @@ export function ProfileCard({ user }) {
         display: 'flex',
         gap: tokens.spacing[2],
       }}>
-        <Button variant="primary">View Profile</Button>
-        <Button variant="ghost">Message</Button>
+        <Button variant="primary">프로필 보기</Button>
+        <Button variant="ghost">메시지</Button>
       </div>
     </Card>
   );
 }
 ```
 
-**Zero hardcoded values. All tokens from your design system.**
+**하드코딩 값 제로. 모든 토큰은 디자인 시스템에서.**
 
-## Real-World Examples: Generic vs. Branded
+## 실제 예시: 일반 vs. 브랜드화
 
-### Example 1: E-Commerce Product Card
+### 예시 1: 이커머스 상품 카드
 
-**Generic AI Output:**
+**일반 AI 출력:**
 
 ```tsx
 <div className="bg-white p-4 rounded-lg shadow">
   <img src="/product.jpg" className="w-full h-48 object-cover rounded" />
-  <h3 className="mt-4 text-lg font-semibold">Product Name</h3>
+  <h3 className="mt-4 text-lg font-semibold">상품명</h3>
   <p className="text-gray-600">$99.99</p>
   <button className="mt-4 w-full bg-blue-500 text-white py-2 rounded">
-    Add to Cart
+    장바구니 담기
   </button>
 </div>
 ```
 
-**Branded AI Output (with design context):**
+**브랜드화 AI 출력 (디자인 컨텍스트 포함):**
 
 ```tsx
 <Card
@@ -442,7 +442,7 @@ export function ProfileCard({ user }) {
         color: tokens.fg.primary,
       }}
     >
-      Product Name
+      상품명
     </Heading>
     <Price
       style={{
@@ -465,30 +465,30 @@ export function ProfileCard({ user }) {
       borderRadius: tokens.radius.md,
     }}
   >
-    Add to Cart
+    장바구니 담기
   </Button>
 </Card>
 ```
 
-**Differences:**
-- Uses your brand's spacing scale (not arbitrary `mt-4`)
-- Uses your accent color for price (not generic `gray-600`)
-- Uses your border style (subtle borders vs. shadow)
-- Uses semantic components (`ProductImage`, `Price`) not generic divs
+**차이점:**
+- 브랜드 간격 스케일 사용 (임의의 `mt-4` 아님)
+- 가격에 액센트 색상 사용 (일반적인 `gray-600` 아님)
+- 브랜드 테두리 스타일 사용 (그림자 대신 섬세한 테두리)
+- 의미론적 컴포넌트 사용 (`ProductImage`, `Price`) 일반 div 아님
 
-### Example 2: Dashboard Card
+### 예시 2: 대시보드 카드
 
-**Generic AI Output:**
+**일반 AI 출력:**
 
 ```tsx
 <div className="bg-white p-6 rounded-lg shadow-sm">
-  <h3 className="text-sm text-gray-600 mb-2">Total Revenue</h3>
+  <h3 className="text-sm text-gray-600 mb-2">총 매출</h3>
   <p className="text-3xl font-bold text-gray-900">$124,500</p>
-  <p className="text-sm text-green-600 mt-2">↑ 12.5% from last month</p>
+  <p className="text-sm text-green-600 mt-2">↑ 지난달 대비 12.5%</p>
 </div>
 ```
 
-**Branded AI Output (fintech brand - professional dark theme):**
+**브랜드화 AI 출력 (핀테크 브랜드 - 전문적인 다크 테마):**
 
 ```tsx
 <StatCard
@@ -497,7 +497,7 @@ export function ProfileCard({ user }) {
     padding: tokens.spacing[6],
     background: tokens.bg.surface.elevated,
     border: `1px solid ${tokens.border.default}`,
-    borderRadius: tokens.radius.sm, // Minimal radius for professional feel
+    borderRadius: tokens.radius.sm, // 전문적 느낌을 위한 최소 반경
   }}
 >
   <StatLabel
@@ -508,7 +508,7 @@ export function ProfileCard({ user }) {
       letterSpacing: '0.05em',
     }}
   >
-    Total Revenue
+    총 매출
   </StatLabel>
   <StatValue
     style={{
@@ -532,68 +532,68 @@ export function ProfileCard({ user }) {
     }}
   >
     <Icon name="trending-up" />
-    12.5% from last month
+    지난달 대비 12.5%
   </StatChange>
 </StatCard>
 ```
 
-**Differences:**
-- Professional dark theme (elevated surface vs. white)
-- Minimal rounded corners (financial = serious)
-- Uppercase label with letter spacing (sophistication)
-- Semantic color for growth (not hardcoded `green-600`)
-- Uses brand-specific components (`StatCard`, `StatLabel`, `StatValue`)
+**차이점:**
+- 전문적인 다크 테마 (흰색 대신 elevated surface)
+- 최소 둥근 모서리 (금융 = 진지함)
+- 자간이 있는 대문자 라벨 (세련됨)
+- 성장에 시맨틱 색상 (하드코딩된 `green-600` 아님)
+- 브랜드별 컴포넌트 사용 (`StatCard`, `StatLabel`, `StatValue`)
 
-## How framingui Makes Your UI Consistent
+## framingui가 UI 일관성을 만드는 방법
 
-framingui solves the generic AI problem with three layers:
+framingui는 세 계층으로 획일화된 AI 문제를 해결합니다:
 
-### Layer 1: Deterministic Token Generation
+### 계층 1: 결정론적 토큰 생성
 
-Generate design tokens algorithmically with WCAG compliance built in.
+WCAG 준수가 내장된 알고리즘으로 디자인 토큰을 생성합니다.
 
 ```typescript
 import { generateTokensFromArchetype } from '@framingui/token-generator';
 
 const archetype = {
   name: "fintech-professional",
-  primaryColor: { l: 0.45, c: 0.13, h: 240 }, // Deep blue
-  neutralTone: "tinted", // Slightly tinted grays
-  contrast: "high", // Fintech = accessibility-first
-  borderRadius: "minimal", // Professional = subtle
+  primaryColor: { l: 0.45, c: 0.13, h: 240 }, // 딥 블루
+  neutralTone: "tinted", // 약간 틴트된 회색
+  contrast: "high", // 핀테크 = 접근성 우선
+  borderRadius: "minimal", // 전문적 = 미묘함
 };
 
 const tokens = await generateTokensFromArchetype(archetype, {
-  wcagLevel: 'AAA', // Stricter than standard AA
+  wcagLevel: 'AAA', // 표준 AA보다 엄격
   generateDarkMode: true,
 });
 
-// Result: 100+ tokens with guaranteed WCAG compliance
-// All tokens follow your brand personality
+// 결과: WCAG 준수가 보장된 100개 이상 토큰
+// 모든 토큰이 브랜드 성격을 따름
 ```
 
-### Layer 2: Component Knowledge System
+### 계층 2: 컴포넌트 지식 시스템
 
-Transform components into AI-understandable metadata.
+컴포넌트를 AI가 이해하는 메타데이터로 변환합니다.
 
 ```typescript
 export const StatCardKnowledge = {
   name: "StatCard",
   category: "data-display",
-  purpose: "Display key metrics with context",
+  purpose: "컨텍스트와 함께 핵심 지표 표시",
   visualImpact: "medium",
 
   variants: [
     {
       name: "elevated",
-      purpose: "Stand out from page background",
+      purpose: "페이지 배경에서 돋보이게",
       tokens: {
         bg: "bg.surface.elevated",
         border: "border.default",
       },
       slotAffinity: {
-        dashboard_grid: 0.95, // Perfect for dashboard grids
-        modal: 0.1, // Almost never in modals
+        dashboard_grid: 0.95, // 대시보드 그리드에 완벽
+        modal: 0.1, // 모달에는 거의 없음
       }
     }
   ],
@@ -606,23 +606,23 @@ export const StatCardKnowledge = {
 };
 ```
 
-Now AI knows:
-- StatCards belong in dashboard grids (0.95 affinity)
-- They need a label and value (required slots)
-- They can show a change indicator (optional slot)
+이제 AI가 알게 됩니다:
+- StatCard는 대시보드 그리드에 어울림 (0.95 친화도)
+- 라벨과 값이 필요 (필수 슬롯)
+- 변화 지표를 보여줄 수 있음 (선택 슬롯)
 
-### Layer 3: MCP Integration
+### 계층 3: MCP 통합
 
-Connect AI directly to your design system.
+AI를 디자인 시스템에 직접 연결합니다.
 
 ```bash
-# Install framingui
+# framingui 설치
 npm install @framingui/core @framingui/mcp-server
 
-# Initialize design tokens
+# 디자인 토큰 초기화
 npx @framingui/cli init
 
-# Configure MCP
+# MCP 설정
 # .claude/mcp.json
 {
   "servers": {
@@ -633,104 +633,104 @@ npx @framingui/cli init
   }
 }
 
-# AI now has access to:
-# - All design tokens
-# - Component knowledge
-# - Usage constraints
-# - Slot affinity scores
+# AI가 이제 접근:
+# - 모든 디자인 토큰
+# - 컴포넌트 지식
+# - 사용 제약
+# - 슬롯 친화도 점수
 ```
 
-**Result:**
+**결과:**
 
 ```
-You: Create a dashboard with revenue metrics
+당신: 매출 지표가 있는 대시보드 만들어줘
 
-AI: [Queries tekton MCP]
-    [Finds: StatCard component, dashboard_grid slot, fintech tokens]
-    [Generates on-brand dashboard using your design system]
+AI: [FramingUI MCP 쿼리]
+    [찾음: StatCard 컴포넌트, dashboard_grid 슬롯, fintech 토큰]
+    [디자인 시스템으로 브랜드에 맞는 대시보드 생성]
 ```
 
-Every component AI generates:
-- Uses your brand colors (not generic blue)
-- Uses your spacing scale (not arbitrary padding)
-- Uses your components (not generic divs)
-- Respects your constraints (max one primary CTA)
+AI가 생성하는 모든 컴포넌트가:
+- 브랜드 색상 사용 (일반적인 파란색 아님)
+- 간격 스케일 사용 (임의 패딩 아님)
+- 당신의 컴포넌트 사용 (일반 div 아님)
+- 제약 준수 (primary CTA 최대 1개)
 
-## Before/After: Real Project Transformation
+## 전후 비교: 실제 프로젝트 변환
 
-**Project:** SaaS analytics dashboard
+**프로젝트:** SaaS 분석 대시보드
 
-**Before framingui (generic AI output):**
-- 47 unique color values in codebase (should be 12 tokens)
-- 28 different spacing values (should be 9 tokens)
-- Inconsistent button styles across 15 components
-- 3 different "primary blue" colors (`#3B82F6`, `#2563EB`, `#1D4ED8`)
-- Time spent fixing AI output: 2-3 hours per day
+**framingui 전 (일반 AI 출력):**
+- 코드베이스에 47개 고유 색상 값 (12개 토큰이어야 함)
+- 28개 다른 간격 값 (9개 토큰이어야 함)
+- 15개 컴포넌트에서 일관되지 않은 버튼 스타일
+- 3개의 다른 "primary blue" 색상 (`#3B82F6`, `#2563EB`, `#1D4ED8`)
+- AI 출력 수정에 들인 시간: 하루 2-3시간
 
-**After framingui (design system context):**
-- 12 color tokens used consistently (100% compliance)
-- 9 spacing tokens from semantic scale
-- All buttons use component variants (primary, ghost, link)
-- One primary blue (`oklch(0.45 0.13 240)`) everywhere
-- Time spent fixing AI output: 0 minutes (AI generates correctly first time)
+**framingui 후 (디자인 시스템 컨텍스트):**
+- 12개 색상 토큰 일관되게 사용 (100% 준수)
+- 의미론적 스케일의 9개 간격 토큰
+- 모든 버튼이 컴포넌트 변형 사용 (primary, ghost, link)
+- 하나의 primary blue (`oklch(0.45 0.13 240)`) 어디서나
+- AI 출력 수정에 들인 시간: 0분 (AI가 처음부터 올바르게 생성)
 
-**Developer testimonial:**
+**개발자 후기:**
 
-> "Before framingui, I spent half my time fixing what AI generated—replacing hardcoded colors, adjusting spacing, making buttons consistent. Now AI generates production-ready code that matches our design system exactly. I went from fighting AI to trusting it."
+> "framingui 전에는 AI가 생성한 것을 수정하는 데 절반의 시간을 썼습니다—하드코딩 색상 교체, 간격 조정, 버튼 일관성 맞추기. 이제 AI가 디자인 시스템과 정확히 일치하는 프로덕션 레디 코드를 생성합니다. AI와 싸우던 것에서 신뢰하게 되었습니다."
 >
-> — Sarah Chen, Indie Developer
+> — Sarah Chen, 인디 개발자
 
 ## FAQ
 
-### Can I use framingui with my existing design system?
+### 기존 디자인 시스템과 framingui를 쓸 수 있나요?
 
-Yes! framingui integrates with:
-- **Figma Tokens**: Import token JSON from Figma Tokens plugin
-- **Style Dictionary**: Point MCP to your Style Dictionary output
-- **Tailwind CSS**: Extract tokens from `tailwind.config.js`
-- **Custom tokens**: Any JSON format with color/spacing/typography values
+네! framingui는 다음과 통합됩니다:
+- **Figma Tokens**: Figma Tokens 플러그인에서 토큰 JSON 가져오기
+- **Style Dictionary**: Style Dictionary 출력에 MCP 연결
+- **Tailwind CSS**: `tailwind.config.js`에서 토큰 추출
+- **커스텀 토큰**: 색상/간격/타이포그래피 값이 있는 모든 JSON 포맷
 
-### Does this work with all AI tools?
+### 모든 AI 도구와 작동하나요?
 
-framingui's MCP server works with:
-- **Claude Code** (official support)
-- **Cursor** (experimental MCP support)
-- **Cline / Windsurf** (community support)
-- Any tool implementing Model Context Protocol
+framingui의 MCP 서버는 다음과 작동합니다:
+- **Claude Code** (공식 지원)
+- **Cursor** (실험적 MCP 지원)
+- **Cline / Windsurf** (커뮤니티 지원)
+- Model Context Protocol을 구현하는 모든 도구
 
-For AI tools without MCP support, you can:
-- Copy token JSON into prompts (manual but effective)
-- Use framingui's code validation tool to check AI output
-- Generate initial components with MCP-enabled tools, then iterate elsewhere
+MCP 지원이 없는 AI 도구의 경우:
+- 토큰 JSON을 프롬프트에 복사 (수동이지만 효과적)
+- framingui의 코드 검증 도구로 AI 출력 확인
+- MCP 지원 도구로 초기 컴포넌트 생성 후 다른 곳에서 반복
 
-### Will AI still make design mistakes?
+### AI가 여전히 디자인 실수를 하나요?
 
-AI with design system context makes fewer mistakes, but it's not perfect:
+디자인 시스템 컨텍스트가 있는 AI는 실수가 적지만, 완벽하지 않습니다:
 
-**Mistakes eliminated:**
-- ✅ Hardcoded colors and spacing
-- ✅ Inconsistent component usage
-- ✅ Accessibility violations (WCAG tokens built-in)
-- ✅ Wrong component variants
+**제거된 실수:**
+- ✅ 하드코딩된 색상과 간격
+- ✅ 일관되지 않은 컴포넌트 사용
+- ✅ 접근성 위반 (WCAG 토큰 내장)
+- ✅ 잘못된 컴포넌트 변형
 
-**Mistakes still possible:**
-- ⚠️ Layout logic errors (e.g., flex vs. grid choice)
-- ⚠️ Component composition issues (nesting errors)
-- ⚠️ Business logic bugs (unrelated to design)
+**여전히 가능한 실수:**
+- ⚠️ 레이아웃 논리 오류 (예: flex vs. grid 선택)
+- ⚠️ 컴포넌트 구성 문제 (중첩 오류)
+- ⚠️ 비즈니스 논리 버그 (디자인과 무관)
 
-framingui solves **design consistency**, not all possible bugs.
+framingui는 **디자인 일관성**을 해결합니다. 모든 가능한 버그는 아닙니다.
 
-### How much does it cost?
+### 비용은 얼마인가요?
 
-framingui is **open-source and free**:
-- MIT license
-- No usage limits
-- No API keys required (MCP runs locally)
-- Works with any AI tool (no vendor lock-in)
+framingui는 **오픈소스이며 무료**입니다:
+- MIT 라이선스
+- 사용 제한 없음
+- API 키 불필요 (MCP가 로컬에서 실행)
+- 모든 AI 도구와 작동 (벤더 종속 없음)
 
-### Can this enforce design system compliance automatically?
+### 디자인 시스템 준수를 자동으로 강제할 수 있나요?
 
-Yes! framingui includes build-time validation:
+네! framingui는 빌드 타임 검증을 포함합니다:
 
 ```typescript
 // esbuild.config.js
@@ -739,38 +739,38 @@ import { tektonPlugin } from '@framingui/esbuild-plugin';
 export default {
   plugins: [
     tektonPlugin({
-      strict: true, // Fail build on violations
-      threshold: 100, // Require 100% token compliance
+      strict: true, // 위반 시 빌드 실패
+      threshold: 100, // 100% 토큰 준수 요구
     })
   ]
 };
 ```
 
-This prevents:
-- Hardcoded colors/spacing from reaching production
-- AI (or human) developers bypassing design system
-- Design drift over time
+이것이 방지하는 것:
+- 하드코딩 색상/간격이 프로덕션에 도달
+- AI (또는 인간) 개발자가 디자인 시스템 우회
+- 시간 지나며 디자인 드리프트
 
-Build fails if any component violates your design system. Works for both AI-generated and human-written code.
+디자인 시스템을 위반하면 빌드가 실패합니다. AI 생성 코드와 인간 작성 코드 모두에 작동합니다.
 
-## Get Started
+## 시작하기
 
-Ready to stop generating generic UI?
+획일화된 UI 생성을 멈출 준비가 되셨나요?
 
-### Step 1: Install framingui
+### 1단계: framingui 설치
 
 ```bash
 npm install @framingui/core @framingui/mcp-server
 ```
 
-### Step 2: Generate Your Design Tokens
+### 2단계: 디자인 토큰 생성
 
 ```bash
 npx @framingui/cli init
-# Interactive prompts for brand personality, colors, spacing
+# 브랜드 성격, 색상, 간격에 대한 대화형 프롬프트
 ```
 
-### Step 3: Configure MCP
+### 3단계: MCP 설정
 
 ```json
 // .claude/mcp.json
@@ -784,36 +784,36 @@ npx @framingui/cli init
 }
 ```
 
-### Step 4: Generate On-Brand UI
+### 4단계: 브랜드에 맞는 UI 생성
 
 ```
-You: Create a user dashboard
+당신: 사용자 대시보드 만들어줘
 
-AI: [Queries your design system]
-    [Generates using YOUR tokens, YOUR components, YOUR brand]
+AI: [디자인 시스템 쿼리]
+    [당신의 토큰, 당신의 컴포넌트, 당신의 브랜드로 생성]
 ```
 
-### Join the Beta
+### 베타 참여
 
-Get early access to advanced features:
+고급 기능에 조기 접근하세요:
 
-👉 **[Sign up for beta access](https://tally.so/r/7R2kz6)**
+👉 **[베타 액세스 신청](https://tally.so/r/7R2kz6)**
 
-Beta features:
-- Visual token editor
-- Real-time design system preview
-- Team collaboration
-- Multi-project token sync
+베타 기능:
+- 시각적 토큰 편집기
+- 실시간 디자인 시스템 프리뷰
+- 팀 협업
+- 멀티 프로젝트 토큰 동기화
 
 ---
 
-**Resources:**
+**리소스:**
 
-- [Documentation](https://framingui.com/docs) — Complete setup guides
-- [Component Catalog](https://framingui.com/components) — Browse available components
-- [MCP Integration](https://framingui.com/docs/mcp) — Connect AI tools
-- [GitHub](https://github.com/framingui) — Open-source repository
+- [문서](https://framingui.com/docs) — 완전한 설정 가이드
+- [컴포넌트 카탈로그](https://framingui.com/components) — 사용 가능한 컴포넌트 둘러보기
+- [MCP 통합](https://framingui.com/docs/mcp) — AI 도구 연결
+- [GitHub](https://github.com/framingui) — 오픈소스 저장소
 
 ---
 
-*Built with [framingui](https://framingui.com) — Stop generating generic UI. Generate your brand.*
+*[framingui](https://framingui.com)로 제작 — 획일화된 UI 생성을 멈추고. 당신의 브랜드를 생성하세요.*

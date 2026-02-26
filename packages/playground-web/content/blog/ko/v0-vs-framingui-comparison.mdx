@@ -1,0 +1,749 @@
+---
+title: "v0 vs. framingui: 어떤 AI UI 생성 도구를 사용해야 할까요?"
+description: "v0과 framingui의 공정한 비교. 각 AI UI 도구가 언제 적합한지, 어떤 문제를 해결하는지 알아봅니다."
+date: "2026-02-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - comparison
+  - v0
+  - ai
+  - design-system
+category: "Comparison"
+coverImage: ""
+published: true
+---
+
+## AI UI 생성 도구의 솔직한 현실
+
+[v0 by Vercel](https://v0.dev)과 [framingui](https://framingui.com) 모두 AI로 UI를 생성합니다. 하지만 둘은 **다른 문제**를 **다른 사용자**를 위해 해결합니다.
+
+이 글은 "뭐가 더 좋은가"를 따지지 않습니다. 상황에 맞는 도구 선택을 돕는 가이드입니다.
+
+## TL;DR: 빠른 선택 가이드
+
+**v0을 선택하세요:**
+- 디자인에서 코드까지 한 곳에서 해결하고 싶을 때
+- 시각적 편집과 즉시 프리뷰가 필요할 때
+- 디자인 시스템 없이 새 프로젝트를 시작할 때
+- shadcn/ui 컴포넌트를 선호할 때 (이미 통합됨)
+- 브랜드 일관성보다 속도가 중요할 때
+
+**framingui를 선택하세요:**
+- 커스텀 디자인 시스템이 있거나 원할 때
+- AI가 브랜드에 맞는 컴포넌트를 일관되게 생성해야 할 때
+- Claude Code나 Cursor로 개발할 때
+- 디자인 시스템 준수를 자동으로 강제하고 싶을 때
+- 기존 브랜드 아이덴티티에 맞는 컴포넌트가 필요할 때
+
+**둘 다 함께 사용하세요:**
+- v0의 시각적 인터페이스로 프로토타입 제작
+- 컴포넌트 내보내기 후 framingui 토큰으로 브랜드 일관성 확보
+- 탐색은 v0, 프로덕션은 framingui
+
+## v0이란?
+
+v0은 Vercel의 AI 기반 UI 생성기입니다. 원하는 것을 설명하면 shadcn/ui로 React 컴포넌트를 생성합니다.
+
+**핵심 기능:**
+- 시각적 인터페이스: AI가 생성하는 동안 실시간 프리뷰
+- 대화형 편집: 대화로 컴포넌트 수정
+- shadcn/ui 통합: 인기 있는 오픈소스 컴포넌트 라이브러리 사용
+- 즉시 배포: Vercel에 바로 배포
+- 이미지-코드 변환: 디자인 목업 업로드하면 React 컴포넌트 생성
+
+**v0이 잘하는 것:**
+- **빠른 프로토타이핑**: 아이디어에서 작동하는 UI까지 몇 분이면 충분
+- **shadcn/ui 학습**: shadcn 컴포넌트 활용법을 실제로 확인
+- **협업**: 생성된 UI를 이해관계자와 즉시 공유
+- **반복 속도**: 코드 건드리지 않고 시각적으로 디자인 편집
+
+**v0 워크플로우 예시:**
+
+```
+당신: 3개 티어가 있는 가격 페이지 만들어줘
+
+v0: [shadcn Card 컴포넌트로 3열 가격 레이아웃 생성]
+    [라이브 프리뷰 표시]
+
+당신: 가운데 티어 강조해줘
+
+v0: [가운데 카드에 테두리와 그림자 추가]
+    [프리뷰 실시간 업데이트]
+
+당신: 코드 내보내기
+
+v0: [shadcn import가 포함된 완전한 React 컴포넌트 제공]
+```
+
+## framingui란?
+
+framingui는 AI가 브랜드를 이해하도록 만드는 디자인 시스템 생성기입니다. AI 도구가 쿼리할 수 있는 기계 가독형 디자인 토큰과 컴포넌트 지식을 생성합니다.
+
+**핵심 기능:**
+- 디자인 토큰 생성: 접근성 있는 색상 팔레트와 간격 스케일 생성
+- 컴포넌트 지식 시스템: AI에게 컴포넌트를 언제, 어떻게 사용하는지 가르침
+- MCP 통합: AI 도구를 디자인 시스템에 직접 연결
+- 토큰 강제: 컴파일 시점에 하드코딩된 값 방지
+- 프레임워크 무관: Next.js뿐 아니라 모든 React 설정에서 작동
+
+**framingui가 잘하는 것:**
+- **브랜드 일관성**: AI가 디자인 시스템에 맞는 컴포넌트 생성
+- **디자인 시스템 구축**: 과학적으로 토큰 생성 및 관리 (OKLCH, WCAG)
+- **AI 도구 통합**: Claude Code, Cursor 등 MCP 호환 도구와 연동
+- **강제 적용**: 디자인 시스템 위반 자동 방지
+
+**framingui 워크플로우 예시:**
+
+```
+# 설정 (1회)
+npx @framingui/cli init  # 디자인 토큰 생성
+# Claude Code / Cursor에서 MCP 설정
+
+# 사용
+당신: 가격 페이지 만들어줘
+
+Claude: [MCP로 디자인 토큰 쿼리]
+        [당신의 브랜드 색상과 간격으로 가격 페이지 생성]
+        [모든 컴포넌트가 디자인 시스템 토큰 사용]
+
+# 결과: 첫 시도에 브랜드에 맞는 가격 페이지
+```
+
+## 나란히 비교
+
+| 기능 | v0 | framingui |
+|---------|-------|-----------|
+| **시각적 프리뷰** | ✅ 실시간 프리뷰 | ❌ 시각적 인터페이스 없음 (코드만) |
+| **디자인 시스템** | ❌ 일반적 (shadcn 기본값) | ✅ 커스텀 (당신의 브랜드) |
+| **AI 도구** | ✅ 내장 (v0 채팅) | ✅ Claude/Cursor 등과 연동 |
+| **토큰 관리** | ❌ 수동 Tailwind 설정 | ✅ 생성 + 검증 |
+| **컴포넌트 라이브러리** | ✅ shadcn/ui (사전 구축) | ⚠️ 직접 준비 (또는 FramingUI 컴포넌트 사용) |
+| **브랜드 일관성** | ⚠️ 수동 조정 필요 | ✅ 자동 (AI가 토큰 읽음) |
+| **배포** | ✅ Vercel에 원클릭 | ❌ 기존 배포 방식 사용 |
+| **접근성** | ⚠️ shadcn 기본값에 의존 | ✅ 토큰 생성에 WCAG 내장 |
+| **비용** | 💰 유료 (무료 티어 제한적) | 💰 베타 무료 (첫 템플릿) |
+| **학습 곡선** | ✅ 낮음 (시각적 인터페이스) | ⚠️ 중간 (MCP 설정 필요) |
+| **반복 속도** | ✅ 빠름 (시각적 편집) | ⚠️ 중간 (프롬프트 기반) |
+| **코드 품질** | ⚠️ 일반적, 정리 필요할 수 있음 | ✅ 처음부터 브랜드에 맞음 |
+| **팀 협업** | ✅ 라이브 프리뷰 공유 | ⚠️ Git으로 공유 (표준 워크플로우) |
+| **버전 관리** | ⚠️ Git으로 수동 내보내기 | ✅ Git에 디자인 토큰 포함 |
+
+## 심층 분석: 언제 무엇을 사용할까
+
+### 시나리오 1: 새 프로젝트 시작
+
+**아직 디자인 시스템이 없습니다. 빠르게 출시해야 합니다.**
+
+**권장: MVP는 v0, 확장은 framingui**
+
+**1단계 (1-2주): v0으로 프로토타입**
+
+```
+v0 사용 목적:
+- 이해관계자와 제품 아이디어 검증
+- 초기 UI 컴포넌트 빠르게 생성
+- 레이아웃과 인터랙션 테스트
+- 투자자/고객과 라이브 데모 공유
+```
+
+**v0이 이기는 이유:**
+- 시각적 프리뷰로 이해관계자 동의 빠르게 확보
+- 디자인 시스템 없음 = framingui가 강제할 것도 없음
+- shadcn/ui는 MVP에 충분
+
+**2단계 (3-4주): framingui로 디자인 시스템 구축**
+
+```
+framingui 사용 목적:
+- 브랜드 맞춤 색상 팔레트 생성
+- 의미론적 간격과 타이포그래피 스케일 생성
+- v0 컴포넌트를 디자인 토큰 사용으로 전환
+- 지속적 개발을 위한 MCP 설정
+```
+
+**마이그레이션 워크플로우:**
+
+```tsx
+// 전 (v0 출력)
+<Card className="p-6 bg-white rounded-lg">
+  <h2 className="text-2xl font-bold text-gray-900">제목</h2>
+  <p className="text-gray-600">설명</p>
+</Card>
+
+// 후 (framingui 토큰)
+<Card
+  style={{
+    padding: tokens.spacing[6],
+    background: tokens.bg.surface.base,
+    borderRadius: tokens.radius.lg,
+  }}
+>
+  <h2 style={{
+    fontSize: tokens.fontSize['2xl'],
+    fontWeight: tokens.fontWeight.bold,
+    color: tokens.fg.primary,
+  }}>
+    제목
+  </h2>
+  <p style={{ color: tokens.fg.secondary }}>설명</p>
+</Card>
+```
+
+**결과:** v0으로 빠른 MVP, framingui로 지속 가능한 코드베이스.
+
+### 시나리오 2: 기존 디자인 시스템 보유
+
+**Figma 디자인, 브랜드 가이드라인, 색상 팔레트가 있습니다.**
+
+**권장: framingui만 (v0은 디자인 시스템과 충돌)**
+
+**framingui가 이기는 이유:**
+
+v0은 기본 스타일의 shadcn/ui 컴포넌트를 출력합니다. 브랜드에 맞추려면:
+
+1. v0에서 컴포넌트 생성
+2. 모든 색상을 브랜드 색상으로 교체
+3. 모든 간격을 간격 스케일로 교체
+4. 모든 타이포그래피를 타입 시스템으로 교체
+5. 모든 테두리 반경을 테두리 스타일로 교체
+
+**컴포넌트당 소요 시간:** 10-20분
+
+framingui 사용 시:
+
+1. Claude Code로 컴포넌트 생성 (framingui MCP 활성화)
+2. 끝 (AI가 디자인 토큰 자동 사용)
+
+**컴포넌트당 소요 시간:** 0분
+
+**설정 워크플로우:**
+
+```bash
+# framingui.com/studio에서 템플릿 선택
+# 그다음 프로젝트에서 MCP 설정:
+# .claude/mcp.json (또는 cursor 설정)
+{
+  "servers": {
+    "tekton": {
+      "command": "npx",
+      "args": ["@framingui/mcp-server"]
+    }
+  }
+}
+
+# AI가 이제 템플릿의 디자인 시스템으로 생성
+# 토큰 포함: 색상, 간격, 타이포그래피, 엘리베이션, 모션
+```
+
+**결과:** AI가 생성하는 모든 컴포넌트가 브랜드 아이덴티티에 맞음.
+
+### 시나리오 3: React와 shadcn/ui 학습 중
+
+**React가 처음입니다. 예제로 배우고 싶습니다.**
+
+**권장: v0 (최고의 학습 도구)**
+
+**v0이 이기는 이유:**
+
+- **시각적 피드백**: 각 컴포넌트가 무엇을 하는지 정확히 확인
+- **shadcn 모범 사례**: shadcn 컴포넌트 패턴 학습
+- **반복**: "더 크게 해줘"라고 하면 시각적 변화 확인
+- **코드 검토**: 생성된 코드를 분석해 React 패턴 학습
+
+**학습 워크플로우:**
+
+```
+v0 프롬프트: 사용자 프로필 페이지 만들어줘
+
+[v0이 Avatar, Card, Badge, Button으로 프로필 페이지 생성]
+
+코드 분석:
+- shadcn 컴포넌트 구성 방법
+- Tailwind 유틸리티 작동 방식
+- React 컴포넌트 구조화 방법
+
+반복:
+"설정 아이콘 버튼 추가해줘"
+[v0이 shadcn Button + Lucide 아이콘으로 IconButton 추가]
+
+학습:
+- 아이콘 라이브러리 사용법
+- 컴포넌트 조합 방법
+- props 전달 방법
+```
+
+**framingui로 전환할 때:**
+
+React와 컴포넌트 패턴을 이해하면, framingui로 학습을 확장하세요:
+- 디자인 시스템 아키텍처
+- 토큰 기반 스타일링
+- OKLCH 색상 공간
+- 접근성 기본 원칙 (WCAG)
+
+### 시나리오 4: 멀티 브랜드 제품 구축
+
+**화이트라벨 소프트웨어를 만듭니다. 각 고객마다 커스텀 브랜딩이 필요합니다.**
+
+**권장: framingui (v0은 멀티 브랜드 미지원)**
+
+**framingui가 이기는 이유:**
+
+v0은 하나의 디자인(shadcn 기본값)만 출력합니다. 여러 브랜드를 지원하려면:
+
+- ❌ 각 브랜드마다 수동으로 Tailwind 테마 생성
+- ❌ 각 고객마다 수동으로 색상 변수 관리
+- ❌ 빌드 시 수동으로 스타일 교체
+- ❌ 브랜드별 버그 발생 위험 높음
+
+framingui는 멀티 브랜드를 기본 지원합니다:
+
+```typescript
+// 브랜드 A (핀테크 - 전문적인 다크)
+const brandA = generateTokensFromArchetype({
+  name: "fintech-pro",
+  primaryColor: { l: 0.45, c: 0.13, h: 240 },
+  neutralTone: "tinted",
+  contrast: "high",
+});
+
+// 브랜드 B (웰니스 - 따뜻하고 부드러운)
+const brandB = generateTokensFromArchetype({
+  name: "wellness-care",
+  primaryColor: { l: 0.65, c: 0.12, h: 140 },
+  neutralTone: "warm",
+  contrast: "medium",
+});
+
+// 같은 컴포넌트, 다른 토큰
+// 코드 변경 불필요
+```
+
+**멀티 브랜드 워크플로우:**
+
+```bash
+# 각 브랜드별 토큰 생성
+npx @framingui/cli init --brand clientA
+npx @framingui/cli init --brand clientB
+
+# 환경 변수로 빌드
+TEKTON_BRAND=clientA npm run build  # clientA 토큰 사용
+TEKTON_BRAND=clientB npm run build  # clientB 토큰 사용
+
+# 단일 코드베이스, 다중 브랜드
+```
+
+**결과:** 하나의 코드베이스로 무제한 브랜드 확장.
+
+### 시나리오 5: 디자인 팀과 협업
+
+**Figma로 목업을 만드는 디자이너가 있습니다.**
+
+**권장: framingui (Figma → 토큰 → AI)**
+
+**framingui가 이기는 이유:**
+
+**v0 워크플로우 (단절됨):**
+
+```
+1. 디자이너가 Figma에서 목업 생성
+2. 개발자가 목업을 v0에 설명
+3. v0이 컴포넌트 생성 (Figma와 정확히 안 맞음)
+4. 개발자가 수동으로 Figma에 맞게 조정
+5. 디자이너가 변경 요청
+6. 2-5단계 반복
+```
+
+**framingui 워크플로우 (연결됨):**
+
+```
+1. 디자인 방향에 맞는 FramingUI 템플릿 선택
+2. 디자인 토큰 커스터마이징 (색상, 간격, 타이포그래피)
+3. AI가 토큰으로 컴포넌트 생성
+4. 컴포넌트가 디자인 시스템과 일관되게 매칭
+5. 토큰 업데이트 → 모든 컴포넌트 자동 업데이트
+```
+
+**디자인-개발 핸드오프:**
+
+```
+디자이너 업데이트:
+- Primary color: #3B82F6 → #2563EB
+
+기존 워크플로우:
+- 개발자가 코드베이스에서 #3B82F6 검색
+- 47개 발생 (일부 하드코딩, 일부 Tailwind)
+- 각각 수동 업데이트
+- 3개 놓침 → 시각적 버그
+
+framingui 워크플로우:
+- 개발자가 한 곳에서 토큰 값 업데이트
+- 모든 컴포넌트가 토큰 참조, 하드코딩된 색상 없음
+- 버그 제로
+```
+
+**결과:** 디자인과 개발이 동기화 유지.
+
+### 시나리오 6: 컴포넌트 라이브러리 구축
+
+**팀을 위한 재사용 가능한 컴포넌트 라이브러리를 만들고 있습니다.**
+
+**권장: framingui (v0은 앱 코드 생성, 라이브러리 아님)**
+
+**framingui가 이기는 이유:**
+
+v0은 애플리케이션 코드(페이지, 기능, 레이아웃)를 생성합니다. 컴포넌트 라이브러리 개발용이 아닙니다.
+
+framingui가 생성하는 것:
+- 디자인 토큰 (모든 프레임워크에서 사용 가능)
+- 컴포넌트 계약 (검증 규칙)
+- 의미론적 메타데이터 (언제 무엇을 사용할지)
+- TypeScript 타입 (타입 안전한 컴포넌트 props)
+
+**컴포넌트 라이브러리 워크플로우:**
+
+```bash
+# 디자인 토큰 생성
+npx @framingui/cli init
+
+# 컴포넌트 지식 생성
+npx @framingui/cli component add Button \
+  --category action \
+  --variants primary,secondary,ghost
+
+# TypeScript 타입 생성
+npx @framingui/cli generate-types
+
+# 배포용 내보내기
+npx @framingui/cli build --format esm,cjs
+```
+
+**출력:**
+
+```
+dist/
+├── tokens.css          # CSS 변수
+├── tokens.json         # 토큰 메타데이터
+├── tokens.d.ts         # TypeScript 타입
+├── components/         # 컴포넌트 라이브러리
+│   ├── button.tsx
+│   ├── card.tsx
+│   └── input.tsx
+└── knowledge/          # AI용 컴포넌트 지식
+    └── catalog.json
+```
+
+컴포넌트 라이브러리에 AI가 올바르게 사용하는 데 필요한 모든 것이 포함됩니다.
+
+## 둘 다 함께 사용할 수 있나요?
+
+**네! 방법은 이렇습니다:**
+
+### 워크플로우 1: v0으로 프로토타입, framingui로 프로덕션화
+
+```
+1. v0에서 빠른 프로토타입
+   → 이해관계자 피드백 받기
+   → 레이아웃과 인터랙션 테스트
+
+2. v0 컴포넌트 코드 내보내기
+
+3. v0 Tailwind 클래스를 framingui 토큰으로 교체
+   → 전: className="bg-blue-500 p-4"
+   → 후: style={{ background: tokens.bg.primary, padding: tokens.spacing[4] }}
+
+4. framingui MCP로 계속 개발
+   → AI가 브랜드에 맞는 새 컴포넌트 생성
+   → 빌드 시 토큰 준수 강제
+```
+
+### 워크플로우 2: 영감은 v0, 생성은 framingui
+
+```
+1. v0에서 레이아웃 아이디어 생성
+   → "가격 페이지 레이아웃 5개 보여줘"
+   → 마음에 드는 것 선택
+
+2. v0 출력 스크린샷
+
+3. 스크린샷으로 Claude Code에 프롬프트
+   → "이 레이아웃을 우리 디자인 토큰으로 생성해줘"
+   → Claude가 framingui MCP 쿼리
+   → Claude가 브랜드에 맞는 버전 생성
+
+4. 결과: v0 디자인 + 당신의 브랜드 토큰
+```
+
+### 워크플로우 3: 페이지는 v0, 컴포넌트는 framingui
+
+```
+v0 사용:
+- 마케팅 페이지 (빠르고 일반적이어도 괜찮음)
+- 내부 도구 (강한 브랜딩 불필요)
+- 프로토타입과 데모
+
+framingui 사용:
+- 고객 대면 제품 (브랜드 일관성 필요)
+- 컴포넌트 라이브러리 (디자인 시스템 필요)
+- 멀티 브랜드 기능 (토큰 교체 필요)
+```
+
+## 가격 비교
+
+### v0 가격
+
+**무료 티어:**
+- 월 200회 AI 생성
+- 퍼블릭 프로젝트만
+- 커뮤니티 지원
+
+**프로 티어 ($20/월):**
+- 월 1000회 AI 생성
+- 프라이빗 프로젝트
+- 우선 지원
+
+**엔터프라이즈:**
+- 무제한 생성
+- 커스텀 배포
+- SLA 보장
+
+### framingui 가격
+
+**오픈소스 (무료):**
+- 무제한 토큰 생성
+- MCP 서버 포함
+- 전체 기능 접근
+- 커뮤니티 지원
+
+**유료 티어 없음 (아직):**
+- 모든 것이 오픈소스
+- MIT 라이선스
+- 셀프 호스팅
+- 벤더 종속 없음
+
+**향후 (계획됨):**
+- 호스팅 MCP 서버 (팀용)
+- 시각적 토큰 편집기
+- Figma 플러그인
+- 프리미엄 지원
+
+## 마이그레이션 가이드
+
+### v0에서 framingui로
+
+이미 v0을 사용 중이신가요? 마이그레이션 방법입니다:
+
+**1단계: v0 컴포넌트 내보내기**
+
+```tsx
+// v0이 이것을 생성했습니다:
+export function PricingCard() {
+  return (
+    <Card className="p-6 bg-white rounded-lg shadow-md">
+      <h3 className="text-2xl font-bold text-gray-900">프로 플랜</h3>
+      <p className="text-gray-600 mt-2">$29/월</p>
+      <Button className="mt-6 w-full bg-blue-500 text-white">
+        시작하기
+      </Button>
+    </Card>
+  );
+}
+```
+
+**2단계: framingui 초기화**
+
+```bash
+npx @framingui/cli init
+# 브랜드 색상, 간격, 타이포그래피 정의
+```
+
+**3단계: Tailwind 클래스를 토큰으로 교체**
+
+```tsx
+import { tokens } from '@/design-system/tokens';
+
+export function PricingCard() {
+  return (
+    <Card
+      style={{
+        padding: tokens.spacing[6],
+        background: tokens.bg.surface.base,
+        borderRadius: tokens.radius.lg,
+        boxShadow: tokens.shadow.md,
+      }}
+    >
+      <h3 style={{
+        fontSize: tokens.fontSize['2xl'],
+        fontWeight: tokens.fontWeight.bold,
+        color: tokens.fg.primary,
+      }}>
+        프로 플랜
+      </h3>
+      <p style={{
+        color: tokens.fg.secondary,
+        marginTop: tokens.spacing[2],
+      }}>
+        $29/월
+      </p>
+      <Button
+        style={{
+          marginTop: tokens.spacing[6],
+          width: '100%',
+          background: tokens.button.bg.primary,
+          color: tokens.button.fg.primary,
+        }}
+      >
+        시작하기
+      </Button>
+    </Card>
+  );
+}
+```
+
+**4단계: 토큰 준수 강제**
+
+```typescript
+// esbuild.config.js
+import { tektonPlugin } from '@framingui/esbuild-plugin';
+
+export default {
+  plugins: [
+    tektonPlugin({
+      strict: true, // 새 하드코딩된 값 방지
+    })
+  ]
+};
+```
+
+### framingui에서 v0으로
+
+framingui 사용 후 v0을 써야 하나요?
+
+**사용 사례:** 특정 기능에 v0의 시각적 편집기를 사용하고 싶음.
+
+**워크플로우:**
+
+```
+1. v0에서 초기 레이아웃 생성
+2. v0 코드 내보내기
+3. v0 클래스를 FramingUI 토큰으로 교체 (위 마이그레이션 참조)
+4. 새 컴포넌트는 framingui MCP로 계속 개발
+```
+
+**또는:** 일회성 프로토타입은 v0, 프로덕션은 framingui.
+
+## FAQ
+
+### v0이 framingui보다 나은가요?
+
+어느 쪽이 "더 나은" 게 아닙니다—다른 문제를 해결합니다:
+- **v0**: 시각적 프로토타이핑과 빠른 반복
+- **framingui**: 디자인 시스템 생성과 AI 통합
+
+필요에 따라 선택하세요 (상단 결정 가이드 참조).
+
+### shadcn/ui를 framingui와 함께 쓸 수 있나요?
+
+네! framingui는 모든 컴포넌트 라이브러리와 작동합니다:
+
+```bash
+# shadcn 컴포넌트 설치
+npx shadcn-ui@latest init
+
+# FramingUI 토큰 생성
+npx @framingui/cli init
+
+# 둘 다 함께 사용
+import { Button } from '@/components/ui/button';
+import { tokens } from '@/design-system/tokens';
+
+<Button style={{ background: tokens.button.bg.primary }}>
+  클릭하세요
+</Button>
+```
+
+shadcn 컴포넌트 + FramingUI 토큰 = 최고의 조합.
+
+### framingui에 v0 같은 시각적 인터페이스가 있나요?
+
+아직 없습니다. framingui는 현재 다음에 집중합니다:
+- 토큰 생성용 CLI
+- AI 통합용 MCP
+- 코드 우선 워크플로우
+
+**로드맵:**
+- 시각적 토큰 편집기 (브라우저에서)
+- 컴포넌트 프리뷰 갤러리
+- 실시간 디자인 시스템 플레이그라운드
+
+### v0이 내 디자인 시스템을 읽을 수 있나요?
+
+아니요. v0은 기본 스타일의 shadcn/ui 컴포넌트를 생성합니다. 내보내기 후 디자인 토큰을 수동으로 적용해야 합니다.
+
+framingui는 MCP로 이 문제를 해결합니다—AI가 디자인 시스템을 프로그래밍적으로 읽습니다.
+
+### 프로토타이핑에 어느 쪽이 더 빠른가요?
+
+**v0**이 초기 프로토타입에 더 빠릅니다:
+- 시각적 프리뷰 (변경 사항 즉시 확인)
+- 설정 불필요 (바로 프롬프트 시작)
+- 공유 가능한 링크 (Git 없이 협업)
+
+**framingui**가 프로덕션 개발에 더 빠릅니다:
+- 토큰 교체 불필요 (AI가 처음부터 토큰 사용)
+- 디자인 드리프트 없음 (자동 준수)
+- 수동 정리 불필요 (처음부터 브랜드에 맞음)
+
+### v0을 셀프 호스팅할 수 있나요?
+
+아니요. v0은 Vercel의 클로즈드 소스 호스팅 서비스입니다.
+
+framingui는 오픈소스이며 셀프 호스팅입니다 (로컬에서 실행).
+
+## 최종 권장
+
+**대부분의 팀에게:** 프로토타이핑은 v0, 프로덕션은 framingui로 마이그레이션.
+
+**이미 디자인 시스템이 있다면:** framingui만 사용.
+
+**학습 중이라면:** v0으로 배우고, framingui로 레벨업.
+
+**제품 회사를 구축 중이라면:** 장기적 일관성을 위해 framingui에 투자.
+
+---
+
+## 시작하기
+
+### v0 체험
+
+[v0.dev](https://v0.dev)에서 즉시 UI 생성을 시작하세요.
+
+### framingui 체험
+
+```bash
+npm install @framingui/core @framingui/mcp-server
+npx @framingui/cli init
+```
+
+Claude Code나 Cursor에서 MCP 설정하세요 ([설정 가이드](https://framingui.com/docs/mcp) 참조).
+
+### framingui 베타 참여
+
+시각적 편집기와 고급 기능에 조기 접근하세요:
+
+👉 **[베타 액세스 신청](https://tally.so/r/7R2kz6)**
+
+---
+
+**리소스:**
+
+- [framingui 문서](https://framingui.com/docs) — 완전한 설정 가이드
+- [v0 문서](https://v0.dev/docs) — Vercel 공식 문서
+- [컴포넌트 비교](https://framingui.com/vs/v0) — 상세 기능 매트릭스
+- [마이그레이션 가이드](https://framingui.com/docs/migration/v0) — 단계별 v0 → framingui
+
+---
+
+*이 글은 독립적인 비교입니다. v0을 존중하며 많은 경우에 추천합니다. framingui는 v0이 해결하도록 설계되지 않은 특정 문제—디자인 시스템 일관성—을 해결하기 위해 존재합니다.*
+
+*[framingui](https://framingui.com)로 제작 — 브랜드 일관성이 중요할 때.*
