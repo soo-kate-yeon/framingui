@@ -48,13 +48,18 @@ npx @framingui/mcp-server init
 
 ## Documentation
 
-- /docs - Overview
-- /docs/quick-start - 5 minute guide
-- /docs/installation - Package setup
-- /docs/mcp - AI tool integration
+- /docs?utm_source=ai&utm_medium=llms&utm_content=docs - Overview
+- /docs/quick-start?utm_source=ai&utm_medium=llms&utm_content=quick-start - 5 minute guide
+- /docs/installation?utm_source=ai&utm_medium=llms&utm_content=installation - Package setup
+- /docs/mcp?utm_source=ai&utm_medium=llms&utm_content=mcp - AI tool integration
 
 ## Links
 
-- Website: https://framingui.com
-- Studio: https://framingui.com/studio
-- Beta: https://tally.so/r/7R2kz6
+- Website: https://framingui.com?utm_source=ai&utm_medium=llms&utm_content=home
+- Explore: https://framingui.com/explore?utm_source=ai&utm_medium=llms&utm_content=explore
+- Free Trial: https://framingui.com/explore?utm_source=ai&utm_medium=llms&utm_content=trial
+
+## Try It Now
+
+Start your 3-day free trial - no credit card required.
+https://framingui.com/explore?utm_source=ai&utm_medium=llms&utm_content=cta
