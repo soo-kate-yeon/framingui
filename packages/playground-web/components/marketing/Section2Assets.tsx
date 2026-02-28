@@ -79,60 +79,6 @@ export const MCPVersatilityAsset = () => {
   );
 };
 
-// --- Design System Core Asset (Explode) ---
-export const DesignSystemCoreAsset = () => {
-  return (
-    <div className="relative w-full aspect-square bg-white rounded-2xl border border-slate-100 flex items-center justify-center overflow-hidden group">
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-        }}
-      />
-
-      <div className="relative w-full h-full flex items-center justify-center scale-75">
-        {/* Layer 3: Code Background */}
-        <motion.div
-          className="absolute w-40 h-16 bg-slate-900/5 rounded-lg border border-slate-900/10 p-2"
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 0.5, y: -100 }}
-          transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
-        >
-          <div className="w-full h-2 bg-slate-300 rounded mb-1" />
-          <div className="w-2/3 h-2 bg-slate-200 rounded" />
-        </motion.div>
-
-        {/* Layer 2: Constraints Label */}
-        <motion.div
-          className="absolute z-10 w-44 h-20 border-2 border-dashed border-blue-400 rounded-2xl flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1.2 }}
-          transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
-        >
-          <div className="absolute -top-4 left-0 bg-blue-500 text-white text-[8px] px-1.5 py-0.5 rounded font-mono shadow-sm">
-            radius: 1rem
-          </div>
-          <div className="absolute -bottom-4 right-0 bg-blue-500 text-white text-[8px] px-1.5 py-0.5 rounded font-mono shadow-sm">
-            padding: 1.5rem
-          </div>
-        </motion.div>
-
-        {/* Layer 1: Core Component */}
-        <motion.div
-          className="relative z-20 px-8 py-4 bg-slate-900 text-white rounded-2xl shadow-2xl font-bold flex items-center gap-2"
-          whileHover={{ scale: 1.05 }}
-        >
-          <div className="w-2 h-2 rounded-full bg-blue-400" />
-          Primary Button
-        </motion.div>
-      </div>
-
-      {/* Removed bottom label */}
-    </div>
-  );
-};
 
 // --- TS Code Export Asset ---
 const codeLines = [
