@@ -1,10 +1,9 @@
-/* global console */
-
+/* eslint-disable */
 import fs from 'fs';
 import path from 'path';
 const themesDir = path.resolve('.moai/themes/generated');
 const themes = fs.readdirSync(themesDir).filter(f => f.endsWith('.json'));
-let missingComponents = [
+const missingComponents = [
   'avatar',
   'checkbox',
   'progress',
@@ -161,9 +160,13 @@ themes.forEach(themeFile => {
       recipes[component] = additionalRecipes[component];
     }
   }
-  if (!theme.tokens) theme.tokens = {};
+  if (!theme.tokens) {
+    theme.tokens = {};
+  }
   theme.tokens.recipes = recipes;
-  if (theme.recipes) delete theme.recipes;
+  if (theme.recipes) {
+    delete theme.recipes;
+  }
   fs.writeFileSync(filePath, JSON.stringify(theme, null, 4));
   console.log(`Updated ${themeFile}`);
 });

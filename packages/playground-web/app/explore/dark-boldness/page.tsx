@@ -1,6 +1,16 @@
 'use client';
 
-import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
+import {
+  DollarSign,
+  Users,
+  Activity,
+  Menu,
+  ChevronRight,
+  CreditCard,
+  X,
+  ArrowUpRight,
+  Zap,
+} from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
@@ -117,6 +127,22 @@ export default function DarkBoldnessDemo() {
               className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
             />
           </button>
+
+          <div className="h-[1px] bg-[var(--tekton-border-default)] my-2 mx-4" />
+
+          <Link
+            href="/explore/dark-boldness/trading"
+            className="text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
+          >
+            <div className="flex items-center gap-2">
+              <Zap size={16} className="electric-blue" />
+              <span>{locale === 'ko' ? '트레이딩 인터페이스' : 'Trading Interface'}</span>
+            </div>
+            <ArrowUpRight
+              size={16}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+            />
+          </Link>
         </nav>
       </aside>
 
@@ -154,6 +180,16 @@ export default function DarkBoldnessDemo() {
             >
               {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
             </button>
+            <Link
+              href="/explore/dark-boldness/trading"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] border-t border-[var(--tekton-border-default)] mt-2 pt-6"
+            >
+              <div className="flex items-center gap-2">
+                <Zap size={20} className="electric-blue" />
+                <span>{locale === 'ko' ? '트레이딩 인터페이스' : 'Trading Interface'}</span>
+              </div>
+            </Link>
           </nav>
         </div>
       )}

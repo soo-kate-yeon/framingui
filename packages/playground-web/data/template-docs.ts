@@ -695,6 +695,18 @@ export function HeroSection() {
     ],
     examples: [
       {
+        title: 'High-Performance Trading Interface',
+        titleKo: '고성능 트레이딩 인터페이스',
+        description: 'Elite trading dashboard with real-time chart, order book, and list views.',
+        descriptionKo: '실시간 차트, 오더북, 리스트 뷰가 포함된 엘리트 트레이딩 대시보드입니다.',
+        code: `import { DarkBoldnessTradingPage } from "@/components/explore/dark-boldness/DarkBoldnessTradingPage";
+
+export default function App() {
+  return <DarkBoldnessTradingPage />;
+}`,
+        language: 'tsx',
+      },
+      {
         title: 'Workout Progress Dashboard',
         titleKo: '운동 진행 대시보드',
         description: 'Visualize daily workout goals with vibrant progress bars.',
