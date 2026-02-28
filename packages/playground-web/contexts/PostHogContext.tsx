@@ -21,6 +21,7 @@ import { trackFunnelHomeEntered, trackFunnelSectionEntered } from '@/lib/analyti
  * Internal 유저 필터링 상수
  */
 const INTERNAL_EMAIL_PATTERNS = [
+  'soo.kate.yeon',
   'sooyeon',
   'framingui.com',
   'tekton',
