@@ -32,6 +32,7 @@ interface VerifySuccessResponse {
   licenses: Array<{
     themeId: string;
     tier: string;
+    type: 'trial' | 'individual' | 'creator';
     isActive: boolean;
     expiresAt: string | null;
   }>;
@@ -69,6 +70,7 @@ interface UserLicense {
   user_id: string;
   theme_id: string;
   tier: string;
+  type: 'trial' | 'individual' | 'creator';
   is_active: boolean;
   expires_at: string | null;
 }
@@ -283,7 +285,7 @@ export async function GET(request: NextRequest) {
     // 8. user_licenses 조회
     const { data: licenses, error: licensesError } = await supabase
       .from('user_licenses')
-      .select('id, user_id, theme_id, tier, is_active, expires_at')
+      .select('id, user_id, theme_id, tier, type, is_active, expires_at')
       .eq('user_id', matchedKey.user_id)
       .eq('is_active', true)
       .returns<UserLicense[]>();
@@ -321,6 +323,7 @@ export async function GET(request: NextRequest) {
       licenses: activeLicenses.map((license) => ({
         themeId: license.theme_id,
         tier: license.tier,
+        type: license.type,
         isActive: license.is_active,
         expiresAt: license.expires_at,
       })),
