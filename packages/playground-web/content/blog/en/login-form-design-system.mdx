@@ -1,0 +1,442 @@
+---
+title: "How to Create a Login Form with FramingUI"
+description: "Build a production-ready login form with validation, accessibility, and consistent styling using FramingUI design system."
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - login-form
+  - authentication
+  - form-design
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## Why Login Forms Matter
+
+The login form is often the first UI interaction users have with your app. A poorly designed form creates friction, while a well-crafted one builds trust. With FramingUI, you get:
+
+- **Consistent styling** through design tokens
+- **Built-in accessibility** from Radix UI primitives
+- **Type-safe validation** with react-hook-form + zod
+- **Zero hardcoded values** for easy theming
+
+## Basic Login Form
+
+Let's start with a simple email/password login form.
+
+### Step 1: Install Dependencies
+
+```bash
+pnpm add @framingui/ui react-hook-form zod @hookform/resolvers
+```
+
+### Step 2: Create the Component
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Input,
+  Label,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@framingui/ui';
+
+// Validation schema
+const loginSchema = z.object({
+  email: z.string().email('올바른 이메일을 입력하세요'),
+  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export function LoginForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  async function onSubmit(data: LoginFormData) {
+    setIsLoading(true);
+    try {
+      // TODO: Call your authentication API
+      console.log('Login data:', data);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Sign In</CardTitle>
+        <CardDescription>Enter your credentials to access your account</CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-[var(--tekton-spacing-4)]">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-[var(--tekton-spacing-4)]">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </Button>
+            <div className="text-sm text-center">
+              <a
+                href="/forgot-password"
+                className="text-[var(--tekton-bg-primary)] hover:underline"
+              >
+                Forgot your password?
+              </a>
+            </div>
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
+  );
+}
+```
+
+### Key Features
+
+✅ **Design Tokens**: All spacing uses `var(--tekton-spacing-*)`, colors use `var(--tekton-bg-*)`
+✅ **Type Safety**: Zod schema provides runtime validation + TypeScript types
+✅ **Accessibility**: FramingUI Form components connect labels, inputs, and error messages
+✅ **Loading States**: Button disables during submission
+
+## Enhanced Login Form with Social Auth
+
+Let's add social authentication buttons and a "Remember me" checkbox.
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Input,
+  Label,
+  Checkbox,
+  Separator,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@framingui/ui';
+import { Github, Mail } from 'lucide-react';
+
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  remember: z.boolean().default(false),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export function EnhancedLoginForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      remember: false,
+    },
+  });
+
+  async function onSubmit(data: LoginFormData) {
+    setIsLoading(true);
+    try {
+      console.log('Login data:', data);
+      // TODO: Implement authentication
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleSocialLogin(provider: 'github' | 'google') {
+    console.log(`Logging in with ${provider}`);
+    // TODO: Implement OAuth flow
+  }
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Welcome Back</CardTitle>
+        <CardDescription>Choose your preferred sign in method</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-[var(--tekton-spacing-4)]">
+        {/* Social Login Buttons */}
+        <div className="grid grid-cols-2 gap-[var(--tekton-spacing-4)]">
+          <Button
+            variant="outline"
+            onClick={() => handleSocialLogin('github')}
+            type="button"
+          >
+            <Github className="mr-[var(--tekton-spacing-2)] h-4 w-4" />
+            GitHub
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSocialLogin('google')}
+            type="button"
+          >
+            <Mail className="mr-[var(--tekton-spacing-2)] h-4 w-4" />
+            Google
+          </Button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <Separator />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-[var(--tekton-bg-background)] px-[var(--tekton-spacing-2)] text-[var(--tekton-bg-muted-foreground)]">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        {/* Email/Password Form */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[var(--tekton-spacing-4)]">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="remember"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-[var(--tekton-spacing-3)] space-y-0">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-[var(--tekton-spacing-1)] leading-none">
+                    <FormLabel>Remember me</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+      <CardFooter className="flex justify-center">
+        <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
+          Don't have an account?{' '}
+          <a href="/signup" className="text-[var(--tekton-bg-primary)] hover:underline">
+            Sign up
+          </a>
+        </p>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+### What's New
+
+✅ **Social Auth Buttons**: GitHub and Google login options
+✅ **Visual Separator**: "Or continue with" divider using Separator component
+✅ **Remember Me**: Checkbox with proper form integration
+✅ **Sign Up Link**: Clear call-to-action for new users
+
+## Accessibility Features
+
+FramingUI's Form components automatically provide:
+
+### 1. Label Association
+
+```tsx
+<FormLabel>Email</FormLabel>
+<FormControl>
+  <Input type="email" {...field} />
+</FormControl>
+```
+
+Generates:
+
+```html
+<label for="email-form-item">Email</label>
+<input id="email-form-item" aria-describedby="email-form-item-message" />
+```
+
+### 2. Error Announcements
+
+```tsx
+<FormMessage />
+```
+
+Creates an `aria-describedby` connection:
+
+```html
+<input aria-invalid="true" aria-describedby="email-form-item-message" />
+<p id="email-form-item-message" role="alert">Please enter a valid email</p>
+```
+
+### 3. Keyboard Navigation
+
+All FramingUI components support:
+- `Tab` to navigate between fields
+- `Enter` to submit form
+- `Space` to toggle checkbox
+
+## Styling Customization
+
+### Change Card Width
+
+```tsx
+<Card className="w-full max-w-sm"> {/* Smaller: 384px */}
+<Card className="w-full max-w-md"> {/* Default: 448px */}
+<Card className="w-full max-w-lg"> {/* Larger: 512px */}
+```
+
+### Add Shadow
+
+```tsx
+<Card className="shadow-lg"> {/* Larger shadow */}
+```
+
+### Center on Page
+
+```tsx
+<div className="flex min-h-screen items-center justify-center p-[var(--tekton-spacing-4)]">
+  <EnhancedLoginForm />
+</div>
+```
+
+## Error Handling Patterns
+
+### Display API Errors
+
+```tsx
+const [apiError, setApiError] = useState('');
+
+async function onSubmit(data: LoginFormData) {
+  setIsLoading(true);
+  setApiError('');
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error('Invalid credentials');
+    }
+  } catch (error) {
+    setApiError(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+}
+
+// In JSX:
+{apiError && (
+  <p className="text-sm text-[var(--tekton-bg-destructive)]" role="alert">
+    {apiError}
+  </p>
+)}
+```
+
+## Next Steps
+
+1. **Integrate with auth provider**: NextAuth.js, Supabase, Firebase
+2. **Add 2FA support**: TOTP input field
+3. **Implement password strength indicator**: Real-time validation
+4. **Add loading skeleton**: Optimize perceived performance
+
+## Complete Example
+
+Check out the [FramingUI GitHub repository](https://github.com/soo-kate-yeon/tekton) for a complete authentication flow example with:
+
+- Login form (this tutorial)
+- Sign up form
+- Password reset flow
+- Email verification
+
+With FramingUI, building production-ready forms is fast, accessible, and maintainable — all while staying 100% consistent with your design system.

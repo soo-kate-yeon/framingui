@@ -21,13 +21,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <nav className="flex-1 p-6 space-y-2">
           {/* [Recipe] Button Ghost (used for nav items) */}
           <NavItem
-            href="/studio/square-minimalism/dashboard"
+            href="/explore/square-minimalism/dashboard"
             icon={<LayoutDashboard size={18} />}
             label="Overview"
             active={pathname === '/studio/square-minimalism/dashboard'}
           />
           <NavItem
-            href="/studio/square-minimalism/dashboard/customers"
+            href="/explore/square-minimalism/dashboard/customers"
             icon={<Users size={18} />}
             label="Customers"
             active={pathname?.includes('/customers')}
@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <NavItem href="#" icon={<CreditCard size={18} />} label="Transactions" />
           <NavItem href="#" icon={<Activity size={18} />} label="Analytics" />
           <NavItem
-            href="/studio/square-minimalism/dashboard/settings"
+            href="/explore/square-minimalism/dashboard/settings"
             icon={<Settings size={18} />}
             label="Settings"
             active={pathname?.includes('/settings')}

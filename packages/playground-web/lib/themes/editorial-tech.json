@@ -178,8 +178,11 @@
         }
       },
       "border": {
-        "default": "atomic.color.neutral.200",
-        "input": "atomic.color.neutral.300",
+        "default": {
+          "subtle": "atomic.color.neutral.100",
+          "default": "atomic.color.neutral.200",
+          "emphasis": "atomic.color.neutral.300"
+        },
         "focus": "atomic.color.neutral.900"
       },
       "text": {

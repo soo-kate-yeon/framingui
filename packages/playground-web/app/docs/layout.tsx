@@ -105,11 +105,11 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             Get Beta Access
           </Link>
           <Link
-            href="/studio"
+            href="/explore"
             onClick={closeMobileMenu}
             className="block w-full text-center py-3 px-4 border border-neutral-300 text-neutral-700 rounded-full font-medium hover:bg-neutral-100 transition-colors"
           >
-            Open Studio
+            Open Explore
           </Link>
         </div>
       </div>
@@ -131,10 +131,10 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
               Get Beta Access
             </Link>
             <Link
-              href="/studio"
+              href="/explore"
               className="text-sm font-medium bg-neutral-900 text-white px-4 py-2 rounded-full hover:bg-neutral-800 transition-colors"
             >
-              Open Studio
+              Open Explore
             </Link>
           </nav>
         </div>

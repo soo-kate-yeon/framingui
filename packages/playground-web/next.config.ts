@@ -24,6 +24,17 @@ const nextConfig: NextConfig = {
     ];
     return config;
   },
+  // PostHog reverse proxy 설정
+  // WHY: ad-blocker 우회 및 성능 향상
+  // IMPACT: 더 정확한 분석 데이터 수집
+  async rewrites() {
+    return [
+      {
+        source: '/ingest/:path*',
+        destination: 'https://us.i.posthog.com/:path*',
+      },
+    ];
+  },
 };
 
 export default withNextIntl(nextConfig);

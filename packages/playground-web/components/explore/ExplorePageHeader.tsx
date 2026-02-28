@@ -1,5 +1,5 @@
 /**
- * Studio Page Header Component
+ * Explore Page Header Component
  * [SPEC-UI-003][TAG-UI003-I18N]
  *
  * Client Component로 i18n 지원
@@ -7,13 +7,13 @@
 
 'use client';
 
-import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 
 // ============================================================================
 // Types
 // ============================================================================
 
-interface StudioPageHeaderProps {
+interface ExplorePageHeaderProps {
   /** 추가 className */
   className?: string;
   /** 선택 모드 (double 패키지) */
@@ -24,18 +24,18 @@ interface StudioPageHeaderProps {
 // Component
 // ============================================================================
 
-export function StudioPageHeader({ className = '', selectionMode }: StudioPageHeaderProps) {
-  const { locale } = useStudioLanguage();
+export function ExplorePageHeader({ className = '', selectionMode }: ExplorePageHeaderProps) {
+  const { locale } = useExploreLanguage();
 
   const content = {
     en: {
-      subtitle: 'tekton/studio',
+      subtitle: 'tekton/explore',
       title: 'Select Theme',
       description:
         'Choose a design system to activate the Agentic Styling engine. Every theme is loaded directly from the MCP knowledge base.',
     },
     ko: {
-      subtitle: 'tekton/studio',
+      subtitle: 'tekton/explore',
       title: '테마 선택',
       description:
         '에이전틱 스타일링 엔진을 활성화할 디자인 시스템을 선택하세요. 모든 테마는 MCP 지식 베이스에서 직접 로드됩니다.',
@@ -44,12 +44,12 @@ export function StudioPageHeader({ className = '', selectionMode }: StudioPageHe
 
   const selectionContent = {
     en: {
-      subtitle: 'tekton/studio',
+      subtitle: 'tekton/explore',
       title: 'Pick 2 Templates',
       description: 'Choose 2 templates for your Double Package.',
     },
     ko: {
-      subtitle: 'tekton/studio',
+      subtitle: 'tekton/explore',
       title: '템플릿 2개 고르기',
       description: '더블 패키지에 포함할 템플릿 2개를 선택하세요.',
     },

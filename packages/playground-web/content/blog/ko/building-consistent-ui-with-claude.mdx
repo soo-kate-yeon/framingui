@@ -1,0 +1,364 @@
+---
+title: "Claude로 일관된 UI 빌드하기"
+description: "FramingUI를 Claude Code와 함께 사용하여 매번 픽셀 퍼펙트하고 일관된 UI 컴포넌트를 생성하는 방법입니다."
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - claude-code
+  - ui-consistency
+  - design-system
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## Claude Code의 도전 과제
+
+Claude Code는 컨텍스트를 이해하고 프로덕션 준비 코드를 생성하는 데 뛰어납니다. 하지만 명시적인 디자인 제약 없이는:
+
+1. **색상 구성을 발명합니다** — "이 버튼을 파란색으로 만들까" → `bg-blue-600`
+2. **간격 패턴을 추측합니다** — `p-4`, `px-5`, `gap-3`을 일관성 없이 섞어 사용
+3. **일회성 스타일을 만듭니다** — 각 컴포넌트가 고유한 스타일을 가짐
+
+결과? AI가 생성한 모든 컴포넌트가 다르게 보이는 코드베이스.
+
+## FramingUI: Claude의 디자인 가드레일
+
+FramingUI는 Claude에게 다음을 통해 **구조화된 디자인 어휘**를 제공합니다:
+
+- `@framingui/ui`의 **타입 안전 컴포넌트**
+- `var(--tekton-bg-primary)` 같은 **시맨틱 디자인 토큰**
+- 컴포넌트 API를 통해 강제되는 **일관된 패턴**
+
+## 설정: Claude에게 FramingUI 가르치기
+
+### 1단계: 프로젝트 지식 파일 생성
+
+`.claude/project-knowledge.md` 생성:
+
+```markdown
+# 프로젝트 디자인 시스템
+
+## FramingUI 컴포넌트 라이브러리
+
+이 프로젝트는 통합 디자인 토큰을 가진 shadcn-ui 포크인 **FramingUI**를 사용합니다.
+
+### 사용 가능한 컴포넌트
+
+`@framingui/ui`에서 임포트:
+- Layout: Card, Sheet, Dialog, Tabs, Separator
+- Forms: Button, Input, Label, Checkbox, RadioGroup, Select, Switch, Textarea
+- Data: Table, Avatar, Badge
+- Feedback: Toast, Tooltip, Progress
+- Navigation: Breadcrumb, NavigationMenu
+
+### 디자인 토큰
+
+모든 스타일링은 CSS 커스텀 속성을 사용합니다:
+
+**색상:**
+- `var(--tekton-bg-primary)` - Primary 브랜드 색상
+- `var(--tekton-bg-secondary)` - Secondary 강조
+- `var(--tekton-bg-destructive)` - 오류/위험 상태
+- `var(--tekton-bg-muted)` - Muted 배경
+- `var(--tekton-bg-accent)` - Accent 하이라이트
+- `var(--tekton-bg-card)` - Card 배경
+
+**간격:**
+- `var(--tekton-spacing-1)`부터 `var(--tekton-spacing-8)`까지
+
+**테두리 반경:**
+- `var(--tekton-radius-sm)`, `var(--tekton-radius-md)`, `var(--tekton-radius-lg)`, `var(--tekton-radius-xl)`
+
+### 코드 생성 규칙
+
+1. **색상을 하드코딩하지 마세요** - 항상 `var(--tekton-*)` 토큰 사용
+2. **@framingui/ui에서 임포트** - 로컬 컴포넌트 파일이 아님
+3. **시맨틱 이름 사용** - `blue`가 아닌 `primary`
+4. **HTML보다 컴포넌트 선호** - `<button>` 대신 `<Button>` 사용
+```
+
+### 2단계: FramingUI 설치
+
+```bash
+pnpm add @framingui/ui @framingui/core
+```
+
+### 3단계: 토큰 임포트
+
+```tsx
+// app/layout.tsx
+import '@framingui/ui/styles/tokens.css';
+```
+
+## 예제: 일관된 UI를 위한 Claude 프롬프팅
+
+### ❌ FramingUI 없이
+
+**프롬프트:**
+```
+이름, 이메일, 편집 버튼이 있는 사용자 프로필 카드 만들어줘
+```
+
+**Claude 생성:**
+```tsx
+export function ProfileCard({ name, email }: ProfileCardProps) {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <h3 className="text-xl font-bold text-gray-900">{name}</h3>
+      <p className="text-gray-600 text-sm mt-1">{email}</p>
+      <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+        프로필 수정
+      </button>
+    </div>
+  );
+}
+```
+
+**문제점:**
+- 하드코딩된 색상: `bg-white`, `text-gray-900`, `bg-blue-600`
+- 임의의 간격: `p-6`, `px-4 py-2`
+- 테마 변경에 적응하지 못함
+
+### ✅ FramingUI와 함께
+
+**프롬프트:**
+```
+이름, 이메일, 편집 버튼이 있는 사용자 프로필 카드를 FramingUI 컴포넌트로 만들어줘
+```
+
+**Claude 생성:**
+```tsx
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button } from '@framingui/ui';
+
+export function ProfileCard({ name, email }: ProfileCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">{email}</p>
+      </CardContent>
+      <CardFooter>
+        <Button variant="default">프로필 수정</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+**장점:**
+- FramingUI Card 컴포넌트 사용
+- 시맨틱 토큰: `var(--tekton-bg-muted-foreground)`
+- 자동으로 테마에 적응
+- 다른 컴포넌트와 일관성 유지
+
+## 실제 예제: Claude로 대시보드 빌드하기
+
+FramingUI를 사용하여 Claude로 완전한 대시보드를 만들어봅시다.
+
+### 프롬프트 1: 통계 카드
+
+```
+총 사용자, 수익, 활성 세션, 전환율을 표시하는 4개의 통계 카드를 만들어줘.
+FramingUI Card 컴포넌트와 디자인 토큰을 사용해줘.
+```
+
+**Claude 생성:**
+
+```tsx
+import { Card, CardContent } from '@framingui/ui';
+import { Users, DollarSign, Activity, TrendingUp } from 'lucide-react';
+
+const stats = [
+  { title: '총 사용자', value: '12,345', icon: Users, change: '+12%' },
+  { title: '수익', value: '₩54,321,000', icon: DollarSign, change: '+8%' },
+  { title: '활성 세션', value: '1,234', icon: Activity, change: '+23%' },
+  { title: '전환율', value: '3.2%', icon: TrendingUp, change: '+0.5%' },
+];
+
+export function StatsGrid() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[var(--tekton-spacing-4)]">
+      {stats.map((stat) => (
+        <Card key={stat.title}>
+          <CardContent className="p-[var(--tekton-spacing-6)]">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
+                  {stat.title}
+                </p>
+                <p className="text-2xl font-bold mt-[var(--tekton-spacing-2)]">
+                  {stat.value}
+                </p>
+                <p className="text-sm text-[var(--tekton-bg-primary)] mt-[var(--tekton-spacing-1)]">
+                  {stat.change}
+                </p>
+              </div>
+              <div className="p-[var(--tekton-spacing-3)] bg-[var(--tekton-bg-primary)]/10 rounded-[var(--tekton-radius-lg)]">
+                <stat.icon className="w-6 h-6 text-[var(--tekton-bg-primary)]" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+```
+
+✅ **주목:** 모든 간격이 토큰 사용, 색상이 시맨틱
+
+### 프롬프트 2: 데이터 테이블
+
+```
+통계 아래에 이름, 이메일, 역할, 상태 컬럼을 가진 사용자 테이블을 추가해줘.
+FramingUI Table 컴포넌트를 사용해줘.
+```
+
+**Claude 생성:**
+
+```tsx
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Badge } from '@framingui/ui';
+
+const users = [
+  { name: '김철수', email: 'kim@example.com', role: '관리자', status: 'active' },
+  { name: '이영희', email: 'lee@example.com', role: '사용자', status: 'active' },
+  { name: '박민수', email: 'park@example.com', role: '사용자', status: 'inactive' },
+];
+
+export function UsersTable() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>최근 사용자</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>이름</TableHead>
+              <TableHead>이메일</TableHead>
+              <TableHead>역할</TableHead>
+              <TableHead>상태</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user.email}>
+                <TableCell className="font-medium">{user.name}</TableCell>
+                <TableCell className="text-[var(--tekton-bg-muted-foreground)]">
+                  {user.email}
+                </TableCell>
+                <TableCell>{user.role}</TableCell>
+                <TableCell>
+                  <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
+                    {user.status}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+✅ **주목:** Badge 변형, 시맨틱 색상 토큰, 일관된 간격
+
+## 고급: 커스텀 토큰 확장
+
+앱별 패턴을 위해 커스텀 토큰을 사용하도록 Claude를 안내할 수 있습니다:
+
+```css
+/* globals.css */
+@import '@framingui/ui/styles/tokens.css';
+
+:root {
+  --app-sidebar-width: 280px;
+  --app-header-height: 64px;
+}
+```
+
+프로젝트 지식 업데이트:
+
+```markdown
+### 커스텀 토큰
+- `--app-sidebar-width` - 사이드바 너비 (280px)
+- `--app-header-height` - 헤더 높이 (64px)
+```
+
+**프롬프트:**
+```
+커스텀 토큰을 사용하여 사이드바와 헤더가 있는 대시보드 레이아웃 만들어줘
+```
+
+**Claude 생성:**
+
+```tsx
+export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen">
+      <aside className="w-[var(--app-sidebar-width)] border-r border-[var(--tekton-border-default)]">
+        {/* 사이드바 내용 */}
+      </aside>
+      <div className="flex-1 flex flex-col">
+        <header className="h-[var(--app-header-height)] border-b border-[var(--tekton-border-default)]">
+          {/* 헤더 내용 */}
+        </header>
+        <main className="flex-1 overflow-auto p-[var(--tekton-spacing-6)]">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+```
+
+## 더 나은 Claude + FramingUI 결과를 위한 팁
+
+### 1. 컴포넌트에 대해 구체적으로 요청
+
+❌ "모달 만들어줘"
+✅ "FramingUI Dialog 컴포넌트를 사용하여 모달 만들어줘"
+
+### 2. 프롬프트에서 디자인 토큰 참조
+
+❌ "텍스트를 회색으로 만들어줘"
+✅ "텍스트 색상에 var(--tekton-bg-muted-foreground) 사용해줘"
+
+### 3. 시맨틱 변형 요청
+
+❌ "버튼을 빨간색으로 만들어줘"
+✅ "Button variant='destructive' 사용해줘"
+
+### 4. 일관성 체크로 반복
+
+```
+코드를 검토하고 모든 색상이 var(--tekton-*) 토큰을 사용하는지 확인해줘
+```
+
+## 성공 측정
+
+Claude와 FramingUI 설정 후 컴포넌트 감사:
+
+```bash
+# 하드코딩된 색상 확인 (0이어야 함)
+grep -r "bg-blue\|text-red\|#[0-9A-F]\{6\}" src/
+
+# 토큰 사용 확인 (모든 곳에 있어야 함)
+grep -r "var(--tekton-" src/
+```
+
+## 다음 단계
+
+1. **프로젝트 지식 추가** - `.claude/project-knowledge.md` 생성
+2. **FramingUI 설치** - `pnpm add @framingui/ui`
+3. **프롬프트로 테스트** - Claude에게 컴포넌트 생성 요청
+4. **일관성 확인** - 모든 컴포넌트가 토큰을 사용하는지 확인
+
+FramingUI와 함께 Claude Code는 **디자인 시스템 인식** 코드 생성기가 되어 매번 일관되고 프로덕션 준비된 UI를 생성합니다.

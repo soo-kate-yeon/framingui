@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TemplateData } from '../../data/templates';
-import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 
 // ============================================================================
 // Types
@@ -20,7 +20,7 @@ interface TemplateModalProps {
 // ============================================================================
 
 export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: TemplateModalProps) {
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
   const [activeChipIdx, setActiveChipIdx] = useState(0);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
@@ -112,7 +112,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     ${template.price} / one-time
                   </button>
                   <a
-                    href={`/studio/${template.id}`}
+                    href={`/explore/${template.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-[0.5] sm:flex-none inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-4 text-base font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"

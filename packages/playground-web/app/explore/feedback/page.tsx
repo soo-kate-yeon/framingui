@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Share Your Feedback | tekton/studio',
+  title: 'Share Your Feedback | tekton/explore',
   description: 'Your honest feedback helps us make tekton better',
 };
 

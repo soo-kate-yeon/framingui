@@ -4,9 +4,9 @@ import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from '
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
-import { PreviewBanner } from '@/components/studio/PreviewBanner';
-import { useStudioLanguage } from '@/contexts/StudioLanguageContext';
-import { ComponentGallery } from '@/components/studio/ComponentGallery';
+import { PreviewBanner } from '@/components/explore/PreviewBanner';
+import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
+import { ComponentGallery } from '@/components/explore/ComponentGallery';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -72,7 +72,7 @@ export default function SquareMinimalismDemo() {
   const { loaded: themeLoaded } = useTektonTheme('square-minimalism', {
     fallback: SQUARE_MINIMALISM_FALLBACK,
   });
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
 
   return (
     <div
@@ -83,7 +83,7 @@ export default function SquareMinimalismDemo() {
       <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-surface)] h-full overflow-y-auto shrink-0">
         <div className="p-6">
           <Link
-            href="/studio"
+            href="/explore"
             className="inline-flex items-center gap-2 mb-10 hover:opacity-70 transition-opacity"
           >
             <span className="text-xl font-bold tracking-tighter text-[var(--tekton-text-primary)]">

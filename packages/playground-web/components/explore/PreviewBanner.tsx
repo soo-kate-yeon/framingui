@@ -131,7 +131,7 @@ export function PreviewBanner({ templateId }: PreviewBannerProps) {
 
       {/* Right: CTA Button - Responsive, Rounded Full */}
       <Link
-        href={`/studio/template/${templateId}`}
+        href={`/explore/template/${templateId}`}
         className={`ml-4 px-4 py-2 text-xs sm:text-sm font-bold uppercase tracking-wider transition-colors rounded-full whitespace-nowrap ${
           isDark
             ? 'bg-white text-black hover:bg-neutral-200'

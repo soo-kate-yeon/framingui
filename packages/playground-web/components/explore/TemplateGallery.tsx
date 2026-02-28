@@ -4,7 +4,7 @@
  *
  * 템플릿 그리드 레이아웃 갤러리 (i18n 지원)
  * - 클라이언트 사이드 selection mode state 관리
- * - StudioPageHeader + SelectionTopBar 내부 렌더링
+ * - ExplorePageHeader + SelectionTopBar 내부 렌더링
  */
 
 'use client';
@@ -14,9 +14,9 @@ import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
 import { SelectionTopBar } from './SelectionTopBar';
 import { TemplateModal } from './TemplateModal';
-import { StudioPageHeader } from './StudioPageHeader';
+import { ExplorePageHeader } from './ExplorePageHeader';
 import { getTemplateData } from '../../data/templates';
-import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 
 // ============================================================================
 // Types
@@ -51,7 +51,7 @@ export function TemplateGallery({
   selectionMode,
 }: TemplateGalleryProps) {
   const router = useRouter();
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // 클라이언트 사이드 selection mode state (서버 prop을 초기값으로 사용)
@@ -68,14 +68,14 @@ export function TemplateGallery({
     setActiveModalId(null); // 모달 닫기
     setInternalSelectionMode('double');
     setSelectedIds([]); // 선택 초기화
-    router.replace('/studio?plan=double', { scroll: false }); // URL 동기화
+    router.replace('/explore?plan=double', { scroll: false }); // URL 동기화
   };
 
   // selection mode 해제
   const handleExitSelectionMode = () => {
     setInternalSelectionMode(undefined);
     setSelectedIds([]);
-    router.replace('/studio', { scroll: false }); // URL 정리
+    router.replace('/explore', { scroll: false }); // URL 정리
   };
 
   // 선택 모드: 카드 클릭 = 선택/해제 토글
@@ -148,7 +148,7 @@ export function TemplateGallery({
 
       {/* Header - selection mode에 따라 반응 */}
       <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-        <StudioPageHeader selectionMode={internalSelectionMode} />
+        <ExplorePageHeader selectionMode={internalSelectionMode} />
 
         {/* Template Grid */}
         <div className="mt-12 flex flex-col">

@@ -13,7 +13,7 @@
 import { useState } from 'react';
 import { Heart, ArrowRight, ExternalLink, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { TemplateThumbnail } from './TemplateThumbnail';
 
 // ============================================================================
@@ -21,13 +21,13 @@ import { TemplateThumbnail } from './TemplateThumbnail';
 // ============================================================================
 
 const DEMO_ROUTES: Record<string, string> = {
-  'square-minimalism': '/studio/square-minimalism',
-  'dark-boldness': '/studio/dark-boldness',
-  'editorial-tech': '/studio/editorial-tech',
-  pebble: '/studio/pebble',
-  'classic-magazine': '/studio/classic-magazine',
-  'neutral-workspace': '/studio/neutral-workspace',
-  'minimal-workspace': '/studio/minimal-workspace',
+  'square-minimalism': '/explore/square-minimalism',
+  'dark-boldness': '/explore/dark-boldness',
+  'editorial-tech': '/explore/editorial-tech',
+  pebble: '/explore/pebble',
+  'classic-magazine': '/explore/classic-magazine',
+  'neutral-workspace': '/explore/neutral-workspace',
+  'minimal-workspace': '/explore/minimal-workspace',
 };
 
 // ============================================================================
@@ -78,7 +78,7 @@ export function TemplateCard({
   selectionDisabled = false,
 }: TemplateCardProps) {
   const { user, toggleLike, userData } = useAuth();
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isLiked = userData?.likedTemplates.includes(id) ?? false;

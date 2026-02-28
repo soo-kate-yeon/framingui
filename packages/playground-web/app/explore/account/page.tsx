@@ -14,8 +14,8 @@
 import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useStudioLanguage } from '../../../contexts/StudioLanguageContext';
-import { TemplateCard } from '../../../components/studio/TemplateCard';
+import { useExploreLanguage } from '../../../contexts/ExploreLanguageContext';
+import { TemplateCard } from '../../../components/explore/TemplateCard';
 import { loadThemes } from '../actions';
 
 interface GalleryItem {
@@ -34,7 +34,7 @@ interface GalleryItem {
 
 const TRANSLATIONS = {
   en: {
-    subtitle: 'Tekton Studio',
+    subtitle: 'Tekton Explore',
     title: 'MY ACCOUNT',
     description: 'Manage your template licenses and saved designs',
     licenses: {
@@ -52,7 +52,7 @@ const TRANSLATIONS = {
     },
   },
   ko: {
-    subtitle: 'Tekton Studio',
+    subtitle: 'Tekton Explore',
     title: '내 계정',
     description: '템플릿 라이선스와 저장한 디자인을 관리하세요',
     licenses: {
@@ -77,7 +77,7 @@ const TRANSLATIONS = {
 
 export default function AccountPage() {
   const { user, userData } = useAuth();
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
   const [themes, setThemes] = useState<GalleryItem[]>([]);
 
   useEffect(() => {

@@ -5,24 +5,24 @@ import { useGlobalLanguage, type GlobalLocale } from './GlobalLanguageContext';
 
 type Locale = 'en' | 'ko';
 
-interface StudioLanguageContextValue {
+interface ExploreLanguageContextValue {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   toggleLocale: () => void;
 }
 
-const StudioLanguageContext = createContext<StudioLanguageContextValue | undefined>(undefined);
+const ExploreLanguageContext = createContext<ExploreLanguageContextValue | undefined>(undefined);
 
 /**
- * StudioLanguageProvider
+ * ExploreLanguageProvider
  *
- * GlobalLanguageContext와 동기화되는 Studio 언어 Provider
- * Studio에서 언어를 변경하면 Footer 등 GlobalLanguageContext를 사용하는 컴포넌트도 함께 업데이트됨
+ * GlobalLanguageContext와 동기화되는 Explore 언어 Provider
+ * Explore에서 언어를 변경하면 Footer 등 GlobalLanguageContext를 사용하는 컴포넌트도 함께 업데이트됨
  */
-export function StudioLanguageProvider({ children }: { children: ReactNode }) {
+export function ExploreLanguageProvider({ children }: { children: ReactNode }) {
   const { locale, setLocale: setGlobalLocale } = useGlobalLanguage();
 
-  // Studio에서 언어 변경 시 GlobalLanguageContext도 함께 업데이트
+  // Explore에서 언어 변경 시 GlobalLanguageContext도 함께 업데이트
   const setLocale = (newLocale: Locale) => {
     setGlobalLocale(newLocale as GlobalLocale);
   };
@@ -31,22 +31,22 @@ export function StudioLanguageProvider({ children }: { children: ReactNode }) {
     setGlobalLocale(locale === 'en' ? 'ko' : 'en');
   };
 
-  // GlobalLanguageContext의 locale을 studioLocale에도 동기화 (선택적)
+  // GlobalLanguageContext의 locale을 exploreLocale에도 동기화 (선택적)
   useEffect(() => {
-    localStorage.setItem('studioLocale', locale);
+    localStorage.setItem('exploreLocale', locale);
   }, [locale]);
 
   return (
-    <StudioLanguageContext.Provider value={{ locale, setLocale, toggleLocale }}>
+    <ExploreLanguageContext.Provider value={{ locale, setLocale, toggleLocale }}>
       {children}
-    </StudioLanguageContext.Provider>
+    </ExploreLanguageContext.Provider>
   );
 }
 
-export function useStudioLanguage() {
-  const context = useContext(StudioLanguageContext);
+export function useExploreLanguage() {
+  const context = useContext(ExploreLanguageContext);
   if (!context) {
-    throw new Error('useStudioLanguage must be used within StudioLanguageProvider');
+    throw new Error('useExploreLanguage must be used within ExploreLanguageProvider');
   }
   return context;
 }

@@ -12,7 +12,7 @@ export default function SquareDashboardPage() {
       {/* [Template] Section: Hero / Stats */}
       <header className="mb-8 md:mb-12">
         <span className="text-xs font-bold uppercase tracking-[0.15em] text-neutral-500 mb-4 block">
-          Tekton Studio
+          Tekton Explore
         </span>
         <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-neutral-900 mb-4 md:mb-6">
           OVERVIEW

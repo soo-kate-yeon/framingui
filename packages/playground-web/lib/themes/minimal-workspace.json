@@ -171,8 +171,12 @@
         "inverted": "atomic.color.neutral.50"
       },
       "border": {
-        "default": "atomic.color.neutral.200",
-        "input": "atomic.color.neutral.200"
+        "default": {
+          "subtle": "atomic.color.neutral.100",
+          "default": "atomic.color.neutral.200",
+          "emphasis": "atomic.color.neutral.300"
+        },
+        "focus": "atomic.color.neutral.950"
       }
     },
     "recipes": {
@@ -213,6 +217,11 @@
         "p": "leading-7 [&:not(:first-child)]:mt-6",
         "blockquote": "mt-6 border-l-2 border-neutral-200 pl-6 italic",
         "list": "my-6 ml-6 list-disc [&>li]:mt-2"
+      },
+      "layout": {
+        "container": "max-w-5xl mx-auto px-6",
+        "section": "py-16 md:py-24",
+        "grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       }
     }
   }

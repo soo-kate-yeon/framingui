@@ -1,0 +1,442 @@
+---
+title: "FramingUI로 로그인 폼 만들기"
+description: "FramingUI 디자인 시스템을 사용하여 검증, 접근성, 일관된 스타일링을 갖춘 프로덕션 준비 로그인 폼을 빌드하세요."
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - login-form
+  - authentication
+  - form-design
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## 로그인 폼이 중요한 이유
+
+로그인 폼은 사용자가 앱과 처음 상호작용하는 UI인 경우가 많습니다. 잘못 디자인된 폼은 마찰을 일으키지만, 잘 만들어진 폼은 신뢰를 구축합니다. FramingUI를 사용하면:
+
+- 디자인 토큰을 통한 **일관된 스타일링**
+- Radix UI 프리미티브의 **내장 접근성**
+- react-hook-form + zod로 **타입 안전 검증**
+- 쉬운 테마 적용을 위한 **하드코딩 값 제로**
+
+## 기본 로그인 폼
+
+간단한 이메일/비밀번호 로그인 폼부터 시작해봅시다.
+
+### 1단계: 의존성 설치
+
+```bash
+pnpm add @framingui/ui react-hook-form zod @hookform/resolvers
+```
+
+### 2단계: 컴포넌트 생성
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Input,
+  Label,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@framingui/ui';
+
+// 검증 스키마
+const loginSchema = z.object({
+  email: z.string().email('올바른 이메일을 입력하세요'),
+  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export function LoginForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  async function onSubmit(data: LoginFormData) {
+    setIsLoading(true);
+    try {
+      // TODO: 인증 API 호출
+      console.log('로그인 데이터:', data);
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // API 호출 시뮬레이션
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>로그인</CardTitle>
+        <CardDescription>계정에 접근하려면 자격 증명을 입력하세요</CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-[var(--tekton-spacing-4)]">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이메일</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-[var(--tekton-spacing-4)]">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? '로그인 중...' : '로그인'}
+            </Button>
+            <div className="text-sm text-center">
+              <a
+                href="/forgot-password"
+                className="text-[var(--tekton-bg-primary)] hover:underline"
+              >
+                비밀번호를 잊으셨나요?
+              </a>
+            </div>
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
+  );
+}
+```
+
+### 주요 기능
+
+✅ **디자인 토큰**: 모든 간격이 `var(--tekton-spacing-*)`, 색상이 `var(--tekton-bg-*)` 사용
+✅ **타입 안전성**: Zod 스키마가 런타임 검증 + TypeScript 타입 제공
+✅ **접근성**: FramingUI Form 컴포넌트가 레이블, 입력, 오류 메시지 연결
+✅ **로딩 상태**: 제출 중 버튼 비활성화
+
+## 소셜 인증이 있는 향상된 로그인 폼
+
+소셜 인증 버튼과 "로그인 유지" 체크박스를 추가해봅시다.
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Input,
+  Label,
+  Checkbox,
+  Separator,
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@framingui/ui';
+import { Github, Mail } from 'lucide-react';
+
+const loginSchema = z.object({
+  email: z.string().email('올바른 이메일을 입력하세요'),
+  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  remember: z.boolean().default(false),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
+export function EnhancedLoginForm() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      remember: false,
+    },
+  });
+
+  async function onSubmit(data: LoginFormData) {
+    setIsLoading(true);
+    try {
+      console.log('로그인 데이터:', data);
+      // TODO: 인증 구현
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleSocialLogin(provider: 'github' | 'google') {
+    console.log(`${provider}로 로그인 중`);
+    // TODO: OAuth 흐름 구현
+  }
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>환영합니다</CardTitle>
+        <CardDescription>선호하는 로그인 방법을 선택하세요</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-[var(--tekton-spacing-4)]">
+        {/* 소셜 로그인 버튼 */}
+        <div className="grid grid-cols-2 gap-[var(--tekton-spacing-4)]">
+          <Button
+            variant="outline"
+            onClick={() => handleSocialLogin('github')}
+            type="button"
+          >
+            <Github className="mr-[var(--tekton-spacing-2)] h-4 w-4" />
+            GitHub
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => handleSocialLogin('google')}
+            type="button"
+          >
+            <Mail className="mr-[var(--tekton-spacing-2)] h-4 w-4" />
+            Google
+          </Button>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <Separator />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-[var(--tekton-bg-background)] px-[var(--tekton-spacing-2)] text-[var(--tekton-bg-muted-foreground)]">
+              또는 계속하기
+            </span>
+          </div>
+        </div>
+
+        {/* 이메일/비밀번호 폼 */}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[var(--tekton-spacing-4)]">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이메일</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>비밀번호</FormLabel>
+                  <FormControl>
+                    <Input type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="remember"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-[var(--tekton-spacing-3)] space-y-0">
+                  <FormControl>
+                    <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                  </FormControl>
+                  <div className="space-y-[var(--tekton-spacing-1)] leading-none">
+                    <FormLabel>로그인 유지</FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? '로그인 중...' : '로그인'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+      <CardFooter className="flex justify-center">
+        <p className="text-sm text-[var(--tekton-bg-muted-foreground)]">
+          계정이 없으신가요?{' '}
+          <a href="/signup" className="text-[var(--tekton-bg-primary)] hover:underline">
+            가입하기
+          </a>
+        </p>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+### 새로운 기능
+
+✅ **소셜 인증 버튼**: GitHub과 Google 로그인 옵션
+✅ **시각적 구분선**: Separator 컴포넌트를 사용한 "또는 계속하기" 구분선
+✅ **로그인 유지**: 적절한 폼 통합을 갖춘 체크박스
+✅ **가입 링크**: 신규 사용자를 위한 명확한 행동 유도
+
+## 접근성 기능
+
+FramingUI의 Form 컴포넌트는 자동으로 제공합니다:
+
+### 1. 레이블 연결
+
+```tsx
+<FormLabel>이메일</FormLabel>
+<FormControl>
+  <Input type="email" {...field} />
+</FormControl>
+```
+
+생성 결과:
+
+```html
+<label for="email-form-item">이메일</label>
+<input id="email-form-item" aria-describedby="email-form-item-message" />
+```
+
+### 2. 오류 알림
+
+```tsx
+<FormMessage />
+```
+
+`aria-describedby` 연결 생성:
+
+```html
+<input aria-invalid="true" aria-describedby="email-form-item-message" />
+<p id="email-form-item-message" role="alert">올바른 이메일을 입력하세요</p>
+```
+
+### 3. 키보드 내비게이션
+
+모든 FramingUI 컴포넌트 지원:
+- `Tab`으로 필드 간 이동
+- `Enter`로 폼 제출
+- `Space`로 체크박스 토글
+
+## 스타일 커스터마이징
+
+### 카드 너비 변경
+
+```tsx
+<Card className="w-full max-w-sm"> {/* 더 작게: 384px */}
+<Card className="w-full max-w-md"> {/* 기본: 448px */}
+<Card className="w-full max-w-lg"> {/* 더 크게: 512px */}
+```
+
+### 그림자 추가
+
+```tsx
+<Card className="shadow-lg"> {/* 더 큰 그림자 */}
+```
+
+### 페이지 중앙 배치
+
+```tsx
+<div className="flex min-h-screen items-center justify-center p-[var(--tekton-spacing-4)]">
+  <EnhancedLoginForm />
+</div>
+```
+
+## 오류 처리 패턴
+
+### API 오류 표시
+
+```tsx
+const [apiError, setApiError] = useState('');
+
+async function onSubmit(data: LoginFormData) {
+  setIsLoading(true);
+  setApiError('');
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      throw new Error('잘못된 자격 증명');
+    }
+  } catch (error) {
+    setApiError(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+}
+
+// JSX에서:
+{apiError && (
+  <p className="text-sm text-[var(--tekton-bg-destructive)]" role="alert">
+    {apiError}
+  </p>
+)}
+```
+
+## 다음 단계
+
+1. **인증 제공자 통합**: NextAuth.js, Supabase, Firebase
+2. **2FA 지원 추가**: TOTP 입력 필드
+3. **비밀번호 강도 표시기 구현**: 실시간 검증
+4. **로딩 스켈레톤 추가**: 체감 성능 최적화
+
+## 완전한 예제
+
+다음이 포함된 완전한 인증 흐름 예제는 [FramingUI GitHub 저장소](https://github.com/soo-kate-yeon/tekton)를 확인하세요:
+
+- 로그인 폼 (이 튜토리얼)
+- 가입 폼
+- 비밀번호 재설정 흐름
+- 이메일 인증
+
+FramingUI를 사용하면 프로덕션 준비 폼을 빠르고, 접근 가능하며, 유지보수하기 쉽게 구축할 수 있습니다 — 디자인 시스템과 100% 일관성을 유지하면서.

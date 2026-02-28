@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * Server Actions for Studio Page
+ * Server Actions for Explore Page
  * 정적 템플릿 데이터를 GalleryItem 형태로 변환하여 제공
  */
 

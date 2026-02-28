@@ -14,6 +14,8 @@ import darkBoldness from './themes/dark-boldness.json';
 import editorialTech from './themes/editorial-tech.json';
 import neutralWorkspace from './themes/neutral-workspace.json';
 import minimalWorkspace from './themes/minimal-workspace.json';
+import squareMinimalism from './themes/square-minimalism.json';
+import classicMagazine from './themes/classic-magazine.json';
 
 interface OKLCh {
   l: number;
@@ -177,56 +179,12 @@ function resolveTheme(themeJson: any): ThumbnailVars {
 }
 
 // ============================================================================
-// Hardcoded fallbacks for themes with non-standard structures
-// ============================================================================
-
-const SQUARE_MINIMALISM_VARS: ThumbnailVars = {
-  '--tekton-bg-canvas': '#ffffff',
-  '--tekton-bg-surface': '#ffffff',
-  '--tekton-bg-secondary': '#fafafa',
-  '--tekton-text-primary': '#0a0a0a',
-  '--tekton-text-secondary': '#737373',
-  '--tekton-text-tertiary': '#a3a3a3',
-  '--tekton-action-primary': '#0a0a0a',
-  '--tekton-action-primary-text': '#ffffff',
-  '--tekton-border-default': '#e5e5e5',
-  '--tekton-border-emphasis': '#171717',
-  '--tekton-radius-none': '0px',
-  '--tekton-radius-sm': '0px',
-  '--tekton-radius-md': '0px',
-  '--tekton-radius-lg': '0px',
-  '--tekton-radius-full': '0px',
-  '--tekton-radius-circle': '50%',
-};
-
-const CLASSIC_MAGAZINE_VARS: ThumbnailVars = {
-  '--tekton-bg-canvas': '#ffffff',
-  '--tekton-bg-surface': '#ffffff',
-  '--tekton-bg-secondary': '#fafafa',
-  '--tekton-text-primary': '#000000',
-  '--tekton-text-secondary': '#525252',
-  '--tekton-text-tertiary': '#a3a3a3',
-  '--tekton-action-primary': '#000000',
-  '--tekton-action-primary-text': '#ffffff',
-  '--tekton-border-default': '#e5e5e5',
-  '--tekton-border-emphasis': '#000000',
-  '--tekton-radius-none': '0px',
-  '--tekton-radius-sm': '0px',
-  '--tekton-radius-md': '0px',
-  '--tekton-radius-lg': '0px',
-  '--tekton-radius-xl': '0px',
-  '--tekton-radius-2xl': '0px',
-  '--tekton-radius-3xl': '0px',
-  '--tekton-radius-full': '0px',
-};
-
-// ============================================================================
 // Theme Registry (pre-resolved at import time)
 // ============================================================================
 
 const THEME_REGISTRY: Record<string, ThumbnailVars> = {
-  'square-minimalism': SQUARE_MINIMALISM_VARS,
-  'classic-magazine': CLASSIC_MAGAZINE_VARS,
+  'square-minimalism': resolveTheme(squareMinimalism),
+  'classic-magazine': resolveTheme(classicMagazine),
   pebble: resolveTheme(pebble),
   'dark-boldness': resolveTheme(darkBoldness),
   'editorial-tech': resolveTheme(editorialTech),

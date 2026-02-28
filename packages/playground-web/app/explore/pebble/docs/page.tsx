@@ -1,4 +1,4 @@
-import { TemplateDocsPage } from '../../../../components/studio/docs/TemplateDocsPage';
+import { TemplateDocsPage } from '../../../../components/explore/docs/TemplateDocsPage';
 import { getTemplateDocsData } from '../../../../data/template-docs';
 
 export default function RoundMinimalDocs() {

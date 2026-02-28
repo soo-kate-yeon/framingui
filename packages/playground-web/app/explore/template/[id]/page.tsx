@@ -18,13 +18,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExternalLink } from 'lucide-react';
-import { ScrollReveal } from '../../../../components/studio/landing';
-import { CodeBlock } from '../../../../components/studio/landing/CodeBlock';
+import { ScrollReveal } from '../../../../components/explore/landing';
+import { CodeBlock } from '../../../../components/explore/landing/CodeBlock';
 import { getTemplateData, type TemplateData } from '../../../../data/templates';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { usePaddle } from '../../../../hooks/usePaddle';
 import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
-import { useStudioLanguage } from '../../../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../../../contexts/ExploreLanguageContext';
 
 interface TemplatePageProps {
   params: Promise<{ id: string }>;
@@ -34,7 +34,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const router = useRouter();
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady } = usePaddle();
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
   const [templateId, setTemplateId] = useState<string>('');
   const [template, setTemplate] = useState<TemplateData | null>(null);
 

@@ -27,54 +27,126 @@
             "c": 0.05,
             "h": 220
           },
+          "200": {
+            "l": 0.88,
+            "c": 0.08,
+            "h": 220
+          },
+          "300": {
+            "l": 0.78,
+            "c": 0.12,
+            "h": 220
+          },
+          "400": {
+            "l": 0.65,
+            "c": 0.18,
+            "h": 220
+          },
           "500": {
             "l": 0.5,
             "c": 0.25,
+            "h": 220
+          },
+          "600": {
+            "l": 0.42,
+            "c": 0.22,
+            "h": 220
+          },
+          "700": {
+            "l": 0.35,
+            "c": 0.18,
+            "h": 220
+          },
+          "800": {
+            "l": 0.25,
+            "c": 0.14,
             "h": 220
           },
           "900": {
             "l": 0.1,
             "c": 0.1,
             "h": 220
+          },
+          "950": {
+            "l": 0.05,
+            "c": 0.06,
+            "h": 220
           }
         },
         "neutral": {
           "white": {
-            "l": 1,
-            "c": 0,
-            "h": 0
+            "l": 1.0,
+            "c": 0.0,
+            "h": 210
           },
-          "cool": {
-            "50": {
-              "l": 0.96,
-              "c": 0.01,
-              "h": 210
-            },
-            "100": {
-              "l": 0.93,
-              "c": 0.02,
-              "h": 210
-            },
-            "200": {
-              "l": 0.88,
-              "c": 0.03,
-              "h": 210
-            },
-            "900": {
-              "l": 0.1,
-              "c": 0.05,
-              "h": 210
-            }
+          "50": {
+            "l": 0.96,
+            "c": 0.01,
+            "h": 210
+          },
+          "100": {
+            "l": 0.93,
+            "c": 0.02,
+            "h": 210
+          },
+          "200": {
+            "l": 0.88,
+            "c": 0.03,
+            "h": 210
+          },
+          "300": {
+            "l": 0.82,
+            "c": 0.03,
+            "h": 210
+          },
+          "400": {
+            "l": 0.7,
+            "c": 0.02,
+            "h": 210
+          },
+          "500": {
+            "l": 0.55,
+            "c": 0.02,
+            "h": 210
+          },
+          "600": {
+            "l": 0.42,
+            "c": 0.02,
+            "h": 210
+          },
+          "700": {
+            "l": 0.3,
+            "c": 0.02,
+            "h": 210
+          },
+          "800": {
+            "l": 0.2,
+            "c": 0.03,
+            "h": 210
+          },
+          "900": {
+            "l": 0.1,
+            "c": 0.05,
+            "h": 210
+          },
+          "950": {
+            "l": 0.05,
+            "c": 0.03,
+            "h": 210
           }
         }
       },
       "spacing": {
-        "4": "16px",
-        "6": "24px",
-        "8": "32px",
-        "12": "48px"
+        "2": "0.5rem",
+        "4": "1rem",
+        "6": "1.5rem",
+        "8": "2rem",
+        "12": "3rem",
+        "16": "4rem",
+        "24": "6rem"
       },
       "radius": {
+        "sm": "8px",
         "md": "16px",
         "lg": "24px",
         "xl": "32px",
@@ -85,21 +157,30 @@
     },
     "semantic": {
       "background": {
-        "canvas": "atomic.color.neutral.cool.50",
+        "canvas": "atomic.color.neutral.50",
         "surface": {
           "default": "atomic.color.neutral.white",
-          "subtle": "atomic.color.neutral.cool.100"
+          "subtle": "atomic.color.neutral.100",
+          "emphasis": "atomic.color.neutral.200"
         },
         "brand": {
-          "default": "atomic.color.brand.500"
+          "default": "atomic.color.brand.500",
+          "subtle": "atomic.color.brand.50"
         }
       },
       "text": {
-        "primary": "atomic.color.neutral.cool.900",
-        "secondary": "atomic.color.neutral.cool.500"
+        "primary": "atomic.color.neutral.900",
+        "secondary": "atomic.color.neutral.500",
+        "muted": "atomic.color.neutral.400",
+        "inverted": "atomic.color.neutral.white"
       },
       "border": {
-        "subtle": "atomic.color.neutral.cool.200"
+        "default": {
+          "subtle": "atomic.color.neutral.100",
+          "default": "atomic.color.neutral.200",
+          "emphasis": "atomic.color.neutral.300"
+        },
+        "focus": "atomic.color.brand.500"
       }
     },
     "recipes": {
@@ -117,14 +198,30 @@
         "default": "w-full bg-white rounded-full h-16 px-8 text-xl shadow-sm border-none placeholder:text-neutral-400 focus:ring-4 focus:ring-brand-500/10 transition-all",
         "search": "w-full bg-white rounded-full h-14 px-12 text-lg shadow-[0_2px_12px_rgba(0,0,0,0.04)] border-none"
       },
+      "badge": {
+        "default": "inline-flex items-center rounded-full bg-neutral-900 text-white px-3 py-1 text-xs font-bold",
+        "secondary": "inline-flex items-center rounded-full bg-neutral-100 text-neutral-900 px-3 py-1 text-xs font-medium",
+        "outline": "inline-flex items-center rounded-full border border-neutral-200 text-neutral-700 px-3 py-1 text-xs font-medium"
+      },
+      "table": {
+        "wrapper": "relative w-full overflow-auto rounded-3xl bg-white shadow-sm",
+        "root": "w-full caption-bottom text-base",
+        "header": "[&_tr]:border-b bg-neutral-50/50",
+        "row": "border-b border-neutral-100 transition-colors hover:bg-neutral-50/50",
+        "head": "h-14 px-6 text-left align-middle font-medium text-neutral-500",
+        "cell": "p-6 align-middle"
+      },
       "typography": {
         "h1": "font-sans text-5xl md:text-6xl font-bold tracking-tight text-neutral-900",
         "h2": "font-sans text-3xl font-bold tracking-tight text-neutral-900",
-        "body": "font-sans text-lg text-neutral-600 leading-relaxed font-medium"
+        "h3": "font-sans text-xl font-semibold text-neutral-900",
+        "body": "font-sans text-lg text-neutral-600 leading-relaxed font-medium",
+        "caption": "font-sans text-sm text-neutral-500"
       },
       "layout": {
         "container": "bg-neutral-50 min-h-screen",
-        "section": "max-w-7xl mx-auto px-6 py-20"
+        "section": "max-w-7xl mx-auto px-6 py-20",
+        "grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       }
     }
   }

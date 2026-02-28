@@ -81,7 +81,7 @@ export default async function ArticlePage({ params }: PageProps) {
         {/* Main Masthead */}
         <div className="py-6 md:py-8 text-center relative px-6">
           <Link
-            href="/studio/classic-magazine"
+            href="/explore/classic-magazine"
             className="absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 p-2 hover:bg-neutral-100 transition-colors group flex items-center gap-2"
           >
             <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
@@ -90,7 +90,7 @@ export default async function ArticlePage({ params }: PageProps) {
             </span>
           </Link>
 
-          <Link href="/studio/classic-magazine">
+          <Link href="/explore/classic-magazine">
             <h1 className="font-serif text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight leading-none scale-y-90 hover:opacity-80 transition-opacity px-12 sm:px-16 md:px-20">
               The Tekton Times
             </h1>
@@ -164,7 +164,7 @@ export default async function ArticlePage({ params }: PageProps) {
           </h2>
           <div className="flex justify-center gap-8 mb-12">
             <Link
-              href="/studio/classic-magazine/docs"
+              href="/explore/classic-magazine/docs"
               className="text-xs font-bold uppercase tracking-widest hover:underline"
             >
               Documentation

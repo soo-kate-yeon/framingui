@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePaddle } from '../../hooks/usePaddle';
 import { PADDLE_CONFIG } from '../../lib/paddle/config';
-import { useStudioLanguage } from '../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 
 // ============================================================================
 // Types
@@ -59,7 +59,7 @@ export function SelectionTopBar({
   const router = useRouter();
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady } = usePaddle();
-  const { locale } = useStudioLanguage();
+  const { locale } = useExploreLanguage();
   const t = messages[locale];
 
   const isComplete = selectedTemplates.length === maxSelection;
@@ -68,7 +68,7 @@ export function SelectionTopBar({
   const handleCheckout = () => {
     if (!user) {
       // 미로그인 → 로그인 페이지로 리디렉션 (returnUrl 포함)
-      const returnUrl = `/studio?plan=double&selected=${selectedTemplates.join(',')}`;
+      const returnUrl = `/explore?plan=double&selected=${selectedTemplates.join(',')}`;
       router.push(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`);
       return;
     }

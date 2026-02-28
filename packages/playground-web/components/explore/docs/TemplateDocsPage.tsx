@@ -12,7 +12,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, Moon, Sun, ArrowLeft, Globe } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useStudioLanguage } from '../../../contexts/StudioLanguageContext';
+import { useExploreLanguage } from '../../../contexts/ExploreLanguageContext';
 import type { TemplateDocsData } from '../../../data/template-docs';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -23,7 +23,7 @@ interface TemplateDocsPageProps {
 
 export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
   const router = useRouter();
-  const { locale, toggleLocale } = useStudioLanguage();
+  const { locale, toggleLocale } = useExploreLanguage();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [activeSection, setActiveSection] = useState('philosophy');
@@ -77,7 +77,7 @@ export function TemplateDocsPage({ data }: TemplateDocsPageProps) {
   };
 
   const goBack = () => {
-    router.push(`/studio/template/${data.id}`);
+    router.push(`/explore/template/${data.id}`);
   };
 
   const t = (en: string, ko?: string) => (locale === 'ko' && ko ? ko : en);

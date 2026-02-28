@@ -1,19 +1,20 @@
 /**
- * Explore Page (Studio Home)
+ * Explore Page (Explore Home)
  * [SPEC-UI-003][TAG-UI003-037]
  *
  * Function: Lists ACTUAL themes from .moai/themes/generated via @framingui/core
  * Uses Server Action for safe filesystem access
  */
 
-import { TemplateGallery } from '../../components/studio/TemplateGallery';
-import { StudioPageHeader } from '../../components/studio/StudioPageHeader';
-import { FeedbackFloatingButton } from '../../components/studio/FeedbackFloatingButton';
+import { TemplateGallery } from '../../components/explore/TemplateGallery';
+import { ExplorePageHeader } from '../../components/explore/ExplorePageHeader';
+import { FeedbackFloatingButton } from '../../components/explore/FeedbackFloatingButton';
+import { ExplorePageClient } from '../../components/explore/ExplorePageClient';
 import { loadThemes } from './actions';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Select Theme | tekton/studio',
+  title: 'Select Theme | tekton/explore',
   description: 'Choose a design system theme to start building.',
 };
 
@@ -29,13 +30,13 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   const galleryItems = await loadThemes();
 
   return (
-    <>
+    <ExplorePageClient>
       {galleryItems && galleryItems.length > 0 ? (
         <TemplateGallery templates={galleryItems} selectionMode={selectionMode} />
       ) : (
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-          {/* empty state에서만 StudioPageHeader 직접 렌더링 */}
-          <StudioPageHeader selectionMode={selectionMode} />
+          {/* empty state에서만 ExplorePageHeader 직접 렌더링 */}
+          <ExplorePageHeader selectionMode={selectionMode} />
           <div className="text-center py-24">
             <p className="text-lg font-medium text-neutral-600 mb-4">
               No themes found or error loading themes
@@ -47,6 +48,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
         </div>
       )}
       <FeedbackFloatingButton />
-    </>
+    </ExplorePageClient>
   );
 }

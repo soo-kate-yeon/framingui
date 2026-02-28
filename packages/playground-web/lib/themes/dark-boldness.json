@@ -2,7 +2,7 @@
   "id": "dark-boldness",
   "name": "Dark Boldness",
   "schemaVersion": "2.1",
-  "brandTone": "elite",
+  "brandTone": "bold",
   "designDNA": {
     "moodKeywords": ["pitch-black", "razor-sharp", "elite", "high-performance"],
     "targetEmotion": "ambition",
@@ -17,50 +17,75 @@
     "atomic": {
       "color": {
         "brand": {
+          "50": {
+            "l": 0.98,
+            "c": 0.01,
+            "h": 0
+          },
           "100": {
             "l": 0.95,
             "c": 0.05,
             "h": 0
           },
+          "200": {
+            "l": 0.88,
+            "c": 0.03,
+            "h": 0
+          },
+          "300": {
+            "l": 0.78,
+            "c": 0.02,
+            "h": 0
+          },
+          "400": {
+            "l": 0.65,
+            "c": 0.01,
+            "h": 0
+          },
           "500": {
-            "l": 1,
-            "c": 0,
+            "l": 1.0,
+            "c": 0.0,
             "h": 0
           },
-          "900": {
-            "l": 0,
-            "c": 0,
-            "h": 0
-          }
-        },
-        "neutral": {
-          "black": {
-            "l": 0,
-            "c": 0,
+          "600": {
+            "l": 0.4,
+            "c": 0.0,
             "h": 0
           },
-          "950": {
-            "l": 0.05,
-            "c": 0.01,
-            "h": 0
-          },
-          "900": {
-            "l": 0.1,
-            "c": 0.01,
+          "700": {
+            "l": 0.3,
+            "c": 0.0,
             "h": 0
           },
           "800": {
             "l": 0.2,
-            "c": 0.01,
+            "c": 0.0,
             "h": 0
           },
-          "500": {
-            "l": 0.5,
-            "c": 0.01,
+          "900": {
+            "l": 0.0,
+            "c": 0.0,
             "h": 0
           },
-          "200": {
-            "l": 0.8,
+          "950": {
+            "l": 0.0,
+            "c": 0.0,
+            "h": 0
+          }
+        },
+        "neutral": {
+          "white": {
+            "l": 1.0,
+            "c": 0.0,
+            "h": 0
+          },
+          "black": {
+            "l": 0.0,
+            "c": 0.0,
+            "h": 0
+          },
+          "50": {
+            "l": 0.96,
             "c": 0.01,
             "h": 0
           },
@@ -69,9 +94,49 @@
             "c": 0.01,
             "h": 0
           },
-          "white": {
-            "l": 1,
-            "c": 0,
+          "200": {
+            "l": 0.8,
+            "c": 0.01,
+            "h": 0
+          },
+          "300": {
+            "l": 0.7,
+            "c": 0.01,
+            "h": 0
+          },
+          "400": {
+            "l": 0.6,
+            "c": 0.01,
+            "h": 0
+          },
+          "500": {
+            "l": 0.5,
+            "c": 0.01,
+            "h": 0
+          },
+          "600": {
+            "l": 0.4,
+            "c": 0.01,
+            "h": 0
+          },
+          "700": {
+            "l": 0.3,
+            "c": 0.01,
+            "h": 0
+          },
+          "800": {
+            "l": 0.2,
+            "c": 0.01,
+            "h": 0
+          },
+          "900": {
+            "l": 0.1,
+            "c": 0.01,
+            "h": 0
+          },
+          "950": {
+            "l": 0.05,
+            "c": 0.01,
             "h": 0
           }
         },
@@ -98,6 +163,7 @@
         "circle": "50%"
       },
       "spacing": {
+        "2": "0.5rem",
         "4": "1rem",
         "6": "1.5rem",
         "8": "2rem",
@@ -109,27 +175,28 @@
       "background": {
         "canvas": "atomic.color.neutral.black",
         "surface": {
-          "subtle": "atomic.color.neutral.950",
           "default": "atomic.color.neutral.900",
+          "subtle": "atomic.color.neutral.950",
           "emphasis": "atomic.color.neutral.800"
         },
         "brand": {
-          "subtle": "atomic.color.brand.100",
           "default": "atomic.color.brand.500",
-          "emphasis": "atomic.color.brand.900"
+          "subtle": "atomic.color.brand.100"
         }
+      },
+      "text": {
+        "primary": "atomic.color.neutral.white",
+        "secondary": "atomic.color.neutral.200",
+        "muted": "atomic.color.neutral.500",
+        "inverted": "atomic.color.neutral.black"
       },
       "border": {
         "default": {
           "subtle": "atomic.color.neutral.800",
           "default": "atomic.color.neutral.500",
           "emphasis": "atomic.color.neutral.200"
-        }
-      },
-      "text": {
-        "primary": "atomic.color.neutral.white",
-        "secondary": "atomic.color.neutral.200",
-        "muted": "atomic.color.neutral.500"
+        },
+        "focus": "atomic.color.neutral.white"
       }
     },
     "recipes": {
@@ -145,21 +212,33 @@
         "ghost": "bg-transparent text-neutral-400 h-10 px-4 uppercase tracking-widest text-[10px] font-bold hover:text-white transition-colors rounded-none"
       },
       "input": {
-        "architectural": "w-full bg-transparent border-b border-neutral-800 py-4 text-white placeholder:text-neutral-600 focus:border-white focus:outline-none rounded-none transition-colors text-sm"
+        "default": "w-full bg-transparent border-b border-neutral-800 py-4 text-white placeholder:text-neutral-600 focus:border-white focus:outline-none rounded-none transition-colors text-sm"
       },
       "badge": {
-        "neutral": "inline-flex items-center rounded-none border border-neutral-800 bg-neutral-900 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-400 tracking-wide",
-        "accent": "inline-flex items-center rounded-none bg-white text-black px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide"
+        "default": "inline-flex items-center rounded-none bg-white text-black px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide",
+        "secondary": "inline-flex items-center rounded-none border border-neutral-800 bg-neutral-900 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-400 tracking-wide",
+        "outline": "inline-flex items-center rounded-none border border-neutral-400 px-2 py-0.5 text-[10px] uppercase font-bold text-neutral-300 tracking-wide"
+      },
+      "table": {
+        "wrapper": "relative w-full overflow-auto",
+        "root": "w-full caption-bottom text-sm",
+        "header": "[&_tr]:border-b border-neutral-800",
+        "row": "border-b border-neutral-800 transition-colors hover:bg-neutral-900/50",
+        "head": "h-12 px-4 text-left align-middle text-[10px] uppercase tracking-widest font-bold text-neutral-500",
+        "cell": "p-4 align-middle text-sm text-neutral-300"
       },
       "typography": {
         "hero": "text-5xl font-bold uppercase tracking-tighter text-white leading-none",
-        "eyebrow": "text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2 block",
+        "h1": "text-4xl font-bold uppercase tracking-tight text-white",
+        "h2": "text-2xl font-bold uppercase tracking-tight text-white",
+        "h3": "text-lg font-bold uppercase tracking-tight text-white",
         "body": "text-sm font-normal text-neutral-400 leading-relaxed",
+        "eyebrow": "text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2 block",
         "label": "text-xs font-bold uppercase tracking-widest text-neutral-500"
       },
       "layout": {
-        "section": "py-24 px-6",
         "container": "px-6",
+        "section": "py-24 px-6",
         "grid": "gap-x-8 gap-y-12",
         "stack": "flex flex-col gap-6"
       }

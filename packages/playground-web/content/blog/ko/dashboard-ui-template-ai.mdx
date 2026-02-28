@@ -1,0 +1,494 @@
+---
+title: "AI로 대시보드 레이아웃 레시피"
+description: "빠른 개발을 위해 AI 지원과 함께 FramingUI 템플릿을 사용하여 전문적인 관리자 대시보드 레이아웃을 만드세요."
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - dashboard
+  - admin-panel
+  - layout-templates
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## 대시보드가 어려운 이유
+
+대시보드를 처음부터 빌드하려면 다음이 필요합니다:
+
+1. **레이아웃 구조** — 사이드바, 헤더, 메인 콘텐츠 영역
+2. **반응형 디자인** — 모바일, 태블릿, 데스크톱 브레이크포인트
+3. **컴포넌트 구성** — 통계 카드, 테이블, 차트
+4. **내비게이션 상태** — 활성 링크, 접을 수 있는 메뉴
+5. **일관된 스타일링** — 색상, 간격, 타이포그래피
+
+FramingUI + AI를 사용하면 몇 시간이 아닌 몇 분 만에 완전한 대시보드를 생성할 수 있습니다.
+
+## 대시보드 구조
+
+일반적인 관리자 대시보드는 다음과 같습니다:
+
+```
+┌─────────────────────────────────────────┐
+│ 헤더 (내비게이션, 사용자 메뉴)            │
+├──────────┬──────────────────────────────┤
+│          │                              │
+│ 사이드바 │ 메인 콘텐츠 영역              │
+│          │  - 통계 카드                 │
+│ (내비)   │  - 차트                      │
+│          │  - 데이터 테이블              │
+│          │                              │
+└──────────┴──────────────────────────────┘
+```
+
+FramingUI로 단계별로 빌드해봅시다.
+
+## 1단계: 기본 레이아웃 구조
+
+```tsx
+import { Card, Separator } from '@framingui/ui';
+
+export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen">
+      {/* 사이드바 */}
+      <aside className="w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-card)]">
+        <div className="p-[var(--tekton-spacing-6)]">
+          <h2 className="text-lg font-bold">MyApp</h2>
+        </div>
+        <Separator />
+        {/* 내비게이션이 여기에 들어갑니다 */}
+      </aside>
+
+      {/* 메인 콘텐츠 */}
+      <div className="flex-1 flex flex-col">
+        {/* 헤더 */}
+        <header className="h-16 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-card)] flex items-center px-[var(--tekton-spacing-6)]">
+          <h1 className="text-xl font-semibold">대시보드</h1>
+        </header>
+
+        {/* 콘텐츠 */}
+        <main className="flex-1 overflow-auto p-[var(--tekton-spacing-6)] bg-[var(--tekton-bg-background)]">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+```
+
+### 주요 기능
+
+✅ **고정 사이드바**: `w-64` (256px 너비)
+✅ **스크롤 가능한 콘텐츠**: main에 `overflow-auto`
+✅ **디자인 토큰**: 모든 테두리와 간격이 토큰 사용
+
+## 2단계: 사이드바 내비게이션
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Home, Users, BarChart3, Settings, ChevronDown } from 'lucide-react';
+import { Button, Separator } from '@framingui/ui';
+import { cn } from '@framingui/ui/lib/utils';
+
+const navItems = [
+  { icon: Home, label: '대시보드', href: '/dashboard' },
+  { icon: Users, label: '사용자', href: '/users' },
+  { icon: BarChart3, label: '분석', href: '/analytics' },
+  { icon: Settings, label: '설정', href: '/settings' },
+];
+
+export function DashboardSidebar() {
+  const [activeItem, setActiveItem] = useState('/dashboard');
+
+  return (
+    <aside className="w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-card)] flex flex-col h-screen">
+      {/* 로고 */}
+      <div className="p-[var(--tekton-spacing-6)]">
+        <h2 className="text-lg font-bold">MyApp 관리자</h2>
+      </div>
+      <Separator />
+
+      {/* 내비게이션 */}
+      <nav className="flex-1 p-[var(--tekton-spacing-4)] space-y-[var(--tekton-spacing-2)]">
+        {navItems.map((item) => (
+          <Button
+            key={item.href}
+            variant={activeItem === item.href ? 'default' : 'ghost'}
+            className={cn(
+              'w-full justify-start',
+              activeItem === item.href && 'bg-[var(--tekton-bg-primary)] text-[var(--tekton-bg-primary-foreground)]'
+            )}
+            onClick={() => setActiveItem(item.href)}
+          >
+            <item.icon className="mr-[var(--tekton-spacing-2)] h-4 w-4" />
+            {item.label}
+          </Button>
+        ))}
+      </nav>
+
+      <Separator />
+
+      {/* 사용자 섹션 */}
+      <div className="p-[var(--tekton-spacing-4)]">
+        <Button variant="ghost" className="w-full justify-between">
+          <div className="flex items-center">
+            <div className="w-8 h-8 rounded-full bg-[var(--tekton-bg-primary)] flex items-center justify-center text-sm font-bold text-[var(--tekton-bg-primary-foreground)] mr-[var(--tekton-spacing-3)]">
+              홍길동
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-medium">홍길동</p>
+              <p className="text-xs text-[var(--tekton-bg-muted-foreground)]">관리자</p>
+            </div>
+          </div>
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </div>
+    </aside>
+  );
+}
+```
+
+### 내비게이션 기능
+
+✅ **활성 상태 강조**: 활성 항목에 `variant="default"` 사용
+✅ **아이콘 지원**: Lucide React 아이콘
+✅ **사용자 프로필 섹션**: 하단에 아바타 포함
+
+## 3단계: 통계 카드 그리드
+
+```tsx
+import { Card, CardContent } from '@framingui/ui';
+import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
+
+const stats = [
+  {
+    title: '총 수익',
+    value: '₩45,231,000',
+    change: '+20.1%',
+    icon: DollarSign,
+    trend: 'up' as const,
+  },
+  {
+    title: '총 사용자',
+    value: '2,350',
+    change: '+12.5%',
+    icon: Users,
+    trend: 'up' as const,
+  },
+  {
+    title: '총 주문',
+    value: '1,234',
+    change: '-4.3%',
+    icon: ShoppingCart,
+    trend: 'down' as const,
+  },
+  {
+    title: '전환율',
+    value: '3.24%',
+    change: '+0.5%',
+    icon: TrendingUp,
+    trend: 'up' as const,
+  },
+];
+
+export function StatsGrid() {
+  return (
+    <div className="grid gap-[var(--tekton-spacing-4)] md:grid-cols-2 lg:grid-cols-4">
+      {stats.map((stat) => (
+        <Card key={stat.title}>
+          <CardContent className="p-[var(--tekton-spacing-6)]">
+            <div className="flex items-center justify-between space-x-[var(--tekton-spacing-4)]">
+              <div className="space-y-[var(--tekton-spacing-2)]">
+                <p className="text-sm font-medium text-[var(--tekton-bg-muted-foreground)]">
+                  {stat.title}
+                </p>
+                <div className="flex items-baseline space-x-[var(--tekton-spacing-2)]">
+                  <p className="text-2xl font-bold">{stat.value}</p>
+                  <span
+                    className={cn(
+                      'text-xs font-medium',
+                      stat.trend === 'up'
+                        ? 'text-[var(--tekton-bg-primary)]'
+                        : 'text-[var(--tekton-bg-destructive)]'
+                    )}
+                  >
+                    {stat.change}
+                  </span>
+                </div>
+              </div>
+              <div className="p-[var(--tekton-spacing-3)] bg-[var(--tekton-bg-primary)]/10 rounded-[var(--tekton-radius-lg)]">
+                <stat.icon className="h-5 w-5 text-[var(--tekton-bg-primary)]" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+```
+
+### 통계 카드 기능
+
+✅ **반응형 그리드**: 1열 모바일 → 2열 태블릿 → 4열 데스크톱
+✅ **트렌드 표시기**: 상승은 녹색, 하락은 빨간색
+✅ **아이콘 배지**: 불투명도가 있는 색상 배경
+
+## 4단계: 데이터 테이블
+
+```tsx
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Badge,
+  Button,
+} from '@framingui/ui';
+import { MoreHorizontal } from 'lucide-react';
+
+const recentOrders = [
+  { id: '#3210', customer: '김철수', amount: '₩250,000', status: 'completed', date: '2026-02-27' },
+  { id: '#3211', customer: '이영희', amount: '₩120,500', status: 'pending', date: '2026-02-27' },
+  { id: '#3212', customer: '박민수', amount: '₩89,990', status: 'completed', date: '2026-02-26' },
+  { id: '#3213', customer: '최지원', amount: '₩340,000', status: 'processing', date: '2026-02-26' },
+];
+
+export function RecentOrdersTable() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>최근 주문</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>주문 ID</TableHead>
+              <TableHead>고객</TableHead>
+              <TableHead>금액</TableHead>
+              <TableHead>상태</TableHead>
+              <TableHead>날짜</TableHead>
+              <TableHead className="w-[50px]"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {recentOrders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell className="font-medium">{order.id}</TableCell>
+                <TableCell>{order.customer}</TableCell>
+                <TableCell>{order.amount}</TableCell>
+                <TableCell>
+                  <Badge
+                    variant={
+                      order.status === 'completed'
+                        ? 'default'
+                        : order.status === 'pending'
+                        ? 'secondary'
+                        : 'outline'
+                    }
+                  >
+                    {order.status}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-[var(--tekton-bg-muted-foreground)]">
+                  {order.date}
+                </TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="icon">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### 테이블 기능
+
+✅ **상태 배지**: 색상 코딩된 주문 상태
+✅ **액션 버튼**: 행 액션용 아이콘 버튼
+✅ **카드 래퍼**: 일관된 스타일링을 위한 Card 내부 테이블
+
+## 5단계: 완전한 대시보드 페이지
+
+```tsx
+import { DashboardLayout } from './dashboard-layout';
+import { DashboardSidebar } from './dashboard-sidebar';
+import { StatsGrid } from './stats-grid';
+import { RecentOrdersTable } from './recent-orders-table';
+
+export default function DashboardPage() {
+  return (
+    <div className="flex h-screen">
+      <DashboardSidebar />
+      <div className="flex-1 flex flex-col">
+        {/* 헤더 */}
+        <header className="h-16 border-b border-[var(--tekton-border-default)] bg-[var(--tekton-bg-card)] flex items-center justify-between px-[var(--tekton-spacing-6)]">
+          <h1 className="text-xl font-semibold">대시보드 개요</h1>
+          <Button variant="default">보고서 다운로드</Button>
+        </header>
+
+        {/* 메인 콘텐츠 */}
+        <main className="flex-1 overflow-auto p-[var(--tekton-spacing-6)] bg-[var(--tekton-bg-background)]">
+          <div className="space-y-[var(--tekton-spacing-6)]">
+            <StatsGrid />
+            <RecentOrdersTable />
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+```
+
+## 반응형 개선
+
+### 모바일 우선 사이드바
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
+import { Button, Sheet, SheetContent, SheetTrigger } from '@framingui/ui';
+
+export function MobileSidebar({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      {/* 모바일 트리거 */}
+      <div className="lg:hidden">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64">
+            {children}
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* 데스크톱 사이드바 */}
+      <div className="hidden lg:block">{children}</div>
+    </>
+  );
+}
+```
+
+## AI 프롬프팅 팁
+
+### 통계 카드 생성
+
+**Claude/Cursor용 프롬프트:**
+
+```
+다음을 표시하는 FramingUI Card를 사용한 통계 그리드 컴포넌트를 만들어줘:
+- 총 사용자 (12,345)
+- 활성 세션 (1,234)
+- 수익 (₩54,321,000)
+- 전환율 (3.2%)
+
+모든 스타일링에 var(--tekton-*) 토큰을 사용해줘.
+```
+
+### 데이터 테이블 생성
+
+**프롬프트:**
+
+```
+다음 컬럼을 가진 FramingUI Table 컴포넌트를 사용한 사용자 테이블을 만들어줘:
+- 이름, 이메일, 역할, 상태 (배지), 액션 (버튼)
+
+간격과 색상에 디자인 토큰을 사용해줘.
+```
+
+### 완전한 대시보드 생성
+
+**프롬프트:**
+
+```
+다음을 포함한 FramingUI를 사용한 완전한 관리자 대시보드를 만들어줘:
+- 사이드바 내비게이션 (대시보드, 사용자, 분석, 설정)
+- 제목과 액션 버튼이 있는 헤더
+- 반응형 그리드의 4개 통계 카드
+- 최근 주문 테이블
+- 모든 스타일링에 var(--tekton-*) 토큰 사용
+```
+
+## 고급: 차트 통합
+
+```tsx
+import { Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+const chartData = [
+  { month: '1월', revenue: 4000 },
+  { month: '2월', revenue: 3000 },
+  { month: '3월', revenue: 5000 },
+  { month: '4월', revenue: 4500 },
+  { month: '5월', revenue: 6000 },
+  { month: '6월', revenue: 5500 },
+];
+
+export function RevenueChart() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>수익 개요</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="var(--tekton-bg-primary)"
+              strokeWidth={2}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+✅ **디자인 토큰 사용**: `stroke="var(--tekton-bg-primary)"`
+
+## 다음 단계
+
+1. **다크 모드 토글 추가**: FramingUI 테마 전환 사용
+2. **데이터 페칭 구현**: React Query 또는 SWR
+3. **필터링/검색 추가**: 검색 입력이 있는 테이블
+4. **상세 페이지 빌드**: 사용자 프로필, 주문 상세
+
+## 리소스
+
+- [FramingUI 문서](https://framingui.com)
+- [GitHub 저장소](https://github.com/soo-kate-yeon/tekton)
+- [Recharts 문서](https://recharts.org)
+
+FramingUI + AI를 사용하면 모든 컴포넌트에서 완벽한 디자인 일관성을 유지하면서 프로덕션 준비 대시보드를 몇 분 만에 빌드할 수 있습니다.

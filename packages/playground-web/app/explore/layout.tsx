@@ -1,5 +1,5 @@
 /**
- * Studio Layout
+ * Explore Layout
  * [SPEC-UI-003][TAG-UI003-037]
  *
  * Theme: Square Minimalism
@@ -13,15 +13,15 @@
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { SidebarProvider } from '../../contexts/SidebarContext';
-import { StudioLanguageProvider } from '../../contexts/StudioLanguageContext';
-import { Sidebar } from '../../components/studio/Sidebar';
+import { ExploreLanguageProvider } from '../../contexts/ExploreLanguageContext';
+import { Sidebar } from '../../components/explore/Sidebar';
 import { Footer } from '../../components/shared/Footer';
 
-interface StudioLayoutProps {
+interface ExploreLayoutProps {
   children: ReactNode;
 }
 
-function StudioLayoutContent({ children }: StudioLayoutProps) {
+function ExploreLayoutContent({ children }: ExploreLayoutProps) {
   const pathname = usePathname();
   const templateSlugs = [
     'neutral-workspace',
@@ -32,7 +32,7 @@ function StudioLayoutContent({ children }: StudioLayoutProps) {
     'square-minimalism',
     'editorial-tech',
   ];
-  const isDemoPage = templateSlugs.some((slug) => pathname?.startsWith(`/studio/${slug}`));
+  const isDemoPage = templateSlugs.some((slug) => pathname?.startsWith(`/explore/${slug}`));
 
   return (
     <div className="flex h-screen overflow-hidden bg-white selection:bg-neutral-950 selection:text-white font-sans text-neutral-950">
@@ -50,15 +50,15 @@ function StudioLayoutContent({ children }: StudioLayoutProps) {
   );
 }
 
-export default function StudioLayout({ children }: StudioLayoutProps) {
+export default function ExploreLayout({ children }: ExploreLayoutProps) {
   // 모든 페이지에서 sidebar는 기본적으로 접힌 상태
   const defaultCollapsed = true;
 
   return (
-    <StudioLanguageProvider>
+    <ExploreLanguageProvider>
       <SidebarProvider defaultCollapsed={defaultCollapsed}>
-        <StudioLayoutContent>{children}</StudioLayoutContent>
+        <ExploreLayoutContent>{children}</ExploreLayoutContent>
       </SidebarProvider>
-    </StudioLanguageProvider>
+    </ExploreLanguageProvider>
   );
 }
