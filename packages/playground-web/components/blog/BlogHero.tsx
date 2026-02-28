@@ -16,7 +16,7 @@ export function BlogHero({ frontmatter, readingTime }: BlogHeroProps) {
   const content = getBlogContent(locale);
 
   const formattedDate = new Date(frontmatter.date).toLocaleDateString(
-    locale === 'ko' ? 'ko-KR' : 'en-US',
+    locale === 'ko' ? 'ko-KR' : locale === 'ja' ? 'ja-JP' : 'en-US',
     {
       year: 'numeric',
       month: 'long',

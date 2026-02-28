@@ -11,8 +11,12 @@ import { GlobalLanguageSwitcher } from '@/components/shared/GlobalLanguageSwitch
 import type { BlogPostSummary } from '@/lib/blog';
 
 interface BlogListPageProps {
-  posts: { en: BlogPostSummary[]; ko: BlogPostSummary[] };
-  allTags: { en: { tag: string; count: number }[]; ko: { tag: string; count: number }[] };
+  posts: { en: BlogPostSummary[]; ko: BlogPostSummary[]; ja: BlogPostSummary[] };
+  allTags: {
+    en: { tag: string; count: number }[];
+    ko: { tag: string; count: number }[];
+    ja: { tag: string; count: number }[];
+  };
   activeTag?: string;
 }
 
@@ -20,11 +24,10 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
   const router = useRouter();
   const { locale } = useGlobalLanguage();
   const [darkMode, setDarkMode] = useState(false);
-  const contentLocale = locale === 'ko' ? 'ko' : 'en';
 
   const content = getBlogContent(locale);
-  const currentPosts = posts[contentLocale];
-  const currentTags = allTags[contentLocale];
+  const currentPosts = posts[locale];
+  const currentTags = allTags[locale];
 
   // 다크모드 persistence
   useEffect(() => {

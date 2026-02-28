@@ -38,8 +38,15 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   const enPosts = getAllBlogPosts('en');
   const koPosts = getAllBlogPosts('ko');
+  const jaPosts = getAllBlogPosts('ja');
   const enTags = getAllTags('en');
   const koTags = getAllTags('ko');
+  const jaTags = getAllTags('ja');
 
-  return <BlogListPage posts={{ en: enPosts, ko: koPosts }} allTags={{ en: enTags, ko: koTags }} />;
+  return (
+    <BlogListPage
+      posts={{ en: enPosts, ko: koPosts, ja: jaPosts }}
+      allTags={{ en: enTags, ko: koTags, ja: jaTags }}
+    />
+  );
 }

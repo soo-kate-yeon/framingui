@@ -57,6 +57,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       languages: {
         en: url,
         ko: url,
+        ja: url,
       },
     },
   };
@@ -72,6 +73,7 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
 
   const enRelated = getRelatedPosts(slug, 'en');
   const koRelated = getRelatedPosts(slug, 'ko');
+  const jaRelated = getRelatedPosts(slug, 'ja');
 
   const fm = post.frontmatter.en;
   const url = `https://framingui.com/blog/${slug}`;
@@ -99,7 +101,7 @@ export default async function BlogSlugPage({ params }: BlogPostPageProps) {
           { name: fm.title, url },
         ]}
       />
-      <BlogPostPage post={post} relatedPosts={{ en: enRelated, ko: koRelated }} />
+      <BlogPostPage post={post} relatedPosts={{ en: enRelated, ko: koRelated, ja: jaRelated }} />
     </>
   );
 }

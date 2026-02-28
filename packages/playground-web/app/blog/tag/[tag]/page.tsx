@@ -24,13 +24,15 @@ export default async function TagPage({ params }: TagPageProps) {
 
   const enPosts = getBlogPostsByTag(tag, 'en');
   const koPosts = getBlogPostsByTag(tag, 'ko');
+  const jaPosts = getBlogPostsByTag(tag, 'ja');
   const enTags = getAllTags('en');
   const koTags = getAllTags('ko');
+  const jaTags = getAllTags('ja');
 
   return (
     <BlogListPage
-      posts={{ en: enPosts, ko: koPosts }}
-      allTags={{ en: enTags, ko: koTags }}
+      posts={{ en: enPosts, ko: koPosts, ja: jaPosts }}
+      allTags={{ en: enTags, ko: koTags, ja: jaTags }}
       activeTag={tag}
     />
   );

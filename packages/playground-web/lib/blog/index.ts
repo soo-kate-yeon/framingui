@@ -7,7 +7,7 @@ import { blogFrontmatterSchema, type BlogFrontmatter } from './schema';
 
 export type { BlogFrontmatter };
 
-export type BlogLocale = 'en' | 'ko';
+export type BlogLocale = 'en' | 'ko' | 'ja';
 
 export interface TocItem {
   id: string;
@@ -17,10 +17,10 @@ export interface TocItem {
 
 export interface BlogPost {
   slug: string;
-  frontmatter: { en: BlogFrontmatter; ko: BlogFrontmatter };
-  content: { en: string; ko: string };
-  toc: { en: TocItem[]; ko: TocItem[] };
-  readingTime: { en: number; ko: number };
+  frontmatter: Record<BlogLocale, BlogFrontmatter>;
+  content: Record<BlogLocale, string>;
+  toc: Record<BlogLocale, TocItem[]>;
+  readingTime: Record<BlogLocale, number>;
 }
 
 export interface BlogPostSummary {
@@ -62,14 +62,18 @@ function parseBlogFile(
   slug: string,
   locale: BlogLocale
 ): { frontmatter: BlogFrontmatter; content: string } | null {
-  const filePath = path.join(BLOG_DIR, locale, `${slug}.mdx`);
-  if (!fs.existsSync(filePath)) { return null; }
+  const directPath = path.join(BLOG_DIR, locale, `${slug}.mdx`);
+  const nestedPath = path.join(BLOG_DIR, slug, `${locale}.mdx`);
+  const filePath = fs.existsSync(directPath) ? directPath : nestedPath;
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
 
   const raw = fs.readFileSync(filePath, 'utf-8');
   const { data, content } = matter(raw, {
     engines: {
-      yaml: (s: string) => yaml.load(s) as Record<string, unknown>
-    }
+      yaml: (s: string) => yaml.load(s) as Record<string, unknown>,
+    },
   });
   const frontmatter = blogFrontmatterSchema.parse({ ...data, slug });
 
@@ -77,22 +81,32 @@ function parseBlogFile(
 }
 
 /**
- * 개별 포스트 읽기 (en/ko 모두)
+ * 개별 포스트 읽기 (en/ko/ja)
  */
 export function getBlogPost(slug: string): BlogPost | null {
   const en = parseBlogFile(slug, 'en');
   const ko = parseBlogFile(slug, 'ko');
+  const ja = parseBlogFile(slug, 'ja');
 
-  if (!en || !ko) { return null; }
+  if (!en) {
+    return null;
+  }
+  const koResolved = ko ?? en;
+  const jaResolved = ja ?? en;
 
   return {
     slug,
-    frontmatter: { en: en.frontmatter, ko: ko.frontmatter },
-    content: { en: en.content, ko: ko.content },
-    toc: { en: extractToc(en.content), ko: extractToc(ko.content) },
+    frontmatter: { en: en.frontmatter, ko: koResolved.frontmatter, ja: jaResolved.frontmatter },
+    content: { en: en.content, ko: koResolved.content, ja: jaResolved.content },
+    toc: {
+      en: extractToc(en.content),
+      ko: extractToc(koResolved.content),
+      ja: extractToc(jaResolved.content),
+    },
     readingTime: {
       en: Math.ceil(readingTime(en.content).minutes),
-      ko: Math.ceil(readingTime(ko.content).minutes),
+      ko: Math.ceil(readingTime(koResolved.content).minutes),
+      ja: Math.ceil(readingTime(jaResolved.content).minutes),
     },
   };
 }
@@ -106,11 +120,13 @@ export function getAllBlogPosts(locale: BlogLocale): BlogPostSummary[] {
 
   for (const slug of slugs) {
     const parsed = parseBlogFile(slug, locale);
-    if (parsed && parsed.frontmatter.published) {
+    const fallback = locale === 'en' ? null : parseBlogFile(slug, 'en');
+    const resolved = parsed ?? fallback;
+    if (resolved && resolved.frontmatter.published) {
       posts.push({
         slug,
-        frontmatter: parsed.frontmatter,
-        readingTime: Math.ceil(readingTime(parsed.content).minutes),
+        frontmatter: resolved.frontmatter,
+        readingTime: Math.ceil(readingTime(resolved.content).minutes),
       });
     }
   }
@@ -125,7 +141,9 @@ export function getAllBlogPosts(locale: BlogLocale): BlogPostSummary[] {
  */
 export function getAllBlogSlugs(): string[] {
   const enDir = path.join(BLOG_DIR, 'en');
-  if (!fs.existsSync(enDir)) { return []; }
+  if (!fs.existsSync(enDir)) {
+    return [];
+  }
 
   return fs
     .readdirSync(enDir)
@@ -164,13 +182,11 @@ export function getAllTags(locale: BlogLocale): { tag: string; count: number }[]
 /**
  * 관련 포스트 (같은 태그, 최대 3개)
  */
-export function getRelatedPosts(
-  slug: string,
-  locale: BlogLocale,
-  limit = 3
-): BlogPostSummary[] {
+export function getRelatedPosts(slug: string, locale: BlogLocale, limit = 3): BlogPostSummary[] {
   const current = parseBlogFile(slug, locale);
-  if (!current) { return []; }
+  if (!current) {
+    return [];
+  }
 
   const allPosts = getAllBlogPosts(locale).filter((p) => p.slug !== slug);
   const currentTags = new Set(current.frontmatter.tags.map((t) => t.toLowerCase()));

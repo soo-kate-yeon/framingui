@@ -19,21 +19,20 @@ import type { BlogPost, BlogPostSummary } from '@/lib/blog';
 
 interface BlogPostPageProps {
   post: BlogPost;
-  relatedPosts: { en: BlogPostSummary[]; ko: BlogPostSummary[] };
+  relatedPosts: { en: BlogPostSummary[]; ko: BlogPostSummary[]; ja: BlogPostSummary[] };
 }
 
 export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   const router = useRouter();
   const { locale } = useGlobalLanguage();
   const [darkMode, setDarkMode] = useState(false);
-  const contentLocale = locale === 'ko' ? 'ko' : 'en';
 
   const blogContent = getBlogContent(locale);
-  const fm = post.frontmatter[contentLocale];
-  const content = post.content[contentLocale];
-  const toc = post.toc[contentLocale];
-  const rt = post.readingTime[contentLocale];
-  const related = relatedPosts[contentLocale];
+  const fm = post.frontmatter[locale];
+  const content = post.content[locale];
+  const toc = post.toc[locale];
+  const rt = post.readingTime[locale];
+  const related = relatedPosts[locale];
 
   // 다크모드 persistence
   useEffect(() => {

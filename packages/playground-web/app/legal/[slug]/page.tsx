@@ -28,13 +28,14 @@ export async function generateMetadata({ params }: LegalPageProps) {
       languages: {
         en: `/legal/${slug}?lang=en`,
         ko: `/legal/${slug}?lang=ko`,
+        ja: `/legal/${slug}?lang=ja`,
       },
     },
     openGraph: {
       title: `${metaEn.title} | Tekton`,
       description: metaEn.description,
       locale: 'en_US',
-      alternateLocale: 'ko_KR',
+      alternateLocale: ['ko_KR', 'ja_JP'],
     },
   };
 }

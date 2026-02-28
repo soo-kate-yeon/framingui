@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 export type LegalSlug = 'terms-of-service' | 'privacy-policy' | 'refund-policy';
-export type LegalLocale = 'en' | 'ko';
+export type LegalLocale = 'en' | 'ko' | 'ja';
 
 export interface TocItem {
   id: string;
@@ -12,18 +12,18 @@ export interface TocItem {
 
 export interface LegalDocument {
   slug: LegalSlug;
-  title: { en: string; ko: string };
-  content: { en: string; ko: string };
-  toc: { en: TocItem[]; ko: TocItem[] };
+  title: Record<LegalLocale, string>;
+  content: Record<LegalLocale, string>;
+  toc: Record<LegalLocale, TocItem[]>;
 }
 
 // packages/playground-web에서 모노레포 루트까지 올라간 후 docs/legal로 이동
 const LEGAL_DOCS_DIR = path.join(process.cwd(), '..', '..', 'docs', 'legal');
 
-const LEGAL_META: Record<LegalSlug, { en: string; ko: string }> = {
-  'terms-of-service': { en: 'Terms of Service', ko: '이용약관' },
-  'privacy-policy': { en: 'Privacy Policy', ko: '개인정보처리방침' },
-  'refund-policy': { en: 'Refund Policy', ko: '환불정책' },
+const LEGAL_META: Record<LegalSlug, Record<LegalLocale, string>> = {
+  'terms-of-service': { en: 'Terms of Service', ko: '이용약관', ja: '利用規約' },
+  'privacy-policy': { en: 'Privacy Policy', ko: '개인정보처리방침', ja: 'プライバシーポリシー' },
+  'refund-policy': { en: 'Refund Policy', ko: '환불정책', ja: '返金ポリシー' },
 };
 
 export const LEGAL_SLUGS: LegalSlug[] = ['terms-of-service', 'privacy-policy', 'refund-policy'];
@@ -53,20 +53,27 @@ function extractToc(markdown: string): TocItem[] {
 }
 
 /**
- * 특정 slug의 법적 문서를 en/ko 모두 읽어 반환
+ * 특정 slug의 법적 문서를 en/ko/ja 모두 읽어 반환
  */
 export function getLegalDocument(slug: LegalSlug): LegalDocument {
-  const enPath = path.join(LEGAL_DOCS_DIR, 'en', `${slug}.md`);
-  const koPath = path.join(LEGAL_DOCS_DIR, 'ko', `${slug}.md`);
+  const readContent = (locale: LegalLocale): string => {
+    const localePath = path.join(LEGAL_DOCS_DIR, locale, `${slug}.md`);
+    if (fs.existsSync(localePath)) {
+      return fs.readFileSync(localePath, 'utf-8');
+    }
+    const enPath = path.join(LEGAL_DOCS_DIR, 'en', `${slug}.md`);
+    return fs.readFileSync(enPath, 'utf-8');
+  };
 
-  const enContent = fs.readFileSync(enPath, 'utf-8');
-  const koContent = fs.readFileSync(koPath, 'utf-8');
+  const enContent = readContent('en');
+  const koContent = readContent('ko');
+  const jaContent = readContent('ja');
 
   return {
     slug,
     title: LEGAL_META[slug],
-    content: { en: enContent, ko: koContent },
-    toc: { en: extractToc(enContent), ko: extractToc(koContent) },
+    content: { en: enContent, ko: koContent, ja: jaContent },
+    toc: { en: extractToc(enContent), ko: extractToc(koContent), ja: extractToc(jaContent) },
   };
 }
 

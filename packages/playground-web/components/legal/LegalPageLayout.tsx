@@ -20,9 +20,9 @@ import { getLegalPageContent } from '../../data/i18n/legal';
 import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 
 interface LegalPageLayoutProps {
-  title: { en: string; ko: string };
-  content: { en: string; ko: string };
-  toc: { en: TocItem[]; ko: TocItem[] };
+  title: { en: string; ko: string; ja: string };
+  content: { en: string; ko: string; ja: string };
+  toc: { en: TocItem[]; ko: TocItem[]; ja: TocItem[] };
 }
 
 export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
@@ -34,11 +34,10 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   // GlobalLanguageContext 사용
   const { locale } = useGlobalLanguage();
   const i18n = getLegalPageContent(locale);
-  const contentLocale = locale === 'ko' ? 'ko' : 'en';
 
-  const currentToc = toc[contentLocale];
-  const currentContent = content[contentLocale];
-  const currentTitle = title[contentLocale];
+  const currentToc = toc[locale];
+  const currentContent = content[locale];
+  const currentTitle = title[locale];
 
   // 다크모드 persistence
   useEffect(() => {
