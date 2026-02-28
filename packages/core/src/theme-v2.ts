@@ -216,6 +216,8 @@ export interface ThemeV2 {
     semantic: SemanticTokensV2;
     component?: ComponentTokensV2;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  recipes?: Record<string, any>;
   stateLayer: StateLayerTokens;
   motion: MotionTokens;
   elevation: ElevationTokens;

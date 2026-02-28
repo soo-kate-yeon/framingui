@@ -3,6 +3,7 @@
 import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
@@ -75,7 +76,8 @@ const EDITORIAL_TECH_FALLBACK: Record<string, string> = {
  * Design DNA: Blank canvas, zero chroma, pill accents, airy spacing
  */
 export default function EditorialTechDemo() {
-  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'page' | 'component' | 'solutions'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('editorial-tech', {
     fallback: EDITORIAL_TECH_FALLBACK,
@@ -128,6 +130,21 @@ export default function EditorialTechDemo() {
               className={`transition-opacity ${activeTab === 'component' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
             />
           </button>
+          <button
+            onClick={() => router.push('/explore/editorial-tech/solutions')}
+            className="text-sm font-medium px-5 py-3 rounded-full transition-colors text-left flex items-center justify-between group text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-muted)]"
+          >
+            <div className="flex items-center gap-2">
+              <span>{locale === 'ko' ? '솔루션 랜딩' : 'Solutions Landing'}</span>
+              <span className="text-[10px] font-bold bg-black text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">
+                New
+              </span>
+            </div>
+            <ChevronRight
+              size={16}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+            />
+          </button>
         </nav>
       </aside>
 
@@ -166,6 +183,15 @@ export default function EditorialTechDemo() {
               className={`text-lg font-medium px-5 py-4 rounded-full transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-action-primary)] text-[var(--tekton-action-primary-text)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-muted)]'}`}
             >
               {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
+            <button
+              onClick={() => router.push('/explore/editorial-tech/solutions')}
+              className="text-lg font-medium px-5 py-4 rounded-full transition-colors text-left text-[var(--tekton-text-secondary)] flex items-center justify-between"
+            >
+              <span>{locale === 'ko' ? '솔루션 랜딩' : 'Solutions Landing'}</span>
+              <span className="text-[10px] font-bold bg-black text-white px-3 py-1 rounded-full uppercase">
+                New
+              </span>
             </button>
           </nav>
         </div>

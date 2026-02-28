@@ -81,69 +81,69 @@
                     }
                 },
                 "neutral": {
-                    "white": {
-                        "l": 1.0,
-                        "c": 0.0,
-                        "h": 0
-                    },
-                    "black": {
-                        "l": 0.0,
-                        "c": 0.0,
-                        "h": 0
-                    },
                     "50": {
                         "l": 0.98,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "100": {
                         "l": 0.95,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "200": {
                         "l": 0.9,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "300": {
                         "l": 0.8,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "400": {
                         "l": 0.7,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "500": {
                         "l": 0.6,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "600": {
                         "l": 0.4,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "700": {
                         "l": 0.3,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "800": {
                         "l": 0.2,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "900": {
                         "l": 0.1,
-                        "c": 0.0,
+                        "c": 0,
                         "h": 0
                     },
                     "950": {
                         "l": 0.05,
-                        "c": 0.0,
+                        "c": 0,
+                        "h": 0
+                    },
+                    "white": {
+                        "l": 1,
+                        "c": 0,
+                        "h": 0
+                    },
+                    "black": {
+                        "l": 0,
+                        "c": 0,
                         "h": 0
                     }
                 }
@@ -222,13 +222,13 @@
                 "header": "border-b-4 border-black",
                 "row": "border-b-[1px] border-neutral-300 hover:bg-[var(--tekton-bg-brand-default)]/20 transition-colors",
                 "head": "py-4 px-4 text-base font-bold text-black uppercase tracking-wider",
-                "cell": "py-6 px-4 text-lg text-black font-medium"
+                "cell": "py-6 px-4 text-lg text-black font-semibold"
             },
             "typography": {
-                "hero": "text-5xl md:text-7xl font-black text-black leading-tight tracking-tight",
-                "h1": "text-4xl md:text-5xl font-black text-black leading-tight tracking-tight",
-                "h2": "text-3xl md:text-4xl font-bold text-black leading-tight",
-                "h3": "text-2xl md:text-3xl font-bold text-black",
+                "h1": "font-sans text-4xl font-semibold tracking-tight text-neutral-950 lg:text-5xl",
+                "h2": "font-sans text-3xl font-semibold tracking-tight text-neutral-950",
+                "h3": "font-sans text-2xl font-semibold tracking-tight text-neutral-950",
+                "h4": "font-sans text-xl font-semibold tracking-tight text-neutral-950",
                 "body": "text-lg text-neutral-800 leading-relaxed",
                 "caption": "text-sm font-bold text-neutral-500 uppercase tracking-widest"
             },
@@ -236,6 +236,102 @@
                 "container": "max-w-7xl mx-auto px-6 md:px-12",
                 "section": "py-24",
                 "grid": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
+            },
+            "avatar": {
+                "default": "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-none"
+            },
+            "checkbox": {
+                "default": "peer h-4 w-4 shrink-0 rounded-none border-2 border-black ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+            },
+            "progress": {
+                "default": "relative h-4 w-full overflow-hidden rounded-none bg-secondary",
+                "indicator": "h-full w-full flex-1 bg-primary transition-all"
+            },
+            "slider": {
+                "default": "relative flex w-full touch-none select-none items-center",
+                "track": "relative h-2 w-full grow overflow-hidden rounded-none bg-secondary",
+                "range": "absolute h-full bg-primary",
+                "thumb": "block h-5 w-5 rounded-none border-2 border-black bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            },
+            "modal": {
+                "overlay": "fixed inset-0 z-50 bg-black/80 backdrop-blur-sm",
+                "content": "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6"
+            },
+            "dropdown": {
+                "content": "z-50 min-w-[8rem] overflow-hidden bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-1",
+                "item": "relative flex cursor-default select-none items-center rounded-none px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            },
+            "form": {
+                "item": "space-y-2",
+                "label": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 uppercase tracking-widest font-bold",
+                "message": "text-[0.8rem] font-medium text-destructive"
+            },
+            "image": {
+                "default": "overflow-hidden rounded-none"
+            },
+            "radio": {
+                "default": "aspect-square h-4 w-4 rounded-full border-2 border-black text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            },
+            "textarea": {
+                "default": "flex min-h-[80px] w-full rounded-none border-2 border-black bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            },
+            "skeleton": {
+                "default": "animate-pulse rounded-none bg-muted"
+            },
+            "scroll-area": {
+                "default": "relative overflow-hidden",
+                "scrollbar": "flex h-full w-2.5 border-l border-l-transparent p-[1px]"
+            },
+            "select": {
+                "trigger": "flex h-10 w-full items-center justify-between rounded-none border-2 border-black bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                "content": "relative z-50 min-w-[8rem] overflow-hidden bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            },
+            "label": {
+                "default": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 uppercase tracking-wider font-bold"
+            },
+            "separator": {
+                "default": "shrink-0 bg-border",
+                "horizontal": "h-[1px] w-full",
+                "vertical": "h-full w-[1px]"
+            },
+            "alert-dialog": {
+                "content": "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-6"
+            },
+            "popover": {
+                "content": "z-50 w-72 bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4 outline-none"
+            },
+            "hover-card": {
+                "content": "z-50 w-64 bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] p-4 outline-none"
+            },
+            "tooltip": {
+                "content": "z-50 overflow-hidden rounded-none bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95"
+            },
+            "sheet": {
+                "content": "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500"
+            },
+            "toast": {
+                "default": "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden p-6 pr-8 shadow-lg transition-all bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+            },
+            "sidebar": {
+                "default": "flex h-full w-64 flex-col overflow-y-auto bg-background border-2 border-black pb-4"
+            },
+            "navigation-menu": {
+                "list": "group flex flex-1 list-none items-center justify-center space-x-1",
+                "trigger": "group inline-flex h-10 w-max items-center justify-center rounded-none bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+            },
+            "breadcrumb": {
+                "list": "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5",
+                "item": "inline-flex items-center gap-1.5",
+                "link": "transition-colors hover:text-foreground"
+            },
+            "command": {
+                "default": "flex h-full w-full flex-col overflow-hidden bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+                "input": "flex h-11 w-full rounded-none bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            },
+            "calendar": {
+                "default": "p-3 bg-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]",
+                "cell": "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                "day": "h-9 w-9 p-0 font-normal aria-selected:opacity-100 rounded-none"
             }
         }
     },

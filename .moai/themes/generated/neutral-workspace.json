@@ -1,212 +1,306 @@
 {
-  "id": "neutral-workspace",
-  "name": "Neutral Workspace",
-  "schemaVersion": "2.1",
-  "brandTone": "professional",
-  "designDNA": {
-    "moodKeywords": [
-      "clean",
-      "accessible",
-      "subtle",
-      "organized",
-      "warm"
-    ],
-    "targetEmotion": "trust",
-    "visualAtmosphere": "modern productivity",
-    "principles": [
-      "Friendly but professional geometry (Radius 8-12px)",
-      "Warm neutral palette for eye comfort",
-      "Focus on content over decoration"
-    ]
-  },
-  "tokens": {
-    "atomic": {
-      "color": {
-        "brand": {
-          "100": {
-            "l": 0.88,
-            "c": 0.06,
-            "h": 32
-          },
-          "500": {
-            "l": 0.55,
-            "c": 0.18,
-            "h": 32
-          },
-          "700": {
-            "l": 0.42,
-            "c": 0.20,
-            "h": 32
-          },
-          "900": {
-            "l": 0.18,
-            "c": 0.06,
-            "h": 32
-          }
-        },
-        "neutral": {
-          "white": {
-            "l": 0.99,
-            "c": 0.01,
-            "h": 55
-          },
-          "50": {
-            "l": 0.97,
-            "c": 0.02,
-            "h": 55
-          },
-          "100": {
-            "l": 0.95,
-            "c": 0.03,
-            "h": 55
-          },
-          "200": {
-            "l": 0.91,
-            "c": 0.03,
-            "h": 55
-          },
-          "300": {
-            "l": 0.86,
-            "c": 0.03,
-            "h": 55
-          },
-          "400": {
-            "l": 0.72,
-            "c": 0.02,
-            "h": 55
-          },
-          "500": {
-            "l": 0.58,
-            "c": 0.02,
-            "h": 55
-          },
-          "600": {
-            "l": 0.42,
-            "c": 0.02,
-            "h": 55
-          },
-          "700": {
-            "l": 0.32,
-            "c": 0.02,
-            "h": 55
-          },
-          "800": {
-            "l": 0.18,
-            "c": 0.01,
-            "h": 55
-          },
-          "900": {
-            "l": 0.12,
-            "c": 0.01,
-            "h": 55
-          },
-          "950": {
-            "l": 0.06,
-            "c": 0.01,
-            "h": 55
-          }
-        }
-      },
-      "spacing": {
-        "0": "0",
-        "1": "4px",
-        "2": "8px",
-        "3": "12px",
-        "4": "16px",
-        "5": "20px",
-        "6": "24px",
-        "8": "32px",
-        "10": "40px",
-        "12": "48px",
-        "16": "64px",
-        "20": "80px",
-        "24": "96px"
-      },
-      "radius": {
-        "sm": "6px",
-        "md": "8px",
-        "lg": "12px",
-        "xl": "16px",
-        "none": "0",
-        "full": "9999px"
-      }
+    "id": "neutral-workspace",
+    "name": "Neutral Workspace",
+    "schemaVersion": "2.1",
+    "brandTone": "professional",
+    "designDNA": {
+        "moodKeywords": [
+            "clean",
+            "accessible",
+            "subtle",
+            "organized",
+            "warm"
+        ],
+        "targetEmotion": "trust",
+        "visualAtmosphere": "modern productivity",
+        "principles": [
+            "Friendly but professional geometry (Radius 8-12px)",
+            "Warm neutral palette for eye comfort",
+            "Focus on content over decoration"
+        ]
     },
-    "semantic": {
-      "background": {
-        "canvas": "atomic.color.neutral.50",
-        "surface": {
-          "subtle": "atomic.color.neutral.100",
-          "default": "atomic.color.neutral.white",
-          "emphasis": "atomic.color.neutral.200"
+    "tokens": {
+        "atomic": {
+            "color": {
+                "brand": {
+                    "100": {
+                        "l": 0.88,
+                        "c": 0.06,
+                        "h": 32
+                    },
+                    "500": {
+                        "l": 0.55,
+                        "c": 0.18,
+                        "h": 32
+                    },
+                    "700": {
+                        "l": 0.42,
+                        "c": 0.2,
+                        "h": 32
+                    },
+                    "900": {
+                        "l": 0.18,
+                        "c": 0.06,
+                        "h": 32
+                    }
+                },
+                "neutral": {
+                    "50": {
+                        "l": 0.97,
+                        "c": 0.02,
+                        "h": 55
+                    },
+                    "100": {
+                        "l": 0.95,
+                        "c": 0.03,
+                        "h": 55
+                    },
+                    "200": {
+                        "l": 0.91,
+                        "c": 0.03,
+                        "h": 55
+                    },
+                    "300": {
+                        "l": 0.86,
+                        "c": 0.03,
+                        "h": 55
+                    },
+                    "400": {
+                        "l": 0.72,
+                        "c": 0.02,
+                        "h": 55
+                    },
+                    "500": {
+                        "l": 0.58,
+                        "c": 0.02,
+                        "h": 55
+                    },
+                    "600": {
+                        "l": 0.42,
+                        "c": 0.02,
+                        "h": 55
+                    },
+                    "700": {
+                        "l": 0.32,
+                        "c": 0.02,
+                        "h": 55
+                    },
+                    "800": {
+                        "l": 0.18,
+                        "c": 0.01,
+                        "h": 55
+                    },
+                    "900": {
+                        "l": 0.12,
+                        "c": 0.01,
+                        "h": 55
+                    },
+                    "950": {
+                        "l": 0.06,
+                        "c": 0.01,
+                        "h": 55
+                    },
+                    "white": {
+                        "l": 0.99,
+                        "c": 0.01,
+                        "h": 55
+                    }
+                }
+            },
+            "spacing": {
+                "0": "0",
+                "1": "4px",
+                "2": "8px",
+                "3": "12px",
+                "4": "16px",
+                "5": "20px",
+                "6": "24px",
+                "8": "32px",
+                "10": "40px",
+                "12": "48px",
+                "16": "64px",
+                "20": "80px",
+                "24": "96px"
+            },
+            "radius": {
+                "sm": "6px",
+                "md": "8px",
+                "lg": "12px",
+                "xl": "16px",
+                "none": "0",
+                "full": "9999px"
+            }
         },
-        "brand": {
-          "subtle": "atomic.color.brand.100",
-          "default": "atomic.color.brand.500",
-          "emphasis": "atomic.color.brand.700"
+        "semantic": {
+            "background": {
+                "canvas": "atomic.color.neutral.50",
+                "surface": {
+                    "subtle": "atomic.color.neutral.100",
+                    "default": "atomic.color.neutral.white",
+                    "emphasis": "atomic.color.neutral.200"
+                },
+                "brand": {
+                    "subtle": "atomic.color.brand.100",
+                    "default": "atomic.color.brand.500",
+                    "emphasis": "atomic.color.brand.700"
+                }
+            },
+            "border": {
+                "default": {
+                    "subtle": "atomic.color.neutral.100",
+                    "default": "atomic.color.neutral.200",
+                    "emphasis": "atomic.color.neutral.300"
+                },
+                "focus": "atomic.color.neutral.800"
+            },
+            "text": {
+                "primary": "atomic.color.neutral.900",
+                "secondary": "atomic.color.neutral.600",
+                "tertiary": "atomic.color.neutral.400",
+                "inverted": "atomic.color.neutral.white",
+                "link": "atomic.color.brand.700"
+            }
+        },
+        "recipes": {
+            "card": {
+                "default": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-xl shadow-sm hover:shadow-md hover:border-[var(--tekton-border-emphasis)] transition-all",
+                "flat": "bg-[var(--tekton-bg-canvas)] rounded-xl",
+                "outlined": "bg-transparent border border-[var(--tekton-border-default)] rounded-xl",
+                "feature": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-bg-canvas)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
+            },
+            "button": {
+                "primary": "bg-[var(--tekton-text-primary)] text-[var(--tekton-bg-surface)] hover:bg-[var(--tekton-bg-canvas-950,#0a0a0a)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+                "secondary": "bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] border border-[var(--tekton-border-default)] hover:bg-[var(--tekton-bg-canvas)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+                "ghost": "text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] hover:text-[var(--tekton-text-primary)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
+                "icon": "text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] rounded-md p-2 transition-colors"
+            },
+            "input": {
+                "default": "w-full bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-lg h-10 px-3 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] focus:border-[var(--tekton-text-primary)] transition-all",
+                "search": "w-full bg-[var(--tekton-bg-canvas)] border-none rounded-lg h-10 px-10 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-secondary)] focus:bg-[var(--tekton-bg-surface)] focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] transition-all"
+            },
+            "badge": {
+                "neutral": "inline-flex items-center rounded-md bg-[var(--tekton-bg-canvas)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-secondary)]",
+                "brand": "inline-flex items-center rounded-md bg-[var(--tekton-bg-brand-subtle)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-link)]"
+            },
+            "typography": {
+                "h1": "scroll-m-20 text-3xl font-semibold tracking-tight text-[var(--tekton-text-primary)] lg:text-4xl",
+                "h2": "scroll-m-20 border-b border-border pb-2 text-2xl font-semibold tracking-tight text-[var(--tekton-text-primary)] first:mt-0",
+                "h3": "scroll-m-20 text-xl font-semibold tracking-tight text-[var(--tekton-text-primary)]",
+                "h4": "scroll-m-20 text-lg font-semibold tracking-tight text-[var(--tekton-text-primary)]",
+                "body": "font-sans text-base text-[var(--tekton-text-secondary)] leading-relaxed",
+                "caption": "font-sans text-sm text-[var(--tekton-text-tertiary)]"
+            },
+            "avatar": {
+                "root": "relative inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[var(--tekton-bg-canvas)]",
+                "fallback": "flex h-full w-full items-center justify-center rounded-full bg-[var(--tekton-bg-canvas)] text-sm font-semibold text-[var(--tekton-text-secondary)]"
+            },
+            "menu": {
+                "item": "flex w-full items-center rounded-md px-2 py-2 text-sm text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] cursor-pointer"
+            },
+            "layout": {
+                "container": "max-w-5xl mx-auto px-6",
+                "sidebar": "w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-canvas)] h-screen p-4 flex flex-col"
+            },
+            "checkbox": {
+                "default": "peer h-4 w-4 shrink-0 rounded-md border border-neutral-200 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+            },
+            "progress": {
+                "default": "relative h-4 w-full overflow-hidden rounded-md bg-secondary",
+                "indicator": "h-full w-full flex-1 bg-primary transition-all"
+            },
+            "slider": {
+                "default": "relative flex w-full touch-none select-none items-center",
+                "track": "relative h-2 w-full grow overflow-hidden rounded-md bg-secondary",
+                "range": "absolute h-full bg-primary",
+                "thumb": "block h-5 w-5 rounded-md border border-neutral-200 bg-background ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            },
+            "modal": {
+                "overlay": "fixed inset-0 z-50 bg-black/80 backdrop-blur-sm",
+                "content": "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-white border border-neutral-200 rounded-md shadow-md p-6"
+            },
+            "dropdown": {
+                "content": "z-50 min-w-[8rem] overflow-hidden bg-white border border-neutral-200 rounded-md shadow-md p-1",
+                "item": "relative flex cursor-default select-none items-center rounded-md px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+            },
+            "form": {
+                "item": "space-y-2",
+                "label": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ",
+                "message": "text-[0.8rem] font-medium text-destructive"
+            },
+            "image": {
+                "default": "overflow-hidden rounded-md"
+            },
+            "radio": {
+                "default": "aspect-square h-4 w-4 rounded-full border border-neutral-200 text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            },
+            "textarea": {
+                "default": "flex min-h-[80px] w-full rounded-md border border-neutral-200 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            },
+            "skeleton": {
+                "default": "animate-pulse rounded-md bg-muted"
+            },
+            "scroll-area": {
+                "default": "relative overflow-hidden",
+                "scrollbar": "flex h-full w-2.5 border-l border-l-transparent p-[1px]"
+            },
+            "select": {
+                "trigger": "flex h-10 w-full items-center justify-between rounded-md border border-neutral-200 bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                "content": "relative z-50 min-w-[8rem] overflow-hidden bg-white border border-neutral-200 rounded-md shadow-md"
+            },
+            "label": {
+                "default": "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 "
+            },
+            "separator": {
+                "default": "shrink-0 bg-border",
+                "horizontal": "h-[1px] w-full",
+                "vertical": "h-full w-[1px]"
+            },
+            "alert-dialog": {
+                "content": "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-white border border-neutral-200 rounded-md shadow-md p-6"
+            },
+            "popover": {
+                "content": "z-50 w-72 bg-white border border-neutral-200 rounded-md shadow-md p-4 outline-none"
+            },
+            "hover-card": {
+                "content": "z-50 w-64 bg-white border border-neutral-200 rounded-md shadow-md p-4 outline-none"
+            },
+            "tooltip": {
+                "content": "z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95"
+            },
+            "sheet": {
+                "content": "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500"
+            },
+            "toast": {
+                "default": "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden p-6 pr-8 shadow-lg transition-all bg-white border border-neutral-200 rounded-md shadow-md"
+            },
+            "sidebar": {
+                "default": "flex h-full w-64 flex-col overflow-y-auto bg-background border-r border-border pb-4"
+            },
+            "navigation-menu": {
+                "list": "group flex flex-1 list-none items-center justify-center space-x-1",
+                "trigger": "group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+            },
+            "breadcrumb": {
+                "list": "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5",
+                "item": "inline-flex items-center gap-1.5",
+                "link": "transition-colors hover:text-foreground"
+            },
+            "command": {
+                "default": "flex h-full w-full flex-col overflow-hidden bg-white border border-neutral-200 rounded-md shadow-md",
+                "input": "flex h-11 w-full rounded-none bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            },
+            "calendar": {
+                "default": "p-3 bg-white border border-neutral-200 rounded-md shadow-md",
+                "cell": "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                "day": "h-9 w-9 p-0 font-normal aria-selected:opacity-100 rounded-md"
+            }
         }
-      },
-      "border": {
-        "default": {
-          "subtle": "atomic.color.neutral.100",
-          "default": "atomic.color.neutral.200",
-          "emphasis": "atomic.color.neutral.300"
-        },
-        "focus": "atomic.color.neutral.800"
-      },
-      "text": {
-        "primary": "atomic.color.neutral.900",
-        "secondary": "atomic.color.neutral.600",
-        "tertiary": "atomic.color.neutral.400",
-        "inverted": "atomic.color.neutral.white",
-        "link": "atomic.color.brand.700"
-      }
     },
-    "recipes": {
-      "card": {
-        "default": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-xl shadow-sm hover:shadow-md hover:border-[var(--tekton-border-emphasis)] transition-all",
-        "flat": "bg-[var(--tekton-bg-canvas)] rounded-xl",
-        "outlined": "bg-transparent border border-[var(--tekton-border-default)] rounded-xl",
-        "feature": "bg-[var(--tekton-bg-surface)] border border-[var(--tekton-bg-canvas)] rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
-      },
-      "button": {
-        "primary": "bg-[var(--tekton-text-primary)] text-[var(--tekton-bg-surface)] hover:bg-[var(--tekton-bg-canvas-950,#0a0a0a)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
-        "secondary": "bg-[var(--tekton-bg-surface)] text-[var(--tekton-text-primary)] border border-[var(--tekton-border-default)] hover:bg-[var(--tekton-bg-canvas)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
-        "ghost": "text-[var(--tekton-text-secondary)] hover:bg-[var(--tekton-bg-canvas)] hover:text-[var(--tekton-text-primary)] rounded-lg h-10 px-4 text-sm font-medium transition-colors",
-        "icon": "text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] rounded-md p-2 transition-colors"
-      },
-      "input": {
-        "default": "w-full bg-[var(--tekton-bg-surface)] border border-[var(--tekton-border-default)] rounded-lg h-10 px-3 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-tertiary)] focus:outline-none focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] focus:border-[var(--tekton-text-primary)] transition-all",
-        "search": "w-full bg-[var(--tekton-bg-canvas)] border-none rounded-lg h-10 px-10 text-[var(--tekton-text-primary)] placeholder:text-[var(--tekton-text-secondary)] focus:bg-[var(--tekton-bg-surface)] focus:ring-2 focus:ring-[var(--tekton-bg-canvas)] transition-all"
-      },
-      "badge": {
-        "neutral": "inline-flex items-center rounded-md bg-[var(--tekton-bg-canvas)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-secondary)]",
-        "brand": "inline-flex items-center rounded-md bg-[var(--tekton-bg-brand-subtle)] px-2 py-1 text-xs font-medium text-[var(--tekton-text-link)]"
-      },
-      "typography": {
-        "h1": "font-sans text-4xl font-bold tracking-tight text-[var(--tekton-text-primary)]",
-        "h2": "font-sans text-2xl font-semibold tracking-tight text-[var(--tekton-text-primary)]",
-        "h3": "font-sans text-lg font-medium text-[var(--tekton-text-primary)]",
-        "body": "font-sans text-base text-[var(--tekton-text-secondary)] leading-relaxed",
-        "caption": "font-sans text-sm text-[var(--tekton-text-tertiary)]"
-      },
-      "avatar": {
-        "root": "relative inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-[var(--tekton-bg-canvas)]",
-        "fallback": "flex h-full w-full items-center justify-center rounded-full bg-[var(--tekton-bg-canvas)] text-sm font-medium text-[var(--tekton-text-secondary)]"
-      },
-      "menu": {
-        "item": "flex w-full items-center rounded-md px-2 py-2 text-sm text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] cursor-pointer"
-      },
-      "layout": {
-        "container": "max-w-5xl mx-auto px-6",
-        "sidebar": "w-64 border-r border-[var(--tekton-border-default)] bg-[var(--tekton-bg-canvas)] h-screen p-4 flex flex-col"
-      }
+    "typography": {
+        "fontFamily": {
+            "sans": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+            "serif": "Merriweather, serif",
+            "mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+        }
     }
-  },
-  "typography": {
-    "fontFamily": {
-      "sans": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
-      "serif": "Merriweather, serif",
-      "mono": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-    }
-  }
 }

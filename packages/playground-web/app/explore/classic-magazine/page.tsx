@@ -3,6 +3,7 @@
 import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
@@ -67,7 +68,8 @@ const CLASSIC_MAGAZINE_FALLBACK: Record<string, string> = {
 };
 
 export default function ClassicMagazineDemo() {
-  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'page' | 'component' | 'article'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('classic-magazine', {
     fallback: CLASSIC_MAGAZINE_FALLBACK,
@@ -118,6 +120,21 @@ export default function ClassicMagazineDemo() {
               className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
             />
           </button>
+          <button
+            onClick={() => router.push('/explore/classic-magazine/article')}
+            className="text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
+          >
+            <div className="flex items-center gap-2">
+              <span>{locale === 'ko' ? '에디토리얼 기사' : 'Editorial Article'}</span>
+              <span className="text-[10px] font-bold bg-[#E11D48] text-white px-1.5 py-0.5 rounded-none uppercase tracking-tighter">
+                New
+              </span>
+            </div>
+            <ChevronRight
+              size={16}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+            />
+          </button>
         </nav>
       </aside>
 
@@ -154,6 +171,15 @@ export default function ClassicMagazineDemo() {
               className={`text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left ${activeTab === 'component' ? 'bg-[var(--tekton-border-default)] text-[var(--tekton-text-primary)]' : 'text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]'}`}
             >
               {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
+            </button>
+            <button
+              onClick={() => router.push('/explore/classic-magazine/article')}
+              className="text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left text-[var(--tekton-text-secondary)] flex items-center justify-between"
+            >
+              <span>{locale === 'ko' ? '에디토리얼 기사' : 'Editorial Article'}</span>
+              <span className="text-[10px] font-bold bg-[#E11D48] text-white px-2 py-1 rounded-none uppercase">
+                New
+              </span>
             </button>
           </nav>
         </div>

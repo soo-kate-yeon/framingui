@@ -183,26 +183,33 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
     <div className="fixed bottom-6 right-6 z-[100] pointer-events-auto">
       {/* Card */}
       <div
-        className={`w-80 bg-white rounded-2xl shadow-2xl overflow-hidden border border-neutral-200 transition-all duration-300 ${
+        className={`w-96 bg-white rounded-none shadow-xl border border-neutral-200 transition-all duration-300 ${
           isClosing ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100 animate-slide-up'
         }`}
       >
-        <div className="p-6 flex flex-col items-center text-center">
+        <div className="p-10 flex flex-col text-left">
           {/* Title */}
-          <h2 className="text-xl font-bold text-neutral-950 mb-2">3일 무료체험으로 시작하세요</h2>
+          <h2 className="text-3xl font-semibold tracking-tight text-neutral-950 mb-3">
+            3일 무료체험으로
+            <br />
+            시작하세요
+          </h2>
 
           {/* Subtitle */}
-          <p className="text-sm text-neutral-600 leading-relaxed mb-4">
+          <p className="text-base text-neutral-600 leading-relaxed mb-8">
             Full 기능을 3일간 무료로 체험해보세요.
             <br />
             카드 등록 없이 바로 시작!
           </p>
 
           {/* Image */}
-          <div className="w-full aspect-[4/3] bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-xl flex items-center justify-center mb-4">
-            <div className="text-center">
-              <div className="text-5xl mb-1">🎨</div>
-              <p className="text-xs text-neutral-500 font-medium">디자인 시스템</p>
+          <div className="w-full aspect-[16/9] bg-neutral-50 border border-neutral-200 rounded-none flex items-center justify-center mb-10 overflow-hidden relative">
+            {/* Using a subtle pattern or simple typography-based placeholder for the image to fit Editorial Tech */}
+            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
+            <div className="text-center relative z-10 bg-white/80 px-6 py-3 border border-neutral-200">
+              <p className="text-xs text-neutral-950 font-bold uppercase tracking-[0.15em]">
+                디자인 시스템
+              </p>
             </div>
           </div>
 
@@ -210,7 +217,7 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
           <button
             onClick={handleCTA}
             disabled={isLoggingIn || isCreatingTrial}
-            className="w-full inline-flex items-center justify-center rounded-full bg-neutral-950 px-6 py-3 text-sm font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+            className="w-full inline-flex items-center justify-center rounded-full bg-neutral-950 px-6 py-4 text-base font-medium text-white shadow-sm hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoggingIn
               ? '로그인 중...'
@@ -222,11 +229,11 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
           </button>
 
           {/* Error Message */}
-          {errorMessage && <p className="text-xs text-red-600 mt-3 font-medium">{errorMessage}</p>}
+          {errorMessage && <p className="text-sm text-red-600 mt-4 font-medium">{errorMessage}</p>}
 
           {/* Info Text */}
           {!errorMessage && (
-            <p className="text-xs text-neutral-400 mt-3">
+            <p className="text-sm text-neutral-500 mt-4 text-center">
               {user ? '이미 로그인되어 있습니다' : 'Google 계정으로 간편하게 시작'}
             </p>
           )}

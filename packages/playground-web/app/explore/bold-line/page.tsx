@@ -14,8 +14,10 @@ import {
   Settings,
   Bell,
   Search,
+  BookOpen,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
@@ -82,11 +84,18 @@ const NAV_ITEMS = [
     labelKo: '컴포넌트 갤러리',
     tab: 'component' as const,
   },
+  {
+    icon: BookOpen,
+    label: 'API Documentation',
+    labelKo: 'API 문서',
+    tab: 'docs' as const,
+  },
 ];
 
 export default function BoldLineDemo() {
-  const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
+  const [activeTab, setActiveTab] = useState<'page' | 'component' | 'docs'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
   const { loaded: themeLoaded } = useTektonTheme('bold-line', {
     fallback: BOLD_LINE_FALLBACK,
   });
@@ -128,7 +137,13 @@ export default function BoldLineDemo() {
             return (
               <button
                 key={item.tab}
-                onClick={() => setActiveTab(item.tab)}
+                onClick={() => {
+                  if (item.tab === 'docs') {
+                    router.push('/explore/bold-line/docs');
+                  } else {
+                    setActiveTab(item.tab);
+                  }
+                }}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-black transition-all text-left border-2 ${
                   isActive
                     ? 'bg-black text-white border-black'
@@ -180,8 +195,12 @@ export default function BoldLineDemo() {
                 <button
                   key={item.tab}
                   onClick={() => {
-                    setActiveTab(item.tab);
-                    setMobileMenuOpen(false);
+                    if (item.tab === 'docs') {
+                      router.push('/explore/bold-line/docs');
+                    } else {
+                      setActiveTab(item.tab);
+                      setMobileMenuOpen(false);
+                    }
                   }}
                   className={`w-full text-base font-black px-5 py-4 transition-all text-left flex items-center gap-4 border-2 ${
                     isActive

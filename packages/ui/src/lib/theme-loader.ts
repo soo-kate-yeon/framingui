@@ -62,6 +62,8 @@ export interface ThemeDefinition {
       };
     };
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  recipes?: Record<string, any>;
   stateLayer?: {
     hover?: { opacity: number };
     disabled?: { opacity: number; contentOpacity: number };
@@ -102,6 +104,7 @@ export function resolveSemanticToken(
     return reference; // Not a token reference
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = theme.tokens;
   for (const part of parts) {
     if (current && typeof current === 'object') {

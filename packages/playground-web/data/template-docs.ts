@@ -1634,6 +1634,132 @@ export function CodeEditor() {
     ],
     tocSections: TOC_SECTIONS,
   },
+  'bold-line': {
+    id: 'bold-line',
+    name: 'Bold Line',
+    philosophy: {
+      tagline: 'Precision in every line, power in every pixel',
+      taglineKo: '모든 선에 정밀함을, 모든 픽셀에 힘을',
+      description:
+        'Bold Line is a high-contrast design system that uses borders and monotone scales to create a professional, utility-first atmosphere. It emphasizes structural clarity and geometric precision, making it ideal for developer tools and technical platforms.',
+      descriptionKo:
+        'Bold Line은 경계선과 모노톤 스케일을 사용하여 전문적이고 기능 중심적인 분위기를 조성하는 고대비 디자인 시스템입니다. 구조적 명확성과 기하학적 정밀함을 강조하여 개발자 도구 및 기술 플랫폼에 이상적입니다.',
+      principles: [
+        'Line as Structure - Use borders to define hierarchy and boundaries',
+        'High Contrast Monotone - Black and white core for maximum legibility',
+        'Functional Spacing - Generous padding to organize complex information',
+        'Stroke Emphasis - Thick icons and borders (2px+) for a "bold" feel',
+      ],
+      principlesKo: [
+        'Line as Structure - 선(border)을 사용하여 계층과 경계를 정의',
+        'High Contrast Monotone - 가독성 극대화를 위한 흑백 중심 설계',
+        'Functional Spacing - 복잡한 정보를 정리하기 위한 넉넉한 패딩',
+        'Stroke Emphasis - "bold"한 느낌을 주기 위한 굵은 아이콘과 테두리(2px+)',
+      ],
+    },
+    installation: SHARED_INSTALLATION,
+    colorTokens: [
+      {
+        name: 'Black (Neutral 950)',
+        hex: '#000000',
+        usage: 'Text, primary borders, CTA backgrounds',
+        usageKo: '텍스트, 주요 테두리, CTA 배경',
+      },
+      {
+        name: 'White (Neutral 50)',
+        hex: '#FFFFFF',
+        usage: 'Canvas, background surfaces',
+        usageKo: '캔버스, 배경 표면',
+      },
+      {
+        name: 'Accent Green',
+        hex: '#22C55E',
+        usage: 'Success states, subtle highlights',
+        usageKo: '성공 상태, 미묘한 강조',
+      },
+    ],
+    typographyTokens: [
+      {
+        name: 'Display Black',
+        nameKo: '디스플레이 블랙',
+        fontSize: '72px',
+        fontWeight: '900',
+        lineHeight: '1.0',
+        letterSpacing: '-0.04em',
+        usage: 'Hero sections, major page headings',
+        usageKo: '히어로 섹션, 주요 페이지 제목',
+      },
+      {
+        name: 'Technical Mono',
+        nameKo: '테크니컬 모노',
+        fontSize: '14px',
+        fontWeight: '500',
+        lineHeight: '1.5',
+        usage: 'Code snippets, API endpoints',
+        usageKo: '코드 스니펫, API 엔드포인트',
+      },
+    ],
+    components: [
+      {
+        name: 'Docs Sidebar',
+        nameKo: '문서 사이드바',
+        description: 'Linear navigation with bold active states and zero-radius borders.',
+        descriptionKo: '굵은 활성 상태와 제로 반경 테두리를 가진 선형 네비게이션입니다.',
+        example: '<Sidebar className="border-r-2 border-black" />',
+      },
+      {
+        name: 'API Table',
+        nameKo: 'API 테이블',
+        description: 'High-contrast table with 4px header divider and bold text.',
+        descriptionKo: '4px 헤더 구분선과 굵은 텍스트를 가진 고대비 테이블입니다.',
+        example: '<Table className="border-b-4 border-black" />',
+      },
+    ],
+    designDetails: [
+      {
+        title: 'Stroke Consistency',
+        titleKo: '선 굵기의 일관성',
+        description: 'Always use 2px borders for containers and 3px stroke for icons.',
+        descriptionKo: '컨테이너에는 항상 2px 테두리를, 아이콘에는 3px 선을 사용하세요.',
+      },
+    ],
+    customization: [
+      {
+        title: 'Change Accent Color',
+        titleKo: '액센트 컬러 변경',
+        description: 'Switch the primary brand accent while keeping the monochrome base.',
+        descriptionKo: '모노크롬 베이스를 유지하면서 기본 브랜드 액센트를 교체합니다.',
+        steps: [
+          {
+            title: 'Update brand variable',
+            titleKo: '브랜드 변수 업데이트',
+            code: ':root {\n  --tekton-color-brand: #3B82F6; /* Switch to Blue */\n}',
+            language: 'css',
+          },
+        ],
+      },
+    ],
+    examples: [
+      {
+        title: 'Terminal Style Hero',
+        titleKo: '터미널 스타일 히어로',
+        description: 'A dev-centric hero section with bold typography.',
+        descriptionKo: '굵은 타이포그래피를 사용한 개발자 중심의 히어로 섹션입니다.',
+        code: `<section className="py-24 border-b-4 border-black">\n  <h1 className="text-7xl font-black tracking-tighter">API.BOLD.TRUE</h1>\n</section>`,
+      },
+    ],
+    bestPractices: [
+      {
+        title: 'Avoid Fills',
+        titleKo: '채우기 지양',
+        description: 'Prefer borders over solid background blocks to define sections.',
+        descriptionKo: '섹션을 구분할 때 솔리드 배경 블록보다 테두리(border)를 선호하세요.',
+        dos: ['Use white backgrounds', 'Use 2px black borders'],
+        donts: ['Use soft shadows', 'Use rounded corners'],
+      },
+    ],
+    tocSections: TOC_SECTIONS,
+  },
 };
 
 // ============================================================================
