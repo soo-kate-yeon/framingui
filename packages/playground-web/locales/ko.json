@@ -2,9 +2,9 @@
   "studio": {
     "landing": {
       "hero": {
-        "openDemo": "데모 열기",
+        "openDemo": "Explore 열기",
         "buyNow": "지금 구매",
-        "tryFree": "무료 체험"
+        "tryFree": "무료체험 시작"
       },
       "topNav": {
         "features": "기능",
