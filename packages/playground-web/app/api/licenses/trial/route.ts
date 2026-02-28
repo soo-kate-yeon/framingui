@@ -12,6 +12,7 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function POST() {
   try {
+    const includeDebugDetails = process.env.NODE_ENV !== 'production';
     const supabase = await createClient();
 
     // 1. 인증 확인
@@ -69,8 +70,31 @@ export async function POST() {
       .single();
 
     if (createError) {
-      console.error('[Trial API] Trial 생성 오류:', createError);
-      return NextResponse.json({ error: 'creation_failed' }, { status: 500 });
+      console.error('[Trial API] Trial 생성 오류:', {
+        message: createError.message,
+        code: createError.code,
+        details: createError.details,
+        hint: createError.hint,
+      });
+
+      const errorResponse: Record<string, unknown> = {
+        error: 'creation_failed',
+      };
+
+      if (createError.code === '42501') {
+        errorResponse.reason = 'rls_denied';
+      }
+
+      if (includeDebugDetails) {
+        errorResponse.message = createError.message;
+        errorResponse.debug = {
+          code: createError.code,
+          details: createError.details,
+          hint: createError.hint,
+        };
+      }
+
+      return NextResponse.json(errorResponse, { status: 500 });
     }
 
     // 4. 성공 응답

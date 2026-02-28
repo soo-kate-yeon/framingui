@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { trackFunnelPrimaryCtaClick } from '../../lib/analytics';
 
@@ -29,23 +29,87 @@ interface FreeTrialModalProps {
 
 const LOCAL_STORAGE_KEY = 'hasSeenFreeTrial';
 
+interface TrialErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+interface NormalizedTrialError {
+  status: number;
+  statusText: string;
+  errorCode: string | null;
+  message: string | null;
+  rawBody: string | null;
+}
+
+async function parseJsonSafely(rawBody: string): Promise<unknown> {
+  if (!rawBody) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawBody) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeTrialError(
+  response: Response,
+  parsedBody: unknown,
+  rawBody: string
+): NormalizedTrialError {
+  const body = (
+    parsedBody && typeof parsedBody === 'object' ? parsedBody : {}
+  ) as TrialErrorResponse;
+
+  return {
+    status: response.status,
+    statusText: response.statusText || 'Unknown Error',
+    errorCode: typeof body.error === 'string' ? body.error : null,
+    message: typeof body.message === 'string' ? body.message : null,
+    rawBody: rawBody || null,
+  };
+}
+
+function toUserErrorMessage(error: NormalizedTrialError): string {
+  if (error.status === 409 && error.errorCode === 'trial_already_exists') {
+    return '이미 체험을 사용했습니다';
+  }
+
+  if (error.status === 401) {
+    return '로그인이 필요합니다';
+  }
+
+  return '체험 생성 중 오류가 발생했습니다';
+}
+
 // ============================================================================
 // Component
 // ============================================================================
 
 export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: FreeTrialModalProps) {
   const { user, login } = useAuth();
+  const hasAutoCreateAttemptedRef = useRef(false);
   const [isClosing] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isCreatingTrial, setIsCreatingTrial] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // 로그인 완료 시 자동으로 trial 생성
+  // 로그인 완료 시 자동으로 trial 생성 (모달 오픈당 1회만)
   useEffect(() => {
-    if (isOpen && user && !isLoggingIn && !isCreatingTrial) {
-      console.log('[FreeTrialModal] User logged in, creating trial');
-      createTrial();
+    if (!isOpen) {
+      hasAutoCreateAttemptedRef.current = false;
+      return;
     }
+
+    if (!user || isLoggingIn || isCreatingTrial || hasAutoCreateAttemptedRef.current) {
+      return;
+    }
+
+    hasAutoCreateAttemptedRef.current = true;
+    console.log('[FreeTrialModal] User logged in, creating trial');
+    void createTrial();
   }, [user, isOpen, isLoggingIn, isCreatingTrial]);
 
   const createTrial = async () => {
@@ -60,26 +124,23 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
         },
       });
 
-      const data = await response.json();
+      const rawBody = await response.text();
+      const parsedBody = await parseJsonSafely(rawBody);
 
       if (response.ok) {
         // 성공: localStorage에 "본 적 있음" 표시
         localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
-        console.log('[FreeTrialModal] Trial created successfully:', data);
+        console.log('[FreeTrialModal] Trial created successfully:', parsedBody);
         onStartTrial();
       } else {
-        // 에러 처리
-        if (response.status === 409 && data.error === 'trial_already_exists') {
-          setErrorMessage('이미 체험을 사용했습니다');
-        } else if (response.status === 401) {
-          setErrorMessage('로그인이 필요합니다');
-        } else {
-          setErrorMessage('체험 생성 중 오류가 발생했습니다');
-        }
-        console.error('[FreeTrialModal] Trial creation failed:', data);
+        const normalizedError = normalizeTrialError(response, parsedBody, rawBody);
+        setErrorMessage(toUserErrorMessage(normalizedError));
+        console.error('[FreeTrialModal] Trial creation failed:', normalizedError);
       }
     } catch (error) {
-      console.error('[FreeTrialModal] Trial creation error:', error);
+      const errorDetails =
+        error instanceof Error ? { name: error.name, message: error.message } : { error };
+      console.error('[FreeTrialModal] Trial creation error:', errorDetails);
       setErrorMessage('네트워크 오류가 발생했습니다');
     } finally {
       setIsCreatingTrial(false);
@@ -98,6 +159,7 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
 
     if (user) {
       // 이미 로그인된 경우: trial 생성
+      hasAutoCreateAttemptedRef.current = true;
       await createTrial();
     } else {
       // 미로그인: Google OAuth 로그인 시작
@@ -160,9 +222,7 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
           </button>
 
           {/* Error Message */}
-          {errorMessage && (
-            <p className="text-xs text-red-600 mt-3 font-medium">{errorMessage}</p>
-          )}
+          {errorMessage && <p className="text-xs text-red-600 mt-3 font-medium">{errorMessage}</p>}
 
           {/* Info Text */}
           {!errorMessage && (
