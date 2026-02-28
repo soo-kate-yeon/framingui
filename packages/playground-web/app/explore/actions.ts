@@ -34,7 +34,7 @@ export async function loadThemes(): Promise<GalleryItem[]> {
     description: t.description,
     descriptionKo: t.descriptionKo,
     category: 'Design System',
-    thumbnail: undefined,
+    thumbnail: `/screenshots/${t.id}/dashboard.png`,
     price: t.price,
   }));
 }
