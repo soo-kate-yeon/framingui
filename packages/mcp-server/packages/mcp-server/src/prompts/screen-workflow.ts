@@ -13,9 +13,9 @@ export function getScreenWorkflowPrompt() {
         role: 'user',
         content: {
           type: 'text',
-          text: `# Tekton Screen Generation Workflow
+          text: `# Framingui Screen Generation Workflow
 
-This is the **recommended production workflow** for generating screens with Tekton.
+This is the **recommended production workflow** for generating screens with Framingui.
 
 ## Overview
 

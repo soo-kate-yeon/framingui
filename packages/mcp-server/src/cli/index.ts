@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Tekton MCP CLI 라우터
+ * Framingui MCP CLI 라우터
  * 서브커맨드: login, logout, status, (없으면 MCP 서버 시작)
  */
 

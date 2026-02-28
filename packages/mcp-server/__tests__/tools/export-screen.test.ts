@@ -10,7 +10,7 @@ import { generateBlueprintTool } from '../../src/tools/generate-blueprint.js';
 import type { Blueprint } from '@framingui/core';
 
 describe('exportScreenTool', () => {
-  const testStorageDir = '.tekton-test/blueprints';
+  const testStorageDir = '.framingui-test/blueprints';
 
   beforeEach(() => {
     // Clean up test directories

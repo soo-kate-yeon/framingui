@@ -1,12 +1,12 @@
 /**
- * TEKTON-GUIDE.md 콘텐츠 템플릿
+ * FRAMINGUI-GUIDE.md 콘텐츠 템플릿
  * 프레임워크별 맞춤 가이드 생성
  */
 
 export type Framework = 'nextjs' | 'vite';
 
 /**
- * TEKTON-GUIDE.md 콘텐츠 생성
+ * FRAMINGUI-GUIDE.md 콘텐츠 생성
  */
 export function generateGuide(framework: Framework): string {
   const importExample =
@@ -52,13 +52,13 @@ export default App;`;
 
 ## Authentication
 
-Before generating screens, authenticate with your Tekton account:
+Before generating screens, authenticate with your Framingui account:
 
 \`\`\`bash
 framingui-mcp login
 \`\`\`
 
-This opens your browser for OAuth authentication. Your credentials are stored in \`~/.tekton/credentials.json\`.
+This opens your browser for OAuth authentication. Your credentials are stored in \`~/.framingui/credentials.json\`.
 
 **Why authentication is required:**
 - All 6 themes require valid licenses
@@ -75,7 +75,7 @@ framingui-mcp status
 
 ## Screen Generation Workflow
 
-Tekton provides a **3-step workflow** for production-ready screen generation:
+Framingui provides a **3-step workflow** for production-ready screen generation:
 
 ### Step 1/3: Get Context
 

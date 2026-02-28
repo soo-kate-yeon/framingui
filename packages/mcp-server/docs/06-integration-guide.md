@@ -1,6 +1,6 @@
 # Integration Guide
 
-How to integrate Tekton MCP Server with AI coding assistants and existing projects.
+How to integrate Framingui MCP Server with AI coding assistants and existing projects.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ How to integrate Tekton MCP Server with AI coding assistants and existing projec
 
 ## MCP Client Configuration
 
-Tekton MCP Server uses the **stdio transport** (JSON-RPC 2.0 over stdin/stdout).
+Framingui MCP Server uses the **stdio transport** (JSON-RPC 2.0 over stdin/stdout).
 
 ### Configuration File
 
@@ -24,7 +24,7 @@ Add to your project root `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "tekton": {
+    "framingui": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@framingui/mcp-server"]
@@ -38,19 +38,19 @@ Add to your project root `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "tekton": {
+    "framingui": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@framingui/mcp-server"],
       "env": {
-        "TEKTON_API_KEY": "tk_live_xxx..."
+        "FRAMINGUI_API_KEY": "tk_live_xxx..."
       }
     }
   }
 }
 ```
 
-> **Tip**: Instead of hardcoding the API key, run `framingui-mcp login` to save credentials to `~/.tekton/credentials.json`. The server loads them automatically.
+> **Tip**: Instead of hardcoding the API key, run `framingui-mcp login` to save credentials to `~/.framingui/credentials.json`. The server loads them automatically.
 
 ---
 
@@ -61,7 +61,7 @@ Add to your project root `.mcp.json`:
 1. **Install**: Add `.mcp.json` to your project root (see above)
 2. **Login**: Run `npx @framingui/mcp-server login`
 3. **Restart**: Restart Claude Code to detect the new MCP server
-4. **Verify**: Ask Claude "Check my Tekton account" → triggers `whoami`
+4. **Verify**: Ask Claude "Check my Framingui account" → triggers `whoami`
 
 ### Usage
 
@@ -90,7 +90,7 @@ Session start → whoami (auto) → your requests → tool calls → code output
 
 ## Cursor / Windsurf / Other Clients
 
-Any MCP-compatible client can use Tekton. The server provides:
+Any MCP-compatible client can use Framingui. The server provides:
 
 - **17 tools**: Discoverable via `ListTools` request
 - **2 prompts**: `getting-started` and `screen-workflow`
@@ -103,7 +103,7 @@ Most clients support a JSON config format similar to:
 ```json
 {
   "mcpServers": {
-    "tekton": {
+    "framingui": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@framingui/mcp-server"]
@@ -118,7 +118,7 @@ Check your client's documentation for the exact config file location.
 
 ## Project Setup with `init`
 
-The `init` command configures an existing project for Tekton:
+The `init` command configures an existing project for Framingui:
 
 ```bash
 npx @framingui/mcp-server init
@@ -132,9 +132,9 @@ npx @framingui/mcp-server init
 | 2    | **Install packages**: `@framingui/ui`, `tailwindcss-animate`           |
 | 3    | **Configure Tailwind**: Add content paths and animate plugin           |
 | 4    | **Setup CSS**: Add `@import '@framingui/ui/styles'` to `globals.css`   |
-| 5    | **Register MCP**: Create/update `.mcp.json` with Tekton server         |
-| 6    | **Generate guide**: Create `TEKTON-GUIDE.md`                           |
-| 7    | **Update AI config**: Add Tekton workflow to `CLAUDE.md` / `AGENTS.md` |
+| 5    | **Register MCP**: Create/update `.mcp.json` with Framingui server         |
+| 6    | **Generate guide**: Create `FRAMINGUI-GUIDE.md`                           |
+| 7    | **Update AI config**: Add Framingui workflow to `CLAUDE.md` / `AGENTS.md` |
 | 8    | **Print next steps**: Auth instructions and usage guide                |
 
 ### Supported Frameworks
@@ -152,13 +152,13 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 
 | Variable         | Required    | Default                 | Description                                     |
 | ---------------- | ----------- | ----------------------- | ----------------------------------------------- |
-| `TEKTON_API_KEY` | Conditional | —                       | API key. Not needed if using `framingui-mcp login` |
-| `TEKTON_API_URL` | No          | `https://framingui.com` | API endpoint                                    |
+| `FRAMINGUI_API_KEY` | Conditional | —                       | API key. Not needed if using `framingui-mcp login` |
+| `FRAMINGUI_API_URL` | No          | `https://framingui.com` | API endpoint                                    |
 
 ### Credential Precedence
 
-1. `TEKTON_API_KEY` environment variable (highest priority)
-2. `~/.tekton/credentials.json` (saved by `framingui-mcp login`)
+1. `FRAMINGUI_API_KEY` environment variable (highest priority)
+2. `~/.framingui/credentials.json` (saved by `framingui-mcp login`)
 
 ---
 
@@ -172,13 +172,13 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 
 ### "Authentication required" After Login
 
-- Verify credentials exist: `cat ~/.tekton/credentials.json`
+- Verify credentials exist: `cat ~/.framingui/credentials.json`
 - Check API key validity: `npx @framingui/mcp-server status`
 - Re-login: `npx @framingui/mcp-server login`
 
 ### "whoami required"
 
-Your AI client must call `whoami` as the first tool. Ask it: "Check my Tekton account".
+Your AI client must call `whoami` as the first tool. Ask it: "Check my Framingui account".
 
 ### Generated Code Missing Theme Styles
 

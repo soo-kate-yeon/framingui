@@ -1,0 +1,142 @@
+name: Vercel Deploy - Playground Web
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch, tag, or SHA to deploy (optional)'
+        required: false
+        default: ''
+      environment:
+        description: 'Deployment environment'
+        required: true
+        type: choice
+        default: auto
+        options:
+          - auto
+          - preview
+          - production
+
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+
+concurrency:
+  group: vercel-deploy-manual-${{ github.event.inputs.ref || github.ref_name }}-${{ github.event.inputs.environment }}
+  cancel-in-progress: false
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  deploy:
+    name: Manual Deploy to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Resolve deployment target
+        id: resolve
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          INPUT_ENV='${{ github.event.inputs.environment }}'
+
+          if [ -z "$INPUT_ENV" ] || [ "$INPUT_ENV" = "auto" ]; then
+            if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "master" ]; then
+              TARGET_ENV='production'
+            else
+              TARGET_ENV='preview'
+            fi
+          else
+            TARGET_ENV="$INPUT_ENV"
+          fi
+
+          if [ "$TARGET_ENV" = "production" ]; then
+            DEPLOY_FLAG='--prod'
+          else
+            DEPLOY_FLAG=''
+          fi
+
+          echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+          echo "target_env=$TARGET_ENV" >> "$GITHUB_OUTPUT"
+          echo "deploy_flag=$DEPLOY_FLAG" >> "$GITHUB_OUTPUT"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace dependencies
+        run: |
+          pnpm --filter @framingui/tokens build
+          pnpm --filter @framingui/core build
+          pnpm --filter @framingui/ui build
+          pnpm --filter @framingui/mcp-server build
+
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+
+      - name: Pull Vercel environment
+        working-directory: packages/playground-web
+        run: |
+          vercel pull --yes --environment='${{ steps.resolve.outputs.target_env }}' --token='${{ secrets.VERCEL_TOKEN }}'
+
+      - name: Build prebuilt output
+        working-directory: packages/playground-web
+        run: |
+          if [ '${{ steps.resolve.outputs.target_env }}' = 'production' ]; then
+            vercel build --prod --token='${{ secrets.VERCEL_TOKEN }}'
+          else
+            vercel build --token='${{ secrets.VERCEL_TOKEN }}'
+          fi
+
+      - name: Deploy to Vercel
+        id: deploy
+        working-directory: packages/playground-web
+        run: |
+          if [ '${{ steps.resolve.outputs.target_env }}' = 'production' ]; then
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token='${{ secrets.VERCEL_TOKEN }}' | tail -n 1)
+          else
+            DEPLOYMENT_URL=$(vercel deploy --prebuilt --token='${{ secrets.VERCEL_TOKEN }}' | tail -n 1)
+          fi
+
+          echo "deployment_url=$DEPLOYMENT_URL" >> "$GITHUB_OUTPUT"
+          echo "Deployed URL: $DEPLOYMENT_URL"
+
+      - name: Comment PR with preview URL (if exists)
+        if: steps.resolve.outputs.target_env == 'preview'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head '${{ steps.resolve.outputs.branch_name }}' --json number --jq '.[0].number' 2>/dev/null || true)
+
+          if [ -n "$PR_NUMBER" ] && [ "$PR_NUMBER" != "null" ]; then
+            gh pr comment "$PR_NUMBER" --body "## Preview Deployment (Manual)\n\nEnvironment: preview\nBranch: \`${{ steps.resolve.outputs.branch_name }}\`\nURL: ${{ steps.deploy.outputs.deployment_url }}"
+          else
+            echo "No open PR found for branch ${{ steps.resolve.outputs.branch_name }}"
+          fi
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "## Vercel Deploy (Manual)" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Branch: ${{ steps.resolve.outputs.branch_name }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Environment: ${{ steps.resolve.outputs.target_env }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- URL: ${{ steps.deploy.outputs.deployment_url }}" >> "$GITHUB_STEP_SUMMARY"

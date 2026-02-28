@@ -150,7 +150,7 @@ Updated `vitest.config.ts` to support workspace packages:
 resolve: {
   alias: {
     '@framingui': resolve(__dirname, '../ui/src/index.ts'),
-    '@tekton/core': resolve(__dirname, '../core/src/index.ts'),
+    '@framingui/core': resolve(__dirname, '../core/src/index.ts'),
   },
 }
 ```

@@ -1,10 +1,25 @@
 {
   "mcpServers": {
-    "tekton": {
+    "framingui": {
       "command": "node",
-      "args": ["/Users/sooyeon/Developer/framingui/packages/mcp-server/dist/index.js"],
+      "args": [
+        "/Users/sooyeon/Developer/framingui/packages/mcp-server/dist/index.js"
+      ],
       "env": {
         "NODE_ENV": "production"
+      }
+    },
+    "posthog": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote@latest",
+        "https://mcp.posthog.com/sse",
+        "--header",
+        "Authorization:${POSTHOG_API_TOKEN}"
+      ],
+      "env": {
+        "POSTHOG_API_TOKEN": "Bearer phx_BHDAKqKrIy9JrdKFiZKGWEYlK7jZfiosDky8XSGXXCvGm3g"
       }
     }
   }

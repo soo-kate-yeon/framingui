@@ -22,7 +22,7 @@ describe('extractDependencies', () => {
   });
 
   describe('내부 패키지 추출', () => {
-    it('@tekton 패키지를 internal로 추출해야 함', () => {
+    it('@framingui 패키지를 internal로 추출해야 함', () => {
       const code = `
         import { Button } from '@framingui/ui';
         import { resolveScreen } from '@framingui/core';

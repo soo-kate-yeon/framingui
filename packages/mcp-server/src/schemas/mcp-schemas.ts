@@ -363,7 +363,7 @@ export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
  */
 export const DependenciesSchema = z.object({
   external: z.array(z.string()).describe('External NPM packages required by generated code'),
-  internal: z.array(z.string()).describe('Internal @tekton packages'),
+  internal: z.array(z.string()).describe('Internal @framingui packages'),
   installCommands: z.object({
     npm: z.string(),
     yarn: z.string(),

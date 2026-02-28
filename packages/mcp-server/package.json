@@ -1,7 +1,7 @@
 {
   "name": "@framingui/mcp-server",
   "version": "0.5.2",
-  "description": "Tekton MCP Server with Claude Code integration and timestamp-based preview system",
+  "description": "Framingui MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

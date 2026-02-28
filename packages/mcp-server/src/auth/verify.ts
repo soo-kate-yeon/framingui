@@ -1,5 +1,5 @@
 /**
- * API Key verification for Tekton MCP Server
+ * API Key verification for Framingui MCP Server
  * SPEC-DEPLOY-001 Phase 4.1: MCP Server Authentication Layer
  */
 
@@ -27,13 +27,12 @@ export interface VerifyResponse {
 }
 
 /**
- * Verify API key with Tekton backend
+ * Verify API key with Framingui backend
  * @param apiKey - The API key to verify
  * @returns VerifyResponse with user data and licenses
  */
 export async function verifyApiKey(apiKey: string): Promise<VerifyResponse> {
-  const apiUrl =
-    process.env.FRAMINGUI_API_URL || process.env.TEKTON_API_URL || 'https://framingui.com';
+  const apiUrl = process.env.FRAMINGUI_API_URL || 'https://framingui.com';
   const endpoint = `${apiUrl}/api/mcp/verify`;
 
   try {

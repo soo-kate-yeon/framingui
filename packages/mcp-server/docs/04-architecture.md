@@ -1,6 +1,6 @@
 # Architecture Documentation
 
-System architecture and data flow for Tekton MCP Server v0.4.5.
+System architecture and data flow for Framingui MCP Server v0.4.5.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ System architecture and data flow for Tekton MCP Server v0.4.5.
 
 ### Core Concepts
 
-Tekton MCP Server is a **stdio-based MCP protocol** server that communicates with AI coding assistants via JSON-RPC 2.0.
+Framingui MCP Server is a **stdio-based MCP protocol** server that communicates with AI coding assistants via JSON-RPC 2.0.
 
 **Key Components**:
 
@@ -48,7 +48,7 @@ graph TB
         AI[AI Agent]
     end
 
-    subgraph "Tekton MCP Server (stdio)"
+    subgraph "Framingui MCP Server (stdio)"
         CLI[CLI Router]
         Auth[Auth Layer]
         MCP[MCP Protocol Handler]
@@ -69,8 +69,8 @@ graph TB
     end
 
     subgraph "External"
-        TektonAPI[framingui.com/api/mcp/verify]
-        Credentials[~/.tekton/credentials.json]
+        FraminguiAPI[framingui.com/api/mcp/verify]
+        Credentials[~/.framingui/credentials.json]
         ThemeFiles[.moai/themes/generated/]
         ComponentFiles[.moai/components/]
         TemplateFiles[.moai/templates/]
@@ -79,7 +79,7 @@ graph TB
     User -->|Natural Language| AI
     AI -->|JSON-RPC 2.0 stdio| MCP
     MCP --> Auth
-    Auth -->|verify API key| TektonAPI
+    Auth -->|verify API key| FraminguiAPI
     Auth -->|load credentials| Credentials
     Auth --> Whoami
     MCP --> ThemeTools
@@ -103,7 +103,7 @@ sequenceDiagram
     participant CLI as framingui-mcp CLI
     participant Browser
     participant API as framingui.com
-    participant Creds as ~/.tekton/credentials.json
+    participant Creds as ~/.framingui/credentials.json
     participant MCP as MCP Server
     participant AI as AI Assistant
 
@@ -152,8 +152,8 @@ packages/mcp-server/
 │   │   ├── logout.ts         # Clear saved credentials
 │   │   ├── status.ts         # Show auth status
 │   │   ├── init.ts           # One-line project setup
-│   │   ├── credentials.ts    # ~/.tekton/credentials.json management
-│   │   ├── guide-template.ts # TEKTON-GUIDE.md generator
+│   │   ├── credentials.ts    # ~/.framingui/credentials.json management
+│   │   ├── guide-template.ts # FRAMINGUI-GUIDE.md generator
 │   │   └── agent-md-templates.ts  # CLAUDE.md/AGENTS.md templates
 │   │
 │   ├── auth/                 # Authentication layer
@@ -246,7 +246,7 @@ graph TD
 | Module                 | Responsibility                                                         |
 | ---------------------- | ---------------------------------------------------------------------- |
 | `cli/login.ts`         | Browser OAuth flow: localhost callback server → save credentials       |
-| `cli/credentials.ts`   | Read/write `~/.tekton/credentials.json`                                |
+| `cli/credentials.ts`   | Read/write `~/.framingui/credentials.json`                                |
 | `auth/verify.ts`       | `verifyApiKey()`: GET `framingui.com/api/mcp/verify` with Bearer token |
 | `auth/guard.ts`        | `requireAuth()` and `requireWhoami()` — throws if not met              |
 | `auth/state.ts`        | In-memory auth state: `authData`, `whoamiCompleted` flag               |

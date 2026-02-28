@@ -1,14 +1,13 @@
 /**
  * 크레덴셜 파일 관리
  * ~/.framingui/credentials.json 읽기/쓰기/삭제
- * (하위 호환: ~/.tekton/credentials.json 폴백 지원)
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
-export interface TektonCredentials {
+export interface FraminguiCredentials {
   api_key: string;
   api_url: string;
   created_at: string;
@@ -23,19 +22,11 @@ export function getCredentialsPath(): string {
 }
 
 /**
- * 레거시 크레덴셜 파일 경로 (하위 호환용)
- */
-function getLegacyCredentialsPath(): string {
-  return path.join(os.homedir(), '.tekton', 'credentials.json');
-}
-
-/**
  * 크레덴셜 파일 로드
- * 새 경로(~/.framingui) 우선, 없으면 레거시 경로(~/.tekton) 폴백
  * @returns 크레덴셜 객체 또는 null (파일 없거나 파싱 실패 시)
  */
-export function loadCredentials(): TektonCredentials | null {
-  const paths = [getCredentialsPath(), getLegacyCredentialsPath()];
+export function loadCredentials(): FraminguiCredentials | null {
+  const paths = [getCredentialsPath()];
 
   for (const credPath of paths) {
     try {
@@ -43,7 +34,7 @@ export function loadCredentials(): TektonCredentials | null {
         continue;
       }
       const raw = fs.readFileSync(credPath, 'utf-8');
-      const data = JSON.parse(raw) as TektonCredentials;
+      const data = JSON.parse(raw) as FraminguiCredentials;
 
       // 필수 필드 검증
       if (!data.api_key || !data.api_url) {
@@ -62,7 +53,7 @@ export function loadCredentials(): TektonCredentials | null {
 /**
  * 크레덴셜 저장 (chmod 600)
  */
-export function saveCredentials(creds: TektonCredentials): void {
+export function saveCredentials(creds: FraminguiCredentials): void {
   const credPath = getCredentialsPath();
   const dir = path.dirname(credPath);
 

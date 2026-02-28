@@ -29,6 +29,14 @@
       }
     }
   },
+  "explore": {
+    "topBanner": {
+      "eyebrow": "Explore · 디자인 시스템",
+      "message": "3일 무료체험 시작하기",
+      "cta": "무료체험 시작",
+      "dismissAriaLabel": "무료체험 배너 닫기"
+    }
+  },
   "common": {
     "learnMore": "자세히 보기"
   },

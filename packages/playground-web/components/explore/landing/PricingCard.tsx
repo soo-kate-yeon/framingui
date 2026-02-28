@@ -7,6 +7,7 @@
 
 import { clsx } from 'clsx';
 import { Check } from 'lucide-react';
+import { trackPricingPurchaseClick, trackPricingManageClick } from '@/lib/analytics';
 
 export type PricingTier = 'Single' | 'Double' | 'Creator Pass';
 
@@ -63,7 +64,10 @@ export function PricingCard({
       {hasLicense ? (
         <button
           type="button"
-          onClick={onManage}
+          onClick={() => {
+            trackPricingManageClick({ tier });
+            onManage?.();
+          }}
           className="w-full px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded"
         >
           Manage License
@@ -71,7 +75,10 @@ export function PricingCard({
       ) : (
         <button
           type="button"
-          onClick={() => onPurchase?.(tier)}
+          onClick={() => {
+            trackPricingPurchaseClick({ tier, price, is_featured: featured });
+            onPurchase?.(tier);
+          }}
           className={clsx(
             'w-full px-6 py-3 text-sm font-bold uppercase tracking-wider transition-colors rounded',
             featured

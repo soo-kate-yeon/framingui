@@ -13,7 +13,7 @@ import {
 } from '../../src/storage/timestamp-manager.js';
 
 describe('Timestamp Manager', () => {
-  const testBaseDir = '.tekton-test/collision-test';
+  const testBaseDir = '.framingui-test/collision-test';
 
   beforeEach(() => {
     try {

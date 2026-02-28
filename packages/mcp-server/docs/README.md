@@ -1,4 +1,4 @@
-# Tekton MCP Server Documentation
+# Framingui MCP Server Documentation
 
 Documentation for `@framingui/mcp-server` v0.4.5 — an stdio-based MCP server for AI-driven UI generation.
 

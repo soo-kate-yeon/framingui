@@ -19,6 +19,7 @@ import {
 } from '../modals';
 import type { TemplateData } from '../../data/templates';
 import { trackFunnelFreeTrialStarted } from '../../lib/analytics';
+import { ExploreTopBanner } from './ExploreTopBanner';
 
 // ============================================================================
 // Types
@@ -100,8 +101,15 @@ export function ExplorePageClient({ children }: ExplorePageClientProps) {
     setSelectedTemplate(null);
   };
 
+  const handleOpenFreeTrialModal = () => {
+    console.log('[ExplorePageClient] Opening free trial modal from top banner');
+    setCurrentModal('free-trial');
+  };
+
   return (
     <>
+      <ExploreTopBanner onStartFreeTrial={handleOpenFreeTrialModal} />
+
       {/* 원래 페이지 콘텐츠 */}
       {children}
 

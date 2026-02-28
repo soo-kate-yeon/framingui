@@ -1,6 +1,6 @@
 /**
  * framingui-mcp logout 명령어
- * ~/.tekton/credentials.json 삭제
+ * ~/.framingui/credentials.json 삭제
  */
 
 import { deleteCredentials } from './credentials.js';

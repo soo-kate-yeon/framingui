@@ -18,6 +18,8 @@ export type AnalyticsEvent =
   | 'cta_click'
   | 'template_select'
   | 'pricing_view'
+  | 'pricing_purchase_clicked'
+  | 'pricing_manage_clicked'
   | 'beta_signup_click'
   | 'funnel_home_entered'
   | 'funnel_docs_or_explore_entered'
@@ -48,6 +50,12 @@ export interface FunnelPrimaryCtaClickProps {
 export interface FunnelFreeTrialStartedProps {
   entry_point: string;
   is_authenticated: boolean;
+}
+
+export interface PricingPurchaseProps {
+  tier: string;
+  price: number;
+  is_featured: boolean;
 }
 
 /**
@@ -205,6 +213,22 @@ export const trackFunnelFreeTrialStarted = (props: FunnelFreeTrialStartedProps):
   captureWithAttribution('funnel_free_trial_started', {
     entry_point: props.entry_point,
     is_authenticated: props.is_authenticated,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+export const trackPricingPurchaseClick = (props: PricingPurchaseProps): void => {
+  captureWithAttribution('pricing_purchase_clicked', {
+    tier: props.tier,
+    price: props.price,
+    is_featured: props.is_featured,
+    timestamp: new Date().toISOString(),
+  });
+};
+
+export const trackPricingManageClick = (props: { tier: string }): void => {
+  captureWithAttribution('pricing_manage_clicked', {
+    tier: props.tier,
     timestamp: new Date().toISOString(),
   });
 };

@@ -126,7 +126,7 @@ export const teamGridExample: ScreenExample = {
     ],
     metadata: {
       version: '1.0.0',
-      author: 'tekton',
+      author: 'framingui',
       created: '2025-01-01T00:00:00Z',
     },
   },
@@ -215,7 +215,7 @@ export const dataTableExample: ScreenExample = {
     ],
     metadata: {
       version: '1.0.0',
-      author: 'tekton',
+      author: 'framingui',
       created: '2025-01-01T00:00:00Z',
     },
   },
@@ -312,7 +312,7 @@ export const loginFormExample: ScreenExample = {
     ],
     metadata: {
       version: '1.0.0',
-      author: 'tekton',
+      author: 'framingui',
       created: '2025-01-01T00:00:00Z',
     },
   },
@@ -440,7 +440,7 @@ export const dashboardOverviewExample: ScreenExample = {
     ],
     metadata: {
       version: '1.0.0',
-      author: 'tekton',
+      author: 'framingui',
       created: '2025-01-01T00:00:00Z',
     },
   },

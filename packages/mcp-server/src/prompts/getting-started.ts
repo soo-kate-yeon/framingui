@@ -1,10 +1,10 @@
 /**
- * MCP Prompts: Getting Started with Tekton
+ * MCP Prompts: Getting Started with Framingui
  * Universal guidance for all MCP clients (Claude Code, OpenAI Codex, etc.)
  */
 
 /**
- * Getting Started prompt for Tekton workflow
+ * Getting Started prompt for Framingui workflow
  * Provides authentication guidance, theme exploration, and screen generation workflow
  */
 export function getGettingStartedPrompt() {
@@ -18,13 +18,13 @@ export function getGettingStartedPrompt() {
 
 ## Step 1: Authentication (Required)
 
-Before generating screens, authenticate with your Tekton account:
+Before generating screens, authenticate with your Framingui account:
 
 \`\`\`bash
 framingui-mcp login
 \`\`\`
 
-This opens your browser for OAuth authentication. Your credentials are stored in \`~/.tekton/credentials.json\`.
+This opens your browser for OAuth authentication. Your credentials are stored in \`~/.framingui/credentials.json\`.
 
 **Why authentication is required:**
 - All 6 themes require valid licenses
@@ -102,7 +102,7 @@ Follow the 3-step workflow:
 
 ## Need Help?
 
-- Check \`TEKTON-GUIDE.md\` in your project root
+- Check \`FRAMINGUI-GUIDE.md\` in your project root
 - Read \`CLAUDE.md\` for Claude Code specific patterns (if available)
 - Read \`AGENTS.md\` for generic AI agent guidance (if available)`,
         },

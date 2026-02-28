@@ -1,10 +1,10 @@
 # Quick Start Guide
 
-Get started with Tekton MCP Server in 5 minutes.
+Get started with Framingui MCP Server in 5 minutes.
 
 ## Overview
 
-Tekton MCP Server is a **stdio-based MCP protocol** server that integrates with AI coding assistants (Claude Code, Cursor, Windsurf, etc.) to generate production-ready UI screens from natural language.
+Framingui MCP Server is a **stdio-based MCP protocol** server that integrates with AI coding assistants (Claude Code, Cursor, Windsurf, etc.) to generate production-ready UI screens from natural language.
 
 **Key Features**:
 
@@ -37,7 +37,7 @@ This automatically:
 3. Configures Tailwind CSS (content paths + animate plugin)
 4. Adds CSS token imports to `globals.css`
 5. Registers MCP server in `.mcp.json`
-6. Generates `TEKTON-GUIDE.md` and updates `CLAUDE.md` / `AGENTS.md`
+6. Generates `FRAMINGUI-GUIDE.md` and updates `CLAUDE.md` / `AGENTS.md`
 
 ### Option 2: Manual MCP Configuration
 
@@ -46,7 +46,7 @@ Add to your project's `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "tekton": {
+    "framingui": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@framingui/mcp-server"]
@@ -67,9 +67,9 @@ This will:
 
 1. Open your browser to `framingui.com/mcp/auth`
 2. Complete the OAuth flow
-3. Save credentials to `~/.tekton/credentials.json`
+3. Save credentials to `~/.framingui/credentials.json`
 
-**Alternative**: Set the `TEKTON_API_KEY` environment variable directly.
+**Alternative**: Set the `FRAMINGUI_API_KEY` environment variable directly.
 
 ### Verify Authentication
 
@@ -86,7 +86,7 @@ After authentication, restart your AI assistant and follow this flow:
 Every session must start with `whoami`. Your AI assistant will call it automatically:
 
 ```
-You: "Check my Tekton account"
+You: "Check my Framingui account"
 → AI calls whoami
 → Returns: plan, licensed themes, MCP support status
 ```
@@ -157,7 +157,7 @@ You: "Build a dashboard screen"
 npx @framingui/mcp-server login
 
 # Or set API key directly
-export TEKTON_API_KEY=tk_live_xxx...
+export FRAMINGUI_API_KEY=tk_live_xxx...
 ```
 
 ### "whoami required" Error

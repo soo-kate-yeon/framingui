@@ -9,7 +9,7 @@ import { generateBlueprintTool } from '../../src/tools/generate-blueprint.js';
 import { getDefaultStorage } from '../../src/storage/blueprint-storage.js';
 
 describe('generateBlueprintTool', () => {
-  const testStorageDir = '.tekton-test/blueprints';
+  const testStorageDir = '.framingui-test/blueprints';
 
   beforeEach(() => {
     // Clean up test storage

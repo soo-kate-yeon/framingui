@@ -29,6 +29,14 @@
       }
     }
   },
+  "explore": {
+    "topBanner": {
+      "eyebrow": "Explore · Design System",
+      "message": "Start your 3-day free trial",
+      "cta": "Start free trial",
+      "dismissAriaLabel": "Dismiss free trial banner"
+    }
+  },
   "common": {
     "learnMore": "Learn More"
   },

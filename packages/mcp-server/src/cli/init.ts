@@ -12,8 +12,8 @@ import { generateClaudeMdSection, generateAgentsMdSection } from './agent-md-tem
 
 // ─── 상수 ──────────────────────────────────────────────
 
-const TEKTON_UI_CONTENT_PATH = './node_modules/@framingui/ui/dist/**/*.{js,mjs}';
-const TEKTON_STYLE_IMPORT = "@import '@framingui/ui/styles';";
+const FRAMINGUI_UI_CONTENT_PATH = './node_modules/@framingui/ui/dist/**/*.{js,mjs}';
+const FRAMINGUI_STYLE_IMPORT = "@import '@framingui/ui/styles';";
 const PACKAGES_TO_INSTALL = ['@framingui/ui', 'tailwindcss-animate'];
 
 // ─── 유틸리티 ──────────────────────────────────────────
@@ -112,7 +112,7 @@ function setupTailwind(cwd: string): void {
 
     // content 배열에 @framingui/ui 경로 추가
     if (!content.includes('@framingui/ui')) {
-      content = content.replace(/(content\s*:\s*\[)/, `$1\n    '${TEKTON_UI_CONTENT_PATH}',`);
+      content = content.replace(/(content\s*:\s*\[)/, `$1\n    '${FRAMINGUI_UI_CONTENT_PATH}',`);
     }
 
     // plugins에 tailwindcss-animate 추가
@@ -140,7 +140,7 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx}',
     './src/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    '${TEKTON_UI_CONTENT_PATH}',
+    '${FRAMINGUI_UI_CONTENT_PATH}',
   ],
   plugins: [require('tailwindcss-animate')],
 };
@@ -164,20 +164,20 @@ function setupCSS(cwd: string, framework: Framework): void {
 
   if (!cssFile) {
     logDetail('CSS 파일을 찾을 수 없습니다. 수동으로 추가해 주세요:');
-    logDetail(`  ${TEKTON_STYLE_IMPORT}`);
+    logDetail(`  ${FRAMINGUI_STYLE_IMPORT}`);
     return;
   }
 
   const cssPath = path.join(cwd, cssFile);
   const content = fs.readFileSync(cssPath, 'utf-8');
 
-  if (content.includes(TEKTON_STYLE_IMPORT)) {
+  if (content.includes(FRAMINGUI_STYLE_IMPORT)) {
     logDetail(`${cssFile} (이미 설정됨, skip)`);
     return;
   }
 
   // 파일 상단에 import 추가
-  fs.writeFileSync(cssPath, `${TEKTON_STYLE_IMPORT}\n\n${content}`, 'utf-8');
+  fs.writeFileSync(cssPath, `${FRAMINGUI_STYLE_IMPORT}\n\n${content}`, 'utf-8');
   logDetail(`${cssFile} 업데이트 완료`);
 }
 
@@ -190,14 +190,14 @@ interface McpConfig {
 function setupMCP(cwd: string): void {
   const mcpPath = path.join(cwd, '.mcp.json');
 
-  const tektonServer = {
+  const framinguiServer = {
     type: 'stdio' as const,
     command: 'npx',
     args: ['-y', '@framingui/mcp-server'],
   };
 
   if (fileExists(mcpPath)) {
-    // 기존 파일에 tekton 서버 추가
+    // 기존 파일에 framingui 서버 추가
     const raw = fs.readFileSync(mcpPath, 'utf-8');
     const config = JSON.parse(raw) as McpConfig;
 
@@ -205,19 +205,19 @@ function setupMCP(cwd: string): void {
       config.mcpServers = {};
     }
 
-    if ('tekton' in config.mcpServers) {
+    if ('framingui' in config.mcpServers) {
       logDetail('.mcp.json (이미 설정됨, skip)');
       return;
     }
 
-    config.mcpServers['tekton'] = tektonServer;
+    config.mcpServers['framingui'] = framinguiServer;
     fs.writeFileSync(mcpPath, JSON.stringify(config, null, 2) + '\n', 'utf-8');
     logDetail('.mcp.json 업데이트 완료');
   } else {
     // 새 파일 생성
     const config = {
       mcpServers: {
-        tekton: tektonServer,
+        framingui: framinguiServer,
       },
     };
 
@@ -229,16 +229,16 @@ function setupMCP(cwd: string): void {
 // ─── Step 6: 가이드 문서 생성 ──────────────────────────
 
 function setupGuide(cwd: string, framework: Framework): void {
-  const guidePath = path.join(cwd, 'TEKTON-GUIDE.md');
+  const guidePath = path.join(cwd, 'FRAMINGUI-GUIDE.md');
 
   if (fileExists(guidePath)) {
-    logDetail('TEKTON-GUIDE.md (이미 존재함, skip)');
+    logDetail('FRAMINGUI-GUIDE.md (이미 존재함, skip)');
     return;
   }
 
   const content = generateGuide(framework);
   fs.writeFileSync(guidePath, content, 'utf-8');
-  logDetail('TEKTON-GUIDE.md 생성 완료');
+  logDetail('FRAMINGUI-GUIDE.md 생성 완료');
 }
 
 // ─── Step 7: CLAUDE.md / AGENTS.md 설정 ────────────────
@@ -251,10 +251,10 @@ function setupAgentMd(cwd: string, framework: Framework): void {
   if (fileExists(claudeMdPath)) {
     const existingContent = fs.readFileSync(claudeMdPath, 'utf-8');
     if (existingContent.includes('## FramingUI Workflow')) {
-      logDetail('CLAUDE.md (이미 Tekton 섹션 존재, skip)');
+      logDetail('CLAUDE.md (이미 Framingui 섹션 존재, skip)');
     } else {
       fs.appendFileSync(claudeMdPath, `\n${claudeSection}`, 'utf-8');
-      logDetail('CLAUDE.md에 Tekton 섹션 추가 완료');
+      logDetail('CLAUDE.md에 Framingui 섹션 추가 완료');
     }
   } else {
     fs.writeFileSync(claudeMdPath, `# Project Instructions\n${claudeSection}`, 'utf-8');
@@ -268,10 +268,10 @@ function setupAgentMd(cwd: string, framework: Framework): void {
   if (fileExists(agentsMdPath)) {
     const existingContent = fs.readFileSync(agentsMdPath, 'utf-8');
     if (existingContent.includes('## FramingUI Workflow')) {
-      logDetail('AGENTS.md (이미 Tekton 섹션 존재, skip)');
+      logDetail('AGENTS.md (이미 Framingui 섹션 존재, skip)');
     } else {
       fs.appendFileSync(agentsMdPath, `\n${agentsSection}`, 'utf-8');
-      logDetail('AGENTS.md에 Tekton 섹션 추가 완료');
+      logDetail('AGENTS.md에 Framingui 섹션 추가 완료');
     }
   } else {
     fs.writeFileSync(agentsMdPath, `# AI Agent Instructions\n${agentsSection}`, 'utf-8');
@@ -291,7 +291,7 @@ function printSuccess(): void {
   1. 먼저 인증하세요: framingui-mcp login
   2. Claude Code를 재시작하세요
   3. AI에게 요청하세요: "로그인 화면 만들어줘"
-  4. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
+  4. FRAMINGUI-GUIDE.md에서 전체 가이드를 확인하세요
 
   중요: 모든 6개 테마는 인증이 필요합니다
 
@@ -352,7 +352,7 @@ export async function initCommand(): Promise<void> {
     setupCSS(cwd, framework);
   } catch {
     console.error('CSS 설정에 실패했습니다. 수동으로 추가해 주세요:');
-    console.error(`  ${TEKTON_STYLE_IMPORT}`);
+    console.error(`  ${FRAMINGUI_STYLE_IMPORT}`);
   }
 
   // Step 5: MCP 설정

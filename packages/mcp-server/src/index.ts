@@ -1016,14 +1016,14 @@ info('Starting Framingui MCP Server v0.5.0...');
 
 // ============================================================================
 // Authentication: Credential Chain
-// 1. 환경변수 FRAMINGUI_API_KEY (신규) / TEKTON_API_KEY (하위 호환)
+// 1. 환경변수 FRAMINGUI_API_KEY
 // 2. ~/.framingui/credentials.json (CLI login 방식)
 // 3. 둘 다 없으면: 인증 없이 시작 (도구 호출 시 에러)
 // ============================================================================
 
 // 크레덴셜 체인으로 API Key 결정
-let apiKey = process.env.FRAMINGUI_API_KEY || process.env.TEKTON_API_KEY;
-let apiKeySource = process.env.FRAMINGUI_API_KEY ? 'FRAMINGUI_API_KEY env' : 'TEKTON_API_KEY env';
+let apiKey = process.env.FRAMINGUI_API_KEY;
+let apiKeySource = 'FRAMINGUI_API_KEY env';
 
 if (!apiKey) {
   const creds = loadCredentials();
@@ -1031,7 +1031,7 @@ if (!apiKey) {
     apiKey = creds.api_key;
     apiKeySource = '~/.framingui/credentials.json';
     // 크레덴셜 파일의 API URL도 적용
-    if (creds.api_url && !process.env.FRAMINGUI_API_URL && !process.env.TEKTON_API_URL) {
+    if (creds.api_url && !process.env.FRAMINGUI_API_URL) {
       process.env.FRAMINGUI_API_URL = creds.api_url;
     }
   }

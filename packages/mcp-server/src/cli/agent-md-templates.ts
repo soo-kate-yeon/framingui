@@ -1,6 +1,6 @@
 /**
  * Agent guidance templates for CLAUDE.md and AGENTS.md
- * Provides framework-specific Tekton workflow instructions
+ * Provides framework-specific Framingui workflow instructions
  */
 
 export type Framework = 'nextjs' | 'vite';
@@ -17,7 +17,7 @@ export function generateClaudeMdSection(framework: Framework): string {
 
 ### MCP Server Connection
 
-Tekton MCP server is configured in \`.mcp.json\`. Claude Code automatically loads 15 tools for screen generation.
+Framingui MCP server is configured in \`.mcp.json\`. Claude Code automatically loads 15 tools for screen generation.
 
 ### Authentication (Step 1)
 
@@ -59,7 +59,7 @@ export default function Page() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Welcome to Tekton</CardTitle>
+        <CardTitle>Welcome to Framingui</CardTitle>
       </CardHeader>
       <CardContent>
         <Button variant="default" size="lg">Get Started</Button>
@@ -141,7 +141,7 @@ export function generateAgentsMdSection(framework: Framework): string {
 
 ### Overview
 
-Tekton MCP server provides 15 tools for screen generation via Model Context Protocol (MCP). This guide is for AI agents on platforms like OpenAI Codex, Cursor, Windsurf, and other MCP-compatible clients.
+Framingui MCP server provides 15 tools for screen generation via Model Context Protocol (MCP). This guide is for AI agents on platforms like OpenAI Codex, Cursor, Windsurf, and other MCP-compatible clients.
 
 ### Prerequisites
 

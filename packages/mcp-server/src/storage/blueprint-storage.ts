@@ -23,7 +23,7 @@ export interface BlueprintMetadata {
  * Blueprint storage configuration
  */
 export interface StorageConfig {
-  baseDir: string; // Default: .tekton/blueprints
+  baseDir: string; // Default: .framingui/blueprints
   ttlDays: number; // Default: 30 days
 }
 
@@ -31,7 +31,7 @@ export interface StorageConfig {
  * Default storage configuration
  */
 const DEFAULT_CONFIG: StorageConfig = {
-  baseDir: '.tekton/blueprints',
+  baseDir: '.framingui/blueprints',
   ttlDays: 30,
 };
 

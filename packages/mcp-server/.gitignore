@@ -8,7 +8,7 @@ dist/
 
 # Test artifacts
 coverage/
-.tekton-test/
+.framingui-test/
 
 # Dependencies
 node_modules/

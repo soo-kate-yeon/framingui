@@ -38,7 +38,7 @@ function openBrowser(url: string): void {
  * OAuth 로그인 플로우 실행
  */
 export async function loginCommand(): Promise<void> {
-  const apiUrl = process.env.FRAMINGUI_API_URL || process.env.TEKTON_API_URL || DEFAULT_API_URL;
+  const apiUrl = process.env.FRAMINGUI_API_URL || DEFAULT_API_URL;
 
   // 1. CSRF state 생성
   const state = crypto.randomBytes(32).toString('hex');

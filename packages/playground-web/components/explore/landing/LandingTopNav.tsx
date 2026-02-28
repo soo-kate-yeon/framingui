@@ -7,6 +7,8 @@
 
 'use client';
 
+import { trackFunnelPrimaryCtaClick } from '@/lib/analytics';
+
 export interface LandingTopNavProps {
   /** Template name to display in logo */
   templateName?: string;
@@ -67,7 +69,15 @@ export function LandingTopNav({
         {/* DEMO Button [TAG-STUDIO-001-E001] */}
         <button
           type="button"
-          onClick={onDemoClick}
+          onClick={() => {
+            trackFunnelPrimaryCtaClick({
+              cta_id: 'nav_demo',
+              cta_label: 'DEMO',
+              location: 'top_nav',
+              cta_variant: 'secondary',
+            });
+            onDemoClick?.();
+          }}
           className="px-4 py-2 text-sm font-medium text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded"
         >
           DEMO
@@ -76,7 +86,16 @@ export function LandingTopNav({
         {/* BUY Button [TAG-STUDIO-001-E002] */}
         <button
           type="button"
-          onClick={onBuyClick}
+          onClick={() => {
+            trackFunnelPrimaryCtaClick({
+              cta_id: 'nav_buy',
+              cta_label: 'BUY',
+              location: 'top_nav',
+              destination: 'pricing',
+              cta_variant: 'primary',
+            });
+            onBuyClick?.();
+          }}
           className="px-4 py-2 text-sm font-medium text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded"
         >
           BUY

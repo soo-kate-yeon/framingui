@@ -1,6 +1,6 @@
 # User Guide
 
-Complete guide to using all Tekton MCP Server features.
+Complete guide to using all Framingui MCP Server features.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ Complete guide to using all Tekton MCP Server features.
 
 ## Authentication Flow
 
-Tekton requires authentication before using any tools.
+Framingui requires authentication before using any tools.
 
 ### 1. Login
 
@@ -24,7 +24,7 @@ Tekton requires authentication before using any tools.
 npx @framingui/mcp-server login
 ```
 
-Opens your browser for OAuth. Credentials are saved to `~/.tekton/credentials.json`.
+Opens your browser for OAuth. Credentials are saved to `~/.framingui/credentials.json`.
 
 ### 2. whoami (Mandatory First Call)
 
@@ -143,7 +143,7 @@ Production workflow:
 
 ## Theme System
 
-Tekton provides 6 premium themes. All themes require authentication.
+Framingui provides 6 premium themes. All themes require authentication.
 
 ### Available Themes
 
@@ -274,11 +274,11 @@ You: "Show me the login template"
 
 ### "Authentication required"
 
-Run `npx @framingui/mcp-server login` or set `TEKTON_API_KEY` environment variable.
+Run `npx @framingui/mcp-server login` or set `FRAMINGUI_API_KEY` environment variable.
 
 ### "whoami required"
 
-Call `whoami` before using any other tool. Ask your AI assistant: "Check my Tekton account".
+Call `whoami` before using any other tool. Ask your AI assistant: "Check my Framingui account".
 
 ### Theme not accessible
 

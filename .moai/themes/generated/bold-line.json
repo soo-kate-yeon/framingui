@@ -209,7 +209,7 @@
             },
             "input": {
                 "default": "w-full bg-transparent border-0 border-b-2 border-black py-4 px-2 text-lg text-black placeholder:text-neutral-500 focus:outline-none focus:border-b-[3px] focus:bg-[var(--tekton-bg-brand-default)]/10 transition-all rounded-none",
-                "search": "w-full bg-transparent border-2 border-black py-4 px-12 text-lg text-black placeholder:text-neutral-500 focus:outline-none focus:bg-[var(--tekton-bg-brand-default)] transition-colors rounded-none"
+                "search": "w-full bg-transparent border-0 border-b-2 border-black py-4 px-12 text-lg text-black placeholder:text-neutral-500 focus:outline-none focus:border-b-[3px] focus:bg-[var(--tekton-bg-brand-default)]/10 transition-all rounded-none"
             },
             "badge": {
                 "default": "inline-flex items-center bg-black text-white px-3 py-1 text-sm font-bold rounded-none",

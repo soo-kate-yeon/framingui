@@ -1,10 +1,10 @@
-# @tekton/mcp-server
+# @framingui/mcp-server
 
-Tekton MCP Server v2.0.0 - stdio-based MCP protocol implementation for Claude Code.
+Framingui MCP Server v2.0.0 - stdio-based MCP protocol implementation for Claude Code.
 
 ## Overview
 
-MCP (Model Context Protocol) server enabling AI-driven blueprint generation, theme preview, and production code export for the Tekton design system.
+MCP (Model Context Protocol) server enabling AI-driven blueprint generation, theme preview, and production code export for the Framingui design system.
 
 **SPEC**: [SPEC-MCP-002 v2.0.0](../../.moai/specs/SPEC-MCP-002/spec.md) - stdio-based MCP Standard
 
@@ -36,10 +36,10 @@ The MCP server supports optional API key authentication to enable access to prem
 
 ```bash
 # Required for premium theme access
-TEKTON_API_KEY=tk_live_xxx...
+FRAMINGUI_API_KEY=tk_live_xxx...
 
 # Optional: API endpoint (defaults to https://framingui.com)
-TEKTON_API_URL=https://framingui.com  # or http://localhost:3000 for dev
+FRAMINGUI_API_URL=https://framingui.com  # or http://localhost:3000 for dev
 ```
 
 ### Theme Access
@@ -89,9 +89,9 @@ npx @framingui/mcp-server init
 2. **패키지 설치** - `@framingui/ui`, `tailwindcss-animate` (패키지 매니저 자동 감지: pnpm/yarn/bun/npm)
 3. **Tailwind CSS 설정** - `tailwind.config.ts`에 content 경로 및 animate 플러그인 추가
 4. **CSS 토큰 임포트** - `globals.css`에 `@import '@framingui/ui/styles'` 추가
-5. **MCP 연결** - `.mcp.json`에 tekton 서버 등록 (프로젝트 루트)
-6. **가이드 생성** - `TEKTON-GUIDE.md` 프로젝트 루트에 생성
-7. **AI 에이전트 가이드** - `CLAUDE.md` 및 `AGENTS.md`에 Tekton 워크플로우 섹션 추가
+5. **MCP 연결** - `.mcp.json`에 framingui 서버 등록 (프로젝트 루트)
+6. **가이드 생성** - `FRAMINGUI-GUIDE.md` 프로젝트 루트에 생성
+7. **AI 에이전트 가이드** - `CLAUDE.md` 및 `AGENTS.md`에 Framingui 워크플로우 섹션 추가
 8. **완료 안내** - 인증 필요성 및 다음 단계 안내
 
 설정 완료 후 Claude Code를 재시작하면, AI에게 "로그인 화면 만들어줘"와 같이 자연어로 화면 생성을 요청할 수 있습니다.
@@ -131,7 +131,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 ```json
 {
   "mcpServers": {
-    "tekton": {
+    "framingui": {
       "type": "stdio",
       "command": "npx",
       "args": ["-y", "@framingui/mcp-server"]
@@ -181,7 +181,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 
 **Tool**: `preview-theme`
 
-**Description**: Preview a Tekton theme and retrieve its design tokens
+**Description**: Preview a Framingui theme and retrieve its design tokens
 
 **Input**:
 
@@ -547,7 +547,7 @@ See [Claude Code Integration Guide](../../.moai/specs/SPEC-MCP-002/CLAUDE-CODE-I
 
 **Tool**: `list-screen-templates`
 
-**Description**: List all available screen templates from the Tekton template registry
+**Description**: List all available screen templates from the Framingui template registry
 
 **Input**:
 
@@ -888,9 +888,9 @@ packages/mcp-server/
 - 100% pass rate
 - Zero failures
 
-## Integration with @tekton/core
+## Integration with @framingui/core
 
-All MCP tools reuse `@tekton/core` functions:
+All MCP tools reuse `@framingui/core` functions:
 
 **Blueprint & Theme Tools**:
 

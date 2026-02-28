@@ -8,6 +8,7 @@
 'use client';
 
 import { clsx } from 'clsx';
+import { trackFunnelPrimaryCtaClick } from '@/lib/analytics';
 
 export interface HeroSectionProps {
   /** Main title */
@@ -49,7 +50,15 @@ export function HeroSection({
           {/* Open Full Demo Button [TAG-STUDIO-001-E003] */}
           <button
             type="button"
-            onClick={onOpenDemoClick}
+            onClick={() => {
+              trackFunnelPrimaryCtaClick({
+                cta_id: 'hero_open_demo',
+                cta_label: 'Open Full Demo',
+                location: 'hero',
+                cta_variant: 'primary',
+              });
+              onOpenDemoClick?.();
+            }}
             className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded"
           >
             Open Full Demo
@@ -58,7 +67,16 @@ export function HeroSection({
           {/* Buy Now Button */}
           <button
             type="button"
-            onClick={onBuyClick}
+            onClick={() => {
+              trackFunnelPrimaryCtaClick({
+                cta_id: 'hero_buy_now',
+                cta_label: 'Buy Now',
+                location: 'hero',
+                destination: 'pricing',
+                cta_variant: 'primary',
+              });
+              onBuyClick?.();
+            }}
             className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded"
           >
             Buy Now

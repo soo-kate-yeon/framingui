@@ -1,6 +1,6 @@
 # Developer Guide
 
-Guide for developing and contributing to Tekton MCP Server.
+Guide for developing and contributing to Framingui MCP Server.
 
 ## Table of Contents
 
@@ -24,8 +24,8 @@ Guide for developing and contributing to Tekton MCP Server.
 ### Clone & Build
 
 ```bash
-git clone https://github.com/soo-kate-yeon/tekton.git
-cd tekton
+git clone https://github.com/soo-kate-yeon/framingui.git
+cd framingui
 
 # Install all workspace dependencies
 pnpm install
@@ -58,8 +58,8 @@ pnpm inspect
 
 | Variable         | Required | Default                 | Description                                              |
 | ---------------- | -------- | ----------------------- | -------------------------------------------------------- |
-| `TEKTON_API_KEY` | Yes\*    | —                       | API key for authentication. \*Or use `framingui-mcp login`  |
-| `TEKTON_API_URL` | No       | `https://framingui.com` | API endpoint (use `http://localhost:3000` for local dev) |
+| `FRAMINGUI_API_KEY` | Yes\*    | —                       | API key for authentication. \*Or use `framingui-mcp login`  |
+| `FRAMINGUI_API_URL` | No       | `https://framingui.com` | API endpoint (use `http://localhost:3000` for local dev) |
 
 ---
 

@@ -43,9 +43,9 @@ npm run build
 ```json
 {
   "mcpServers": {
-    "tekton-screen-generation": {
+    "framingui-screen-generation": {
       "command": "node",
-      "args": ["/absolute/path/to/tekton/packages/mcp-server/dist/index.js"],
+      "args": ["/absolute/path/to/framingui/packages/mcp-server/dist/index.js"],
       "env": {
         "NODE_ENV": "production"
       }
@@ -63,7 +63,7 @@ npm run build
 ```json
 {
   "mcpServers": {
-    "tekton-screen-generation": {
+    "framingui-screen-generation": {
       "command": "node",
       "args": ["./packages/mcp-server/dist/index.js"]
     }
@@ -162,7 +162,7 @@ TypeScript: true
 ```typescript
 {
   "success": true,
-  "code": "import React from 'react';\nimport { Card, Heading, Text } from '@tekton/components';\n\nexport const DashboardScreen: React.FC = () => {\n  return (\n    <div data-screen-id=\"dashboard-screen\">\n      <div className=\"metrics-section\" data-section-id=\"metrics-section\">\n        <Card variant=\"elevated\">\n          <Heading level={3}>Total Users</Heading>\n          <Text size=\"large\">12,453</Text>\n        </Card>\n      </div>\n    </div>\n  );\n};\n"
+  "code": "import React from 'react';\nimport { Card, Heading, Text } from '@framingui/components';\n\nexport const DashboardScreen: React.FC = () => {\n  return (\n    <div data-screen-id=\"dashboard-screen\">\n      <div className=\"metrics-section\" data-section-id=\"metrics-section\">\n        <Card variant=\"elevated\">\n          <Heading level={3}>Total Users</Heading>\n          <Text size=\"large\">12,453</Text>\n        </Card>\n      </div>\n    </div>\n  );\n};\n"
 }
 ```
 
@@ -666,7 +666,7 @@ Error: MCP server not found
 
 문제가 발생하거나 제안사항이 있으시면:
 
-1. GitHub Issues: https://github.com/asleep/tekton/issues
+1. GitHub Issues: https://github.com/asleep/framingui/issues
 2. 문서 개선 제안
 3. 새 도구 요청
 
