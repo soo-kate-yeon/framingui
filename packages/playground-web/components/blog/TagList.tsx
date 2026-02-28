@@ -8,7 +8,7 @@ interface TagListProps {
 }
 
 export function TagList({ tags, activeTag }: TagListProps) {
-  const normalizedTags = tags.filter((tag) => tag.trim().length > 0);
+  const normalizedTags = Array.from(new Set(tags.map((tag) => tag.trim()).filter(Boolean)));
 
   return (
     <div className="flex flex-wrap gap-2">
