@@ -917,6 +917,19 @@ export function WorkoutDashboard() {
     ],
     examples: [
       {
+        title: 'Modern Social Feed Dashboard',
+        titleKo: '모던 소셜 피드 대시보드',
+        description: 'Bubbly and approachable social media interface with rich media cards.',
+        descriptionKo:
+          '리치 미디어 카드와 부드러운 UI가 특징인 친근한 소셜 미디어 인터페이스입니다.',
+        code: `import { PebbleSocialFeedPage } from "@/components/explore/pebble/PebbleSocialFeedPage";
+
+export default function App() {
+  return <PebbleSocialFeedPage />;
+}`,
+        language: 'tsx',
+      },
+      {
         title: 'Profile Card with Soft Edges',
         titleKo: '부드러운 모서리를 가진 프로필 카드',
         description: 'User profile card showcasing the friendly rounded aesthetic.',

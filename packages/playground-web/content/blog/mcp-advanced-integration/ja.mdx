@@ -1,0 +1,123 @@
+---
+title: "MCP 応用連携: カスタム AI ツールを作る"
+description: "Model Context Protocol（MCP）をデザインシステムに統合する方法を解説。トークン連携のカスタム AI ツールを構築します。"
+date: "2026-02-26"
+author: "tekton team"
+tags: ["mcp", "ai", "integration", "tutorial"]
+---
+
+# MCP 応用連携: カスタム AI ツールを作る
+
+Model Context Protocol（MCP）は、AI ツールがコードベースを理解する方法を変えています。ここでは、実務で使えるカスタム連携の作り方を紹介します。
+
+## MCP とは？
+
+MCP は、AI アシスタントが外部ツールやデータへアクセスするための標準プロトコルです。推測ではなく、実データを問い合わせて判断できます。
+
+## デザインシステムで MCP を使う理由
+
+デザインシステムは MCP と相性が良い領域です。
+
+- **構造化データ** — トークンが整理されている
+- **明確な制約** — AI が従うべきルールが定義されている
+- **予測しやすい出力** — 一貫したコンポーネント生成につながる
+
+## MCP サーバーを作る
+
+### 基本セットアップ
+
+```typescript
+import { Server } from '@modelcontextprotocol/sdk/server/index.js'
+
+const server = new Server({
+  name: 'my-design-system',
+  version: '1.0.0',
+})
+```
+
+### デザイントークンを公開する
+
+```typescript
+server.setRequestHandler('tools/call', async (request) => {
+  if (request.params.name === 'get-color') {
+    const { colorName } = request.params.arguments
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(tokens.colors[colorName])
+      }]
+    }
+  }
+})
+```
+
+### ツールを登録する
+
+```typescript
+server.setRequestHandler('tools/list', async () => ({
+  tools: [{
+    name: 'get-color',
+    description: 'Get a color token value',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        colorName: { type: 'string' }
+      }
+    }
+  }]
+}))
+```
+
+## 応用パターン
+
+### コンポーネント生成
+
+コンポーネントを丸ごと生成するツールを用意できます。
+
+```typescript
+{
+  name: 'generate-component',
+  description: 'Generate a component with proper tokens',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      componentType: { enum: ['button', 'card', 'input'] },
+      variant: { type: 'string' }
+    }
+  }
+}
+```
+
+### テーマ切り替え
+
+テーマ情報も AI が理解できるようにします。
+
+```typescript
+{
+  name: 'apply-theme',
+  description: 'Apply a theme to generated code',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      themeName: { type: 'string' }
+    }
+  }
+}
+```
+
+## framingui MCP サーバー
+
+ゼロから作らなくても、framingui にはすぐ使える MCP サーバーが含まれています。
+
+- すべてのトークンタイプを公開
+- コンポーネント生成ツール
+- テーマ管理
+- リアルタイムプレビュー
+
+```bash
+npx @anthropic-ai/claude-code mcp add tekton
+```
+
+## はじめる
+
+[詳しい MCP ドキュメントを見る →](/docs/mcp)

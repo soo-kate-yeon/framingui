@@ -1,0 +1,107 @@
+---
+title: "Figma からコードへ: AI で進めるデザイン自動化"
+description: "AI とデザイントークンで、Figma デザインを本番品質のコードへ変換する方法を紹介します。"
+date: "2026-02-26"
+author: "tekton team"
+tags: ["figma", "automation", "ai", "design-tokens"]
+---
+
+# Figma からコードへ: AI で進めるデザイン自動化
+
+デザインと実装の間にあるズレは長く課題でした。AI とデザイントークンを組み合わせると、この分断をかなり小さくできます。
+
+## 従来フローで起きる問題
+
+1. デザイナーが Figma でモックを作る
+2. 開発者が値を目視で拾う
+3. ハードコード中心で実装する
+4. デザイン変更のたびに値を拾い直す
+5. これを繰り返す
+
+**問題点:** 手作業の変換はミスを増やし、開発速度を落とします。
+
+## トークン中心のフロー
+
+Token-First で進めると、次のように変わります。
+
+1. デザイナーがトークン対応コンポーネントで設計
+2. AI がデザインを読み取り、既存トークンにマッピング
+3. 実際のデザインシステムを使ってコード生成
+4. デザイン変更時も AI がマッピングを更新
+
+**結果:** コードの一貫性が上がり、反復が速くなります。
+
+## 仕組み
+
+### 1. トークンを意識した Figma 構成
+
+意味の分かる命名にそろえます。
+
+```
+Colors/Primary/500 → maps to → tokens.colors.primary[500]
+Spacing/md → maps to → tokens.spacing.md
+```
+
+### 2. AI による抽出
+
+AI が Figma を解析すると、値をトークンに対応付けます。
+
+```typescript
+// AI sees: Rectangle with #3B82F6 fill
+// AI maps: tokens.colors.primary[500]
+// AI generates: className="bg-primary-500"
+```
+
+### 3. コンポーネント生成
+
+ピクセル再現ではなく、意味を持つコードを生成します。
+
+```tsx
+// Generated component
+export function FeatureCard() {
+  return (
+    <Card variant="elevated">
+      <CardHeader>
+        <Heading size="lg">{title}</Heading>
+      </CardHeader>
+      <CardBody>
+        <Text color="muted">{description}</Text>
+      </CardBody>
+    </Card>
+  )
+}
+```
+
+## 実運用での進め方
+
+### framingui を使う場合
+
+1. Figma フレームをエクスポート
+2. MCP コンテキスト付きで AI に渡す
+3. トークン準拠コードを受け取る
+
+```bash
+# In Claude or Cursor with tekton MCP
+"Convert this Figma design to a React component"
+```
+
+AI がトークンと設計ルールを参照した状態で、一貫したコードを生成します。
+
+## 主なメリット
+
+| 従来フロー | トークン中心フロー |
+|-------------|-------------|
+| コンポーネントごとに数時間 | 数分で作成 |
+| ハードコード中心 | セマンティックトークン中心 |
+| 手動更新 | AI 補助で更新 |
+| デザイン崩れが起きやすい | 一貫性を保ちやすい |
+
+## はじめる
+
+Figma からコードへの流れを自動化したいなら:
+
+1. [framingui をセットアップ](/docs/quick-start)
+2. [MCP を接続](/docs/mcp)
+3. 一貫したコード生成を試す
+
+[無料で試す →](/pricing)
