@@ -38,7 +38,7 @@ function openBrowser(url: string): void {
  * OAuth 로그인 플로우 실행
  */
 export async function loginCommand(): Promise<void> {
-  const apiUrl = process.env.TEKTON_API_URL || DEFAULT_API_URL;
+  const apiUrl = process.env.FRAMINGUI_API_URL || process.env.TEKTON_API_URL || DEFAULT_API_URL;
 
   // 1. CSRF state 생성
   const state = crypto.randomBytes(32).toString('hex');
@@ -94,7 +94,7 @@ export async function loginCommand(): Promise<void> {
         );
 
         console.log(`\nAuthenticated as ${email}`);
-        console.log('Credentials saved to ~/.tekton/credentials.json');
+        console.log('Credentials saved to ~/.framingui/credentials.json');
         cleanup();
       } catch (err) {
         res.writeHead(500, { 'Content-Type': 'text/html; charset=utf-8' });

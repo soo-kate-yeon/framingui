@@ -665,7 +665,7 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
             text: JSON.stringify({
               success: false,
               error: 'Authentication required.',
-              hint: 'Run `framingui-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
+              hint: 'Run `framingui-mcp login` to authenticate, or set FRAMINGUI_API_KEY environment variable.',
             }),
           },
         ],
@@ -1012,27 +1012,27 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 // Server Initialization
 // ============================================================================
 
-info('Starting Tekton MCP Server v2.1.0...');
+info('Starting Framingui MCP Server v0.5.0...');
 
 // ============================================================================
 // Authentication: Credential Chain
-// 1. 환경변수 TEKTON_API_KEY (기존 방식 호환)
-// 2. ~/.tekton/credentials.json (CLI login 방식)
+// 1. 환경변수 FRAMINGUI_API_KEY (신규) / TEKTON_API_KEY (하위 호환)
+// 2. ~/.framingui/credentials.json (CLI login 방식)
 // 3. 둘 다 없으면: 인증 없이 시작 (도구 호출 시 에러)
 // ============================================================================
 
 // 크레덴셜 체인으로 API Key 결정
-let apiKey = process.env.TEKTON_API_KEY;
-let apiKeySource = 'TEKTON_API_KEY env';
+let apiKey = process.env.FRAMINGUI_API_KEY || process.env.TEKTON_API_KEY;
+let apiKeySource = process.env.FRAMINGUI_API_KEY ? 'FRAMINGUI_API_KEY env' : 'TEKTON_API_KEY env';
 
 if (!apiKey) {
   const creds = loadCredentials();
   if (creds) {
     apiKey = creds.api_key;
-    apiKeySource = '~/.tekton/credentials.json';
+    apiKeySource = '~/.framingui/credentials.json';
     // 크레덴셜 파일의 API URL도 적용
-    if (creds.api_url && !process.env.TEKTON_API_URL) {
-      process.env.TEKTON_API_URL = creds.api_url;
+    if (creds.api_url && !process.env.FRAMINGUI_API_URL && !process.env.TEKTON_API_URL) {
+      process.env.FRAMINGUI_API_URL = creds.api_url;
     }
   }
 }
@@ -1063,7 +1063,7 @@ if (apiKey) {
     setAuthData(null);
   }
 } else {
-  info('No API key found. Run `framingui-mcp login` or set TEKTON_API_KEY to authenticate.');
+  info('No API key found. Run `framingui-mcp login` or set FRAMINGUI_API_KEY to authenticate.');
   setAuthData(null);
 }
 
@@ -1075,7 +1075,7 @@ if (apiKey) {
 try {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  info('Tekton MCP Server connected via stdio transport');
+  info('Framingui MCP Server connected via stdio transport');
 } catch (err) {
   const errorMessage = err instanceof Error ? err.message : String(err);
   logError(`Failed to connect to stdio transport: ${errorMessage}`);

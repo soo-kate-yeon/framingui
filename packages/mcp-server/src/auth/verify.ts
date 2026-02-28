@@ -32,7 +32,8 @@ export interface VerifyResponse {
  * @returns VerifyResponse with user data and licenses
  */
 export async function verifyApiKey(apiKey: string): Promise<VerifyResponse> {
-  const apiUrl = process.env.TEKTON_API_URL || 'https://framingui.com';
+  const apiUrl =
+    process.env.FRAMINGUI_API_URL || process.env.TEKTON_API_URL || 'https://framingui.com';
   const endpoint = `${apiUrl}/api/mcp/verify`;
 
   try {

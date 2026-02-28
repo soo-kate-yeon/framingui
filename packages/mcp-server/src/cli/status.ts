@@ -10,9 +10,9 @@ import { loadCredentials, getCredentialsPath } from './credentials.js';
  */
 export function statusCommand(): void {
   // 1. 환경변수 확인
-  const envKey = process.env.TEKTON_API_KEY;
+  const envKey = process.env.FRAMINGUI_API_KEY || process.env.TEKTON_API_KEY;
   if (envKey) {
-    console.log('Authentication: TEKTON_API_KEY environment variable');
+    console.log('Authentication: FRAMINGUI_API_KEY environment variable');
     console.log(`  Key: ${envKey.substring(0, 15)}...`);
     return;
   }

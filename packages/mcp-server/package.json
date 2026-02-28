@@ -16,7 +16,6 @@
     }
   },
   "bin": {
-    "framingui-mcp": "./dist/cli/index.js",
     "framingui-mcp": "./dist/cli/index.js"
   },
   "files": [
