@@ -45,7 +45,7 @@ export default function MagazinePage() {
           />
           <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-20 bg-gradient-to-t from-black/60 to-transparent">
             <div className="max-w-4xl space-y-6">
-              <Badge className="bg-white text-black rounded-none px-3 py-1 text-[10px] items-center">
+              <Badge className="bg-white text-black border-none rounded-none px-4 py-1.5 text-[10px] font-black tracking-widest items-center">
                 FEATURED ISSUE
               </Badge>
               <h2 className="text-5xl md:text-8xl font-bold tracking-tighter text-white leading-[0.9] uppercase">
@@ -103,9 +103,9 @@ export default function MagazinePage() {
                 id: '01',
                 category: 'ARCHITECTURE',
                 title: 'Concrete Rationalism in Berlin',
-                description: 'The works of David Chipperfield and the restoration of memory.',
+                description: 'The sharp interplay of shadow and structure in the new urban core.',
                 image:
-                  'https://images.unsplash.com/photo-1518005020480-1cd1987d603a?q=80&w=1974&auto=format&fit=crop',
+                  'https://images.unsplash.com/photo-1555636222-cae831e670b3?q=80&w=2077&auto=format&fit=crop',
               },
               {
                 id: '02',
@@ -165,7 +165,7 @@ export default function MagazinePage() {
         {/* Secondary Full Image Section */}
         <section className="relative h-[80vh] w-full overflow-hidden bg-neutral-900">
           <Image
-            src="https://images.unsplash.com/photo-1449156001931-82830078e00d?q=80&w=2070&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=2070&auto=format&fit=crop"
             alt="Minimal Interior"
             fill
             className="object-cover opacity-90"
@@ -193,9 +193,9 @@ export default function MagazinePage() {
             <input
               type="email"
               placeholder="YOUR EMAIL ARCHITECTURE"
-              className="flex-1 bg-transparent border-b-2 border-neutral-800 py-4 text-xl tracking-wide placeholder:text-neutral-700 outline-none focus:border-white transition-colors"
+              className="flex-1 bg-transparent border-b border-neutral-800 py-4 text-xl tracking-wide placeholder:text-neutral-700 outline-none focus:border-white transition-colors uppercase font-bold"
             />
-            <Button className="bg-white text-black rounded-none h-16 px-12 text-sm font-bold uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all">
+            <Button className="bg-white text-black rounded-none h-16 px-12 text-sm font-bold uppercase tracking-[0.2em] hover:bg-neutral-200 transition-all border-none">
               SIGN UP
             </Button>
           </div>
