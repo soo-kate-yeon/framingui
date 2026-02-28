@@ -28,6 +28,7 @@ const DEMO_ROUTES: Record<string, string> = {
   'classic-magazine': '/explore/classic-magazine',
   'neutral-workspace': '/explore/neutral-workspace',
   'minimal-workspace': '/explore/minimal-workspace',
+  'bold-line': '/explore/bold-line',
 };
 
 // ============================================================================

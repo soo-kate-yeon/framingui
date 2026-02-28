@@ -16,6 +16,7 @@ import neutralWorkspace from './themes/neutral-workspace.json';
 import minimalWorkspace from './themes/minimal-workspace.json';
 import squareMinimalism from './themes/square-minimalism.json';
 import classicMagazine from './themes/classic-magazine.json';
+import boldLine from './themes/bold-line.json';
 
 interface OKLCh {
   l: number;
@@ -190,6 +191,7 @@ const THEME_REGISTRY: Record<string, ThumbnailVars> = {
   'editorial-tech': resolveTheme(editorialTech),
   'neutral-workspace': resolveTheme(neutralWorkspace),
   'minimal-workspace': resolveTheme(minimalWorkspace),
+  'bold-line': resolveTheme(boldLine),
 };
 
 /**

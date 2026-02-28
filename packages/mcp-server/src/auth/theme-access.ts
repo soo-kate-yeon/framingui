@@ -8,6 +8,7 @@
  * 인증된 사용자만 라이선스 보유 테마에 접근 가능
  */
 export const PREMIUM_THEMES = [
+  'bold-line',
   'classic-magazine',
   'dark-boldness',
   'minimal-workspace',

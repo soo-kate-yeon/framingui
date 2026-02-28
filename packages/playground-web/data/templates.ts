@@ -1029,6 +1029,145 @@ export const TEMPLATES: Record<string, TemplateData> = {
       },
     ],
   },
+
+  'bold-line': {
+    id: 'bold-line',
+    name: 'Bold Line',
+    tagline: 'High-contrast, line-forward, typographically bold',
+    taglineKo: '강렬한 대비, 선 중심, 타이포그래피가 돋보이는 디자인',
+    description:
+      'A stark black-and-white design system that uses bold borders instead of filled surfaces. Built for clarity, function, and maximum visual impact with a vibrant green accent.',
+    descriptionKo:
+      '굵은 테두리와 흑백 대비로 이루어진 선 중심 디자인 시스템이에요. 군더더기 없이 명확하고 강렬한 인상을 주며, 그린 액센트로 포인트를 살렸어요.',
+    price: 59,
+    screenshots: [
+      getScreenshotUrl('bold-line', 'dashboard.png'),
+      getScreenshotUrl('bold-line', 'components.png'),
+    ],
+    features: [
+      {
+        icon: '1',
+        title: '2px Bold Border System',
+        titleKo: '2px 굵은 테두리 시스템',
+        subtitle: 'Line-forward visual language',
+        subtitleKo: '선 중심의 시각 언어',
+        description:
+          'Every component uses 2px black borders instead of filled surfaces, creating a distinctive editorial look with maximum visual clarity.',
+        descriptionKo:
+          '모든 컴포넌트가 채워진 배경 대신 2px 검정 테두리를 사용해요. 강렬하고 편집적인 느낌으로 시각적 명료성을 극대화해요.',
+      },
+      {
+        icon: '2',
+        title: 'Zero-Radius Sharp Corners',
+        titleKo: '0px 직각 모서리',
+        subtitle: 'Geometric precision throughout',
+        subtitleKo: '일관된 기하학적 정밀함',
+        description:
+          'No rounded corners anywhere. All elements use 0px border-radius for a geometric, grid-aligned aesthetic that communicates precision and confidence.',
+        descriptionKo:
+          '어디에도 둥근 모서리가 없어요. 모든 요소가 0px 라디우스를 사용해 기하학적이고 그리드 정렬된 미학을 표현해요.',
+      },
+      {
+        icon: '3',
+        title: 'Black & White with Green Accent',
+        titleKo: '흑백 + 그린 액센트',
+        subtitle: 'Strict monotone with vibrant highlight',
+        subtitleKo: '모노톤 위의 생동감 있는 포인트',
+        description:
+          'Strict black and white palette with a single vibrant green accent for status indicators, highlights, and calls-to-action. Maximum clarity, zero noise.',
+        descriptionKo:
+          '엄격한 흑백 팔레트에 그린 액센트 하나만 사용해요. 상태 표시, 강조, CTA에 활용돼 노이즈 없이 최대한 명료하게 전달해요.',
+      },
+      {
+        icon: '4',
+        title: 'Heavy Weight Typography',
+        titleKo: '헤비 웨이트 타이포그래피',
+        subtitle: 'Black-weight fonts for impact',
+        subtitleKo: '임팩트를 위한 블랙 웨이트 폰트',
+        description:
+          'Headings use font-black (900 weight) with tight tracking. Labels and metadata use uppercase with wide letter-spacing for editorial hierarchy.',
+        descriptionKo:
+          '제목은 font-black(900 굵기)에 좁은 자간을 사용해요. 레이블과 메타데이터는 대문자에 넓은 자간을 사용해 편집적 위계를 만들어요.',
+      },
+      {
+        icon: '5',
+        title: 'MCP Server Integration',
+        titleKo: 'MCP 서버 통합',
+        subtitle: 'Generate Bold Line UIs instantly',
+        subtitleKo: 'Bold Line UI를 즉시 생성',
+        description:
+          'Request "Create a dashboard with Bold Line theme" and get a high-contrast layout with bold borders, sharp corners, and black-white typography in seconds.',
+        descriptionKo:
+          '"Bold Line 테마로 대시보드 만들어줘"라고 요청하면 굵은 테두리, 직각 모서리, 흑백 타이포그래피가 적용된 레이아웃이 즉시 생성돼요.',
+      },
+      {
+        icon: '6',
+        title: 'Dashboard Screen Template',
+        titleKo: '대시보드 스크린 템플릿',
+        subtitle: 'Production-ready analytics dashboard',
+        subtitleKo: '프로덕션 준비된 분석 대시보드',
+        description:
+          "Includes a full analytics dashboard with stats cards, area chart, activity feed, and transaction table—all styled with Bold Line's signature aesthetic.",
+        descriptionKo:
+          '스탯 카드, 에리어 차트, 활동 피드, 거래 테이블이 포함된 완전한 분석 대시보드가 Bold Line 시그니처 스타일로 제공돼요.',
+      },
+    ],
+    recommendedFor: [
+      {
+        title: 'SaaS Analytics & Admin Dashboards',
+        titleKo: 'SaaS 분석 및 관리자 대시보드',
+        description:
+          'The high-contrast, data-forward design makes metrics and KPIs stand out immediately. Ideal for analytics platforms, admin panels, and monitoring tools.',
+        descriptionKo:
+          '높은 대비와 데이터 중심 디자인으로 지표와 KPI가 즉시 눈에 들어와요. 분석 플랫폼, 관리자 패널, 모니터링 도구에 딱이에요.',
+      },
+      {
+        title: 'Developer Tools & Technical Products',
+        titleKo: '개발자 도구 및 기술 제품',
+        description:
+          'The precision-focused, no-nonsense aesthetic resonates with developers and technical users. Works great for CLIs with web interfaces, API dashboards, and DevOps tools.',
+        descriptionKo:
+          '군더더기 없는 정밀한 미학이 개발자와 기술 사용자에게 어필해요. 웹 인터페이스가 있는 CLI, API 대시보드, DevOps 도구에 잘 어울려요.',
+      },
+      {
+        title: 'Editorial & Publishing Platforms',
+        titleKo: '편집 및 출판 플랫폼',
+        description:
+          'The bold typography and line-forward structure bring a print-editorial quality to digital products. Perfect for news platforms, content management systems, and writing tools.',
+        descriptionKo:
+          '굵은 타이포그래피와 선 중심 구조가 디지털 제품에 인쇄 편집물 같은 품격을 더해요. 뉴스 플랫폼, CMS, 글쓰기 도구에 완벽해요.',
+      },
+      {
+        title: 'Fintech & Data-Heavy Applications',
+        titleKo: '핀테크 및 데이터 집약적 애플리케이션',
+        description:
+          'The green accent for positive status and the bold contrast for emphasis make financial data readable at a glance. Ideal for trading platforms, invoicing tools, and financial dashboards.',
+        descriptionKo:
+          '긍정 상태를 나타내는 그린 액센트와 강조를 위한 굵은 대비로 금융 데이터를 한눈에 파악할 수 있어요. 거래 플랫폼, 인보이스 도구, 금융 대시보드에 이상적이에요.',
+      },
+    ],
+    howToUse: [
+      ...SHARED_HOW_TO_USE,
+      {
+        step: 5,
+        title: 'Use generate-blueprint Tool',
+        titleKo: 'generate-blueprint 툴 사용',
+        description:
+          'In Claude Code, request: "Use generate-blueprint tool with themeId: bold-line, layout: dashboard, components: Card, Table, Chart, Badge"',
+        descriptionKo:
+          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: bold-line, layout: dashboard, components: Card, Table, Chart, Badge"',
+      },
+      {
+        step: 6,
+        title: 'Preview and Export Code',
+        titleKo: '미리보기 및 코드 내보내기',
+        description:
+          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
+        descriptionKo:
+          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+      },
+    ],
+  },
 };
 
 // ============================================================================
