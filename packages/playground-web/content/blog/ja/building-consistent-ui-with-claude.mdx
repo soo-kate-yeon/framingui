@@ -1,0 +1,63 @@
+---
+title: "Claude で一貫した UI を作る方法"
+description: "FramingUI と Claude Code を使って、毎回同じ品質で UI コンポーネントを生成する実践手順を紹介します。"
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - claude-code
+  - ui-consistency
+  - design-system
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## 先に結論
+
+Claude で UI を安定させるには、次の 3 点を固定します。
+
+1. トークン
+2. コンポーネント API
+3. 生成プロンプト
+
+この 3 点が曖昧だと、同じ依頼でも出力がぶれます。
+
+## セットアップ
+
+```bash
+npx @framingui/mcp-server init
+```
+
+初期化後、Claude Code で次を確認します。
+
+- テーマ一覧が取れる
+- トークン値を取得できる
+- コンポーネント仕様を参照できる
+
+## 実際の依頼テンプレート
+
+```text
+editorial-tech テーマで、
+ログインカードを作成。
+Button/Input/Card のみ使用し、
+色と余白はトークン参照で実装。
+```
+
+指示は短くても、制約を明示すると結果が安定します。
+
+## 失敗しやすいポイント
+
+- 「いい感じで作って」とだけ頼む
+- 使用可能コンポーネントを指定しない
+- 生成後の lint / type-check を省く
+
+## チェックリスト
+
+- ハードコード色がないか
+- `@framingui/ui` のコンポーネントを使っているか
+- フォーカスリングなどアクセシビリティが維持されているか
+
+## まとめ
+
+Claude を強くするのは、長いプロンプトではなく明確な制約です。FramingUI のトークンとコンポーネントを前提にすると、修正回数を大きく減らせます。

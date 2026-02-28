@@ -1,0 +1,50 @@
+---
+title: "Agentic Design System とは何か"
+description: "Agentic Design System の概念と、従来のデザインシステムとの違いを解説します。"
+date: "2026-02-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-system
+  - ai
+  - design-tokens
+  - architecture
+category: "Deep Dive"
+coverImage: ""
+published: true
+---
+
+## 定義
+
+Agentic Design System は、AI エージェントが直接理解・参照できる形で設計されたデザインシステムです。
+
+従来システムが「人間向けのガイド」だったのに対し、Agentic では「機械可読なルール」まで含みます。
+
+## 構成要素
+
+1. デザイントークン
+2. コンポーネント API
+3. レイアウト規約
+4. AI 連携レイヤー（MCP など）
+
+## なぜ必要か
+
+AI が推測だけで UI を生成すると、見た目は早く作れても一貫性が落ちます。Agentic 化すると、推測領域を減らして品質を安定させられます。
+
+## 従来との違い
+
+| 項目 | 従来 | Agentic |
+| --- | --- | --- |
+| 主な対象 | デザイナー/開発者 | デザイナー/開発者 + AI |
+| 仕様表現 | ドキュメント中心 | ドキュメント + 機械可読データ |
+| 再現性 | 人に依存 | ルール参照で高めやすい |
+
+## 導入の第一歩
+
+- トークン命名を統一
+- コンポーネントの入力/出力を明確化
+- AI へ参照可能な設定を追加
+
+## まとめ
+
+Agentic Design System は新しい流行語ではなく、AI 前提の実装運用に必要な設計方法です。設計情報を「読む資料」から「使えるデータ」に変えることが核心です。

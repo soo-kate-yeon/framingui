@@ -26,18 +26,33 @@ export function GlobalLanguageSwitcher({
       <SelectTrigger
         aria-label="Select language"
         className={`${
-          compact ? 'h-8 px-2.5 text-xs' : 'h-9 px-3 text-sm'
-        } w-[110px] sm:w-[120px] rounded-none border-neutral-200 bg-white text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100 font-medium tracking-tight shadow-none hover:border-neutral-900 focus:ring-neutral-950 ${className}`}
+          compact ? 'h-8 px-2' : 'h-10 px-3'
+        } w-[110px] sm:w-[120px] items-center justify-between rounded-none border border-neutral-200 bg-white text-sm text-neutral-950 shadow-none outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100 ${className}`}
       >
         <span className="flex items-center gap-2 truncate">
           <Globe2 className="h-3.5 w-3.5 opacity-60 shrink-0" />
           <SelectValue />
         </span>
       </SelectTrigger>
-      <SelectContent className="rounded-none border-neutral-200 bg-white text-neutral-950 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100">
-        <SelectItem value="ko">한국어</SelectItem>
-        <SelectItem value="en">English</SelectItem>
-        <SelectItem value="ja">日本語</SelectItem>
+      <SelectContent className="z-50 min-w-[8rem] overflow-hidden rounded-none border border-neutral-200 bg-white p-1 text-neutral-950 shadow-md dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100">
+        <SelectItem
+          value="ko"
+          className="rounded-none focus:bg-neutral-100 dark:focus:bg-neutral-800"
+        >
+          한국어
+        </SelectItem>
+        <SelectItem
+          value="en"
+          className="rounded-none focus:bg-neutral-100 dark:focus:bg-neutral-800"
+        >
+          English
+        </SelectItem>
+        <SelectItem
+          value="ja"
+          className="rounded-none focus:bg-neutral-100 dark:focus:bg-neutral-800"
+        >
+          日本語
+        </SelectItem>
       </SelectContent>
     </Select>
   );

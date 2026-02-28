@@ -1,0 +1,46 @@
+---
+title: "shadcn UI + AI で不足しやすい最後のピース"
+description: "shadcn UI と AI コード生成をつなぐときに不足しやすい部分と、FramingUI で補う方法を解説します。"
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - shadcn-ui
+  - ai-code-generation
+  - design-tokens
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## shadcn UI は強いが、生成運用で課題が出る
+
+shadcn UI は柔軟で扱いやすい一方、AI 生成と組み合わせると次の課題が出ます。
+
+- 色や余白の統一基準が弱い
+- 生成時にブランド文脈が不足する
+- チームでの運用ルールが散らばる
+
+## 足りないのは「設計データの配布経路」
+
+解決に必要なのは以下です。
+
+1. トークン定義
+2. コンポーネント利用規約
+3. AI へ文脈を渡す経路（MCP）
+
+## 実践アプローチ
+
+- 基盤コンポーネントは shadcn を活用
+- 見た目と意味は FramingUI トークンで固定
+- 生成時は MCP で仕様参照
+
+## 得られる効果
+
+- UI 差分の減少
+- 生成コードの再利用性向上
+- レビュー工数の削減
+
+## まとめ
+
+shadcn UI と AI は相性が良い組み合わせです。最後に必要なのは、判断基準を明文化して AI に参照させる仕組みです。

@@ -1,0 +1,77 @@
+---
+title: "AI コード生成のためのデザイントークン: MCP 連携完全ガイド"
+description: "MCP を使って Claude と Cursor にデザインシステムを接続し、ブランド整合した UI 生成を実現する手順を解説します。"
+date: "2026-02-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - mcp
+  - ai
+  - tutorial
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## このガイドでやること
+
+- トークンを整理する
+- MCP で AI ツールに公開する
+- 生成コードをトークン準拠で固定する
+
+## 1. トークン定義を揃える
+
+```ts
+export const semantic = {
+  text: {
+    primary: 'var(--tekton-fg-primary)',
+    muted: 'var(--tekton-fg-muted)',
+  },
+  bg: {
+    surface: 'var(--tekton-bg-surface-default)',
+    accent: 'var(--tekton-bg-accent-default)',
+  },
+}
+```
+
+命名は意味ベースで統一します。
+
+## 2. MCP サーバーを有効化
+
+```bash
+npx @framingui/mcp-server init
+```
+
+`.mcp.json` を確認し、AI ツールを再起動します。
+
+## 3. 生成ルールを明示
+
+```text
+色・余白・角丸はトークン参照のみ使用。
+ハードコード値は禁止。
+```
+
+この 1 文だけでも出力のぶれが減ります。
+
+## 4. 生成後の検証
+
+- `type-check`
+- `lint`
+- UI 差分確認
+
+ルール化して毎回同じ手順で確認するのが重要です。
+
+## よくある質問
+
+### 既存コードに後から導入できる？
+
+できます。まず新規画面から適用し、段階的に置き換えるのが安全です。
+
+### すべての値をトークン化すべき？
+
+優先度は「色・余白・タイポ・角丸」です。まず頻出値から始めると進めやすいです。
+
+## まとめ
+
+MCP 連携の本質は、AI の推測領域を減らすことです。トークンを参照可能にすると、生成結果の保守性と再現性が大きく向上します。

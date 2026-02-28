@@ -1,0 +1,64 @@
+---
+title: "Cursor + デザイントークン設定ガイド"
+description: "FramingUI のデザイントークンを Cursor IDE に接続し、AI 生成 UI の整合性を上げる手順を解説します。"
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - cursor-ide
+  - design-tokens
+  - ai-setup
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## 目標
+
+Cursor で UI を生成するときに、ブランド外の色や余白を出さない状態を作ります。
+
+## 1. 初期化
+
+```bash
+npx @framingui/mcp-server init
+```
+
+このコマンドで `.mcp.json` と必要設定が作成されます。
+
+## 2. Cursor 側確認
+
+- ワークスペース直下に `.mcp.json` がある
+- ウィンドウ再読み込み済み
+- MCP ツールが参照できる
+
+## 3. 最初の生成タスク
+
+```text
+square-minimalism テーマで、
+検索バー付き一覧画面を作成。
+Input / Card / Button を使用。
+```
+
+## 4. トークン準拠チェック
+
+- 色: `--tekton-*` 参照になっている
+- 余白: スケールが揃っている
+- 角丸: コンポーネントごとにばらつきがない
+
+## 5. よくある詰まり
+
+### MCP が見えない
+
+- `.mcp.json` の配置場所を再確認
+- Cursor 再起動
+- JSON 構文エラーの確認
+
+### 出力がバラつく
+
+- 使用コンポーネントを明示
+- テーマ ID を毎回指定
+- 生成後に差分レビューを固定
+
+## まとめ
+
+Cursor は速く試せる一方、制約がないとぶれます。トークンとテーマを最初に固定すると、反復速度と品質を両立しやすくなります。

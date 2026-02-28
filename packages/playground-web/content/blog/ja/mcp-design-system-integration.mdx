@@ -1,0 +1,54 @@
+---
+title: "MCP でデザインシステムを連携: Claude と Cursor に実トークンを渡す"
+description: "MCP を使ってデザインシステムを AI ツールに接続し、トークン準拠 UI を生成する手順を解説します。"
+date: "2026-02-28"
+author:
+  name: "FramingUI Team"
+tags:
+  - mcp
+  - design-system
+  - claude
+  - cursor
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## 何が変わるのか
+
+MCP 連携前は、AI が UI を推測で生成します。MCP 連携後は、トークン・テーマ・コンポーネント仕様を参照して生成します。
+
+## 導入手順
+
+### 1. 初期化
+
+```bash
+npx @framingui/mcp-server init
+```
+
+### 2. 設定確認
+
+`.mcp.json` に `framingui` サーバーがあるか確認します。
+
+### 3. ツール再起動
+
+Claude Code / Cursor を再起動して MCP を再接続します。
+
+## 依頼テンプレート
+
+```text
+neutral-workspace テーマで、
+顧客一覧画面を作成。
+Card/Table/Input/Button を使用し、
+トークン参照のみで実装。
+```
+
+## 連携後のチェック
+
+- ハードコード値が混ざっていないか
+- コンポーネント API が統一されているか
+- レスポンシブ挙動が壊れていないか
+
+## まとめ
+
+MCP は AI の能力を増やす機能ではなく、プロジェクト固有の文脈を渡す仕組みです。連携すると、生成結果の再現性が上がります。

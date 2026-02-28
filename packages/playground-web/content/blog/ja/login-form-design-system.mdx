@@ -1,0 +1,70 @@
+---
+title: "FramingUI でログインフォームを作る"
+description: "バリデーション、アクセシビリティ、スタイル一貫性を備えた本番向けログインフォームの実装手順を紹介します。"
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - login-form
+  - authentication
+  - form-design
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## 目標
+
+以下を満たすログインフォームを短時間で実装します。
+
+- 視認性の高いレイアウト
+- 入力エラーの明確表示
+- キーボード操作対応
+- トークン準拠スタイル
+
+## 基本構成
+
+```tsx
+import { Card, CardHeader, CardTitle, CardContent, Button, Input, Label } from '@framingui/ui';
+```
+
+## 実装例
+
+```tsx
+export function LoginForm() {
+  return (
+    <Card className="max-w-md w-full">
+      <CardHeader>
+        <CardTitle>ログイン</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">メールアドレス</Label>
+          <Input id="email" type="email" required />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">パスワード</Label>
+          <Input id="password" type="password" required />
+        </div>
+        <Button className="w-full">ログイン</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+## バリデーション方針
+
+- 即時エラーは最小限
+- 送信時に要点をまとめて表示
+- エラー文は短く具体的にする
+
+## アクセシビリティ
+
+- `label` と `input` を紐づける
+- `aria-invalid` と `aria-describedby` を使う
+- フォーカス状態を視覚的に明確にする
+
+## まとめ
+
+ログインフォームは単純に見えて、品質差が出やすい部分です。コンポーネント構造と検証ルールを固定すると、実装ミスを減らせます。

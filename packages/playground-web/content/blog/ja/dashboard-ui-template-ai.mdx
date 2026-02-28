@@ -1,0 +1,60 @@
+---
+title: "AI で作るダッシュボード レイアウトレシピ"
+description: "FramingUI テンプレートと AI を組み合わせて、業務向けダッシュボードを短時間で構築する方法を紹介します。"
+date: "2026-02-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - dashboard
+  - admin-panel
+  - layout-templates
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## ダッシュボードで必要な要素
+
+業務画面で最低限そろえるとよいのは次の 4 つです。
+
+1. 上部のフィルターと検索
+2. KPI サマリーカード
+3. テーブルまたはチャート
+4. 補助パネル（通知・履歴）
+
+## レイアウトの基本骨格
+
+```text
+Header
+Main
+- KPI Grid (4)
+- Data Table
+Sidebar
+- Activity Feed
+```
+
+骨格を先に決めると、AI への指示が短くなっても崩れにくくなります。
+
+## 推奨プロンプト
+
+```text
+editorial-tech テーマで管理画面を作成。
+KPI 4件、検索付きテーブル、右側に更新履歴。
+Card/Table/Input/Button のみ使用。
+```
+
+## 品質を上げるコツ
+
+- テーブル列定義を先に固定
+- カード見出しの階層を揃える
+- CTA は 1 つだけ強調する
+
+## 実装時の注意
+
+- 色を直接指定しない
+- モバイル時は KPI を 1 列に落とす
+- スクロール領域を 1 つに絞る
+
+## まとめ
+
+ダッシュボード生成は「要素の多さ」より「構造の明確さ」が重要です。テンプレート骨格 + トークン制約の組み合わせが最も再現性の高い方法です。
