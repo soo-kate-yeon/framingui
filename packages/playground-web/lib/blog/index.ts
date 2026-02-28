@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import * as yaml from 'js-yaml';
 import readingTime from 'reading-time';
 import { blogFrontmatterSchema, type BlogFrontmatter } from './schema';
+import { createHeadingIdFactory } from '../heading';
 
 export type { BlogFrontmatter };
 
@@ -37,17 +38,14 @@ const BLOG_DIR = path.join(process.cwd(), 'content', 'blog');
 export function extractToc(markdown: string): TocItem[] {
   const lines = markdown.split('\n');
   const toc: TocItem[] = [];
+  const nextHeadingId = createHeadingIdFactory();
 
   for (const line of lines) {
     const match = line.match(/^(#{2,3})\s+(.+)/);
     if (match && match[1] && match[2]) {
       const level = match[1].length;
       const title = match[2].trim();
-      const id = title
-        .toLowerCase()
-        .replace(/[^a-z0-9가-힣\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
+      const id = nextHeadingId(title);
       toc.push({ id, title, level });
     }
   }
@@ -75,7 +73,14 @@ function parseBlogFile(
       yaml: (s: string) => yaml.load(s) as Record<string, unknown>,
     },
   });
-  const frontmatter = blogFrontmatterSchema.parse({ ...data, slug });
+  const parsed = blogFrontmatterSchema.parse({ ...data, slug });
+  const normalizedTags = Array.from(
+    new Set((parsed.tags ?? []).map((tag) => tag.trim()).filter((tag) => tag.length > 0))
+  );
+  const frontmatter: BlogFrontmatter = {
+    ...parsed,
+    tags: normalizedTags.length > 0 ? normalizedTags : ['general'],
+  };
 
   return { frontmatter, content };
 }

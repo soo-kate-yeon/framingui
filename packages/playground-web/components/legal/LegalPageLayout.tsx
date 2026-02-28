@@ -9,12 +9,13 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Menu, X, Moon, Sun, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { TocItem } from '../../lib/legal';
+import { createHeadingIdFactory } from '../../lib/heading';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLegalPageContent } from '../../data/i18n/legal';
 import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
@@ -38,6 +39,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   const currentToc = toc[locale];
   const currentContent = content[locale];
   const currentTitle = title[locale];
+  const nextHeadingId = useMemo(() => createHeadingIdFactory(), [currentContent]);
 
   // 다크모드 persistence
   useEffect(() => {
@@ -176,11 +178,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
                   // h2 - 섹션 헤딩 (TOC 연동)
                   h2: ({ children }) => {
                     const text = String(children);
-                    const id = text
-                      .toLowerCase()
-                      .replace(/[^a-z0-9가-힣\s-]/g, '')
-                      .replace(/\s+/g, '-')
-                      .replace(/-+/g, '-');
+                    const id = nextHeadingId(text);
                     return (
                       <h2
                         id={id}
@@ -193,11 +191,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
                   // h3 - 서브섹션
                   h3: ({ children }) => {
                     const text = String(children);
-                    const id = text
-                      .toLowerCase()
-                      .replace(/[^a-z0-9가-힣\s-]/g, '')
-                      .replace(/\s+/g, '-')
-                      .replace(/-+/g, '-');
+                    const id = nextHeadingId(text);
                     return (
                       <h3
                         id={id}

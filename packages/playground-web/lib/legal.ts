@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { createHeadingIdFactory } from './heading';
 
 export type LegalSlug = 'terms-of-service' | 'privacy-policy' | 'refund-policy';
 export type LegalLocale = 'en' | 'ko' | 'ja';
@@ -34,17 +35,14 @@ export const LEGAL_SLUGS: LegalSlug[] = ['terms-of-service', 'privacy-policy', '
 function extractToc(markdown: string): TocItem[] {
   const lines = markdown.split('\n');
   const toc: TocItem[] = [];
+  const nextHeadingId = createHeadingIdFactory();
 
   for (const line of lines) {
     const match = line.match(/^(#{2,3})\s+(.+)/);
     if (match && match[1] && match[2]) {
       const level = match[1].length;
       const title = match[2].trim();
-      const id = title
-        .toLowerCase()
-        .replace(/[^a-z0-9가-힣\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
+      const id = nextHeadingId(title);
       toc.push({ id, title, level });
     }
   }

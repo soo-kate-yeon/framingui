@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -15,6 +15,7 @@ import { InlineCTA } from '@/components/shared/InlineCTA';
 import { GlobalLanguageSwitcher } from '@/components/shared/GlobalLanguageSwitcher';
 import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
 import { getBlogContent } from '@/data/i18n/blog';
+import { createHeadingIdFactory } from '@/lib/heading';
 import type { BlogPost, BlogPostSummary } from '@/lib/blog';
 
 interface BlogPostPageProps {
@@ -33,6 +34,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   const toc = post.toc[locale];
   const rt = post.readingTime[locale];
   const related = relatedPosts[locale];
+  const nextHeadingId = useMemo(() => createHeadingIdFactory(), [content]);
 
   // 다크모드 persistence
   useEffect(() => {
@@ -122,11 +124,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
                     ),
                     h2: ({ children }) => {
                       const text = String(children);
-                      const id = text
-                        .toLowerCase()
-                        .replace(/[^a-z0-9가-힣\s-]/g, '')
-                        .replace(/\s+/g, '-')
-                        .replace(/-+/g, '-');
+                      const id = nextHeadingId(text);
                       return (
                         <h2
                           id={id}
@@ -138,11 +136,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
                     },
                     h3: ({ children }) => {
                       const text = String(children);
-                      const id = text
-                        .toLowerCase()
-                        .replace(/[^a-z0-9가-힣\s-]/g, '')
-                        .replace(/\s+/g, '-')
-                        .replace(/-+/g, '-');
+                      const id = nextHeadingId(text);
                       return (
                         <h3
                           id={id}
