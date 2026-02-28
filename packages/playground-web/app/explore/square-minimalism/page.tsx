@@ -117,6 +117,16 @@ export default function SquareMinimalismDemo() {
               className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
             />
           </button>
+          <Link
+            href="/explore/square-minimalism/magazine"
+            className="text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
+          >
+            <span>{locale === 'ko' ? '매거진 도시에 (신규)' : 'Magazine Dossier (New)'}</span>
+            <ChevronRight
+              size={16}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+            />
+          </Link>
         </nav>
       </aside>
 
@@ -154,6 +164,13 @@ export default function SquareMinimalismDemo() {
             >
               {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
             </button>
+            <Link
+              href="/explore/square-minimalism/magazine"
+              className="text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              {locale === 'ko' ? '매거진 도시에 (신규)' : 'Magazine Dossier (New)'}
+            </Link>
           </nav>
         </div>
       )}
