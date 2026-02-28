@@ -90,7 +90,8 @@ export default function AccountPage() {
   }
 
   const getThemeData = (id: string) => themes.find((t) => t.id === id);
-  const t = TRANSLATIONS[locale] || TRANSLATIONS.en;
+  const translationLocale = locale === 'ko' ? 'ko' : 'en';
+  const t = TRANSLATIONS[translationLocale];
 
   return (
     <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">

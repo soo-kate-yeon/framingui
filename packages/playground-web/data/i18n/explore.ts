@@ -51,7 +51,7 @@ interface ExploreI18nContent {
   };
 }
 
-const content: Record<GlobalLocale, ExploreI18nContent> = {
+const content: Record<'en' | 'ko', ExploreI18nContent> = {
   en: {
     header: {
       subtitle: 'tekton/explore',
@@ -157,7 +157,7 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
 };
 
 export function getExploreContent(locale: GlobalLocale): ExploreI18nContent {
-  return content[locale];
+  return locale === 'ko' ? content.ko : content.en;
 }
 
 export function getTemplatePriceLabel(locale: GlobalLocale, price: number): string {

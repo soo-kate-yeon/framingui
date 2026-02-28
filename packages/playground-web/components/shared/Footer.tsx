@@ -53,7 +53,7 @@ export function Footer({ className = '' }: FooterProps) {
                 {label}
               </Link>
             ))}
-            <GlobalLanguageSwitcher className="bg-white border-neutral-300 text-neutral-950 hover:bg-neutral-50 rounded-full" />
+            <GlobalLanguageSwitcher className="font-serif" />
           </nav>
         </div>
 

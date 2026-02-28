@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Globe, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import { BlogCard } from './BlogCard';
 import { TagList } from './TagList';
 import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
 import { getBlogContent } from '@/data/i18n/blog';
+import { GlobalLanguageSwitcher } from '@/components/shared/GlobalLanguageSwitcher';
 import type { BlogPostSummary } from '@/lib/blog';
 
 interface BlogListPageProps {
@@ -17,12 +18,13 @@ interface BlogListPageProps {
 
 export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
   const router = useRouter();
-  const { locale, toggleLocale } = useGlobalLanguage();
+  const { locale } = useGlobalLanguage();
   const [darkMode, setDarkMode] = useState(false);
+  const contentLocale = locale === 'ko' ? 'ko' : 'en';
 
   const content = getBlogContent(locale);
-  const currentPosts = posts[locale];
-  const currentTags = allTags[locale];
+  const currentPosts = posts[contentLocale];
+  const currentTags = allTags[contentLocale];
 
   // 다크모드 persistence
   useEffect(() => {
@@ -73,14 +75,7 @@ export function BlogListPage({ posts, allTags, activeTag }: BlogListPageProps) {
             {content.header.title}
           </h1>
 
-          <button
-            onClick={toggleLocale}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium rounded border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-300"
-            aria-label={content.header.toggleLanguage}
-          >
-            <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span>{locale === 'en' ? 'KO' : 'EN'}</span>
-          </button>
+          <GlobalLanguageSwitcher compact className="font-serif" />
         </div>
       </header>
 

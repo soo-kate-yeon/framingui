@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, type ReactNode } from 'react';
 import { useGlobalLanguage, type GlobalLocale } from './GlobalLanguageContext';
 
-type Locale = 'en' | 'ko';
+type Locale = GlobalLocale;
 
 interface ExploreLanguageContextValue {
   locale: Locale;
@@ -24,7 +24,7 @@ export function ExploreLanguageProvider({ children }: { children: ReactNode }) {
 
   // Explore에서 언어 변경 시 GlobalLanguageContext도 함께 업데이트
   const setLocale = (newLocale: Locale) => {
-    setGlobalLocale(newLocale as GlobalLocale);
+    setGlobalLocale(newLocale);
   };
 
   const toggleLocale = () => {

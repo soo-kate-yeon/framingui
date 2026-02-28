@@ -9,7 +9,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 
-export type GlobalLocale = 'en' | 'ko';
+export type GlobalLocale = 'en' | 'ko' | 'ja';
 
 interface GlobalLanguageContextValue {
   locale: GlobalLocale;
@@ -25,7 +25,7 @@ export function GlobalLanguageProvider({ children }: { children: ReactNode }) {
   // Load from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem('globalLocale');
-    if (saved === 'en' || saved === 'ko') {
+    if (saved === 'en' || saved === 'ko' || saved === 'ja') {
       setLocale(saved);
     }
   }, []);

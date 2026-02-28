@@ -57,7 +57,7 @@ export interface BlogContent {
   };
 }
 
-export const blogContent: Record<GlobalLocale, BlogContent> = {
+const blogContent: Record<'en' | 'ko', BlogContent> = {
   en: {
     header: {
       title: 'Blog',
@@ -165,5 +165,5 @@ export const blogContent: Record<GlobalLocale, BlogContent> = {
  * Helper function to get blog content by locale
  */
 export function getBlogContent(locale: GlobalLocale): BlogContent {
-  return blogContent[locale];
+  return locale === 'ko' ? blogContent.ko : blogContent.en;
 }

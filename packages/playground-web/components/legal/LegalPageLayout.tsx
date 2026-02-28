@@ -10,13 +10,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Menu, X, Moon, Sun, ArrowLeft, Globe } from 'lucide-react';
+import { Menu, X, Moon, Sun, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { TocItem } from '../../lib/legal';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLegalPageContent } from '../../data/i18n/legal';
+import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 
 interface LegalPageLayoutProps {
   title: { en: string; ko: string };
@@ -31,12 +32,13 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   const [activeSection, setActiveSection] = useState('');
 
   // GlobalLanguageContext 사용
-  const { locale, toggleLocale } = useGlobalLanguage();
+  const { locale } = useGlobalLanguage();
   const i18n = getLegalPageContent(locale);
+  const contentLocale = locale === 'ko' ? 'ko' : 'en';
 
-  const currentToc = toc[locale];
-  const currentContent = content[locale];
-  const currentTitle = title[locale];
+  const currentToc = toc[contentLocale];
+  const currentContent = content[contentLocale];
+  const currentTitle = title[contentLocale];
 
   // 다크모드 persistence
   useEffect(() => {
@@ -100,11 +102,6 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
     }
   };
 
-  const handleLanguageToggle = () => {
-    toggleLocale();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
       {/* 모바일 사이드바 배경 */}
@@ -147,14 +144,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
 
           {/* 오른쪽: 언어 토글 + TOC 토글 */}
           <div className="flex items-center gap-1 sm:gap-2">
-            <button
-              onClick={handleLanguageToggle}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium rounded border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-300"
-              aria-label={i18n.ui.languageToggle}
-            >
-              <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              <span>{locale === 'en' ? 'KO' : 'EN'}</span>
-            </button>
+            <GlobalLanguageSwitcher compact className="font-serif" />
             <button
               onClick={() => setSidebarOpen(true)}
               className="xl:hidden p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors flex-shrink-0"

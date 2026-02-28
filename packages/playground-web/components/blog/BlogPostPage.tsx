@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Globe, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ReadingProgressBar } from './ReadingProgressBar';
@@ -12,6 +12,7 @@ import { TableOfContents } from './TableOfContents';
 import { ShareButtons } from './ShareButtons';
 import { RelatedPosts } from './RelatedPosts';
 import { InlineCTA } from '@/components/shared/InlineCTA';
+import { GlobalLanguageSwitcher } from '@/components/shared/GlobalLanguageSwitcher';
 import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
 import { getBlogContent } from '@/data/i18n/blog';
 import type { BlogPost, BlogPostSummary } from '@/lib/blog';
@@ -23,15 +24,16 @@ interface BlogPostPageProps {
 
 export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   const router = useRouter();
-  const { locale, toggleLocale } = useGlobalLanguage();
+  const { locale } = useGlobalLanguage();
   const [darkMode, setDarkMode] = useState(false);
+  const contentLocale = locale === 'ko' ? 'ko' : 'en';
 
   const blogContent = getBlogContent(locale);
-  const fm = post.frontmatter[locale];
-  const content = post.content[locale];
-  const toc = post.toc[locale];
-  const rt = post.readingTime[locale];
-  const related = relatedPosts[locale];
+  const fm = post.frontmatter[contentLocale];
+  const content = post.content[contentLocale];
+  const toc = post.toc[contentLocale];
+  const rt = post.readingTime[contentLocale];
+  const related = relatedPosts[contentLocale];
 
   // 다크모드 persistence
   useEffect(() => {
@@ -49,11 +51,6 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
-
-  const handleToggleLocale = () => {
-    toggleLocale();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const goBack = () => {
     router.push('/blog');
@@ -93,14 +90,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
             {fm.title}
           </span>
 
-          <button
-            onClick={handleToggleLocale}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs sm:text-sm font-medium rounded border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-neutral-700 dark:text-neutral-300"
-            aria-label={blogContent.header.toggleLanguage}
-          >
-            <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span>{locale === 'en' ? 'KO' : 'EN'}</span>
-          </button>
+          <GlobalLanguageSwitcher compact className="font-serif" />
         </div>
       </header>
 

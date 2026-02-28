@@ -101,7 +101,7 @@ export interface PricingContent {
   };
 }
 
-export const pricingContent: Record<GlobalLocale, PricingContent> = {
+const pricingContent: Record<'en' | 'ko', PricingContent> = {
   en: {
     nav: {
       brandName: 'TEKTON',
@@ -385,5 +385,5 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
 };
 
 export function getPricingContent(locale: GlobalLocale): PricingContent {
-  return pricingContent[locale];
+  return locale === 'ko' ? pricingContent.ko : pricingContent.en;
 }

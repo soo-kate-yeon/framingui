@@ -1,7 +1,7 @@
 /**
  * Footer i18n Content
  *
- * Footer 컴포넌트의 모든 텍스트 콘텐츠를 영어/한국어로 관리
+ * Footer 컴포넌트의 모든 텍스트 콘텐츠를 영어/한국어/일본어로 관리
  */
 
 import type { GlobalLocale } from '../../contexts/GlobalLanguageContext';
@@ -60,6 +60,24 @@ export const footerContent: Record<GlobalLocale, FooterContent> = {
       representative: '대표: 김수연',
       address: '주소: 인천광역시 연수구 아트센터대로97번길 30',
       email: '이메일: soo.kate.yeon@gmail.com',
+    },
+  },
+  ja: {
+    brandName: 'framingui',
+    copyright: 'framingui. All rights reserved.',
+    links: {
+      pricing: '料金',
+      docs: 'ドキュメント',
+      blog: 'ブログ',
+      terms: '利用規約',
+      privacy: 'プライバシー',
+      refund: '返金ポリシー',
+    },
+    businessInfo: {
+      operatedBy: '運営: Morak',
+      representative: '代表: Sooyeon Kim',
+      address: '住所: 30, Art Center-daero 97beon-gil, Yeonsu-gu, Incheon, Republic of Korea',
+      email: 'メール: soo.kate.yeon@gmail.com',
     },
   },
 };

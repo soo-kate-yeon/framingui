@@ -41,7 +41,7 @@ export interface LegalPageContent {
   };
 }
 
-export const legalPageContent: Record<GlobalLocale, LegalPageContent> = {
+const legalPageContent: Record<'en' | 'ko', LegalPageContent> = {
   en: {
     pages: {
       terms: {
@@ -113,7 +113,7 @@ export const legalPageContent: Record<GlobalLocale, LegalPageContent> = {
 };
 
 export function getLegalPageContent(locale: GlobalLocale): LegalPageContent {
-  return legalPageContent[locale];
+  return locale === 'ko' ? legalPageContent.ko : legalPageContent.en;
 }
 
 // 타입 헬퍼: slug를 기반으로 페이지 콘텐츠 추출

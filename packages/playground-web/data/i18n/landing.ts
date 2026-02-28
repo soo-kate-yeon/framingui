@@ -52,7 +52,7 @@ export interface LandingContent {
   };
 }
 
-export const landingContent: Record<GlobalLocale, LandingContent> = {
+const landingContent: Record<'en' | 'ko', LandingContent> = {
   en: {
     nav: {
       brandName: 'framingui',
@@ -228,5 +228,5 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
 };
 
 export function getLandingContent(locale: GlobalLocale): LandingContent {
-  return landingContent[locale];
+  return locale === 'ko' ? landingContent.ko : landingContent.en;
 }

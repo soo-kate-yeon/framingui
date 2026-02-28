@@ -44,6 +44,11 @@ const messages = {
     checkout: '결제하기 - $99',
     selectMore: (remaining: number) => `${remaining}개 더 선택하세요`,
   },
+  ja: {
+    selected: (count: number, max: number) => `${max}件中 ${count}件を選択`,
+    checkout: '購入手続き - $99',
+    selectMore: (remaining: number) => `あと ${remaining}件を選択`,
+  },
 };
 
 // ============================================================================
@@ -60,7 +65,7 @@ export function SelectionTopBar({
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady } = usePaddle();
   const { locale } = useExploreLanguage();
-  const t = messages[locale];
+  const t = locale === 'ko' ? messages.ko : locale === 'ja' ? messages.ja : messages.en;
 
   const isComplete = selectedTemplates.length === maxSelection;
   const remaining = maxSelection - selectedTemplates.length;
