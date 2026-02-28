@@ -142,21 +142,21 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
   ko: {
     nav: {
       brandName: 'framingui',
-      pricing: '가격',
+      pricing: '요금',
       docs: '문서',
-      tryStudio: 'Explore 체험',
+      tryStudio: 'Explore 둘러보기',
       getStarted: '가입하기',
     },
     hero: {
       brandName: 'framingui',
       title: {
-        part1: '에이전트-퍼스트',
+        part1: 'AI가 이해하는',
         part2: '디자인 시스템',
       },
       description:
-        'framingui는 AI 에이전트가 완벽하게 이해할 수 있는 첫 번째 디자인 시스템입니다. 구조화된 토큰과 직관적인 레이아웃 로직으로, 당신의 아이디어를 즉시 프로덕션 수준의 UI로 렌더링하세요.',
+        'framingui는 AI가 진짜로 읽는 디자인 시스템이다. 구조화된 토큰과 레이아웃 규칙 덕분에 에이전트가 추측 없이 코드베이스에서 바로 프로덕션급 UI를 만든다.',
       buttons: {
-        tryStudio: '디자인 시스템 살펴보기...',
+        tryStudio: '무료로 Explore 시작',
         getStarted: '가입하기',
       },
     },
@@ -166,60 +166,60 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     sections: {
       s1: {
-        title: '디자인 시스템의 코어: 토큰',
+        title: '디자인 시스템의 핵심, 토큰',
         description:
-          '컬러, 타이포그래피, 여백까지. 완벽하게 계산된 OKLCH 토큰 아키텍처가 에이전트에게 명확한 가이드를 제공합니다.',
+          '컬러, 타이포, 간격까지 토큰으로 정리했다. OKLCH 기반 구조라 에이전트가 헤매지 않고 정확히 따라간다.',
       },
       s2: {
-        title: '프로덕션 품질의 핵심: 레이아웃',
+        title: '프로덕션 퀄리티를 만드는 레이아웃',
         description:
-          '앱과 웹 Shell을 완벽하게 이해합니다. 단순한 그리드를 넘어 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되는 반응형 레이아웃을 제공합니다.',
+          'App/Web Shell 구조를 기준으로 반응형이 자연스럽게 맞춰진다. 모바일부터 데스크톱까지 토큰 스케일이 깔끔하게 이어진다.',
       },
       s3: {
-        title: '30개 이상의 shadcn/ui 컴포넌트 기본 제공',
+        title: '30+ shadcn/ui 컴포넌트 기본 탑재',
         description:
-          '자동으로 디자인 시스템 가이드가 적용되어, 여러분이 만드는 서비스 아이덴티티에 딱 맞는 커스텀 컴포넌트로 렌더링합니다.',
+          '디자인 시스템 가이드를 자동 반영해 서비스 톤에 맞는 UI를 만든다. 기본 컴포넌트로 시작해도 결과물은 충분히 제품급이다.',
       },
       s4: {
-        title: 'MCP로 바로 도입',
+        title: 'MCP로 바로 투입',
         description:
-          'Figma 필요 없고, 캔버스도 필요 없어요. IDE, CLI, 심지어는 OpenClaw에서 자연어로 명령해 바로 프론트엔드 코드를 디자인하세요.',
+          'Figma 없어도 된다. IDE, CLI, OpenClaw에서 자연어로 지시하면 에이전트가 바로 프론트엔드 코드를 뽑는다.',
       },
     },
     section5: {
-      badge: '3월 런칭 베타 한정',
-      title: 'Design System 1개를 골라 무료로 사용할 수 있어요.',
-      description: '상세한 리뷰를 남겨주신 분께는 무제한 사용이 가능한 1년 Creator Pass를 드려요.',
+      badge: '3월 런칭 베타 한정 혜택',
+      title: '디자인 시스템 1개, 무료로 써봐.',
+      description: '리뷰를 자세히 남기면 1년 Creator Pass를 준다. 제한 없이 써볼 수 있다.',
       cta: '디자인 시스템 살펴보기',
     },
     faq: {
       title: '자주 묻는 질문',
-      subtitle: 'framingui에 대해 알아야 할 모든 것.',
+      subtitle: 'framingui 시작 전에 많이 묻는 것들.',
       items: [
         {
           title: '템플릿은 어떻게 사용하나요?',
           content:
-            '템플릿을 고르고, 명령어 하나로 MCP 서버를 설치하면 AI 코딩 도구에서 바로 프로덕션 UI를 만들 수 있어요. 베타 기간에는 첫 번째 템플릿이 무료예요.',
+            '템플릿을 고른 뒤 명령어 한 번으로 MCP 서버를 설치하면 된다. 바로 AI 코딩 도구에서 프로덕션 UI를 만들 수 있고, 베타 기간에는 첫 템플릿이 무료다.',
         },
         {
           title: 'framingui는 무료인가요?',
           content:
-            'framingui는 유료예요. MCP 서버에 접근하고 에이전트로 실제 사용 가능한 UI를 만들려면 최소 템플릿 하나는 구매하셔야 해요.',
+            'framingui는 유료다. MCP 서버 접근과 실사용 UI 생성을 하려면 템플릿을 최소 1개 구매해야 한다.',
         },
         {
           title: '앱 개발에 사용할 수 있나요?',
           content:
-            '지금은 React 생태계를 지원해요. Next.js랑 Vite 프로젝트 모두 쓸 수 있어요. init CLI가 프레임워크를 자동으로 감지해줘요. 네이티브 모바일 디자인 시스템 지원은 곧 만나볼 수 있어요.',
+            '지금은 React 생태계(Next.js, Vite)를 지원한다. init CLI가 프레임워크를 자동으로 감지하고 설정한다. 네이티브 모바일 디자인 시스템 지원도 준비 중이다.',
         },
         {
           title: '기존 프로젝트에 적용할 수 있나요?',
           content:
-            '물론이죠! 프로젝트 루트에서 npx @framingui/mcp-server init을 실행해보세요. 프레임워크를 자동으로 인식하고 필요한 패키지를 설치한 뒤 모든 걸 세팅해줘요. 기존 코드는 건드리지 않아요.',
+            '가능하다. 프로젝트 루트에서 npx @framingui/mcp-server init만 실행하면 된다. 프레임워크 인식, 패키지 설치, 설정까지 자동으로 처리하고 기존 코드는 건드리지 않는다.',
         },
         {
           title: 'Figma 가져오기 기능이 있나요?',
           content:
-            '아직은 없어요. 커스텀 디자인을 AI가 이해할 수 있는 토큰으로 바꿔주는 Figma-to-Tekton 브리지를 만들고 있어요. 조금만 기다려주세요!',
+            '아직은 없다. 커스텀 디자인을 AI가 읽는 토큰으로 바꿔주는 Figma-to-Tekton 브리지를 만들고 있다.',
         },
       ],
     },

@@ -112,7 +112,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   onClick={handlePreviewClick}
                   className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg flex items-center justify-center gap-2"
                 >
-                  {locale === 'ko' ? '미리보기' : 'Preview'}
+                  {locale === 'ko' ? '데모 보기' : 'Preview'}
                   <ExternalLink size={14} />
                 </button>
 
@@ -129,7 +129,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   onClick={handleDocumentationClick}
                   className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded-lg"
                 >
-                  {locale === 'ko' ? '문서' : 'Documentation'}
+                  {locale === 'ko' ? '가이드' : 'Documentation'}
                 </button>
               </div>
             </div>
@@ -214,7 +214,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.3}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12 text-center">
-              {locale === 'ko' ? '추천 사용처' : 'Recommended to use for'}
+              {locale === 'ko' ? '이럴 때 잘 맞아요' : 'Recommended to use for'}
             </h2>
           </ScrollReveal>
 
@@ -245,7 +245,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.4}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12">
-              {locale === 'ko' ? '사용 방법' : 'How to use'}
+              {locale === 'ko' ? '적용 방법' : 'How to use'}
             </h2>
           </ScrollReveal>
 
@@ -289,11 +289,11 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal delay={0.5}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-4 sm:mb-6">
-              {locale === 'ko' ? '시작할 준비가 되셨나요?' : 'Ready to start?'}
+              {locale === 'ko' ? '바로 시작해볼까?' : 'Ready to start?'}
             </h2>
             <p className="text-base sm:text-lg text-neutral-600 mb-6 sm:mb-8 px-2">
               {locale === 'ko'
-                ? `지금 구매하고 ${template.name}으로 다음 프로젝트를 시작하세요.`
+                ? `${template.name}으로 다음 프로젝트를 바로 시작해봐.`
                 : `Purchase now and start building your next project with ${template.name}.`}
             </p>
             <button
