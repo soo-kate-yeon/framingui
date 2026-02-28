@@ -33,6 +33,11 @@ export const WhoamiOutputSchema = z.object({
       renewable: z.boolean(),
     })
     .optional(),
+  // Trial 정보
+  is_trial: z.boolean().optional(),
+  trial_expires_at: z.string().nullable().optional(),
+  trial_days_left: z.number().nullable().optional(),
+  message: z.string().optional(),
   error: z.string().optional(),
 });
 

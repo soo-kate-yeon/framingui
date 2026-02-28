@@ -16,6 +16,7 @@ export interface VerifyResponse {
   licenses?: Array<{
     themeId: string;
     tier: string;
+    type?: 'trial' | 'individual' | 'creator';
     isActive: boolean;
     expiresAt: string | null;
   }>;

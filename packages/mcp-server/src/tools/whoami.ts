@@ -57,6 +57,33 @@ export async function whoamiTool(): Promise<WhoamiOutput> {
     latestExpiry = expiryDates[0] || null;
   }
 
+  // Trial 라이선스 확인
+  let isTrial = false;
+  let trialExpiresAt: string | null = null;
+  let trialDaysLeft: number | null = null;
+  let trialMessage: string | null = null;
+
+  if (authData.licenses && authData.licenses.length > 0) {
+    const trialLicense = authData.licenses.find(l => l.type === 'trial');
+    if (trialLicense) {
+      isTrial = true;
+      trialExpiresAt = trialLicense.expiresAt || null;
+      
+      if (trialExpiresAt) {
+        const now = new Date();
+        const expiryDate = new Date(trialExpiresAt);
+        const diffMs = expiryDate.getTime() - now.getTime();
+        trialDaysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+        
+        if (trialDaysLeft > 0) {
+          trialMessage = `You have ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left in your free trial.`;
+        } else {
+          trialMessage = 'Your free trial has expired. Upgrade to continue using premium themes: https://framingui.com/pricing';
+        }
+      }
+    }
+  }
+
   // whoami 완료 플래그 설정 (서버 사이드 게이트 해제)
   setWhoamiCompleted();
 
@@ -70,5 +97,10 @@ export async function whoamiTool(): Promise<WhoamiOutput> {
       expiresAt: latestExpiry,
       renewable: true,
     },
+    // Trial 정보
+    is_trial: isTrial,
+    trial_expires_at: trialExpiresAt,
+    trial_days_left: trialDaysLeft,
+    ...(trialMessage && { message: trialMessage }),
   };
 }
