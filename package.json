@@ -23,6 +23,8 @@
     "lint:all": "pnpm --filter \"./packages/*\" lint",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "check:tsup": "node scripts/check-tsup-config.js",
+    "check:publish-integrity": "node scripts/check-publish-integrity.mjs",
+    "check:publish-integrity:smoke": "node scripts/check-publish-integrity.mjs --consumer-smoke",
     "validate:tags": "npx tsx .moai/scripts/validate-tags.ts",
     "precommit": "pnpm check:tsup && pnpm build:all && pnpm validate:tags",
     "prepare": "husky"

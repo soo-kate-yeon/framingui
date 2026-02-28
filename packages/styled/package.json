@@ -34,7 +34,7 @@
     "prepublishOnly": "pnpm build"
   },
   "dependencies": {
-    "@framingui/tokens": "workspace:*",
+    "@framingui/tokens": "^0.3.3",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {

@@ -1,0 +1,47 @@
+name: Publish Integrity Gate
+
+on:
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'packages/**/package.json'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - 'scripts/check-publish-integrity.mjs'
+      - '.github/workflows/publish-integrity.yml'
+  push:
+    branches: [master, main, develop]
+    paths:
+      - 'packages/**/package.json'
+      - 'pnpm-lock.yaml'
+      - 'package.json'
+      - 'scripts/check-publish-integrity.mjs'
+      - '.github/workflows/publish-integrity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  publish-integrity:
+    name: Validate publishable packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Run publish integrity checks
+        run: pnpm check:publish-integrity

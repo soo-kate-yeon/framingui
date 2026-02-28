@@ -554,7 +554,7 @@ importers:
   packages/styled:
     dependencies:
       '@framingui/tokens':
-        specifier: workspace:*
+        specifier: ^0.3.3
         version: link:../tokens
       styled-components:
         specifier: ^6.1.13
