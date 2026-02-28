@@ -28,7 +28,10 @@ export function ExploreLanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleLocale = () => {
-    setGlobalLocale(locale === 'en' ? 'ko' : 'en');
+    const order: Locale[] = ['en', 'ko', 'ja'];
+    const currentIndex = order.indexOf(locale);
+    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % order.length;
+    setGlobalLocale(order[nextIndex] ?? 'en');
   };
 
   // GlobalLanguageContext의 locale을 exploreLocale에도 동기화 (선택적)

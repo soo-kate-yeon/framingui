@@ -20,7 +20,11 @@ import { useRouter } from 'next/navigation';
 import { ExternalLink } from 'lucide-react';
 import { ScrollReveal } from '../../../../components/explore/landing';
 import { CodeBlock } from '../../../../components/explore/landing/CodeBlock';
-import { getTemplateData, type TemplateData } from '../../../../data/templates';
+import {
+  getTemplateData,
+  getLocalizedTemplateText,
+  type TemplateData,
+} from '../../../../data/templates';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { usePaddle } from '../../../../hooks/usePaddle';
 import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
@@ -106,9 +110,12 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
 
               {/* Description (통합된 소개글) */}
               <p className="text-base sm:text-lg text-neutral-700 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-2">
-                {locale === 'ko' && template.descriptionKo
-                  ? template.descriptionKo
-                  : template.description}
+                {getLocalizedTemplateText(
+                  locale,
+                  template.description,
+                  template.descriptionKo,
+                  template.descriptionJa
+                )}
               </p>
 
               {/* CTA Buttons - Mobile Optimized */}
@@ -194,19 +201,32 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
 
                   {/* Title - Bold, Prominent */}
                   <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 leading-tight">
-                    {locale === 'ko' && feature.titleKo ? feature.titleKo : feature.title}
+                    {getLocalizedTemplateText(
+                      locale,
+                      feature.title,
+                      feature.titleKo,
+                      feature.titleJa
+                    )}
                   </h3>
 
                   {/* Subtitle - 1 Sentence Tagline */}
                   <p className="text-base sm:text-lg font-medium text-neutral-700 leading-snug">
-                    {locale === 'ko' && feature.subtitleKo ? feature.subtitleKo : feature.subtitle}
+                    {getLocalizedTemplateText(
+                      locale,
+                      feature.subtitle,
+                      feature.subtitleKo,
+                      feature.subtitleJa
+                    )}
                   </p>
 
                   {/* Body Text - 2-3 Sentences Detailed Explanation */}
                   <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
-                    {locale === 'ko' && feature.descriptionKo
-                      ? feature.descriptionKo
-                      : feature.description}
+                    {getLocalizedTemplateText(
+                      locale,
+                      feature.description,
+                      feature.descriptionKo,
+                      feature.descriptionJa
+                    )}
                   </p>
                 </div>
               </ScrollReveal>
@@ -230,14 +250,22 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
                   {/* Title */}
                   <h3 className="text-lg sm:text-xl font-bold text-neutral-900 leading-tight">
-                    {locale === 'ko' && useCase.titleKo ? useCase.titleKo : useCase.title}
+                    {getLocalizedTemplateText(
+                      locale,
+                      useCase.title,
+                      useCase.titleKo,
+                      useCase.titleJa
+                    )}
                   </h3>
 
                   {/* Description - Why this template is good for this use case */}
                   <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
-                    {locale === 'ko' && useCase.descriptionKo
-                      ? useCase.descriptionKo
-                      : useCase.description}
+                    {getLocalizedTemplateText(
+                      locale,
+                      useCase.description,
+                      useCase.descriptionKo,
+                      useCase.descriptionJa
+                    )}
                   </p>
                 </div>
               </ScrollReveal>
@@ -269,12 +297,15 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   {/* Step Content - Mobile Optimized */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg sm:text-xl font-bold text-neutral-900 mb-2">
-                      {locale === 'ko' && step.titleKo ? step.titleKo : step.title}
+                      {getLocalizedTemplateText(locale, step.title, step.titleKo, step.titleJa)}
                     </h3>
                     <p className="text-sm sm:text-base text-neutral-600 mb-3 sm:mb-4">
-                      {locale === 'ko' && step.descriptionKo
-                        ? step.descriptionKo
-                        : step.description}
+                      {getLocalizedTemplateText(
+                        locale,
+                        step.description,
+                        step.descriptionKo,
+                        step.descriptionJa
+                      )}
                     </p>
 
                     {step.code && (

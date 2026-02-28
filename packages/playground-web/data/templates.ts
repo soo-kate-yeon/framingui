@@ -6,6 +6,8 @@
  * - Supabase Storage 이미지 URL 헬퍼
  */
 
+type TemplateLocale = 'en' | 'ko' | 'ja';
+
 // ============================================================================
 // Types
 // ============================================================================
@@ -15,31 +17,40 @@ export interface TemplateData {
   name: string;
   tagline: string;
   taglineKo?: string;
+  taglineJa?: string;
   description: string;
   descriptionKo?: string;
+  descriptionJa?: string;
   price: number;
   screenshots: string[];
   features: {
     icon: string;
     title: string;
     titleKo?: string;
+    titleJa?: string;
     subtitle: string;
     subtitleKo?: string;
+    subtitleJa?: string;
     description: string;
     descriptionKo?: string;
+    descriptionJa?: string;
   }[];
   recommendedFor: {
     title: string;
     titleKo?: string;
+    titleJa?: string;
     description: string;
     descriptionKo?: string;
+    descriptionJa?: string;
   }[];
   howToUse: {
     step: number;
     title: string;
     titleKo?: string;
+    titleJa?: string;
     description: string;
     descriptionKo?: string;
+    descriptionJa?: string;
     code?: string;
   }[];
 }
@@ -1097,4 +1108,23 @@ export function getTemplateData(id: string): TemplateData | null {
  */
 export function getAllTemplates(): TemplateData[] {
   return Object.values(TEMPLATES);
+}
+
+/**
+ * locale에 맞는 텍스트를 선택합니다.
+ * - ko/ja가 없으면 en으로 fallback
+ */
+export function getLocalizedTemplateText(
+  locale: TemplateLocale,
+  en: string,
+  ko?: string,
+  ja?: string
+): string {
+  if (locale === 'ko' && ko) {
+    return ko;
+  }
+  if (locale === 'ja' && ja) {
+    return ja;
+  }
+  return en;
 }

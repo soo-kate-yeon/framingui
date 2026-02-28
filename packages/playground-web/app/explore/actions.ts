@@ -12,6 +12,7 @@ interface GalleryItem {
   name: string;
   description: string;
   descriptionKo?: string;
+  descriptionJa?: string;
   category: string;
   thumbnail?: string;
   price?: number;
@@ -33,6 +34,7 @@ export async function loadThemes(): Promise<GalleryItem[]> {
     name: t.name,
     description: t.description,
     descriptionKo: t.descriptionKo,
+    descriptionJa: t.descriptionJa,
     category: 'Design System',
     thumbnail: `/screenshots/${t.id}/dashboard.png`,
     price: t.price,

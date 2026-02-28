@@ -28,6 +28,7 @@ interface Template {
   name: string;
   description: string;
   descriptionKo?: string;
+  descriptionJa?: string;
   thumbnail?: string;
   category: string;
   price?: number;
@@ -146,11 +147,6 @@ export function TemplateGallery({
             className={`template-gallery grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-0 ${className}`}
           >
             {templates.map((template) => {
-              const description =
-                locale === 'ko' && template.descriptionKo
-                  ? template.descriptionKo
-                  : template.description;
-
               const isSelected = selectedIds.includes(template.id);
               const selectionDisabled = !isSelected && selectedIds.length >= maxSelection;
 
@@ -159,7 +155,9 @@ export function TemplateGallery({
                   key={template.id}
                   id={template.id}
                   name={template.name}
-                  description={description}
+                  description={template.description}
+                  descriptionKo={template.descriptionKo}
+                  descriptionJa={template.descriptionJa}
                   thumbnail={template.thumbnail}
                   category={template.category}
                   price={template.price}

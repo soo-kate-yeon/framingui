@@ -3,6 +3,7 @@ import { X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TemplateData } from '../../data/templates';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { getExploreContent, getTemplatePriceLabel } from '../../data/i18n/explore';
+import { getLocalizedTemplateText } from '../../data/templates';
 
 // ============================================================================
 // Types
@@ -62,10 +63,18 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
 
   // Translation helpers
   const displayTitle = template.name;
-  const displayTagline =
-    locale === 'ko' && template.taglineKo ? template.taglineKo : template.tagline;
-  const displayDesc =
-    locale === 'ko' && template.descriptionKo ? template.descriptionKo : template.description;
+  const displayTagline = getLocalizedTemplateText(
+    locale,
+    template.tagline,
+    template.taglineKo,
+    template.taglineJa
+  );
+  const displayDesc = getLocalizedTemplateText(
+    locale,
+    template.description,
+    template.descriptionKo,
+    template.descriptionJa
+  );
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 md:p-12">
@@ -219,12 +228,18 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 sm:gap-y-10">
                 {template.features.map((feature, idx) => {
-                  const fTitle =
-                    locale === 'ko' && feature.titleKo ? feature.titleKo : feature.title;
-                  const fDesc =
-                    locale === 'ko' && feature.descriptionKo
-                      ? feature.descriptionKo
-                      : feature.description;
+                  const fTitle = getLocalizedTemplateText(
+                    locale,
+                    feature.title,
+                    feature.titleKo,
+                    feature.titleJa
+                  );
+                  const fDesc = getLocalizedTemplateText(
+                    locale,
+                    feature.description,
+                    feature.descriptionKo,
+                    feature.descriptionJa
+                  );
                   return (
                     <div key={idx} className="flex gap-3 sm:gap-4">
                       <div className="mt-1 shrink-0 bg-neutral-100 rounded-full p-1 h-fit">
@@ -252,7 +267,12 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               <div className="flex flex-col gap-4 sm:gap-6">
                 <div className="flex flex-wrap gap-2">
                   {template.recommendedFor.map((rec, idx) => {
-                    const rTitle = locale === 'ko' && rec.titleKo ? rec.titleKo : rec.title;
+                    const rTitle = getLocalizedTemplateText(
+                      locale,
+                      rec.title,
+                      rec.titleKo,
+                      rec.titleJa
+                    );
                     const isActive = idx === activeChipIdx;
                     return (
                       <button
@@ -273,9 +293,12 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                 {/* Active Description */}
                 <div className="pt-2">
                   <p className="text-base text-neutral-600 leading-relaxed">
-                    {locale === 'ko' && template.recommendedFor[activeChipIdx]?.descriptionKo
-                      ? template.recommendedFor[activeChipIdx]?.descriptionKo
-                      : template.recommendedFor[activeChipIdx]?.description}
+                    {getLocalizedTemplateText(
+                      locale,
+                      template.recommendedFor[activeChipIdx]?.description ?? '',
+                      template.recommendedFor[activeChipIdx]?.descriptionKo,
+                      template.recommendedFor[activeChipIdx]?.descriptionJa
+                    )}
                   </p>
                 </div>
               </div>
@@ -290,14 +313,23 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
           <section className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 lg:gap-16 pb-8 sm:pb-12">
             <div>
               <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-950 lg:sticky top-12">
-                {locale === 'ko' ? '사용 방법' : 'How to use'}
+                {i18n.templateLanding.howToUse}
               </h3>
             </div>
             <div className="flex flex-col gap-8 sm:gap-10">
               {template.howToUse.map((step, idx) => {
-                const sTitle = locale === 'ko' && step.titleKo ? step.titleKo : step.title;
-                const sDesc =
-                  locale === 'ko' && step.descriptionKo ? step.descriptionKo : step.description;
+                const sTitle = getLocalizedTemplateText(
+                  locale,
+                  step.title,
+                  step.titleKo,
+                  step.titleJa
+                );
+                const sDesc = getLocalizedTemplateText(
+                  locale,
+                  step.description,
+                  step.descriptionKo,
+                  step.descriptionJa
+                );
                 return (
                   <div key={idx} className="flex gap-4 sm:gap-6 group">
                     <div className="flex flex-col items-center">
