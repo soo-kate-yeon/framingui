@@ -7,6 +7,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { resolveAppOrigin } from '@/lib/auth/redirect-origin';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -40,9 +41,21 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createClient();
+    const resolvedOrigin = resolveAppOrigin(
+      request.nextUrl.origin,
+      process.env.NEXT_PUBLIC_APP_URL
+    );
+
+    if (resolvedOrigin.reasons.length > 0) {
+      console.warn('[MCP CLI Callback] App origin normalization:', {
+        source: resolvedOrigin.source,
+        resolvedOrigin: resolvedOrigin.origin,
+        reasons: resolvedOrigin.reasons,
+      });
+    }
 
     // OAuth 완료 후 돌아올 때 사용할 파라미터를 리다이렉트 URL에 포함
-    const redirectTo = `${request.nextUrl.origin}/api/auth/callback?next=${encodeURIComponent(
+    const redirectTo = `${resolvedOrigin.origin}/api/auth/callback?next=${encodeURIComponent(
       `/api/mcp/cli-callback/complete?callback_port=${callbackPort}&state=${state}`
     )}`;
 
@@ -59,8 +72,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to start OAuth flow' }, { status: 500 });
     }
 
+    // Supabase가 반환한 URL에 레거시 redirect_to가 남아있지 않도록 강제 정규화
+    let oauthUrl: string;
+    try {
+      const oauth = new URL(data.url);
+      oauth.searchParams.set('redirect_to', redirectTo);
+      oauthUrl = oauth.toString();
+    } catch {
+      oauthUrl = data.url;
+    }
+
     // OAuth URL로 리다이렉트
-    return NextResponse.redirect(data.url);
+    return NextResponse.redirect(oauthUrl);
   } catch (err) {
     console.error('[MCP CLI Callback] Unexpected error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

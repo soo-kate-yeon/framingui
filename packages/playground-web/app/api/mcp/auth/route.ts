@@ -9,6 +9,7 @@
  */
 
 import { createClient } from '@/lib/supabase/server';
+import { resolveAppOrigin } from '@/lib/auth/redirect-origin';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -103,13 +104,27 @@ export async function POST(request: NextRequest) {
 
     // 4. Supabase 서버 클라이언트 생성
     const supabase = await createClient();
+    const resolvedOrigin = resolveAppOrigin(
+      request.nextUrl.origin,
+      process.env.NEXT_PUBLIC_APP_URL
+    );
+
+    if (resolvedOrigin.reasons.length > 0) {
+      console.warn('[MCP Auth] App origin normalization:', {
+        source: resolvedOrigin.source,
+        resolvedOrigin: resolvedOrigin.origin,
+        reasons: resolvedOrigin.reasons,
+      });
+    }
+
+    const redirectTo = `${resolvedOrigin.origin}/api/auth/callback`;
 
     // 5. Supabase OAuth URL 생성 (Google provider)
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         // OAuth 콜백 후 Studio callback 페이지로 이동
-        redirectTo: `${request.nextUrl.origin}/api/auth/callback`,
+        redirectTo,
         // CSRF 보호를 위한 state 파라미터 포함
         // MCP 클라이언트가 제공한 state를 그대로 전달
         queryParams: {
@@ -151,9 +166,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Supabase가 반환한 URL에 레거시 redirect_to가 남아있지 않도록 강제 정규화
+    let authUrl = data.url;
+    try {
+      const oauth = new URL(data.url);
+      oauth.searchParams.set('redirect_to', redirectTo);
+      authUrl = oauth.toString();
+    } catch {
+      // ignore malformed URL and keep original
+    }
+
     // 6. 성공 응답 반환
     const response: MCPAuthResponse = {
-      auth_url: data.url,
+      auth_url: authUrl,
       state, // 클라이언트가 제공한 state를 그대로 반환 (CSRF 검증용)
       expires_in: 300, // 5분 (OAuth 플로우 완료 제한 시간)
     };
