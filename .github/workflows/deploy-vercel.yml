@@ -66,7 +66,6 @@ jobs:
 
       - name: Pull Vercel Environment Information
         run: |
-          cd packages/playground-web
           if [ "${{ github.event.workflow_run.head_branch }}" = "master" ] || [ "${{ github.event.workflow_run.head_branch }}" = "main" ]; then
             TARGET_ENV="production"
           else
@@ -78,7 +77,6 @@ jobs:
         id: deploy-preview
         if: github.event.workflow_run.head_branch != 'master' && github.event.workflow_run.head_branch != 'main'
         run: |
-          cd packages/playground-web
           DEPLOYMENT_URL=$(vercel deploy --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOYMENT_URL"
@@ -87,7 +85,6 @@ jobs:
         id: deploy-production
         if: github.event.workflow_run.head_branch == 'master' || github.event.workflow_run.head_branch == 'main'
         run: |
-          cd packages/playground-web
           DEPLOYMENT_URL=$(vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }})
           echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
           echo "Deployed to: $DEPLOYMENT_URL"
