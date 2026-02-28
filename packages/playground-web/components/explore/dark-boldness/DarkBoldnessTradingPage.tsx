@@ -204,7 +204,7 @@ export default function DarkBoldnessTradingPage() {
 
         {/* Left Global Nav */}
         <aside className="row-span-2 border-r border-neutral-800 bg-black flex flex-col items-center py-6 gap-8 z-10">
-          <div className="w-10 h-10 flex items-center justify-center rounded-none bg-white mb-4">
+          <div className="w-10 h-10 flex items-center justify-center rounded-none bg-white">
             <Layers className="w-6 h-6 text-black" />
           </div>
 

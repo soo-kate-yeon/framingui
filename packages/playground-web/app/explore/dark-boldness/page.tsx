@@ -128,8 +128,6 @@ export default function DarkBoldnessDemo() {
             />
           </button>
 
-          <div className="h-[1px] bg-[var(--tekton-border-default)] my-2 mx-4" />
-
           <Link
             href="/explore/dark-boldness/trading"
             className="text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
@@ -183,7 +181,7 @@ export default function DarkBoldnessDemo() {
             <Link
               href="/explore/dark-boldness/trading"
               onClick={() => setMobileMenuOpen(false)}
-              className="text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] border-t border-[var(--tekton-border-default)] mt-2 pt-6"
+              className="text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
             >
               <div className="flex items-center gap-2">
                 <Zap size={20} className="electric-blue" />
