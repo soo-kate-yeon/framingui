@@ -154,7 +154,8 @@
                 "lg": "0.75rem",
                 "xl": "9999px",
                 "2xl": "1.5rem",
-                "full": "9999px"
+                "full": "9999px",
+                "select": "9999px"
             },
             "spacing": {
                 "2": "0.5rem",

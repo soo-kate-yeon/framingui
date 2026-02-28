@@ -128,7 +128,8 @@
                 "lg": "12px",
                 "xl": "16px",
                 "none": "0",
-                "full": "9999px"
+                "full": "9999px",
+                "select": "8px"
             }
         },
         "semantic": {

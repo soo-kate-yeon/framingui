@@ -27,7 +27,7 @@ export function GlobalLanguageSwitcher({
         aria-label="Select language"
         className={`${
           compact ? 'h-8 px-2.5' : 'h-10 px-3.5'
-        } w-[110px] sm:w-[120px] inline-flex items-center justify-between rounded-full border border-neutral-200 bg-white !font-sans !leading-none text-sm font-medium tracking-tight text-neutral-950 shadow-none outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100 ${className}`}
+        } w-[110px] sm:w-[120px] inline-flex items-center justify-between border border-neutral-200 bg-white !font-sans !leading-none text-sm font-medium tracking-tight text-neutral-950 shadow-none outline-none focus:ring-2 focus:ring-neutral-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-100 ${className}`}
       >
         <div className="flex items-center gap-1.5 truncate">
           <Globe2 className="h-3.5 w-3.5 opacity-60 shrink-0" />

@@ -146,7 +146,8 @@
                 "md": "calc(0.5rem - 2px)",
                 "lg": "0.5rem",
                 "xl": "0.75rem",
-                "full": "9999px"
+                "full": "9999px",
+                "select": "calc(0.5rem - 2px)"
             },
             "spacing": {
                 "2": "0.5rem",

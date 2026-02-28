@@ -108,6 +108,7 @@
                 "lg": "0px",
                 "xl": "0px",
                 "full": "0px",
+                "select": "0px",
                 "circle": "50%"
             },
             "spacing": {

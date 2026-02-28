@@ -85,7 +85,8 @@
                 "xl": "32px",
                 "2xl": "40px",
                 "3xl": "48px",
-                "full": "9999px"
+                "full": "9999px",
+                "select": "9999px"
             }
         },
         "semantic": {

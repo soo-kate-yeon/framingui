@@ -473,6 +473,29 @@ export function HeroSection() {
 }`,
         language: 'tsx',
       },
+      {
+        title: 'Web Magazine Dossier',
+        titleKo: '웹 매거진 도시에',
+        description:
+          'A typography-first editorial layout with article lists and full-bleed imagery.',
+        descriptionKo:
+          '아티클 리스트와 풀블리드 이미지를 활용한 타이포그래피 중심의 에디토리얼 레이아웃입니다.',
+        code: `// Featured Article Grid
+<div className="grid grid-cols-1 gap-px bg-neutral-100 border border-neutral-100">
+  {articles.map((article) => (
+    <div key={article.id} className="group relative bg-white flex flex-col md:flex-row items-stretch overflow-hidden">
+      <div className="relative w-full md:w-[400px] h-[300px] md:h-auto overflow-hidden">
+        <Image src={article.image} fill className="object-cover grayscale hover:grayscale-0 transition-all duration-700" />
+      </div>
+      <div className="flex-1 p-8 md:p-12 flex flex-col justify-between">
+        <h4 className="text-3xl md:text-5xl font-bold tracking-tighter leading-tight uppercase italic">{article.title}</h4>
+        <p className="text-neutral-500 text-lg md:text-xl font-light italic">{article.description}</p>
+      </div>
+    </div>
+  ))}
+</div>`,
+        language: 'tsx',
+      },
     ],
     bestPractices: [
       {

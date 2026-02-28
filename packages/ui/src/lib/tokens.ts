@@ -60,6 +60,7 @@ export const tokenVars = {
     lg: 'var(--tekton-radius-lg)' as TokenReference,
     xl: 'var(--tekton-radius-xl)' as TokenReference,
     full: 'var(--tekton-radius-full)' as TokenReference,
+    select: 'var(--tekton-radius-select)' as TokenReference,
   },
 
   // ========================================
