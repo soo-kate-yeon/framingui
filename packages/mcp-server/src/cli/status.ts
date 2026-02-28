@@ -1,5 +1,5 @@
 /**
- * tekton-mcp status 명령어
+ * framingui-mcp status 명령어
  * 인증 상태 확인
  */
 
@@ -30,5 +30,5 @@ export function statusCommand(): void {
 
   // 3. 인증 안 됨
   console.log('Not authenticated.');
-  console.log('Run `tekton-mcp login` to authenticate.');
+  console.log('Run `framingui-mcp login` to authenticate.');
 }

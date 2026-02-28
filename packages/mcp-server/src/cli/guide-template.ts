@@ -55,7 +55,7 @@ export default App;`;
 Before generating screens, authenticate with your Tekton account:
 
 \`\`\`bash
-tekton-mcp login
+framingui-mcp login
 \`\`\`
 
 This opens your browser for OAuth authentication. Your credentials are stored in \`~/.tekton/credentials.json\`.
@@ -68,7 +68,7 @@ This opens your browser for OAuth authentication. Your credentials are stored in
 **Check your authentication status:**
 
 \`\`\`bash
-tekton-mcp status
+framingui-mcp status
 \`\`\`
 
 ---

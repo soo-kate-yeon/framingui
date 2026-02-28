@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     if (userError || !user || !user.email) {
       return new NextResponse(
-        '<html><body><h1>Authentication Failed</h1><p>Please try again with `tekton-mcp login`.</p></body></html>',
+        '<html><body><h1>Authentication Failed</h1><p>Please try again with `framingui-mcp login`.</p></body></html>',
         { status: 401, headers: { 'Content-Type': 'text/html' } }
       );
     }

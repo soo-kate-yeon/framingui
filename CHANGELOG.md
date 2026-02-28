@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Step 6 (개선)**: 가이드 템플릿에 "Authentication" 및 "Workflow" 섹션 추가
   - **Step 7 (신규)**: CLAUDE.md, AGENTS.md 자동 생성/업데이트
   - **Step 8 (신규)**: 인증 우선 완료 메시지
-    - `tekton-mcp login` 명령어 안내
+    - `framingui-mcp login` 명령어 안내
     - 모든 6개 테마가 인증 필수인 이유 설명
     - TEKTON-GUIDE.md, CLAUDE.md, AGENTS.md 문서 링크
 

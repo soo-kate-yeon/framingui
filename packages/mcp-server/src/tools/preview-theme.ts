@@ -130,7 +130,7 @@ export async function previewThemeTool(input: PreviewThemeInput): Promise<Previe
     if (!authData || !authData.valid) {
       return {
         success: false,
-        error: `Authentication required to preview themes. Run \`tekton-mcp login\` to authenticate.`,
+        error: `Authentication required to preview themes. Run \`framingui-mcp login\` to authenticate.`,
       };
     }
 

@@ -50,7 +50,7 @@ Add to your project root `.mcp.json`:
 }
 ```
 
-> **Tip**: Instead of hardcoding the API key, run `tekton-mcp login` to save credentials to `~/.tekton/credentials.json`. The server loads them automatically.
+> **Tip**: Instead of hardcoding the API key, run `framingui-mcp login` to save credentials to `~/.tekton/credentials.json`. The server loads them automatically.
 
 ---
 
@@ -152,13 +152,13 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 
 | Variable         | Required    | Default                 | Description                                     |
 | ---------------- | ----------- | ----------------------- | ----------------------------------------------- |
-| `TEKTON_API_KEY` | Conditional | —                       | API key. Not needed if using `tekton-mcp login` |
+| `TEKTON_API_KEY` | Conditional | —                       | API key. Not needed if using `framingui-mcp login` |
 | `TEKTON_API_URL` | No          | `https://framingui.com` | API endpoint                                    |
 
 ### Credential Precedence
 
 1. `TEKTON_API_KEY` environment variable (highest priority)
-2. `~/.tekton/credentials.json` (saved by `tekton-mcp login`)
+2. `~/.tekton/credentials.json` (saved by `framingui-mcp login`)
 
 ---
 

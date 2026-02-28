@@ -100,7 +100,7 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant User
-    participant CLI as tekton-mcp CLI
+    participant CLI as framingui-mcp CLI
     participant Browser
     participant API as framingui.com
     participant Creds as ~/.tekton/credentials.json
@@ -108,7 +108,7 @@ sequenceDiagram
     participant AI as AI Assistant
 
     Note over User,AI: One-time Login
-    User->>CLI: tekton-mcp login
+    User->>CLI: framingui-mcp login
     CLI->>CLI: Start localhost callback server
     CLI->>Browser: Open framingui.com/mcp/auth
     Browser->>API: OAuth flow

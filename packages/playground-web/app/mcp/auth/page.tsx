@@ -2,7 +2,7 @@
 
 /**
  * MCP CLI OAuth 랜딩 페이지
- * tekton-mcp login 명령어가 브라우저를 열어 이 페이지로 이동
+ * framingui-mcp login 명령어가 브라우저를 열어 이 페이지로 이동
  *
  * URL params:
  * - callback_port: CLI가 대기 중인 localhost 포트
@@ -28,7 +28,7 @@ function MCPAuthContent() {
           <h1 className="mb-4 text-2xl font-bold text-red-600">Invalid Request</h1>
           <p className="text-gray-600">
             Missing or invalid parameters. Please run{' '}
-            <code className="rounded bg-gray-100 px-2 py-1">tekton-mcp login</code> from your
+            <code className="rounded bg-gray-100 px-2 py-1">framingui-mcp login</code> from your
             terminal.
           </p>
         </div>

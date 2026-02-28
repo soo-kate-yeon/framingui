@@ -58,7 +58,7 @@ pnpm inspect
 
 | Variable         | Required | Default                 | Description                                              |
 | ---------------- | -------- | ----------------------- | -------------------------------------------------------- |
-| `TEKTON_API_KEY` | Yes\*    | —                       | API key for authentication. \*Or use `tekton-mcp login`  |
+| `TEKTON_API_KEY` | Yes\*    | —                       | API key for authentication. \*Or use `framingui-mcp login`  |
 | `TEKTON_API_URL` | No       | `https://framingui.com` | API endpoint (use `http://localhost:3000` for local dev) |
 
 ---

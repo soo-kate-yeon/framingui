@@ -24,7 +24,7 @@ export async function whoamiTool(): Promise<WhoamiOutput> {
     return {
       success: false,
       error:
-        'Authentication required. Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
+        'Authentication required. Run `framingui-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
     };
   }
 

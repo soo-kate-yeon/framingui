@@ -1,5 +1,5 @@
 /**
- * tekton-mcp login 명령어
+ * framingui-mcp login 명령어
  * 브라우저 OAuth → API Key 자동 저장
  */
 

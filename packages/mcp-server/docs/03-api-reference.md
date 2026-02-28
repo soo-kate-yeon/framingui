@@ -69,7 +69,7 @@ interface WhoamiOutput {
 ```json
 {
   "success": false,
-  "error": "Authentication required. Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable."
+  "error": "Authentication required. Run `framingui-mcp login` to authenticate, or set TEKTON_API_KEY environment variable."
 }
 ```
 
@@ -415,9 +415,9 @@ Basic screen definition validation with helpful feedback.
 
 | Error                     | Cause                   | Solution                                       |
 | ------------------------- | ----------------------- | ---------------------------------------------- |
-| `Authentication required` | No API key found        | Run `tekton-mcp login` or set `TEKTON_API_KEY` |
+| `Authentication required` | No API key found        | Run `framingui-mcp login` or set `TEKTON_API_KEY` |
 | `whoami required`         | `whoami` not called yet | Call `whoami` first                            |
-| `API key is invalid`      | Expired or revoked key  | Re-run `tekton-mcp login`                      |
+| `API key is invalid`      | Expired or revoked key  | Re-run `framingui-mcp login`                      |
 
 ### Validation Errors
 

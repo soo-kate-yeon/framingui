@@ -1,5 +1,5 @@
 /**
- * tekton-mcp init 명령어
+ * framingui-mcp init 명령어
  * 프로젝트에 FramingUI 디자인 시스템을 한 줄로 설정
  */
 
@@ -288,7 +288,7 @@ function printSuccess(): void {
   FramingUI 설정 완료!
 
   다음 단계:
-  1. 먼저 인증하세요: tekton-mcp login
+  1. 먼저 인증하세요: framingui-mcp login
   2. Claude Code를 재시작하세요
   3. AI에게 요청하세요: "로그인 화면 만들어줘"
   4. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요

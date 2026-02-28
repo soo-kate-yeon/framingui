@@ -59,7 +59,7 @@ import {
 
 const server = new Server(
   {
-    name: 'tekton-mcp-server',
+    name: 'framingui-mcp-server',
     version: '2.1.0',
   },
   {
@@ -665,7 +665,7 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
             text: JSON.stringify({
               success: false,
               error: 'Authentication required.',
-              hint: 'Run `tekton-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
+              hint: 'Run `framingui-mcp login` to authenticate, or set TEKTON_API_KEY environment variable.',
             }),
           },
         ],
@@ -1063,7 +1063,7 @@ if (apiKey) {
     setAuthData(null);
   }
 } else {
-  info('No API key found. Run `tekton-mcp login` or set TEKTON_API_KEY to authenticate.');
+  info('No API key found. Run `framingui-mcp login` or set TEKTON_API_KEY to authenticate.');
   setAuthData(null);
 }
 

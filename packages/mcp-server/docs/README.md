@@ -18,7 +18,7 @@ Documentation for `@framingui/mcp-server` v0.4.5 — an stdio-based MCP server f
 - **17 MCP Tools**: Authentication, themes, components, templates, screen generation
 - **6 Premium Themes**: All require authentication
 - **stdio Protocol**: JSON-RPC 2.0 over stdin/stdout (no HTTP)
-- **OAuth Login**: `tekton-mcp login` for browser-based authentication
+- **OAuth Login**: `framingui-mcp login` for browser-based authentication
 - **whoami**: Mandatory first call every session
 
 ## Quick Reference

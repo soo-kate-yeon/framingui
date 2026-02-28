@@ -16,7 +16,7 @@ npx @framingui/mcp-server
 
 # 또는 전역 설치 후 실행
 npm install -g @framingui/mcp-server
-tekton-mcp
+framingui-mcp
 ```
 
 ---
@@ -72,7 +72,7 @@ npx @framingui/mcp-server init
   FramingUI 설정 완료!
 
   다음 단계:
-  1. 먼저 인증하세요: tekton-mcp login
+  1. 먼저 인증하세요: framingui-mcp login
   2. Claude Code를 재시작하세요
   3. AI에게 요청하세요: "로그인 화면 만들어줘"
   4. TEKTON-GUIDE.md에서 전체 가이드를 확인하세요
@@ -243,7 +243,7 @@ MCP 서버는 모든 MCP 클라이언트에서 사용 가능한 2개의 내장 �
 
 **내용:**
 
-- 인증 설정 (tekton-mcp login)
+- 인증 설정 (framingui-mcp login)
 - 테마 탐색 워크플로우
 - 컴포넌트 가용성 확인
 - 4단계 스크린 생성 워크플로우
@@ -285,7 +285,7 @@ npx @framingui/mcp-server
 **방법 2: CLI 로그인**
 
 ```bash
-tekton-mcp login
+framingui-mcp login
 # 브라우저에서 인증 후 ~/.tekton/credentials.json에 저장
 ```
 

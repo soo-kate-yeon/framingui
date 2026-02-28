@@ -24,7 +24,7 @@ Tekton MCP server is configured in \`.mcp.json\`. Claude Code automatically load
 Before generating any screens, authenticate:
 
 \`\`\`bash
-tekton-mcp login
+framingui-mcp login
 \`\`\`
 
 **Important:** All 6 themes require authentication. No free themes are available.
@@ -115,8 +115,8 @@ These prompts work across all MCP clients, not just Claude Code.
 ### Troubleshooting
 
 **Authentication issues:**
-- Run \`tekton-mcp status\` to check authentication
-- Run \`tekton-mcp login\` to re-authenticate
+- Run \`framingui-mcp status\` to check authentication
+- Run \`framingui-mcp login\` to re-authenticate
 
 **Missing styles:**
 - Run \`validate-environment\` to check Tailwind config
@@ -146,19 +146,19 @@ Tekton MCP server provides 15 tools for screen generation via Model Context Prot
 ### Prerequisites
 
 1. **MCP Server Running:** Ensure \`@framingui/mcp-server\` is running and connected
-2. **Authentication:** User must run \`tekton-mcp login\` before generating screens
+2. **Authentication:** User must run \`framingui-mcp login\` before generating screens
 3. **Project Setup:** \`@framingui/ui\` and \`tailwindcss-animate\` must be installed
 
 ### Required Authentication Flow
 
 **Step 1:** Check authentication status
 \`\`\`bash
-tekton-mcp status
+framingui-mcp status
 \`\`\`
 
 **Step 2:** If not authenticated, instruct user:
 \`\`\`bash
-tekton-mcp login
+framingui-mcp login
 \`\`\`
 
 **Important:** All 6 themes require valid licenses. There are no free themes available.
@@ -280,8 +280,8 @@ These provide context to help you guide users effectively.
 ### Error Handling
 
 **Authentication errors:**
-- Instruct user to run \`tekton-mcp login\`
-- Verify with \`tekton-mcp status\`
+- Instruct user to run \`framingui-mcp login\`
+- Verify with \`framingui-mcp status\`
 
 **Validation errors (Step 2):**
 - Read error messages - they include suggestions

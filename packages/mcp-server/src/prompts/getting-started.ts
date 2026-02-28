@@ -21,7 +21,7 @@ export function getGettingStartedPrompt() {
 Before generating screens, authenticate with your Tekton account:
 
 \`\`\`bash
-tekton-mcp login
+framingui-mcp login
 \`\`\`
 
 This opens your browser for OAuth authentication. Your credentials are stored in \`~/.tekton/credentials.json\`.

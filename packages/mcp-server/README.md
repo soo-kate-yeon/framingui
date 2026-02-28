@@ -102,9 +102,9 @@ npx @framingui/mcp-server init
 | -------------------------------- | --------------------- |
 | `npx @framingui/mcp-server`      | MCP stdio 서버 시작   |
 | `npx @framingui/mcp-server init` | 프로젝트 초기 설정    |
-| `tekton-mcp login`               | 브라우저 OAuth 로그인 |
-| `tekton-mcp logout`              | 로그아웃              |
-| `tekton-mcp status`              | 인증 상태 확인        |
+| `framingui-mcp login`               | 브라우저 OAuth 로그인 |
+| `framingui-mcp logout`              | 로그아웃              |
+| `framingui-mcp status`              | 인증 상태 확인        |
 
 ## Development Quick Start
 
@@ -610,7 +610,7 @@ The MCP server provides 2 built-in prompts that work across all MCP clients:
 
 **Content**:
 
-- Authentication setup (tekton-mcp login)
+- Authentication setup (framingui-mcp login)
 - Theme exploration workflow
 - Component availability checking
 - 4-step screen generation workflow

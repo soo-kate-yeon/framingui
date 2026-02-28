@@ -1,5 +1,5 @@
 /**
- * tekton-mcp logout 명령어
+ * framingui-mcp logout 명령어
  * ~/.tekton/credentials.json 삭제
  */
 
