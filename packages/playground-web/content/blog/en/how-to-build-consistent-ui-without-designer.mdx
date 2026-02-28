@@ -1,0 +1,234 @@
+---
+title: "How to Build Consistent UI Without a Designer"
+description: "A practical system for solo developers to create consistent UI without hiring a designer, using design tokens, rules, and repeatable workflows."
+date: "2026-02-28"
+author:
+  name: "FramingUI Team"
+tags:
+  - consistent-ui
+  - design-system
+  - solo-developer
+  - indie-hacker
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+## Why Consistent UI Feels Hard When You Build Alone
+
+If you are a solo developer or indie hacker, UI inconsistency usually does not happen because you do not care. It happens because your product grows faster than your decisions. You build a dashboard in week one, add onboarding in week two, ship settings in week three, and suddenly the same button appears in five different styles.
+
+You tweak quickly to ship. You copy and adapt old code. You test less visual edge cases than you want. Then one day you realize your product looks "almost right" everywhere, but never fully cohesive.
+
+The good news: you do not need a full-time designer to fix this. You need a lightweight design system that gives you constraints you can trust.
+
+## What "Consistent UI" Actually Means
+
+Consistent UI is not about making everything identical. It is about making predictable choices across contexts.
+
+### Visual Consistency
+
+- Colors map to clear meaning: primary, success, warning, danger
+- Spacing follows one scale, not arbitrary `14px`, `17px`, `22px`
+- Typography follows a readable hierarchy for title, subtitle, body, caption
+
+### Behavioral Consistency
+
+- Buttons behave the same across screens
+- Inputs show validation and focus in the same pattern
+- Feedback states (loading, empty, error) follow shared rules
+
+### Structural Consistency
+
+- Reusable layout blocks for headers, cards, forms, and sections
+- Repeated patterns for navigation and page composition
+
+When these three layers align, your UI feels professional even without custom visual polish.
+
+## The Solo Builder's 4-Layer System
+
+You can build consistency with four layers, in order.
+
+### Layer 1: Foundations (Design Tokens)
+
+Design tokens are the smallest reusable values in your 디자인 시스템. They include color, spacing, radius, typography, and shadow values.
+
+If you skip tokens and write raw values directly in components, drift starts immediately. A tokenized base makes every style decision explicit.
+
+Use semantic naming:
+
+- `color.background.surface`
+- `color.text.muted`
+- `spacing.4`
+- `radius.md`
+- `font.size.body`
+
+Avoid brand-specific names in component code like `blue500` or `gray700`. Components should consume semantic meaning, not raw palette entries.
+
+### Layer 2: Primitives
+
+Primitives are low-level reusable UI pieces with no product logic:
+
+- `Button`
+- `Input`
+- `Select`
+- `Card`
+- `Badge`
+
+Each primitive should expose a small set of variants, not infinite freedom. Example:
+
+- `Button` variants: `primary`, `secondary`, `ghost`, `danger`
+- `Button` sizes: `sm`, `md`, `lg`
+
+If each team member can pass custom colors and spacing directly, consistency disappears. Strong defaults are the point.
+
+### Layer 3: Patterns
+
+Patterns combine primitives into frequent product structures:
+
+- Filter bars
+- Form sections
+- Empty states
+- Data table toolbars
+- Auth page layouts
+
+Most inconsistency appears at this level because people rebuild common sections from scratch. If a pattern appears twice, extract it.
+
+### Layer 4: Rules
+
+Rules are documented decisions for when to use which variant. You do not need a 40-page handbook. Start with one page:
+
+- When to use primary vs secondary button
+- Standard spacing between form elements
+- Page title hierarchy
+- Error message style and placement
+
+Rules remove decision fatigue, which is the hidden cause of visual drift.
+
+## A 7-Day Workflow to Fix Existing Inconsistency
+
+You can retrofit this into an active product without pausing shipping.
+
+### Day 1: UI Audit
+
+Take screenshots of major pages and list repeated UI problems:
+
+- Number of button styles
+- Number of input styles
+- Number of font sizes in body copy
+- Number of card paddings
+
+This gives you a baseline and prevents subjective debates.
+
+### Day 2: Token Baseline
+
+Define your minimum token set:
+
+- 8-10 spacing steps
+- 5-7 semantic text colors
+- 5-7 semantic background/border colors
+- 3 radius values
+- 3-4 font sizes for app UI
+
+Keep it small. You can extend later.
+
+### Day 3: Primitive Refactor
+
+Refactor one high-usage primitive first, usually `Button`. Replace raw utility combinations with token-backed variants.
+
+### Day 4: Form Stack
+
+Refactor `Input`, `Textarea`, `Select`, `Label`, `FieldError`. Forms expose inconsistency quickly and deliver high leverage.
+
+### Day 5: Layout Patterns
+
+Create `PageHeader`, `SectionCard`, `EmptyState` patterns. Use them in two real screens.
+
+### Day 6: Replace Top 20 Screens
+
+Touch the screens with highest traffic or highest internal usage. Do not chase full migration first.
+
+### Day 7: Lock Rules
+
+Document short usage rules and add lint or review checks:
+
+- New components must use tokens
+- No hardcoded color values in JSX
+- No custom spacing outside token scale unless justified
+
+At this point, you have a practical 디자인 시스템 and a repeatable process.
+
+## How to Keep Consistency While Moving Fast
+
+Speed and consistency are not opposites if your defaults are good.
+
+### Use "Default First" Component APIs
+
+Bad API:
+
+```tsx
+<Button bgColor="..." textColor="..." px={...} py={...} radius={...}>
+```
+
+Good API:
+
+```tsx
+<Button variant="primary" size="md">Create Project</Button>
+```
+
+The second API preserves consistency under pressure.
+
+### Reserve Custom Styling for Explicit Exceptions
+
+Create an `unstyled` or `custom` escape hatch, but require explanation in PRs. This keeps flexibility without accidental entropy.
+
+### Track Drift with Lightweight Metrics
+
+Once a month, run simple checks:
+
+- Count hardcoded hex colors
+- Count one-off spacing values
+- Count component variants actually used
+
+If these numbers rise, your system is leaking.
+
+## Where FramingUI Helps Solo Developers
+
+Many indie hackers know what consistency means but get stuck implementing it. FramingUI helps at two critical points:
+
+- It gives token and component scaffolding that makes a 디자인 시스템 operational quickly
+- It integrates with AI coding workflows so generated UI follows your token rules instead of random defaults
+
+This is useful when you build alone because every manual cleanup step steals product time.
+
+## Common Mistakes That Break Consistency
+
+### Mistake 1: Starting from Components Instead of Tokens
+
+If tokens are vague or missing, component variants become arbitrary and hard to scale.
+
+### Mistake 2: Too Many Variants
+
+If every button has eight variants and six sizes, nobody remembers rules. Restrict options.
+
+### Mistake 3: No Migration Plan
+
+A perfect new system does nothing if old screens still dominate user experience. Migrate high-impact surfaces first.
+
+### Mistake 4: Treating Consistency as a Visual Nice-to-Have
+
+Consistent UI improves velocity. It reduces repeated decisions, QA noise, and onboarding time for contributors.
+
+## Final Checklist for Solo Builders
+
+Before you consider your UI system stable, confirm:
+
+- Tokens exist for color, spacing, type, radius, and shadow
+- Top primitives use tokens only
+- High-frequency page patterns are extracted
+- Usage rules are documented in one internal page
+- PR checks catch hardcoded visual values
+
+You do not need a big design team to ship coherent product UI. You need a small, enforced 디자인 시스템 and disciplined defaults.
+
+For solo developers and indie hackers, that is the fastest path to a product that feels intentional from first visit to power-user workflows.
