@@ -49,7 +49,7 @@ export function BetaBanner() {
             rel="noopener noreferrer"
             className="shrink-0 inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-full bg-white text-[var(--atomic-color-brand-500)] hover:bg-white/90 transition-colors shadow-sm"
           >
-            Try Beta Free →
+            Start Free Trial →
           </Link>
           <button
             onClick={handleDismiss}

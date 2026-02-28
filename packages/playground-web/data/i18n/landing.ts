@@ -59,7 +59,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       pricing: 'Pricing',
       docs: 'Docs',
       tryStudio: 'Try Explore',
-      getStarted: 'Sign up',
+      getStarted: 'Start Free Trial',
     },
     hero: {
       brandName: 'framingui',
@@ -71,7 +71,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
         'framingui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
       buttons: {
         tryStudio: 'Try Explore Free',
-        getStarted: 'Sign up',
+        getStarted: 'Start Free Trial',
       },
     },
     mainImage: {
