@@ -180,10 +180,10 @@ importers:
         specifier: ^7.28.6
         version: 7.28.6
       '@framingui/core':
-        specifier: workspace:*
+        specifier: ^0.4.0
         version: link:../core
       '@framingui/ui':
-        specifier: workspace:*
+        specifier: ^0.6.0
         version: link:../ui
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
