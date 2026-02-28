@@ -66,36 +66,18 @@ export function getScreenshotUrl(templateId: string, filename: string): string {
 const SHARED_HOW_TO_USE = [
   {
     step: 1,
-    title: 'Install Tekton Design System',
-    titleKo: 'Tekton 디자인 시스템 설치',
-    description: 'Install the FramingUI package using pnpm in your project.',
-    descriptionKo: '프로젝트에 pnpm을 사용하여 FramingUI 패키지를 설치합니다.',
-    code: 'pnpm add @framingui/ui @framingui/tokens',
+    title: 'Install MCP Server',
+    titleKo: 'MCP 서버 설치',
+    description: 'Add the FramingUI MCP server to Claude Code with one command.',
+    descriptionKo: '단 한 줄의 명령어로 FramingUI MCP 서버를 Claude Code에 추가합니다.',
+    code: 'npx @framingui/mcp-server init',
   },
   {
     step: 2,
-    title: 'Configure Theme Tokens',
-    titleKo: '테마 토큰 설정',
-    description: 'Import and apply the theme tokens in your application root or layout file.',
-    descriptionKo: '애플리케이션 루트 또는 레이아웃 파일에서 테마 토큰을 가져와 적용합니다.',
-    code: 'import "@framingui/tokens/themes/[theme-id].css";\n// Replace [theme-id] with: square-minimalism, neutral-workspace, etc.',
-  },
-  {
-    step: 3,
-    title: 'Import Components',
-    titleKo: '컴포넌트 가져오기',
-    description: 'Import and use Tekton components in your React application.',
-    descriptionKo: 'React 애플리케이션에서 Tekton 컴포넌트를 가져와 사용합니다.',
-    code: 'import { Button, Card, Input } from "@framingui/ui";\n\nexport default function App() {\n  return <Button>Get Started</Button>;\n}',
-  },
-  {
-    step: 4,
-    title: 'Customize with CSS Variables',
-    titleKo: 'CSS 변수로 커스터마이징',
-    description:
-      'Override theme variables in your global CSS to customize colors, spacing, and more.',
-    descriptionKo: '글로벌 CSS에서 테마 변수를 재정의하여 색상, 간격 등을 커스터마이징합니다.',
-    code: ':root {\n  --tekton-bg-canvas: #ffffff;\n  --tekton-text-primary: #000000;\n  /* Override other variables as needed */\n}',
+    title: 'Log in & Authenticate',
+    titleKo: '로그인 & 인증',
+    description: 'Open Claude Code and authenticate to unlock your licensed themes.',
+    descriptionKo: 'Claude Code를 열고 인증하여 라이선스 테마를 활성화하세요.',
   },
 ];
 
@@ -223,22 +205,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: square-minimalism, layout: sidebar-left, components: Card, Button, Input"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: square-minimalism, layout: sidebar-left, components: Card, Button, Input"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"square-minimalism 테마로 사이드바 대시보드 만들어줘"',
       },
     ],
   },
@@ -324,13 +296,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: editorial-tech, layout: feed, components: Card, Heading, Article"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: editorial-tech, layout: feed, components: Card, Heading, Article"',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"editorial-tech 테마로 아티클 피드 페이지 만들어줘"',
       },
     ],
   },
@@ -454,22 +425,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: dark-boldness, layout: dashboard, components: Card, Progress, Chart"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: dark-boldness, layout: dashboard, components: Card, Progress, Chart"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"dark-boldness 테마로 피트니스 대시보드 만들어줘"',
       },
     ],
   },
@@ -593,22 +554,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: pebble, layout: centered, components: Card, Avatar, Button"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: pebble, layout: centered, components: Card, Avatar, Button"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"pebble 테마로 카드 레이아웃 화면 만들어줘"',
       },
     ],
   },
@@ -732,22 +683,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: classic-magazine, layout: article, components: Heading, Paragraph, Image"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: classic-magazine, layout: article, components: Heading, Paragraph, Image"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"classic-magazine 테마로 매거진 아티클 페이지 만들어줘"',
       },
     ],
   },
@@ -871,22 +812,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: neutral-workspace, layout: form, components: Input, Label, Button"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: neutral-workspace, layout: form, components: Input, Label, Button"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"neutral-workspace 테마로 워크스페이스 대시보드 만들어줘"',
       },
     ],
   },
@@ -1010,22 +941,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: minimal-workspace, layout: sidebar-left, components: Editor, Sidebar, Toolbar"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: minimal-workspace, layout: sidebar-left, components: Editor, Sidebar, Toolbar"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"minimal-workspace 테마로 에디터 사이드바 레이아웃 만들어줘"',
       },
     ],
   },
@@ -1149,22 +1070,12 @@ export const TEMPLATES: Record<string, TemplateData> = {
     howToUse: [
       ...SHARED_HOW_TO_USE,
       {
-        step: 5,
-        title: 'Use generate-blueprint Tool',
-        titleKo: 'generate-blueprint 툴 사용',
-        description:
-          'In Claude Code, request: "Use generate-blueprint tool with themeId: bold-line, layout: dashboard, components: Card, Table, Chart, Badge"',
-        descriptionKo:
-          'Claude Code에서 다음과 같이 요청하세요: "Use generate-blueprint tool with themeId: bold-line, layout: dashboard, components: Card, Table, Chart, Badge"',
-      },
-      {
-        step: 6,
-        title: 'Preview and Export Code',
-        titleKo: '미리보기 및 코드 내보내기',
-        description:
-          'Review the result at the generated previewUrl, then export TSX code to your project using the export-screen tool.',
-        descriptionKo:
-          '생성된 previewUrl에서 결과를 확인한 후, export-screen 툴로 TSX 코드를 프로젝트에 내보냅니다.',
+        step: 3,
+        title: 'Ask Claude to Build Your Screen',
+        titleKo: 'Claude에게 화면 만들어 달라고 요청',
+        description: 'Just describe what you need. FramingUI handles the rest.',
+        descriptionKo: '원하는 화면을 말하기만 하면 됩니다. 나머지는 FramingUI가 처리해요.',
+        code: '"bold-line 테마로 대시보드 만들어줘"',
       },
     ],
   },
