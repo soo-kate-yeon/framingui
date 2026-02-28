@@ -1,0 +1,56 @@
+{
+  "studio": {
+    "landing": {
+      "hero": {
+        "openDemo": "デモを見る",
+        "buyNow": "今すぐ購入",
+        "tryFree": "無料で試す"
+      },
+      "topNav": {
+        "features": "機能",
+        "pricing": "料金",
+        "docs": "ドキュメント",
+        "signIn": "ログイン"
+      },
+      "pricing": {
+        "title": "シンプルでわかりやすい料金",
+        "description": "用途に合うプランを選択してください",
+        "perMonth": "/月",
+        "perYear": "/年",
+        "getStarted": "始める",
+        "mostPopular": "人気プラン"
+      },
+      "component": {
+        "title": "コンポーネント概要"
+      },
+      "codeBlock": {
+        "copy": "コピー",
+        "copied": "コピーしました"
+      }
+    }
+  },
+  "explore": {
+    "topBanner": {
+      "eyebrow": "Explore · デザインシステム",
+      "message": "3日間の無料トライアルを開始",
+      "cta": "無料トライアルを開始",
+      "dismissAriaLabel": "無料トライアルバナーを閉じる"
+    }
+  },
+  "common": {
+    "learnMore": "詳しく見る"
+  },
+  "blog": {
+    "title": "ブログ",
+    "latestPosts": "最新記事",
+    "description": "AI開発、デザインシステム、モダンWebエンジニアリングに関するインサイト。",
+    "readMore": "続きを読む",
+    "minRead": "分で読めます",
+    "relatedPosts": "関連記事",
+    "noPosts": "記事が見つかりません。",
+    "share": "共有",
+    "onThisPage": "目次",
+    "allPosts": "すべての記事",
+    "taggedWith": "タグ"
+  }
+}

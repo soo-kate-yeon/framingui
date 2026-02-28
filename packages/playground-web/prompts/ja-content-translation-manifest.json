@@ -1,0 +1,226 @@
+[
+  {
+    "scope": "legal",
+    "source_file": "docs/legal/en/privacy-policy.md",
+    "output_suggestion": "docs/legal/ja/privacy-policy.md",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/docs__legal__en__privacy-policy.md.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "legal",
+    "source_file": "docs/legal/en/refund-policy.md",
+    "output_suggestion": "docs/legal/ja/refund-policy.md",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/docs__legal__en__refund-policy.md.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "legal",
+    "source_file": "docs/legal/en/terms-of-service.md",
+    "output_suggestion": "docs/legal/ja/terms-of-service.md",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/docs__legal__en__terms-of-service.md.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/en/components/button.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/components/button.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__en__components__button.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/en/components/card.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/components/card.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__en__components__card.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/en/components/input.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/components/input.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__en__components__input.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/en/guides/mcp-setup.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/guides/mcp-setup.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__en__guides__mcp-setup.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/en/guides/theming.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/guides/theming.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__en__guides__theming.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/ko/installation.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/installation.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__ko__installation.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "docs",
+    "source_file": "packages/playground-web/content/docs/ko/quick-start.mdx",
+    "output_suggestion": "packages/playground-web/content/docs/ja/quick-start.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__docs__ko__quick-start.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/ai-design-workflow-guide/en.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ai-design-workflow-guide/ja.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__ai-design-workflow-guide__en.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/design-tokens-best-practices/en.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/design-tokens-best-practices/ja.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__design-tokens-best-practices__en.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/ai-code-generation-design-tokens.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/ai-code-generation-design-tokens.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__ai-code-generation-design-tokens.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/building-consistent-ui-with-claude.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/building-consistent-ui-with-claude.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__building-consistent-ui-with-claude.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/cursor-design-tokens-setup.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/cursor-design-tokens-setup.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__cursor-design-tokens-setup.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/cursor-vs-claude-code-comparison.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/cursor-vs-claude-code-comparison.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__cursor-vs-claude-code-comparison.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/dashboard-ui-template-ai.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/dashboard-ui-template-ai.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__dashboard-ui-template-ai.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/design-system-for-indie-hackers.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/design-system-for-indie-hackers.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__design-system-for-indie-hackers.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/design-tokens-for-ai-code-generation.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/design-tokens-for-ai-code-generation.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__design-tokens-for-ai-code-generation.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/getting-started-with-tekton.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/getting-started-with-tekton.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__getting-started-with-tekton.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/how-to-build-consistent-ui-without-designer.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/how-to-build-consistent-ui-without-designer.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__how-to-build-consistent-ui-without-designer.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/login-form-design-system.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/login-form-design-system.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__login-form-design-system.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/mcp-design-system-integration.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/mcp-design-system-integration.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__mcp-design-system-integration.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/shadcn-ui-ai-missing-piece.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/shadcn-ui-ai-missing-piece.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__shadcn-ui-ai-missing-piece.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/shadcn-vs-framingui-which-to-choose.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/shadcn-vs-framingui-which-to-choose.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__shadcn-vs-framingui-which-to-choose.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/solo-developer-design-system-guide.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/solo-developer-design-system-guide.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__solo-developer-design-system-guide.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/v0-vs-tekton-comparison.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/v0-vs-tekton-comparison.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__v0-vs-tekton-comparison.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/what-is-agentic-design-system.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/what-is-agentic-design-system.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__what-is-agentic-design-system.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/en/why-ai-generated-ui-looks-generic.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/ja/why-ai-generated-ui-looks-generic.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__en__why-ai-generated-ui-looks-generic.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/figma-to-code-automation/en.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/figma-to-code-automation/ja.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__figma-to-code-automation__en.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/mcp-advanced-integration/en.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/mcp-advanced-integration/ja.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__mcp-advanced-integration__en.mdx.prompt.md",
+    "status": "PENDING"
+  },
+  {
+    "scope": "blog",
+    "source_file": "packages/playground-web/content/blog/oklch-color-system-guide/en.mdx",
+    "output_suggestion": "packages/playground-web/content/blog/oklch-color-system-guide/ja.mdx",
+    "prompt_file": "packages/playground-web/prompts/ja-content-batches/packages__playground-web__content__blog__oklch-color-system-guide__en.mdx.prompt.md",
+    "status": "PENDING"
+  }
+]
