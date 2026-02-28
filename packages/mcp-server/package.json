@@ -34,7 +34,7 @@
     "directory": "packages/mcp-server"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "tsc --watch",
     "test": "vitest run",
     "test:watch": "vitest",
