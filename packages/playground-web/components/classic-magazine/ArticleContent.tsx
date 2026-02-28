@@ -5,28 +5,21 @@
  */
 
 import type { ContentSection } from '@/lib/data/articles';
+import { createHeadingIdFactory } from '@/lib/heading';
 
 export interface ArticleContentProps {
   content: ContentSection[];
 }
 
-/**
- * 문자열을 URL-safe한 slug로 변환
- */
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
 export function ArticleContent({ content }: ArticleContentProps) {
+  const nextHeadingId = createHeadingIdFactory();
+
   return (
     <div className="article-content max-w-3xl">
       {content.map((section, index) => {
         switch (section.type) {
           case 'heading': {
-            const headingId = slugify(section.content);
+            const headingId = nextHeadingId(section.content);
             const HeadingTag = section.level === 2 ? 'h2' : 'h3';
             const headingClass =
               section.level === 2

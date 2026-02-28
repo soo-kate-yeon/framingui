@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import type { ContentSection } from '@/lib/data/articles';
+import { createHeadingIdFactory } from '@/lib/heading';
 
 export interface ReadingProgressProps {
   articleTitle: string;
@@ -19,16 +20,6 @@ interface TocItem {
   id: string;
   text: string;
   level: 'h2' | 'h3';
-}
-
-/**
- * 문자열을 URL-safe한 slug로 변환
- */
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 export function ReadingProgress({ articleTitle, content }: ReadingProgressProps) {
@@ -80,9 +71,10 @@ export function ReadingProgress({ articleTitle, content }: ReadingProgressProps)
       return;
     }
 
+    const nextHeadingId = createHeadingIdFactory();
     const headings = articleContent.querySelectorAll('h2, h3');
     const toc: TocItem[] = Array.from(headings).map((heading) => ({
-      id: heading.id,
+      id: heading.id || nextHeadingId(heading.textContent || ''),
       text: heading.textContent || '',
       level: heading.tagName.toLowerCase() as 'h2' | 'h3',
     }));

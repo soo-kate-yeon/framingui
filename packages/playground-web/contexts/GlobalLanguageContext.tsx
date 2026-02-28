@@ -36,7 +36,7 @@ export function GlobalLanguageProvider({ children }: { children: ReactNode }) {
   }, [locale]);
 
   const toggleLocale = () => {
-    setLocale((prev) => (prev === 'en' ? 'ko' : 'en'));
+    setLocale((prev) => (prev === 'en' ? 'ko' : prev === 'ko' ? 'ja' : 'en'));
   };
 
   return (

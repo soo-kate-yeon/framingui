@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
   // Workspace 패키지 transpile
   // Note: @framingui/ui는 이미 'use client' 지시어가 포함된 pre-built ESM 번들을 제공하므로 제외
   transpilePackages: ['@framingui/core'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
+  },
   webpack: (config) => {
     // pnpm symlink를 따라가지 않고 package.json exports 사용
     config.resolve.symlinks = false;
