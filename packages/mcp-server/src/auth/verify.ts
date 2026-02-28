@@ -4,6 +4,7 @@
  */
 
 import { info, error as logError } from '../utils/logger.js';
+import { resolveFraminguiApiUrl } from '../utils/api-url.js';
 
 export interface VerifyResponse {
   valid: boolean;
@@ -32,7 +33,10 @@ export interface VerifyResponse {
  * @returns VerifyResponse with user data and licenses
  */
 export async function verifyApiKey(apiKey: string): Promise<VerifyResponse> {
-  const apiUrl = process.env.FRAMINGUI_API_URL || 'https://framingui.com';
+  const { apiUrl, reason } = resolveFraminguiApiUrl(process.env.FRAMINGUI_API_URL);
+  if (reason) {
+    info(reason);
+  }
   const endpoint = `${apiUrl}/api/mcp/verify`;
 
   try {

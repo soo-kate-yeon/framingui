@@ -6,6 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
+import { resolveFraminguiApiUrl } from '../utils/api-url.js';
 
 export interface FraminguiCredentials {
   api_key: string;
@@ -41,7 +42,26 @@ export function loadCredentials(): FraminguiCredentials | null {
         continue;
       }
 
-      return data;
+      const { apiUrl, wasNormalized, reason } = resolveFraminguiApiUrl(data.api_url);
+      const normalizedCredentials: FraminguiCredentials = {
+        ...data,
+        api_url: apiUrl,
+      };
+
+      if (wasNormalized) {
+        if (reason) {
+          console.warn(`[framingui-mcp] ${reason}`);
+        }
+
+        // 레거시/비정상 URL은 로드 시점에 즉시 정리해 재발을 방지
+        try {
+          saveCredentials(normalizedCredentials);
+        } catch {
+          // 마이그레이션 저장 실패는 치명적이지 않으므로 무시
+        }
+      }
+
+      return normalizedCredentials;
     } catch {
       continue;
     }

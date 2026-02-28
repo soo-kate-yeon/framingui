@@ -7,9 +7,9 @@ import http from 'node:http';
 import crypto from 'node:crypto';
 import { exec } from 'node:child_process';
 import { saveCredentials } from './credentials.js';
+import { resolveFraminguiApiUrl } from '../utils/api-url.js';
 
 const LOGIN_TIMEOUT_MS = 5 * 60 * 1000; // 5분
-const DEFAULT_API_URL = 'https://framingui.com';
 
 /**
  * 플랫폼별 브라우저 열기
@@ -38,7 +38,10 @@ function openBrowser(url: string): void {
  * OAuth 로그인 플로우 실행
  */
 export async function loginCommand(): Promise<void> {
-  const apiUrl = process.env.FRAMINGUI_API_URL || DEFAULT_API_URL;
+  const { apiUrl, reason } = resolveFraminguiApiUrl(process.env.FRAMINGUI_API_URL);
+  if (reason) {
+    console.warn(`[framingui-mcp] ${reason}`);
+  }
 
   // 1. CSRF state 생성
   const state = crypto.randomBytes(32).toString('hex');
