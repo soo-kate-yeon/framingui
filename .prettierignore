@@ -9,6 +9,7 @@ storybook-static
 playwright-report
 test-results
 .next
+.mcp.json
 
 # TypeScript build artifacts (root level)
 src/**/*.js

@@ -32,7 +32,11 @@ const TAILWIND_CONFIG_FILES = [
  * standalone: node_modules/@framingui/ui/
  * 직접 참조: @framingui/ui
  */
-const UI_CONTENT_PATTERNS = [/packages\/ui\/src\//, /node_modules\/@framingui\/ui\//, /@framingui\/ui/];
+const UI_CONTENT_PATTERNS = [
+  /packages\/ui\/src\//,
+  /node_modules\/@framingui\/ui\//,
+  /@framingui\/ui/,
+];
 
 /**
  * tailwindcss-animate 플러그인 패턴

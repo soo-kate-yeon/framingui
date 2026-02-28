@@ -68,17 +68,18 @@ export async function whoamiTool(): Promise<WhoamiOutput> {
     if (trialLicense) {
       isTrial = true;
       trialExpiresAt = trialLicense.expiresAt || null;
-      
+
       if (trialExpiresAt) {
         const now = new Date();
         const expiryDate = new Date(trialExpiresAt);
         const diffMs = expiryDate.getTime() - now.getTime();
         trialDaysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-        
+
         if (trialDaysLeft > 0) {
           trialMessage = `You have ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left in your free trial.`;
         } else {
-          trialMessage = 'Your free trial has expired. Upgrade to continue using premium themes: https://framingui.com/pricing';
+          trialMessage =
+            'Your free trial has expired. Upgrade to continue using premium themes: https://framingui.com/pricing';
         }
       }
     }
