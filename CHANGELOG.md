@@ -5,6 +5,16 @@ All notable changes to the Tekton project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.3] - 2026-02-28
+
+### Fixed
+
+- **@framingui/mcp-server**: MCP 로그인 API URL 정규화 및 레거시 도메인 자동 마이그레이션
+  - `tekton-ui.com` / `www.tekton-ui.com` 감지 시 `https://framingui.com`으로 자동 치환
+  - 잘못된 `FRAMINGUI_API_URL` 또는 credentials의 URL이 들어와도 기본 URL로 안전하게 fallback
+  - path/query가 포함된 URL은 origin만 사용하도록 정규화하여 콜백/verify 경로 오동작 방지
+- **playground-web**: `.env.example`의 `NEXT_PUBLIC_APP_URL` 기본값을 `https://framingui.com`으로 정정
+
 ## [0.6.1] - 2026-02-28
 
 ### Fixed
