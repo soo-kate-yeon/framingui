@@ -1,6 +1,6 @@
 {
   "name": "@framingui/ui",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "FramingUI Reference Component Library",
   "main": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -48,7 +48,7 @@
     "accessibility"
   ],
   "dependencies": {
-    "@framingui/tokens": "workspace:*"
+    "@framingui/tokens": "^0.3.3"
   },
   "peerDependencies": {
     "@hookform/resolvers": "^3.0.0",

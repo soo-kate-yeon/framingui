@@ -612,7 +612,7 @@ importers:
   packages/ui:
     dependencies:
       '@framingui/tokens':
-        specifier: workspace:*
+        specifier: ^0.3.3
         version: link:../tokens
       react:
         specifier: ^18.0.0 || ^19.0.0

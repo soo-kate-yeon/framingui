@@ -5,6 +5,14 @@ All notable changes to the Tekton project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-02-28
+
+### Fixed
+
+- **@framingui/ui**: npm 배포 패키지의 내부 의존성 스펙 수정
+  - `@framingui/tokens` 의존성을 `workspace:*`에서 `^0.3.3`으로 변경
+  - 외부 프로젝트에서 `@framingui/ui` 설치 시 발생하던 `workspace:*` 해석 오류 해결
+
 ## [0.3.3] - 2026-02-10
 
 ### Fixed
