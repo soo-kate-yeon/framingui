@@ -1,0 +1,88 @@
+---
+title: "Input"
+description: "Input 컴포넌트 Props, 사용 예제, 유효성 검사 패턴"
+---
+
+# Input
+
+`Input`은 FramingUI 디자인 시스템에서 텍스트 입력을 담당하는 기본 폼 컴포넌트다. HTML input 속성을 그대로 사용할 수 있다.
+
+## Import
+
+```tsx
+import { Input } from '@framingui/ui';
+```
+
+## Props
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `type` | `string` | 브라우저 기본값(`text`) | 입력 타입 (`email`, `password`, `number` 등) |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `disabled` | `boolean` | `false` | 비활성화 상태 |
+| `required` | `boolean` | `false` | 필수 입력 필드 |
+| `aria-invalid` | `boolean \| 'true' \| 'false'` | `false` | 접근성용 오류 상태 |
+| `aria-describedby` | `string` | `undefined` | 도움말/오류 텍스트 연결 |
+| `...props` | `React.InputHTMLAttributes<HTMLInputElement>` | - | 기본 input 속성 |
+
+## 사용 예제
+
+```tsx
+import { Input, Label } from '@framingui/ui';
+
+export function InputExamples() {
+  return (
+    <div className="grid gap-4 max-w-sm">
+      <div className="grid gap-2">
+        <Label htmlFor="email">이메일</Label>
+        <Input id="email" type="email" placeholder="you@company.com" />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="password">비밀번호</Label>
+        <Input id="password" type="password" placeholder="••••••••" />
+      </div>
+
+      <Input type="search" placeholder="검색" />
+    </div>
+  );
+}
+```
+
+## 유효성 검사 예제
+
+```tsx
+import { useState } from 'react';
+import { Input, Label } from '@framingui/ui';
+
+export function EmailField() {
+  const [email, setEmail] = useState('');
+  const isInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  return (
+    <div className="grid gap-2 max-w-sm">
+      <Label htmlFor="signup-email">회사 이메일</Label>
+      <Input
+        id="signup-email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        aria-invalid={isInvalid}
+        aria-describedby={isInvalid ? 'signup-email-error' : undefined}
+        className={isInvalid ? 'border-[var(--tekton-bg-destructive)]' : undefined}
+      />
+      {isInvalid && (
+        <p id="signup-email-error" className="text-sm text-[var(--tekton-bg-destructive)]">
+          올바른 이메일 형식을 입력해 주세요.
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+## 사용 팁
+
+- 입력 필드는 `Label`과 함께 쓰는 것을 기본으로 한다.
+- `email`, `tel`, `url` 같은 시맨틱 타입을 우선 사용한다.
+- 오류 메시지가 있을 때는 `aria-invalid`, `aria-describedby`를 같이 설정한다.

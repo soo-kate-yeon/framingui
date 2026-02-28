@@ -1,0 +1,88 @@
+---
+title: "Input"
+description: "Input component API, form usage, and validation patterns"
+---
+
+# Input
+
+`Input` is the base text field in the FramingUI design system. It supports all native HTML input attributes.
+
+## Import
+
+```tsx
+import { Input } from '@framingui/ui';
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `type` | `string` | browser default (`text`) | Input type (`email`, `password`, `number`, etc.) |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `required` | `boolean` | `false` | Required field |
+| `aria-invalid` | `boolean \| 'true' \| 'false'` | `false` | Validation state for assistive tech |
+| `aria-describedby` | `string` | `undefined` | Link helper/error text |
+| `...props` | `React.InputHTMLAttributes<HTMLInputElement>` | - | Native input attributes |
+
+## Usage Examples
+
+```tsx
+import { Input, Label } from '@framingui/ui';
+
+export function InputExamples() {
+  return (
+    <div className="grid gap-4 max-w-sm">
+      <div className="grid gap-2">
+        <Label htmlFor="email">Email</Label>
+        <Input id="email" type="email" placeholder="you@company.com" />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="password">Password</Label>
+        <Input id="password" type="password" placeholder="••••••••" />
+      </div>
+
+      <Input type="search" placeholder="Search" />
+    </div>
+  );
+}
+```
+
+## Validation Example
+
+```tsx
+import { useState } from 'react';
+import { Input, Label } from '@framingui/ui';
+
+export function EmailField() {
+  const [email, setEmail] = useState('');
+  const isInvalid = email.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  return (
+    <div className="grid gap-2 max-w-sm">
+      <Label htmlFor="signup-email">Work email</Label>
+      <Input
+        id="signup-email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        aria-invalid={isInvalid}
+        aria-describedby={isInvalid ? 'signup-email-error' : undefined}
+        className={isInvalid ? 'border-[var(--tekton-bg-destructive)]' : undefined}
+      />
+      {isInvalid && (
+        <p id="signup-email-error" className="text-sm text-[var(--tekton-bg-destructive)]">
+          Enter a valid email address.
+        </p>
+      )}
+    </div>
+  );
+}
+```
+
+## Notes
+
+- Always pair input fields with labels.
+- Prefer semantic types (`email`, `tel`, `url`) for better browser and mobile behavior.
+- Use `aria-invalid` and `aria-describedby` for accessible validation states.

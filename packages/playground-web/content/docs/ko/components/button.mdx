@@ -1,0 +1,77 @@
+---
+title: "Button"
+description: "Button 컴포넌트 Props, variants, 실전 사용 예제"
+---
+
+# Button
+
+`Button`은 FramingUI 디자인 시스템에서 가장 기본이 되는 액션 컴포넌트다.
+
+## Import
+
+```tsx
+import { Button } from '@framingui/ui';
+```
+
+## Props
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `variant` | `'default' \| 'destructive' \| 'outline' \| 'secondary' \| 'ghost' \| 'link'` | `'default'` | 버튼 스타일 |
+| `size` | `'default' \| 'sm' \| 'lg' \| 'icon'` | `'default'` | 버튼 크기 |
+| `asChild` | `boolean` | `false` | Radix Slot으로 자식 엘리먼트 렌더링 |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `disabled` | `boolean` | `false` | 비활성화 상태 |
+| `...props` | `React.ButtonHTMLAttributes<HTMLButtonElement>` | - | 기본 button 속성 |
+
+## Variants 설명
+
+- `default`: 주요 행동
+- `destructive`: 삭제처럼 되돌리기 어려운 행동
+- `outline`: 강조도 낮은 보조 행동
+- `secondary`: 보조 채움 버튼
+- `ghost`: 밀도 높은 UI에서 가벼운 행동
+- `link`: 본문 내 텍스트 CTA
+
+## 사용 예제
+
+```tsx
+import { Button } from '@framingui/ui';
+
+export function ButtonExamples() {
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button>저장</Button>
+      <Button variant="destructive">삭제</Button>
+      <Button variant="outline">취소</Button>
+      <Button variant="secondary">뒤로</Button>
+      <Button variant="ghost">더보기</Button>
+      <Button variant="link">자세히 보기</Button>
+      <Button size="sm">작게</Button>
+      <Button size="lg">크게</Button>
+      <Button size="icon" aria-label="메뉴 열기">☰</Button>
+    </div>
+  );
+}
+```
+
+### `asChild` 조합 패턴
+
+```tsx
+import Link from 'next/link';
+import { Button } from '@framingui/ui';
+
+export function LinkButton() {
+  return (
+    <Button asChild variant="outline">
+      <Link href="/pricing">요금제 보기</Link>
+    </Button>
+  );
+}
+```
+
+## 사용 팁
+
+- 폼에서는 `type="submit"`를 명시하는 편이 안전하다.
+- 아이콘 전용 버튼은 `aria-label`을 꼭 넣는다.
+- 한 섹션에는 주 버튼을 1개만 두는 게 보통 가장 읽기 쉽다.

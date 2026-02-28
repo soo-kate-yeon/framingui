@@ -1,0 +1,94 @@
+---
+title: "Card"
+description: "Card 컴포넌트 Props와 CardHeader/CardContent/CardFooter 구성 가이드"
+---
+
+# Card
+
+`Card`는 FramingUI 디자인 시스템에서 관련 정보를 한 묶음으로 보여줄 때 쓰는 컨테이너 컴포넌트다.
+
+## Import
+
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Card
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `children` | `React.ReactNode` | `undefined` | 카드 내용 |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | 기본 div 속성 |
+
+### CardHeader / CardContent / CardFooter
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 간격/정렬 커스터마이징 |
+| `children` | `React.ReactNode` | `undefined` | 섹션 내용 |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | 기본 div 속성 |
+
+### CardTitle / CardDescription
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 텍스트 스타일 조정 |
+| `children` | `React.ReactNode` | `undefined` | 텍스트 내용 |
+| `...props` | `React.HTMLAttributes<...>` | - | heading/paragraph 속성 |
+
+## 사용 예제
+
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Input,
+  Label,
+} from '@framingui/ui';
+
+export function ProfileCard() {
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>프로필 수정</CardTitle>
+        <CardDescription>계정 정보를 업데이트하세요.</CardDescription>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">이름</Label>
+          <Input id="name" placeholder="홍길동" />
+        </div>
+      </CardContent>
+
+      <CardFooter className="justify-end gap-2">
+        <Button variant="outline">취소</Button>
+        <Button>저장</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+## 섹션 역할
+
+- `CardHeader`: 제목/설명 영역
+- `CardContent`: 본문 영역
+- `CardFooter`: 액션 버튼이나 상태 표시 영역
+
+이 구조를 일관되게 쓰면 화면 전반의 정보 위계가 안정적으로 유지된다.

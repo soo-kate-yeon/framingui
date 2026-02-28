@@ -1,0 +1,94 @@
+---
+title: "Card"
+description: "Card component structure, sub-components, and usage patterns"
+---
+
+# Card
+
+`Card` is a container component in the FramingUI design system for grouping related content and actions.
+
+## Import
+
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Card
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `children` | `React.ReactNode` | `undefined` | Card body |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Native div attributes |
+
+### CardHeader / CardContent / CardFooter
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Layout and spacing control |
+| `children` | `React.ReactNode` | `undefined` | Section content |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Native div attributes |
+
+### CardTitle / CardDescription
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Typography customization |
+| `children` | `React.ReactNode` | `undefined` | Text content |
+| `...props` | `React.HTMLAttributes<...>` | - | Native heading/paragraph attributes |
+
+## Usage Example
+
+```tsx
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Button,
+  Input,
+  Label,
+} from '@framingui/ui';
+
+export function ProfileCard() {
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Edit Profile</CardTitle>
+        <CardDescription>Update your account details.</CardDescription>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" placeholder="Jane Doe" />
+        </div>
+      </CardContent>
+
+      <CardFooter className="justify-end gap-2">
+        <Button variant="outline">Cancel</Button>
+        <Button>Save</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+## Sub-component Roles
+
+- `CardHeader`: title/description area.
+- `CardContent`: main content section.
+- `CardFooter`: actions and status row.
+
+Keep this structure consistent for predictable layouts.

@@ -1,0 +1,97 @@
+---
+title: "테마 설정"
+description: "FramingUI 테마 7종 소개, 토큰 커스터마이징, 다크모드 적용 방법"
+---
+
+# 테마 설정
+
+FramingUI는 토큰 중심 디자인 시스템이다. 기본 테마를 고른 다음, 필요한 토큰만 덮어써서 빠르게 브랜드 스타일을 맞추면 된다.
+
+## 기본 테마 7종
+
+| 테마 ID | 추천 용도 |
+| --- | --- |
+| `classic-magazine` | 콘텐츠 중심 서비스, 에디토리얼 레이아웃 |
+| `editorial-tech` | 문서/지식형 제품 |
+| `dark-boldness` | 대비가 강한 다크 대시보드 |
+| `minimal-workspace` | 집중형 생산성 인터페이스 |
+| `neutral-workspace` | 균형 잡힌 업무용 화면 |
+| `pebble` | 부드럽고 친근한 소비자 UI |
+| `square-minimalism` | 각진 인상의 밀도 높은 업무 UI |
+
+## 테마 적용
+
+앱 루트에서 테마 CSS를 import 한다.
+
+```tsx
+// app/layout.tsx (Next.js)
+import '@framingui/tokens/themes/square-minimalism.css';
+import '@framingui/ui/styles';
+```
+
+## 토큰 수정 방법
+
+전역 CSS에서 `--tekton-*` 변수를 오버라이드하면 된다.
+
+```css
+/* app/globals.css */
+:root {
+  --tekton-bg-primary: oklch(0.56 0.18 257);
+  --tekton-bg-primary-foreground: oklch(0.98 0 0);
+  --tekton-radius-lg: 14px;
+  --tekton-spacing-4: 1rem;
+}
+```
+
+특정 영역만 다르게 보이게 하려면 범위를 좁혀서 오버라이드한다.
+
+```css
+.pricing-surface {
+  --tekton-bg-card: oklch(0.99 0.01 250);
+  --tekton-border-default: oklch(0.88 0.02 250);
+}
+```
+
+## 다크모드 설정
+
+가장 단순한 방법은 `.dark` 클래스로 토큰 값을 교체하는 방식이다.
+
+```css
+:root {
+  --tekton-bg-background: oklch(1 0 0);
+  --tekton-bg-foreground: oklch(0.2 0 0);
+}
+
+.dark {
+  --tekton-bg-background: oklch(0.16 0.01 260);
+  --tekton-bg-foreground: oklch(0.96 0.01 260);
+  --tekton-bg-card: oklch(0.2 0.01 260);
+  --tekton-border-default: oklch(0.32 0.01 260);
+}
+```
+
+```tsx
+// app/providers.tsx
+import { useEffect, useState } from 'react';
+
+export function ThemeModeToggle() {
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', dark);
+  }, [dark]);
+
+  return (
+    <button onClick={() => setDark(v => !v)}>
+      {dark ? '라이트 모드로 전환' : '다크 모드로 전환'}
+    </button>
+  );
+}
+```
+
+## 추천 순서
+
+1. 제품 성격에 가장 가까운 기본 테마를 고른다.
+2. 브랜드 컬러/타이포 토큰부터 먼저 맞춘다.
+3. 라이트/다크 모두에서 대비를 점검한다.
+4. 컴포넌트 코드는 건드리지 않고 토큰으로 스타일을 제어한다.

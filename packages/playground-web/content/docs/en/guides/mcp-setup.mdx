@@ -1,0 +1,89 @@
+---
+title: "MCP Setup"
+description: "Connect FramingUI MCP server to Claude, Cursor, and Windsurf with command reference and troubleshooting"
+---
+
+# MCP Setup
+
+Use FramingUI MCP to let your AI tool understand your design system tokens, themes, and component APIs.
+
+## 1) Quick Setup
+
+```bash
+npx @framingui/mcp-server init
+```
+
+This command configures dependencies, updates Tailwind setup, adds `@framingui/ui/styles`, and creates `.mcp.json`.
+
+## 2) Connect Claude, Cursor, Windsurf
+
+All three tools can read project-level `.mcp.json`.
+
+```json
+{
+  "mcpServers": {
+    "tekton": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server"]
+    }
+  }
+}
+```
+
+### Claude Code
+
+1. Run `npx @framingui/mcp-server init` in project root.
+2. Restart Claude Code.
+3. Ask: "List available FramingUI themes."
+
+### Cursor
+
+1. Confirm `.mcp.json` exists in the workspace root.
+2. Restart Cursor (or reload window).
+3. Ask for a token-based UI task and verify MCP tools appear.
+
+### Windsurf
+
+1. Keep `.mcp.json` at project root.
+2. Restart Windsurf.
+3. Verify by asking for theme list or component list.
+
+## 3) `framingui-mcp` Commands
+
+| Command | What It Does |
+| --- | --- |
+| `npx @framingui/mcp-server init` | Project bootstrap for MCP + design system setup |
+| `framingui-mcp` | Start MCP server over stdio |
+| `framingui-mcp login` | Authenticate in browser |
+| `framingui-mcp logout` | Remove local auth session |
+| `framingui-mcp status` | Check current auth state |
+
+## 4) Troubleshooting
+
+### MCP server is not detected
+
+- Check `.mcp.json` is in the project root.
+- Confirm JSON syntax is valid.
+- Restart the AI tool after changing config.
+
+### Command not found: `framingui-mcp`
+
+Use `npx` first, or install dependencies in the project.
+
+```bash
+npx @framingui/mcp-server init
+npx @framingui/mcp-server
+```
+
+### Authentication fails
+
+- Run `framingui-mcp login` again.
+- Check status with `framingui-mcp status`.
+- Make sure browser login was fully completed.
+
+### Styles look broken after setup
+
+- Ensure `@framingui/ui/styles` exists in global CSS.
+- Ensure Tailwind `content` includes `@framingui/ui` path.
+- Restart dev server after configuration changes.

@@ -1,0 +1,82 @@
+---
+title: "설치"
+description: "npm, pnpm, yarn으로 framingui 패키지를 설치하는 방법"
+---
+
+# 설치
+
+좋아하는 패키지 매니저로 설치하면 된다. 핵심은 빠르게 붙이고 바로 써보는 것.
+
+## 패키지 구성
+
+- `@framingui/core`: 토큰 생성, 테마 파싱, OKLCH 유틸
+- `@framingui/ui`: 테마 지원 React 컴포넌트 30+
+- `@framingui/tokens`: 원본 디자인 토큰 (컬러, 타이포, 간격)
+- `@framingui/mcp-server`: AI 도구 연동용 MCP 서버
+
+## 추천 설치 (가장 빠름)
+
+```bash
+npx @framingui/mcp-server init
+```
+
+프로젝트 탐지부터 설정까지 한 번에 끝난다.
+
+## 수동 설치
+
+### npm
+
+```bash
+npm install @framingui/ui @framingui/core
+```
+
+### pnpm
+
+```bash
+pnpm add @framingui/ui @framingui/core
+```
+
+### yarn
+
+```bash
+yarn add @framingui/ui @framingui/core
+```
+
+## Tailwind 설정
+
+`tailwind.config.ts`에 FramingUI 경로를 추가한다.
+
+```ts
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  content: [
+    './app/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@framingui/ui/**/*.{js,ts,jsx,tsx}',
+  ],
+  plugins: [require('tailwindcss-animate')],
+};
+
+export default config;
+```
+
+## 스타일 import
+
+전역 CSS에 아래를 추가한다.
+
+```css
+@import '@framingui/ui/styles';
+```
+
+## Peer Dependencies
+
+`@framingui/ui`는 아래 의존성이 필요하다.
+
+```text
+react >= 18.0.0
+react-dom >= 18.0.0
+tailwind-merge >= 2.0.0
+class-variance-authority >= 0.7.0
+clsx >= 2.0.0
+lucide-react >= 0.400.0
+```

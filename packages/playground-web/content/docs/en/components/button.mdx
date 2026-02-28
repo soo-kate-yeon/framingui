@@ -1,0 +1,77 @@
+---
+title: "Button"
+description: "Button component API, variants, and practical usage examples"
+---
+
+# Button
+
+`Button` is the primary action component in the FramingUI design system.
+
+## Import
+
+```tsx
+import { Button } from '@framingui/ui';
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `variant` | `'default' \| 'destructive' \| 'outline' \| 'secondary' \| 'ghost' \| 'link'` | `'default'` | Visual style |
+| `size` | `'default' \| 'sm' \| 'lg' \| 'icon'` | `'default'` | Button size |
+| `asChild` | `boolean` | `false` | Render child element through Radix Slot |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `...props` | `React.ButtonHTMLAttributes<HTMLButtonElement>` | - | Native button attributes |
+
+## Variants
+
+- `default`: primary action
+- `destructive`: dangerous actions such as delete
+- `outline`: low-emphasis secondary actions
+- `secondary`: secondary filled action
+- `ghost`: minimal action inside dense UI
+- `link`: text-only CTA in paragraphs and cards
+
+## Usage Examples
+
+```tsx
+import { Button } from '@framingui/ui';
+
+export function ButtonExamples() {
+  return (
+    <div className="flex flex-wrap gap-3">
+      <Button>Save</Button>
+      <Button variant="destructive">Delete</Button>
+      <Button variant="outline">Cancel</Button>
+      <Button variant="secondary">Back</Button>
+      <Button variant="ghost">More</Button>
+      <Button variant="link">Learn more</Button>
+      <Button size="sm">Small</Button>
+      <Button size="lg">Large</Button>
+      <Button size="icon" aria-label="Open menu">☰</Button>
+    </div>
+  );
+}
+```
+
+### `asChild` Composition
+
+```tsx
+import Link from 'next/link';
+import { Button } from '@framingui/ui';
+
+export function LinkButton() {
+  return (
+    <Button asChild variant="outline">
+      <Link href="/pricing">Go to pricing</Link>
+    </Button>
+  );
+}
+```
+
+## Notes
+
+- Use explicit `type="submit"` in forms.
+- Add `aria-label` for icon-only buttons.
+- Keep one clear primary action per section.
