@@ -30,29 +30,17 @@ export interface LandingContent {
     alt: string;
     placeholder: string;
   };
-  feature1: {
-    title: string;
-    accordionItems: {
-      title: string;
-      content: string;
-    }[];
-    imageAlt: string;
+  sections: {
+    s1: { title: string; description: string };
+    s2: { title: string; description: string };
+    s3: { title: string; description: string };
+    s4: { title: string; description: string };
   };
-  feature2: {
+  section5: {
+    badge: string;
     title: string;
-    accordionItems: {
-      title: string;
-      content: string;
-    }[];
-    imageAlt: string;
-  };
-  feature3: {
-    title: string;
-    accordionItems: {
-      title: string;
-      content: string;
-    }[];
-    imageAlt: string;
+    description: string;
+    cta: string;
   };
   faq: {
     title: string;
@@ -70,7 +58,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       brandName: 'framingui',
       pricing: 'Pricing',
       docs: 'Docs',
-      tryStudio: 'Try Studio',
+      tryStudio: 'Try Explore',
       getStarted: 'Sign up',
     },
     hero: {
@@ -82,7 +70,7 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       description:
         'framingui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork.',
       buttons: {
-        tryStudio: 'Try Studio Free',
+        tryStudio: 'Try Explore Free',
         getStarted: 'Sign up',
       },
     },
@@ -90,68 +78,34 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       alt: 'Main Dashboard Preview',
       placeholder: 'Main Dashboard Preview',
     },
-    feature1: {
-      title: 'High-Quality Templates. Zero Design Effort.',
-      accordionItems: [
-        {
-          title: 'Precision OKLCH Token System',
-          content:
-            'Every template ships with a complete OKLCH-based token architecture — atomic colors, semantic layers, typography, spacing, elevation, motion, density, state layers, and dark mode. All WCAG AA compliant out of the box.',
-        },
-        {
-          title: 'Fully Responsive Layout Tokens',
-          content:
-            'Go beyond basic grids. framingui defines structured tokens for Shells (app frames), Pages (content layouts), and Sections (content blocks) that auto-adapt across Mobile, Tablet, and Desktop breakpoints. Your agent knows exactly how to scale.',
-        },
-        {
-          title: 'Built on 30+ shadcn/ui Components',
-          content:
-            'From Buttons and Cards to Dialogs, Tables, Sidebars, and Calendars — built on battle-tested shadcn/ui primitives organized into 3 tiers. Stable, consistent, and ready to ship.',
-        },
-        {
-          title: '6 Curated Templates, Ready Now',
-          content:
-            'classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism — each handcrafted with 200+ tokens. Pick one, and your agent handles the rest.',
-        },
-      ],
-      imageAlt: 'Feature Image 1',
+    sections: {
+      s1: {
+        title: 'Core of the Design System: Tokens',
+        description:
+          'Complete architecture leveraging atomic colors, typography, spacing, and elevation. Every pixel mathematically aligned.',
+      },
+      s2: {
+        title: 'Production Quality: Adaptive Layout',
+        description:
+          'Understands App and Web Shells. Tokens scale naturally to provide a perfectly responsive layout across all breakpoints.',
+      },
+      s3: {
+        title: '30+ Built-in shadcn/ui Components',
+        description:
+          'Automatically applies the design system guide, rendering custom components perfectly tailored to your service identity.',
+      },
+      s4: {
+        title: 'Adopt Immediately with MCP',
+        description:
+          'No Figma, no canvas required. Issue natural language commands directly in your IDE, CLI, or OpenClaw to design instantly.',
+      },
     },
-    feature2: {
-      title: 'From Chat to Production. Instantly.',
-      accordionItems: [
-        {
-          title: 'Works Everywhere MCP Runs',
-          content:
-            'Not locked to one platform. Claude Code, Cursor, Windsurf, OpenAI Codex — if it supports MCP, framingui works. One npx command and your agent has full design capabilities.',
-        },
-        {
-          title: 'Import a System, Not Just a Screen',
-          content:
-            "Don't just generate one UI — import an entire design language. With tekton init, your agent sets up template tokens, component libraries, and layout logic to design every flow in your product consistently.",
-        },
-        {
-          title: 'Production-Ready TypeScript Output',
-          content:
-            'Generated code is clean, fully typed, and uses Tailwind CSS with design tokens. It looks and behaves exactly like code written by a senior engineer — because the system enforces it.',
-        },
-      ],
-      imageAlt: 'Feature Image 2',
-    },
-    feature3: {
-      title: 'Deterministic UI. No Hallucinations.',
-      accordionItems: [
-        {
-          title: 'Reliable Code, Every Single Time',
-          content:
-            'Raw LLMs guess at styles and layouts — framingui eliminates that. A semantic scoring algorithm places components using weighted rules, producing code that follows strict design constraints instead of hallucinating CSS.',
-        },
-        {
-          title: 'Safety Protocols Built In',
-          content:
-            'Multi-layer validation — threshold checks, hallucination detection, constraint enforcement, and automatic fallbacks — ensures your agent never ships broken UI.',
-        },
-      ],
-      imageAlt: 'Feature Image 3',
+    section5: {
+      badge: 'March Launch Beta Invite',
+      title: 'Choose 1 Design System for Free',
+      description:
+        'Leave a detailed review to receive a 1-Year Creator Pass with unlimited access.',
+      cta: 'Explore design system',
     },
     faq: {
       title: 'Frequently Asked Questions',
@@ -190,19 +144,19 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       brandName: 'framingui',
       pricing: '가격',
       docs: '문서',
-      tryStudio: 'Studio 체험',
+      tryStudio: 'Explore 체험',
       getStarted: '가입하기',
     },
     hero: {
       brandName: 'framingui',
       title: {
-        part1: '에이전트를 위한',
-        part2: '에이전트-퍼스트 디자인 시스템',
+        part1: '에이전트-퍼스트',
+        part2: '디자인 시스템',
       },
       description:
-        'framingui는 AI 에이전트가 진짜로 이해할 수 있는 첫 번째 디자인 시스템이에요. 구조화된 토큰과 레이아웃 로직으로 에이전트가 전문적이고 바로 쓸 수 있는 UI를 코드베이스에 직접 만들어줘요. Figma도, 추측도 필요 없어요.',
+        'framingui는 AI 에이전트가 완벽하게 이해할 수 있는 첫 번째 디자인 시스템입니다. 구조화된 토큰과 직관적인 레이아웃 로직으로, 당신의 아이디어를 즉시 프로덕션 수준의 UI로 렌더링하세요.',
       buttons: {
-        tryStudio: '무료로 Studio 체험하기',
+        tryStudio: '디자인 시스템 살펴보기...',
         getStarted: '가입하기',
       },
     },
@@ -210,68 +164,33 @@ export const landingContent: Record<GlobalLocale, LandingContent> = {
       alt: '메인 대시보드 미리보기',
       placeholder: '메인 대시보드 미리보기',
     },
-    feature1: {
-      title: '고품질 템플릿. 디자인 노력은 제로.',
-      accordionItems: [
-        {
-          title: '정밀한 OKLCH 토큰 시스템',
-          content:
-            '모든 템플릿에 완전한 OKLCH 토큰 아키텍처가 들어있어요. 원자 색상, 시맨틱 레이어, 타이포그래피, 간격, 높이, 모션, 밀도, 상태 레이어, 다크 모드까지 전부요. 웹 접근성 WCAG AA 기준도 기본으로 만족해요.',
-        },
-        {
-          title: '완전 반응형 레이아웃 토큰',
-          content:
-            '기본 그리드를 넘어서요. framingui는 Shells(앱 프레임), Pages(콘텐츠 레이아웃), Sections(콘텐츠 블록)을 위한 토큰을 제공해요. 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되죠. 에이전트가 정확히 어떻게 확장할지 알고 있어요.',
-        },
-        {
-          title: '30개 이상의 shadcn/ui 컴포넌트 기반',
-          content:
-            'Button, Card부터 Dialog, Table, Sidebar, Calendar까지 검증된 shadcn/ui 컴포넌트로 만들어졌어요. 안정적이고 일관되며 바로 배포할 수 있어요.',
-        },
-        {
-          title: '6개의 엄선된 템플릿, 지금 바로 사용',
-          content:
-            'classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism. 각 템플릿마다 200개 이상의 토큰을 손수 만들었어요. 하나만 선택하면 에이전트가 알아서 처리해줘요.',
-        },
-      ],
-      imageAlt: '기능 이미지 1',
+    sections: {
+      s1: {
+        title: '디자인 시스템의 코어: 토큰',
+        description:
+          '컬러, 타이포그래피, 여백까지. 완벽하게 계산된 OKLCH 토큰 아키텍처가 에이전트에게 명확한 가이드를 제공합니다.',
+      },
+      s2: {
+        title: '프로덕션 품질의 핵심: 레이아웃',
+        description:
+          '앱과 웹 Shell을 완벽하게 이해합니다. 단순한 그리드를 넘어 모바일, 태블릿, 데스크톱에 맞춰 자동으로 조정되는 반응형 레이아웃을 제공합니다.',
+      },
+      s3: {
+        title: '30개 이상의 shadcn/ui 컴포넌트 기본 제공',
+        description:
+          '자동으로 디자인 시스템 가이드가 적용되어, 여러분이 만드는 서비스 아이덴티티에 딱 맞는 커스텀 컴포넌트로 렌더링합니다.',
+      },
+      s4: {
+        title: 'MCP로 바로 도입',
+        description:
+          'Figma 필요 없고, 캔버스도 필요 없어요. IDE, CLI, 심지어는 OpenClaw에서 자연어로 명령해 바로 프론트엔드 코드를 디자인하세요.',
+      },
     },
-    feature2: {
-      title: '채팅에서 프로덕션까지. 즉시.',
-      accordionItems: [
-        {
-          title: 'MCP가 실행되는 모든 곳에서 작동해요',
-          content:
-            '하나의 플랫폼에 묶이지 않아요. Claude Code, Cursor, Windsurf, OpenAI Codex처럼 MCP를 지원하는 곳이라면 framingui가 다 작동해요. npx 명령 하나로 에이전트가 완전한 디자인 기능을 갖출 수 있어요.',
-        },
-        {
-          title: '화면 하나가 아니라 시스템 전체를 가져와요',
-          content:
-            '단순히 UI 하나만 만드는 게 아니에요. 전체 디자인 언어를 가져와요. tekton init 명령으로 에이전트가 템플릿 토큰, 컴포넌트 라이브러리, 레이아웃 로직을 세팅해서 제품의 모든 화면을 일관되게 디자인해줘요.',
-        },
-        {
-          title: '바로 쓸 수 있는 TypeScript 코드',
-          content:
-            '만들어진 코드는 깔끔하고 타입도 완벽하게 지정돼요. 디자인 토큰이 담긴 Tailwind CSS를 사용하죠. 시니어 엔지니어가 짠 코드처럼 보이고 동작해요. 시스템이 품질을 보장하거든요.',
-        },
-      ],
-      imageAlt: '기능 이미지 2',
-    },
-    feature3: {
-      title: '정확한 UI. 환각 없음.',
-      accordionItems: [
-        {
-          title: '매번 믿을 수 있는 코드',
-          content:
-            '일반 LLM은 스타일과 레이아웃을 추측해요. framingui는 이걸 없앴어요. 시맨틱 스코어링 알고리즘이 규칙 기반으로 컴포넌트를 배치해서, CSS를 만들어내는 대신 정확한 디자인 제약을 따르는 코드를 생성해요.',
-        },
-        {
-          title: '안전장치가 내장되어 있어요',
-          content:
-            '여러 겹의 검증 시스템이 있어요. 임계값 확인, 환각 감지, 제약 강제, 자동 복구까지. 에이전트가 절대 깨진 UI를 만들지 않도록 막아줘요.',
-        },
-      ],
-      imageAlt: '기능 이미지 3',
+    section5: {
+      badge: '3월 런칭 베타 한정',
+      title: 'Design System 1개를 골라 무료로 사용할 수 있어요.',
+      description: '상세한 리뷰를 남겨주신 분께는 무제한 사용이 가능한 1년 Creator Pass를 드려요.',
+      cta: '디자인 시스템 살펴보기',
     },
     faq: {
       title: '자주 묻는 질문',

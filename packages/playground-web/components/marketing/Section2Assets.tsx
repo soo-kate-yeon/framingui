@@ -74,10 +74,7 @@ export const MCPVersatilityAsset = () => {
         ))}
       </div>
 
-      <div className="absolute bottom-4 left-4">
-        <div className="text-xs font-bold text-slate-900">MCP Versatility</div>
-        <div className="text-[10px] text-slate-400">Universal Framework Support</div>
-      </div>
+      {/* Removed bottom label */}
     </div>
   );
 };
@@ -132,10 +129,7 @@ export const DesignSystemCoreAsset = () => {
         </motion.div>
       </div>
 
-      <div className="absolute bottom-4 left-4">
-        <div className="text-xs font-bold text-slate-900">Design System Core</div>
-        <div className="text-[10px] text-slate-400">Component → Constraint Logic</div>
-      </div>
+      {/* Removed bottom label */}
     </div>
   );
 };
@@ -180,10 +174,7 @@ export const TSCodeExportAsset = () => {
         ))}
       </div>
 
-      <div className="absolute bottom-4 left-4">
-        <div className="text-xs font-bold text-white">TS Code Export</div>
-        <div className="text-[10px] text-slate-500 font-mono">Clean & Validated</div>
-      </div>
+      {/* Removed bottom label */}
     </div>
   );
 };

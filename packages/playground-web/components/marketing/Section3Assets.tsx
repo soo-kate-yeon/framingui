@@ -63,10 +63,7 @@ export const ConstraintReliabilityAsset = () => {
         </motion.div>
       </div>
 
-      <div className="absolute bottom-4 left-4">
-        <div className="text-xs font-bold text-slate-900">Constraint Reliability</div>
-        <div className="text-[10px] text-slate-400">0% Hallucination Policy</div>
-      </div>
+      {/* Removed bottom label */}
     </div>
   );
 };
@@ -211,12 +208,7 @@ export const TemplateEfficiencyAsset = () => {
         </AnimatePresence>
       </div>
 
-      <div className="absolute bottom-4 left-4 z-50">
-        <div className="text-xs font-bold text-slate-900 uppercase tracking-tighter">
-          Theme Registry
-        </div>
-        <div className="text-[10px] text-slate-400 font-medium">Synced with .moai/themes</div>
-      </div>
+      {/* Removed bottom label */}
     </div>
   );
 };
@@ -260,10 +252,7 @@ export const VerificationLogicAsset = () => {
         </motion.div>
       </div>
 
-      <div className="absolute bottom-4 left-4">
-        <div className="text-xs font-bold text-white">Verification Logic</div>
-        <div className="text-[10px] text-slate-500">Bulletproof System Reliability</div>
-      </div>
+      {/* Removed bottom label */}
     </div>
   );
 };
