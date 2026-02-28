@@ -7,6 +7,7 @@ import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
 import { ComponentGallery } from '@/components/explore/ComponentGallery';
+import { Badge } from '@framingui/ui';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -128,6 +129,19 @@ export default function NeutralHumanismDemo() {
               className={`opacity-0 group-hover:opacity-100 transition-opacity ${activeTab === 'component' ? 'opacity-100' : ''}`}
             />
           </button>
+          <Link
+            href="/explore/neutral-workspace/kanban"
+            className="text-sm font-medium px-4 py-3 rounded-[var(--tekton-radius-lg)] transition-colors text-left flex items-center justify-between group text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)]"
+          >
+            <span>{locale === 'ko' ? '이슈 트래커' : 'Issue Tracker'}</span>
+            <Badge className="ml-2 bg-blue-500 text-white text-[10px] h-4 px-1 rounded-sm border-none">
+              NEW
+            </Badge>
+            <ChevronRight
+              size={16}
+              className="opacity-0 group-hover:opacity-100 transition-opacity"
+            />
+          </Link>
         </nav>
       </aside>
 
@@ -167,6 +181,16 @@ export default function NeutralHumanismDemo() {
             >
               {locale === 'ko' ? '컴포넌트 갤러리' : 'Component Gallery'}
             </button>
+            <Link
+              href="/explore/neutral-workspace/kanban"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-lg font-medium px-4 py-4 rounded-[var(--tekton-radius-lg)] transition-colors text-left text-[var(--tekton-text-secondary)] hover:text-[var(--tekton-text-primary)] hover:bg-[var(--tekton-bg-canvas)] flex items-center justify-between"
+            >
+              <span>{locale === 'ko' ? '이슈 트래커' : 'Issue Tracker'}</span>
+              <Badge className="bg-blue-500 text-white text-[10px] h-5 px-1.5 rounded-sm border-none">
+                NEW
+              </Badge>
+            </Link>
           </nav>
         </div>
       )}

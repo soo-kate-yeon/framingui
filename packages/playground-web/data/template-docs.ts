@@ -1448,6 +1448,18 @@ export function PatientForm() {
 }`,
         language: 'tsx',
       },
+      {
+        title: 'Kanban Ticket Tracker',
+        titleKo: '칸반 티켓 트래커',
+        description: 'Linear-style productivity board with adaptive theme styling.',
+        descriptionKo: '테마 스타일링이 적용된 Linear 스타일의 생산성 보드입니다.',
+        code: `import { KanbanBoardView } from "@/components/explore/workspace/KanbanBoardView";
+
+export default function App() {
+  return <KanbanBoardView themeName="neutral-workspace" />;
+}`,
+        language: 'tsx',
+      },
     ],
     bestPractices: [
       {
@@ -1648,6 +1660,18 @@ export function CodeEditor() {
       </div>
     </div>
   );
+}`,
+        language: 'tsx',
+      },
+      {
+        title: 'Kanban Ticket Tracker',
+        titleKo: '칸반 티켓 트래커',
+        description: 'Linear-style productivity board with adaptive theme styling.',
+        descriptionKo: '테마 스타일링이 적용된 Linear 스타일의 생산성 보드입니다.',
+        code: `import { KanbanBoardView } from "@/components/explore/workspace/KanbanBoardView";
+
+export default function App() {
+  return <KanbanBoardView themeName="minimal-workspace" />;
 }`,
         language: 'tsx',
       },
