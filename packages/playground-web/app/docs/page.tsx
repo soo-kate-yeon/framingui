@@ -56,7 +56,7 @@ const CARDS = [
     description: 'Token, layout, and component guidance for each theme',
   },
   {
-    href: '/studio',
+    href: '/explore',
     icon: Palette,
     title: 'Explore Themes',
     description: 'Browse 7 production-ready themes',

@@ -15,7 +15,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * 보호된 라우트 목록
  * 인증이 필요한 경로들
  */
-const PROTECTED_ROUTES = ['/dashboard', '/settings', '/profile', '/studio/account'];
+const PROTECTED_ROUTES = ['/dashboard', '/settings', '/profile', '/explore/account'];
 
 /**
  * 공개 라우트 참고

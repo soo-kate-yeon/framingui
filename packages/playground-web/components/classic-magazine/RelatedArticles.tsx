@@ -25,7 +25,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
             Related Articles
           </h3>
           <Link
-            href="/studio/classic-magazine"
+            href="/explore/classic-magazine"
             className="font-sans text-xs font-bold uppercase tracking-widest text-neutral-600 hover:text-neutral-900 transition-colors"
           >
             View All
@@ -36,7 +36,7 @@ export function RelatedArticles({ articles }: RelatedArticlesProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((article) => (
             <article key={article.id} className="group">
-              <Link href={`/studio/classic-magazine/article/${article.id}`}>
+              <Link href={`/explore/classic-magazine/article/${article.id}`}>
                 {/* Thumbnail Placeholder */}
                 <div className="aspect-[4/3] bg-neutral-100 border border-neutral-200 mb-4 relative group-hover:border-neutral-900 transition-colors">
                   <div className="absolute inset-0 flex items-center justify-center">

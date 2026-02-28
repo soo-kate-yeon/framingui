@@ -52,7 +52,7 @@ const PLANS = [
     priceLabel: '$59',
     priceSub: 'one-time payment',
     cta: 'Browse Templates',
-    ctaHref: '/studio',
+    ctaHref: '/explore',
     featured: false,
     badge: null,
     features: [
@@ -70,7 +70,7 @@ const PLANS = [
     priceLabel: '$99',
     priceSub: 'one-time payment',
     cta: 'Choose Templates',
-    ctaHref: '/studio?plan=double',
+    ctaHref: '/explore?plan=double',
     featured: true,
     badge: 'Most Popular',
     features: [
@@ -115,10 +115,10 @@ export function PricingPage() {
   /**
    * 베타 접근 핸들러 (Single Template 전용)
    * - 로그인 안 됨: /auth/login으로 리디렉션
-   * - 로그인 됨: /studio로 바로 리디렉션 (결제 없이)
+   * - 로그인 됨: /explore로 바로 리디렉션 (결제 없이)
    */
   const handleBetaAccess = () => {
-    router.push('/studio');
+    router.push('/explore');
   };
 
   /**
@@ -274,7 +274,7 @@ export function PricingPage() {
                         if (planId === 'single') {
                           handleBetaAccess();
                         } else if (planId === 'double') {
-                          router.push('/studio?plan=double');
+                          router.push('/explore?plan=double');
                         } else {
                           handleCheckout('creator');
                         }

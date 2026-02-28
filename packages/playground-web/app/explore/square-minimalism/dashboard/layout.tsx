@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             href="/explore/square-minimalism/dashboard"
             icon={<LayoutDashboard size={18} />}
             label="Overview"
-            active={pathname === '/studio/square-minimalism/dashboard'}
+            active={pathname === '/explore/square-minimalism/dashboard'}
           />
           <NavItem
             href="/explore/square-minimalism/dashboard/customers"

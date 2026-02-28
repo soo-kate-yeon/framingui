@@ -11,7 +11,7 @@ import { LanguageSwitcher } from '../LanguageSwitcher';
 
 // Mock next/navigation
 const mockPush = vi.fn();
-const mockPathname = '/studio/template/test';
+const mockPathname = '/explore/template/test';
 const mockParams = { locale: 'en' };
 
 vi.mock('next/navigation', () => ({

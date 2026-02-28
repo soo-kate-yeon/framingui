@@ -20,7 +20,7 @@ export default function SettingsPage() {
   const router = useRouter();
 
   const handleLogout = () => {
-    router.push('/studio/dark-boldness');
+    router.push('/explore/dark-boldness');
   };
 
   return (

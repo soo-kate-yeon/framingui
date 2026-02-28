@@ -25,12 +25,12 @@ function MockNavigation() {
     <nav aria-label="Main navigation">
       <ul role="list">
         <li>
-          <a href="/studio" aria-label="Explore templates">
+          <a href="/explore" aria-label="Explore templates">
             Explore
           </a>
         </li>
         <li>
-          <a href="/studio/account" aria-label="My account">
+          <a href="/explore/account" aria-label="My account">
             Account
           </a>
         </li>

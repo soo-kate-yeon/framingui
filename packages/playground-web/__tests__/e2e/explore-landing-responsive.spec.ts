@@ -15,7 +15,7 @@ const TABLET_VIEWPORT = { width: 768, height: 1024 };
 const DESKTOP_VIEWPORT = { width: 1280, height: 720 };
 
 // Mock landing page path - adjust to actual route when implemented
-const LANDING_PAGE_PATH = '/studio/template/test-template';
+const LANDING_PAGE_PATH = '/explore/template/test-template';
 
 test.describe('Studio Landing Page - Mobile Viewport (< 768px)', () => {
   test.beforeEach(async ({ page }) => {

@@ -49,7 +49,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
 
   const handlePreviewClick = () => {
     // Open demo in new window
-    window.open(`/studio/${templateId}`, '_blank');
+    window.open(`/explore/${templateId}`, '_blank');
   };
 
   const handleBuyClick = () => {
@@ -69,12 +69,12 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
       }
     }
     // Fallback: 기존 결제 페이지로 이동
-    router.push(`/studio/checkout/${templateId}`);
+    router.push(`/explore/checkout/${templateId}`);
   };
 
   const handleDocumentationClick = () => {
     // Navigate to template documentation page
-    router.push(`/studio/${templateId}/docs`);
+    router.push(`/explore/${templateId}/docs`);
   };
 
   // Loading state

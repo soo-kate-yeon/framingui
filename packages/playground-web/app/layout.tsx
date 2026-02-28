@@ -66,12 +66,12 @@ const siteNavigation = {
     {
       '@type': 'WebPage',
       name: 'See Demo',
-      url: 'https://framingui.com/studio',
+      url: 'https://framingui.com/explore',
     },
     {
       '@type': 'WebPage',
       name: 'Templates Gallery',
-      url: 'https://framingui.com/studio',
+      url: 'https://framingui.com/explore',
     },
     {
       '@type': 'WebPage',

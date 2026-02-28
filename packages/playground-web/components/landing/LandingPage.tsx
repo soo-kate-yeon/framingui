@@ -153,7 +153,7 @@ export function LandingPage() {
             <Button
               onClick={() =>
                 handleNavigateWithTracking(
-                  '/studio',
+                  '/explore',
                   'home_hero_try_studio',
                   content.hero.buttons.tryStudio,
                   'home_hero',
@@ -263,7 +263,7 @@ export function LandingPage() {
           <Button
             onClick={() =>
               handleNavigateWithTracking(
-                '/studio',
+                '/explore',
                 'home_beta_offer_cta',
                 content.section5.cta,
                 'home_beta_offer',

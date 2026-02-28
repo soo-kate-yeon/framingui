@@ -23,8 +23,8 @@ export function LandingPageWrapper() {
   useEffect(() => {
     // Hydration 완료 후 인증 체크
     if (!isLoading && user) {
-      // 로그인 사용자는 /studio로 리디렉션
-      router.push('/studio');
+      // 로그인 사용자는 /explore로 리디렉션
+      router.push('/explore');
     }
   }, [user, isLoading, router]);
 

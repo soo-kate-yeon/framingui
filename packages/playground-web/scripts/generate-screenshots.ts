@@ -37,7 +37,7 @@ async function main() {
     }
 
     try {
-      await page.goto(`${BASE_URL}/studio/${theme}`);
+      await page.goto(`${BASE_URL}/explore/${theme}`);
 
       // Wait for the opacity transition and layout to settle
       await page.waitForTimeout(1000);
