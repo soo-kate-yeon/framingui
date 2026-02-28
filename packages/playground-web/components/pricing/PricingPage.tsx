@@ -132,7 +132,7 @@ export function PricingPage() {
 
     if (!isPaddleReady) {
       console.error('[Paddle] Payment system is not ready');
-      alert('Payment system is not ready. Please try again later.');
+      alert(content.ui.paymentNotReady);
       return;
     }
 
@@ -141,7 +141,7 @@ export function PricingPage() {
 
     if (!priceId) {
       console.error('[Paddle] Price configuration missing for plan:', planId);
-      alert('Price configuration missing. Please contact support.');
+      alert(content.ui.priceConfigMissing);
       return;
     }
 
@@ -240,10 +240,10 @@ export function PricingPage() {
                       <div className="w-full">
                         <div className="flex items-baseline gap-1.5">
                           <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
-                            {planId === 'single' ? 'FREE' : planContent.priceLabel}
+                            {planId === 'single' ? content.ui.freeLabel : planContent.priceLabel}
                           </span>
                           <span className="text-sm text-neutral-500">
-                            {planId === 'single' ? 'during beta' : planContent.priceSub}
+                            {planId === 'single' ? content.ui.duringBeta : planContent.priceSub}
                           </span>
                         </div>
                       </div>
@@ -285,7 +285,7 @@ export function PricingPage() {
                           : 'bg-neutral-100 text-neutral-950 hover:bg-neutral-200'
                       }`}
                     >
-                      {planId === 'single' ? 'Get Beta Access - FREE' : planContent.cta}
+                      {planId === 'single' ? content.ui.getBetaAccess : planContent.cta}
                       <ArrowRight className="w-4 h-4" />
                     </button>
 

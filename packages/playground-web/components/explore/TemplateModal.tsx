@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TemplateData } from '../../data/templates';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
+import { getExploreContent, getTemplatePriceLabel } from '../../data/i18n/explore';
 
 // ============================================================================
 // Types
@@ -21,6 +22,7 @@ interface TemplateModalProps {
 
 export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: TemplateModalProps) {
   const { locale } = useExploreLanguage();
+  const i18n = getExploreContent(locale);
   const [activeChipIdx, setActiveChipIdx] = useState(0);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
@@ -83,7 +85,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 p-2 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 transition-colors"
-          aria-label="Close modal"
+          aria-label={i18n.templateModal.closeModalAria}
         >
           <X size={20} />
         </button>
@@ -109,7 +111,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-3">
                   <button className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full bg-neutral-950 px-8 py-4 text-base font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2">
-                    ${template.price} / one-time
+                    {getTemplatePriceLabel(locale, template.price)}
                   </button>
                   <a
                     href={`/explore/${template.id}`}
@@ -117,7 +119,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     rel="noopener noreferrer"
                     className="flex-[0.5] sm:flex-none inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-4 text-base font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
                   >
-                    Live Demo <span className="text-neutral-500">→</span>
+                    {i18n.templateModal.liveDemo} <span className="text-neutral-500">→</span>
                   </a>
                 </div>
 
@@ -126,17 +128,19 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     onClick={onSelectDouble}
                     className="group flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors text-left w-fit"
                   >
-                    <span className="underline underline-offset-4">Get 2 templates at $99</span>
+                    <span className="underline underline-offset-4">
+                      {i18n.templateModal.getTwoTemplates}
+                    </span>
                     <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase group-hover:bg-emerald-100 transition-colors">
-                      Save 16%
+                      {i18n.templateModal.savePercent}
                     </span>
                   </button>
                   <button className="group flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors text-left w-fit">
                     <span className="underline underline-offset-4">
-                      Get unlimited access: $149/yearly
+                      {i18n.templateModal.getUnlimitedAccess}
                     </span>
                     <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[10px] font-bold tracking-widest text-brand-700 uppercase group-hover:bg-brand-100 transition-colors">
-                      Best Offer
+                      {i18n.templateModal.bestOffer}
                     </span>
                   </button>
                 </div>
@@ -171,14 +175,14 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     <button
                       onClick={prevImage}
                       className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-neutral-950 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
-                      aria-label="Previous image"
+                      aria-label={i18n.templateModal.previousImageAria}
                     >
                       <ChevronLeft size={20} />
                     </button>
                     <button
                       onClick={nextImage}
                       className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm text-neutral-950 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white z-10"
-                      aria-label="Next image"
+                      aria-label={i18n.templateModal.nextImageAria}
                     >
                       <ChevronRight size={20} />
                     </button>
@@ -193,7 +197,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     key={idx}
                     onClick={() => setCurrentImageIdx(idx)}
                     className={`w-2 h-2 rounded-full transition-all ${idx === currentImageIdx ? 'bg-neutral-900 w-4' : 'bg-neutral-300 hover:bg-neutral-400'}`}
-                    aria-label={`Go to slide ${idx + 1}`}
+                    aria-label={`${i18n.templateModal.slideAriaPrefix} ${idx + 1}`}
                   />
                 ))}
               </div>
@@ -210,7 +214,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 lg:gap-16">
               <div>
                 <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-950 lg:sticky top-12">
-                  {locale === 'ko' ? '주요 특징' : 'Features'}
+                  {i18n.templateModal.features}
                 </h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 sm:gap-y-10">
@@ -242,7 +246,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 lg:gap-16">
               <div>
                 <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-950 lg:sticky top-12">
-                  {locale === 'ko' ? '추천 대상' : 'Recommended to use for'}
+                  {i18n.templateModal.recommendedToUseFor}
                 </h3>
               </div>
               <div className="flex flex-col gap-4 sm:gap-6">

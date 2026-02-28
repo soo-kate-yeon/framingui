@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
+import { getExploreContent } from '@/data/i18n/explore';
 
 interface ExploreTopBannerProps {
   onStartFreeTrial: () => void;
@@ -10,24 +11,9 @@ interface ExploreTopBannerProps {
 
 const DISMISSED_BANNER_STORAGE_KEY = 'dismissedExploreTopBanner';
 
-const MESSAGES = {
-  en: {
-    eyebrow: 'Explore · Design System',
-    message: 'Start your 3-day free trial',
-    cta: 'Start free trial',
-    dismissAriaLabel: 'Dismiss free trial banner',
-  },
-  ko: {
-    eyebrow: 'Explore · 디자인 시스템',
-    message: '3일 무료체험 시작하기',
-    cta: '무료체험 시작',
-    dismissAriaLabel: '무료체험 배너 닫기',
-  },
-} as const;
-
 export function ExploreTopBanner({ onStartFreeTrial }: ExploreTopBannerProps) {
   const { locale } = useExploreLanguage();
-  const t = MESSAGES[locale as keyof typeof MESSAGES] ?? MESSAGES.en;
+  const t = getExploreContent(locale).topBanner;
   const [isVisible, setIsVisible] = useState<boolean | null>(null);
 
   useEffect(() => {

@@ -92,6 +92,13 @@ export interface PricingContent {
       content: string;
     }[];
   };
+  ui: {
+    freeLabel: string;
+    duringBeta: string;
+    getBetaAccess: string;
+    paymentNotReady: string;
+    priceConfigMissing: string;
+  };
 }
 
 export const pricingContent: Record<GlobalLocale, PricingContent> = {
@@ -227,6 +234,13 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
         },
       ],
     },
+    ui: {
+      freeLabel: 'FREE',
+      duringBeta: 'during beta',
+      getBetaAccess: 'Get Beta Access - FREE',
+      paymentNotReady: 'Payment system is not ready. Please try again later.',
+      priceConfigMissing: 'Price configuration missing. Please contact support.',
+    },
   },
   ko: {
     nav: {
@@ -234,9 +248,9 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
       getStarted: '시작하기',
     },
     hero: {
-      title: '플랜을 선택해보세요',
+      title: '플랜을 선택합니다',
       description:
-        'AI 기반 디자인 시스템을 갖춘 프리미엄 React 템플릿이에요. 오늘부터 바로 쓸 수 있는 인터페이스를 만들어보세요.',
+        'AI 기반 디자인 시스템을 갖춘 프리미엄 React 템플릿입니다. 오늘부터 프로덕션 인터페이스를 바로 구축할 수 있습니다.',
     },
     betaBanner: {
       mobile: '🎉 단일 템플릿 무료!',
@@ -245,7 +259,7 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
     plans: {
       single: {
         name: '단일 템플릿',
-        description: '프로젝트에 딱 맞는 템플릿 하나로 시작해보세요.',
+        description: '프로젝트에 맞는 템플릿 1개로 시작합니다.',
         priceLabel: '$59',
         priceSub: '1회 결제',
         cta: '템플릿 둘러보기',
@@ -258,34 +272,34 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
       },
       double: {
         name: '더블 패키지',
-        description: '더 많이 필요한 분들을 위한 최고의 가성비.',
+        description: '여러 템플릿이 필요한 팀에 적합한 구성입니다.',
         priceLabel: '$99',
         priceSub: '한 번만 결제',
         cta: '템플릿 고르기',
-        badge: '가장 인기 있는',
+        badge: '가장 많이 선택',
         features: [
           '원하는 템플릿 2개',
           '1년간 업데이트',
           '상업적 사용 가능',
           '이메일 지원 (72시간)',
-          '따로 사는 것보다 저렴해요',
+          '개별 구매 대비 비용 절감',
         ],
       },
       creator: {
         name: '크리에이터 패스',
-        description: '많이 만드는 분들을 위한 무제한 이용권.',
+        description: '지속적으로 제작하는 팀을 위한 무제한 이용권입니다.',
         priceLabel: '$149',
         priceSub: '/년',
         cta: '구독하기',
         badge: '최고의 가치',
         features: [
           '지금 있는 모든 템플릿',
-          '앞으로 나올 템플릿도 전부',
-          '구독 기간 동안 계속 업데이트',
+          '향후 출시 템플릿 포함',
+          '구독 기간 동안 업데이트 제공',
           '빠른 이메일 지원 (48시간)',
           '우선 지원',
         ],
-        renewalNotice: '매년 $149에 자동 갱신돼요. 언제든지 취소할 수 있어요.',
+        renewalNotice: '매년 $149에 자동 갱신됩니다. 언제든지 취소할 수 있습니다.',
       },
     },
     comparison: {
@@ -326,39 +340,46 @@ export const pricingContent: Record<GlobalLocale, PricingContent> = {
     },
     faq: {
       title: '자주 묻는 질문',
-      subtitle: '가격과 플랜에 대해 궁금한 점들을 모았어요.',
+      subtitle: '가격과 플랜 관련 주요 질문을 정리했습니다.',
       items: [
         {
-          title: '템플릿은 어떻게 사용하는 건가요?',
+          title: '템플릿은 어떻게 사용합니까?',
           content:
-            '템플릿을 구매하면 (베타 기간에는 1개 무료) 프로젝트에서 "npx @framingui/mcp-server init" 명령을 실행하세요. MCP 서버 설치, 디자인 토큰 설정, Tailwind CSS 구성, AI 코딩 도구 연결까지 한 번에 처리돼요. 이후에는 AI 에이전트에게 선택한 테마로 화면을 만들어달라고 요청하면 끝이에요.',
+            '템플릿을 구매하면 (베타 기간에는 1개 무료) 프로젝트에서 "npx @framingui/mcp-server init" 명령을 실행합니다. MCP 서버 설치, 디자인 토큰 설정, Tailwind CSS 구성, AI 코딩 도구 연결을 한 번에 완료합니다. 이후에는 AI 에이전트에게 선택한 테마로 화면 생성을 요청하면 됩니다.',
         },
         {
-          title: '업데이트 기간이 끝나면 어떻게 되나요?',
+          title: '업데이트 기간이 끝나면 어떻게 됩니까?',
           content:
-            '다운로드한 템플릿은 계속 쓸 수 있어요. 다만 새로운 업데이트만 못 받을 뿐이에요. 언제든지 갱신하면 최신 버전을 받을 수 있어요.',
+            '다운로드한 템플릿은 계속 사용할 수 있습니다. 업데이트 기간 종료 후에는 신규 업데이트만 중단됩니다. 갱신하면 최신 버전을 다시 받을 수 있습니다.',
         },
         {
-          title: '클라이언트 프로젝트에 써도 되나요?',
+          title: '클라이언트 프로젝트에 사용해도 됩니까?',
           content:
-            '물론이죠! 모든 플랜에 상업용 라이선스가 포함돼 있어요. 개인 프로젝트든 클라이언트 프로젝트든 제한 없이 쓸 수 있어요. 단, 템플릿 자체를 재판매하거나 재배포하는 건 안 돼요.',
+            '모든 플랜에는 상업용 라이선스가 포함됩니다. 개인 프로젝트와 클라이언트 프로젝트 모두에서 사용할 수 있습니다. 단, 템플릿 자체의 재판매 또는 재배포는 허용하지 않습니다.',
         },
         {
-          title: '크리에이터 패스 자동 갱신은 어떻게 되나요?',
+          title: '크리에이터 패스 자동 갱신은 어떻게 됩니까?',
           content:
-            '크리에이터 패스는 매년 $149에 자동으로 갱신돼요. 계정 설정에서 언제든 취소할 수 있어요. 취소하면 현재 결제 기간이 끝날 때 적용되고, 그때까지는 계속 이용하실 수 있어요.',
+            '크리에이터 패스는 매년 $149에 자동으로 갱신됩니다. 계정 설정에서 언제든 취소할 수 있으며, 취소는 현재 결제 기간 종료 시점에 적용됩니다. 종료 시점까지는 계속 이용할 수 있습니다.',
         },
         {
-          title: '환불은 어떻게 받을 수 있나요?',
+          title: '환불은 어떻게 받을 수 있습니까?',
           content:
-            '템플릿은 디지털 제품이라서, 구매 후 14일 이내에 다운로드하기 전이라면 환불받을 수 있어요. 기술적 문제나 중복 구매는 언제든 환불 가능해요. 자세한 내용은 환불 정책을 확인해보세요.',
+            '템플릿은 디지털 제품이므로 구매 후 14일 이내이며 다운로드 전 상태라면 환불할 수 있습니다. 기술적 결함 또는 중복 구매는 항상 환불 대상입니다. 상세 기준은 환불 정책에서 확인할 수 있습니다.',
         },
         {
-          title: '팀이나 교육 할인이 있나요?',
+          title: '팀 또는 교육 할인은 제공합니까?',
           content:
-            '팀 라이선스와 교육 할인은 곧 선보일 예정이에요. 미리 써보고 싶거나 맞춤 가격이 필요하시면 soo.kate.yeon@gmail.com으로 연락 주세요.',
+            '팀 라이선스와 교육 할인은 준비 중입니다. 사전 도입 또는 맞춤 가격이 필요하면 soo.kate.yeon@gmail.com으로 문의해 주세요.',
         },
       ],
+    },
+    ui: {
+      freeLabel: '무료',
+      duringBeta: '베타 기간 한정',
+      getBetaAccess: '베타 무료 체험 시작',
+      paymentNotReady: '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+      priceConfigMissing: '가격 설정을 찾을 수 없습니다. 지원팀에 문의해 주세요.',
     },
   },
 };

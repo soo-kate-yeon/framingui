@@ -25,6 +25,11 @@ import { useAuth } from '../../../../contexts/AuthContext';
 import { usePaddle } from '../../../../hooks/usePaddle';
 import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
 import { useExploreLanguage } from '../../../../contexts/ExploreLanguageContext';
+import {
+  getExploreContent,
+  getTemplateBuyLabel,
+  getTemplateFinalCtaDescription,
+} from '../../../../data/i18n/explore';
 
 interface TemplatePageProps {
   params: Promise<{ id: string }>;
@@ -35,6 +40,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady } = usePaddle();
   const { locale } = useExploreLanguage();
+  const i18n = getExploreContent(locale);
   const [templateId, setTemplateId] = useState<string>('');
   const [template, setTemplate] = useState<TemplateData | null>(null);
 
@@ -81,7 +87,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   if (!template) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-white">
-        <div className="text-sm text-neutral-600">Loading template...</div>
+        <div className="text-sm text-neutral-600">{i18n.templateLanding.loadingTemplate}</div>
       </div>
     );
   }
@@ -112,7 +118,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   onClick={handlePreviewClick}
                   className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-lg flex items-center justify-center gap-2"
                 >
-                  {locale === 'ko' ? '데모 보기' : 'Preview'}
+                  {i18n.templateLanding.preview}
                   <ExternalLink size={14} />
                 </button>
 
@@ -121,7 +127,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   onClick={handleBuyClick}
                   className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-lg"
                 >
-                  {locale === 'ko' ? `$${template.price}에 구매` : `Buy for $${template.price}`}
+                  {getTemplateBuyLabel(locale, template.price)}
                 </button>
 
                 <button
@@ -129,7 +135,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   onClick={handleDocumentationClick}
                   className="px-6 py-3 text-sm font-bold uppercase tracking-wider text-neutral-900 bg-white border border-neutral-300 hover:border-neutral-900 transition-colors rounded-lg"
                 >
-                  {locale === 'ko' ? '가이드' : 'Documentation'}
+                  {i18n.templateLanding.guide}
                 </button>
               </div>
             </div>
@@ -173,7 +179,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.2}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12 text-center">
-              {locale === 'ko' ? '주요 기능' : 'Features'}
+              {i18n.templateLanding.features}
             </h2>
           </ScrollReveal>
 
@@ -214,7 +220,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.3}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12 text-center">
-              {locale === 'ko' ? '이럴 때 잘 맞아요' : 'Recommended to use for'}
+              {i18n.templateLanding.recommendedToUseFor}
             </h2>
           </ScrollReveal>
 
@@ -245,7 +251,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-6xl mx-auto">
           <ScrollReveal delay={0.4}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-8 sm:mb-12">
-              {locale === 'ko' ? '적용 방법' : 'How to use'}
+              {i18n.templateLanding.howToUse}
             </h2>
           </ScrollReveal>
 
@@ -289,19 +295,21 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
         <div className="max-w-4xl mx-auto text-center">
           <ScrollReveal delay={0.5}>
             <h2 className="text-2xl sm:text-3xl font-bold uppercase tracking-wider text-neutral-900 mb-4 sm:mb-6">
-              {locale === 'ko' ? '바로 시작해볼까?' : 'Ready to start?'}
+              {i18n.templateLanding.readyToStart}
             </h2>
             <p className="text-base sm:text-lg text-neutral-600 mb-6 sm:mb-8 px-2">
-              {locale === 'ko'
-                ? `${template.name}으로 다음 프로젝트를 바로 시작해봐.`
-                : `Purchase now and start building your next project with ${template.name}.`}
+              {getTemplateFinalCtaDescription(
+                locale,
+                template.name,
+                i18n.templateLanding.finalCtaDescriptionSuffix
+              )}
             </p>
             <button
               type="button"
               onClick={handleBuyClick}
               className="w-full sm:w-auto px-8 py-4 text-base font-bold uppercase tracking-wider text-white bg-neutral-900 hover:bg-neutral-800 transition-colors rounded"
             >
-              {locale === 'ko' ? `$${template.price}에 구매` : `Buy for $${template.price}`}
+              {getTemplateBuyLabel(locale, template.price)}
             </button>
           </ScrollReveal>
         </div>

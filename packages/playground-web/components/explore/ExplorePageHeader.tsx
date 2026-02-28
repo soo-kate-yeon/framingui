@@ -8,6 +8,7 @@
 'use client';
 
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
+import { getExploreContent } from '../../data/i18n/explore';
 
 // ============================================================================
 // Types
@@ -26,36 +27,8 @@ interface ExplorePageHeaderProps {
 
 export function ExplorePageHeader({ className = '', selectionMode }: ExplorePageHeaderProps) {
   const { locale } = useExploreLanguage();
-
-  const content = {
-    en: {
-      subtitle: 'tekton/explore',
-      title: 'Select Theme',
-      description:
-        'Choose a design system to activate the Agentic Styling engine. Every theme is loaded directly from the MCP knowledge base.',
-    },
-    ko: {
-      subtitle: 'tekton/explore',
-      title: '테마 선택',
-      description:
-        '에이전틱 스타일링 엔진을 활성화할 디자인 시스템을 선택하세요. 모든 테마는 MCP 지식 베이스에서 직접 로드됩니다.',
-    },
-  };
-
-  const selectionContent = {
-    en: {
-      subtitle: 'tekton/explore',
-      title: 'Pick 2 Templates',
-      description: 'Choose 2 templates for your Double Package.',
-    },
-    ko: {
-      subtitle: 'tekton/explore',
-      title: '템플릿 2개 고르기',
-      description: '더블 패키지에 포함할 템플릿 2개를 선택하세요.',
-    },
-  };
-
-  const t = selectionMode ? selectionContent[locale] : content[locale];
+  const i18n = getExploreContent(locale);
+  const t = selectionMode ? i18n.selectionHeader : i18n.header;
 
   return (
     <header className={className}>

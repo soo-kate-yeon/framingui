@@ -15,6 +15,7 @@ import { Heart, ArrowRight, ExternalLink, Check, ChevronDown, ChevronUp } from '
 import { useAuth } from '../../contexts/AuthContext';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { TemplateThumbnail } from './TemplateThumbnail';
+import { getExploreContent } from '../../data/i18n/explore';
 
 // ============================================================================
 // Demo App Routes (데모 앱이 있는 테마만 정의)
@@ -80,6 +81,7 @@ export function TemplateCard({
 }: TemplateCardProps) {
   const { user, toggleLike, userData } = useAuth();
   const { locale } = useExploreLanguage();
+  const i18n = getExploreContent(locale);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isLiked = userData?.likedTemplates.includes(id) ?? false;
@@ -168,7 +170,7 @@ export function TemplateCard({
             onClick={handleLiveDemoClick}
             className="absolute bottom-4 right-4 px-5 py-2.5 flex items-center gap-2 bg-neutral-950 text-white text-sm font-medium rounded-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10 hover:bg-neutral-800 shadow-sm"
           >
-            Live Demo
+            {i18n.templateCard.liveDemo}
             <ExternalLink size={14} />
           </button>
         )}
@@ -206,7 +208,9 @@ export function TemplateCard({
           {/* 하단 화살표 토글 버튼 */}
           <button
             className="absolute bottom-1 right-0 text-neutral-400 hover:text-neutral-900 transition-colors"
-            aria-label={isExpanded ? 'Collapse text' : 'Expand text'}
+            aria-label={
+              isExpanded ? i18n.templateCard.collapseTextAria : i18n.templateCard.expandTextAria
+            }
           >
             {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>

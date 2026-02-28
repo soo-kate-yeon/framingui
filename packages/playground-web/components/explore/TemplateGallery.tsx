@@ -17,6 +17,7 @@ import { TemplateModal } from './TemplateModal';
 import { ExplorePageHeader } from './ExplorePageHeader';
 import { getTemplateData } from '../../data/templates';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
+import { getExploreContent } from '../../data/i18n/explore';
 
 // ============================================================================
 // Types
@@ -52,6 +53,7 @@ export function TemplateGallery({
 }: TemplateGalleryProps) {
   const router = useRouter();
   const { locale } = useExploreLanguage();
+  const i18n = getExploreContent(locale);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // 클라이언트 사이드 selection mode state (서버 prop을 초기값으로 사용)
@@ -97,18 +99,6 @@ export function TemplateGallery({
     });
   };
 
-  // i18n messages
-  const messages = {
-    en: {
-      noTemplates: 'No templates found',
-    },
-    ko: {
-      noTemplates: '템플릿을 찾을 수 없습니다',
-    },
-  };
-
-  const t = messages[locale];
-
   if (templates.length === 0) {
     return (
       <div
@@ -121,7 +111,7 @@ export function TemplateGallery({
           color: 'var(--tekton-text-muted-foreground, #6b7280)',
         }}
       >
-        {t.noTemplates}
+        {i18n.gallery.noTemplates}
       </div>
     );
   }

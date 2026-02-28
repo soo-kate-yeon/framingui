@@ -1,0 +1,157 @@
+[
+  {
+    "key": "landing.nav.pricing",
+    "component_type": "label",
+    "source_en": "Pricing"
+  },
+  {
+    "key": "landing.nav.docs",
+    "component_type": "label",
+    "source_en": "Docs"
+  },
+  {
+    "key": "landing.hero.title.part1",
+    "component_type": "title",
+    "source_en": "Agent-first"
+  },
+  {
+    "key": "landing.hero.title.part2",
+    "component_type": "title",
+    "source_en": "Design System"
+  },
+  {
+    "key": "landing.hero.description",
+    "component_type": "description",
+    "source_en": "framingui is the first design system AI agents can actually understand. Structured tokens and layout logic let agents generate professional, production-ready UI—directly in your codebase. No Figma. No guesswork."
+  },
+  {
+    "key": "landing.hero.buttons.tryStudio",
+    "component_type": "button",
+    "source_en": "Try Explore Free"
+  },
+  {
+    "key": "landing.sections.s1.title",
+    "component_type": "title",
+    "source_en": "Core of the Design System: Tokens"
+  },
+  {
+    "key": "landing.sections.s2.title",
+    "component_type": "title",
+    "source_en": "Production Quality: Adaptive Layout"
+  },
+  {
+    "key": "landing.sections.s3.title",
+    "component_type": "title",
+    "source_en": "30+ Built-in shadcn/ui Components"
+  },
+  {
+    "key": "landing.sections.s4.title",
+    "component_type": "title",
+    "source_en": "Adopt Immediately with MCP"
+  },
+  {
+    "key": "landing.section5.badge",
+    "component_type": "label",
+    "source_en": "March Launch Beta Invite"
+  },
+  {
+    "key": "landing.section5.title",
+    "component_type": "title",
+    "source_en": "Choose 1 Design System for Free"
+  },
+  {
+    "key": "landing.section5.cta",
+    "component_type": "button",
+    "source_en": "Explore design system"
+  },
+  {
+    "key": "pricing.hero.title",
+    "component_type": "title",
+    "source_en": "Choose your plan"
+  },
+  {
+    "key": "pricing.hero.description",
+    "component_type": "description",
+    "source_en": "Premium React templates with AI-powered design system. Start building production-ready interfaces today."
+  },
+  {
+    "key": "pricing.betaBanner.desktop",
+    "component_type": "description",
+    "source_en": "🎉 Beta Launch: Single Template FREE during beta period!"
+  },
+  {
+    "key": "pricing.plans.single.cta",
+    "component_type": "button",
+    "source_en": "Browse Templates"
+  },
+  {
+    "key": "pricing.plans.double.cta",
+    "component_type": "button",
+    "source_en": "Choose Templates"
+  },
+  {
+    "key": "pricing.plans.creator.cta",
+    "component_type": "button",
+    "source_en": "Subscribe"
+  },
+  {
+    "key": "pricing.ui.getBetaAccess",
+    "component_type": "button",
+    "source_en": "Get Beta Access - FREE"
+  },
+  {
+    "key": "explore.header.title",
+    "component_type": "title",
+    "source_en": "Select Theme"
+  },
+  {
+    "key": "explore.header.description",
+    "component_type": "description",
+    "source_en": "Choose a design system to activate the Agentic Styling engine. Every theme is loaded directly from the MCP knowledge base."
+  },
+  {
+    "key": "explore.selectionHeader.title",
+    "component_type": "title",
+    "source_en": "Pick 2 Templates"
+  },
+  {
+    "key": "explore.topBanner.message",
+    "component_type": "description",
+    "source_en": "Start your 3-day free trial"
+  },
+  {
+    "key": "explore.topBanner.cta",
+    "component_type": "button",
+    "source_en": "Start free trial"
+  },
+  {
+    "key": "template.card.liveDemo",
+    "component_type": "button",
+    "source_en": "Live Demo"
+  },
+  {
+    "key": "template.modal.getTwoTemplates",
+    "component_type": "button",
+    "source_en": "Get 2 templates at $99"
+  },
+  {
+    "key": "template.modal.getUnlimitedAccess",
+    "component_type": "button",
+    "source_en": "Get unlimited access: $149/yearly"
+  },
+  {
+    "key": "template.landing.preview",
+    "component_type": "button",
+    "source_en": "Preview"
+  },
+  {
+    "key": "template.landing.guide",
+    "component_type": "button",
+    "source_en": "Documentation"
+  },
+  {
+    "key": "template.landing.readyToStart",
+    "component_type": "title",
+    "source_en": "Ready to start?"
+  }
+]

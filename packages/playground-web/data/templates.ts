@@ -90,11 +90,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'square-minimalism',
     name: 'Square Minimalism',
     tagline: 'Bold, geometric, high-contrast design system',
-    taglineKo: '대담하고 기하학적인 고대비 디자인 시스템',
+    taglineKo: '곡률 없이 정리된 깔끔한 인터페이스',
     description:
       'A minimalist design system featuring sharp corners and high contrast. Build professional web applications quickly with clear visual hierarchy and clean typography.',
     descriptionKo:
-      '날카로운 모서리와 높은 대비가 특징인 미니멀리즘 디자인 시스템이에요. 명확한 계층 구조와 깔끔한 타이포그래피로 전문적인 웹 앱을 빠르게 만들 수 있어요.',
+      '모서리가 둥글지 않은 컴포넌트를 중심으로 구성한 디자인 시스템입니다. 대비가 분명해 데이터 화면이나 관리 도구처럼 기능 중심 인터페이스에 잘 맞습니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('square-minimalism', 'dashboard.png'),
@@ -219,11 +219,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'editorial-tech',
     name: 'Editorial Tech',
     tagline: 'Lucid, airy, typography-first rational design',
-    taglineKo: '명료하고 여유로운 타이포그래피 중심의 이성적인 디자인',
+    taglineKo: '읽기 편한 타이포 중심 인터페이스',
     description:
       'An elegant design system blending intellectual clarity with airy layouts. Prioritizes large, clean headings and generous white space to create a rational "blank canvas" atmosphere.',
     descriptionKo:
-      '지적인 명확성과 여유로운 레이아웃을 결합한 우아한 디자인 시스템입니다. 크고 깔끔한 헤딩과 넉넉한 여백을 우선시하여 이성적인 "빈 캔버스" 같은 분위기를 조성합니다.',
+      '큰 제목과 넉넉한 여백으로 문서를 보기 쉽게 구성한 디자인 시스템입니다. 블로그, 문서, 콘텐츠 서비스처럼 텍스트가 많은 화면에 적합합니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('editorial-tech', 'dashboard.png'),
@@ -310,11 +310,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'dark-boldness',
     name: 'Dark Boldness',
     tagline: 'Energetic, bold fitness & wellness design',
-    taglineKo: '에너지 넘치고 대담한 피트니스 및 웰니스 디자인',
+    taglineKo: '기본 다크모드의 선명한 피트니스 UI',
     description:
       'A vibrant design system with energetic colors and bold typography for fitness and wellness brands. Motivate users with dynamic visuals and engaging interactions.',
     descriptionKo:
-      '에너지 넘치는 컬러와 대담한 타이포그래피로 피트니스와 웰니스 브랜드를 위한 디자인 시스템이에요. 역동적인 비주얼과 매력적인 인터랙션으로 사용자에게 동기를 부여해요.',
+      '기본 다크모드와 강한 포인트 컬러를 적용한 디자인 시스템입니다. 운동 기록, 목표 추적처럼 상태 변화를 빠르게 확인해야 하는 화면에 어울립니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('dark-boldness', 'dashboard.png'),
@@ -439,11 +439,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'pebble',
     name: 'Pebble',
     tagline: 'Soft, rounded, gentle user experience',
-    taglineKo: '부드럽고 둥글며 온화한 사용자 경험',
+    taglineKo: '둥근 모서리의 편안한 소비자 앱 UI',
     description:
       'A minimal design system with soft corners and gentle colors for friendly user experiences. Approachable and comfortable for consumer-facing applications.',
     descriptionKo:
-      '부드러운 모서리와 온화한 컬러로 친근한 사용자 경험을 만드는 미니멀 디자인 시스템이에요. 소비자 대상 앱에 접근하기 쉽고 편안해요.',
+      '라운드 컴포넌트와 부드러운 색상을 중심으로 구성한 디자인 시스템입니다. 커뮤니티, 소셜, 라이프스타일처럼 친근한 경험이 중요한 서비스에 적합합니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('pebble', 'dashboard.png'),
@@ -568,11 +568,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'classic-magazine',
     name: 'Classic Magazine',
     tagline: 'Editorial, content-rich, timeless typography',
-    taglineKo: '편집적이고 콘텐츠가 풍부한 시대를 초월한 타이포그래피',
+    taglineKo: '긴 글 읽기에 맞춘 매거진 스타일 UI',
     description:
       'A design system with classic magazine layouts and elegant typography for content-focused websites. Honors the traditions of readability and editorial design.',
     descriptionKo:
-      '클래식한 잡지 레이아웃과 우아한 타이포그래피로 콘텐츠 중심 웹사이트를 위한 디자인 시스템이에요. 가독성과 편집 디자인의 전통을 이어가요.',
+      '기사형 레이아웃과 읽기 좋은 타이포그래피를 갖춘 디자인 시스템입니다. 블로그, 뉴스, 리포트처럼 긴 콘텐츠를 제공하는 화면에 적합합니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('classic-magazine', 'dashboard.png'),
@@ -697,11 +697,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'neutral-workspace',
     name: 'Neutral Workspace',
     tagline: 'Human-centered, approachable, balanced design',
-    taglineKo: '사람 중심의 접근하기 쉬운 균형잡힌 디자인',
+    taglineKo: '접근성과 가독성을 우선한 균형형 UI',
     description:
       'A design system prioritizing accessibility and readability with warm human-centered design and a neutral color palette. Provides comfortable experiences for all users.',
     descriptionKo:
-      '사람 중심의 따뜻한 디자인과 중립적인 컬러로 접근성과 가독성을 최우선으로 하는 디자인 시스템이에요. 모든 사용자에게 편안한 경험을 제공해요.',
+      '명도 대비와 정보 구조를 쉽게 읽히도록 설계한 디자인 시스템입니다. 헬스케어, 교육, 공공 서비스처럼 신뢰와 명확성이 필요한 화면에 잘 맞습니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('neutral-workspace', 'dashboard.png'),
@@ -826,11 +826,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'minimal-workspace',
     name: 'Minimal Workspace',
     tagline: 'Productivity-focused, distraction-free, efficient',
-    taglineKo: '생산성 중심의 방해 없는 효율적인 작업 환경',
+    taglineKo: '불필요한 요소를 줄인 집중형 작업 UI',
     description:
       'A minimal workspace design system maximizing productivity and focus. Eliminates unnecessary elements so users can immerse themselves in their work.',
     descriptionKo:
-      '생산성과 집중력을 극대화하는 미니멀 워크스페이스 디자인 시스템이에요. 불필요한 요소를 없애서 작업에만 몰입할 수 있도록 설계했어요.',
+      '단순한 레이아웃으로 작업 흐름에 집중하도록 만든 디자인 시스템입니다. 에디터, 프로젝트 관리, 개발 도구처럼 기능 중심 업무 화면에 적합합니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('minimal-workspace', 'dashboard.png'),
@@ -955,11 +955,11 @@ export const TEMPLATES: Record<string, TemplateData> = {
     id: 'bold-line',
     name: 'Bold Line',
     tagline: 'High-contrast, line-forward, typographically bold',
-    taglineKo: '강렬한 대비, 선 중심, 타이포그래피가 돋보이는 디자인',
+    taglineKo: '직각 테두리 중심의 고대비 업무 UI',
     description:
       'A stark black-and-white design system that uses bold borders instead of filled surfaces. Built for clarity, function, and maximum visual impact with a vibrant green accent.',
     descriptionKo:
-      '굵은 테두리와 흑백 대비로 이루어진 선 중심 디자인 시스템이에요. 군더더기 없이 명확하고 강렬한 인상을 주며, 그린 액센트로 포인트를 살렸어요.',
+      '둥근 모서리 없이 굵은 테두리와 흑백 대비로 구성한 디자인 시스템입니다. 대시보드, 운영 툴, 데이터 관리처럼 정보 구분이 중요한 화면에 적합합니다.',
     price: 59,
     screenshots: [
       getScreenshotUrl('bold-line', 'dashboard.png'),
