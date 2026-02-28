@@ -9,6 +9,7 @@ import { Footer } from '../shared/Footer';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLandingContent } from '../../data/i18n/landing';
 import { AgentReviewMarquee } from '../marketing/AgentReviewMarquee';
+import { trackFunnelPrimaryCtaClick } from '../../lib/analytics';
 
 // Assets
 import {
@@ -51,6 +52,23 @@ export function LandingPage() {
     setIsScrolled(latest > 50);
   });
 
+  const handleNavigateWithTracking = (
+    destination: string,
+    ctaId: string,
+    ctaLabel: string,
+    location: string,
+    ctaVariant: 'primary' | 'secondary' | 'beta' | 'free-start' = 'primary'
+  ) => {
+    trackFunnelPrimaryCtaClick({
+      cta_id: ctaId,
+      cta_label: ctaLabel,
+      location,
+      destination,
+      cta_variant: ctaVariant,
+    });
+    router.push(destination);
+  };
+
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
       {/* Top Nav Bar */}
@@ -70,19 +88,43 @@ export function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Button
-              onClick={() => router.push('/pricing')}
+              onClick={() =>
+                handleNavigateWithTracking(
+                  '/pricing',
+                  'home_nav_pricing',
+                  content.nav.pricing,
+                  'home_top_nav',
+                  'secondary'
+                )
+              }
               className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200 shadow-sm"
             >
               {content.nav.pricing}
             </Button>
             <Button
-              onClick={() => router.push('/docs')}
+              onClick={() =>
+                handleNavigateWithTracking(
+                  '/docs',
+                  'home_nav_docs',
+                  content.nav.docs,
+                  'home_top_nav',
+                  'secondary'
+                )
+              }
               className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200 shadow-sm"
             >
               {content.nav.docs}
             </Button>
             <Button
-              onClick={() => router.push('/explore')}
+              onClick={() =>
+                handleNavigateWithTracking(
+                  '/explore',
+                  'home_nav_explore',
+                  content.hero.buttons.tryStudio,
+                  'home_top_nav',
+                  'primary'
+                )
+              }
               className="h-9 px-4 rounded-full text-sm font-medium bg-neutral-900 text-white hover:bg-neutral-800 shadow-sm"
             >
               {content.hero.buttons.tryStudio}
@@ -109,7 +151,15 @@ export function LandingPage() {
         <FadeIn delay={0.3}>
           <div className="flex justify-center">
             <Button
-              onClick={() => router.push('/studio')}
+              onClick={() =>
+                handleNavigateWithTracking(
+                  '/studio',
+                  'home_hero_try_studio',
+                  content.hero.buttons.tryStudio,
+                  'home_hero',
+                  'primary'
+                )
+              }
               className="h-14 md:h-16 px-8 md:px-12 rounded-full text-lg md:text-xl font-medium bg-neutral-900 text-white hover:bg-neutral-800 hover:scale-105 transition-all shadow-xl"
             >
               {content.hero.buttons.tryStudio}
@@ -211,7 +261,15 @@ export function LandingPage() {
             {content.section5.description}
           </p>
           <Button
-            onClick={() => router.push('/studio')}
+            onClick={() =>
+              handleNavigateWithTracking(
+                '/studio',
+                'home_beta_offer_cta',
+                content.section5.cta,
+                'home_beta_offer',
+                'beta'
+              )
+            }
             className="h-14 md:h-16 px-8 md:px-12 rounded-full text-lg md:text-xl font-bold bg-white text-neutral-950 hover:bg-neutral-200 hover:scale-105 transition-all shadow-2xl"
           >
             {content.section5.cta}

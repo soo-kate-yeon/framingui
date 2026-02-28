@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight, Rocket } from 'lucide-react';
+import { trackFunnelPrimaryCtaClick } from '@/lib/analytics';
 
 const BETA_SIGNUP_URL = 'https://tally.so/r/7R2kz6';
 
@@ -15,7 +16,8 @@ interface InlineCTAProps {
 
 const defaultContent = {
   heading: 'Ready to build with FramingUI?',
-  description: 'Join the beta and get early access to agentic design systems that adapt to your needs.',
+  description:
+    'Join the beta and get early access to agentic design systems that adapt to your needs.',
   buttonText: 'Join Beta',
 };
 
@@ -26,6 +28,16 @@ export function InlineCTA({
   buttonText = defaultContent.buttonText,
   href = BETA_SIGNUP_URL,
 }: InlineCTAProps) {
+  const handleBetaClick = () => {
+    trackFunnelPrimaryCtaClick({
+      cta_id: 'inline_beta_signup',
+      cta_label: buttonText,
+      location: `inline_cta_${variant}`,
+      destination: href,
+      cta_variant: 'beta',
+    });
+  };
+
   if (variant === 'minimal') {
     return (
       <div className="my-8 py-4 border-t border-b border-neutral-200 dark:border-neutral-700">
@@ -35,6 +47,7 @@ export function InlineCTA({
             href={href}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleBetaClick}
             className="inline-flex items-center gap-1 font-medium text-neutral-900 dark:text-neutral-100 underline underline-offset-2 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
           >
             {buttonText}
@@ -64,6 +77,7 @@ export function InlineCTA({
           href={href}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={handleBetaClick}
           className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
         >
           {buttonText}

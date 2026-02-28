@@ -22,6 +22,7 @@ import {
   X,
 } from 'lucide-react';
 import { BetaBanner } from '@/components/shared/BetaBanner';
+import { trackFunnelPrimaryCtaClick } from '@/lib/analytics';
 
 const NAV_ITEMS = [
   { href: '/docs', label: 'Overview', icon: Book },
@@ -38,6 +39,22 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const trackDocsCta = (
+    ctaId: string,
+    ctaLabel: string,
+    location: string,
+    destination: string,
+    ctaVariant: 'primary' | 'secondary' | 'beta' | 'free-start'
+  ) => {
+    trackFunnelPrimaryCtaClick({
+      cta_id: ctaId,
+      cta_label: ctaLabel,
+      location,
+      destination,
+      cta_variant: ctaVariant,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#fafafa]">
@@ -99,14 +116,32 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
           <Link
             href="https://tally.so/r/7R2kz6"
             target="_blank"
-            onClick={closeMobileMenu}
+            onClick={() => {
+              trackDocsCta(
+                'docs_mobile_beta_access',
+                'Get Beta Access',
+                'docs_mobile_menu',
+                'https://tally.so/r/7R2kz6',
+                'beta'
+              );
+              closeMobileMenu();
+            }}
             className="block w-full text-center py-3 px-4 bg-neutral-900 text-white rounded-full font-medium hover:bg-neutral-800 transition-colors"
           >
             Get Beta Access
           </Link>
           <Link
             href="/explore"
-            onClick={closeMobileMenu}
+            onClick={() => {
+              trackDocsCta(
+                'docs_mobile_open_explore',
+                'Open Explore',
+                'docs_mobile_menu',
+                '/explore',
+                'primary'
+              );
+              closeMobileMenu();
+            }}
             className="block w-full text-center py-3 px-4 border border-neutral-300 text-neutral-700 rounded-full font-medium hover:bg-neutral-100 transition-colors"
           >
             Open Explore
@@ -126,12 +161,30 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
             <Link
               href="https://tally.so/r/7R2kz6"
               target="_blank"
+              onClick={() =>
+                trackDocsCta(
+                  'docs_desktop_beta_access',
+                  'Get Beta Access',
+                  'docs_desktop_header',
+                  'https://tally.so/r/7R2kz6',
+                  'beta'
+                )
+              }
               className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
             >
               Get Beta Access
             </Link>
             <Link
               href="/explore"
+              onClick={() =>
+                trackDocsCta(
+                  'docs_desktop_open_explore',
+                  'Open Explore',
+                  'docs_desktop_header',
+                  '/explore',
+                  'primary'
+                )
+              }
               className="text-sm font-medium bg-neutral-900 text-white px-4 py-2 rounded-full hover:bg-neutral-800 transition-colors"
             >
               Open Explore

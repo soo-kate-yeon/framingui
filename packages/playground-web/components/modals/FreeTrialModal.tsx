@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { trackFunnelPrimaryCtaClick } from '../../lib/analytics';
 
 // ============================================================================
 // Types
@@ -71,6 +72,13 @@ export function FreeTrialModal({ isOpen, onClose, onStartTrial }: FreeTrialModal
 
   const handleCTA = async () => {
     console.log('[FreeTrialModal] CTA clicked, user:', user ? 'logged in' : 'not logged in');
+    trackFunnelPrimaryCtaClick({
+      cta_id: user ? 'free_trial_select_template' : 'free_trial_start_free',
+      cta_label: user ? '테마 선택하기' : '무료로 시작하기',
+      location: 'free_trial_modal',
+      destination: user ? '/explore' : '/auth/login',
+      cta_variant: 'free-start',
+    });
 
     if (user) {
       // 이미 로그인된 경우: 바로 템플릿 선택 모달로
