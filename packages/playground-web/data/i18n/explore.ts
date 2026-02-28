@@ -51,7 +51,7 @@ interface ExploreI18nContent {
   };
 }
 
-const content: Record<'en' | 'ko', ExploreI18nContent> = {
+const content: Record<GlobalLocale, ExploreI18nContent> = {
   en: {
     header: {
       subtitle: 'tekton/explore',
@@ -154,15 +154,69 @@ const content: Record<'en' | 'ko', ExploreI18nContent> = {
       finalCtaDescriptionSuffix: '지금 구매하고 다음 프로젝트를 시작합니다:',
     },
   },
+  ja: {
+    header: {
+      subtitle: 'tekton/explore',
+      title: 'テーマを選択',
+      description:
+        'Agentic Styling エンジンを有効にするデザインシステムを選択します。すべてのテーマは MCP ナレッジベースから直接読み込みます。',
+    },
+    selectionHeader: {
+      subtitle: 'tekton/explore',
+      title: 'テンプレートを2つ選択',
+      description: 'Double Package に含めるテンプレートを2つ選択します。',
+    },
+    topBanner: {
+      eyebrow: 'Explore · デザインシステム',
+      message: '3日間の無料トライアルを開始',
+      cta: '無料トライアル開始',
+      dismissAriaLabel: '無料トライアルバナーを閉じる',
+    },
+    gallery: {
+      noTemplates: 'テンプレートが見つかりません。',
+    },
+    templateCard: {
+      liveDemo: 'ライブデモ',
+      expandTextAria: '説明を開く',
+      collapseTextAria: '説明を閉じる',
+    },
+    templateModal: {
+      closeModalAria: 'モーダルを閉じる',
+      oneTimePrice: '買い切り',
+      liveDemo: 'ライブデモ',
+      getTwoTemplates: 'テンプレート2つを $99 で購入',
+      savePercent: '16% お得',
+      getUnlimitedAccess: '無制限アクセス: $149/年',
+      bestOffer: 'おすすめ',
+      features: '主な機能',
+      recommendedToUseFor: 'おすすめ用途',
+      previousImageAria: '前の画像',
+      nextImageAria: '次の画像',
+      slideAriaPrefix: 'スライドへ移動',
+    },
+    templateLanding: {
+      loadingTemplate: 'テンプレートを読み込んでいます...',
+      preview: 'プレビュー',
+      guide: 'ガイド',
+      features: '主な機能',
+      recommendedToUseFor: 'おすすめ用途',
+      howToUse: '使い方',
+      readyToStart: '準備はできましたか？',
+      finalCtaDescriptionSuffix: 'を使って、今すぐ次のプロジェクトを始めましょう。',
+    },
+  },
 };
 
 export function getExploreContent(locale: GlobalLocale): ExploreI18nContent {
-  return locale === 'ko' ? content.ko : content.en;
+  return content[locale];
 }
 
 export function getTemplatePriceLabel(locale: GlobalLocale, price: number): string {
   if (locale === 'ko') {
     return `$${price} / 1회 결제`;
+  }
+  if (locale === 'ja') {
+    return `$${price} / 買い切り`;
   }
   return `$${price} / one-time`;
 }
@@ -170,6 +224,9 @@ export function getTemplatePriceLabel(locale: GlobalLocale, price: number): stri
 export function getTemplateBuyLabel(locale: GlobalLocale, price: number): string {
   if (locale === 'ko') {
     return `$${price}에 구매`;
+  }
+  if (locale === 'ja') {
+    return `$${price}で購入`;
   }
   return `Buy for $${price}`;
 }
@@ -180,6 +237,9 @@ export function getTemplateFinalCtaDescription(
   suffix: string
 ): string {
   if (locale === 'ko') {
+    return `${templateName}${suffix}`;
+  }
+  if (locale === 'ja') {
     return `${templateName}${suffix}`;
   }
   return `${suffix} ${templateName}.`;

@@ -1,7 +1,7 @@
 /**
  * Pricing Page i18n Content
  *
- * 가격 페이지의 모든 텍스트 콘텐츠를 영어/한국어로 관리
+ * 가격 페이지의 모든 텍스트 콘텐츠를 영어/한국어/일본어로 관리
  */
 
 import type { GlobalLocale } from '../../contexts/GlobalLanguageContext';
@@ -101,7 +101,7 @@ export interface PricingContent {
   };
 }
 
-const pricingContent: Record<'en' | 'ko', PricingContent> = {
+const pricingContent: Record<GlobalLocale, PricingContent> = {
   en: {
     nav: {
       brandName: 'TEKTON',
@@ -382,8 +382,148 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
       priceConfigMissing: '가격 설정을 찾을 수 없습니다. 지원팀에 문의해 주세요.',
     },
   },
+  ja: {
+    nav: {
+      brandName: 'TEKTON',
+      getStarted: '始める',
+    },
+    hero: {
+      title: 'プランを選択',
+      description:
+        'AI ベースのデザインシステムを備えたプレミアム React テンプレートです。今日から本番向けインターフェースを作れます。',
+    },
+    betaBanner: {
+      mobile: '🎉 単一テンプレート無料！',
+      desktop: '🎉 ベータローンチ: ベータ期間中は単一テンプレート無料！',
+    },
+    plans: {
+      single: {
+        name: 'Single Template',
+        description: 'プロジェクトに合うテンプレート1つから始めましょう。',
+        priceLabel: '$59',
+        priceSub: '買い切り',
+        cta: 'テンプレートを見る',
+        features: [
+          '好きなテンプレート 1 つ',
+          '1年間のアップデート',
+          '商用利用可',
+          'メールサポート（72時間）',
+        ],
+      },
+      double: {
+        name: 'Double Package',
+        description: '複数テンプレートが必要な開発に最適です。',
+        priceLabel: '$99',
+        priceSub: '買い切り',
+        cta: 'テンプレートを選ぶ',
+        badge: '人気プラン',
+        features: [
+          '好きなテンプレート 2 つ',
+          '1年間のアップデート',
+          '商用利用可',
+          'メールサポート（72時間）',
+          '個別購入よりお得',
+        ],
+      },
+      creator: {
+        name: 'Creator Pass',
+        description: '継続的に作るチーム向けの無制限アクセスです。',
+        priceLabel: '$149',
+        priceSub: '/年',
+        cta: '購読する',
+        badge: 'ベストバリュー',
+        features: [
+          '現在の全テンプレート',
+          '今後のテンプレートも含む',
+          '購読期間中アップデート提供',
+          '優先メールサポート（48時間）',
+          '優先サポートキュー',
+        ],
+        renewalNotice: '毎年 $149 で自動更新されます。いつでも解約できます。',
+      },
+    },
+    comparison: {
+      title: 'プラン比較',
+      tableHeaders: {
+        feature: '機能',
+        single: 'Single',
+        double: 'Double',
+        creator: 'Creator Pass',
+      },
+      features: {
+        templatesIncluded: '含まれるテンプレート',
+        futureTemplates: '今後のテンプレート',
+        updateDuration: 'アップデート期間',
+        commercialUse: '商用利用',
+        emailSupport: 'メールサポート',
+        priorityQueue: '優先キュー',
+        communityDiscord: 'コミュニティ Discord',
+        documentation: 'ドキュメント',
+      },
+      values: {
+        single: {
+          templatesIncluded: '1',
+          updateDuration: '1年',
+          emailSupport: '72時間',
+        },
+        double: {
+          templatesIncluded: '2',
+          updateDuration: '1年',
+          emailSupport: '72時間',
+        },
+        creator: {
+          templatesIncluded: 'すべて',
+          updateDuration: '購読期間',
+          emailSupport: '48時間',
+        },
+      },
+    },
+    faq: {
+      title: 'よくある質問',
+      subtitle: '料金とプランに関する主な質問をまとめました。',
+      items: [
+        {
+          title: 'テンプレートはどう使いますか？',
+          content:
+            'テンプレート購入後（ベータ期間は 1 つ無料）、プロジェクトで「npx @framingui/mcp-server init」を実行してください。MCP サーバー設定、デザイントークン設定、Tailwind 設定、AI ツール接続まで 1 回で完了します。',
+        },
+        {
+          title: 'アップデート期間終了後はどうなりますか？',
+          content:
+            'ダウンロード済みテンプレートは継続利用できます。期間終了後は新規アップデートのみ停止されます。必要な時に更新プランへ切り替えられます。',
+        },
+        {
+          title: 'クライアント案件で使えますか？',
+          content:
+            'はい。すべてのプランに商用ライセンスが含まれます。個人案件とクライアント案件の両方で使えます。テンプレート自体の再販売・再配布のみ不可です。',
+        },
+        {
+          title: 'Creator Pass の自動更新はどうなりますか？',
+          content:
+            'Creator Pass は毎年 $149 で自動更新されます。アカウント設定からいつでも解約でき、解約は現在の請求期間終了時に反映されます。',
+        },
+        {
+          title: '返金ポリシーはどうなっていますか？',
+          content:
+            'テンプレートはデジタル商品なので、購入後14日以内かつ未ダウンロードの場合に返金できます。技術的欠陥と重複購入は常に返金対象です。',
+        },
+        {
+          title: 'チーム割引や教育割引はありますか？',
+          content:
+            'チームライセンスと教育割引は準備中です。早期導入や個別見積りは soo.kate.yeon@gmail.com までお問い合わせください。',
+        },
+      ],
+    },
+    ui: {
+      freeLabel: '無料',
+      duringBeta: 'ベータ期間限定',
+      getBetaAccess: 'ベータ無料トライアル開始',
+      paymentNotReady: '決済システムを利用できません。しばらくしてから再試行してください。',
+      priceConfigMissing: '価格設定が見つかりません。サポートへお問い合わせください。',
+    },
+  },
 };
 
 export function getPricingContent(locale: GlobalLocale): PricingContent {
-  return locale === 'ko' ? pricingContent.ko : pricingContent.en;
+  return pricingContent[locale];
 }
