@@ -1,0 +1,499 @@
+---
+title: "Dark Mode Design Tokens: Complete Implementation Guide"
+description: "Master dark mode design tokens with semantic color systems, contrast ratios, and automated theme switching for accessible, beautiful dark interfaces."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["dark-mode", "design-tokens", "theming", "accessibility", "oklch"]
+---
+
+# Dark Mode Design Tokens: Complete Implementation Guide
+
+Dark mode isn't just inverting colors. It's a complete rethink of your color system, requiring careful contrast management, semantic naming, and accessibility considerations.
+
+Done right, dark mode improves readability in low-light environments and reduces eye strain. Done wrong, it creates unreadable text and accessibility violations.
+
+## Why Design Tokens Are Essential for Dark Mode
+
+Design tokens enable theme-independent component code. Instead of hardcoding `#000000`, you reference `--color-background`, which resolves to different values per theme.
+
+### Without Design Tokens (Hard to Maintain)
+
+```tsx
+// Bad: Hardcoded colors
+const Button = () => (
+  <button style={{
+    background: isDark ? '#1a1a1a' : '#ffffff',
+    color: isDark ? '#ffffff' : '#000000',
+    border: `1px solid ${isDark ? '#333' : '#ccc'}`
+  }}>
+    Click me
+  </button>
+);
+```
+
+### With Design Tokens (Scalable)
+
+```tsx
+// Good: Token-based theming
+const Button = () => (
+  <button className="btn">
+    Click me
+  </button>
+);
+
+// CSS automatically switches based on theme
+.btn {
+  background: var(--color-button-background);
+  color: var(--color-button-foreground);
+  border: 1px solid var(--color-button-border);
+}
+```
+
+## Token Architecture for Dark Mode
+
+A robust dark mode token system uses three layers:
+
+### Layer 1: Primitive Tokens (Raw Color Values)
+
+These are your base colors—never reference these directly in components.
+
+```typescript
+// primitives.ts
+export const primitives = {
+  neutral: {
+    0: 'oklch(1.00 0.00 0)',      // Pure white
+    50: 'oklch(0.98 0.00 0)',
+    100: 'oklch(0.95 0.00 0)',
+    200: 'oklch(0.90 0.00 0)',
+    // ... up to
+    900: 'oklch(0.20 0.00 0)',
+    950: 'oklch(0.10 0.00 0)',
+    1000: 'oklch(0.00 0.00 0)',   // Pure black
+  },
+  blue: {
+    50: 'oklch(0.97 0.02 250)',
+    100: 'oklch(0.93 0.04 250)',
+    // ... color scale
+    900: 'oklch(0.30 0.15 250)',
+  }
+};
+```
+
+### Layer 2: Semantic Tokens (Purpose-Based)
+
+Map primitives to semantic meanings. This is where light/dark themes diverge.
+
+```typescript
+// semantic.ts
+export const semantic = {
+  light: {
+    background: {
+      page: primitives.neutral[0],
+      surface: primitives.neutral[50],
+      elevated: primitives.neutral[0],
+    },
+    foreground: {
+      primary: primitives.neutral[950],
+      secondary: primitives.neutral[700],
+      tertiary: primitives.neutral[500],
+    },
+    border: {
+      default: primitives.neutral[200],
+      strong: primitives.neutral[300],
+    },
+    primary: {
+      default: primitives.blue[500],
+      hover: primitives.blue[600],
+      active: primitives.blue[700],
+    }
+  },
+  dark: {
+    background: {
+      page: primitives.neutral[950],
+      surface: primitives.neutral[900],
+      elevated: primitives.neutral[850],
+    },
+    foreground: {
+      primary: primitives.neutral[50],
+      secondary: primitives.neutral[400],
+      tertiary: primitives.neutral[500],
+    },
+    border: {
+      default: primitives.neutral[800],
+      strong: primitives.neutral[700],
+    },
+    primary: {
+      default: primitives.blue[400],  // Lighter in dark mode
+      hover: primitives.blue[300],
+      active: primitives.blue[200],
+    }
+  }
+};
+```
+
+### Layer 3: Component Tokens
+
+Components reference semantic tokens, not primitives.
+
+```typescript
+// component.ts
+export const componentTokens = {
+  button: {
+    background: '--color-primary-default',
+    backgroundHover: '--color-primary-hover',
+    foreground: '--color-background-page',
+  },
+  card: {
+    background: '--color-background-surface',
+    border: '--color-border-default',
+    foreground: '--color-foreground-primary',
+  }
+};
+```
+
+## OKLCH: The Secret to Better Dark Mode
+
+OKLCH (Oklab Lightness Chroma Hue) produces perceptually uniform color scales, critical for dark mode.
+
+### Why OKLCH Beats HSL for Dark Mode
+
+```typescript
+// HSL: Inconsistent perceived brightness
+const hslColors = {
+  blue: 'hsl(220, 80%, 50%)',   // Looks bright
+  yellow: 'hsl(60, 80%, 50%)',  // Looks VERY bright (same L value!)
+};
+
+// OKLCH: Consistent perceived brightness
+const oklchColors = {
+  blue: 'oklch(0.55 0.15 250)',    // Perceptually 55% bright
+  yellow: 'oklch(0.55 0.15 90)',   // Also perceptually 55% bright
+};
+```
+
+### Generating OKLCH Scales for Dark Mode
+
+```typescript
+function generateOKLCHScale(hue: number): Record<number, string> {
+  return {
+    50: `oklch(0.97 0.02 ${hue})`,
+    100: `oklch(0.93 0.05 ${hue})`,
+    200: `oklch(0.85 0.08 ${hue})`,
+    300: `oklch(0.75 0.11 ${hue})`,
+    400: `oklch(0.65 0.13 ${hue})`,
+    500: `oklch(0.55 0.15 ${hue})`,  // Base color
+    600: `oklch(0.45 0.13 ${hue})`,
+    700: `oklch(0.35 0.11 ${hue})`,
+    800: `oklch(0.25 0.08 ${hue})`,
+    900: `oklch(0.20 0.05 ${hue})`,
+  };
+}
+
+const blue = generateOKLCHScale(250);
+const green = generateOKLCHScale(145);
+const red = generateOKLCHScale(25);
+```
+
+## Contrast Ratios for Accessibility
+
+Dark mode must meet WCAG 2.1 AA standards:
+- **Normal text**: 4.5:1 contrast ratio
+- **Large text**: 3:1 contrast ratio
+- **UI components**: 3:1 contrast ratio
+
+### Checking Contrast with OKLCH
+
+```typescript
+function getContrastRatio(color1: string, color2: string): number {
+  const l1 = parseOKLCH(color1).lightness;
+  const l2 = parseOKLCH(color2).lightness;
+
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+// Validate dark mode tokens
+const darkBg = 'oklch(0.10 0.00 0)';
+const darkText = 'oklch(0.95 0.00 0)';
+
+const ratio = getContrastRatio(darkBg, darkText);
+console.log(`Contrast ratio: ${ratio}:1`); // Should be > 4.5 for body text
+```
+
+### Auto-Adjusting Colors for Contrast
+
+```typescript
+function ensureContrast(
+  foreground: string,
+  background: string,
+  targetRatio: number = 4.5
+): string {
+  let adjusted = foreground;
+  let ratio = getContrastRatio(adjusted, background);
+
+  while (ratio < targetRatio) {
+    const [l, c, h] = parseOKLCH(adjusted);
+    adjusted = `oklch(${l + 0.05} ${c} ${h})`;
+    ratio = getContrastRatio(adjusted, background);
+  }
+
+  return adjusted;
+}
+
+// Usage
+const safeForeground = ensureContrast(
+  'oklch(0.70 0.15 250)',  // Might be too dark
+  'oklch(0.10 0.00 0)'     // Dark background
+);
+```
+
+## Implementing Theme Switching
+
+### CSS Custom Properties Approach
+
+```css
+/* light-theme.css */
+:root, [data-theme="light"] {
+  --color-background-page: oklch(1.00 0.00 0);
+  --color-background-surface: oklch(0.98 0.00 0);
+  --color-foreground-primary: oklch(0.10 0.00 0);
+  --color-foreground-secondary: oklch(0.30 0.00 0);
+  --color-primary: oklch(0.55 0.15 250);
+}
+
+/* dark-theme.css */
+[data-theme="dark"] {
+  --color-background-page: oklch(0.10 0.00 0);
+  --color-background-surface: oklch(0.15 0.00 0);
+  --color-foreground-primary: oklch(0.95 0.00 0);
+  --color-foreground-secondary: oklch(0.70 0.00 0);
+  --color-primary: oklch(0.65 0.15 250); /* Lighter for dark mode */
+}
+
+/* Automatic OS preference detection */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-page: oklch(0.10 0.00 0);
+    /* ... dark mode tokens */
+  }
+}
+```
+
+### React Implementation
+
+```tsx
+import { useEffect, useState } from 'react';
+
+type Theme = 'light' | 'dark' | 'system';
+
+export function useTheme() {
+  const [theme, setTheme] = useState<Theme>('system');
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+
+    const activeTheme = theme === 'system' ? systemTheme : theme;
+    root.setAttribute('data-theme', activeTheme);
+  }, [theme]);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        const newTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme]);
+
+  return { theme, setTheme };
+}
+
+// Theme toggle component
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <button
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      aria-label="Toggle theme"
+    >
+      {theme === 'dark' ? '🌙' : '☀️'}
+    </button>
+  );
+}
+```
+
+## Advanced Dark Mode Patterns
+
+### Pattern 1: Elevation System
+
+In dark mode, elevation is shown by *lighter* surfaces, not shadows.
+
+```css
+:root {
+  --elevation-0: var(--color-background-page);
+  --elevation-1: var(--color-background-surface);
+  --elevation-2: var(--color-background-elevated);
+}
+
+[data-theme="dark"] {
+  /* Higher elevation = lighter surface in dark mode */
+  --elevation-0: oklch(0.10 0.00 0);
+  --elevation-1: oklch(0.15 0.00 0);
+  --elevation-2: oklch(0.20 0.00 0);
+  --elevation-3: oklch(0.25 0.00 0);
+}
+
+.card {
+  background: var(--elevation-1);
+}
+
+.dialog {
+  background: var(--elevation-2);
+}
+```
+
+### Pattern 2: Color Intensity Shifts
+
+Accent colors need adjustment for dark backgrounds.
+
+```typescript
+const colorShifts = {
+  light: {
+    primary: 'oklch(0.55 0.15 250)',    // Standard saturation
+    success: 'oklch(0.55 0.15 145)',
+    error: 'oklch(0.55 0.20 25)',
+  },
+  dark: {
+    primary: 'oklch(0.65 0.12 250)',    // Reduced saturation
+    success: 'oklch(0.65 0.12 145)',
+    error: 'oklch(0.65 0.15 25)',
+  }
+};
+```
+
+### Pattern 3: Border Transparency
+
+Dark mode borders work better with transparency:
+
+```css
+[data-theme="light"] {
+  --color-border-default: oklch(0.90 0.00 0);
+}
+
+[data-theme="dark"] {
+  /* Use transparency to work on any background */
+  --color-border-default: oklch(0.95 0.00 0 / 0.15);
+}
+```
+
+## Testing Dark Mode Tokens
+
+### Visual Regression Testing
+
+```typescript
+// dark-mode.test.ts
+import { test, expect } from '@playwright/test';
+
+test('dark mode renders correctly', async ({ page }) => {
+  await page.goto('/');
+
+  // Take light mode screenshot
+  await page.screenshot({ path: 'light-mode.png' });
+
+  // Switch to dark mode
+  await page.evaluate(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  });
+
+  // Take dark mode screenshot
+  await page.screenshot({ path: 'dark-mode.png' });
+
+  // Compare contrast ratios
+  const contrast = await page.evaluate(() => {
+    const bg = getComputedStyle(document.body).backgroundColor;
+    const text = getComputedStyle(document.body).color;
+    return calculateContrastRatio(bg, text);
+  });
+
+  expect(contrast).toBeGreaterThan(4.5);
+});
+```
+
+### Accessibility Audit
+
+```typescript
+import { checkA11y } from 'axe-playwright';
+
+test('dark mode meets WCAG AA', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  });
+
+  await checkA11y(page, null, {
+    rules: {
+      'color-contrast': { enabled: true }
+    }
+  });
+});
+```
+
+## Common Dark Mode Mistakes
+
+1. **Pure black backgrounds** (`#000000`) — Use `oklch(0.10 0.00 0)` instead for reduced eye strain
+2. **Inverted light colors** — Don't just flip HSL lightness values
+3. **Ignoring images** — Images need opacity reduction in dark mode
+4. **Same shadows** — Shadows should be more subtle or replaced by elevation in dark mode
+5. **Forgetting focus states** — Focus outlines need higher contrast in dark mode
+6. **No transition** — Theme switches should animate smoothly
+
+## Image Handling in Dark Mode
+
+```css
+[data-theme="dark"] img {
+  /* Reduce brightness for photos */
+  filter: brightness(0.8) contrast(1.1);
+}
+
+[data-theme="dark"] .icon {
+  /* Invert icons if they're meant to be dark-on-light */
+  filter: invert(1);
+}
+
+[data-theme="dark"] .logo {
+  /* Swap logo entirely */
+  content: url('/logo-dark.svg');
+}
+```
+
+## FramingUI Dark Mode System
+
+FramingUI includes a production-ready dark mode system:
+
+- OKLCH-based color scales for perceptual uniformity
+- Automatic contrast checking and adjustment
+- Three-tier token architecture (primitive, semantic, component)
+- Smooth theme transitions with zero flicker
+- [Explore dark mode themes →](/explore)
+
+## Related Resources
+
+- [Design Tokens Best Practices](/blog/design-tokens-best-practices) — Foundation of theme systems
+- [OKLCH Color System Guide](/blog/oklch-color-system-guide) — Deep dive into perceptual color
+- [Responsive Design Tokens](/blog/responsive-design-tokens) — Combining dark mode with responsive design
+
+---
+
+**Build dark mode right from day one.** Users expect it. Accessibility requires it. Design tokens make it effortless.

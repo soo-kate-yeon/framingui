@@ -1,0 +1,571 @@
+---
+title: "Dialog"
+description: "Dialog component API, variants, and practical usage examples for modals, alerts, and forms"
+---
+
+# Dialog
+
+`Dialog` is a modal overlay component built on Radix UI for creating accessible dialogs, modals, and alerts in the FramingUI design system.
+
+## Import
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Dialog (Root)
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `open` | `boolean` | `undefined` | Controlled open state |
+| `defaultOpen` | `boolean` | `false` | Uncontrolled default open state |
+| `onOpenChange` | `(open: boolean) => void` | `undefined` | Event handler when open state changes |
+| `modal` | `boolean` | `true` | Whether dialog blocks interaction with rest of page |
+
+### DialogContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `children` | `ReactNode` | - | Dialog content |
+| `onEscapeKeyDown` | `(event: KeyboardEvent) => void` | `undefined` | Handler for Escape key |
+| `onPointerDownOutside` | `(event: PointerDownOutsideEvent) => void` | `undefined` | Handler for clicking outside |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Native div attributes |
+
+### DialogHeader, DialogFooter
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Native div attributes |
+
+### DialogTitle
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | Radix DialogTitle props | - | Radix primitive props |
+
+### DialogDescription
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | Radix DialogDescription props | - | Radix primitive props |
+
+## Basic Usage
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function BasicDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>Open Dialog</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Welcome</DialogTitle>
+          <DialogDescription>
+            This is a basic dialog example.
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## Practical Scenarios
+
+### 1. Confirmation Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function DeleteConfirmation() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive">Delete Account</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete your account.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline">Cancel</Button>
+          <Button variant="destructive">Delete</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 2. Login Form Dialog
+
+```tsx
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Input, Label } from '@framingui/ui';
+
+export function LoginDialog() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>Sign In</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Sign in to your account</DialogTitle>
+          <DialogDescription>
+            Enter your credentials to continue.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="name@example.com" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" type="password" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit">Sign In</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 3. Alert Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function AlertDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Session Expired</DialogTitle>
+          <DialogDescription>
+            Your session has expired. Please sign in again to continue.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button onClick={onClose}>OK</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 4. Settings Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Label, Switch } from '@framingui/ui';
+
+export function SettingsDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Settings</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Preferences</DialogTitle>
+          <DialogDescription>
+            Manage your notification and privacy settings.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="notifications">Email notifications</Label>
+            <Switch id="notifications" />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="marketing">Marketing emails</Label>
+            <Switch id="marketing" />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 5. Create New Item Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Input, Label, Textarea } from '@framingui/ui';
+
+export function CreateProjectDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>New Project</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Project</DialogTitle>
+          <DialogDescription>
+            Add a new project to your workspace.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">Project name</Label>
+            <Input id="name" placeholder="My Awesome Project" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea id="description" placeholder="What's this project about?" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline">Cancel</Button>
+          <Button type="submit">Create</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 6. Information Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function InfoDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost">About</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>About FramingUI</DialogTitle>
+          <DialogDescription>
+            FramingUI is a modern design system built with Tailwind CSS and Radix UI.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4 text-sm">
+          <p className="mb-2">Version: 1.0.0</p>
+          <p className="mb-2">Built with React, TypeScript, and Next.js</p>
+          <p className="text-neutral-500">© 2024 FramingUI. All rights reserved.</p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 7. Image Preview Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from '@framingui/ui';
+
+export function ImagePreviewDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="cursor-pointer">
+          <img
+            src="/placeholder.jpg"
+            alt="Preview"
+            className="h-20 w-20 rounded object-cover"
+          />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl">
+        <img
+          src="/placeholder.jpg"
+          alt="Full size"
+          className="h-auto w-full rounded"
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 8. Multi-Step Form Dialog
+
+```tsx
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Input, Label } from '@framingui/ui';
+
+export function MultiStepDialog() {
+  const [step, setStep] = useState(1);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>Sign Up</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Account - Step {step} of 2</DialogTitle>
+          <DialogDescription>
+            {step === 1 ? 'Enter your personal information' : 'Choose your password'}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          {step === 1 ? (
+            <>
+              <div className="grid gap-2">
+                <Label htmlFor="fullname">Full name</Label>
+                <Input id="fullname" placeholder="John Doe" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" type="email" placeholder="john@example.com" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirm">Confirm password</Label>
+                <Input id="confirm" type="password" />
+              </div>
+            </>
+          )}
+        </div>
+        <DialogFooter>
+          {step === 2 && (
+            <Button variant="outline" onClick={() => setStep(1)}>
+              Back
+            </Button>
+          )}
+          <Button onClick={() => step === 1 ? setStep(2) : null}>
+            {step === 1 ? 'Next' : 'Create Account'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 9. Selection Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function SelectionDialog() {
+  const items = ['React', 'Vue', 'Angular', 'Svelte'];
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Choose Framework</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Select Framework</DialogTitle>
+          <DialogDescription>
+            Choose your preferred frontend framework.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-2 py-4">
+          {items.map((item) => (
+            <button
+              key={item}
+              className="rounded border border-neutral-200 p-3 text-left hover:bg-neutral-50"
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 10. Loading Dialog
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@framingui/ui';
+
+export function LoadingDialog({ open }: { open: boolean }) {
+  return (
+    <Dialog open={open}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Processing</DialogTitle>
+          <DialogDescription>
+            Please wait while we process your request...
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex items-center justify-center py-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-900" />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## Design Tokens
+
+The Dialog component uses these Tailwind utility classes:
+
+**DialogOverlay:**
+- Background: `bg-black/80`
+- Backdrop: `backdrop-blur-sm`
+- Position: `fixed inset-0 z-50`
+- Animation: `data-[state=open]:animate-in data-[state=closed]:animate-out`
+
+**DialogContent:**
+- Background: `bg-white`
+- Border: `border border-neutral-200`
+- Shadow: `shadow-lg`
+- Padding: `p-6`
+- Border radius: `sm:rounded-lg`
+- Max width: `max-w-lg`
+- Position: `fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]`
+- Animation: `zoom-in-95`, `zoom-out-95`, `fade-in-0`, `fade-out-0`
+
+**DialogTitle:**
+- Font: `text-lg font-semibold leading-none tracking-tight`
+
+**DialogDescription:**
+- Color: `text-sm text-neutral-500`
+
+**DialogHeader:**
+- Layout: `flex flex-col space-y-2 text-center sm:text-left`
+
+**DialogFooter:**
+- Layout: `flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2`
+
+## Best Practices
+
+- Always include `DialogTitle` for accessibility (screen readers).
+- Use `DialogDescription` to provide context about the dialog's purpose.
+- For destructive actions, use confirmation dialogs with clear cancel options.
+- Keep dialog content focused on a single task or decision.
+- Use controlled state (`open` + `onOpenChange`) when you need to programmatically control the dialog.
+- Add appropriate `aria-label` to close buttons for better accessibility.
+- Avoid nesting dialogs inside other dialogs.
+- For complex forms, consider breaking them into multiple steps.
+- Use `DialogFooter` to align action buttons consistently.
+- Ensure keyboard navigation works properly (Escape to close, Tab to navigate).
+
+## Related
+
+- [Button](/docs/components/button) - Action buttons used in dialog footers
+- [Input](/docs/components/input) - Form inputs for dialog content
+- [Card](/docs/components/card) - Alternative for non-modal content display

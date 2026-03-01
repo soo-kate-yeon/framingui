@@ -7,14 +7,13 @@
  */
 
 import { TemplateGallery } from '../../components/explore/TemplateGallery';
-import { ExplorePageHeader } from '../../components/explore/ExplorePageHeader';
 import { FeedbackFloatingButton } from '../../components/explore/FeedbackFloatingButton';
 import { ExplorePageClient } from '../../components/explore/ExplorePageClient';
 import { loadThemes } from './actions';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Select Theme | tekton/explore',
+  title: 'Select Theme',
   description: 'Choose a design system theme to start building.',
 };
 
@@ -35,8 +34,6 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
         <TemplateGallery templates={galleryItems} selectionMode={selectionMode} />
       ) : (
         <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-          {/* empty state에서만 ExplorePageHeader 직접 렌더링 */}
-          <ExplorePageHeader selectionMode={selectionMode} />
           <div className="text-center py-24">
             <p className="text-lg font-medium text-neutral-600 mb-4">
               No themes found or error loading themes

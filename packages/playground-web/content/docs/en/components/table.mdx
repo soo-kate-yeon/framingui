@@ -1,0 +1,549 @@
+---
+title: "Table"
+description: "Table component API, variants, and practical usage examples for data display"
+---
+
+# Table
+
+`Table` is a composable component for displaying structured data in rows and columns in the FramingUI design system.
+
+## Import
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Table
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.HTMLAttributes<HTMLTableElement>` | - | Native table attributes |
+
+### TableHeader
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.HTMLAttributes<HTMLTableSectionElement>` | - | Native thead attributes |
+
+### TableBody
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.HTMLAttributes<HTMLTableSectionElement>` | - | Native tbody attributes |
+
+### TableFooter
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.HTMLAttributes<HTMLTableSectionElement>` | - | Native tfoot attributes |
+
+### TableRow
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `data-state` | `'selected'` | `undefined` | Selection state |
+| `...props` | `React.HTMLAttributes<HTMLTableRowElement>` | - | Native tr attributes |
+
+### TableHead
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.ThHTMLAttributes<HTMLTableCellElement>` | - | Native th attributes |
+
+### TableCell
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.TdHTMLAttributes<HTMLTableCellElement>` | - | Native td attributes |
+
+### TableCaption
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `...props` | `React.HTMLAttributes<HTMLTableCaptionElement>` | - | Native caption attributes |
+
+## Usage Examples
+
+### 1. Basic User List
+
+```tsx
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from '@framingui/ui';
+
+export function UserList() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Role</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>John Doe</TableCell>
+          <TableCell>john@example.com</TableCell>
+          <TableCell>Admin</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Jane Smith</TableCell>
+          <TableCell>jane@example.com</TableCell>
+          <TableCell>Editor</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 2. Product Catalog
+
+```tsx
+export function ProductCatalog() {
+  return (
+    <Table>
+      <TableCaption>Available products in stock</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Product</TableHead>
+          <TableHead>SKU</TableHead>
+          <TableHead className="text-right">Price</TableHead>
+          <TableHead className="text-right">Stock</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">Wireless Mouse</TableCell>
+          <TableCell>WM-2024</TableCell>
+          <TableCell className="text-right">$29.99</TableCell>
+          <TableCell className="text-right">45</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">USB-C Cable</TableCell>
+          <TableCell>UC-150</TableCell>
+          <TableCell className="text-right">$12.99</TableCell>
+          <TableCell className="text-right">120</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 3. Transaction History
+
+```tsx
+export function TransactionHistory() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Date</TableHead>
+          <TableHead>Description</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>2024-03-01</TableCell>
+          <TableCell>Payment received</TableCell>
+          <TableCell className="text-right text-green-600">+$500.00</TableCell>
+          <TableCell>
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+              Completed
+            </span>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>2024-02-28</TableCell>
+          <TableCell>Subscription fee</TableCell>
+          <TableCell className="text-right text-red-600">-$29.99</TableCell>
+          <TableCell>
+            <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700">
+              Processed
+            </span>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 4. Data Grid with Sorting
+
+```tsx
+import { useState } from 'react';
+
+export function DataGrid() {
+  const [sortConfig, setSortConfig] = useState({ key: 'name', direction: 'asc' });
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>
+            <button onClick={() => setSortConfig({ key: 'name', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}>
+              Name {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </button>
+          </TableHead>
+          <TableHead className="text-right">
+            <button onClick={() => setSortConfig({ key: 'sales', direction: sortConfig.direction === 'asc' ? 'desc' : 'asc' })}>
+              Sales {sortConfig.key === 'sales' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+            </button>
+          </TableHead>
+          <TableHead className="text-right">Growth</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>North Region</TableCell>
+          <TableCell className="text-right">$125,000</TableCell>
+          <TableCell className="text-right">+12%</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>South Region</TableCell>
+          <TableCell className="text-right">$98,500</TableCell>
+          <TableCell className="text-right">+8%</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 5. Invoice Table
+
+```tsx
+export function InvoiceTable() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Item</TableHead>
+          <TableHead className="text-right">Qty</TableHead>
+          <TableHead className="text-right">Rate</TableHead>
+          <TableHead className="text-right">Amount</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>Website Design</TableCell>
+          <TableCell className="text-right">1</TableCell>
+          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell className="text-right">$2,500.00</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Development Hours</TableCell>
+          <TableCell className="text-right">40</TableCell>
+          <TableCell className="text-right">$75.00</TableCell>
+          <TableCell className="text-right">$3,000.00</TableCell>
+        </TableRow>
+      </TableBody>
+      <TableFooter>
+        <TableRow>
+          <TableCell colSpan={3}>Total</TableCell>
+          <TableCell className="text-right font-bold">$5,500.00</TableCell>
+        </TableRow>
+      </TableFooter>
+    </Table>
+  );
+}
+```
+
+### 6. Employee Directory
+
+```tsx
+export function EmployeeDirectory() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Employee</TableHead>
+          <TableHead>Department</TableHead>
+          <TableHead>Location</TableHead>
+          <TableHead className="text-right">Hire Date</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                JD
+              </div>
+              <div>
+                <div className="font-medium">John Doe</div>
+                <div className="text-sm text-gray-500">john.doe@company.com</div>
+              </div>
+            </div>
+          </TableCell>
+          <TableCell>Engineering</TableCell>
+          <TableCell>San Francisco</TableCell>
+          <TableCell className="text-right">Jan 15, 2022</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-medium">
+                JS
+              </div>
+              <div>
+                <div className="font-medium">Jane Smith</div>
+                <div className="text-sm text-gray-500">jane.smith@company.com</div>
+              </div>
+            </div>
+          </TableCell>
+          <TableCell>Marketing</TableCell>
+          <TableCell>New York</TableCell>
+          <TableCell className="text-right">Mar 20, 2023</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 7. Analytics Dashboard
+
+```tsx
+export function AnalyticsDashboard() {
+  return (
+    <Table>
+      <TableCaption>Website traffic analytics for last 7 days</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Page</TableHead>
+          <TableHead className="text-right">Views</TableHead>
+          <TableHead className="text-right">Unique</TableHead>
+          <TableHead className="text-right">Avg. Time</TableHead>
+          <TableHead className="text-right">Bounce Rate</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">/home</TableCell>
+          <TableCell className="text-right">12,450</TableCell>
+          <TableCell className="text-right">9,230</TableCell>
+          <TableCell className="text-right">2m 34s</TableCell>
+          <TableCell className="text-right">32%</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">/products</TableCell>
+          <TableCell className="text-right">8,920</TableCell>
+          <TableCell className="text-right">7,100</TableCell>
+          <TableCell className="text-right">3m 12s</TableCell>
+          <TableCell className="text-right">28%</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">/about</TableCell>
+          <TableCell className="text-right">4,320</TableCell>
+          <TableCell className="text-right">3,890</TableCell>
+          <TableCell className="text-right">1m 48s</TableCell>
+          <TableCell className="text-right">45%</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 8. Order Management
+
+```tsx
+export function OrderManagement() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Order ID</TableHead>
+          <TableHead>Customer</TableHead>
+          <TableHead className="text-right">Total</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow data-state="selected">
+          <TableCell className="font-mono">#ORD-1234</TableCell>
+          <TableCell>Alice Johnson</TableCell>
+          <TableCell className="text-right">$149.99</TableCell>
+          <TableCell>
+            <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-700">
+              Pending
+            </span>
+          </TableCell>
+          <TableCell className="text-right">
+            <button className="text-sm text-blue-600 hover:underline">View</button>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-mono">#ORD-1235</TableCell>
+          <TableCell>Bob Wilson</TableCell>
+          <TableCell className="text-right">$299.99</TableCell>
+          <TableCell>
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+              Shipped
+            </span>
+          </TableCell>
+          <TableCell className="text-right">
+            <button className="text-sm text-blue-600 hover:underline">View</button>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 9. Inventory Table
+
+```tsx
+export function InventoryTable() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Product</TableHead>
+          <TableHead>Category</TableHead>
+          <TableHead className="text-right">In Stock</TableHead>
+          <TableHead className="text-right">Reserved</TableHead>
+          <TableHead className="text-right">Available</TableHead>
+          <TableHead>Alert</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">Laptop Pro 15"</TableCell>
+          <TableCell>Electronics</TableCell>
+          <TableCell className="text-right">45</TableCell>
+          <TableCell className="text-right">12</TableCell>
+          <TableCell className="text-right">33</TableCell>
+          <TableCell>
+            <span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700">
+              In Stock
+            </span>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">Wireless Keyboard</TableCell>
+          <TableCell>Accessories</TableCell>
+          <TableCell className="text-right">8</TableCell>
+          <TableCell className="text-right">3</TableCell>
+          <TableCell className="text-right">5</TableCell>
+          <TableCell>
+            <span className="inline-flex items-center rounded-full bg-red-50 px-2 py-1 text-xs font-medium text-red-700">
+              Low Stock
+            </span>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+}
+```
+
+### 10. Pricing Comparison
+
+```tsx
+export function PricingComparison() {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Feature</TableHead>
+          <TableHead className="text-center">Free</TableHead>
+          <TableHead className="text-center">Pro</TableHead>
+          <TableHead className="text-center">Enterprise</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell className="font-medium">Users</TableCell>
+          <TableCell className="text-center">Up to 5</TableCell>
+          <TableCell className="text-center">Up to 50</TableCell>
+          <TableCell className="text-center">Unlimited</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">Storage</TableCell>
+          <TableCell className="text-center">5 GB</TableCell>
+          <TableCell className="text-center">100 GB</TableCell>
+          <TableCell className="text-center">1 TB</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">Support</TableCell>
+          <TableCell className="text-center">Community</TableCell>
+          <TableCell className="text-center">Email</TableCell>
+          <TableCell className="text-center">24/7 Priority</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell className="font-medium">API Access</TableCell>
+          <TableCell className="text-center">-</TableCell>
+          <TableCell className="text-center">✓</TableCell>
+          <TableCell className="text-center">✓</TableCell>
+        </TableRow>
+      </TableBody>
+      <TableFooter>
+        <TableRow>
+          <TableCell className="font-medium">Price/month</TableCell>
+          <TableCell className="text-center font-bold">$0</TableCell>
+          <TableCell className="text-center font-bold">$29</TableCell>
+          <TableCell className="text-center font-bold">Custom</TableCell>
+        </TableRow>
+      </TableFooter>
+    </Table>
+  );
+}
+```
+
+## Design Tokens
+
+The Table component uses the following Tailwind utility classes and CSS custom properties:
+
+- **Layout**: `w-full`, `overflow-auto`, `relative`
+- **Typography**: `text-sm`, `text-left`, `font-medium`, `caption-bottom`
+- **Spacing**: `p-4`, `px-4`, `h-12`, `mt-4`
+- **Borders**: `border-b`, `border-t`
+- **Colors**: Uses CSS variables for theming
+  - `--tekton-bg-muted`: Muted background color
+  - `--tekton-bg-muted-foreground`: Muted text color
+  - `--tekton-border-default`: Default border color
+- **Interactions**: `hover:bg-[var(--tekton-bg-muted)]/50`, `transition-colors`
+- **States**: `data-[state=selected]:bg-[var(--tekton-bg-muted)]`
+
+## Notes
+
+- The table is automatically wrapped in a scrollable container for responsive behavior.
+- Use `TableCaption` to provide context for screen readers and SEO.
+- Add `className="text-right"` to `TableHead` and `TableCell` for right-aligned numeric columns.
+- Use `data-state="selected"` on `TableRow` to highlight selected rows.
+- Keep table headers concise and descriptive.
+- For large datasets, consider implementing pagination or virtualization.
+- Use semantic HTML attributes like `colSpan` and `rowSpan` when needed.

@@ -1,0 +1,941 @@
+---
+title: "Form"
+description: "Form component with React Hook Form, Zod validation, and accessible field management"
+---
+
+# Form
+
+`Form` is a powerful form-building system in FramingUI that integrates React Hook Form with Zod validation and accessible field management.
+
+## Import
+
+```tsx
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@framingui/ui';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+```
+
+## Basic Usage
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@framingui/ui';
+import { Input, Button } from '@framingui/ui';
+
+const formSchema = z.object({
+  username: z.string().min(2, {
+    message: 'Username must be at least 2 characters.',
+  }),
+});
+
+export function BasicForm() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="johndoe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+## Real-World Scenarios
+
+### 1. Login Form
+
+```tsx
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
+export function LoginForm() {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="you@company.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full">Sign in</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 2. Registration Form
+
+```tsx
+const registerSchema = z.object({
+  username: z.string().min(3).max(20),
+  email: z.string().email(),
+  password: z.string().min(8),
+  confirmPassword: z.string(),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword'],
+});
+
+export function RegisterForm() {
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormDescription>Your unique username</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full">Create account</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 3. Checkout Form
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+const checkoutSchema = z.object({
+  fullName: z.string().min(2),
+  email: z.string().email(),
+  address: z.string().min(5),
+  city: z.string().min(2),
+  country: z.string(),
+  zipCode: z.string().min(4),
+});
+
+export function CheckoutForm() {
+  const form = useForm<z.infer<typeof checkoutSchema>>({
+    resolver: zodResolver(checkoutSchema),
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Full Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Address</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>City</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="zipCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>ZIP Code</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <FormField
+          control={form.control}
+          name="country"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Country</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="us">United States</SelectItem>
+                  <SelectItem value="uk">United Kingdom</SelectItem>
+                  <SelectItem value="ca">Canada</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full">Complete order</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 4. Settings Form
+
+```tsx
+import { Switch } from '@framingui/ui';
+
+const settingsSchema = z.object({
+  displayName: z.string().min(2),
+  email: z.string().email(),
+  notifications: z.boolean(),
+  marketing: z.boolean(),
+});
+
+export function SettingsForm() {
+  const form = useForm<z.infer<typeof settingsSchema>>({
+    resolver: zodResolver(settingsSchema),
+    defaultValues: {
+      notifications: true,
+      marketing: false,
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-6">
+        <FormField
+          control={form.control}
+          name="displayName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Display Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="notifications"
+          render={({ field }) => (
+            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+              <div>
+                <FormLabel>Push Notifications</FormLabel>
+                <FormDescription>Receive push notifications</FormDescription>
+              </div>
+              <FormControl>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="marketing"
+          render={({ field }) => (
+            <FormItem className="flex items-center justify-between rounded-lg border p-4">
+              <div>
+                <FormLabel>Marketing Emails</FormLabel>
+                <FormDescription>Receive marketing updates</FormDescription>
+              </div>
+              <FormControl>
+                <Switch checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Save settings</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 5. Search Form
+
+```tsx
+import { RadioGroup, RadioGroupItem } from '@framingui/ui';
+
+const searchSchema = z.object({
+  query: z.string().min(1, 'Search query is required'),
+  category: z.enum(['all', 'products', 'articles', 'users']),
+});
+
+export function SearchForm() {
+  const form = useForm<z.infer<typeof searchSchema>>({
+    resolver: zodResolver(searchSchema),
+    defaultValues: {
+      category: 'all',
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="query"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Search</FormLabel>
+              <FormControl>
+                <Input placeholder="What are you looking for?" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex gap-4"
+                >
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <RadioGroupItem value="all" />
+                    </FormControl>
+                    <FormLabel className="font-normal">All</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <RadioGroupItem value="products" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Products</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <RadioGroupItem value="articles" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Articles</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Search</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 6. Contact Form
+
+```tsx
+import { Textarea } from '@framingui/ui';
+
+const contactSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+  subject: z.string().min(5),
+  message: z.string().min(10).max(500),
+});
+
+export function ContactForm() {
+  const form = useForm<z.infer<typeof contactSchema>>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="subject"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Subject</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="message"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Message</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Your message..." {...field} />
+              </FormControl>
+              <FormDescription>Maximum 500 characters</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Send message</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 7. Newsletter Subscription
+
+```tsx
+import { Checkbox } from '@framingui/ui';
+
+const newsletterSchema = z.object({
+  email: z.string().email(),
+  terms: z.boolean().refine(val => val === true, {
+    message: 'You must accept the terms',
+  }),
+});
+
+export function NewsletterForm() {
+  const form = useForm<z.infer<typeof newsletterSchema>>({
+    resolver: zodResolver(newsletterSchema),
+    defaultValues: {
+      terms: false,
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="you@example.com" {...field} />
+              </FormControl>
+              <FormDescription>Get weekly updates</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="terms"
+          render={({ field }) => (
+            <FormItem className="flex items-start space-x-3">
+              <FormControl>
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>I agree to receive marketing emails</FormLabel>
+                <FormDescription>You can unsubscribe at any time</FormDescription>
+              </div>
+            </FormItem>
+          )}
+        />
+        <FormMessage />
+        <Button type="submit" className="w-full">Subscribe</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 8. Profile Update
+
+```tsx
+const profileSchema = z.object({
+  username: z.string().min(3).max(20),
+  email: z.string().email(),
+  bio: z.string().max(160).optional(),
+  url: z.string().url().optional().or(z.literal('')),
+});
+
+export function ProfileForm() {
+  const form = useForm<z.infer<typeof profileSchema>>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      username: '',
+      email: '',
+      bio: '',
+      url: '',
+    },
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormDescription>Public display name</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="bio"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Bio</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Tell us about yourself" {...field} />
+              </FormControl>
+              <FormDescription>Max 160 characters</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website</FormLabel>
+              <FormControl>
+                <Input type="url" placeholder="https://example.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Update profile</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 9. Feedback Form
+
+```tsx
+const feedbackSchema = z.object({
+  rating: z.enum(['1', '2', '3', '4', '5']),
+  feedback: z.string().min(10),
+  email: z.string().email().optional().or(z.literal('')),
+});
+
+export function FeedbackForm() {
+  const form = useForm<z.infer<typeof feedbackSchema>>({
+    resolver: zodResolver(feedbackSchema),
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="rating"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Rating</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Rate your experience" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="5">⭐⭐⭐⭐⭐ Excellent</SelectItem>
+                  <SelectItem value="4">⭐⭐⭐⭐ Good</SelectItem>
+                  <SelectItem value="3">⭐⭐⭐ Average</SelectItem>
+                  <SelectItem value="2">⭐⭐ Poor</SelectItem>
+                  <SelectItem value="1">⭐ Very Poor</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="feedback"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Feedback</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Share your thoughts..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email (optional)</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="your@email.com" {...field} />
+              </FormControl>
+              <FormDescription>We'll follow up if needed</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit feedback</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+### 10. Password Reset
+
+```tsx
+const passwordResetSchema = z.object({
+  currentPassword: z.string().min(8),
+  newPassword: z.string().min(8),
+  confirmPassword: z.string(),
+}).refine(data => data.newPassword === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword'],
+});
+
+export function PasswordResetForm() {
+  const form = useForm<z.infer<typeof passwordResetSchema>>({
+    resolver: zodResolver(passwordResetSchema),
+  });
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(console.log)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="currentPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Current Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="newPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>New Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormDescription>Minimum 8 characters</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm New Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full">Update password</Button>
+      </form>
+    </Form>
+  );
+}
+```
+
+## Component API
+
+### Form
+
+`Form` is an alias for `FormProvider` from `react-hook-form`. It accepts all standard `FormProvider` props.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `...props` | `FormProviderProps` | All React Hook Form provider props |
+
+### FormField
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `control` | `Control<TFieldValues>` | Form control from `useForm` |
+| `name` | `FieldPath<TFieldValues>` | Field name in the form |
+| `render` | `({ field }) => React.ReactElement` | Render function |
+
+### FormItem
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` | Extra utility classes |
+| `...props` | `HTMLAttributes<HTMLDivElement>` | Standard div attributes |
+
+### FormLabel
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` | Extra utility classes |
+| `...props` | `LabelProps` | Radix Label props |
+
+### FormControl
+
+`FormControl` is a `Slot` component that passes proper accessibility attributes to its child.
+
+### FormDescription
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` | Extra utility classes |
+| `...props` | `HTMLAttributes<HTMLParagraphElement>` | Standard paragraph attributes |
+
+### FormMessage
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `className` | `string` | Extra utility classes |
+| `children` | `React.ReactNode` | Custom error message (overrides validation) |
+
+## Design Tokens
+
+Form components use these Tailwind utility classes:
+
+- Spacing: `space-y-[var(--tekton-spacing-2)]`
+- Error text: `text-[var(--tekton-bg-destructive)]`
+- Description text: `text-[var(--tekton-bg-muted-foreground)]`
+- Font size: `text-sm`
+
+## Best Practices
+
+- Always use Zod schemas for type-safe validation.
+- Wrap form inputs with `FormControl` for proper accessibility.
+- Use `FormDescription` for helpful hints, not critical information.
+- Add `FormMessage` after each field for inline error display.
+- Set `type="submit"` explicitly on submit buttons.
+- Use semantic input types (`email`, `password`, `url`, `tel`).
+- Provide clear, actionable error messages in validation schemas.
+- Consider UX: show errors after blur or submit, not on every keystroke.
+
+## Related
+
+- [Input](/docs/en/components/input) - Text input field
+- [Button](/docs/en/components/button) - Submit buttons
+- [Select](/docs/en/components/select) - Dropdown selection
+- [Checkbox](/docs/en/components/checkbox) - Boolean input
+- [Textarea](/docs/en/components/textarea) - Multi-line text

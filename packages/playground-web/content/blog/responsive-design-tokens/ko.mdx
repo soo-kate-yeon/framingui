@@ -1,0 +1,319 @@
+---
+title: "반응형 디자인 토큰: 모든 기기에서 유연한 레이아웃"
+description: "뷰포트 기반 토큰, 유동적 타이포그래피, 컨테이너 쿼리, 모바일 우선 디자인 토큰 전략으로 반응형 디자인 시스템을 구축하세요."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["responsive-design", "design-tokens", "mobile-first", "container-queries", "fluid-typography"]
+---
+
+# 반응형 디자인 토큰: 모든 기기에서 유연한 레이아웃
+
+반응형 디자인은 더 이상 단순히 브레이크포인트에 관한 것이 아닙니다. 현대적인 반응형 시스템은 디자인 토큰을 사용하여 모바일에서 데스크톱까지, 그리고 그 사이의 모든 것에 부드럽게 확장되는 유연하고 적응적인 인터페이스를 만듭니다.
+
+이 가이드는 진정으로 반응형인 디자인 시스템을 구축하기 위한 토큰 기반 전략을 다룹니다.
+
+## 반응형 디자인에 디자인 토큰이 필요한 이유
+
+하드코딩된 브레이크포인트와 픽셀 값은 취약하고 기기별 디자인을 만듭니다. 토큰 기반 반응형 시스템은 모든 뷰포트에 우아하게 적응합니다.
+
+### 전통적인 브레이크포인트 (경직됨)
+
+```css
+/* 나쁨: 기기별 브레이크포인트 */
+.heading {
+  font-size: 16px; /* 모바일 */
+}
+
+@media (min-width: 768px) {
+  .heading {
+    font-size: 20px; /* 태블릿 */
+  }
+}
+
+@media (min-width: 1024px) {
+  .heading {
+    font-size: 24px; /* 데스크톱 */
+  }
+}
+```
+
+### 토큰 기반 유동적 스케일 (적응적)
+
+```css
+/* 좋음: 유동적, 토큰 기반 스케일링 */
+:root {
+  --font-size-heading: clamp(1rem, 2vw + 0.5rem, 1.5rem);
+}
+
+.heading {
+  font-size: var(--font-size-heading);
+}
+```
+
+## 반응형 토큰 아키텍처
+
+반응형 토큰을 계층으로 구축하세요:
+
+### 1계층: 기본 스케일 토큰
+
+뷰포트와 독립적으로 기본 스케일을 정의하세요:
+
+```typescript
+// scales.ts
+export const spacing = {
+  1: '0.25rem',  // 4px
+  2: '0.5rem',   // 8px
+  3: '0.75rem',  // 12px
+  4: '1rem',     // 16px
+  6: '1.5rem',   // 24px
+  8: '2rem',     // 32px
+  12: '3rem',    // 48px
+  16: '4rem',    // 64px
+};
+
+export const fontSize = {
+  xs: '0.75rem',   // 12px
+  sm: '0.875rem',  // 14px
+  base: '1rem',    // 16px
+  lg: '1.125rem',  // 18px
+  xl: '1.25rem',   // 20px
+  '2xl': '1.5rem', // 24px
+  '3xl': '1.875rem', // 30px
+  '4xl': '2.25rem',  // 36px
+};
+```
+
+### 2계층: 뷰포트 인식 토큰
+
+CSS 커스텀 속성을 사용하여 반응형 변형을 추가하세요:
+
+```css
+:root {
+  /* 모바일 우선 기본 값 */
+  --spacing-section: var(--spacing-4);
+  --spacing-container: var(--spacing-3);
+  --font-size-heading: var(--font-size-xl);
+  --font-size-body: var(--font-size-base);
+}
+
+/* 태블릿 */
+@media (min-width: 640px) {
+  :root {
+    --spacing-section: var(--spacing-8);
+    --spacing-container: var(--spacing-4);
+    --font-size-heading: var(--font-size-2xl);
+  }
+}
+
+/* 데스크톱 */
+@media (min-width: 1024px) {
+  :root {
+    --spacing-section: var(--spacing-16);
+    --spacing-container: var(--spacing-6);
+    --font-size-heading: var(--font-size-4xl);
+  }
+}
+```
+
+### 3계층: 시맨틱 반응형 토큰
+
+뷰포트 인식 토큰을 시맨틱 목적에 매핑하세요:
+
+```typescript
+export const semanticTokens = {
+  layout: {
+    contentMaxWidth: 'var(--max-width-content)',
+    containerPadding: 'var(--spacing-container)',
+    sectionGap: 'var(--spacing-section)',
+  },
+  typography: {
+    headingSize: 'var(--font-size-heading)',
+    bodySize: 'var(--font-size-body)',
+    lineHeight: 'var(--line-height-body)',
+  }
+};
+```
+
+## 디자인 토큰을 활용한 유동적 타이포그래피
+
+브레이크포인트 사이에서 부드럽게 적응하는 타입 스케일을 만드세요.
+
+### 유동적 타입 스케일 공식
+
+```css
+/* clamp(최소값, 선호값, 최대값) */
+:root {
+  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.5rem);
+  --font-size-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
+}
+```
+
+### TypeScript로 유동적 스케일 생성
+
+```typescript
+function generateFluidTypography(
+  minSize: number,
+  maxSize: number,
+  minViewport: number = 320,
+  maxViewport: number = 1280
+): string {
+  const slope = (maxSize - minSize) / (maxViewport - minViewport);
+  const yIntercept = minSize - slope * minViewport;
+
+  return `clamp(${minSize}rem, ${yIntercept.toFixed(2)}rem + ${(slope * 100).toFixed(2)}vw, ${maxSize}rem)`;
+}
+
+const fluidScale = {
+  xs: generateFluidTypography(0.75, 0.875),
+  sm: generateFluidTypography(0.875, 1),
+  base: generateFluidTypography(1, 1.125),
+  lg: generateFluidTypography(1.125, 1.25),
+  xl: generateFluidTypography(1.25, 1.5),
+  '2xl': generateFluidTypography(1.5, 2),
+  '3xl': generateFluidTypography(1.875, 2.5),
+  '4xl': generateFluidTypography(2.25, 3),
+};
+```
+
+## 유동적 여백 시스템
+
+여백은 뷰포트 크기에 비례하여 확장되어야 합니다.
+
+```css
+:root {
+  /* 유동적 여백 스케일 */
+  --spacing-1: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  --spacing-2: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+  --spacing-3: clamp(0.75rem, 0.6rem + 0.75vw, 1.125rem);
+  --spacing-4: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  --spacing-6: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  --spacing-8: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --spacing-12: clamp(3rem, 2.4rem + 3vw, 4.5rem);
+  --spacing-16: clamp(4rem, 3.2rem + 4vw, 6rem);
+}
+```
+
+## 디자인 토큰을 활용한 컨테이너 쿼리
+
+컨테이너 쿼리는 컴포넌트 레벨의 반응형 디자인을 가능하게 합니다.
+
+```css
+/* 컨테이너 컨텍스트 정의 */
+.card-grid {
+  container-type: inline-size;
+  container-name: card-grid;
+}
+
+/* 컴포넌트 토큰이 컨테이너 너비에 적응 */
+@container card-grid (min-width: 400px) {
+  .card {
+    --card-padding: var(--spacing-4);
+    --card-gap: var(--spacing-3);
+  }
+}
+
+@container card-grid (min-width: 600px) {
+  .card {
+    --card-padding: var(--spacing-6);
+    --card-gap: var(--spacing-4);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+## 모바일 우선 토큰 전략
+
+항상 토큰을 모바일 우선으로 디자인하고, 그 다음 확장하세요:
+
+```css
+/* ✅ 좋음: 모바일 우선 접근 */
+:root {
+  /* 기본 모바일 값 */
+  --font-size-heading: 1.5rem;
+  --spacing-section: 2rem;
+  --container-padding: 1rem;
+}
+
+/* 더 큰 뷰포트로 확장 */
+@media (min-width: 640px) {
+  :root {
+    --font-size-heading: 2rem;
+    --spacing-section: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --font-size-heading: 3rem;
+    --spacing-section: 4rem;
+    --container-padding: 2rem;
+  }
+}
+```
+
+## 반응형 토큰 테스트
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('반응형 토큰이 브레이크포인트에서 적응함', async ({ page }) => {
+  await page.goto('/');
+
+  // 모바일 뷰포트
+  await page.setViewportSize({ width: 375, height: 667 });
+  const mobileHeading = await page.locator('h1');
+  const mobileFontSize = await mobileHeading.evaluate(
+    el => getComputedStyle(el).fontSize
+  );
+  expect(mobileFontSize).toBe('24px');
+
+  // 태블릿 뷰포트
+  await page.setViewportSize({ width: 768, height: 1024 });
+  const tabletFontSize = await mobileHeading.evaluate(
+    el => getComputedStyle(el).fontSize
+  );
+  expect(tabletFontSize).toBe('32px');
+
+  // 데스크톱 뷰포트
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const desktopFontSize = await mobileHeading.evaluate(
+    el => getComputedStyle(el).fontSize
+  );
+  expect(desktopFontSize).toBe('48px');
+});
+```
+
+## 일반적인 반응형 토큰 실수
+
+1. **너무 많은 브레이크포인트** — 3-5개의 주요 브레이크포인트를 고수하세요
+2. **픽셀 기반 미디어 쿼리** — 접근성을 위해 `rem` 또는 `em` 사용
+3. **가로 방향 무시** — 세로와 가로 모두 테스트하세요
+4. **실제 기기 테스트 생략** — 에뮬레이터가 모든 것을 잡지는 못합니다
+5. **터치 타겟 잊음** — 모바일에서 최소 44×44px 탭 영역
+6. **고정 너비** — `width` 대신 `max-width` 사용
+
+## FramingUI 반응형 시스템
+
+FramingUI는 다음을 제공합니다:
+- 유동적 타이포그래피 및 여백 스케일
+- 기본 제공 컨테이너 쿼리 지원
+- 모바일 우선 토큰 아키텍처
+- 사전 구성된 브레이크포인트
+- [반응형 예시 탐색 →](/explore)
+
+## 관련 리소스
+
+- [디자인 토큰 베스트 프랙티스](/blog/design-tokens-best-practices) — 토큰 시스템의 기초
+- [다크 모드 디자인 토큰](/blog/dark-mode-design-tokens) — 반응형과 다크 모드 결합
+- [접근 가능한 폼 구축하기](/docs/accessibility) — 반응형 폼 디자인
+
+---
+
+**모든 화면에 적응하는 인터페이스를 구축하세요.** 반응형 디자인 토큰은 유연하고 기기에 구애받지 않는 레이아웃을 쉽게 만듭니다.

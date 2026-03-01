@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   FreeTrialModal,
-  hasSeenFreeTrialModal,
+  hasOptedOutOfFreeTrialModal,
   TemplateSelectModal,
   TrialCompleteModal,
 } from '../modals';
@@ -47,25 +47,26 @@ export function ExplorePageClient({ children }: ExplorePageClientProps) {
       return undefined;
     }
 
-    // 이미 모달을 본 경우 표시 안 함
-    if (hasSeenFreeTrialModal()) {
-      console.log('[ExplorePageClient] User has already seen free trial modal');
+    // "다시 보지 않기"를 선택한 경우 표시 안 함
+    if (hasOptedOutOfFreeTrialModal()) {
+      console.log('[ExplorePageClient] User has opted out of free trial modal forever');
       return undefined;
     }
 
     // 조건 확인:
     // 1. 미로그인 OR
-    // 2. 로그인했지만 라이선스가 하나도 없는 경우
-    const hasAnyLicense = userData?.licenses && userData.licenses.length > 0;
-    const shouldShowModal = !user || !hasAnyLicense;
+    // 2. 로그인했지만 활성화된 라이선스(또는 체험)가 하나도 없는 경우
+    const hasAnyActiveLicense =
+      userData?.licenses && userData.licenses.some((l) => l.status === 'active');
+    const shouldShowModal = !user || !hasAnyActiveLicense;
 
     if (shouldShowModal) {
       console.log(
         '[ExplorePageClient] Showing free trial modal after delay',
         'user:',
         user ? 'logged in' : 'not logged in',
-        'hasLicense:',
-        hasAnyLicense
+        'hasActiveLicense:',
+        hasAnyActiveLicense
       );
 
       // 1-2초 후 모달 표시
@@ -106,6 +107,11 @@ export function ExplorePageClient({ children }: ExplorePageClientProps) {
     setCurrentModal('free-trial');
   };
 
+  const handleDismissForever = () => {
+    console.log('[ExplorePageClient] User opted out forever from modal');
+    setCurrentModal(null);
+  };
+
   return (
     <>
       <ExploreTopBanner onStartFreeTrial={handleOpenFreeTrialModal} />
@@ -118,6 +124,7 @@ export function ExplorePageClient({ children }: ExplorePageClientProps) {
         isOpen={currentModal === 'free-trial'}
         onClose={handleCloseModal}
         onStartTrial={handleStartTrial}
+        onDismissForever={handleDismissForever}
       />
 
       <TemplateSelectModal

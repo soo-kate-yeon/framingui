@@ -1,0 +1,441 @@
+---
+title: "데이터 테이블 컴포넌트 베스트 프랙티스: AI 기반 UX 가이드"
+description: "정렬, 필터링, 페이지네이션, 가상화, AI 지원 기능으로 현대 웹 애플리케이션을 위한 고성능 데이터 테이블을 구축하세요."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["data-table", "component", "ai", "performance", "ux"]
+---
+
+# 데이터 테이블 컴포넌트 베스트 프랙티스: AI 기반 UX 가이드
+
+데이터 테이블은 엔터프라이즈 애플리케이션의 일꾼입니다. 잘못 만들면 느리고, 혼란스러우며, 좌절감을 줍니다. 잘 만들면 사용자가 수천 개의 행을 효율적으로 처리할 수 있게 합니다.
+
+이 가이드는 10개 행에서 10,000개 이상의 행까지 확장 가능한 데이터 테이블을 구축하기 위한 검증된 패턴을 다룹니다.
+
+## 데이터 테이블이 어려운 이유
+
+테이블은 복잡한 상호작용을 결합합니다:
+- **정렬** (오름차순, 내림차순, 다중 열)
+- **필터링** (텍스트 검색, 패싯, 날짜 범위)
+- **페이지네이션** (무한 스크롤, 페이지 기반, 가상 스크롤)
+- **선택** (단일, 다중, 범위)
+- **액션** (대량 작업, 행 액션, 인라인 편집)
+- **반응형 레이아웃** (모바일, 태블릿, 데스크톱)
+
+어떤 부분이라도 잘못되면 UX가 손상됩니다.
+
+## 패턴 #1: 대용량 데이터셋을 위한 가상화
+
+10,000개의 DOM 노드를 렌더링하면 성능이 죽습니다. 가상화는 보이는 행만 렌더링합니다.
+
+### React Virtual 구현
+
+```tsx
+import { useVirtualizer } from '@tanstack/react-virtual';
+
+interface DataTableProps<T> {
+  data: T[];
+  columns: Column<T>[];
+}
+
+export function VirtualizedTable<T>({ data, columns }: DataTableProps<T>) {
+  const parentRef = React.useRef<HTMLDivElement>(null);
+
+  const rowVirtualizer = useVirtualizer({
+    count: data.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50, // 픽셀 단위 행 높이
+    overscan: 5, // 뷰포트 위/아래에 5개 추가 행 렌더링
+  });
+
+  return (
+    <div
+      ref={parentRef}
+      className="table-container"
+      style={{ height: '600px', overflow: 'auto' }}
+    >
+      <div
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          position: 'relative',
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          const row = data[virtualRow.index];
+          return (
+            <div
+              key={virtualRow.index}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${virtualRow.size}px`,
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              <TableRow row={row} columns={columns} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+```
+
+### 성능 영향
+
+- **가상화 없이**: 10,000행 × 6열 = 60,000 DOM 노드
+- **가상화 사용**: ~20개 보이는 행 × 6열 = 120 DOM 노드
+- **결과**: 500배 적은 DOM 노드, 부드러운 60fps 스크롤
+
+## 패턴 #2: 시각적 피드백을 제공하는 스마트 정렬
+
+사용자는 무엇이 어떤 방향으로 정렬되었는지 알아야 합니다.
+
+```tsx
+import { useState } from 'react';
+
+type SortDirection = 'asc' | 'desc' | null;
+
+interface SortState {
+  column: string | null;
+  direction: SortDirection;
+}
+
+export function SortableTable<T>({ data, columns }: TableProps<T>) {
+  const [sort, setSort] = useState<SortState>({ column: null, direction: null });
+
+  const handleSort = (columnId: string) => {
+    setSort((prev) => {
+      if (prev.column !== columnId) {
+        return { column: columnId, direction: 'asc' };
+      }
+      if (prev.direction === 'asc') {
+        return { column: columnId, direction: 'desc' };
+      }
+      return { column: null, direction: null }; // 정렬 해제
+    });
+  };
+
+  const sortedData = React.useMemo(() => {
+    if (!sort.column || !sort.direction) return data;
+
+    return [...data].sort((a, b) => {
+      const aValue = a[sort.column];
+      const bValue = b[sort.column];
+
+      if (aValue === bValue) return 0;
+
+      const comparison = aValue < bValue ? -1 : 1;
+      return sort.direction === 'asc' ? comparison : -comparison;
+    });
+  }, [data, sort]);
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th key={column.id} onClick={() => handleSort(column.id)}>
+              <div className="sortable-header">
+                {column.label}
+                {sort.column === column.id && (
+                  <span className="sort-icon">
+                    {sort.direction === 'asc' ? '↑' : '↓'}
+                  </span>
+                )}
+              </div>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {sortedData.map((row) => (
+          <TableRow key={row.id} row={row} columns={columns} />
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+
+## 패턴 #3: 점진적 필터링
+
+간단한 것부터 복잡한 것까지 필터링을 계층화하세요.
+
+### 1단계: 전역 텍스트 검색
+
+```tsx
+export function SearchableTable<T>({ data, columns }: TableProps<T>) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredData = React.useMemo(() => {
+    if (!searchTerm) return data;
+
+    const lowerSearch = searchTerm.toLowerCase();
+    return data.filter((row) =>
+      columns.some((col) => {
+        const value = row[col.id];
+        return String(value).toLowerCase().includes(lowerSearch);
+      })
+    );
+  }, [data, searchTerm, columns]);
+
+  return (
+    <>
+      <input
+        type="search"
+        placeholder="모든 열에서 검색..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="table-search"
+      />
+      <Table data={filteredData} columns={columns} />
+    </>
+  );
+}
+```
+
+### 3단계: AI 지원 자연어 필터
+
+```tsx
+export function AIFilterTable<T>({ data, columns }: TableProps<T>) {
+  const [naturalQuery, setNaturalQuery] = useState('');
+
+  const applyAIFilter = async () => {
+    // 자연어를 필터로 변환
+    const filters = await ai.parseFilterQuery(naturalQuery, columns);
+    setFilters(filters);
+  };
+
+  return (
+    <>
+      <div className="ai-filter">
+        <input
+          type="text"
+          placeholder="예: '지난달 $1000 이상의 판매 보여줘'"
+          value={naturalQuery}
+          onChange={(e) => setNaturalQuery(e.target.value)}
+        />
+        <button onClick={applyAIFilter}>AI 필터 적용</button>
+      </div>
+      <Table data={filteredData} columns={columns} />
+    </>
+  );
+}
+```
+
+## 패턴 #4: 효율적인 행 선택
+
+단일, 다중, 범위 선택을 처리하세요.
+
+```tsx
+export function SelectableTable<T extends { id: string }>({
+  data,
+  columns,
+}: TableProps<T>) {
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [lastSelected, setLastSelected] = useState<string | null>(null);
+
+  const handleSelectRow = (rowId: string, shiftKey: boolean) => {
+    if (shiftKey && lastSelected) {
+      // 범위 선택
+      const start = data.findIndex((r) => r.id === lastSelected);
+      const end = data.findIndex((r) => r.id === rowId);
+      const range = data.slice(
+        Math.min(start, end),
+        Math.max(start, end) + 1
+      );
+
+      setSelected((prev) => {
+        const newSet = new Set(prev);
+        range.forEach((row) => newSet.add(row.id));
+        return newSet;
+      });
+    } else {
+      // 단일 행 토글
+      setSelected((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(rowId)) {
+          newSet.delete(rowId);
+        } else {
+          newSet.add(rowId);
+        }
+        return newSet;
+      });
+    }
+    setLastSelected(rowId);
+  };
+
+  const handleSelectAll = () => {
+    if (selected.size === data.length) {
+      setSelected(new Set()); // 모두 선택 해제
+    } else {
+      setSelected(new Set(data.map((row) => row.id))); // 모두 선택
+    }
+  };
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <input
+              type="checkbox"
+              checked={selected.size === data.length && data.length > 0}
+              onChange={handleSelectAll}
+              aria-label="모든 행 선택"
+            />
+          </th>
+          {/* 열 헤더 */}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row) => (
+          <tr key={row.id} className={selected.has(row.id) ? 'selected' : ''}>
+            <td>
+              <input
+                type="checkbox"
+                checked={selected.has(row.id)}
+                onChange={(e) => handleSelectRow(row.id, e.shiftKey)}
+                aria-label={`행 ${row.id} 선택`}
+              />
+            </td>
+            {/* 행 셀 */}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+```
+
+## 패턴 #5: 반응형 테이블 디자인
+
+테이블은 모바일 화면에 맞지 않습니다. 다음 전략을 사용하세요:
+
+### 전략 1: 고정 열이 있는 가로 스크롤
+
+```css
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  min-width: 600px; /* 최소 테이블 너비 */
+}
+
+.table th:first-child,
+.table td:first-child {
+  position: sticky;
+  left: 0;
+  background: var(--color-background-surface);
+  z-index: 1;
+}
+```
+
+### 전략 2: 모바일에서 카드 레이아웃
+
+```tsx
+export function ResponsiveTable<T>({ data, columns }: TableProps<T>) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  if (isMobile) {
+    return (
+      <div className="table-cards">
+        {data.map((row) => (
+          <div key={row.id} className="table-card">
+            {columns.map((col) => (
+              <div key={col.id} className="card-row">
+                <span className="card-label">{col.label}</span>
+                <span className="card-value">{row[col.id]}</span>
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return <Table data={data} columns={columns} />;
+}
+```
+
+## 디자인 토큰 통합
+
+```css
+:root {
+  /* 테이블 토큰 */
+  --table-border-color: var(--color-border-default);
+  --table-header-bg: var(--color-background-surface);
+  --table-row-hover: var(--color-background-hover);
+  --table-row-selected: var(--color-primary-background);
+  --table-cell-padding: var(--spacing-3);
+  --table-header-font-weight: 600;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  background: var(--table-header-bg);
+  padding: var(--table-cell-padding);
+  font-weight: var(--table-header-font-weight);
+  border-bottom: 2px solid var(--table-border-color);
+}
+
+.table td {
+  padding: var(--table-cell-padding);
+  border-bottom: 1px solid var(--table-border-color);
+}
+
+.table tr:hover {
+  background: var(--table-row-hover);
+}
+
+.table tr.selected {
+  background: var(--table-row-selected);
+}
+```
+
+## 일반적인 데이터 테이블 실수
+
+1. **대용량 데이터셋에 가상화 없음** — 1000행 이상에서 성능 저하
+2. **로딩 상태 누락** — 비동기 작업 중 사용자에게 피드백 필요
+3. **열악한 모바일 경험** — 테이블에는 반응형 전략이 필요
+4. **키보드 내비게이션 없음** — 화살표 키, Tab, Enter가 작동해야 함
+5. **불명확한 정렬 상태** — 사용자는 무엇이 정렬되었는지 알아야 함
+6. **빈 상태 잊음** — "결과 없음"에도 디자인이 필요
+7. **대량 액션 없음** — 액션 없는 다중 선택은 무용지물
+
+## FramingUI 데이터 테이블 시스템
+
+FramingUI는 프로덕션 준비된 데이터 테이블을 제공합니다:
+- 10,000개 이상 행을 위한 내장 가상화
+- AI 기반 필터링 및 검색
+- 반응형 모바일 레이아웃
+- 완전한 키보드 내비게이션
+- [데이터 테이블 예시 탐색 →](/explore)
+
+## 관련 리소스
+
+- [폼 유효성 검사 UI 패턴](/blog/form-validation-ui-patterns) — 인라인 편집 유효성 검사
+- [디자인 토큰 베스트 프랙티스](/blog/design-tokens-best-practices) — 토큰 기반 테이블 스타일링
+- [반응형 디자인 토큰](/blog/responsive-design-tokens) — 모바일 테이블 전략
+
+---
+
+**사용자가 사랑하는 데이터 테이블을 구축하세요.** 성능, 사용성, 접근성—FramingUI가 모두 처리합니다.

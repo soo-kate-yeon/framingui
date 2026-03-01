@@ -1,0 +1,376 @@
+---
+title: "Select"
+description: "Select (dropdown) component API, variants, and practical usage examples"
+---
+
+# Select
+
+`Select` is an accessible dropdown selection component built on Radix UI with keyboard navigation and design token integration.
+
+## Import
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Select (Root)
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | `undefined` | Controlled selected value |
+| `defaultValue` | `string` | `undefined` | Uncontrolled default value |
+| `onValueChange` | `(value: string) => void` | `undefined` | Callback when value changes |
+| `disabled` | `boolean` | `false` | Disable entire select |
+| `name` | `string` | `undefined` | Form field name |
+| `required` | `boolean` | `false` | Required field validation |
+
+### SelectTrigger
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Additional CSS classes |
+| `id` | `string` | `undefined` | HTML id for label association |
+
+### SelectValue
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `placeholder` | `string` | `undefined` | Text shown when no value selected |
+
+### SelectItem
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `string` | **required** | Item value (must be unique) |
+| `disabled` | `boolean` | `false` | Disable this item |
+| `className` | `string` | `undefined` | Additional CSS classes |
+
+## Real-World Scenarios
+
+### 1. Country Selector
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function CountrySelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[200px]">
+        <SelectValue placeholder="Select country" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="us">United States</SelectItem>
+        <SelectItem value="uk">United Kingdom</SelectItem>
+        <SelectItem value="kr">South Korea</SelectItem>
+        <SelectItem value="jp">Japan</SelectItem>
+        <SelectItem value="ca">Canada</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 2. Sort Options
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function SortDropdown() {
+  return (
+    <Select defaultValue="name">
+      <SelectTrigger className="w-[180px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="name">Sort by Name</SelectItem>
+        <SelectItem value="date">Sort by Date</SelectItem>
+        <SelectItem value="price">Sort by Price</SelectItem>
+        <SelectItem value="popular">Sort by Popularity</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 3. Status Filter
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function StatusFilter() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[160px]">
+        <SelectValue placeholder="All statuses" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All statuses</SelectItem>
+        <SelectItem value="active">Active</SelectItem>
+        <SelectItem value="pending">Pending</SelectItem>
+        <SelectItem value="completed">Completed</SelectItem>
+        <SelectItem value="cancelled">Cancelled</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 4. Theme Selector
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function ThemeSelector() {
+  return (
+    <Select defaultValue="system">
+      <SelectTrigger className="w-[150px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="light">Light</SelectItem>
+        <SelectItem value="dark">Dark</SelectItem>
+        <SelectItem value="system">System</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 5. Time Zone Selector
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@framingui/ui';
+
+export function TimeZoneSelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[240px]">
+        <SelectValue placeholder="Select timezone" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>North America</SelectLabel>
+          <SelectItem value="est">Eastern Time (EST)</SelectItem>
+          <SelectItem value="cst">Central Time (CST)</SelectItem>
+          <SelectItem value="pst">Pacific Time (PST)</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>Asia</SelectLabel>
+          <SelectItem value="kst">Korea Standard Time (KST)</SelectItem>
+          <SelectItem value="jst">Japan Standard Time (JST)</SelectItem>
+          <SelectItem value="ist">India Standard Time (IST)</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 6. Language Switcher
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+import { Globe } from 'lucide-react';
+
+export function LanguageSwitcher() {
+  return (
+    <Select defaultValue="en">
+      <SelectTrigger className="w-[140px]">
+        <div className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          <SelectValue />
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="ko">한국어</SelectItem>
+        <SelectItem value="ja">日本語</SelectItem>
+        <SelectItem value="zh">中文</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 7. Priority Selector
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function PrioritySelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[150px]">
+        <SelectValue placeholder="Set priority" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="low">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-green-500" />
+            Low
+          </span>
+        </SelectItem>
+        <SelectItem value="medium">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-yellow-500" />
+            Medium
+          </span>
+        </SelectItem>
+        <SelectItem value="high">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-red-500" />
+            High
+          </span>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 8. Category Selector
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '@framingui/ui';
+
+export function CategorySelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[200px]">
+        <SelectValue placeholder="Select category" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Design</SelectLabel>
+          <SelectItem value="ui">UI Design</SelectItem>
+          <SelectItem value="ux">UX Research</SelectItem>
+        </SelectGroup>
+        <SelectSeparator />
+        <SelectGroup>
+          <SelectLabel>Development</SelectLabel>
+          <SelectItem value="frontend">Frontend</SelectItem>
+          <SelectItem value="backend">Backend</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 9. Date Range Presets
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function DateRangePresets() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select range" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="today">Today</SelectItem>
+        <SelectItem value="yesterday">Yesterday</SelectItem>
+        <SelectItem value="last7">Last 7 days</SelectItem>
+        <SelectItem value="last30">Last 30 days</SelectItem>
+        <SelectItem value="thisMonth">This month</SelectItem>
+        <SelectItem value="lastMonth">Last month</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 10. Page Size Selector
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function PageSizeSelector() {
+  return (
+    <Select defaultValue="25">
+      <SelectTrigger className="w-[120px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="10">10 per page</SelectItem>
+        <SelectItem value="25">25 per page</SelectItem>
+        <SelectItem value="50">50 per page</SelectItem>
+        <SelectItem value="100">100 per page</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+## Design Tokens
+
+The Select component uses FramingUI design tokens for consistent theming:
+
+```css
+/* Trigger */
+--tekton-bg-background
+--tekton-border-input
+--tekton-border-ring
+--tekton-spacing-2, --tekton-spacing-3
+--tekton-radius-md
+
+/* Content/Dropdown */
+--tekton-bg-popover
+--tekton-bg-popover-foreground
+--tekton-border-default
+--tekton-radius-md
+
+/* Items */
+--tekton-bg-accent
+--tekton-bg-accent-foreground
+--tekton-radius-sm
+
+/* Separators */
+--tekton-bg-muted
+```
+
+## Best Practices
+
+- Use descriptive placeholders when no default value is set.
+- Associate selects with labels using `htmlFor` and `id` for accessibility.
+- Use `SelectGroup` and `SelectLabel` to organize many options into categories.
+- Provide `disabled` state when options are temporarily unavailable.
+- Keep option text concise (under 40 characters when possible).
+- Use controlled state with `value` and `onValueChange` when the selection affects other UI.
+- Add icons or color indicators for visual clarity (priority, status).
+- For 2-3 options, consider using radio buttons or toggle groups instead.
+
+## Related
+
+- [Input](/docs/components/input) - For text input fields
+- [Button](/docs/components/button) - For action buttons
+- [Card](/docs/components/card) - For card containers

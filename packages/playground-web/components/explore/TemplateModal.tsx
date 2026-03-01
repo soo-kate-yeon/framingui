@@ -118,37 +118,37 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
 
               {/* Pricing Options & CTAs */}
               <div className="space-y-4">
-                <div className="flex flex-wrap gap-3">
-                  <button className="flex-1 sm:flex-none inline-flex items-center justify-center rounded-full bg-neutral-950 px-8 py-4 text-base font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-neutral-950 px-8 py-4 text-base font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2">
                     {getTemplatePriceLabel(locale, template.price)}
                   </button>
                   <a
                     href={`/explore/${template.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-[0.5] sm:flex-none inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-4 text-base font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
+                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-4 text-base font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
                   >
                     {i18n.templateModal.liveDemo} <span className="text-neutral-500">→</span>
                   </a>
                 </div>
 
-                <div className="flex flex-col gap-3 justify-center pt-2">
+                <div className="flex flex-col gap-4 sm:gap-3 justify-center pt-4 sm:pt-2">
                   <button
                     onClick={onSelectDouble}
-                    className="group flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors text-left w-fit"
+                    className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit"
                   >
                     <span className="underline underline-offset-4">
                       {i18n.templateModal.getTwoTemplates}
                     </span>
-                    <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-bold tracking-widest text-emerald-700 uppercase group-hover:bg-emerald-100 transition-colors">
+                    <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-emerald-700 uppercase group-hover:bg-emerald-100 transition-colors shrink-0">
                       {i18n.templateModal.savePercent}
                     </span>
                   </button>
-                  <button className="group flex items-center gap-2 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors text-left w-fit">
+                  <button className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit">
                     <span className="underline underline-offset-4">
                       {i18n.templateModal.getUnlimitedAccess}
                     </span>
-                    <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-[10px] font-bold tracking-widest text-brand-700 uppercase group-hover:bg-brand-100 transition-colors">
+                    <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-brand-700 uppercase group-hover:bg-brand-100 transition-colors shrink-0">
                       {i18n.templateModal.bestOffer}
                     </span>
                   </button>
@@ -159,7 +159,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
             {/* Right: Media */}
             <div className="flex flex-col gap-4">
               {/* Simple Carousel */}
-              <div className="relative w-full aspect-[4/3] bg-neutral-100 rounded-2xl border border-neutral-200 overflow-hidden group">
+              <div className="relative w-full aspect-[1440/900] bg-neutral-100 rounded-2xl border border-neutral-200 overflow-hidden group">
                 <img
                   key={currentImageIdx}
                   src={template.screenshots[currentImageIdx]}

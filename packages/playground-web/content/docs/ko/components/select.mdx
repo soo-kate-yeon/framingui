@@ -1,0 +1,376 @@
+---
+title: "Select"
+description: "Select (드롭다운) 컴포넌트 Props, variants, 실전 사용 예제"
+---
+
+# Select
+
+`Select`는 Radix UI 기반의 접근성 높은 드롭다운 선택 컴포넌트로, 키보드 네비게이션과 디자인 토큰이 통합되어 있다.
+
+## Import
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Select (Root)
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `value` | `string` | `undefined` | 제어 모드 선택 값 |
+| `defaultValue` | `string` | `undefined` | 비제어 모드 기본 값 |
+| `onValueChange` | `(value: string) => void` | `undefined` | 값 변경 시 콜백 |
+| `disabled` | `boolean` | `false` | 전체 Select 비활성화 |
+| `name` | `string` | `undefined` | 폼 필드 name 속성 |
+| `required` | `boolean` | `false` | 필수 입력 검증 |
+
+### SelectTrigger
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 CSS 클래스 |
+| `id` | `string` | `undefined` | Label 연결용 HTML id |
+
+### SelectValue
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `placeholder` | `string` | `undefined` | 값이 없을 때 표시 텍스트 |
+
+### SelectItem
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `value` | `string` | **필수** | 아이템 값 (고유해야 함) |
+| `disabled` | `boolean` | `false` | 해당 항목 비활성화 |
+| `className` | `string` | `undefined` | 추가 CSS 클래스 |
+
+## 실전 시나리오
+
+### 1. 국가 선택기
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function CountrySelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[200px]">
+        <SelectValue placeholder="국가 선택" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="us">미국</SelectItem>
+        <SelectItem value="uk">영국</SelectItem>
+        <SelectItem value="kr">대한민국</SelectItem>
+        <SelectItem value="jp">일본</SelectItem>
+        <SelectItem value="ca">캐나다</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 2. 정렬 옵션
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function SortDropdown() {
+  return (
+    <Select defaultValue="name">
+      <SelectTrigger className="w-[180px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="name">이름순</SelectItem>
+        <SelectItem value="date">날짜순</SelectItem>
+        <SelectItem value="price">가격순</SelectItem>
+        <SelectItem value="popular">인기순</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 3. 상태 필터
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function StatusFilter() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[160px]">
+        <SelectValue placeholder="전체 상태" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">전체 상태</SelectItem>
+        <SelectItem value="active">진행 중</SelectItem>
+        <SelectItem value="pending">대기 중</SelectItem>
+        <SelectItem value="completed">완료</SelectItem>
+        <SelectItem value="cancelled">취소됨</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 4. 테마 선택기
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function ThemeSelector() {
+  return (
+    <Select defaultValue="system">
+      <SelectTrigger className="w-[150px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="light">라이트</SelectItem>
+        <SelectItem value="dark">다크</SelectItem>
+        <SelectItem value="system">시스템</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 5. 시간대 선택기
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@framingui/ui';
+
+export function TimeZoneSelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[240px]">
+        <SelectValue placeholder="시간대 선택" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>북미</SelectLabel>
+          <SelectItem value="est">동부 시간 (EST)</SelectItem>
+          <SelectItem value="cst">중부 시간 (CST)</SelectItem>
+          <SelectItem value="pst">태평양 시간 (PST)</SelectItem>
+        </SelectGroup>
+        <SelectGroup>
+          <SelectLabel>아시아</SelectLabel>
+          <SelectItem value="kst">한국 표준시 (KST)</SelectItem>
+          <SelectItem value="jst">일본 표준시 (JST)</SelectItem>
+          <SelectItem value="ist">인도 표준시 (IST)</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 6. 언어 전환기
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+import { Globe } from 'lucide-react';
+
+export function LanguageSwitcher() {
+  return (
+    <Select defaultValue="ko">
+      <SelectTrigger className="w-[140px]">
+        <div className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          <SelectValue />
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="ko">한국어</SelectItem>
+        <SelectItem value="ja">日本語</SelectItem>
+        <SelectItem value="zh">中文</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 7. 우선순위 선택기
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function PrioritySelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[150px]">
+        <SelectValue placeholder="우선순위 설정" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="low">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-green-500" />
+            낮음
+          </span>
+        </SelectItem>
+        <SelectItem value="medium">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-yellow-500" />
+            보통
+          </span>
+        </SelectItem>
+        <SelectItem value="high">
+          <span className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-red-500" />
+            높음
+          </span>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 8. 카테고리 선택기
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '@framingui/ui';
+
+export function CategorySelector() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[200px]">
+        <SelectValue placeholder="카테고리 선택" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>디자인</SelectLabel>
+          <SelectItem value="ui">UI 디자인</SelectItem>
+          <SelectItem value="ux">UX 리서치</SelectItem>
+        </SelectGroup>
+        <SelectSeparator />
+        <SelectGroup>
+          <SelectLabel>개발</SelectLabel>
+          <SelectItem value="frontend">프론트엔드</SelectItem>
+          <SelectItem value="backend">백엔드</SelectItem>
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 9. 날짜 범위 프리셋
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function DateRangePresets() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="기간 선택" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="today">오늘</SelectItem>
+        <SelectItem value="yesterday">어제</SelectItem>
+        <SelectItem value="last7">최근 7일</SelectItem>
+        <SelectItem value="last30">최근 30일</SelectItem>
+        <SelectItem value="thisMonth">이번 달</SelectItem>
+        <SelectItem value="lastMonth">지난 달</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+### 10. 페이지 크기 선택기
+
+```tsx
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@framingui/ui';
+
+export function PageSizeSelector() {
+  return (
+    <Select defaultValue="25">
+      <SelectTrigger className="w-[120px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="10">10개씩 보기</SelectItem>
+        <SelectItem value="25">25개씩 보기</SelectItem>
+        <SelectItem value="50">50개씩 보기</SelectItem>
+        <SelectItem value="100">100개씩 보기</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+```
+
+## 디자인 토큰
+
+Select 컴포넌트는 일관된 테마를 위해 FramingUI 디자인 토큰을 사용한다:
+
+```css
+/* Trigger */
+--tekton-bg-background
+--tekton-border-input
+--tekton-border-ring
+--tekton-spacing-2, --tekton-spacing-3
+--tekton-radius-md
+
+/* Content/Dropdown */
+--tekton-bg-popover
+--tekton-bg-popover-foreground
+--tekton-border-default
+--tekton-radius-md
+
+/* Items */
+--tekton-bg-accent
+--tekton-bg-accent-foreground
+--tekton-radius-sm
+
+/* Separators */
+--tekton-bg-muted
+```
+
+## 사용 팁
+
+- 기본값이 없을 때는 명확한 placeholder를 사용한다.
+- 접근성을 위해 `htmlFor`와 `id`로 Label과 연결한다.
+- 옵션이 많을 때는 `SelectGroup`과 `SelectLabel`로 카테고리를 나눈다.
+- 일시적으로 사용 불가능한 옵션은 `disabled` 상태를 제공한다.
+- 옵션 텍스트는 간결하게 유지한다 (가능하면 40자 이하).
+- 선택값이 다른 UI에 영향을 줄 때는 `value`와 `onValueChange`로 제어 모드를 사용한다.
+- 시각적 명확성을 위해 아이콘이나 색상 표시를 추가한다 (우선순위, 상태 등).
+- 옵션이 2-3개라면 라디오 버튼이나 토글 그룹 사용을 고려한다.
+
+## 관련 컴포넌트
+
+- [Input](/docs/components/input) - 텍스트 입력 필드
+- [Button](/docs/components/button) - 액션 버튼
+- [Card](/docs/components/card) - 카드 컨테이너

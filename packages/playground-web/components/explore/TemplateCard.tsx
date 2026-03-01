@@ -141,9 +141,8 @@ export function TemplateCard({
         </div>
       )}
 
-      {/* Thumbnail Area */}
       <div
-        className={`relative aspect-[4/3] w-full bg-neutral-100 overflow-hidden rounded-2xl transition-all duration-500 group-hover:shadow-lg border ${selectionStyles}`}
+        className={`relative aspect-[1440/900] w-full bg-neutral-100 overflow-hidden rounded-2xl transition-all duration-500 group-hover:shadow-lg border ${selectionStyles}`}
       >
         {thumbnail ? (
           <img

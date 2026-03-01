@@ -12,6 +12,7 @@
 import type { WhoamiOutput } from '../schemas/mcp-schemas.js';
 import { getAuthData, setAuthData, setWhoamiCompleted } from '../auth/state.js';
 import { isMasterAccount, PREMIUM_THEMES } from '../auth/theme-access.js';
+import { addMcpUtmParams } from '../utils/url-utils.js';
 
 /**
  * whoami 도구 구현
@@ -78,8 +79,8 @@ export async function whoamiTool(): Promise<WhoamiOutput> {
         if (trialDaysLeft > 0) {
           trialMessage = `You have ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} left in your free trial.`;
         } else {
-          trialMessage =
-            'Your free trial has expired. Upgrade to continue using premium themes: https://framingui.com/pricing';
+          const pricingUrl = addMcpUtmParams('https://framingui.com/pricing', 'whoami');
+          trialMessage = `Your free trial has expired. Upgrade to continue using premium themes: ${pricingUrl}`;
         }
       }
     }

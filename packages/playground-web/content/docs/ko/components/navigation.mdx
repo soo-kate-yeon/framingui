@@ -1,0 +1,596 @@
+---
+title: "NavigationMenu"
+description: "NavigationMenu 컴포넌트 Props, variants, 실전 사용 예제"
+---
+
+# NavigationMenu
+
+`NavigationMenu`는 Radix UI 기반의 접근 가능한 드롭다운 메뉴를 지원하는 수평 네비게이션 컴포넌트다.
+
+## Import
+
+```tsx
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '@framingui/ui';
+```
+
+## 기본 사용법
+
+```tsx
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '@framingui/ui';
+
+export function SimpleNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/" className={navigationMenuTriggerStyle()}>
+            홈
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/about" className={navigationMenuTriggerStyle()}>
+            소개
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/contact" className={navigationMenuTriggerStyle()}>
+            문의
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+## Variants
+
+### 1. 드롭다운이 있는 상단 네비게이션
+
+```tsx
+export function TopNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>제품</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid gap-3 p-6 md:w-[500px] lg:grid-cols-2">
+              <li>
+                <NavigationMenuLink asChild>
+                  <a href="/product-a" className="block p-3 rounded-md hover:bg-accent">
+                    <div className="font-medium">제품 A</div>
+                    <p className="text-sm text-muted-foreground">고급 분석 플랫폼</p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink asChild>
+                  <a href="/product-b" className="block p-3 rounded-md hover:bg-accent">
+                    <div className="font-medium">제품 B</div>
+                    <p className="text-sm text-muted-foreground">마케팅 자동화 도구</p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/pricing" className={navigationMenuTriggerStyle()}>
+            요금제
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 2. 문서 사이드바 네비게이션
+
+```tsx
+export function DocsSidebar() {
+  return (
+    <NavigationMenu orientation="vertical" className="max-w-xs">
+      <NavigationMenuList className="flex-col items-start gap-1">
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>시작하기</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="space-y-1 p-2">
+              <li>
+                <NavigationMenuLink href="/docs/installation" className="block px-3 py-2 rounded hover:bg-accent">
+                  설치
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink href="/docs/setup" className="block px-3 py-2 rounded hover:bg-accent">
+                  설정
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>컴포넌트</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="space-y-1 p-2">
+              <li>
+                <NavigationMenuLink href="/docs/button" className="block px-3 py-2 rounded hover:bg-accent">
+                  Button
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink href="/docs/input" className="block px-3 py-2 rounded hover:bg-accent">
+                  Input
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 3. 브레드크럼 네비게이션
+
+```tsx
+export function Breadcrumbs() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList className="gap-1">
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/" className="text-sm text-muted-foreground hover:text-foreground">
+            홈
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <span className="text-muted-foreground">/</span>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/products" className="text-sm text-muted-foreground hover:text-foreground">
+            제품
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <span className="text-muted-foreground">/</span>
+        <NavigationMenuItem>
+          <span className="text-sm font-medium">상세정보</span>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 4. 탭 네비게이션
+
+```tsx
+export function TabNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList className="border-b">
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            href="/dashboard/overview"
+            className={navigationMenuTriggerStyle()}
+            data-active
+          >
+            개요
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard/analytics" className={navigationMenuTriggerStyle()}>
+            분석
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard/reports" className={navigationMenuTriggerStyle()}>
+            보고서
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard/settings" className={navigationMenuTriggerStyle()}>
+            설정
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 5. 햄버거 메뉴가 있는 모바일 네비게이션
+
+```tsx
+import { Sheet, SheetContent, SheetTrigger } from '@framingui/ui';
+
+export function MobileNav() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <button className="md:hidden p-2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M3 12h18M3 6h18M3 18h18" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </button>
+      </SheetTrigger>
+      <SheetContent side="left">
+        <NavigationMenu orientation="vertical" className="w-full">
+          <NavigationMenuList className="flex-col items-start gap-2">
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/" className={navigationMenuTriggerStyle()}>
+                홈
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>제품</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="space-y-1 p-2">
+                  <li>
+                    <NavigationMenuLink href="/products/a">제품 A</NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/products/b">제품 B</NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </SheetContent>
+    </Sheet>
+  );
+}
+```
+
+### 6. 메가 메뉴
+
+```tsx
+export function MegaMenu() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>솔루션</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div className="grid gap-6 p-6 md:w-[600px] lg:w-[800px] lg:grid-cols-3">
+              <div>
+                <h3 className="font-semibold mb-3">산업별</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <NavigationMenuLink href="/solutions/healthcare" className="text-sm hover:underline">
+                      헬스케어
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/finance" className="text-sm hover:underline">
+                      금융
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/retail" className="text-sm hover:underline">
+                      유통
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">용도별</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <NavigationMenuLink href="/solutions/automation" className="text-sm hover:underline">
+                      자동화
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/analytics" className="text-sm hover:underline">
+                      분석
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">규모별</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <NavigationMenuLink href="/solutions/enterprise" className="text-sm hover:underline">
+                      대기업
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/smb" className="text-sm hover:underline">
+                      중소기업
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 7. 설정 네비게이션
+
+```tsx
+export function SettingsNav() {
+  return (
+    <NavigationMenu orientation="vertical" className="w-64 border-r">
+      <NavigationMenuList className="flex-col items-start gap-1 p-4">
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink
+            href="/settings/profile"
+            className="w-full px-3 py-2 rounded hover:bg-accent"
+            data-active
+          >
+            프로필
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink href="/settings/security" className="w-full px-3 py-2 rounded hover:bg-accent">
+            보안
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink href="/settings/notifications" className="w-full px-3 py-2 rounded hover:bg-accent">
+            알림
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink href="/settings/billing" className="w-full px-3 py-2 rounded hover:bg-accent">
+            결제
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 8. 푸터 네비게이션
+
+```tsx
+export function FooterNav() {
+  return (
+    <footer className="border-t bg-muted/50">
+      <div className="container py-8">
+        <div className="grid gap-8 md:grid-cols-4">
+          <div>
+            <h4 className="font-semibold mb-4">제품</h4>
+            <NavigationMenu orientation="vertical">
+              <NavigationMenuList className="flex-col items-start gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/features" className="text-sm text-muted-foreground hover:text-foreground">
+                    기능
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
+                    요금제
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/roadmap" className="text-sm text-muted-foreground hover:text-foreground">
+                    로드맵
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-4">회사</h4>
+            <NavigationMenu orientation="vertical">
+              <NavigationMenuList className="flex-col items-start gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/about" className="text-sm text-muted-foreground hover:text-foreground">
+                    소개
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/blog" className="text-sm text-muted-foreground hover:text-foreground">
+                    블로그
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/careers" className="text-sm text-muted-foreground hover:text-foreground">
+                    채용
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+```
+
+### 9. 페이지네이션 네비게이션
+
+```tsx
+export function PaginationNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            href="/page/1"
+            className={navigationMenuTriggerStyle()}
+            aria-label="이전 페이지"
+          >
+            ←
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/1" className={navigationMenuTriggerStyle()} data-active>
+            1
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/2" className={navigationMenuTriggerStyle()}>
+            2
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/3" className={navigationMenuTriggerStyle()}>
+            3
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <span className={navigationMenuTriggerStyle()}>...</span>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/10" className={navigationMenuTriggerStyle()}>
+            10
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            href="/page/2"
+            className={navigationMenuTriggerStyle()}
+            aria-label="다음 페이지"
+          >
+            →
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 10. 유틸리티 네비게이션 (사용자 메뉴)
+
+```tsx
+export function UtilityNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/notifications" className={navigationMenuTriggerStyle()}>
+            🔔
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>계정</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="w-48 p-2">
+              <li>
+                <NavigationMenuLink href="/profile" className="block px-3 py-2 rounded hover:bg-accent">
+                  프로필
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink href="/settings" className="block px-3 py-2 rounded hover:bg-accent">
+                  설정
+                </NavigationMenuLink>
+              </li>
+              <li className="border-t my-1" />
+              <li>
+                <NavigationMenuLink href="/logout" className="block px-3 py-2 rounded hover:bg-accent text-destructive">
+                  로그아웃
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+## Props API
+
+### NavigationMenu
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | 레이아웃 방향 |
+| `dir` | `'ltr' \| 'rtl'` | `'ltr'` | 텍스트 방향 |
+| `delayDuration` | `number` | `200` | 드롭다운 표시 전 지연 시간 (ms) |
+| `skipDelayDuration` | `number` | `300` | 항목 간 이동 시 건너뛸 지연 시간 |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+
+### NavigationMenuTrigger
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `disabled` | `boolean` | `false` | 비활성화 상태 |
+| `children` | `ReactNode` | - | 트리거 콘텐츠 |
+
+### NavigationMenuContent
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `children` | `ReactNode` | - | 드롭다운 콘텐츠 |
+| `forceMount` | `boolean` | `false` | 콘텐츠 강제 마운트 |
+
+### NavigationMenuLink
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `href` | `string` | - | 링크 목적지 |
+| `active` | `boolean` | `false` | 활성화 상태 |
+| `asChild` | `boolean` | `false` | 자식 엘리먼트로 렌더링 |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+
+## 디자인 토큰
+
+컴포넌트는 FramingUI 디자인 토큰을 사용한다:
+
+```tsx
+// Spacing
+--tekton-spacing-1  // 메뉴 항목 간 간격
+--tekton-spacing-2  // 수직 패딩
+--tekton-spacing-4  // 수평 패딩
+
+// Radius
+--tekton-radius-md  // 트리거와 콘텐츠의 테두리 반경
+
+// Colors
+--tekton-bg-background          // 기본 배경
+--tekton-bg-accent              // 호버/포커스 배경
+--tekton-bg-accent-foreground   // 호버/포커스 텍스트
+--tekton-bg-popover             // 드롭다운 배경
+--tekton-text-popover-foreground // 드롭다운 텍스트
+--tekton-text-muted-foreground  // 보조 텍스트
+--tekton-border-default         // 테두리와 인디케이터
+```
+
+## 사용 팁
+
+- 드롭다운에는 `NavigationMenuTrigger`, 직접 링크에는 `NavigationMenuLink`를 사용한다
+- 접근성을 위해 아이콘 전용 네비게이션 항목에는 `aria-label`을 추가한다
+- 드롭다운 콘텐츠는 간결하게—메가 메뉴는 최대 2-3열로 제한한다
+- 사이드바 네비게이션에는 `orientation="vertical"`을 사용한다
+- 모바일 반응성을 고려—햄버거 메뉴에는 Sheet를 사용한다
+- 현재 페이지는 `data-active` 속성으로 표시해 시각적 피드백을 제공한다
+- 키보드 네비게이션은 기본 내장—Tab, 화살표 키, Enter, Escape 모두 작동한다
+- 드롭다운 중첩은 2단계 이하로 유지하는 게 좋다
+
+## 관련 컴포넌트
+
+- [Button](/docs/components/button) - 액션 버튼
+- [Link](/docs/components/link) - 텍스트 링크
+- [Breadcrumb](/docs/components/breadcrumb) - 계층적 네비게이션
+- [Sheet](/docs/components/sheet) - 모바일 메뉴용 슬라이드 아웃 패널

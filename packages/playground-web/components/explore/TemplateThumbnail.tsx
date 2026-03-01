@@ -14,7 +14,7 @@ export function TemplateThumbnail({ templateId }: TemplateThumbnailProps) {
   return (
     <div
       style={vars as React.CSSProperties}
-      className="relative w-full h-full min-h-[260px] lg:min-h-0 aspect-[4/3] overflow-hidden group bg-[var(--tekton-bg-canvas)] flex items-center justify-center perspective-[2000px]"
+      className="relative w-full h-full min-h-[260px] lg:min-h-0 aspect-[1440/900] overflow-hidden group bg-[var(--tekton-bg-canvas)] flex items-center justify-center perspective-[2000px]"
     >
       {/* Container for 3D Transform */}
       <motion.div
@@ -24,7 +24,7 @@ export function TemplateThumbnail({ templateId }: TemplateThumbnailProps) {
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
       >
         {/* Main Dashboard Canvas */}
-        <div className="absolute w-[110%] md:w-[600px] aspect-[4/3] bg-[var(--tekton-bg-surface)] rounded-[var(--tekton-radius-lg,12px)] border border-[var(--tekton-border-default)] shadow-2xl shadow-black/10 overflow-hidden flex flex-col pointer-events-none">
+        <div className="absolute w-[110%] md:w-[600px] aspect-[1440/900] bg-[var(--tekton-bg-surface)] rounded-[var(--tekton-radius-lg,12px)] border border-[var(--tekton-border-default)] shadow-2xl shadow-black/10 overflow-hidden flex flex-col pointer-events-none">
           {/* Header */}
           <div className="h-10 md:h-12 border-b border-[var(--tekton-border-default)] flex items-center px-4 gap-4 bg-[var(--tekton-bg-surface)]">
             <div className="w-5 h-5 md:w-6 md:h-6 rounded flex-shrink-0 bg-[var(--tekton-action-primary)]" />

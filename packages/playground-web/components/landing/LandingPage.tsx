@@ -149,7 +149,7 @@ export function LandingPage() {
         </FadeIn>
 
         <FadeIn delay={0.3}>
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-4">
             <Button
               onClick={() =>
                 handleNavigateWithTracking(
@@ -164,6 +164,9 @@ export function LandingPage() {
             >
               {content.hero.buttons.tryStudio}
             </Button>
+            <p className="text-sm md:text-base text-neutral-500 font-medium">
+              {content.hero.noCreditCard}
+            </p>
           </div>
         </FadeIn>
       </header>

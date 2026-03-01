@@ -1,0 +1,571 @@
+---
+title: "Dialog"
+description: "Dialog 컴포넌트 Props, variants, 모달, 알림, 폼 실전 사용 예제"
+---
+
+# Dialog
+
+`Dialog`는 Radix UI 기반의 모달 오버레이 컴포넌트로, FramingUI 디자인 시스템에서 접근성 높은 다이얼로그, 모달, 알림을 만들 때 사용한다.
+
+## Import
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+```
+
+## Props
+
+### Dialog (Root)
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `open` | `boolean` | `undefined` | 제어된 열림 상태 |
+| `defaultOpen` | `boolean` | `false` | 비제어 기본 열림 상태 |
+| `onOpenChange` | `(open: boolean) => void` | `undefined` | 열림 상태 변경 시 이벤트 핸들러 |
+| `modal` | `boolean` | `true` | 다이얼로그가 페이지 나머지 부분과의 상호작용을 차단할지 여부 |
+
+### DialogContent
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `children` | `ReactNode` | - | 다이얼로그 콘텐츠 |
+| `onEscapeKeyDown` | `(event: KeyboardEvent) => void` | `undefined` | Escape 키 핸들러 |
+| `onPointerDownOutside` | `(event: PointerDownOutsideEvent) => void` | `undefined` | 외부 클릭 핸들러 |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | 기본 div 속성 |
+
+### DialogHeader, DialogFooter
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | 기본 div 속성 |
+
+### DialogTitle
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `...props` | Radix DialogTitle props | - | Radix primitive props |
+
+### DialogDescription
+
+| Prop | 타입 | 기본값 | 설명 |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | 추가 유틸리티 클래스 |
+| `...props` | Radix DialogDescription props | - | Radix primitive props |
+
+## 기본 사용법
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function BasicDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>다이얼로그 열기</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>환영합니다</DialogTitle>
+          <DialogDescription>
+            기본 다이얼로그 예제입니다.
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## 실전 시나리오
+
+### 1. 확인 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function DeleteConfirmation() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive">계정 삭제</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>정말 삭제하시겠습니까?</DialogTitle>
+          <DialogDescription>
+            이 작업은 되돌릴 수 없습니다. 계정이 영구적으로 삭제됩니다.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline">취소</Button>
+          <Button variant="destructive">삭제</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 2. 로그인 폼 다이얼로그
+
+```tsx
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Input, Label } from '@framingui/ui';
+
+export function LoginDialog() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button>로그인</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>계정에 로그인</DialogTitle>
+          <DialogDescription>
+            계속하려면 인증 정보를 입력하세요.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="email">이메일</Label>
+            <Input id="email" type="email" placeholder="name@example.com" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">비밀번호</Label>
+            <Input id="password" type="password" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit">로그인</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 3. 알림 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function AlertDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>세션 만료</DialogTitle>
+          <DialogDescription>
+            세션이 만료되었습니다. 계속하려면 다시 로그인하세요.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button onClick={onClose}>확인</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 4. 설정 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Label, Switch } from '@framingui/ui';
+
+export function SettingsDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">설정</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>환경설정</DialogTitle>
+          <DialogDescription>
+            알림 및 개인정보 설정을 관리합니다.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="notifications">이메일 알림</Label>
+            <Switch id="notifications" />
+          </div>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="marketing">마케팅 이메일</Label>
+            <Switch id="marketing" />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 5. 새 항목 생성 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Input, Label, Textarea } from '@framingui/ui';
+
+export function CreateProjectDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>새 프로젝트</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>프로젝트 만들기</DialogTitle>
+          <DialogDescription>
+            워크스페이스에 새 프로젝트를 추가합니다.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="name">프로젝트 이름</Label>
+            <Input id="name" placeholder="멋진 프로젝트" />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">설명</Label>
+            <Textarea id="description" placeholder="이 프로젝트는 무엇인가요?" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline">취소</Button>
+          <Button type="submit">만들기</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 6. 정보 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function InfoDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost">소개</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>FramingUI 소개</DialogTitle>
+          <DialogDescription>
+            FramingUI는 Tailwind CSS와 Radix UI로 구축된 현대적인 디자인 시스템입니다.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4 text-sm">
+          <p className="mb-2">버전: 1.0.0</p>
+          <p className="mb-2">React, TypeScript, Next.js로 제작</p>
+          <p className="text-neutral-500">© 2024 FramingUI. All rights reserved.</p>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 7. 이미지 미리보기 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from '@framingui/ui';
+
+export function ImagePreviewDialog() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <button className="cursor-pointer">
+          <img
+            src="/placeholder.jpg"
+            alt="미리보기"
+            className="h-20 w-20 rounded object-cover"
+          />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl">
+        <img
+          src="/placeholder.jpg"
+          alt="전체 크기"
+          className="h-auto w-full rounded"
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 8. 다단계 폼 다이얼로그
+
+```tsx
+import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button, Input, Label } from '@framingui/ui';
+
+export function MultiStepDialog() {
+  const [step, setStep] = useState(1);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button>회원가입</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>계정 만들기 - {step}/2단계</DialogTitle>
+          <DialogDescription>
+            {step === 1 ? '개인 정보를 입력하세요' : '비밀번호를 선택하세요'}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          {step === 1 ? (
+            <>
+              <div className="grid gap-2">
+                <Label htmlFor="fullname">이름</Label>
+                <Input id="fullname" placeholder="홍길동" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">이메일</Label>
+                <Input id="email" type="email" placeholder="hong@example.com" />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="grid gap-2">
+                <Label htmlFor="password">비밀번호</Label>
+                <Input id="password" type="password" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirm">비밀번호 확인</Label>
+                <Input id="confirm" type="password" />
+              </div>
+            </>
+          )}
+        </div>
+        <DialogFooter>
+          {step === 2 && (
+            <Button variant="outline" onClick={() => setStep(1)}>
+              이전
+            </Button>
+          )}
+          <Button onClick={() => step === 1 ? setStep(2) : null}>
+            {step === 1 ? '다음' : '계정 만들기'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 9. 선택 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@framingui/ui';
+import { Button } from '@framingui/ui';
+
+export function SelectionDialog() {
+  const items = ['React', 'Vue', 'Angular', 'Svelte'];
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">프레임워크 선택</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>프레임워크 선택</DialogTitle>
+          <DialogDescription>
+            선호하는 프론트엔드 프레임워크를 선택하세요.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-2 py-4">
+          {items.map((item) => (
+            <button
+              key={item}
+              className="rounded border border-neutral-200 p-3 text-left hover:bg-neutral-50"
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+### 10. 로딩 다이얼로그
+
+```tsx
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@framingui/ui';
+
+export function LoadingDialog({ open }: { open: boolean }) {
+  return (
+    <Dialog open={open}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>처리 중</DialogTitle>
+          <DialogDescription>
+            요청을 처리하는 동안 잠시만 기다려 주세요...
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex items-center justify-center py-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-900" />
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## 디자인 토큰
+
+Dialog 컴포넌트는 다음 Tailwind 유틸리티 클래스를 사용한다:
+
+**DialogOverlay:**
+- 배경: `bg-black/80`
+- 백드롭: `backdrop-blur-sm`
+- 위치: `fixed inset-0 z-50`
+- 애니메이션: `data-[state=open]:animate-in data-[state=closed]:animate-out`
+
+**DialogContent:**
+- 배경: `bg-white`
+- 테두리: `border border-neutral-200`
+- 그림자: `shadow-lg`
+- 패딩: `p-6`
+- 모서리: `sm:rounded-lg`
+- 최대 너비: `max-w-lg`
+- 위치: `fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]`
+- 애니메이션: `zoom-in-95`, `zoom-out-95`, `fade-in-0`, `fade-out-0`
+
+**DialogTitle:**
+- 폰트: `text-lg font-semibold leading-none tracking-tight`
+
+**DialogDescription:**
+- 색상: `text-sm text-neutral-500`
+
+**DialogHeader:**
+- 레이아웃: `flex flex-col space-y-2 text-center sm:text-left`
+
+**DialogFooter:**
+- 레이아웃: `flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2`
+
+## 사용 팁
+
+- 접근성을 위해 `DialogTitle`을 항상 포함한다 (스크린 리더용).
+- `DialogDescription`으로 다이얼로그 목적에 대한 맥락을 제공한다.
+- 위험한 작업에는 명확한 취소 옵션이 있는 확인 다이얼로그를 사용한다.
+- 다이얼로그 콘텐츠는 단일 작업이나 결정에 집중한다.
+- 프로그래밍 방식으로 다이얼로그를 제어해야 할 때는 제어된 상태(`open` + `onOpenChange`)를 사용한다.
+- 더 나은 접근성을 위해 닫기 버튼에 적절한 `aria-label`을 추가한다.
+- 다이얼로그 안에 다른 다이얼로그를 중첩하지 않는다.
+- 복잡한 폼은 여러 단계로 나누는 것을 고려한다.
+- `DialogFooter`를 사용하여 액션 버튼을 일관되게 정렬한다.
+- 키보드 탐색이 제대로 작동하는지 확인한다 (Escape로 닫기, Tab으로 이동).
+
+## 관련 컴포넌트
+
+- [Button](/docs/components/button) - 다이얼로그 푸터에 사용되는 액션 버튼
+- [Input](/docs/components/input) - 다이얼로그 콘텐츠용 폼 입력
+- [Card](/docs/components/card) - 비모달 콘텐츠 표시의 대안

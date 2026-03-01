@@ -1,0 +1,491 @@
+---
+title: "Responsive Design Tokens: Fluid Layouts Across All Devices"
+description: "Build responsive design systems with viewport-based tokens, fluid typography, container queries, and mobile-first design token strategies."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["responsive-design", "design-tokens", "mobile-first", "container-queries", "fluid-typography"]
+---
+
+# Responsive Design Tokens: Fluid Layouts Across All Devices
+
+Responsive design isn't just about breakpoints anymore. Modern responsive systems use design tokens to create fluid, adaptive interfaces that scale smoothly from mobile to desktop—and everything in between.
+
+This guide covers token-based strategies for building truly responsive design systems.
+
+## Why Design Tokens for Responsive Design?
+
+Hard-coded breakpoints and pixel values create brittle, device-specific designs. Token-based responsive systems adapt gracefully to any viewport.
+
+### Traditional Breakpoints (Rigid)
+
+```css
+/* Bad: Device-specific breakpoints */
+.heading {
+  font-size: 16px; /* Mobile */
+}
+
+@media (min-width: 768px) {
+  .heading {
+    font-size: 20px; /* Tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  .heading {
+    font-size: 24px; /* Desktop */
+  }
+}
+```
+
+### Token-Based Fluid Scale (Adaptive)
+
+```css
+/* Good: Fluid, token-based scaling */
+:root {
+  --font-size-heading: clamp(1rem, 2vw + 0.5rem, 1.5rem);
+}
+
+.heading {
+  font-size: var(--font-size-heading);
+}
+```
+
+## Responsive Token Architecture
+
+Build responsive tokens in layers:
+
+### Layer 1: Base Scale Tokens
+
+Define your foundational scales independent of viewport:
+
+```typescript
+// scales.ts
+export const spacing = {
+  1: '0.25rem',  // 4px
+  2: '0.5rem',   // 8px
+  3: '0.75rem',  // 12px
+  4: '1rem',     // 16px
+  6: '1.5rem',   // 24px
+  8: '2rem',     // 32px
+  12: '3rem',    // 48px
+  16: '4rem',    // 64px
+};
+
+export const fontSize = {
+  xs: '0.75rem',   // 12px
+  sm: '0.875rem',  // 14px
+  base: '1rem',    // 16px
+  lg: '1.125rem',  // 18px
+  xl: '1.25rem',   // 20px
+  '2xl': '1.5rem', // 24px
+  '3xl': '1.875rem', // 30px
+  '4xl': '2.25rem',  // 36px
+};
+```
+
+### Layer 2: Viewport-Aware Tokens
+
+Add responsive variants using CSS custom properties:
+
+```css
+:root {
+  /* Mobile-first base values */
+  --spacing-section: var(--spacing-4);
+  --spacing-container: var(--spacing-3);
+  --font-size-heading: var(--font-size-xl);
+  --font-size-body: var(--font-size-base);
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  :root {
+    --spacing-section: var(--spacing-8);
+    --spacing-container: var(--spacing-4);
+    --font-size-heading: var(--font-size-2xl);
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  :root {
+    --spacing-section: var(--spacing-16);
+    --spacing-container: var(--spacing-6);
+    --font-size-heading: var(--font-size-4xl);
+  }
+}
+```
+
+### Layer 3: Semantic Responsive Tokens
+
+Map viewport-aware tokens to semantic purposes:
+
+```typescript
+export const semanticTokens = {
+  layout: {
+    contentMaxWidth: 'var(--max-width-content)',
+    containerPadding: 'var(--spacing-container)',
+    sectionGap: 'var(--spacing-section)',
+  },
+  typography: {
+    headingSize: 'var(--font-size-heading)',
+    bodySize: 'var(--font-size-body)',
+    lineHeight: 'var(--line-height-body)',
+  }
+};
+```
+
+## Fluid Typography with Design Tokens
+
+Create type scales that adapt smoothly between breakpoints.
+
+### Fluid Type Scale Formula
+
+```css
+/* clamp(minimum, preferred, maximum) */
+:root {
+  --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
+  --font-size-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1rem + 0.625vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+  --font-size-2xl: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --font-size-3xl: clamp(1.875rem, 1.6rem + 1.375vw, 2.5rem);
+  --font-size-4xl: clamp(2.25rem, 1.9rem + 1.75vw, 3rem);
+}
+```
+
+### Generating Fluid Scales with TypeScript
+
+```typescript
+function generateFluidTypography(
+  minSize: number,
+  maxSize: number,
+  minViewport: number = 320,
+  maxViewport: number = 1280
+): string {
+  const slope = (maxSize - minSize) / (maxViewport - minViewport);
+  const yIntercept = minSize - slope * minViewport;
+
+  return `clamp(${minSize}rem, ${yIntercept.toFixed(2)}rem + ${(slope * 100).toFixed(2)}vw, ${maxSize}rem)`;
+}
+
+const fluidScale = {
+  xs: generateFluidTypography(0.75, 0.875),
+  sm: generateFluidTypography(0.875, 1),
+  base: generateFluidTypography(1, 1.125),
+  lg: generateFluidTypography(1.125, 1.25),
+  xl: generateFluidTypography(1.25, 1.5),
+  '2xl': generateFluidTypography(1.5, 2),
+  '3xl': generateFluidTypography(1.875, 2.5),
+  '4xl': generateFluidTypography(2.25, 3),
+};
+```
+
+## Fluid Spacing System
+
+Spacing should scale proportionally with viewport size.
+
+```css
+:root {
+  /* Fluid spacing scale */
+  --spacing-1: clamp(0.25rem, 0.2rem + 0.25vw, 0.375rem);
+  --spacing-2: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
+  --spacing-3: clamp(0.75rem, 0.6rem + 0.75vw, 1.125rem);
+  --spacing-4: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  --spacing-6: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);
+  --spacing-8: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --spacing-12: clamp(3rem, 2.4rem + 3vw, 4.5rem);
+  --spacing-16: clamp(4rem, 3.2rem + 4vw, 6rem);
+}
+```
+
+## Container Queries with Design Tokens
+
+Container queries enable component-level responsive design.
+
+```css
+/* Define container contexts */
+.card-grid {
+  container-type: inline-size;
+  container-name: card-grid;
+}
+
+/* Component tokens adapt to container width */
+@container card-grid (min-width: 400px) {
+  .card {
+    --card-padding: var(--spacing-4);
+    --card-gap: var(--spacing-3);
+  }
+}
+
+@container card-grid (min-width: 600px) {
+  .card {
+    --card-padding: var(--spacing-6);
+    --card-gap: var(--spacing-4);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+  }
+}
+```
+
+### React Component with Container Query Tokens
+
+```tsx
+export function AdaptiveCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="adaptive-card-container">
+      <div className="card">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// CSS
+.adaptive-card-container {
+  container-type: inline-size;
+  container-name: adaptive-card;
+}
+
+.card {
+  /* Default mobile tokens */
+  padding: var(--spacing-2);
+  gap: var(--spacing-2);
+}
+
+@container adaptive-card (min-width: 320px) {
+  .card {
+    padding: var(--spacing-4);
+    gap: var(--spacing-3);
+  }
+}
+
+@container adaptive-card (min-width: 480px) {
+  .card {
+    padding: var(--spacing-6);
+    gap: var(--spacing-4);
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+}
+```
+
+## Breakpoint Tokens
+
+Define consistent breakpoints across your system:
+
+```typescript
+export const breakpoints = {
+  xs: '320px',
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
+  '2xl': '1536px',
+} as const;
+
+// Usage in CSS
+:root {
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
+/* Or in JavaScript */
+const mediaQuery = `@media (min-width: ${breakpoints.md})`;
+```
+
+## Responsive Grid System with Tokens
+
+```css
+:root {
+  /* Grid configuration tokens */
+  --grid-columns: 4;
+  --grid-gap: var(--spacing-4);
+  --grid-min-column-width: 250px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --grid-columns: 8;
+    --grid-gap: var(--spacing-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --grid-columns: 12;
+    --grid-gap: var(--spacing-8);
+  }
+}
+
+/* Auto-responsive grid using tokens */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--grid-min-column-width), 1fr)
+  );
+  gap: var(--grid-gap);
+}
+```
+
+## Viewport-Based Component Variants
+
+```tsx
+type ComponentSize = 'sm' | 'md' | 'lg';
+
+// Token-based responsive variants
+const buttonTokens: Record<ComponentSize, React.CSSProperties> = {
+  sm: {
+    padding: 'var(--spacing-2) var(--spacing-3)',
+    fontSize: 'var(--font-size-sm)',
+  },
+  md: {
+    padding: 'var(--spacing-3) var(--spacing-4)',
+    fontSize: 'var(--font-size-base)',
+  },
+  lg: {
+    padding: 'var(--spacing-4) var(--spacing-6)',
+    fontSize: 'var(--font-size-lg)',
+  },
+};
+
+export function ResponsiveButton({ children }: { children: React.ReactNode }) {
+  return (
+    <button
+      className="btn"
+      style={{
+        // Automatically responsive via CSS custom properties
+        padding: 'var(--button-padding)',
+        fontSize: 'var(--button-font-size)',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// CSS adapts button tokens by viewport
+.btn {
+  --button-padding: var(--spacing-2) var(--spacing-3);
+  --button-font-size: var(--font-size-sm);
+}
+
+@media (min-width: 640px) {
+  .btn {
+    --button-padding: var(--spacing-3) var(--spacing-4);
+    --button-font-size: var(--font-size-base);
+  }
+}
+```
+
+## Mobile-First Token Strategy
+
+Always design tokens mobile-first, then scale up:
+
+```css
+/* ✅ Good: Mobile-first approach */
+:root {
+  /* Base mobile values */
+  --font-size-heading: 1.5rem;
+  --spacing-section: 2rem;
+  --container-padding: 1rem;
+}
+
+/* Scale up for larger viewports */
+@media (min-width: 640px) {
+  :root {
+    --font-size-heading: 2rem;
+    --spacing-section: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --font-size-heading: 3rem;
+    --spacing-section: 4rem;
+    --container-padding: 2rem;
+  }
+}
+```
+
+```css
+/* ❌ Bad: Desktop-first requires overrides */
+:root {
+  --font-size-heading: 3rem; /* Desktop default */
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --font-size-heading: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --font-size-heading: 1.5rem;
+  }
+}
+```
+
+## Testing Responsive Tokens
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('responsive tokens adapt at breakpoints', async ({ page }) => {
+  await page.goto('/');
+
+  // Mobile viewport
+  await page.setViewportSize({ width: 375, height: 667 });
+  const mobileHeading = await page.locator('h1');
+  const mobileFontSize = await mobileHeading.evaluate(
+    el => getComputedStyle(el).fontSize
+  );
+  expect(mobileFontSize).toBe('24px');
+
+  // Tablet viewport
+  await page.setViewportSize({ width: 768, height: 1024 });
+  const tabletFontSize = await mobileHeading.evaluate(
+    el => getComputedStyle(el).fontSize
+  );
+  expect(tabletFontSize).toBe('32px');
+
+  // Desktop viewport
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const desktopFontSize = await mobileHeading.evaluate(
+    el => getComputedStyle(el).fontSize
+  );
+  expect(desktopFontSize).toBe('48px');
+});
+```
+
+## Common Responsive Token Mistakes
+
+1. **Too many breakpoints** — Stick to 3-5 major breakpoints
+2. **Pixel-based media queries** — Use `rem` or `em` for accessibility
+3. **Ignoring landscape orientation** — Test both portrait and landscape
+4. **Not testing real devices** — Emulators don't catch everything
+5. **Forgetting touch targets** — Minimum 44×44px tap areas on mobile
+6. **Fixed widths** — Use `max-width` instead of `width`
+
+## FramingUI Responsive System
+
+FramingUI provides:
+- Fluid typography and spacing scales
+- Container query support out of the box
+- Mobile-first token architecture
+- Pre-configured breakpoints
+- [Explore responsive examples →](/explore)
+
+## Related Resources
+
+- [Design Tokens Best Practices](/blog/design-tokens-best-practices) — Foundation of token systems
+- [Dark Mode Design Tokens](/blog/dark-mode-design-tokens) — Combining responsive with dark mode
+- [Building Accessible Forms](/docs/accessibility) — Responsive form design
+
+---
+
+**Build interfaces that adapt to any screen.** Responsive design tokens make fluid, device-agnostic layouts effortless.

@@ -10,6 +10,7 @@ import { themeToCSS, type ThemeDefinition } from '@framingui/ui';
 import type { PreviewThemeInput, PreviewThemeOutput } from '../schemas/mcp-schemas.js';
 import { createThemeNotFoundError, extractErrorMessage } from '../utils/error-handler.js';
 import { getAuthData } from '../auth/state.js';
+import { addMcpUtmParams } from '../utils/url-utils.js';
 
 /**
  * ThemeV2 (core) -> ThemeDefinition (ui) 어댑터
@@ -137,9 +138,10 @@ export async function previewThemeTool(input: PreviewThemeInput): Promise<Previe
     // 라이선스 보유 확인
     const licensedThemes = authData.themes?.licensed || [];
     if (!licensedThemes.includes(themeId)) {
+      const purchaseUrl = addMcpUtmParams('https://framingui.com', 'preview-theme');
       return {
         success: false,
-        error: `Theme "${themeId}" is not included in your license. Please purchase this theme at https://framingui.com.`,
+        error: `Theme "${themeId}" is not included in your license. Please purchase this theme at ${purchaseUrl}.`,
       };
     }
 

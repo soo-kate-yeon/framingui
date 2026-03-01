@@ -1,0 +1,640 @@
+---
+title: "Modal Dialog Design Patterns: Accessible, User-Friendly Modals"
+description: "Build accessible modal dialogs with focus management, keyboard navigation, animations, and best practices for confirmation, forms, and alerts."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["modal", "dialog", "component", "accessibility", "ux"]
+---
+
+# Modal Dialog Design Patterns: Accessible, User-Friendly Modals
+
+Modal dialogs interrupt users—so they better be worth it. Done right, modals focus attention and streamline workflows. Done wrong, they're annoying overlays that trap users.
+
+This guide covers patterns for building modals that users don't hate.
+
+## When to Use Modals (and When Not To)
+
+### Good Use Cases ✅
+
+- **Critical confirmations** — "Delete 1,000 records? This cannot be undone."
+- **Focused tasks** — Multi-step forms that need isolation
+- **Contextual actions** — Quick edits without leaving the current page
+- **Alerts and warnings** — Time-sensitive information requiring acknowledgment
+
+### Bad Use Cases ❌
+
+- **Content that should be on the page** — Don't hide important info in modals
+- **Complex workflows** — Long forms belong on dedicated pages
+- **Marketing popups** — Users hate them (seriously, they do)
+- **Mobile navigation** — Slide-out panels work better
+
+## Pattern #1: Accessible Modal Foundation
+
+Accessibility is non-negotiable. Modals must work with keyboard and screen readers.
+
+### HTML Structure with ARIA
+
+```tsx
+export function AccessibleModal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: ModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Store previously focused element
+    const previouslyFocused = document.activeElement as HTMLElement;
+
+    // Focus modal
+    modalRef.current?.focus();
+
+    // Trap focus inside modal
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = modalRef.current?.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusableElements?.length) return;
+
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleTabKey);
+
+    // Cleanup: restore focus
+    return () => {
+      document.removeEventListener('keydown', handleTabKey);
+      previouslyFocused?.focus();
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div
+        ref={modalRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
+      >
+        <div className="modal-header">
+          <h2 id="modal-title">{title}</h2>
+          <button
+            onClick={onClose}
+            aria-label="Close modal"
+            className="modal-close"
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+```
+
+### Focus Management
+
+```tsx
+function useFocusTrap(isOpen: boolean, modalRef: RefObject<HTMLElement>) {
+  useEffect(() => {
+    if (!isOpen || !modalRef.current) return;
+
+    const modal = modalRef.current;
+    const previouslyFocused = document.activeElement as HTMLElement;
+
+    // Focus first focusable element
+    const focusableElements = modal.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusableElements[0]?.focus();
+
+    // Return focus on unmount
+    return () => {
+      previouslyFocused?.focus();
+    };
+  }, [isOpen, modalRef]);
+}
+```
+
+## Pattern #2: Confirmation Dialog
+
+High-stakes actions need clear, unambiguous confirmation.
+
+```tsx
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  variant?: 'danger' | 'warning' | 'info';
+}
+
+export function ConfirmDialog({
+  isOpen,
+  onConfirm,
+  onCancel,
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  variant = 'info',
+}: ConfirmDialogProps) {
+  const handleConfirm = () => {
+    onConfirm();
+    onCancel(); // Close modal
+  };
+
+  return (
+    <AccessibleModal isOpen={isOpen} onClose={onCancel} title={title}>
+      <div className={`confirm-dialog confirm-dialog--${variant}`}>
+        <p className="confirm-message">{message}</p>
+        <div className="confirm-actions">
+          <button onClick={onCancel} className="btn btn-secondary">
+            {cancelLabel}
+          </button>
+          <button
+            onClick={handleConfirm}
+            className={`btn btn-${variant === 'danger' ? 'danger' : 'primary'}`}
+            autoFocus
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </AccessibleModal>
+  );
+}
+
+// Usage
+<ConfirmDialog
+  isOpen={showDeleteConfirm}
+  onConfirm={handleDelete}
+  onCancel={() => setShowDeleteConfirm(false)}
+  title="Delete Account"
+  message="This will permanently delete your account and all associated data. This action cannot be undone."
+  confirmLabel="Delete Account"
+  cancelLabel="Keep Account"
+  variant="danger"
+/>
+```
+
+### Preventing Accidental Confirmations
+
+```tsx
+export function DangerousConfirmDialog(props: ConfirmDialogProps) {
+  const [confirmText, setConfirmText] = useState('');
+  const requiredText = 'DELETE';
+  const isConfirmEnabled = confirmText === requiredText;
+
+  return (
+    <AccessibleModal isOpen={props.isOpen} onClose={props.onCancel} title={props.title}>
+      <p>{props.message}</p>
+      <div className="confirmation-input">
+        <label htmlFor="confirm-input">
+          Type <strong>{requiredText}</strong> to confirm:
+        </label>
+        <input
+          id="confirm-input"
+          type="text"
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}
+          placeholder={requiredText}
+        />
+      </div>
+      <div className="modal-actions">
+        <button onClick={props.onCancel}>Cancel</button>
+        <button
+          onClick={props.onConfirm}
+          disabled={!isConfirmEnabled}
+          className="btn-danger"
+        >
+          {props.confirmLabel}
+        </button>
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+## Pattern #3: Form Modal
+
+Multi-step or complex forms work well in modals when they don't interrupt the main workflow.
+
+```tsx
+export function FormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  title,
+}: FormModalProps) {
+  const [formData, setFormData] = useState({ name: '', email: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(formData);
+      onClose(); // Close on success
+    } catch (error) {
+      setErrors({ submit: 'Failed to save. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <AccessibleModal isOpen={isOpen} onClose={onClose} title={title}>
+      <form onSubmit={handleSubmit}>
+        <div className="form-field">
+          <label htmlFor="name">Name</label>
+          <input
+            id="name"
+            type="text"
+            value={formData.name}
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
+            required
+          />
+          {errors.name && <span className="error">{errors.name}</span>}
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+          />
+          {errors.email && <span className="error">{errors.email}</span>}
+        </div>
+
+        {errors.submit && (
+          <div className="form-error" role="alert">
+            {errors.submit}
+          </div>
+        )}
+
+        <div className="modal-actions">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="btn-secondary"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary"
+          >
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </button>
+        </div>
+      </form>
+    </AccessibleModal>
+  );
+}
+```
+
+## Pattern #4: Multi-Step Modal
+
+Break complex workflows into digestible steps.
+
+```tsx
+export function MultiStepModal({ isOpen, onClose }: ModalProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({});
+
+  const steps = [
+    { title: 'Personal Info', component: PersonalInfoStep },
+    { title: 'Address', component: AddressStep },
+    { title: 'Review', component: ReviewStep },
+  ];
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    await submitForm(formData);
+    onClose();
+  };
+
+  const CurrentStepComponent = steps[currentStep].component;
+
+  return (
+    <AccessibleModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={steps[currentStep].title}
+    >
+      <div className="multi-step-modal">
+        {/* Progress indicator */}
+        <div className="step-progress">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className={`step ${index <= currentStep ? 'active' : ''}`}
+            >
+              <span className="step-number">{index + 1}</span>
+              <span className="step-label">{step.title}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Current step content */}
+        <div className="step-content">
+          <CurrentStepComponent
+            data={formData}
+            onChange={setFormData}
+          />
+        </div>
+
+        {/* Navigation */}
+        <div className="modal-actions">
+          <button
+            onClick={handleBack}
+            disabled={currentStep === 0}
+            className="btn-secondary"
+          >
+            Back
+          </button>
+          {currentStep < steps.length - 1 ? (
+            <button onClick={handleNext} className="btn-primary">
+              Next
+            </button>
+          ) : (
+            <button onClick={handleSubmit} className="btn-primary">
+              Submit
+            </button>
+          )}
+        </div>
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+## Pattern #5: Animated Entry/Exit
+
+Smooth animations make modals feel less jarring.
+
+```tsx
+import { AnimatePresence, motion } from 'framer-motion';
+
+export function AnimatedModal({ isOpen, onClose, children }: ModalProps) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            className="modal-overlay"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          />
+
+          {/* Modal content */}
+          <motion.div
+            className="modal-content"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            {children}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+```
+
+### CSS-Only Animation
+
+```css
+.modal-overlay {
+  animation: fade-in 0.2s ease-out;
+}
+
+.modal-content {
+  animation: scale-up 0.2s ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+```
+
+## Pattern #6: Size Variants
+
+Different content needs different modal sizes.
+
+```tsx
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+
+interface SizedModalProps extends ModalProps {
+  size?: ModalSize;
+}
+
+export function SizedModal({ size = 'md', children, ...props }: SizedModalProps) {
+  return (
+    <AccessibleModal {...props}>
+      <div className={`modal-content modal-content--${size}`}>
+        {children}
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+```css
+.modal-content--sm {
+  max-width: 400px;
+}
+
+.modal-content--md {
+  max-width: 600px;
+}
+
+.modal-content--lg {
+  max-width: 900px;
+}
+
+.modal-content--xl {
+  max-width: 1200px;
+}
+
+.modal-content--full {
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  border-radius: 0;
+}
+```
+
+## Pattern #7: Keyboard Shortcuts
+
+Power users expect keyboard shortcuts.
+
+```tsx
+export function KeyboardModal({ isOpen, onClose, children }: ModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'Escape':
+          onClose();
+          break;
+        case 'Enter':
+          if (e.metaKey || e.ctrlKey) {
+            // Cmd/Ctrl+Enter to submit
+            const form = document.querySelector('.modal-content form') as HTMLFormElement;
+            form?.requestSubmit();
+          }
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  return (
+    <AccessibleModal isOpen={isOpen} onClose={onClose}>
+      {children}
+      <div className="keyboard-hints">
+        <kbd>Esc</kbd> to close • <kbd>⌘ Enter</kbd> to submit
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+## Design Token Integration
+
+```css
+:root {
+  /* Modal tokens */
+  --modal-overlay-bg: oklch(0 0 0 / 0.5);
+  --modal-content-bg: var(--color-background-surface);
+  --modal-border-radius: var(--radius-lg);
+  --modal-shadow: var(--shadow-xl);
+  --modal-padding: var(--spacing-6);
+  --modal-max-width: 600px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--modal-content-bg);
+  border-radius: var(--modal-border-radius);
+  box-shadow: var(--modal-shadow);
+  padding: var(--modal-padding);
+  max-width: var(--modal-max-width);
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+```
+
+## Common Modal Mistakes
+
+1. **No escape route** — Always provide a way to close (X button, Esc key, backdrop click)
+2. **Breaking scroll** — Remember to prevent body scroll when modal is open
+3. **Poor mobile experience** — Full-screen modals work better on mobile
+4. **No loading states** — Show progress during async operations
+5. **Forgetting focus** — Restore focus to trigger element on close
+6. **Unclear actions** — Primary vs secondary buttons must be obvious
+7. **Too many modals** — Stacking modals is confusing (use routing instead)
+
+## FramingUI Modal System
+
+FramingUI provides accessible, beautiful modals:
+- WCAG 2.1 AA compliant out of the box
+- Smooth animations with zero config
+- Responsive sizing for mobile
+- Built-in focus management
+- [Explore modal examples →](/explore)
+
+## Related Resources
+
+- [Form Validation UI Patterns](/blog/form-validation-ui-patterns) — Validation in modal forms
+- [Design Tokens Best Practices](/blog/design-tokens-best-practices) — Token-based modal styling
+- [Responsive Design Tokens](/blog/responsive-design-tokens) — Mobile modal patterns
+
+---
+
+**Build modals users actually use.** Accessible, intuitive, and beautifully designed—that's the FramingUI way.

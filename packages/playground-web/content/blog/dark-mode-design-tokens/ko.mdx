@@ -1,0 +1,499 @@
+---
+title: "다크 모드 디자인 토큰: 완벽한 구현 가이드"
+description: "시맨틱 색상 시스템, 대비율, 자동 테마 전환으로 접근 가능하고 아름다운 다크 인터페이스를 위한 다크 모드 디자인 토큰을 마스터하세요."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["dark-mode", "design-tokens", "theming", "accessibility", "oklch"]
+---
+
+# 다크 모드 디자인 토큰: 완벽한 구현 가이드
+
+다크 모드는 단순히 색상을 반전하는 것이 아닙니다. 신중한 대비 관리, 시맨틱 네이밍, 접근성 고려가 필요한 색상 시스템의 완전한 재구성입니다.
+
+제대로 구현하면 다크 모드는 저조도 환경에서 가독성을 향상시키고 눈의 피로를 줄입니다. 잘못 구현하면 읽을 수 없는 텍스트와 접근성 위반을 만듭니다.
+
+## 다크 모드에 디자인 토큰이 필수적인 이유
+
+디자인 토큰은 테마 독립적인 컴포넌트 코드를 가능하게 합니다. `#000000`을 하드코딩하는 대신 `--color-background`를 참조하면, 테마에 따라 다른 값으로 해석됩니다.
+
+### 디자인 토큰 없이 (유지보수 어려움)
+
+```tsx
+// 나쁨: 하드코딩된 색상
+const Button = () => (
+  <button style={{
+    background: isDark ? '#1a1a1a' : '#ffffff',
+    color: isDark ? '#ffffff' : '#000000',
+    border: `1px solid ${isDark ? '#333' : '#ccc'}`
+  }}>
+    클릭하기
+  </button>
+);
+```
+
+### 디자인 토큰 사용 (확장 가능)
+
+```tsx
+// 좋음: 토큰 기반 테마
+const Button = () => (
+  <button className="btn">
+    클릭하기
+  </button>
+);
+
+// CSS가 테마에 따라 자동으로 전환
+.btn {
+  background: var(--color-button-background);
+  color: var(--color-button-foreground);
+  border: 1px solid var(--color-button-border);
+}
+```
+
+## 다크 모드를 위한 토큰 아키텍처
+
+견고한 다크 모드 토큰 시스템은 세 계층을 사용합니다:
+
+### 1계층: Primitive 토큰 (원시 색상 값)
+
+기본 색상입니다—컴포넌트에서 직접 참조하지 마세요.
+
+```typescript
+// primitives.ts
+export const primitives = {
+  neutral: {
+    0: 'oklch(1.00 0.00 0)',      // 순수한 흰색
+    50: 'oklch(0.98 0.00 0)',
+    100: 'oklch(0.95 0.00 0)',
+    200: 'oklch(0.90 0.00 0)',
+    // ... 이하
+    900: 'oklch(0.20 0.00 0)',
+    950: 'oklch(0.10 0.00 0)',
+    1000: 'oklch(0.00 0.00 0)',   // 순수한 검정
+  },
+  blue: {
+    50: 'oklch(0.97 0.02 250)',
+    100: 'oklch(0.93 0.04 250)',
+    // ... 색상 스케일
+    900: 'oklch(0.30 0.15 250)',
+  }
+};
+```
+
+### 2계층: Semantic 토큰 (목적 기반)
+
+원시값을 시맨틱 의미에 매핑합니다. 라이트/다크 테마가 여기서 갈라집니다.
+
+```typescript
+// semantic.ts
+export const semantic = {
+  light: {
+    background: {
+      page: primitives.neutral[0],
+      surface: primitives.neutral[50],
+      elevated: primitives.neutral[0],
+    },
+    foreground: {
+      primary: primitives.neutral[950],
+      secondary: primitives.neutral[700],
+      tertiary: primitives.neutral[500],
+    },
+    border: {
+      default: primitives.neutral[200],
+      strong: primitives.neutral[300],
+    },
+    primary: {
+      default: primitives.blue[500],
+      hover: primitives.blue[600],
+      active: primitives.blue[700],
+    }
+  },
+  dark: {
+    background: {
+      page: primitives.neutral[950],
+      surface: primitives.neutral[900],
+      elevated: primitives.neutral[850],
+    },
+    foreground: {
+      primary: primitives.neutral[50],
+      secondary: primitives.neutral[400],
+      tertiary: primitives.neutral[500],
+    },
+    border: {
+      default: primitives.neutral[800],
+      strong: primitives.neutral[700],
+    },
+    primary: {
+      default: primitives.blue[400],  // 다크 모드에서 더 밝음
+      hover: primitives.blue[300],
+      active: primitives.blue[200],
+    }
+  }
+};
+```
+
+### 3계층: Component 토큰
+
+컴포넌트는 시맨틱 토큰을 참조하며, 원시값을 참조하지 않습니다.
+
+```typescript
+// component.ts
+export const componentTokens = {
+  button: {
+    background: '--color-primary-default',
+    backgroundHover: '--color-primary-hover',
+    foreground: '--color-background-page',
+  },
+  card: {
+    background: '--color-background-surface',
+    border: '--color-border-default',
+    foreground: '--color-foreground-primary',
+  }
+};
+```
+
+## OKLCH: 더 나은 다크 모드의 비밀
+
+OKLCH(Oklab Lightness Chroma Hue)는 지각적으로 균일한 색상 스케일을 생성하며, 다크 모드에 필수적입니다.
+
+### OKLCH가 다크 모드에서 HSL을 능가하는 이유
+
+```typescript
+// HSL: 일관성 없는 인지 밝기
+const hslColors = {
+  blue: 'hsl(220, 80%, 50%)',   // 밝게 보임
+  yellow: 'hsl(60, 80%, 50%)',  // 매우 밝게 보임 (같은 L 값!)
+};
+
+// OKLCH: 일관된 인지 밝기
+const oklchColors = {
+  blue: 'oklch(0.55 0.15 250)',    // 지각적으로 55% 밝음
+  yellow: 'oklch(0.55 0.15 90)',   // 역시 지각적으로 55% 밝음
+};
+```
+
+### 다크 모드용 OKLCH 스케일 생성
+
+```typescript
+function generateOKLCHScale(hue: number): Record<number, string> {
+  return {
+    50: `oklch(0.97 0.02 ${hue})`,
+    100: `oklch(0.93 0.05 ${hue})`,
+    200: `oklch(0.85 0.08 ${hue})`,
+    300: `oklch(0.75 0.11 ${hue})`,
+    400: `oklch(0.65 0.13 ${hue})`,
+    500: `oklch(0.55 0.15 ${hue})`,  // 기본 색상
+    600: `oklch(0.45 0.13 ${hue})`,
+    700: `oklch(0.35 0.11 ${hue})`,
+    800: `oklch(0.25 0.08 ${hue})`,
+    900: `oklch(0.20 0.05 ${hue})`,
+  };
+}
+
+const blue = generateOKLCHScale(250);
+const green = generateOKLCHScale(145);
+const red = generateOKLCHScale(25);
+```
+
+## 접근성을 위한 대비율
+
+다크 모드는 WCAG 2.1 AA 표준을 충족해야 합니다:
+- **일반 텍스트**: 4.5:1 대비율
+- **큰 텍스트**: 3:1 대비율
+- **UI 컴포넌트**: 3:1 대비율
+
+### OKLCH로 대비 확인
+
+```typescript
+function getContrastRatio(color1: string, color2: string): number {
+  const l1 = parseOKLCH(color1).lightness;
+  const l2 = parseOKLCH(color2).lightness;
+
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+// 다크 모드 토큰 검증
+const darkBg = 'oklch(0.10 0.00 0)';
+const darkText = 'oklch(0.95 0.00 0)';
+
+const ratio = getContrastRatio(darkBg, darkText);
+console.log(`대비율: ${ratio}:1`); // 본문 텍스트는 > 4.5여야 함
+```
+
+### 대비를 위한 자동 색상 조정
+
+```typescript
+function ensureContrast(
+  foreground: string,
+  background: string,
+  targetRatio: number = 4.5
+): string {
+  let adjusted = foreground;
+  let ratio = getContrastRatio(adjusted, background);
+
+  while (ratio < targetRatio) {
+    const [l, c, h] = parseOKLCH(adjusted);
+    adjusted = `oklch(${l + 0.05} ${c} ${h})`;
+    ratio = getContrastRatio(adjusted, background);
+  }
+
+  return adjusted;
+}
+
+// 사용법
+const safeForeground = ensureContrast(
+  'oklch(0.70 0.15 250)',  // 너무 어두울 수 있음
+  'oklch(0.10 0.00 0)'     // 어두운 배경
+);
+```
+
+## 테마 전환 구현
+
+### CSS 커스텀 속성 방식
+
+```css
+/* light-theme.css */
+:root, [data-theme="light"] {
+  --color-background-page: oklch(1.00 0.00 0);
+  --color-background-surface: oklch(0.98 0.00 0);
+  --color-foreground-primary: oklch(0.10 0.00 0);
+  --color-foreground-secondary: oklch(0.30 0.00 0);
+  --color-primary: oklch(0.55 0.15 250);
+}
+
+/* dark-theme.css */
+[data-theme="dark"] {
+  --color-background-page: oklch(0.10 0.00 0);
+  --color-background-surface: oklch(0.15 0.00 0);
+  --color-foreground-primary: oklch(0.95 0.00 0);
+  --color-foreground-secondary: oklch(0.70 0.00 0);
+  --color-primary: oklch(0.65 0.15 250); /* 다크 모드에서 더 밝음 */
+}
+
+/* 자동 OS 설정 감지 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-page: oklch(0.10 0.00 0);
+    /* ... 다크 모드 토큰 */
+  }
+}
+```
+
+### React 구현
+
+```tsx
+import { useEffect, useState } from 'react';
+
+type Theme = 'light' | 'dark' | 'system';
+
+export function useTheme() {
+  const [theme, setTheme] = useState<Theme>('system');
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
+
+    const activeTheme = theme === 'system' ? systemTheme : theme;
+    root.setAttribute('data-theme', activeTheme);
+  }, [theme]);
+
+  // 시스템 테마 변경 감지
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (theme === 'system') {
+        const newTheme = e.matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme]);
+
+  return { theme, setTheme };
+}
+
+// 테마 토글 컴포넌트
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <button
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      aria-label="테마 전환"
+    >
+      {theme === 'dark' ? '🌙' : '☀️'}
+    </button>
+  );
+}
+```
+
+## 고급 다크 모드 패턴
+
+### 패턴 1: Elevation 시스템
+
+다크 모드에서는 elevation을 그림자가 아닌 *더 밝은* 표면으로 표시합니다.
+
+```css
+:root {
+  --elevation-0: var(--color-background-page);
+  --elevation-1: var(--color-background-surface);
+  --elevation-2: var(--color-background-elevated);
+}
+
+[data-theme="dark"] {
+  /* 더 높은 elevation = 다크 모드에서 더 밝은 표면 */
+  --elevation-0: oklch(0.10 0.00 0);
+  --elevation-1: oklch(0.15 0.00 0);
+  --elevation-2: oklch(0.20 0.00 0);
+  --elevation-3: oklch(0.25 0.00 0);
+}
+
+.card {
+  background: var(--elevation-1);
+}
+
+.dialog {
+  background: var(--elevation-2);
+}
+```
+
+### 패턴 2: 색상 강도 조정
+
+악센트 색상은 어두운 배경에 맞게 조정이 필요합니다.
+
+```typescript
+const colorShifts = {
+  light: {
+    primary: 'oklch(0.55 0.15 250)',    // 표준 채도
+    success: 'oklch(0.55 0.15 145)',
+    error: 'oklch(0.55 0.20 25)',
+  },
+  dark: {
+    primary: 'oklch(0.65 0.12 250)',    // 감소된 채도
+    success: 'oklch(0.65 0.12 145)',
+    error: 'oklch(0.65 0.15 25)',
+  }
+};
+```
+
+### 패턴 3: 투명한 테두리
+
+다크 모드 테두리는 투명도를 사용하면 더 잘 작동합니다:
+
+```css
+[data-theme="light"] {
+  --color-border-default: oklch(0.90 0.00 0);
+}
+
+[data-theme="dark"] {
+  /* 모든 배경에서 작동하도록 투명도 사용 */
+  --color-border-default: oklch(0.95 0.00 0 / 0.15);
+}
+```
+
+## 다크 모드 토큰 테스트
+
+### 시각적 회귀 테스트
+
+```typescript
+// dark-mode.test.ts
+import { test, expect } from '@playwright/test';
+
+test('다크 모드가 올바르게 렌더링됨', async ({ page }) => {
+  await page.goto('/');
+
+  // 라이트 모드 스크린샷
+  await page.screenshot({ path: 'light-mode.png' });
+
+  // 다크 모드로 전환
+  await page.evaluate(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  });
+
+  // 다크 모드 스크린샷
+  await page.screenshot({ path: 'dark-mode.png' });
+
+  // 대비율 비교
+  const contrast = await page.evaluate(() => {
+    const bg = getComputedStyle(document.body).backgroundColor;
+    const text = getComputedStyle(document.body).color;
+    return calculateContrastRatio(bg, text);
+  });
+
+  expect(contrast).toBeGreaterThan(4.5);
+});
+```
+
+### 접근성 감사
+
+```typescript
+import { checkA11y } from 'axe-playwright';
+
+test('다크 모드가 WCAG AA 충족', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  });
+
+  await checkA11y(page, null, {
+    rules: {
+      'color-contrast': { enabled: true }
+    }
+  });
+});
+```
+
+## 일반적인 다크 모드 실수
+
+1. **순수한 검정 배경** (`#000000`) — 눈의 피로 감소를 위해 `oklch(0.10 0.00 0)` 사용
+2. **반전된 라이트 색상** — HSL lightness 값을 단순히 뒤집지 마세요
+3. **이미지 무시** — 이미지는 다크 모드에서 불투명도 감소가 필요합니다
+4. **같은 그림자** — 그림자는 다크 모드에서 더 미묘하거나 elevation으로 교체되어야 합니다
+5. **포커스 상태 잊음** — 포커스 아웃라인은 다크 모드에서 더 높은 대비가 필요합니다
+6. **전환 없음** — 테마 전환은 부드럽게 애니메이션되어야 합니다
+
+## 다크 모드에서 이미지 처리
+
+```css
+[data-theme="dark"] img {
+  /* 사진 밝기 감소 */
+  filter: brightness(0.8) contrast(1.1);
+}
+
+[data-theme="dark"] .icon {
+  /* 어두운-밝은 의도의 아이콘 반전 */
+  filter: invert(1);
+}
+
+[data-theme="dark"] .logo {
+  /* 로고 완전 교체 */
+  content: url('/logo-dark.svg');
+}
+```
+
+## FramingUI 다크 모드 시스템
+
+FramingUI는 프로덕션 준비된 다크 모드 시스템을 포함합니다:
+
+- 지각적 균일성을 위한 OKLCH 기반 색상 스케일
+- 자동 대비 확인 및 조정
+- 3계층 토큰 아키텍처 (primitive, semantic, component)
+- 깜빡임 없는 부드러운 테마 전환
+- [다크 모드 테마 탐색 →](/explore)
+
+## 관련 리소스
+
+- [디자인 토큰 베스트 프랙티스](/blog/design-tokens-best-practices) — 테마 시스템의 기초
+- [OKLCH 색상 시스템 가이드](/blog/oklch-color-system-guide) — 지각적 색상 심층 탐구
+- [반응형 디자인 토큰](/blog/responsive-design-tokens) — 다크 모드와 반응형 디자인 결합
+
+---
+
+**처음부터 다크 모드를 올바르게 구축하세요.** 사용자가 기대합니다. 접근성이 요구합니다. 디자인 토큰이 쉽게 만듭니다.

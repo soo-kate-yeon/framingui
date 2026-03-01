@@ -108,8 +108,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '모서리가 둥글지 않은 컴포넌트를 중심으로 구성한 디자인 시스템입니다. 대비가 분명해 데이터 화면이나 관리 도구처럼 기능 중심 인터페이스에 잘 맞습니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('square-minimalism', 'dashboard.png'),
-      getScreenshotUrl('square-minimalism', 'components.png'),
+      getScreenshotUrl('square-minimalism', 'dashboard.webp'),
+      getScreenshotUrl('square-minimalism', 'components.webp'),
+      getScreenshotUrl('square-minimalism', 'magazine.webp'),
     ],
     features: [
       {
@@ -237,8 +238,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '큰 제목과 넉넉한 여백으로 문서를 보기 쉽게 구성한 디자인 시스템입니다. 블로그, 문서, 콘텐츠 서비스처럼 텍스트가 많은 화면에 적합합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('editorial-tech', 'dashboard.png'),
-      getScreenshotUrl('editorial-tech', 'components.png'),
+      getScreenshotUrl('editorial-tech', 'dashboard.webp'),
+      getScreenshotUrl('editorial-tech', 'components.webp'),
+      getScreenshotUrl('editorial-tech', 'solutions.webp'),
     ],
     features: [
       {
@@ -328,8 +330,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '기본 다크모드와 강한 포인트 컬러를 적용한 디자인 시스템입니다. 운동 기록, 목표 추적처럼 상태 변화를 빠르게 확인해야 하는 화면에 어울립니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('dark-boldness', 'dashboard.png'),
-      getScreenshotUrl('dark-boldness', 'components.png'),
+      getScreenshotUrl('dark-boldness', 'dashboard.webp'),
+      getScreenshotUrl('dark-boldness', 'components.webp'),
+      getScreenshotUrl('dark-boldness', 'trading.webp'),
     ],
     features: [
       {
@@ -457,8 +460,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '라운드 컴포넌트와 부드러운 색상을 중심으로 구성한 디자인 시스템입니다. 커뮤니티, 소셜, 라이프스타일처럼 친근한 경험이 중요한 서비스에 적합합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('pebble', 'dashboard.png'),
-      getScreenshotUrl('pebble', 'components.png'),
+      getScreenshotUrl('pebble', 'dashboard.webp'),
+      getScreenshotUrl('pebble', 'components.webp'),
+      getScreenshotUrl('pebble', 'feed.webp'),
     ],
     features: [
       {
@@ -586,8 +590,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '기사형 레이아웃과 읽기 좋은 타이포그래피를 갖춘 디자인 시스템입니다. 블로그, 뉴스, 리포트처럼 긴 콘텐츠를 제공하는 화면에 적합합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('classic-magazine', 'dashboard.png'),
-      getScreenshotUrl('classic-magazine', 'components.png'),
+      getScreenshotUrl('classic-magazine', 'dashboard.webp'),
+      getScreenshotUrl('classic-magazine', 'components.webp'),
+      getScreenshotUrl('classic-magazine', 'article.webp'),
     ],
     features: [
       {
@@ -715,8 +720,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '명도 대비와 정보 구조를 쉽게 읽히도록 설계한 디자인 시스템입니다. 헬스케어, 교육, 공공 서비스처럼 신뢰와 명확성이 필요한 화면에 잘 맞습니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('neutral-workspace', 'dashboard.png'),
-      getScreenshotUrl('neutral-workspace', 'components.png'),
+      getScreenshotUrl('neutral-workspace', 'dashboard.webp'),
+      getScreenshotUrl('neutral-workspace', 'components.webp'),
+      getScreenshotUrl('neutral-workspace', 'kanban.webp'),
     ],
     features: [
       {
@@ -844,8 +850,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '단순한 레이아웃으로 작업 흐름에 집중하도록 만든 디자인 시스템입니다. 에디터, 프로젝트 관리, 개발 도구처럼 기능 중심 업무 화면에 적합합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('minimal-workspace', 'dashboard.png'),
-      getScreenshotUrl('minimal-workspace', 'components.png'),
+      getScreenshotUrl('minimal-workspace', 'dashboard.webp'),
+      getScreenshotUrl('minimal-workspace', 'components.webp'),
+      getScreenshotUrl('minimal-workspace', 'kanban.webp'),
     ],
     features: [
       {
@@ -973,8 +980,9 @@ export const TEMPLATES: Record<string, TemplateData> = {
       '둥근 모서리 없이 굵은 테두리와 흑백 대비로 구성한 디자인 시스템입니다. 대시보드, 운영 툴, 데이터 관리처럼 정보 구분이 중요한 화면에 적합합니다.',
     price: 59,
     screenshots: [
-      getScreenshotUrl('bold-line', 'dashboard.png'),
-      getScreenshotUrl('bold-line', 'components.png'),
+      getScreenshotUrl('bold-line', 'dashboard.webp'),
+      getScreenshotUrl('bold-line', 'components.webp'),
+      getScreenshotUrl('bold-line', 'docs.webp'),
     ],
     features: [
       {

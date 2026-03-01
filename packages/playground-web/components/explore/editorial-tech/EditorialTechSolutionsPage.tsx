@@ -11,7 +11,6 @@ import {
   Users,
   Command,
   Layers,
-  Sparkles,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useExploreLanguage } from '../../../contexts/ExploreLanguageContext';
@@ -124,13 +123,6 @@ export function EditorialTechSolutionsPage() {
 
       {/* Hero Section - Balanced Typography */}
       <header className="pt-72 pb-48 px-8 max-w-[1240px] mx-auto text-center space-y-16">
-        <div className="inline-flex items-center rounded-full bg-neutral-50 px-6 py-2.5 gap-3 border border-neutral-100">
-          <Sparkles size={14} className="text-neutral-400" />
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-neutral-500">
-            {t('Tekton for Enterprise', '엔터프라이즈를 위한 Tekton')}
-          </span>
-        </div>
-
         <div className="space-y-10">
           <h1 className="text-5xl md:text-7xl lg:text-[88px] hero-title leading-[1.05] tracking-tight">
             <span className="text-neutral-900">{t('Design for', '디자인,')}</span>

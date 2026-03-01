@@ -1,0 +1,596 @@
+---
+title: "NavigationMenu"
+description: "NavigationMenu component API, variants, and practical usage examples"
+---
+
+# NavigationMenu
+
+`NavigationMenu` is a horizontal navigation component with accessible dropdown menus, built on Radix UI primitives.
+
+## Import
+
+```tsx
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '@framingui/ui';
+```
+
+## Basic Usage
+
+```tsx
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '@framingui/ui';
+
+export function SimpleNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/" className={navigationMenuTriggerStyle()}>
+            Home
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/about" className={navigationMenuTriggerStyle()}>
+            About
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/contact" className={navigationMenuTriggerStyle()}>
+            Contact
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+## Variants
+
+### 1. Top Navigation with Dropdowns
+
+```tsx
+export function TopNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="grid gap-3 p-6 md:w-[500px] lg:grid-cols-2">
+              <li>
+                <NavigationMenuLink asChild>
+                  <a href="/product-a" className="block p-3 rounded-md hover:bg-accent">
+                    <div className="font-medium">Product A</div>
+                    <p className="text-sm text-muted-foreground">Advanced analytics platform</p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink asChild>
+                  <a href="/product-b" className="block p-3 rounded-md hover:bg-accent">
+                    <div className="font-medium">Product B</div>
+                    <p className="text-sm text-muted-foreground">Marketing automation suite</p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/pricing" className={navigationMenuTriggerStyle()}>
+            Pricing
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 2. Documentation Sidebar Navigation
+
+```tsx
+export function DocsSidebar() {
+  return (
+    <NavigationMenu orientation="vertical" className="max-w-xs">
+      <NavigationMenuList className="flex-col items-start gap-1">
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Getting Started</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="space-y-1 p-2">
+              <li>
+                <NavigationMenuLink href="/docs/installation" className="block px-3 py-2 rounded hover:bg-accent">
+                  Installation
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink href="/docs/setup" className="block px-3 py-2 rounded hover:bg-accent">
+                  Setup
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="space-y-1 p-2">
+              <li>
+                <NavigationMenuLink href="/docs/button" className="block px-3 py-2 rounded hover:bg-accent">
+                  Button
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink href="/docs/input" className="block px-3 py-2 rounded hover:bg-accent">
+                  Input
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 3. Breadcrumb Navigation
+
+```tsx
+export function Breadcrumbs() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList className="gap-1">
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/" className="text-sm text-muted-foreground hover:text-foreground">
+            Home
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <span className="text-muted-foreground">/</span>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/products" className="text-sm text-muted-foreground hover:text-foreground">
+            Products
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <span className="text-muted-foreground">/</span>
+        <NavigationMenuItem>
+          <span className="text-sm font-medium">Details</span>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 4. Tab Navigation
+
+```tsx
+export function TabNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList className="border-b">
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            href="/dashboard/overview"
+            className={navigationMenuTriggerStyle()}
+            data-active
+          >
+            Overview
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard/analytics" className={navigationMenuTriggerStyle()}>
+            Analytics
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard/reports" className={navigationMenuTriggerStyle()}>
+            Reports
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/dashboard/settings" className={navigationMenuTriggerStyle()}>
+            Settings
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 5. Mobile Menu with Hamburger
+
+```tsx
+import { Sheet, SheetContent, SheetTrigger } from '@framingui/ui';
+
+export function MobileNav() {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <button className="md:hidden p-2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M3 12h18M3 6h18M3 18h18" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </button>
+      </SheetTrigger>
+      <SheetContent side="left">
+        <NavigationMenu orientation="vertical" className="w-full">
+          <NavigationMenuList className="flex-col items-start gap-2">
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/" className={navigationMenuTriggerStyle()}>
+                Home
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="space-y-1 p-2">
+                  <li>
+                    <NavigationMenuLink href="/products/a">Product A</NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/products/b">Product B</NavigationMenuLink>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </SheetContent>
+    </Sheet>
+  );
+}
+```
+
+### 6. Mega Menu
+
+```tsx
+export function MegaMenu() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Solutions</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div className="grid gap-6 p-6 md:w-[600px] lg:w-[800px] lg:grid-cols-3">
+              <div>
+                <h3 className="font-semibold mb-3">By Industry</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <NavigationMenuLink href="/solutions/healthcare" className="text-sm hover:underline">
+                      Healthcare
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/finance" className="text-sm hover:underline">
+                      Finance
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/retail" className="text-sm hover:underline">
+                      Retail
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">By Use Case</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <NavigationMenuLink href="/solutions/automation" className="text-sm hover:underline">
+                      Automation
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/analytics" className="text-sm hover:underline">
+                      Analytics
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="font-semibold mb-3">By Size</h3>
+                <ul className="space-y-2">
+                  <li>
+                    <NavigationMenuLink href="/solutions/enterprise" className="text-sm hover:underline">
+                      Enterprise
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink href="/solutions/smb" className="text-sm hover:underline">
+                      Small Business
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 7. Settings Navigation
+
+```tsx
+export function SettingsNav() {
+  return (
+    <NavigationMenu orientation="vertical" className="w-64 border-r">
+      <NavigationMenuList className="flex-col items-start gap-1 p-4">
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink
+            href="/settings/profile"
+            className="w-full px-3 py-2 rounded hover:bg-accent"
+            data-active
+          >
+            Profile
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink href="/settings/security" className="w-full px-3 py-2 rounded hover:bg-accent">
+            Security
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink href="/settings/notifications" className="w-full px-3 py-2 rounded hover:bg-accent">
+            Notifications
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem className="w-full">
+          <NavigationMenuLink href="/settings/billing" className="w-full px-3 py-2 rounded hover:bg-accent">
+            Billing
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 8. Footer Navigation
+
+```tsx
+export function FooterNav() {
+  return (
+    <footer className="border-t bg-muted/50">
+      <div className="container py-8">
+        <div className="grid gap-8 md:grid-cols-4">
+          <div>
+            <h4 className="font-semibold mb-4">Product</h4>
+            <NavigationMenu orientation="vertical">
+              <NavigationMenuList className="flex-col items-start gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/features" className="text-sm text-muted-foreground hover:text-foreground">
+                    Features
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
+                    Pricing
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/roadmap" className="text-sm text-muted-foreground hover:text-foreground">
+                    Roadmap
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-4">Company</h4>
+            <NavigationMenu orientation="vertical">
+              <NavigationMenuList className="flex-col items-start gap-2">
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/about" className="text-sm text-muted-foreground hover:text-foreground">
+                    About
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/blog" className="text-sm text-muted-foreground hover:text-foreground">
+                    Blog
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink href="/careers" className="text-sm text-muted-foreground hover:text-foreground">
+                    Careers
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+```
+
+### 9. Pagination Navigation
+
+```tsx
+export function PaginationNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            href="/page/1"
+            className={navigationMenuTriggerStyle()}
+            aria-label="Previous page"
+          >
+            ←
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/1" className={navigationMenuTriggerStyle()} data-active>
+            1
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/2" className={navigationMenuTriggerStyle()}>
+            2
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/3" className={navigationMenuTriggerStyle()}>
+            3
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <span className={navigationMenuTriggerStyle()}>...</span>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/page/10" className={navigationMenuTriggerStyle()}>
+            10
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            href="/page/2"
+            className={navigationMenuTriggerStyle()}
+            aria-label="Next page"
+          >
+            →
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+### 10. Utility Navigation (User Menu)
+
+```tsx
+export function UtilityNav() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuLink href="/notifications" className={navigationMenuTriggerStyle()}>
+            🔔
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Account</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <ul className="w-48 p-2">
+              <li>
+                <NavigationMenuLink href="/profile" className="block px-3 py-2 rounded hover:bg-accent">
+                  Profile
+                </NavigationMenuLink>
+              </li>
+              <li>
+                <NavigationMenuLink href="/settings" className="block px-3 py-2 rounded hover:bg-accent">
+                  Settings
+                </NavigationMenuLink>
+              </li>
+              <li className="border-t my-1" />
+              <li>
+                <NavigationMenuLink href="/logout" className="block px-3 py-2 rounded hover:bg-accent text-destructive">
+                  Sign Out
+                </NavigationMenuLink>
+              </li>
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+```
+
+## Props API
+
+### NavigationMenu
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Layout direction |
+| `dir` | `'ltr' \| 'rtl'` | `'ltr'` | Text direction |
+| `delayDuration` | `number` | `200` | Delay before showing dropdown (ms) |
+| `skipDelayDuration` | `number` | `300` | Delay to skip when moving between items |
+| `className` | `string` | `undefined` | Extra utility classes |
+
+### NavigationMenuTrigger
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `children` | `ReactNode` | - | Trigger content |
+
+### NavigationMenuContent
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `className` | `string` | `undefined` | Extra utility classes |
+| `children` | `ReactNode` | - | Dropdown content |
+| `forceMount` | `boolean` | `false` | Force content to mount |
+
+### NavigationMenuLink
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `href` | `string` | - | Link destination |
+| `active` | `boolean` | `false` | Active state |
+| `asChild` | `boolean` | `false` | Render as child element |
+| `className` | `string` | `undefined` | Extra utility classes |
+
+## Design Tokens
+
+The component uses FramingUI design tokens:
+
+```tsx
+// Spacing
+--tekton-spacing-1  // Gap between menu items
+--tekton-spacing-2  // Vertical padding
+--tekton-spacing-4  // Horizontal padding
+
+// Radius
+--tekton-radius-md  // Border radius for triggers and content
+
+// Colors
+--tekton-bg-background          // Default background
+--tekton-bg-accent              // Hover/focus background
+--tekton-bg-accent-foreground   // Hover/focus text
+--tekton-bg-popover             // Dropdown background
+--tekton-text-popover-foreground // Dropdown text
+--tekton-text-muted-foreground  // Secondary text
+--tekton-border-default         // Border and indicator
+```
+
+## Best Practices
+
+- Use `NavigationMenuTrigger` for dropdowns, `NavigationMenuLink` for direct links
+- Add `aria-label` to icon-only navigation items for accessibility
+- Keep dropdown content concise—max 2-3 columns for mega menus
+- Use `orientation="vertical"` for sidebar navigation
+- Consider mobile responsiveness—use Sheet for hamburger menus
+- Mark current page with `data-active` attribute for visual feedback
+- Keyboard navigation is built-in—Tab, Arrow keys, Enter, Escape all work
+- Avoid nesting dropdowns more than 2 levels deep
+
+## Related
+
+- [Button](/docs/components/button) - Action buttons
+- [Link](/docs/components/link) - Text links
+- [Breadcrumb](/docs/components/breadcrumb) - Hierarchical navigation
+- [Sheet](/docs/components/sheet) - Slide-out panel for mobile menus

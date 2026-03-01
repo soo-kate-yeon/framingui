@@ -14,7 +14,6 @@ import { useRouter } from 'next/navigation';
 import { TemplateCard } from './TemplateCard';
 import { SelectionTopBar } from './SelectionTopBar';
 import { TemplateModal } from './TemplateModal';
-import { ExplorePageHeader } from './ExplorePageHeader';
 import { getTemplateData } from '../../data/templates';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { getExploreContent } from '../../data/i18n/explore';
@@ -138,9 +137,7 @@ export function TemplateGallery({
       )}
 
       {/* Header - selection mode에 따라 반응 */}
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-        <ExplorePageHeader selectionMode={internalSelectionMode} />
-
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 pt-12 pb-12 md:pb-16">
         {/* Template Grid */}
         <div className="mt-12 flex flex-col">
           <div

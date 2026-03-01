@@ -12,6 +12,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { trackFunnelPrimaryCtaClick } from '../../lib/analytics';
+import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
+import { getFreeTrialModalContent } from '../../data/i18n/freeTrialModal';
 
 // ============================================================================
 // Types
@@ -21,6 +23,7 @@ interface FreeTrialModalProps {
   isOpen: boolean;
   onClose: () => void;
   onStartTrial: () => void; // 로그인 완료 후 템플릿 선택 모달로 진입
+  onDismissForever: () => void; // "다시 보지 않기" 클릭 시
 }
 
 // ============================================================================
@@ -28,6 +31,7 @@ interface FreeTrialModalProps {
 // ============================================================================
 
 const LOCAL_STORAGE_KEY = 'hasSeenFreeTrial';
+const OPT_OUT_STORAGE_KEY = 'optedOutOfFreeTrialForever';
 
 interface TrialErrorResponse {
   error?: string;
@@ -72,24 +76,34 @@ function normalizeTrialError(
   };
 }
 
-function toUserErrorMessage(error: NormalizedTrialError): string {
+function toUserErrorMessage(
+  error: NormalizedTrialError,
+  errorMessages: { trialAlreadyExists: string; loginRequired: string; trialCreationFailed: string }
+): string {
   if (error.status === 409 && error.errorCode === 'trial_already_exists') {
-    return '이미 체험을 사용했습니다';
+    return errorMessages.trialAlreadyExists;
   }
 
   if (error.status === 401) {
-    return '로그인이 필요합니다';
+    return errorMessages.loginRequired;
   }
 
-  return '체험 생성 중 오류가 발생했습니다';
+  return errorMessages.trialCreationFailed;
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: FreeTrialModalProps) {
+export function FreeTrialModal({
+  isOpen,
+  onClose: _onClose,
+  onStartTrial,
+  onDismissForever,
+}: FreeTrialModalProps) {
   const { user, login } = useAuth();
+  const { locale } = useGlobalLanguage();
+  const content = getFreeTrialModalContent(locale);
   const hasAutoCreateAttemptedRef = useRef(false);
   const [isClosing] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -128,20 +142,20 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
       const parsedBody = await parseJsonSafely(rawBody);
 
       if (response.ok) {
-        // 성공: localStorage에 "본 적 있음" 표시
+        // 성공: localStorage에 "본 적 있음" 표시 (이건 하위 호환성을 위해 유지)
         localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
         console.log('[FreeTrialModal] Trial created successfully:', parsedBody);
         onStartTrial();
       } else {
         const normalizedError = normalizeTrialError(response, parsedBody, rawBody);
-        setErrorMessage(toUserErrorMessage(normalizedError));
+        setErrorMessage(toUserErrorMessage(normalizedError, content.errors));
         console.error('[FreeTrialModal] Trial creation failed:', normalizedError);
       }
     } catch (error) {
       const errorDetails =
         error instanceof Error ? { name: error.name, message: error.message } : { error };
       console.error('[FreeTrialModal] Trial creation error:', errorDetails);
-      setErrorMessage('네트워크 오류가 발생했습니다');
+      setErrorMessage(content.errors.networkError);
     } finally {
       setIsCreatingTrial(false);
     }
@@ -151,7 +165,7 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
     console.log('[FreeTrialModal] CTA clicked, user:', user ? 'logged in' : 'not logged in');
     trackFunnelPrimaryCtaClick({
       cta_id: user ? 'free_trial_create_trial' : 'free_trial_start_free',
-      cta_label: user ? '무료체험 시작' : '무료로 시작하기',
+      cta_label: user ? content.buttons.startTrial : content.buttons.startFree,
       location: 'free_trial_modal',
       destination: user ? '/api/licenses/trial' : '/auth/login',
       cta_variant: 'free-start',
@@ -175,6 +189,16 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
     }
   };
 
+  const handleDismissForever = () => {
+    console.log('[FreeTrialModal] Dismiss forever clicked');
+    try {
+      localStorage.setItem(OPT_OUT_STORAGE_KEY, 'true');
+    } catch (e) {
+      console.error('Failed to save opt-out preference', e);
+    }
+    onDismissForever();
+  };
+
   if (!isOpen) {
     return null;
   }
@@ -190,28 +214,17 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
         <div className="p-10 flex flex-col text-left">
           {/* Title */}
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-950 mb-3">
-            3일 무료체험으로
+            {content.title.part1}
             <br />
-            시작하세요
+            {content.title.part2}
           </h2>
 
           {/* Subtitle */}
           <p className="text-base text-neutral-600 leading-relaxed mb-8">
-            Full 기능을 3일간 무료로 체험해보세요.
+            {content.subtitle.line1}
             <br />
-            카드 등록 없이 바로 시작!
+            {content.subtitle.line2}
           </p>
-
-          {/* Image */}
-          <div className="w-full aspect-[16/9] bg-neutral-50 border border-neutral-200 rounded-none flex items-center justify-center mb-10 overflow-hidden relative">
-            {/* Using a subtle pattern or simple typography-based placeholder for the image to fit Editorial Tech */}
-            <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
-            <div className="text-center relative z-10 bg-white/80 px-6 py-3 border border-neutral-200">
-              <p className="text-xs text-neutral-950 font-bold uppercase tracking-[0.15em]">
-                디자인 시스템
-              </p>
-            </div>
-          </div>
 
           {/* CTA Button */}
           <button
@@ -220,22 +233,27 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
             className="w-full inline-flex items-center justify-center rounded-full bg-neutral-950 px-6 py-4 text-base font-medium text-white shadow-sm hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {isLoggingIn
-              ? '로그인 중...'
+              ? content.buttons.loggingIn
               : isCreatingTrial
-                ? '체험 생성 중...'
+                ? content.buttons.creatingTrial
                 : user
-                  ? '무료체험 시작'
-                  : '무료로 시작하기'}
+                  ? content.buttons.startTrial
+                  : content.buttons.startFree}
           </button>
 
           {/* Error Message */}
           {errorMessage && <p className="text-sm text-red-600 mt-4 font-medium">{errorMessage}</p>}
 
-          {/* Info Text */}
+          {/* Don't show again link */}
           {!errorMessage && (
-            <p className="text-sm text-neutral-500 mt-4 text-center">
-              {user ? '이미 로그인되어 있습니다' : 'Google 계정으로 간편하게 시작'}
-            </p>
+            <div className="mt-6 text-center">
+              <button
+                onClick={handleDismissForever}
+                className="text-xs font-semibold text-neutral-400 hover:text-neutral-900 transition-colors uppercase tracking-widest"
+              >
+                {content.infoText.dismissForever}
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -244,7 +262,17 @@ export function FreeTrialModal({ isOpen, onClose: _onClose, onStartTrial }: Free
 }
 
 /**
- * Helper: localStorage에서 무료 체험 모달을 본 적이 있는지 확인
+ * Helper: 유저가 무료 체험 모달 "다시 보지 않기"를 선택했는지 확인
+ */
+export function hasOptedOutOfFreeTrialModal(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return localStorage.getItem(OPT_OUT_STORAGE_KEY) === 'true';
+}
+
+/**
+ * DEPRECATED: use hasOptedOutOfFreeTrialModal instead
  */
 export function hasSeenFreeTrialModal(): boolean {
   if (typeof window === 'undefined') {

@@ -1,0 +1,545 @@
+---
+title: "모달 다이얼로그 디자인 패턴: 접근 가능하고 사용자 친화적인 모달"
+description: "포커스 관리, 키보드 내비게이션, 애니메이션, 확인, 폼, 알림을 위한 베스트 프랙티스로 접근 가능한 모달 다이얼로그를 구축하세요."
+date: "2026-03-01"
+author: "FramingUI team"
+tags: ["modal", "dialog", "component", "accessibility", "ux"]
+---
+
+# 모달 다이얼로그 디자인 패턴: 접근 가능하고 사용자 친화적인 모달
+
+모달 다이얼로그는 사용자를 방해합니다—그러니 그만한 가치가 있어야 합니다. 제대로 만들면 모달은 주의를 집중시키고 워크플로우를 간소화합니다. 잘못 만들면 사용자를 가두는 짜증나는 오버레이가 됩니다.
+
+이 가이드는 사용자가 싫어하지 않는 모달을 구축하기 위한 패턴을 다룹니다.
+
+## 모달을 사용할 때(그리고 사용하지 말아야 할 때)
+
+### 좋은 사용 사례 ✅
+
+- **중요한 확인** — "1,000개의 레코드를 삭제하시겠습니까? 되돌릴 수 없습니다."
+- **집중된 작업** — 격리가 필요한 다단계 폼
+- **문맥적 액션** — 현재 페이지를 떠나지 않고 빠른 편집
+- **알림 및 경고** — 확인이 필요한 시간에 민감한 정보
+
+### 나쁜 사용 사례 ❌
+
+- **페이지에 있어야 할 콘텐츠** — 중요한 정보를 모달에 숨기지 마세요
+- **복잡한 워크플로우** — 긴 폼은 전용 페이지에 속합니다
+- **마케팅 팝업** — 사용자가 싫어합니다 (정말로요)
+- **모바일 내비게이션** — 슬라이드아웃 패널이 더 잘 작동합니다
+
+## 패턴 #1: 접근 가능한 모달 기초
+
+접근성은 협상 불가입니다. 모달은 키보드와 스크린 리더에서 작동해야 합니다.
+
+### ARIA를 사용한 HTML 구조
+
+```tsx
+export function AccessibleModal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: ModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // 이전에 포커스된 요소 저장
+    const previouslyFocused = document.activeElement as HTMLElement;
+
+    // 모달에 포커스
+    modalRef.current?.focus();
+
+    // 모달 내부에 포커스 가두기
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = modalRef.current?.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusableElements?.length) return;
+
+      const firstElement = focusableElements[0] as HTMLElement;
+      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+      if (e.shiftKey && document.activeElement === firstElement) {
+        e.preventDefault();
+        lastElement.focus();
+      } else if (!e.shiftKey && document.activeElement === lastElement) {
+        e.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleTabKey);
+
+    // 정리: 포커스 복원
+    return () => {
+      document.removeEventListener('keydown', handleTabKey);
+      previouslyFocused?.focus();
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div
+        ref={modalRef}
+        className="modal-content"
+        onClick={(e) => e.stopPropagation()}
+        tabIndex={-1}
+      >
+        <div className="modal-header">
+          <h2 id="modal-title">{title}</h2>
+          <button
+            onClick={onClose}
+            aria-label="모달 닫기"
+            className="modal-close"
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  );
+}
+```
+
+## 패턴 #2: 확인 다이얼로그
+
+중요한 액션에는 명확하고 모호하지 않은 확인이 필요합니다.
+
+```tsx
+interface ConfirmDialogProps {
+  isOpen: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  variant?: 'danger' | 'warning' | 'info';
+}
+
+export function ConfirmDialog({
+  isOpen,
+  onConfirm,
+  onCancel,
+  title,
+  message,
+  confirmLabel = '확인',
+  cancelLabel = '취소',
+  variant = 'info',
+}: ConfirmDialogProps) {
+  const handleConfirm = () => {
+    onConfirm();
+    onCancel(); // 모달 닫기
+  };
+
+  return (
+    <AccessibleModal isOpen={isOpen} onClose={onCancel} title={title}>
+      <div className={`confirm-dialog confirm-dialog--${variant}`}>
+        <p className="confirm-message">{message}</p>
+        <div className="confirm-actions">
+          <button onClick={onCancel} className="btn btn-secondary">
+            {cancelLabel}
+          </button>
+          <button
+            onClick={handleConfirm}
+            className={`btn btn-${variant === 'danger' ? 'danger' : 'primary'}`}
+            autoFocus
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
+    </AccessibleModal>
+  );
+}
+
+// 사용법
+<ConfirmDialog
+  isOpen={showDeleteConfirm}
+  onConfirm={handleDelete}
+  onCancel={() => setShowDeleteConfirm(false)}
+  title="계정 삭제"
+  message="계정과 모든 관련 데이터가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다."
+  confirmLabel="계정 삭제"
+  cancelLabel="계정 유지"
+  variant="danger"
+/>
+```
+
+### 실수로 확인하는 것 방지
+
+```tsx
+export function DangerousConfirmDialog(props: ConfirmDialogProps) {
+  const [confirmText, setConfirmText] = useState('');
+  const requiredText = '삭제';
+  const isConfirmEnabled = confirmText === requiredText;
+
+  return (
+    <AccessibleModal isOpen={props.isOpen} onClose={props.onCancel} title={props.title}>
+      <p>{props.message}</p>
+      <div className="confirmation-input">
+        <label htmlFor="confirm-input">
+          확인하려면 <strong>{requiredText}</strong>를 입력하세요:
+        </label>
+        <input
+          id="confirm-input"
+          type="text"
+          value={confirmText}
+          onChange={(e) => setConfirmText(e.target.value)}
+          placeholder={requiredText}
+        />
+      </div>
+      <div className="modal-actions">
+        <button onClick={props.onCancel}>취소</button>
+        <button
+          onClick={props.onConfirm}
+          disabled={!isConfirmEnabled}
+          className="btn-danger"
+        >
+          {props.confirmLabel}
+        </button>
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+## 패턴 #3: 폼 모달
+
+다단계 또는 복잡한 폼은 메인 워크플로우를 방해하지 않을 때 모달에서 잘 작동합니다.
+
+```tsx
+export function FormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  title,
+}: FormModalProps) {
+  const [formData, setFormData] = useState({ name: '', email: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit(formData);
+      onClose(); // 성공 시 닫기
+    } catch (error) {
+      setErrors({ submit: '저장 실패. 다시 시도해주세요.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <AccessibleModal isOpen={isOpen} onClose={onClose} title={title}>
+      <form onSubmit={handleSubmit}>
+        <div className="form-field">
+          <label htmlFor="name">이름</label>
+          <input
+            id="name"
+            type="text"
+            value={formData.name}
+            onChange={(e) =>
+              setFormData({ ...formData, name: e.target.value })
+            }
+            required
+          />
+          {errors.name && <span className="error">{errors.name}</span>}
+        </div>
+
+        <div className="form-field">
+          <label htmlFor="email">이메일</label>
+          <input
+            id="email"
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+          />
+          {errors.email && <span className="error">{errors.email}</span>}
+        </div>
+
+        {errors.submit && (
+          <div className="form-error" role="alert">
+            {errors.submit}
+          </div>
+        )}
+
+        <div className="modal-actions">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="btn-secondary"
+          >
+            취소
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="btn-primary"
+          >
+            {isSubmitting ? '저장 중...' : '저장'}
+          </button>
+        </div>
+      </form>
+    </AccessibleModal>
+  );
+}
+```
+
+## 패턴 #4: 다단계 모달
+
+복잡한 워크플로우를 소화하기 쉬운 단계로 나누세요.
+
+```tsx
+export function MultiStepModal({ isOpen, onClose }: ModalProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState({});
+
+  const steps = [
+    { title: '개인 정보', component: PersonalInfoStep },
+    { title: '주소', component: AddressStep },
+    { title: '검토', component: ReviewStep },
+  ];
+
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    await submitForm(formData);
+    onClose();
+  };
+
+  const CurrentStepComponent = steps[currentStep].component;
+
+  return (
+    <AccessibleModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={steps[currentStep].title}
+    >
+      <div className="multi-step-modal">
+        {/* 진행 표시기 */}
+        <div className="step-progress">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className={`step ${index <= currentStep ? 'active' : ''}`}
+            >
+              <span className="step-number">{index + 1}</span>
+              <span className="step-label">{step.title}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* 현재 단계 콘텐츠 */}
+        <div className="step-content">
+          <CurrentStepComponent
+            data={formData}
+            onChange={setFormData}
+          />
+        </div>
+
+        {/* 네비게이션 */}
+        <div className="modal-actions">
+          <button
+            onClick={handleBack}
+            disabled={currentStep === 0}
+            className="btn-secondary"
+          >
+            이전
+          </button>
+          {currentStep < steps.length - 1 ? (
+            <button onClick={handleNext} className="btn-primary">
+              다음
+            </button>
+          ) : (
+            <button onClick={handleSubmit} className="btn-primary">
+              제출
+            </button>
+          )}
+        </div>
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+## 패턴 #5: 애니메이션 진입/종료
+
+부드러운 애니메이션은 모달이 덜 거슬리게 만듭니다.
+
+```tsx
+import { AnimatePresence, motion } from 'framer-motion';
+
+export function AnimatedModal({ isOpen, onClose, children }: ModalProps) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* 배경 */}
+          <motion.div
+            className="modal-overlay"
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          />
+
+          {/* 모달 콘텐츠 */}
+          <motion.div
+            className="modal-content"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+          >
+            {children}
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+```
+
+## 패턴 #6: 크기 변형
+
+다른 콘텐츠는 다른 모달 크기가 필요합니다.
+
+```tsx
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+
+interface SizedModalProps extends ModalProps {
+  size?: ModalSize;
+}
+
+export function SizedModal({ size = 'md', children, ...props }: SizedModalProps) {
+  return (
+    <AccessibleModal {...props}>
+      <div className={`modal-content modal-content--${size}`}>
+        {children}
+      </div>
+    </AccessibleModal>
+  );
+}
+```
+
+```css
+.modal-content--sm {
+  max-width: 400px;
+}
+
+.modal-content--md {
+  max-width: 600px;
+}
+
+.modal-content--lg {
+  max-width: 900px;
+}
+
+.modal-content--xl {
+  max-width: 1200px;
+}
+
+.modal-content--full {
+  max-width: 100vw;
+  max-height: 100vh;
+  margin: 0;
+  border-radius: 0;
+}
+```
+
+## 디자인 토큰 통합
+
+```css
+:root {
+  /* 모달 토큰 */
+  --modal-overlay-bg: oklch(0 0 0 / 0.5);
+  --modal-content-bg: var(--color-background-surface);
+  --modal-border-radius: var(--radius-lg);
+  --modal-shadow: var(--shadow-xl);
+  --modal-padding: var(--spacing-6);
+  --modal-max-width: 600px;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--modal-content-bg);
+  border-radius: var(--modal-border-radius);
+  box-shadow: var(--modal-shadow);
+  padding: var(--modal-padding);
+  max-width: var(--modal-max-width);
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+```
+
+## 일반적인 모달 실수
+
+1. **탈출 경로 없음** — 항상 닫는 방법을 제공하세요 (X 버튼, Esc 키, 배경 클릭)
+2. **스크롤 중단** — 모달이 열려 있을 때 body 스크롤을 방지하는 것을 기억하세요
+3. **열악한 모바일 경험** — 모바일에서는 전체 화면 모달이 더 잘 작동합니다
+4. **로딩 상태 없음** — 비동기 작업 중 진행 상황 표시
+5. **포커스 잊음** — 닫을 때 트리거 요소로 포커스 복원
+6. **불명확한 액션** — 기본 vs 보조 버튼이 명확해야 함
+7. **너무 많은 모달** — 모달을 쌓는 것은 혼란스럽습니다 (대신 라우팅 사용)
+
+## FramingUI 모달 시스템
+
+FramingUI는 접근 가능하고 아름다운 모달을 제공합니다:
+- 기본적으로 WCAG 2.1 AA 준수
+- 설정 없이 부드러운 애니메이션
+- 모바일용 반응형 크기 조정
+- 내장 포커스 관리
+- [모달 예시 탐색 →](/explore)
+
+## 관련 리소스
+
+- [폼 유효성 검사 UI 패턴](/blog/form-validation-ui-patterns) — 모달 폼의 유효성 검사
+- [디자인 토큰 베스트 프랙티스](/blog/design-tokens-best-practices) — 토큰 기반 모달 스타일링
+- [반응형 디자인 토큰](/blog/responsive-design-tokens) — 모바일 모달 패턴
+
+---
+
+**사용자가 실제로 사용하는 모달을 구축하세요.** 접근 가능하고, 직관적이며, 아름답게 디자인된—그것이 FramingUI 방식입니다.
