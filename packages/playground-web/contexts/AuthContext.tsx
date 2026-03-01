@@ -97,20 +97,31 @@ function convertSupabaseUserToUser(supabaseUser: SupabaseUser): User {
  */
 async function fetchUserLicenses(userId: string): Promise<License[]> {
   try {
-    const supabase = createClient();
+    // NOTE:
+    // Safari 환경에서 Supabase REST 직접 호출 시 CORS 이슈가 발생할 수 있어
+    // same-origin API Route를 통해 라이선스를 조회한다.
+    const response = await fetch('/api/user/licenses', {
+      method: 'GET',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
 
-    const { data, error } = await supabase
-      .from('user_licenses')
-      .select('*')
-      .eq('user_id', userId)
-      .order('purchased_at', { ascending: false });
-
-    if (error) {
-      console.error('Failed to fetch user licenses:', error.message);
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      console.error('Failed to fetch user licenses:', response.status, body);
       return [];
     }
 
-    return (data as UserLicense[]).map(convertUserLicenseToLicense);
+    const payload = (await response.json()) as { licenses?: UserLicense[] };
+    const licenses = payload.licenses ?? [];
+
+    // 방어적 검증: 다른 사용자 라이선스가 응답되면 무시
+    const safeLicenses = licenses.filter((license) => license.user_id === userId);
+
+    return safeLicenses.map(convertUserLicenseToLicense);
   } catch (error) {
     console.error('Unexpected error fetching licenses:', error);
     return [];

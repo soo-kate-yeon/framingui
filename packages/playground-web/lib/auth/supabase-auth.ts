@@ -37,6 +37,80 @@ export interface AuthResult {
   error: AuthError | null;
 }
 
+function buildOAuthContext(returnUrl: string | null): { callbackUrl: string; safeNext: string } {
+  // Supabase allowlist 매칭 안정성을 위해 redirect_to에는 쿼리를 붙이지 않는다.
+  // 실제 목적지(next)는 임시 쿠키로 전달한다.
+  const safeNext = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/';
+  return {
+    callbackUrl: `${window.location.origin}/auth/callback`,
+    safeNext,
+  };
+}
+
+async function startOAuth(
+  provider: 'google' | 'github',
+  callbackUrl: string,
+  safeNext: string,
+  queryParams?: Record<string, string>
+): Promise<OAuthResult> {
+  try {
+    document.cookie = `oauth_return_url=${encodeURIComponent(safeNext)}; Path=/; Max-Age=600; SameSite=Lax`;
+  } catch {
+    // ignore cookie write issues and continue
+  }
+
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: callbackUrl,
+      queryParams,
+      // 자동 리디렉트 전에 URL을 검증/보정하기 위해 수동 처리
+      skipBrowserRedirect: true,
+    },
+  });
+
+  if (!data.url || error) {
+    return {
+      url: data.url ?? null,
+      error,
+    };
+  }
+
+  const oauthUrl = new URL(data.url);
+  oauthUrl.searchParams.set('redirect_to', callbackUrl);
+
+  if (process.env.NODE_ENV === 'development') {
+    console.info('[OAuth] Redirecting browser to provider', {
+      provider,
+      callbackUrl,
+      oauthUrl: oauthUrl.toString(),
+      redirectToParam: oauthUrl.searchParams.get('redirect_to'),
+    });
+
+    try {
+      sessionStorage.setItem(
+        'last_oauth_debug',
+        JSON.stringify({
+          provider,
+          callbackUrl,
+          oauthUrl: oauthUrl.toString(),
+          createdAt: new Date().toISOString(),
+        })
+      );
+    } catch {
+      // ignore storage issues
+    }
+  }
+
+  window.location.assign(oauthUrl.toString());
+
+  return {
+    url: oauthUrl.toString(),
+    error: null,
+  };
+}
+
 /**
  * Google OAuth 로그인 시작
  *
@@ -55,8 +129,6 @@ export interface AuthResult {
  * ```
  */
 export async function signInWithGoogle(): Promise<OAuthResult> {
-  const supabase = createClient();
-
   try {
     // Get returnUrl from current URL if present
     const returnUrl =
@@ -64,26 +136,20 @@ export async function signInWithGoogle(): Promise<OAuthResult> {
         ? new URLSearchParams(window.location.search).get('returnUrl')
         : null;
 
-    // Build callback URL with returnUrl if available
-    const callbackUrl = returnUrl
-      ? `${window.location.origin}/auth/callback?returnUrl=${encodeURIComponent(returnUrl)}`
-      : `${window.location.origin}/auth/callback`;
+    const { callbackUrl, safeNext } = buildOAuthContext(returnUrl);
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: callbackUrl,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      },
+    if (process.env.NODE_ENV === 'development') {
+      console.info('[OAuth] Starting Google sign-in', {
+        origin: window.location.origin,
+        callbackUrl,
+        returnUrl,
+      });
+    }
+
+    return await startOAuth('google', callbackUrl, safeNext, {
+      access_type: 'offline',
+      prompt: 'consent',
     });
-
-    return {
-      url: data.url,
-      error,
-    };
   } catch (err) {
     return {
       url: null,
@@ -110,8 +176,6 @@ export async function signInWithGoogle(): Promise<OAuthResult> {
  * ```
  */
 export async function signInWithGitHub(): Promise<OAuthResult> {
-  const supabase = createClient();
-
   try {
     // Get returnUrl from current URL if present
     const returnUrl =
@@ -119,22 +183,17 @@ export async function signInWithGitHub(): Promise<OAuthResult> {
         ? new URLSearchParams(window.location.search).get('returnUrl')
         : null;
 
-    // Build callback URL with returnUrl if available
-    const callbackUrl = returnUrl
-      ? `${window.location.origin}/auth/callback?returnUrl=${encodeURIComponent(returnUrl)}`
-      : `${window.location.origin}/auth/callback`;
+    const { callbackUrl, safeNext } = buildOAuthContext(returnUrl);
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: callbackUrl,
-      },
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.info('[OAuth] Starting GitHub sign-in', {
+        origin: window.location.origin,
+        callbackUrl,
+        returnUrl,
+      });
+    }
 
-    return {
-      url: data.url,
-      error,
-    };
+    return await startOAuth('github', callbackUrl, safeNext);
   } catch (err) {
     return {
       url: null,

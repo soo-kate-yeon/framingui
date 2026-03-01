@@ -12,6 +12,16 @@ import { createClient } from '@/lib/supabase/server';
 import { createOrUpdateUser } from '@/lib/db/users';
 import { NextRequest, NextResponse } from 'next/server';
 
+function redirectWithOAuthCookieClear(destination: URL) {
+  const response = NextResponse.redirect(destination);
+  response.cookies.set('oauth_return_url', '', {
+    path: '/',
+    maxAge: 0,
+    sameSite: 'lax',
+  });
+  return response;
+}
+
 /**
  * OAuth 콜백 처리
  *
@@ -30,6 +40,18 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code');
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
+  const nextFromCookieRaw = request.cookies.get('oauth_return_url')?.value ?? null;
+
+  const nextFromCookie = (() => {
+    if (!nextFromCookieRaw) {
+      return null;
+    }
+    try {
+      return decodeURIComponent(nextFromCookieRaw);
+    } catch {
+      return nextFromCookieRaw;
+    }
+  })();
 
   // 1. OAuth 제공자에서 반환한 에러 확인
   if (error) {
@@ -37,14 +59,14 @@ export async function GET(request: NextRequest) {
       error,
       description: errorDescription,
     });
-    return NextResponse.redirect(new URL(`/auth/login?error=${error}`, requestUrl.origin));
+    return redirectWithOAuthCookieClear(new URL(`/auth/login?error=${error}`, requestUrl.origin));
   }
 
   // 2. Authorization code 검증
   // Note: Supabase uses PKCE for CSRF protection, so state parameter is optional
   if (!code) {
     console.error('[OAuth Callback] Missing authorization code');
-    return NextResponse.redirect(new URL('/auth/login?error=missing_code', requestUrl.origin));
+    return redirectWithOAuthCookieClear(new URL('/auth/login?error=missing_code', requestUrl.origin));
   }
 
   try {
@@ -63,16 +85,16 @@ export async function GET(request: NextRequest) {
 
       // 만료된 코드 또는 잘못된 코드 처리
       if (exchangeError.code === 'invalid_grant') {
-        return NextResponse.redirect(new URL('/auth/login?error=code_expired', requestUrl.origin));
+        return redirectWithOAuthCookieClear(new URL('/auth/login?error=code_expired', requestUrl.origin));
       }
 
-      return NextResponse.redirect(new URL('/auth/login?error=exchange_failed', requestUrl.origin));
+      return redirectWithOAuthCookieClear(new URL('/auth/login?error=exchange_failed', requestUrl.origin));
     }
 
     // 5. 세션 및 사용자 정보 검증
     if (!data.session || !data.user) {
       console.error('[OAuth Callback] Invalid session or user data after exchange');
-      return NextResponse.redirect(new URL('/auth/login?error=invalid_session', requestUrl.origin));
+      return redirectWithOAuthCookieClear(new URL('/auth/login?error=invalid_session', requestUrl.origin));
     }
 
     // 6. 사용자 레코드 생성 또는 업데이트
@@ -81,7 +103,7 @@ export async function GET(request: NextRequest) {
 
       if (!userProfile) {
         console.error('[OAuth Callback] Failed to create/update user profile');
-        return NextResponse.redirect(
+        return redirectWithOAuthCookieClear(
           new URL('/auth/login?error=user_creation_failed', requestUrl.origin)
         );
       }
@@ -93,11 +115,11 @@ export async function GET(request: NextRequest) {
       });
     } catch (dbError) {
       console.error('[OAuth Callback] Database error during user creation:', dbError);
-      return NextResponse.redirect(new URL('/auth/login?error=database_error', requestUrl.origin));
+      return redirectWithOAuthCookieClear(new URL('/auth/login?error=database_error', requestUrl.origin));
     }
 
     // 7. 원래 요청된 페이지로 리다이렉트 (또는 홈페이지)
-    const next = requestUrl.searchParams.get('next') ?? '/';
+    const next = requestUrl.searchParams.get('next') ?? nextFromCookie ?? '/';
 
     // 보안: 외부 URL로의 리다이렉트 방지
     const redirectUrl = next.startsWith('/')
@@ -106,13 +128,13 @@ export async function GET(request: NextRequest) {
 
     console.log('[OAuth Callback] Redirecting to:', redirectUrl.pathname);
 
-    return NextResponse.redirect(redirectUrl);
+    return redirectWithOAuthCookieClear(redirectUrl);
   } catch (error) {
     // 8. 예상치 못한 에러 처리
     console.error('[OAuth Callback] Unexpected error:', {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
     });
-    return NextResponse.redirect(new URL('/auth/login?error=unexpected_error', requestUrl.origin));
+    return redirectWithOAuthCookieClear(new URL('/auth/login?error=unexpected_error', requestUrl.origin));
   }
 }

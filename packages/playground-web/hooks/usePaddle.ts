@@ -10,7 +10,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { initializePaddle, type Paddle } from '@paddle/paddle-js';
-import { PADDLE_CONFIG } from '@/lib/paddle/config';
+import { PADDLE_CONFIG, isPaymentsEnabled } from '@/lib/paddle/config';
 
 export interface OpenCheckoutParams {
   priceId: string;
@@ -23,16 +23,31 @@ export interface OpenCheckoutParams {
 export function usePaddle() {
   const [paddle, setPaddle] = useState<Paddle | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [notReadyReason, setNotReadyReason] = useState<string | null>(null);
 
   useEffect(() => {
-    // Feature flag 확인
-    if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') {
+    // Feature flag: 명시적으로 비활성화된 경우만 중단
+    if (!isPaymentsEnabled()) {
+      setNotReadyReason('Payments are disabled by NEXT_PUBLIC_ENABLE_PAYMENTS.');
+      setIsLoading(false);
+      return;
+    }
+
+    const isLocalHost =
+      typeof window !== 'undefined' &&
+      ['localhost', '127.0.0.1', '::1', '[::1]'].includes(window.location.hostname);
+
+    if (isLocalHost && PADDLE_CONFIG.environment === 'production') {
+      setNotReadyReason(
+        'Paddle live checkout is blocked on local hosts. Use sandbox locally or run on an allowed domain.'
+      );
       setIsLoading(false);
       return;
     }
 
     if (!PADDLE_CONFIG.clientToken) {
       console.warn('[Paddle] NEXT_PUBLIC_PADDLE_CLIENT_TOKEN이 설정되지 않았습니다');
+      setNotReadyReason('NEXT_PUBLIC_PADDLE_CLIENT_TOKEN is missing.');
       setIsLoading(false);
       return;
     }
@@ -48,6 +63,7 @@ export function usePaddle() {
       })
       .catch((error) => {
         console.error('[Paddle] 초기화 실패:', error);
+        setNotReadyReason(error instanceof Error ? error.message : 'Paddle initialization failed.');
       })
       .finally(() => {
         setIsLoading(false);
@@ -78,6 +94,7 @@ export function usePaddle() {
     paddle,
     isLoading,
     isReady: !!paddle,
+    notReadyReason,
     openCheckout,
   };
 }

@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { TemplateData } from '../../data/templates';
+import { useAuth } from '../../contexts/AuthContext';
+import { usePaddle } from '../../hooks/usePaddle';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { getExploreContent, getTemplatePriceLabel } from '../../data/i18n/explore';
 import { getLocalizedTemplateText } from '../../data/templates';
+import { PADDLE_CONFIG } from '../../lib/paddle/config';
 
 // ============================================================================
 // Types
@@ -22,11 +26,26 @@ interface TemplateModalProps {
 // ============================================================================
 
 export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: TemplateModalProps) {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { openCheckout, isReady: isPaddleReady, notReadyReason } = usePaddle();
   const { locale } = useExploreLanguage();
   const i18n = getExploreContent(locale);
   const [activeChipIdx, setActiveChipIdx] = useState(0);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
+  const paymentNotReadyMessage =
+    locale === 'ko'
+      ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+      : locale === 'ja'
+        ? '決済システムを利用できません。しばらくしてから再試行してください。'
+        : 'Payment system is not ready. Please try again later.';
+  const priceConfigMissingMessage =
+    locale === 'ko'
+      ? '결제 가격 설정이 누락되었습니다. 관리자에게 문의해 주세요.'
+      : locale === 'ja'
+        ? '価格設定が見つかりません。管理者にお問い合わせください。'
+        : 'Price configuration is missing. Please contact support.';
 
   const prevImage = () => {
     setCurrentImageIdx((prev) => (prev === 0 ? template.screenshots.length - 1 : prev - 1));
@@ -42,6 +61,74 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
       onClose();
       setIsClosing(false); // Reset state after animation
     }, 200); // 200ms matches the duration-200 class
+  };
+
+  const redirectToLogin = () => {
+    const returnUrl = `/explore/template/${template.id}`;
+    router.push(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+  };
+
+  const handleSingleCheckout = () => {
+    if (!user) {
+      redirectToLogin();
+      return;
+    }
+
+    if (!isPaddleReady) {
+      console.error('[Paddle] Payment system is not ready');
+      alert(notReadyReason ?? paymentNotReadyMessage);
+      return;
+    }
+
+    const priceId = PADDLE_CONFIG.prices.single;
+    if (!priceId) {
+      console.error('[Paddle] Single price configuration missing');
+      alert(priceConfigMissingMessage);
+      return;
+    }
+
+    openCheckout({
+      priceId,
+      userId: user.id,
+      userEmail: user.email ?? '',
+      themeId: template.id,
+      tier: 'single',
+    });
+  };
+
+  const handleCreatorCheckout = () => {
+    if (!user) {
+      redirectToLogin();
+      return;
+    }
+
+    if (!isPaddleReady) {
+      console.error('[Paddle] Payment system is not ready');
+      alert(notReadyReason ?? paymentNotReadyMessage);
+      return;
+    }
+
+    const priceId = PADDLE_CONFIG.prices.creator;
+    if (!priceId) {
+      console.error('[Paddle] Creator price configuration missing');
+      alert(priceConfigMissingMessage);
+      return;
+    }
+
+    openCheckout({
+      priceId,
+      userId: user.id,
+      userEmail: user.email ?? '',
+      tier: 'creator',
+    });
+  };
+
+  const handleSelectDouble = () => {
+    if (onSelectDouble) {
+      onSelectDouble();
+      return;
+    }
+    router.push('/explore?plan=double');
   };
 
   // Body Scroll Lock & Reset State
@@ -119,7 +206,11 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               {/* Pricing Options & CTAs */}
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-neutral-950 px-8 py-4 text-base font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2">
+                  <button
+                    type="button"
+                    onClick={handleSingleCheckout}
+                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-neutral-950 px-8 py-4 text-base font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
+                  >
                     {getTemplatePriceLabel(locale, template.price)}
                   </button>
                   <a
@@ -134,7 +225,8 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
 
                 <div className="flex flex-col gap-4 sm:gap-3 justify-center pt-4 sm:pt-2">
                   <button
-                    onClick={onSelectDouble}
+                    type="button"
+                    onClick={handleSelectDouble}
                     className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit"
                   >
                     <span className="underline underline-offset-4">
@@ -144,7 +236,11 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                       {i18n.templateModal.savePercent}
                     </span>
                   </button>
-                  <button className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit">
+                  <button
+                    type="button"
+                    onClick={handleCreatorCheckout}
+                    className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit"
+                  >
                     <span className="underline underline-offset-4">
                       {i18n.templateModal.getUnlimitedAccess}
                     </span>

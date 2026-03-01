@@ -13,6 +13,7 @@ import { motion } from 'framer-motion';
 import { Check, X, ArrowRight, Sparkles } from 'lucide-react';
 import { Accordion } from '../landing/Accordion';
 import { Footer } from '../shared/Footer';
+import { BetaBanner } from '../shared/BetaBanner';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getPricingContent } from '../../data/i18n/pricing';
 import { useAuth } from '../../contexts/AuthContext';
@@ -110,7 +111,7 @@ export function PricingPage() {
   const { locale } = useGlobalLanguage();
   const content = getPricingContent(locale);
   const { user } = useAuth();
-  const { openCheckout, isReady: isPaddleReady } = usePaddle();
+  const { openCheckout, isReady: isPaddleReady, notReadyReason } = usePaddle();
 
   /**
    * 베타 접근 핸들러 (Single Template 전용)
@@ -126,13 +127,14 @@ export function PricingPage() {
    */
   const handleCheckout = (planId: 'double' | 'creator') => {
     if (!user) {
-      router.push('/auth/login');
+      const returnUrl = planId === 'double' ? '/explore?plan=double' : '/pricing';
+      router.push(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`);
       return;
     }
 
     if (!isPaddleReady) {
       console.error('[Paddle] Payment system is not ready');
-      alert(content.ui.paymentNotReady);
+      alert(notReadyReason ?? content.ui.paymentNotReady);
       return;
     }
 
@@ -155,15 +157,7 @@ export function PricingPage() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white pt-12">
-      {/* Beta Launch Banner */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-12 flex items-center justify-center px-4 sm:px-6 transition-colors bg-black text-white">
-        <p className="text-xs sm:text-sm font-medium text-center">
-          {/* 모바일: 짧은 메시지 */}
-          <span className="sm:hidden">{content.betaBanner.mobile}</span>
-          {/* 데스크톱: 전체 메시지 */}
-          <span className="hidden sm:inline">{content.betaBanner.desktop}</span>
-        </p>
-      </div>
+      <BetaBanner onStartFreeTrial={() => router.push('/explore')} />
 
       {/* 네비게이션 */}
       <nav className="border-b border-neutral-200">
@@ -209,18 +203,16 @@ export function PricingPage() {
             return (
               <FadeIn key={planId} delay={index * 0.1} className="h-full">
                 <div
-                  className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-sm ${
-                    planData.featured ? 'border-neutral-950' : 'border-neutral-200'
-                  }`}
+                  className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-sm ${planData.featured ? 'border-neutral-950' : 'border-neutral-200'
+                    }`}
                 >
                   {/* 배지 */}
                   {planData.badge && (
                     <div
-                      className={`absolute -top-3 left-6 px-3 py-1 text-xs font-semibold rounded-full ${
-                        planData.featured
+                      className={`absolute -top-3 left-6 px-3 py-1 text-xs font-semibold rounded-full ${planData.featured
                           ? 'bg-neutral-950 text-white'
                           : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                      }`}
+                        }`}
                     >
                       {planData.badge === 'Best Value' && (
                         <Sparkles className="w-3 h-3 inline mr-1 -mt-0.5" />
@@ -279,11 +271,10 @@ export function PricingPage() {
                           handleCheckout('creator');
                         }
                       }}
-                      className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${
-                        planData.featured
+                      className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${planData.featured
                           ? 'bg-neutral-950 text-white hover:bg-neutral-800'
                           : 'bg-neutral-100 text-neutral-950 hover:bg-neutral-200'
-                      }`}
+                        }`}
                     >
                       {planId === 'single' ? content.ui.getBetaAccess : planContent.cta}
                       <ArrowRight className="w-4 h-4" />

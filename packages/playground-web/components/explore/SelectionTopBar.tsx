@@ -63,9 +63,21 @@ export function SelectionTopBar({
 }: SelectionTopBarProps) {
   const router = useRouter();
   const { user } = useAuth();
-  const { openCheckout, isReady: isPaddleReady } = usePaddle();
+  const { openCheckout, isReady: isPaddleReady, notReadyReason } = usePaddle();
   const { locale } = useExploreLanguage();
   const t = locale === 'ko' ? messages.ko : locale === 'ja' ? messages.ja : messages.en;
+  const paymentNotReadyMessage =
+    locale === 'ko'
+      ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+      : locale === 'ja'
+        ? '決済システムを利用できません。しばらくしてから再試行してください。'
+        : 'Payment system is not ready. Please try again later.';
+  const priceConfigMissingMessage =
+    locale === 'ko'
+      ? '결제 가격 설정이 누락되었습니다. 관리자에게 문의해 주세요.'
+      : locale === 'ja'
+        ? '価格設定が見つかりません。管理者にお問い合わせください。'
+        : 'Price configuration is missing. Please contact support.';
 
   const isComplete = selectedTemplates.length === maxSelection;
   const remaining = maxSelection - selectedTemplates.length;
@@ -80,12 +92,14 @@ export function SelectionTopBar({
 
     if (!isPaddleReady) {
       console.error('[Paddle] Payment system is not ready');
+      alert(notReadyReason ?? paymentNotReadyMessage);
       return;
     }
 
     const priceId = PADDLE_CONFIG.prices.double;
     if (!priceId) {
       console.error('[Paddle] Double price configuration missing');
+      alert(priceConfigMissingMessage);
       return;
     }
 

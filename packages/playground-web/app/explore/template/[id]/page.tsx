@@ -27,7 +27,7 @@ import {
 } from '../../../../data/templates';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { usePaddle } from '../../../../hooks/usePaddle';
-import { PADDLE_CONFIG, toPaddlePriceTier } from '../../../../lib/paddle/config';
+import { PADDLE_CONFIG } from '../../../../lib/paddle/config';
 import { useExploreLanguage } from '../../../../contexts/ExploreLanguageContext';
 import {
   getExploreContent,
@@ -42,11 +42,23 @@ interface TemplatePageProps {
 export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const router = useRouter();
   const { user } = useAuth();
-  const { openCheckout, isReady: isPaddleReady } = usePaddle();
+  const { openCheckout, isReady: isPaddleReady, notReadyReason } = usePaddle();
   const { locale } = useExploreLanguage();
   const i18n = getExploreContent(locale);
   const [templateId, setTemplateId] = useState<string>('');
   const [template, setTemplate] = useState<TemplateData | null>(null);
+  const paymentNotReadyMessage =
+    locale === 'ko'
+      ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+      : locale === 'ja'
+        ? '決済システムを利用できません。しばらくしてから再試行してください。'
+        : 'Payment system is not ready. Please try again later.';
+  const priceConfigMissingMessage =
+    locale === 'ko'
+      ? '결제 가격 설정이 누락되었습니다. 관리자에게 문의해 주세요.'
+      : locale === 'ja'
+        ? '価格設定が見つかりません。管理者にお問い合わせください。'
+        : 'Price configuration is missing. Please contact support.';
 
   // Next.js 16: params is a Promise
   useEffect(() => {
@@ -63,23 +75,32 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   };
 
   const handleBuyClick = () => {
-    // Paddle 결제가 활성화되어 있고 사용자가 로그인된 경우 → Paddle Checkout Overlay
-    if (isPaddleReady && user) {
-      const priceTier = toPaddlePriceTier('single');
-      if (priceTier) {
-        const priceId = PADDLE_CONFIG.prices[priceTier];
-        openCheckout({
-          priceId,
-          userId: user.id,
-          userEmail: user.email ?? '',
-          themeId: templateId,
-          tier: priceTier,
-        });
-        return;
-      }
+    if (!user) {
+      const returnUrl = `/explore/template/${templateId}`;
+      router.push(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+      return;
     }
-    // Fallback: 기존 결제 페이지로 이동
-    router.push(`/explore/checkout/${templateId}`);
+
+    if (!isPaddleReady) {
+      console.error('[Paddle] Payment system is not ready');
+      alert(notReadyReason ?? paymentNotReadyMessage);
+      return;
+    }
+
+    const priceId = PADDLE_CONFIG.prices.single;
+    if (!priceId) {
+      console.error('[Paddle] Single price configuration missing');
+      alert(priceConfigMissingMessage);
+      return;
+    }
+
+    openCheckout({
+      priceId,
+      userId: user.id,
+      userEmail: user.email ?? '',
+      themeId: templateId,
+      tier: 'single',
+    });
   };
 
   const handleDocumentationClick = () => {

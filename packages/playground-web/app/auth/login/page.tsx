@@ -24,6 +24,10 @@ const ERROR_MESSAGES: Record<string, string> = {
   user_creation_failed: 'Failed to create user account. Please contact support.',
   database_error: 'Database error occurred. Please try again later.',
   unexpected_error: 'An unexpected error occurred. Please try again.',
+  invalid_request:
+    'OAuth request is invalid. If you are using Safari, clear site data and retry in a fresh tab.',
+  bad_oauth_state:
+    'OAuth state has expired. Please restart login from /auth/login and complete sign-in immediately.',
 };
 
 /**
@@ -38,8 +42,21 @@ function LoginContent() {
   // URL 쿼리 파라미터에서 에러 처리
   useEffect(() => {
     const errorParam = searchParams.get('error');
+    const errorCodeParam = searchParams.get('error_code');
+    const errorDescriptionParam = searchParams.get('error_description');
+
+    if (errorCodeParam) {
+      const message =
+        ERROR_MESSAGES[errorCodeParam] ||
+        `Authentication error (${errorCodeParam}): ${errorDescriptionParam ?? 'Unknown error'}`;
+      setDisplayError(message);
+      return;
+    }
+
     if (errorParam) {
-      const message = ERROR_MESSAGES[errorParam] || `Authentication error: ${errorParam}`;
+      const message =
+        ERROR_MESSAGES[errorParam] ||
+        `Authentication error: ${errorParam}${errorDescriptionParam ? ` (${errorDescriptionParam})` : ''}`;
       setDisplayError(message);
     }
   }, [searchParams]);

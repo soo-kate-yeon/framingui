@@ -21,6 +21,16 @@ export const PADDLE_CONFIG = {
 export type PaddlePriceTier = keyof typeof PADDLE_CONFIG.prices;
 
 /**
+ * 결제 기능 활성화 여부
+ * - 명시적으로 false/0/off 일 때만 비활성화
+ * - 미설정 시 Paddle 설정이 있으면 동작하도록 기본 허용
+ */
+export function isPaymentsEnabled(): boolean {
+  const rawFlag = process.env.NEXT_PUBLIC_ENABLE_PAYMENTS?.trim().toLowerCase();
+  return rawFlag !== 'false' && rawFlag !== '0' && rawFlag !== 'off';
+}
+
+/**
  * PricingTier 문자열을 Paddle Price tier로 매핑
  */
 export function toPaddlePriceTier(tier: string): PaddlePriceTier | null {
