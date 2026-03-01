@@ -157,7 +157,7 @@ export function PricingPage() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white pt-12">
-      <BetaBanner onStartFreeTrial={() => router.push('/explore')} />
+      <BetaBanner />
 
       {/* 네비게이션 */}
       <nav className="border-b border-neutral-200">
