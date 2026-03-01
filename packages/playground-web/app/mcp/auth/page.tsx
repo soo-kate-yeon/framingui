@@ -50,7 +50,7 @@ function MCPAuthContent() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
         <div className="mb-6 text-center">
-          <h1 className="mb-2 text-2xl font-bold text-gray-900">Tekton MCP Authentication</h1>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900">framingui MCP Authentication</h1>
           <p className="text-sm text-gray-500">Sign in to connect your development tools</p>
         </div>
 

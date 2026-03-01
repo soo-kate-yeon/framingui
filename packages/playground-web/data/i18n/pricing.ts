@@ -104,7 +104,7 @@ export interface PricingContent {
 const pricingContent: Record<GlobalLocale, PricingContent> = {
   en: {
     nav: {
-      brandName: 'TEKTON',
+      brandName: 'framingui',
       getStarted: 'Get Started',
     },
     hero: {
@@ -244,22 +244,22 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
   },
   ko: {
     nav: {
-      brandName: 'TEKTON',
+      brandName: 'framingui',
       getStarted: '시작하기',
     },
     hero: {
-      title: '플랜을 선택합니다',
+      title: '요금제를 선택하세요',
       description:
-        'AI 기반 디자인 시스템을 갖춘 프리미엄 React 템플릿입니다. 오늘부터 프로덕션 인터페이스를 바로 구축할 수 있습니다.',
+        'AI 기반 디자인 시스템이 포함된 프리미엄 React 템플릿입니다. 오늘 바로 프로덕션 UI를 구축할 수 있습니다.',
     },
     betaBanner: {
       mobile: '🎉 단일 템플릿 무료!',
-      desktop: '🎉 베타 런칭: 베타 기간 동안 단일 템플릿 무료!',
+      desktop: '🎉 베타 런칭: 베타 기간에는 단일 템플릿이 무료입니다!',
     },
     plans: {
       single: {
         name: '단일 템플릿',
-        description: '프로젝트에 맞는 템플릿 1개로 시작합니다.',
+        description: '프로젝트에 맞는 템플릿 1개로 시작하세요.',
         priceLabel: '$59',
         priceSub: '1회 결제',
         cta: '템플릿 둘러보기',
@@ -272,11 +272,11 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       },
       double: {
         name: '더블 패키지',
-        description: '여러 템플릿이 필요한 팀에 적합한 구성입니다.',
+        description: '여러 템플릿이 필요한 경우 가장 합리적인 구성입니다.',
         priceLabel: '$99',
-        priceSub: '한 번만 결제',
-        cta: '템플릿 고르기',
-        badge: '가장 많이 선택',
+        priceSub: '1회 결제',
+        cta: '템플릿 선택하기',
+        badge: '인기 플랜',
         features: [
           '원하는 템플릿 2개',
           '1년간 업데이트',
@@ -287,19 +287,19 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       },
       creator: {
         name: '크리에이터 패스',
-        description: '지속적으로 제작하는 팀을 위한 무제한 이용권입니다.',
+        description: '지속적으로 제작하는 팀을 위한 무제한 플랜입니다.',
         priceLabel: '$149',
         priceSub: '/년',
         cta: '구독하기',
         badge: '최고의 가치',
         features: [
-          '지금 있는 모든 템플릿',
+          '현재 제공되는 모든 템플릿',
           '향후 출시 템플릿 포함',
           '구독 기간 동안 업데이트 제공',
           '빠른 이메일 지원 (48시간)',
           '우선 지원',
         ],
-        renewalNotice: '매년 $149에 자동 갱신됩니다. 언제든지 취소할 수 있습니다.',
+        renewalNotice: '연 $149로 자동 갱신됩니다. 언제든지 해지할 수 있습니다.',
       },
     },
     comparison: {
@@ -343,32 +343,32 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       subtitle: '가격과 플랜 관련 주요 질문을 정리했습니다.',
       items: [
         {
-          title: '템플릿은 어떻게 사용합니까?',
+          title: '템플릿은 어떻게 사용하나요?',
           content:
-            '템플릿을 구매하면 (베타 기간에는 1개 무료) 프로젝트에서 "npx @framingui/mcp-server init" 명령을 실행합니다. MCP 서버 설치, 디자인 토큰 설정, Tailwind CSS 구성, AI 코딩 도구 연결을 한 번에 완료합니다. 이후에는 AI 에이전트에게 선택한 테마로 화면 생성을 요청하면 됩니다.',
+            '템플릿을 구매한 후(베타 기간에는 1개 무료) 프로젝트 루트에서 "npx @framingui/mcp-server init" 명령을 실행하세요. MCP 서버 설치, 디자인 토큰 설정, Tailwind CSS 구성, AI 코딩 도구 연결이 한 번에 완료됩니다. 이후에는 선택한 테마로 화면 생성을 요청하면 됩니다.',
         },
         {
-          title: '업데이트 기간이 끝나면 어떻게 됩니까?',
+          title: '업데이트 기간이 끝나면 어떻게 되나요?',
           content:
             '다운로드한 템플릿은 계속 사용할 수 있습니다. 업데이트 기간 종료 후에는 신규 업데이트만 중단됩니다. 갱신하면 최신 버전을 다시 받을 수 있습니다.',
         },
         {
-          title: '클라이언트 프로젝트에 사용해도 됩니까?',
+          title: '클라이언트 프로젝트에도 사용할 수 있나요?',
           content:
             '모든 플랜에는 상업용 라이선스가 포함됩니다. 개인 프로젝트와 클라이언트 프로젝트 모두에서 사용할 수 있습니다. 단, 템플릿 자체의 재판매 또는 재배포는 허용하지 않습니다.',
         },
         {
-          title: '크리에이터 패스 자동 갱신은 어떻게 됩니까?',
+          title: '크리에이터 패스 자동 갱신은 어떻게 되나요?',
           content:
             '크리에이터 패스는 매년 $149에 자동으로 갱신됩니다. 계정 설정에서 언제든 취소할 수 있으며, 취소는 현재 결제 기간 종료 시점에 적용됩니다. 종료 시점까지는 계속 이용할 수 있습니다.',
         },
         {
-          title: '환불은 어떻게 받을 수 있습니까?',
+          title: '환불은 어떻게 받을 수 있나요?',
           content:
             '템플릿은 디지털 제품이므로 구매 후 14일 이내이며 다운로드 전 상태라면 환불할 수 있습니다. 기술적 결함 또는 중복 구매는 항상 환불 대상입니다. 상세 기준은 환불 정책에서 확인할 수 있습니다.',
         },
         {
-          title: '팀 또는 교육 할인은 제공합니까?',
+          title: '팀 또는 교육 할인이 있나요?',
           content:
             '팀 라이선스와 교육 할인은 준비 중입니다. 사전 도입 또는 맞춤 가격이 필요하면 soo.kate.yeon@gmail.com으로 문의해 주세요.',
         },
@@ -377,14 +377,14 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
     ui: {
       freeLabel: '무료',
       duringBeta: '베타 기간 한정',
-      getBetaAccess: '베타 무료 체험 시작',
+      getBetaAccess: '베타 무료로 시작하기',
       paymentNotReady: '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.',
       priceConfigMissing: '가격 설정을 찾을 수 없습니다. 지원팀에 문의해 주세요.',
     },
   },
   ja: {
     nav: {
-      brandName: 'TEKTON',
+      brandName: 'framingui',
       getStarted: '始める',
     },
     hero: {

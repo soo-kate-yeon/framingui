@@ -30,11 +30,9 @@ export default function SignupPage() {
         {/* Header */}
         <div className="mb-12 text-center">
           <Link href="/" className="mb-6 inline-block">
-            <div className="text-2xl font-bold tracking-tighter">TEKTON</div>
+            <div className="text-2xl font-bold tracking-tighter">framingui</div>
           </Link>
-          <h1 className="text-sm font-medium text-neutral-500 mb-2">
-            Welcome
-          </h1>
+          <h1 className="text-sm font-medium text-neutral-500 mb-2">Welcome</h1>
           <p className="text-xl font-bold text-neutral-900 leading-tight">Create your account.</p>
         </div>
 
@@ -47,11 +45,9 @@ export default function SignupPage() {
 
         {/* OAuth Login Info */}
         <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200 rounded-lg">
-          <p className="text-sm font-semibold text-neutral-700 mb-2">
-            OAuth Signup
-          </p>
+          <p className="text-sm font-semibold text-neutral-700 mb-2">OAuth Signup</p>
           <p className="text-sm text-neutral-600">
-            Create an account with your Google or GitHub to get started with TEKTON Studio.
+            Create an account with your Google or GitHub to get started with framingui Studio.
           </p>
         </div>
 

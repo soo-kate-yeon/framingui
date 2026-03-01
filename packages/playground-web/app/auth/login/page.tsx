@@ -70,11 +70,9 @@ function LoginContent() {
         {/* Header */}
         <div className="mb-12 text-center">
           <Link href="/" className="mb-6 inline-block">
-            <div className="text-2xl font-bold tracking-tighter">TEKTON</div>
+            <div className="text-2xl font-bold tracking-tighter">framingui</div>
           </Link>
-          <h1 className="text-sm font-medium text-neutral-500 mb-2">
-            Welcome Back
-          </h1>
+          <h1 className="text-sm font-medium text-neutral-500 mb-2">Welcome Back</h1>
           <p className="text-xl font-bold text-neutral-900 leading-tight">
             Log in to your workspace.
           </p>
@@ -89,11 +87,9 @@ function LoginContent() {
 
         {/* OAuth Login Info */}
         <div className="mb-8 p-4 bg-neutral-50 border border-neutral-200 rounded-lg">
-          <p className="text-sm font-semibold text-neutral-700 mb-2">
-            OAuth Login
-          </p>
+          <p className="text-sm font-semibold text-neutral-700 mb-2">OAuth Login</p>
           <p className="text-sm text-neutral-600">
-            Sign in with your Google or GitHub account to access TEKTON Studio.
+            Sign in with your Google or GitHub account to access framingui Studio.
           </p>
         </div>
 
