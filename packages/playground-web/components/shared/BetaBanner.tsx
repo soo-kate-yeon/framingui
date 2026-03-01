@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { X } from 'lucide-react';
 
-const STORAGE_KEY = 'framingui-beta-banner-dismissed';
-const BETA_SIGNUP_URL = 'https://tally.so/r/7R2kz6';
+import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
+import { getBetaBannerContent } from '@/data/i18n/betaBanner';
 
-export function BetaBanner() {
+const STORAGE_KEY = 'framingui-beta-banner-dismissed';
+
+interface BetaBannerProps {
+  onStartFreeTrial?: () => void;
+}
+
+export function BetaBanner({ onStartFreeTrial }: BetaBannerProps) {
+  const { locale } = useGlobalLanguage();
+  const content = getBetaBannerContent(locale);
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -30,33 +37,28 @@ export function BetaBanner() {
   }
 
   return (
-    <div className="relative bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white">
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center gap-3 sm:gap-6 text-sm sm:text-base">
-          <span className="shrink-0 inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-full bg-white text-purple-600 shadow-md animate-pulse">
-            BETA
-          </span>
-          <p className="text-center">
-            <span className="font-bold text-base sm:text-lg">FramingUI is in Beta!</span>
-            <span className="hidden sm:inline ml-2 font-medium">
-              Get early access and shape the future of agentic design systems.
-            </span>
-          </p>
-          <Link
-            href={BETA_SIGNUP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 inline-flex items-center px-5 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base font-bold rounded-full bg-white text-purple-600 hover:bg-gray-50 hover:scale-105 transition-all shadow-lg hover:shadow-xl"
-          >
-            Start Free Trial →
-          </Link>
-          <button
-            onClick={handleDismiss}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-1.5 hover:bg-white/20 rounded-full transition-colors"
-            aria-label="Dismiss banner"
-          >
-            <X className="w-4 h-4" />
-          </button>
+    <div className="relative animate-gradient-vibrant text-white overflow-hidden shadow-sm">
+      {/* Subtle overlay to improve legibility if needed */}
+      <div className="absolute inset-0 bg-black/5 pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm sm:text-base">
+          <p className="text-left font-medium tracking-tight opacity-95">{content.label}</p>
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+            <button
+              onClick={onStartFreeTrial}
+              className="inline-flex items-center px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-bold rounded-full bg-white text-neutral-900 hover:bg-neutral-100 hover:scale-105 active:scale-95 transition-all shadow-sm"
+            >
+              {content.cta}
+            </button>
+            <button
+              onClick={handleDismiss}
+              className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
+              aria-label="Dismiss banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

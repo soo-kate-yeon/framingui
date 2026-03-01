@@ -118,11 +118,11 @@ Claude: [Queries your design tokens via MCP]
 | **Design System** | ❌ Generic (shadcn defaults) | ✅ Custom (your brand) |
 | **AI Tool** | ✅ Built-in (v0 chat) | ✅ Works with Claude/Cursor/etc. |
 | **Token Management** | ❌ Manual Tailwind config | ✅ Generated + validated |
-| **Component Library** | ✅ shadcn/ui (pre-built) | ⚠️ Bring your own (or use tekton components) |
+| **Component Library** | ✅ shadcn/ui (pre-built) | ⚠️ Bring your own (or use framingui components) |
 | **Brand Consistency** | ⚠️ Manual tweaking required | ✅ Automatic (AI reads tokens) |
 | **Deployment** | ✅ One-click to Vercel | ❌ Use your existing deployment |
 | **Accessibility** | ⚠️ Depends on shadcn defaults | ✅ WCAG built into token generation |
-| **Cost** | 💰 Paid (free tier limited) | 💰 Beta free (first template) |
+| **Cost** | 💰 Paid (free tier limited) | 💰 Paid (free trial available) |
 | **Learning Curve** | ✅ Low (visual interface) | ⚠️ Medium (requires MCP setup) |
 | **Iteration Speed** | ✅ Fast (visual edits) | ⚠️ Medium (prompt-based) |
 | **Code Quality** | ⚠️ Generic, may need cleanup | ✅ On-brand from the start |
@@ -225,7 +225,7 @@ With framingui:
 # .claude/mcp.json (or cursor settings)
 {
   "servers": {
-    "tekton": {
+    "framingui": {
       "command": "npx",
       "args": ["@framingui/mcp-server"]
     }
@@ -357,7 +357,7 @@ TEKTON_BRAND=clientB npm run build  # Uses clientB tokens
 **framingui workflow (connected):**
 
 ```
-1. Choose a tekton template that matches your design direction
+1. Choose a framingui template that matches your design direction
 2. Customize the design tokens (colors, spacing, typography)
 3. AI generates components using your tokens
 4. Components match your design system consistently
@@ -509,23 +509,23 @@ Use framingui for:
 
 ### framingui Pricing
 
-**Open Source (Free):**
-- Unlimited token generation
+**Individual Plan:**
+- For solo developers and indie hackers
+- Full access to design token generation
 - MCP server included
-- Full feature access
 - Community support
 
-**No paid tiers (yet):**
-- Everything is open-source
-- MIT licensed
-- Self-hosted
-- No vendor lock-in
+**Creator Plan:**
+- For teams and agencies
+- Advanced features
+- Priority support
+- Collaboration tools
 
-**Future (planned):**
-- Hosted MCP server (for teams)
-- Visual token editor
-- Figma plugin
-- Premium support
+**Free Trial:**
+- Explore all features
+- No credit card required
+- Self-hosted option
+- No vendor lock-in
 
 ## Migration Guides
 
@@ -604,11 +604,11 @@ export function PricingCard() {
 
 ```typescript
 // esbuild.config.js
-import { tektonPlugin } from '@framingui/esbuild-plugin';
+import { framinguiPlugin } from '@framingui/esbuild-plugin';
 
 export default {
   plugins: [
-    tektonPlugin({
+    framinguiPlugin({
       strict: true, // Prevent new hardcoded values
     })
   ]
@@ -626,7 +626,7 @@ Need to use v0 after using framingui?
 ```
 1. Generate initial layout in v0
 2. Export v0 code
-3. Replace v0 classes with tekton tokens (see migration above)
+3. Replace v0 classes with framingui tokens (see migration above)
 4. Continue with framingui MCP for new components
 ```
 
@@ -650,7 +650,7 @@ Yes! framingui works with any component library:
 # Install shadcn components
 npx shadcn-ui@latest init
 
-# Generate tekton tokens
+# Generate framingui tokens
 npx @framingui/cli init
 
 # Use both together
@@ -662,7 +662,7 @@ import { tokens } from '@/design-system/tokens';
 </Button>
 ```
 
-shadcn components + tekton tokens = best of both worlds.
+shadcn components + framingui tokens = best of both worlds.
 
 ### Does framingui have a visual interface like v0?
 

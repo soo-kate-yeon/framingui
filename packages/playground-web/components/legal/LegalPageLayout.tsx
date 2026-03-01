@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Menu, X, Moon, Sun, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -39,7 +39,7 @@ export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {
   const currentToc = toc[locale];
   const currentContent = content[locale];
   const currentTitle = title[locale];
-  const nextHeadingId = useMemo(() => createHeadingIdFactory(), [currentContent]);
+  const nextHeadingId = createHeadingIdFactory();
 
   // 다크모드 persistence
   useEffect(() => {

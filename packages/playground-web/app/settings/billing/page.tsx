@@ -11,6 +11,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { UserLicense } from '@/lib/db/types';
+import { isPaymentsEnabled } from '@/lib/paddle/config';
 
 export default function BillingPage() {
   const { user } = useAuth();
@@ -44,7 +45,7 @@ export default function BillingPage() {
   const expiredLicenses = licenses.filter((l) => !l.is_active);
 
   // 결제 기능 비활성화 시
-  if (process.env.NEXT_PUBLIC_ENABLE_PAYMENTS !== 'true') {
+  if (!isPaymentsEnabled()) {
     return (
       <div className="space-y-6">
         <div>

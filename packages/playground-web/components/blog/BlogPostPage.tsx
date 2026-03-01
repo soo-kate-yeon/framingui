@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Moon, Sun } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
@@ -34,7 +34,7 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   const toc = post.toc[locale];
   const rt = post.readingTime[locale];
   const related = relatedPosts[locale];
-  const nextHeadingId = useMemo(() => createHeadingIdFactory(), [content]);
+  const nextHeadingId = createHeadingIdFactory();
 
   // 다크모드 persistence
   useEffect(() => {

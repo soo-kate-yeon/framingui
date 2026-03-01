@@ -19,7 +19,7 @@ import {
 } from '../modals';
 import type { TemplateData } from '../../data/templates';
 import { trackFunnelFreeTrialStarted } from '../../lib/analytics';
-import { ExploreTopBanner } from './ExploreTopBanner';
+import { BetaBanner } from '../shared/BetaBanner';
 
 // ============================================================================
 // Types
@@ -114,7 +114,7 @@ export function ExplorePageClient({ children }: ExplorePageClientProps) {
 
   return (
     <>
-      <ExploreTopBanner onStartFreeTrial={handleOpenFreeTrialModal} />
+      <BetaBanner onStartFreeTrial={handleOpenFreeTrialModal} />
 
       {/* 원래 페이지 콘텐츠 */}
       {children}
