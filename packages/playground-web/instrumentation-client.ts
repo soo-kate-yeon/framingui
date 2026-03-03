@@ -29,8 +29,8 @@ export function register() {
   // PostHog 초기화 (이미 초기화되었으면 건너뛰기)
   if (!posthog.__loaded) {
     posthog.init(posthogKey, {
-      // reverse proxy 사용 (next.config.ts에서 /ingest → https://us.i.posthog.com 리다이렉트)
-      api_host: '/ingest',
+      // 직접 PostHog 호스트 사용 (reverse proxy 대신)
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
 
       // Autocapture 비활성화 (명시적 이벤트만 트래킹)
       autocapture: false,
