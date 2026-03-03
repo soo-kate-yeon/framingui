@@ -1,6 +1,6 @@
 {
   "name": "@framingui/tokens",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "TypeScript token type definitions with compile-time enforcement",
   "type": "module",
   "main": "./dist/index.js",

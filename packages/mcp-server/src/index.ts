@@ -60,7 +60,7 @@ import {
 const server = new Server(
   {
     name: 'framingui-mcp-server',
-    version: '2.1.0',
+    version: '0.5.4',
   },
   {
     capabilities: {
