@@ -30,7 +30,7 @@ export function register() {
   if (!posthog.__loaded) {
     posthog.init(posthogKey, {
       // Use relative /ingest path for Next.js rewrites to bypass Cloudflare Error 1014
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || '/ingest',
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
       ui_host: 'https://us.posthog.com',
 
       // Autocapture 비활성화 (명시적 이벤트만 트래킹)
