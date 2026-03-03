@@ -29,8 +29,9 @@ export function register() {
   // PostHog 초기화 (이미 초기화되었으면 건너뛰기)
   if (!posthog.__loaded) {
     posthog.init(posthogKey, {
-      // 직접 PostHog 호스트 사용 (reverse proxy 대신)
-      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+      // Use relative /ingest path for Next.js rewrites to bypass Cloudflare Error 1014
+      api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || '/ingest',
+      ui_host: 'https://us.posthog.com',
 
       // Autocapture 비활성화 (명시적 이벤트만 트래킹)
       autocapture: false,

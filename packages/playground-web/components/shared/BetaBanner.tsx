@@ -41,9 +41,11 @@ export function BetaBanner({ onStartFreeTrial }: BetaBannerProps) {
       {/* Subtle overlay to improve legibility if needed */}
       <div className="absolute inset-0 bg-black/5 pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-sm sm:text-base">
-          <p className="text-left font-medium tracking-tight opacity-95">{content.label}</p>
+      <div className="max-w-7xl mx-auto px-4 py-3 sm:py-2.5 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col sm:flex-row items-center sm:justify-between gap-2 sm:gap-3 text-sm sm:text-base">
+          <p className="text-center sm:text-left font-medium tracking-tight opacity-95">
+            {content.label}
+          </p>
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <button
               onClick={onStartFreeTrial}

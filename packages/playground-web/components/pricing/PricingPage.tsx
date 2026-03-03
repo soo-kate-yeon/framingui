@@ -203,16 +203,18 @@ export function PricingPage() {
             return (
               <FadeIn key={planId} delay={index * 0.1} className="h-full">
                 <div
-                  className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-sm ${planData.featured ? 'border-neutral-950' : 'border-neutral-200'
-                    }`}
+                  className={`relative flex flex-col h-full p-6 md:p-8 rounded-2xl border transition-shadow hover:shadow-sm ${
+                    planData.featured ? 'border-neutral-950' : 'border-neutral-200'
+                  }`}
                 >
                   {/* 배지 */}
                   {planData.badge && (
                     <div
-                      className={`absolute -top-3 left-6 px-3 py-1 text-xs font-semibold rounded-full ${planData.featured
+                      className={`absolute -top-3 left-6 px-3 py-1 text-xs font-semibold rounded-full ${
+                        planData.featured
                           ? 'bg-neutral-950 text-white'
                           : 'bg-neutral-100 text-neutral-700 border border-neutral-200'
-                        }`}
+                      }`}
                     >
                       {planData.badge === 'Best Value' && (
                         <Sparkles className="w-3 h-3 inline mr-1 -mt-0.5" />
@@ -271,10 +273,11 @@ export function PricingPage() {
                           handleCheckout('creator');
                         }
                       }}
-                      className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${planData.featured
+                      className={`w-full py-3 px-6 rounded-full text-sm font-semibold transition-colors mb-3 flex items-center justify-center gap-2 ${
+                        planData.featured
                           ? 'bg-neutral-950 text-white hover:bg-neutral-800'
                           : 'bg-neutral-100 text-neutral-950 hover:bg-neutral-200'
-                        }`}
+                      }`}
                     >
                       {planId === 'single' ? content.ui.getBetaAccess : planContent.cta}
                       <ArrowRight className="w-4 h-4" />
@@ -305,10 +308,10 @@ export function PricingPage() {
 
           <FadeIn delay={0.1}>
             <div className="overflow-x-auto rounded-xl border border-neutral-200">
-              <table className="w-full text-sm">
+              <table className="w-full text-sm min-w-[480px]">
                 <thead>
                   <tr className="border-b border-neutral-200">
-                    <th className="text-left py-4 pr-4 font-medium text-neutral-500 w-1/4">
+                    <th className="text-left py-4 pr-4 font-medium text-neutral-500 w-[35%]">
                       {content.comparison.tableHeaders.feature}
                     </th>
                     <th className="text-center py-4 px-4 font-bold text-neutral-900">

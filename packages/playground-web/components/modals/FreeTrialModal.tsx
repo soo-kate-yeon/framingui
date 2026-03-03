@@ -204,23 +204,23 @@ export function FreeTrialModal({
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] pointer-events-auto">
+    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] pointer-events-auto">
       {/* Card */}
       <div
-        className={`w-96 bg-white rounded-none shadow-xl border border-neutral-200 transition-all duration-300 ${
+        className={`w-[calc(100vw-2rem)] max-w-[24rem] bg-white rounded-none shadow-xl border border-neutral-200 transition-all duration-300 ${
           isClosing ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100 animate-slide-up'
         }`}
       >
-        <div className="p-10 flex flex-col text-left">
+        <div className="p-6 sm:p-10 flex flex-col text-left">
           {/* Title */}
-          <h2 className="text-3xl font-semibold tracking-tight text-neutral-950 mb-3">
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-neutral-950 mb-3">
             {content.title.part1}
             <br />
             {content.title.part2}
           </h2>
 
           {/* Subtitle */}
-          <p className="text-base text-neutral-600 leading-relaxed mb-8">
+          <p className="text-sm sm:text-base text-neutral-600 leading-relaxed mb-6 sm:mb-8">
             {content.subtitle.line1}
             <br />
             {content.subtitle.line2}
