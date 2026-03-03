@@ -13,7 +13,6 @@
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { GlobalLanguageProvider } from '@/contexts/GlobalLanguageContext';
-import { PostHogProvider } from '@/contexts/PostHogContext';
 import type { ReactNode } from 'react';
 
 interface ProvidersProps {
@@ -23,16 +22,15 @@ interface ProvidersProps {
 /**
  * 전역 Provider 컴포넌트
  *
- * GlobalLanguageProvider, PostHogProvider, AuthProvider (Supabase Auth), ThemeContext를 통합
+ * GlobalLanguageProvider, AuthProvider (Supabase Auth), ThemeContext를 통합
+ * Analytics: Google Analytics 4 (layout.tsx에서 로드)
  */
 export function Providers({ children }: ProvidersProps) {
   return (
     <GlobalLanguageProvider>
-      <PostHogProvider>
-        <AuthProvider>
-          <ThemeProvider>{children}</ThemeProvider>
-        </AuthProvider>
-      </PostHogProvider>
+      <AuthProvider>
+        <ThemeProvider>{children}</ThemeProvider>
+      </AuthProvider>
     </GlobalLanguageProvider>
   );
 }
