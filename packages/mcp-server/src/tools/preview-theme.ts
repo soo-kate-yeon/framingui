@@ -131,7 +131,7 @@ export async function previewThemeTool(input: PreviewThemeInput): Promise<Previe
     if (!authData || !authData.valid) {
       return {
         success: false,
-        error: `Authentication required to preview themes. Run \`framingui-mcp login\` to authenticate.`,
+        error: `🔐 Authentication required to preview themes.\n\n🎁 Start your FREE 3-day trial (no credit card):\n   → https://framingui.com/auth/signup?utm_source=mcp&utm_medium=cli&utm_campaign=theme_preview\n\nAlready have an account? Run \`framingui-mcp login\``,
       };
     }
 

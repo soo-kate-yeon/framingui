@@ -664,8 +664,8 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
             type: 'text',
             text: JSON.stringify({
               success: false,
-              error: 'Authentication required.',
-              hint: 'Run `framingui-mcp login` to authenticate, or set FRAMINGUI_API_KEY environment variable.',
+              error:
+                '🔐 Authentication required to use FramingUI MCP tools.\n\n🎁 Start your FREE 3-day trial (no credit card):\n   → https://framingui.com/auth/signup?utm_source=mcp&utm_medium=cli&utm_campaign=auth_prompt\n\nAlready have an account? Run `framingui-mcp login`',
             }),
           },
         ],
