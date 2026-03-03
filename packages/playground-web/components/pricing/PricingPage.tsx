@@ -13,7 +13,7 @@ import { motion } from 'framer-motion';
 import { Check, X, ArrowRight, Sparkles } from 'lucide-react';
 import { Accordion } from '../landing/Accordion';
 import { Footer } from '../shared/Footer';
-import { BetaBanner } from '../shared/BetaBanner';
+import { FreeTrialBanner } from '../shared/FreeTrialBanner';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getPricingContent } from '../../data/i18n/pricing';
 import { useAuth } from '../../contexts/AuthContext';
@@ -157,7 +157,7 @@ export function PricingPage() {
 
   return (
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white pt-12">
-      <BetaBanner />
+      <FreeTrialBanner />
 
       {/* 네비게이션 */}
       <nav className="border-b border-neutral-200">

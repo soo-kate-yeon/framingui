@@ -1,11 +1,11 @@
 import type { BlogLocale } from '../../lib/blog';
 
-export interface BetaBannerContent {
+export interface FreeTrialBannerContent {
   label: string;
   cta: string;
 }
 
-export const betaBannerContent: Record<BlogLocale, BetaBannerContent> = {
+export const freeTrialBannerContent: Record<BlogLocale, FreeTrialBannerContent> = {
   en: {
     label: 'FramingUI Beta is live. Agent-first design systems for modern engineering teams.',
     cta: 'Start Free Trial',
@@ -22,6 +22,6 @@ export const betaBannerContent: Record<BlogLocale, BetaBannerContent> = {
   },
 };
 
-export function getBetaBannerContent(locale: BlogLocale): BetaBannerContent {
-  return betaBannerContent[locale] || betaBannerContent.en;
+export function getFreeTrialBannerContent(locale: BlogLocale): FreeTrialBannerContent {
+  return freeTrialBannerContent[locale] || freeTrialBannerContent.en;
 }

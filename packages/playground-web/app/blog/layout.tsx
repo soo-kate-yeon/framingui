@@ -1,6 +1,6 @@
 'use client';
 
-import { BetaBanner } from '@/components/shared/BetaBanner';
+import { FreeTrialBanner } from '@/components/shared/FreeTrialBanner';
 import { useRouter } from 'next/navigation';
 
 export default function BlogLayout({ children }: { children: React.ReactNode }) {
@@ -8,7 +8,7 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <BetaBanner onStartFreeTrial={() => router.push('/explore')} />
+      <FreeTrialBanner onStartFreeTrial={() => router.push('/explore')} />
       {children}
     </>
   );
