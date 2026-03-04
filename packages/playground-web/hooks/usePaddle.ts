@@ -9,13 +9,13 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { initializePaddle, type Paddle } from '@paddle/paddle-js';
+import { initializePaddle, type Paddle, type PaddleEventData } from '@paddle/paddle-js';
 import { PADDLE_CONFIG, isPaymentsEnabled } from '@/lib/paddle/config';
 
 export interface OpenCheckoutParams {
   priceId: string;
   userId: string;
-  userEmail: string;
+  userEmail?: string | null;
   themeId?: string;
   tier: 'single' | 'double' | 'creator';
 }
@@ -55,6 +55,12 @@ export function usePaddle() {
     initializePaddle({
       environment: PADDLE_CONFIG.environment,
       token: PADDLE_CONFIG.clientToken,
+      // checkout-service 400 등 Paddle 내부 오류 관측을 위해 이벤트를 남긴다.
+      eventCallback: (event: PaddleEventData) => {
+        if (event?.name === 'checkout.error') {
+          console.error('[Paddle] checkout.error event:', event);
+        }
+      },
     })
       .then((paddleInstance) => {
         if (paddleInstance) {
@@ -77,15 +83,37 @@ export function usePaddle() {
         return;
       }
 
-      paddle.Checkout.open({
+      const trimmedEmail = userEmail?.trim();
+      const normalizedThemeId = themeId?.trim();
+
+      // NOTE:
+      // - 빈 email/theme_id를 전달하면 Paddle checkout-service에서 400이 발생할 수 있어
+      //   유효한 값만 조건부로 포함한다.
+      const checkoutOptions: Parameters<typeof paddle.Checkout.open>[0] = {
         items: [{ priceId, quantity: 1 }],
-        customer: { email: userEmail },
         customData: {
           user_id: userId,
-          theme_id: themeId ?? '',
           tier,
+          ...(normalizedThemeId ? { theme_id: normalizedThemeId } : {}),
         },
-      });
+        ...(trimmedEmail ? { customer: { email: trimmedEmail } } : {}),
+        settings: {
+          // 결제 완료 후 사용자가 앱으로 복귀할 수 있도록 명시
+          successUrl: `${window.location.origin}/settings/billing?checkout=success`,
+        },
+      };
+
+      try {
+        paddle.Checkout.open(checkoutOptions);
+      } catch (error) {
+        console.error('[Paddle] Checkout.open failed:', {
+          tier,
+          priceId,
+          hasEmail: Boolean(trimmedEmail),
+          hasThemeId: Boolean(normalizedThemeId),
+          error,
+        });
+      }
     },
     [paddle]
   );
