@@ -29,7 +29,7 @@ You handle quality assurance while Claude Code handles development. This separat
 
 ### 4. Error Log Analysis
 
-- Parse Vercel deployment logs, PostHog errors
+- Parse Vercel deployment logs, analytics errors
 - Identify patterns and root causes
 - Suggest actionable fixes
 

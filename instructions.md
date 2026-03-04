@@ -52,7 +52,7 @@
 
 - [ ] Preview/Deploy URL 헬스 체크
 - [ ] 마이그레이션 필요 시 업/다운 전략 검증
-- [ ] 에러 모니터링(PostHog/Sentry 등) 확인 포인트 정의
+- [ ] 에러 모니터링 (analytics, Sentry 등) 확인 포인트 정의
 
 ---
 
