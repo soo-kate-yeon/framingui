@@ -1,24 +1,23 @@
-# @tekton/tokens
+# @framingui/tokens
 
-TypeScript token type definitions for Tekton Design System with compile-time enforcement.
+> TypeScript token type definitions with compile-time enforcement
 
-## Overview
-
-Provides TypeScript interfaces for design tokens that enforce CSS variable references at compile time.
+[![npm](https://img.shields.io/npm/v/@framingui/tokens)](https://www.npmjs.com/package/@framingui/tokens)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 
 ## Installation
 
 ```bash
-pnpm add @tekton/tokens
+npm install @framingui/tokens
 ```
 
 ## Usage
 
 ```typescript
-import type { TektonTokens, TokenReference } from '@tekton/tokens';
+import type { FramingUITokens, TokenReference } from '@framingui/tokens';
 
 // TokenReference ensures only CSS variables are allowed
-const background: TokenReference = 'var(--tekton-bg-surface-default)';
+const background: TokenReference = 'var(--framingui-bg-surface-default)';
 
 // TypeScript error: Type '"#ffffff"' is not assignable to type 'TokenReference'
 // const invalid: TokenReference = '#ffffff';
@@ -26,17 +25,12 @@ const background: TokenReference = 'var(--tekton-bg-surface-default)';
 
 ## Token Categories
 
-- **BgTokens**: Background colors (surface, primary, secondary, etc.)
+- **BgTokens**: Background colors
 - **FgTokens**: Foreground/text colors
-- **SpacingTokens**: Spacing scale (0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24)
-- **RadiusTokens**: Border radius (none, sm, md, lg, xl, full)
-- **TypographyTokens**: Font families, sizes, weights, line heights
-- **ShadowTokens**: Box shadows (none, sm, md, lg, xl)
-
-## SPEC Reference
-
-- [SPEC-STYLED-001](/.moai/specs/SPEC-STYLED-001/spec.md)
-- TAG-002: Token Type Definitions
+- **SpacingTokens**: Spacing scale
+- **RadiusTokens**: Border radius
+- **TypographyTokens**: Font properties
+- **ShadowTokens**: Box shadows
 
 ## License
 
