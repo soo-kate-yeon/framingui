@@ -1,0 +1,549 @@
+---
+title: "Design Tokens for AI Agents: A Complete Guide"
+description: "Learn how AI agents understand and use design tokens effectively—with color, typography, and spacing examples plus hallucination-proof architecture."
+date: "2025-03-05"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - ai-agents
+  - mcp
+  - architecture
+  - hallucination-prevention
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+# Design Tokens for AI Agents: A Complete Guide
+
+AI agents can code. But can they design consistently?
+
+The answer depends entirely on how you structure your design tokens. Give an AI agent raw Tailwind classes, and it'll invent a new shade of blue for every component. Give it proper design tokens, and it'll build pixel-perfect UIs that match your design system.
+
+This guide shows you how to architect design tokens that AI agents actually understand—and how to prevent hallucination in the process.
+
+## The Problem: AI Doesn't "See" Your Design System
+
+When you ask Claude Code or Cursor to generate a button, it doesn't know your brand colors. It guesses based on training data:
+
+```tsx
+// AI hallucination: inventing arbitrary values
+<button className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg">
+  Submit
+</button>
+
+// Next component: different blue, different spacing
+<div className="bg-indigo-500 p-4 rounded-md">
+  Card content
+</div>
+```
+
+**Every component looks different because the AI has no single source of truth.**
+
+## The Solution: Design Tokens as AI-Readable Data
+
+Design tokens bridge the gap between human design intent and AI code generation. They're not just CSS variables—they're **structured data that AI can query, understand, and apply consistently**.
+
+### What Makes a Token "AI-Readable"?
+
+1. **Semantic naming** — `color-primary` instead of `blue-600`
+2. **Type information** — Is this a color? A spacing value? A shadow?
+3. **Usage context** — When should this token be used?
+4. **Hierarchical structure** — Primitives → Semantic → Component tokens
+
+## Architecture: Three-Tier Token System for AI
+
+The most effective token architecture for AI agents uses three layers:
+
+### Tier 1: Primitive Tokens (Raw Values)
+
+These are your design system's raw materials:
+
+```typescript
+// tokens/primitives.ts
+export const primitives = {
+  color: {
+    blue: {
+      50: 'oklch(0.97 0.02 250)',
+      100: 'oklch(0.93 0.04 250)',
+      500: 'oklch(0.55 0.15 250)',
+      900: 'oklch(0.25 0.10 250)',
+    },
+    neutral: {
+      50: 'oklch(0.98 0 0)',
+      100: 'oklch(0.95 0 0)',
+      900: 'oklch(0.20 0 0)',
+      950: 'oklch(0.15 0 0)',
+    }
+  },
+  spacing: {
+    1: '0.25rem',   // 4px
+    2: '0.5rem',    // 8px
+    3: '0.75rem',   // 12px
+    4: '1rem',      // 16px
+    6: '1.5rem',    // 24px
+    8: '2rem',      // 32px
+  },
+  fontSize: {
+    xs: '0.75rem',
+    sm: '0.875rem',
+    base: '1rem',
+    lg: '1.125rem',
+    xl: '1.25rem',
+    '2xl': '1.5rem',
+  }
+}
+```
+
+**Why this works for AI:** AI can see the full range of available values and understand the scale system.
+
+### Tier 2: Semantic Tokens (Purpose-Based)
+
+Map primitives to design intent:
+
+```typescript
+// tokens/semantic.ts
+export const semantic = {
+  color: {
+    // Backgrounds
+    backgroundPrimary: primitives.color.neutral[50],
+    backgroundSecondary: primitives.color.neutral[100],
+    backgroundInverse: primitives.color.neutral[950],
+    
+    // Text
+    textPrimary: primitives.color.neutral[900],
+    textSecondary: primitives.color.neutral[600],
+    textInverse: primitives.color.neutral[50],
+    
+    // Interactive
+    interactivePrimary: primitives.color.blue[500],
+    interactivePrimaryHover: primitives.color.blue[600],
+    interactiveDisabled: primitives.color.neutral[300],
+    
+    // Feedback
+    feedbackSuccess: primitives.color.green[500],
+    feedbackError: primitives.color.red[500],
+    feedbackWarning: primitives.color.amber[500],
+  },
+  
+  spacing: {
+    componentGapSmall: primitives.spacing[2],
+    componentGapMedium: primitives.spacing[4],
+    componentGapLarge: primitives.spacing[6],
+    
+    insetSmall: primitives.spacing[2],
+    insetMedium: primitives.spacing[4],
+    insetLarge: primitives.spacing[6],
+  },
+  
+  typography: {
+    headingLarge: {
+      fontSize: primitives.fontSize['2xl'],
+      fontWeight: '700',
+      lineHeight: '1.2',
+    },
+    headingMedium: {
+      fontSize: primitives.fontSize.xl,
+      fontWeight: '600',
+      lineHeight: '1.3',
+    },
+    bodyDefault: {
+      fontSize: primitives.fontSize.base,
+      fontWeight: '400',
+      lineHeight: '1.5',
+    },
+    bodySmall: {
+      fontSize: primitives.fontSize.sm,
+      fontWeight: '400',
+      lineHeight: '1.4',
+    }
+  }
+}
+```
+
+**Why this works for AI:** Token names describe *intent* (primary, secondary, disabled), not implementation (blue, gray). AI can reason about which token to use based on component purpose.
+
+### Tier 3: Component Tokens (Specific Use Cases)
+
+Component-specific overrides and compositions:
+
+```typescript
+// tokens/components.ts
+export const components = {
+  button: {
+    // Primary variant
+    primaryBackground: semantic.color.interactivePrimary,
+    primaryBackgroundHover: semantic.color.interactivePrimaryHover,
+    primaryText: semantic.color.textInverse,
+    primaryPadding: `${semantic.spacing.insetSmall} ${semantic.spacing.insetMedium}`,
+    primaryBorderRadius: primitives.borderRadius.default,
+    
+    // Secondary variant
+    secondaryBackground: 'transparent',
+    secondaryBorder: semantic.color.interactivePrimary,
+    secondaryText: semantic.color.interactivePrimary,
+    
+    // States
+    disabledBackground: semantic.color.interactiveDisabled,
+    disabledText: semantic.color.textSecondary,
+  },
+  
+  card: {
+    background: semantic.color.backgroundSecondary,
+    border: semantic.color.borderDefault,
+    padding: semantic.spacing.insetLarge,
+    borderRadius: primitives.borderRadius.large,
+    shadow: primitives.shadow.medium,
+  },
+  
+  input: {
+    background: semantic.color.backgroundPrimary,
+    border: semantic.color.borderDefault,
+    borderFocus: semantic.color.interactivePrimary,
+    text: semantic.color.textPrimary,
+    placeholder: semantic.color.textSecondary,
+    padding: semantic.spacing.insetSmall,
+  }
+}
+```
+
+**Why this works for AI:** When generating a button, AI queries `components.button.*` and gets exact values. No guessing. No hallucination.
+
+## Example: AI Agent Using Tokens
+
+Here's how an AI agent (via MCP or direct API) would generate a button component using your tokens:
+
+### Without Design Tokens (Hallucination)
+
+```tsx
+// AI invents arbitrary values
+function Button({ children }) {
+  return (
+    <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold">
+      {children}
+    </button>
+  )
+}
+```
+
+### With Design Tokens (Grounded)
+
+```tsx
+// AI queries token system and generates consistent code
+import { components } from '@/tokens/components'
+
+function Button({ children, variant = 'primary' }) {
+  return (
+    <button 
+      style={{
+        background: components.button.primaryBackground,
+        color: components.button.primaryText,
+        padding: components.button.primaryPadding,
+        borderRadius: components.button.primaryBorderRadius,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = components.button.primaryBackgroundHover
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+**Every button generated by AI looks identical because it references the same tokens.**
+
+## Hallucination Prevention: Architecture Patterns
+
+### Pattern 1: Token Validation Layer
+
+Prevent AI from inventing values by validating against your token schema:
+
+```typescript
+// tokens/validate.ts
+import { primitives, semantic, components } from './index'
+
+export function validateToken(tokenPath: string): boolean {
+  const [tier, category, ...rest] = tokenPath.split('.')
+  
+  const tokenMap = {
+    primitives,
+    semantic,
+    components,
+  }
+  
+  let current = tokenMap[tier]
+  for (const key of [category, ...rest]) {
+    if (!current?.[key]) {
+      throw new Error(`Invalid token: ${tokenPath}`)
+    }
+    current = current[key]
+  }
+  
+  return true
+}
+
+// Usage in AI prompt
+const tokenPath = 'semantic.color.interactivePrimary'
+if (validateToken(tokenPath)) {
+  // Safe to use
+}
+```
+
+### Pattern 2: Token Autocomplete Context
+
+Provide AI with a structured token reference in every prompt:
+
+```typescript
+// tokens/context.ts
+export function getTokenContext() {
+  return `
+Available Design Tokens:
+
+Colors:
+- semantic.color.interactivePrimary → Main action color
+- semantic.color.textPrimary → Body text
+- semantic.color.backgroundPrimary → Default background
+
+Spacing:
+- semantic.spacing.insetSmall → 8px padding
+- semantic.spacing.insetMedium → 16px padding
+- semantic.spacing.componentGapMedium → 16px gap
+
+Components:
+- components.button.primaryBackground
+- components.button.primaryPadding
+- components.card.padding
+
+Rules:
+1. NEVER use hardcoded colors (e.g., #3b82f6, blue-600)
+2. ALWAYS reference tokens from the lists above
+3. If unsure, ask which token to use
+  `.trim()
+}
+```
+
+Add this to your AI agent's system prompt, and it'll have constant awareness of available tokens.
+
+### Pattern 3: Token-First Code Generation
+
+Structure your prompts to enforce token usage:
+
+```
+Generate a primary button component.
+
+Requirements:
+1. Use components.button.* tokens for styling
+2. No hardcoded values allowed
+3. Include hover state using components.button.primaryBackgroundHover
+
+Available tokens:
+${getTokenContext()}
+```
+
+## Real-World Example: FramingUI MCP Integration
+
+FramingUI provides first-class MCP (Model Context Protocol) support for AI agents. Here's how tokens flow from design system to AI-generated code:
+
+### 1. Token Definition (Your Design System)
+
+```typescript
+// design-system/tokens.ts
+export const tokens = {
+  semantic: {
+    color: {
+      interactivePrimary: 'var(--color-interactive-primary)',
+      textPrimary: 'var(--color-text-primary)',
+    }
+  }
+}
+```
+
+### 2. MCP Server Exposes Tokens
+
+```typescript
+// mcp-server/handlers.ts
+mcp.tool('get_design_tokens', async () => {
+  return {
+    tokens: tokens,
+    schema: tokenSchema,
+  }
+})
+```
+
+### 3. AI Agent Queries Tokens
+
+```typescript
+// AI agent uses MCP to query tokens
+const { tokens } = await mcp.callTool('get_design_tokens')
+
+// AI generates code using token values
+const buttonCode = `
+<button style={{
+  background: '${tokens.semantic.color.interactivePrimary}',
+  color: '${tokens.semantic.color.textPrimary}',
+}}>
+  Click me
+</button>
+`
+```
+
+**Result:** Zero hallucination. Every component references your actual design system.
+
+## Best Practices for AI-Friendly Tokens
+
+### 1. Use Descriptive Semantic Names
+
+❌ **Bad:** `color1`, `spacing-md`, `blue-main`
+
+✅ **Good:** `color-interactive-primary`, `spacing-component-gap-medium`, `color-brand-primary`
+
+### 2. Include Type Information
+
+```typescript
+export type ColorToken = `var(--color-${string})`
+export type SpacingToken = `var(--spacing-${string})`
+
+export const tokens: {
+  color: Record<string, ColorToken>
+  spacing: Record<string, SpacingToken>
+} = {
+  color: {
+    primary: 'var(--color-interactive-primary)',
+  },
+  spacing: {
+    medium: 'var(--spacing-4)',
+  }
+}
+```
+
+TypeScript ensures AI (and developers) use tokens correctly.
+
+### 3. Document Token Usage
+
+```typescript
+/**
+ * Primary interactive color
+ * @usage Buttons, links, active states
+ * @contrast Meets WCAG AA on backgroundPrimary
+ * @example <Button bg={tokens.color.interactivePrimary}>Save</Button>
+ */
+export const interactivePrimary = 'var(--color-interactive-primary)'
+```
+
+AI can read JSDoc comments to understand when to use each token.
+
+### 4. Provide Fallback Values
+
+```typescript
+export const tokens = {
+  color: {
+    primary: 'var(--color-interactive-primary, oklch(0.55 0.15 250))',
+  }
+}
+```
+
+If CSS variable fails, fallback ensures UI doesn't break.
+
+## Token Architecture Checklist
+
+Use this checklist to audit your design token system for AI readiness:
+
+- [ ] **Three-tier structure** (primitives → semantic → components)
+- [ ] **Semantic naming** (`interactivePrimary` not `blue600`)
+- [ ] **Type safety** (TypeScript types for token categories)
+- [ ] **Usage documentation** (JSDoc comments on every token)
+- [ ] **Validation layer** (Prevent invalid token references)
+- [ ] **MCP integration** (AI agents can query tokens programmatically)
+- [ ] **Token context in prompts** (AI knows available tokens)
+- [ ] **Fallback values** (CSS variables with fallbacks)
+- [ ] **Dark mode support** (Tokens adapt to theme)
+- [ ] **Single source of truth** (One token definition file)
+
+## Common Pitfalls
+
+### Pitfall 1: Too Many Component Tokens
+
+Don't create a component token for every CSS property:
+
+❌ **Over-tokenization:**
+```typescript
+button: {
+  primaryBackgroundColorLightModeDefault: '...',
+  primaryBackgroundColorLightModeHover: '...',
+  primaryBackgroundColorDarkModeDefault: '...',
+  // 50 more tokens...
+}
+```
+
+✅ **Right level of abstraction:**
+```typescript
+button: {
+  primaryBackground: semantic.color.interactivePrimary,
+  primaryBackgroundHover: semantic.color.interactivePrimaryHover,
+  primaryText: semantic.color.textInverse,
+}
+```
+
+### Pitfall 2: Mixing Tiers
+
+Don't reference primitives directly in component code:
+
+❌ **Bad:**
+```tsx
+<Button bg={primitives.color.blue[500]} />
+```
+
+✅ **Good:**
+```tsx
+<Button bg={components.button.primaryBackground} />
+```
+
+### Pitfall 3: Ambiguous Names
+
+Avoid names that don't communicate intent:
+
+❌ **Ambiguous:** `colorMain`, `spacingDefault`, `sizeNormal`
+
+✅ **Clear:** `color-interactive-primary`, `spacing-component-gap`, `size-button-default`
+
+## Measuring Success
+
+Track these metrics to validate your token architecture:
+
+1. **Hallucination rate** — % of AI-generated components using hardcoded values vs. tokens
+2. **Token coverage** — % of codebase using tokens
+3. **Design consistency score** — Unique color/spacing values across components (lower = better)
+4. **AI iteration time** — How many rounds of "fix this color" feedback
+
+**Goal:** <5% hallucination rate, >95% token coverage, <20 unique colors app-wide.
+
+## Get Started: FramingUI Token System
+
+FramingUI ships with a production-ready token architecture built for AI agents:
+
+- Three-tier token structure out of the box
+- MCP server with token query support
+- TypeScript types for all tokens
+- OKLCH color system (perceptually uniform)
+- Automatic dark mode support
+- Token validation utilities
+
+```bash
+npx framingui init
+```
+
+Generates a complete token system ready for AI agent integration.
+
+[Explore the token system →](/docs/tokens)
+
+## Conclusion
+
+Design tokens aren't just for human developers anymore. They're the interface between human design intent and AI code generation.
+
+Get your token architecture right, and AI agents become reliable design system citizens—generating perfectly consistent UIs every time.
+
+Get it wrong, and you'll spend hours fixing AI hallucinations.
+
+**The choice is yours. But the architecture is clear.**
