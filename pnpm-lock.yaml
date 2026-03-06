@@ -183,6 +183,12 @@ importers:
       '@babel/traverse':
         specifier: ^7.28.6
         version: 7.28.6
+      '@framingui/core':
+        specifier: ^0.4.0
+        version: 0.4.1
+      '@framingui/ui':
+        specifier: ^0.6.0
+        version: 0.6.2(883d942f6df9be89f8b1aee0a3a6f958)
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
