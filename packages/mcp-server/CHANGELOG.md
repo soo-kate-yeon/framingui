@@ -2,6 +2,17 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.4] - 2026-03-07
+
+### Fixed
+
+- Disabled shared auth-route caching for theme access checks so MCP sessions no longer reuse stale authorization state.
+- Kept theme and component discovery aligned with the refreshed token and template catalogs used by the hosted API routes.
+
+### Changed
+
+- Raised the published `@framingui/core` and `@framingui/ui` dependency floor to the versions that include the prefixless token migration and latest catalog fixes.
+
 ## [0.6.3] - 2026-03-06
 
 ### Fixed

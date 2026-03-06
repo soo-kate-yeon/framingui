@@ -5,6 +5,17 @@ All notable changes to @framingui/ui will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.4] - 2026-03-07
+
+### Changed
+
+- Migrated component and template styling to the prefixless token naming scheme across the published React UI library.
+- Refreshed template examples, docs, and theme-loading helpers to stay aligned with the updated token contract shipped by `@framingui/core` and `@framingui/tokens`.
+
+### Testing
+
+- Added and updated regression coverage for card, form, table, tabs, template rendering, and theme loader behavior under the new token naming model.
+
 ## [0.6.3] - 2026-03-06
 
 ### Changed

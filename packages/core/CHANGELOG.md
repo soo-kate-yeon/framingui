@@ -5,6 +5,17 @@ All notable changes to @tekton/core will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - 2026-03-07
+
+### Changed
+
+- Migrated bundled template and token-facing template definitions to the prefixless token naming model introduced in the design token refresh.
+- Refreshed catalog-backed screen template data so downstream UI and MCP consumers resolve the updated token contract consistently.
+
+### Fixed
+
+- Hardened bundled icon-library data preparation so clean CI and publish builds keep working after the design token migration.
+
 ## [0.4.5] - 2026-03-06
 
 ### Fixed
