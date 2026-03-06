@@ -1,0 +1,252 @@
+---
+title: "MCP for Designers: How AI Agents Read Your Design System"
+description: "Understanding Model Context Protocol from a designer's perspective and how AI agents use design tokens to build consistent UIs without guesswork."
+date: "2025-03-06"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-system
+  - mcp
+  - ai-tools
+  - design-tokens
+category: "Concept"
+coverImage: ""
+published: true
+---
+
+## What is MCP, and Why Should Designers Care?
+
+If you're a designer, you've probably experienced this: you spend hours perfecting a color palette, defining spacing scales, and documenting typography systems—only to see developers implement slightly off colors, inconsistent spacing, or mismatched fonts.
+
+**Model Context Protocol (MCP)** is a game-changer for this problem. It's an open standard created by Anthropic that lets AI assistants like Claude directly read and use your design system. Think of it as giving AI a "design system API" so it can generate UI components using your exact tokens—no more guessing, no more #3498db when your brand color is actually `primary-600`.
+
+For designers, MCP means:
+- **AI understands your design language** — It reads your color, spacing, and typography tokens like a developer would
+- **Consistency by default** — AI-generated components use your actual design system values
+- **Fewer handoff errors** — No more "the blue looks different from the mockup"
+
+## How AI Agents Read Design Tokens
+
+Let's break down how an AI agent like Claude Code interacts with your design system through MCP.
+
+### Traditional Workflow (Without MCP)
+
+1. Designer creates a button in Figma with `Primary/600` color
+2. Developer asks: "What's the hex code for Primary/600?"
+3. Designer checks documentation → `#7C3AED`
+4. Developer hardcodes `background-color: #7C3AED`
+5. Design system updates Primary/600 to `#8B5CF6`
+6. Component is now out of sync
+
+### With MCP (FramingUI's Approach)
+
+1. Designer defines tokens in FramingUI design system
+2. AI agent connects via MCP server
+3. Developer asks Claude: "Create a button using our primary color"
+4. Claude queries the MCP server: "What is `primary-600`?"
+5. MCP server responds: `#7C3AED` (or whatever the current value is)
+6. Claude generates: `className="bg-primary-600"` (or CSS variable)
+7. Design system updates → All components stay in sync automatically
+
+### What Can AI "See" in Your Design System?
+
+When an AI agent connects to FramingUI's MCP server, it can access:
+
+- **Color tokens** — Primary, secondary, neutral, semantic colors with full shade ranges
+- **Spacing scale** — Consistent spacing values (4px, 8px, 16px, etc.)
+- **Typography system** — Font families, sizes, weights, line heights
+- **Border radius** — Consistent corner radii across components
+- **Shadows & effects** — Elevation levels and visual effects
+- **Semantic tokens** — Success, warning, error states
+- **Accessibility data** — Contrast ratios, WCAG compliance
+
+The AI doesn't just get hex codes—it understands the **semantic meaning** behind each token. It knows `primary-600` is for interactive elements, `neutral-100` is for backgrounds, and `spacing-4` should be used for comfortable padding.
+
+## Designer-Developer Collaboration with MCP
+
+### Before MCP: The Handoff Problem
+
+**Designer perspective:**
+- Spend hours creating a detailed design system
+- Document every token, variant, and usage guideline
+- Hand off designs to developers
+- Wait for implementation
+- Review and find inconsistencies
+- Go back and forth with redlines
+
+**Developer perspective:**
+- Receive design files and documentation
+- Search for token values in Figma, Notion, or Storybook
+- Manually translate design tokens to code
+- Hope the documentation is up-to-date
+- Receive feedback on inconsistencies
+- Fix and repeat
+
+### After MCP: Real-Time Collaboration
+
+**Designer workflow:**
+1. Define design tokens in FramingUI
+2. AI agents can immediately access them
+3. Update tokens in one place
+4. All AI-generated components update automatically
+
+**Developer workflow:**
+1. Ask Claude: "Create a card component using our design system"
+2. Claude queries MCP server for tokens
+3. Generates component with correct values
+4. Zero manual lookups, zero hardcoded values
+
+**The magic:** Designers control the source of truth (design tokens), and AI ensures every generated component respects that truth.
+
+## Practical Examples from a Designer's POV
+
+### Example 1: Color Consistency
+
+**What you define:**
+```json
+{
+  "primary": {
+    "50": "#F5F3FF",
+    "600": "#7C3AED",
+    "900": "#4C1D95"
+  }
+}
+```
+
+**What AI generates (without asking for hex codes):**
+```jsx
+<Button className="bg-primary-600 text-white hover:bg-primary-700">
+  Click me
+</Button>
+```
+
+The AI **knows** which shade to use based on context. You don't need to specify "use #7C3AED"—you just say "use our primary button color," and MCP handles the rest.
+
+### Example 2: Spacing Scale
+
+**What you define:**
+```json
+{
+  "spacing": {
+    "2": "8px",
+    "4": "16px",
+    "6": "24px"
+  }
+}
+```
+
+**What AI understands:**
+- "Comfortable padding for a button" → `spacing-4` (16px)
+- "Tight spacing for list items" → `spacing-2` (8px)
+- "Generous section spacing" → `spacing-6` (24px)
+
+Instead of saying "add 16px padding," you say "use standard button padding," and the AI picks the right token.
+
+### Example 3: Typography Hierarchy
+
+**What you define:**
+```json
+{
+  "typography": {
+    "heading-1": {
+      "size": "48px",
+      "weight": "700",
+      "lineHeight": "1.2"
+    },
+    "body-md": {
+      "size": "16px",
+      "weight": "400",
+      "lineHeight": "1.5"
+    }
+  }
+}
+```
+
+**What AI generates:**
+```jsx
+<h1 className="text-heading-1">Welcome to Our Product</h1>
+<p className="text-body-md">This is a description paragraph.</p>
+```
+
+The AI respects your typographic scale without you needing to explain font sizes every time.
+
+## Benefits for Designers
+
+### 1. **Single Source of Truth**
+
+You define tokens once in FramingUI. Developers, AI agents, and documentation all pull from the same source. No more "which version is correct?"
+
+### 2. **Faster Design Iteration**
+
+Update a color token, and every component using that token updates automatically. No need to chase down developers to change hex codes.
+
+### 3. **Better Collaboration**
+
+Developers can generate components without constant back-and-forth. You review the output, give feedback, and the AI adjusts—keeping your design system intact.
+
+### 4. **Reduced Design Debt**
+
+Hardcoded values create design debt. With MCP, every component is token-based, making it easier to maintain and evolve your design system.
+
+### 5. **Accessibility by Default**
+
+FramingUI's MCP server can check contrast ratios and WCAG compliance. Ask Claude: "Does this color combo meet AA standards?" and it'll tell you instantly.
+
+## Getting Started as a Designer
+
+You don't need to be a developer to benefit from MCP. Here's how to get started:
+
+### 1. **Define Your Design Tokens**
+
+Use FramingUI's visual editor to create your color palette, spacing scale, and typography system. No code required—just design decisions.
+
+### 2. **Enable the MCP Server**
+
+Once your tokens are defined, FramingUI automatically exposes them via MCP. No extra setup needed.
+
+### 3. **Collaborate with Developers**
+
+Share your FramingUI project with your team. Developers can now ask AI assistants like Claude Code to generate components using your design tokens.
+
+### 4. **Review and Iterate**
+
+When AI generates a component, review it like you would a developer's work. The difference? The AI won't deviate from your design system unless you explicitly change the tokens.
+
+## Common Questions from Designers
+
+### "Does this replace design tools like Figma?"
+
+No. Figma is still your canvas for exploration and high-fidelity mockups. FramingUI + MCP is the **bridge between design and code**. You design in Figma, define tokens in FramingUI, and AI uses those tokens to generate production-ready components.
+
+### "Will AI guess what I want?"
+
+This is the key difference. Without MCP, AI hallucinates colors like `#3498db` or spacing like `padding: 20px`. With MCP, AI **reads your exact design system** and uses only the tokens you defined. Zero hallucination.
+
+### "Do I need to learn coding?"
+
+Not at all. You define tokens visually in FramingUI. The AI handles the code generation. You focus on design decisions; the AI handles implementation.
+
+### "What if I update a token?"
+
+That's the beauty of token-based design. Update `primary-600` from `#7C3AED` to `#8B5CF6`, and every component using `primary-600` updates automatically. No manual find-and-replace.
+
+## The Future of Designer-AI Collaboration
+
+MCP is just the beginning. Imagine a future where:
+
+- You sketch a layout in Figma, and AI generates a fully token-based React component in seconds
+- You ask Claude: "Make this design more accessible," and it adjusts colors, spacing, and typography to meet WCAG AAA
+- You run A/B tests on design tokens, and AI suggests the winning variant based on user behavior
+- Your design system evolves with real-time feedback from AI analyzing usage patterns
+
+With FramingUI's MCP server, this future is already here. AI isn't replacing designers—it's amplifying your ability to create consistent, accessible, and maintainable design systems.
+
+## Try It Yourself
+
+Ready to see how AI agents can read and use your design system?
+
+1. **Explore FramingUI** — Check out pre-built design systems at [framingui.com](https://framingui.com)
+2. **Start a free trial** — No credit card required, pick a theme and start experimenting
+3. **Connect with Claude Code** — Follow our [MCP setup guide](https://framingui.com/blog/mcp-design-system-claude-code) to integrate with your AI workflow
+
+The era of AI hallucinating `#3498db` is over. Welcome to the era of AI-powered design systems. 🎨✨
