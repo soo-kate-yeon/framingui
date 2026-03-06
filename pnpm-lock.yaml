@@ -184,11 +184,11 @@ importers:
         specifier: ^7.28.6
         version: 7.28.6
       '@framingui/core':
-        specifier: ^0.4.0
-        version: 0.4.1
+        specifier: ^0.4.4
+        version: 0.4.4
       '@framingui/ui':
-        specifier: ^0.6.0
-        version: 0.6.2(883d942f6df9be89f8b1aee0a3a6f958)
+        specifier: ^0.6.3
+        version: 0.6.3(883d942f6df9be89f8b1aee0a3a6f958)
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
@@ -1499,16 +1499,16 @@ packages:
   '@formatjs/intl-localematcher@0.8.1':
     resolution: {integrity: sha512-xwEuwQFdtSq1UKtQnyTZWC+eHdv7Uygoa+H2k/9uzBVQjDyp9r20LNDNKedWXll7FssT3GRHvqsdJGYSUWqYFA==}
 
-  '@framingui/core@0.4.1':
-    resolution: {integrity: sha512-FW7lUCY00kLF5J7Td+PF55ZqKt5fqppL19EVUOgOF15U0nNmKtvwPm5nAg6/KLX47hXuGtkKr1PJEdqW7g8Pig==}
+  '@framingui/core@0.4.4':
+    resolution: {integrity: sha512-if7jOvzlULgtiyD3Fc4vhJu6Ut86OHhLIkSzZP8stVvIDUTh6v9PuWScwYXJiod59F2DBgDPAA6v/7AYAt1kfw==}
     engines: {node: '>=20.0.0'}
 
   '@framingui/tokens@0.3.4':
     resolution: {integrity: sha512-jiCGevtPkfmaY6gOf295PkybMI5l1v8W6DfMamvIK2CGJwAzvAoX754XBK9rrOk55+tzsPH5R7F2/uE/OIDHCA==}
     engines: {node: '>=20.0.0'}
 
-  '@framingui/ui@0.6.2':
-    resolution: {integrity: sha512-gNkQSBt9ApK1M366ZECdwO3Lny5uZr7P3uBz0HZGxM3bJXyl9xmY7qKb4eTKQzWZJram1f7rDWXwtOVgTMMYFw==}
+  '@framingui/ui@0.6.3':
+    resolution: {integrity: sha512-wq11U9JCCDPelcQectLoXnUbQbONTUYw5DK3saWdWIIo/sXU+C7PKdsqKKRYlkLSPMDB+9hDQF2riMdD26YEBQ==}
     peerDependencies:
       '@hookform/resolvers': ^3.0.0
       '@radix-ui/react-alert-dialog': ^1.0.0
@@ -7269,14 +7269,15 @@ snapshots:
       '@formatjs/fast-memoize': 3.1.0
       tslib: 2.8.1
 
-  '@framingui/core@0.4.1':
+  '@framingui/core@0.4.4':
     dependencies:
       zod: 3.25.76
 
   '@framingui/tokens@0.3.4': {}
 
-  '@framingui/ui@0.6.2(883d942f6df9be89f8b1aee0a3a6f958)':
+  '@framingui/ui@0.6.3(883d942f6df9be89f8b1aee0a3a6f958)':
     dependencies:
+      '@framingui/core': 0.4.4
       '@framingui/tokens': 0.3.4
       '@hookform/resolvers': 3.10.0(react-hook-form@7.71.1(react@19.2.3))
       '@radix-ui/react-alert-dialog': 1.1.15(@types/react-dom@18.2.25)(@types/react@18.2.79)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
