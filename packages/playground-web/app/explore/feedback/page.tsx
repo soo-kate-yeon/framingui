@@ -9,8 +9,8 @@ import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Share Your Feedback | tekton/explore',
-  description: 'Your honest feedback helps us make tekton better',
+  title: 'Share Your Feedback | framingui/explore',
+  description: 'Your honest feedback helps us make framingui better',
 };
 
 export default function FeedbackPage() {
@@ -23,7 +23,7 @@ export default function FeedbackPage() {
             Share Your Feedback
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed mb-8">
-            Whether it's good or bad, your honest feedback helps us make tekton better.
+            Whether it's good or bad, your honest feedback helps us make framingui better.
           </p>
           <p className="text-base text-neutral-500 leading-relaxed">
             We'll select 20% of those who provide detailed feedback and give them a free 1-year

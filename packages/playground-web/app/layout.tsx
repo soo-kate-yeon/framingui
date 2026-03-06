@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import '../styles/globals.css';
 import { Providers } from './providers';
 import { GoogleAnalytics } from '@/components/GoogleAnalytics';
-import { Clarity } from '@/components/Clarity';
+import { ClarityProvider } from '@/components/Clarity';
 
 export const metadata: Metadata = {
   title: {
@@ -102,7 +102,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <GoogleAnalytics />
-        <Clarity />
+        <ClarityProvider />
         <Providers>{children}</Providers>
       </body>
     </html>

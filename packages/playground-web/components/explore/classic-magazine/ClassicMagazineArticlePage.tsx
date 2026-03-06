@@ -33,7 +33,7 @@ export function ClassicMagazineArticlePage() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 100);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -74,7 +74,7 @@ export function ClassicMagazineArticlePage() {
 
       {/* Navigation - Authoritative & Minimal */}
       <nav
-        className={`fixed top-12 left-0 right-0 z-40 transition-all duration-500 border-b-2 border-black ${scrolled ? 'bg-white/95 backdrop-blur-md py-3' : 'bg-white py-6'}`}
+        className={`fixed top-12 left-0 right-0 z-40 transition-[background-color,padding] duration-500 border-b-2 border-black ${scrolled ? 'bg-white/95 backdrop-blur-md py-3' : 'bg-white py-6'}`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <button

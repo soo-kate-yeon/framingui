@@ -7,17 +7,15 @@ export interface FreeTrialBannerContent {
 
 export const freeTrialBannerContent: Record<BlogLocale, FreeTrialBannerContent> = {
   en: {
-    label: 'FramingUI Beta is live. Agent-first design systems for modern engineering teams.',
+    label: 'Try all FramingUI features free for 3 days.',
     cta: 'Start Free Trial',
   },
   ko: {
-    label:
-      'FramingUI 베타 버전이 출시되었습니다. 현대적인 엔지니어링 팀을 위한 에이전트 우선 디자인 시스템입니다.',
+    label: 'FramingUI의 모든 기능을 3일 동안 무료로 체험해보세요.',
     cta: '무료 체험 시작하기',
   },
   ja: {
-    label:
-      'FramingUIベータ版がリリースされました。モダンなエンジニアリングチームのためのエージェントファーストデザインシステムです。',
+    label: 'FramingUIのすべての機能を3日間無料でお試しください。',
     cta: '無料トライアルを開始',
   },
 };

@@ -40,7 +40,7 @@ export function EditorialTechSolutionsPage() {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -77,7 +77,7 @@ export function EditorialTechSolutionsPage() {
 
       {/* Lucid Navigation - Mandatory BG for Fixed Element */}
       <nav
-        className={`fixed top-12 left-0 right-0 z-50 transition-all duration-700 bg-white shadow-sm py-4 border-b border-neutral-100 ${scrolled ? 'py-4' : 'py-6'}`}
+        className={`fixed top-12 left-0 right-0 z-50 transition-[padding] duration-700 bg-white shadow-sm py-4 border-b border-neutral-100 ${scrolled ? 'py-4' : 'py-6'}`}
       >
         <div className="max-w-[1240px] mx-auto px-8 flex items-center justify-between">
           <div className="flex items-center gap-12">

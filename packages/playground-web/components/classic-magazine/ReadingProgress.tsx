@@ -58,7 +58,7 @@ export function ReadingProgress({ articleTitle, content }: ReadingProgressProps)
       setProgress(Math.max(0, Math.min(100, progressPercent)));
     };
 
-    window.addEventListener('scroll', calculateProgress);
+    window.addEventListener('scroll', calculateProgress, { passive: true });
     calculateProgress();
 
     return () => window.removeEventListener('scroll', calculateProgress);
@@ -130,7 +130,7 @@ export function ReadingProgress({ articleTitle, content }: ReadingProgressProps)
       {/* Progress Bar (Fixed Top) */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-neutral-200">
         <div
-          className="h-1 bg-neutral-900 transition-all duration-300"
+          className="h-1 bg-neutral-900 transition-[width] duration-300"
           style={{ width: `${progress}%` }}
         />
 

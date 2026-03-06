@@ -73,7 +73,7 @@ export function LandingPage() {
     <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
       {/* Top Nav Bar */}
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color] duration-300 ${
           isScrolled
             ? 'bg-white/80 backdrop-blur-md border-b border-neutral-200'
             : 'bg-transparent border-b border-transparent'

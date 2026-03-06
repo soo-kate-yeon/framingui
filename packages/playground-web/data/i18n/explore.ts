@@ -54,13 +54,13 @@ interface ExploreI18nContent {
 const content: Record<GlobalLocale, ExploreI18nContent> = {
   en: {
     header: {
-      subtitle: 'tekton/explore',
+      subtitle: 'framingui/explore',
       title: 'Select Theme',
       description:
         'Choose a design system to activate the Agentic Styling engine. Every theme is loaded directly from the MCP knowledge base.',
     },
     selectionHeader: {
-      subtitle: 'tekton/explore',
+      subtitle: 'framingui/explore',
       title: 'Pick 2 Templates',
       description: 'Choose 2 templates for your Double Package.',
     },
@@ -105,13 +105,13 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
   },
   ko: {
     header: {
-      subtitle: 'tekton/explore',
+      subtitle: 'framingui/explore',
       title: '테마를 선택합니다',
       description:
         '에이전틱 스타일링 엔진을 활성화할 디자인 시스템을 선택합니다. 모든 테마는 MCP 지식 베이스에서 직접 불러옵니다.',
     },
     selectionHeader: {
-      subtitle: 'tekton/explore',
+      subtitle: 'framingui/explore',
       title: '템플릿 2개를 선택합니다',
       description: '더블 패키지에 포함할 템플릿 2개를 선택합니다.',
     },
@@ -156,13 +156,13 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
   },
   ja: {
     header: {
-      subtitle: 'tekton/explore',
+      subtitle: 'framingui/explore',
       title: 'テーマを選択',
       description:
         'Agentic Styling エンジンを有効にするデザインシステムを選択します。すべてのテーマは MCP ナレッジベースから直接読み込みます。',
     },
     selectionHeader: {
-      subtitle: 'tekton/explore',
+      subtitle: 'framingui/explore',
       title: 'テンプレートを2つ選択',
       description: 'Double Package に含めるテンプレートを2つ選択します。',
     },
