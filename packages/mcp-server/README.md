@@ -102,9 +102,9 @@ npx @framingui/mcp-server init
 | -------------------------------- | --------------------- |
 | `npx @framingui/mcp-server`      | MCP stdio 서버 시작   |
 | `npx @framingui/mcp-server init` | 프로젝트 초기 설정    |
-| `framingui-mcp login`               | 브라우저 OAuth 로그인 |
-| `framingui-mcp logout`              | 로그아웃              |
-| `framingui-mcp status`              | 인증 상태 확인        |
+| `framingui-mcp login`            | 브라우저 OAuth 로그인 |
+| `framingui-mcp logout`           | 로그아웃              |
+| `framingui-mcp status`           | 인증 상태 확인        |
 
 ## Development Quick Start
 
@@ -824,9 +824,10 @@ packages/mcp-server/
 │   │   ├── preview-component.ts     # Component preview (SPEC-MCP-003)
 │   │   ├── list-screen-templates.ts # Template listing (SPEC-MCP-003)
 │   │   └── preview-screen-template.ts # Template preview (SPEC-MCP-003)
-│   ├── data/                  # Static data registries (SPEC-MCP-003)
-│   │   ├── component-registry.ts    # Component metadata registry
-│   │   └── component-metadata.json  # Static component metadata
+│   ├── data/                  # Data utilities (non-API helpers)
+│   │   ├── template-matcher.ts      # Template matching logic
+│   │   ├── hint-generator.ts        # AI hint generation
+│   │   └── recipe-resolver.ts       # Recipe resolution
 │   ├── storage/               # Blueprint storage
 │   │   ├── blueprint-storage.ts
 │   │   └── timestamp-manager.ts
@@ -883,43 +884,26 @@ packages/mcp-server/
 
 **Test Results**:
 
-- 22 test files
-- 214 test cases
+- 29 test files
+- 290 test cases
 - 100% pass rate
 - Zero failures
 
-## Integration with @framingui/core
+## Architecture: API-Based Data Sources (v0.6.0)
 
-All MCP tools reuse `@framingui/core` functions:
+Since v0.6.0, the MCP server fetches all data from the framingui.com API via `data-client.ts`. This removes `@framingui/core` and `@framingui/ui` from production dependencies, enabling truly standalone npm installation.
 
-**Blueprint & Theme Tools**:
+**Data Client** (`src/api/data-client.ts`):
 
-- `loadTheme()` - Theme loading
-- `listThemes()` - Theme enumeration
-- `createBlueprint()` - Blueprint creation
-- `validateBlueprint()` - Schema validation
-- `generateCSSVariables()` - CSS variable extraction
-- `render()` - Code generation
+- `fetchThemeList()`, `fetchTheme(id)` — Theme data
+- `fetchIconLibraries()`, `fetchIconLibrary(id)` — Icon libraries
+- `fetchTemplateList()`, `fetchTemplate(id)` — Screen templates
+- `fetchComponentList()`, `fetchComponent(id)` — Component catalog
+- `fetchTokenList(type?)` — Layout tokens
+- `fetchCSSVariables(themeId)` — CSS generation
+- `fetchScreenExamples()` — Screen examples
 
-**Screen Generation Tools** (SPEC-LAYOUT-002):
-
-- `validateScreenDefinition()` - Screen validation
-- `resolveScreen()` - Layout and component resolution
-- `generateStyledComponents()` - CSS-in-JS generation
-- `generateTailwindClasses()` - Tailwind CSS generation
-- `generateReactComponent()` - React component generation
-- `getAllShellTokens()` - Shell token listing
-- `getAllPageLayoutTokens()` - Page token listing
-- `getAllSectionPatternTokens()` - Section token listing
-
-**Component & Template Discovery** (SPEC-MCP-003):
-
-- `templateRegistry` from `@framingui` - Template metadata and search
-- Component metadata registry - Static component catalog with 30+ components
-- Component type definitions - TypeScript interfaces for props and variants
-- Template structure definitions - Skeleton, layout, and customization schemas
-
-**Zero code duplication** - Single source of truth maintained.
+All functions use `MemoryCache` (10-min TTL) with `getStale()` fallback for network resilience.
 
 ## Documentation
 
@@ -1021,7 +1005,7 @@ MIT
 
 ---
 
-**Version**: 3.0.0 (stdio-based MCP standard + Component & Template Discovery)
-**Last Updated**: 2026-02-01
-**SPEC**: SPEC-MCP-002 v2.0.0, SPEC-LAYOUT-002 Phase 4, SPEC-MCP-003 v1.0.0
-**Total Tools**: 13 (9 existing + 4 new discovery tools)
+**Version**: 0.6.0 (API-based data sources — no workspace dependencies)
+**Last Updated**: 2026-03-06
+**SPEC**: SPEC-MCP-002 v2.0.0, SPEC-LAYOUT-002 Phase 4, SPEC-MCP-003 v1.0.0, SPEC-MCP-007 v1.0.0
+**Total Tools**: 17
