@@ -58,4 +58,16 @@ export class MemoryCache<T> {
   size(): number {
     return this.cache.size;
   }
+
+  /**
+   * TTL 만료 여부와 관계없이 캐시 값 반환 (stale 허용)
+   * [SPEC-MCP-007:S-004] API 실패 시 만료된 캐시도 반환
+   */
+  getStale(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) {
+      return null;
+    }
+    return entry.value;
+  }
 }

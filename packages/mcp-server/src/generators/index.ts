@@ -9,19 +9,18 @@
  */
 
 // CSS Generator
+// [SPEC-MCP-007] generateCSS, ThemeV2 제거 (API 기반으로 대체)
 export {
-  generateCSS,
   generateCSSFromThemeId,
   extractCSSVariables,
   type CSSGenerationResult,
-  type ThemeV2,
 } from './css-generator.js';
 
 // Core Resolver (Tier 1)
+// [SPEC-MCP-007] getTier1Source 제거 (readFileSync 사용, npm 환경 미지원)
 export {
   isTier1Component,
   getTier1Example,
-  getTier1Source,
   resolveFromTier1,
   resolveMultipleFromTier1,
   TIER1_COMPONENTS,

@@ -1,21 +1,17 @@
 /**
- * Component Registry (SPEC-MCP-003)
- * Static component metadata from @framingui/ui
- *
- * This registry provides metadata for all UI components
- * organized by tier (1: Core, 2: Complex, 3: Advanced)
+ * GET /api/mcp/components — UI 컴포넌트 카탈로그 목록 API
+ * [SPEC-MCP-007:E-003] fetchComponentList() 지원
  */
 
-import type { ComponentMeta } from '../schemas/mcp-schemas.js';
+import { NextRequest, NextResponse } from 'next/server';
+import { authenticateMcpRequest } from '@/lib/mcp/auth-helper';
 
 /**
- * All component metadata organized by tier
- * Data extracted from @framingui/ui exports
+ * 컴포넌트 카탈로그 (30개 컴포넌트, 3 tier)
+ * mcp-server의 component-registry.ts 데이터를 서버 사이드로 이전
  */
-export const COMPONENT_CATALOG: ComponentMeta[] = [
-  // ========================================
-  // Tier 1: Core Components (15)
-  // ========================================
+const COMPONENT_CATALOG = [
+  // Tier 1: Core Components (15개)
   {
     id: 'button',
     name: 'Button',
@@ -151,10 +147,7 @@ export const COMPONENT_CATALOG: ComponentMeta[] = [
     variantsCount: 1,
     hasSubComponents: true,
   },
-
-  // ========================================
-  // Tier 2: Complex Components (10)
-  // ========================================
+  // Tier 2: Complex Components (10개)
   {
     id: 'dialog',
     name: 'Dialog',
@@ -245,10 +238,7 @@ export const COMPONENT_CATALOG: ComponentMeta[] = [
     variantsCount: 1,
     hasSubComponents: false,
   },
-
-  // ========================================
-  // Tier 3: Advanced Components (5)
-  // ========================================
+  // Tier 3: Advanced Components (5개)
   {
     id: 'sidebar',
     name: 'Sidebar',
@@ -296,38 +286,41 @@ export const COMPONENT_CATALOG: ComponentMeta[] = [
   },
 ];
 
-/**
- * Get all components
- */
-export function getAllComponents(): ComponentMeta[] {
-  return COMPONENT_CATALOG;
+export async function GET(request: NextRequest) {
+  try {
+    const auth = await authenticateMcpRequest(request);
+    if (!auth.valid) {
+      return auth.response;
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        components: COMPONENT_CATALOG,
+        count: COMPONENT_CATALOG.length,
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600',
+          ...auth.rateLimitHeaders,
+        },
+      }
+    );
+  } catch (error) {
+    console.error('[MCP Components] Unexpected error:', error);
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+  }
 }
 
-/**
- * Get components by category
- */
-export function getComponentsByCategory(
-  category: 'core' | 'complex' | 'advanced'
-): ComponentMeta[] {
-  return COMPONENT_CATALOG.filter(c => c.category === category);
-}
-
-/**
- * Get component by ID
- */
-export function getComponentById(id: string): ComponentMeta | undefined {
-  return COMPONENT_CATALOG.find(c => c.id === id);
-}
-
-/**
- * Search components by keyword
- */
-export function searchComponents(keyword: string): ComponentMeta[] {
-  const lowerKeyword = keyword.toLowerCase();
-  return COMPONENT_CATALOG.filter(
-    c =>
-      c.id.includes(lowerKeyword) ||
-      c.name.toLowerCase().includes(lowerKeyword) ||
-      c.description.toLowerCase().includes(lowerKeyword)
-  );
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }

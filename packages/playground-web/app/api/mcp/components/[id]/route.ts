@@ -1,29 +1,304 @@
 /**
- * Shared Component Props Data Module
- * 실제 @framingui/ui 컴포넌트에서 추출한 Tier 1 (15개 core) props/variants 데이터
- *
- * 사용처:
- * - preview-component.ts: 컴포넌트 상세 정보 제공
- * - get-screen-generation-context.ts: 인라인 props 컨텍스트 제공
- * - validate-screen-definition.ts: props 유효성 검증
+ * GET /api/mcp/components/[id] — 컴포넌트 상세 정보 API
+ * [SPEC-MCP-007:E-004] fetchComponent(id) 지원
+ * 컴포넌트 메타데이터 + props + variants + examples + accessibility 통합 반환
  */
 
-import type { PropDefinition, Variant, UsageExample } from '../schemas/mcp-schemas.js';
-
-export interface ComponentPropsData {
-  props: PropDefinition[];
-  variants?: Variant[];
-  subComponents?: string[];
-  dependencies: { internal: string[]; external: string[] };
-  examples?: UsageExample[];
-  accessibility?: string;
-}
+import { NextRequest, NextResponse } from 'next/server';
+import { authenticateMcpRequest } from '@/lib/mcp/auth-helper';
 
 /**
- * Tier 1 Core 컴포넌트 (15개) 전체 props/variants 데이터
- * 실제 packages/ui/src/components/*.tsx 소스에서 추출
+ * 컴포넌트 카탈로그 메타데이터
  */
-const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
+const COMPONENT_CATALOG: Record<
+  string,
+  {
+    id: string;
+    name: string;
+    category: string;
+    tier: number;
+    description: string;
+    variantsCount: number;
+    hasSubComponents: boolean;
+  }
+> = {
+  button: {
+    id: 'button',
+    name: 'Button',
+    category: 'core',
+    tier: 1,
+    description: 'Interactive button component with multiple variants and sizes',
+    variantsCount: 6,
+    hasSubComponents: false,
+  },
+  input: {
+    id: 'input',
+    name: 'Input',
+    category: 'core',
+    tier: 1,
+    description: 'Text input field with validation support',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  label: {
+    id: 'label',
+    name: 'Label',
+    category: 'core',
+    tier: 1,
+    description: 'Form label component with accessibility support',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  card: {
+    id: 'card',
+    name: 'Card',
+    category: 'core',
+    tier: 1,
+    description: 'Container card with header, content, and footer sections',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  badge: {
+    id: 'badge',
+    name: 'Badge',
+    category: 'core',
+    tier: 1,
+    description: 'Badge component for status and labels',
+    variantsCount: 4,
+    hasSubComponents: false,
+  },
+  avatar: {
+    id: 'avatar',
+    name: 'Avatar',
+    category: 'core',
+    tier: 1,
+    description: 'Avatar component with image and fallback support',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  separator: {
+    id: 'separator',
+    name: 'Separator',
+    category: 'core',
+    tier: 1,
+    description: 'Visual separator line component',
+    variantsCount: 2,
+    hasSubComponents: false,
+  },
+  checkbox: {
+    id: 'checkbox',
+    name: 'Checkbox',
+    category: 'core',
+    tier: 1,
+    description: 'Checkbox input component with indeterminate state',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  'radio-group': {
+    id: 'radio-group',
+    name: 'RadioGroup',
+    category: 'core',
+    tier: 1,
+    description: 'Radio button group for single selection',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  switch: {
+    id: 'switch',
+    name: 'Switch',
+    category: 'core',
+    tier: 1,
+    description: 'Toggle switch component for boolean states',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  textarea: {
+    id: 'textarea',
+    name: 'Textarea',
+    category: 'core',
+    tier: 1,
+    description: 'Multi-line text input area',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  skeleton: {
+    id: 'skeleton',
+    name: 'Skeleton',
+    category: 'core',
+    tier: 1,
+    description: 'Loading skeleton placeholder component',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  'scroll-area': {
+    id: 'scroll-area',
+    name: 'ScrollArea',
+    category: 'core',
+    tier: 1,
+    description: 'Custom scrollable area with styled scrollbar',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  form: {
+    id: 'form',
+    name: 'Form',
+    category: 'core',
+    tier: 1,
+    description: 'Form component with validation and error handling',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  select: {
+    id: 'select',
+    name: 'Select',
+    category: 'core',
+    tier: 1,
+    description: 'Dropdown select component with search support',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  dialog: {
+    id: 'dialog',
+    name: 'Dialog',
+    category: 'complex',
+    tier: 2,
+    description: 'Modal dialog component with overlay and animations',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  'dropdown-menu': {
+    id: 'dropdown-menu',
+    name: 'DropdownMenu',
+    category: 'complex',
+    tier: 2,
+    description: 'Contextual dropdown menu with nested items',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  table: {
+    id: 'table',
+    name: 'Table',
+    category: 'complex',
+    tier: 2,
+    description: 'Data table component with sorting and pagination',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  tabs: {
+    id: 'tabs',
+    name: 'Tabs',
+    category: 'complex',
+    tier: 2,
+    description: 'Tabbed interface component with keyboard navigation',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  toast: {
+    id: 'toast',
+    name: 'Toast',
+    category: 'complex',
+    tier: 2,
+    description: 'Toast notification system with queue management',
+    variantsCount: 4,
+    hasSubComponents: true,
+  },
+  tooltip: {
+    id: 'tooltip',
+    name: 'Tooltip',
+    category: 'complex',
+    tier: 2,
+    description: 'Tooltip component with positioning and delay',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  popover: {
+    id: 'popover',
+    name: 'Popover',
+    category: 'complex',
+    tier: 2,
+    description: 'Popover component with smart positioning',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  sheet: {
+    id: 'sheet',
+    name: 'Sheet',
+    category: 'complex',
+    tier: 2,
+    description: 'Slide-out panel component from screen edges',
+    variantsCount: 4,
+    hasSubComponents: true,
+  },
+  'alert-dialog': {
+    id: 'alert-dialog',
+    name: 'AlertDialog',
+    category: 'complex',
+    tier: 2,
+    description: 'Alert dialog for important confirmations',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  progress: {
+    id: 'progress',
+    name: 'Progress',
+    category: 'complex',
+    tier: 2,
+    description: 'Progress bar component with percentage tracking',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+  sidebar: {
+    id: 'sidebar',
+    name: 'Sidebar',
+    category: 'advanced',
+    tier: 3,
+    description: 'Collapsible sidebar navigation with sections and items',
+    variantsCount: 2,
+    hasSubComponents: true,
+  },
+  'navigation-menu': {
+    id: 'navigation-menu',
+    name: 'NavigationMenu',
+    category: 'advanced',
+    tier: 3,
+    description: 'Accessible navigation menu with dropdown support',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  breadcrumb: {
+    id: 'breadcrumb',
+    name: 'Breadcrumb',
+    category: 'advanced',
+    tier: 3,
+    description: 'Breadcrumb navigation component with custom separators',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  command: {
+    id: 'command',
+    name: 'Command',
+    category: 'advanced',
+    tier: 3,
+    description: 'Command palette component with search and keyboard shortcuts',
+    variantsCount: 1,
+    hasSubComponents: true,
+  },
+  calendar: {
+    id: 'calendar',
+    name: 'Calendar',
+    category: 'advanced',
+    tier: 3,
+    description: 'Interactive calendar component with date selection',
+    variantsCount: 1,
+    hasSubComponents: false,
+  },
+};
+
+/**
+ * 컴포넌트 상세 props 데이터
+ * mcp-server의 component-props.ts 데이터를 서버 사이드로 이전
+ */
+const COMPONENT_PROPS: Record<string, any> = {
   button: {
     props: [
       {
@@ -56,10 +331,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
       { name: 'variant', value: 'ghost', description: 'Transparent ghost button' },
       { name: 'variant', value: 'link', description: 'Link-styled button' },
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-slot'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-slot'] },
     examples: [
       {
         title: 'Basic Usage',
@@ -75,7 +347,6 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     accessibility:
       'Supports keyboard navigation and ARIA attributes. Focus-visible ring for keyboard users.',
   },
-
   input: {
     props: [
       {
@@ -84,12 +355,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         required: false,
         description: 'HTML input type (text, email, password, etc.)',
       },
-      {
-        name: 'placeholder',
-        type: 'string',
-        required: false,
-        description: 'Placeholder text',
-      },
+      { name: 'placeholder', type: 'string', required: false, description: 'Placeholder text' },
       {
         name: 'disabled',
         type: 'boolean',
@@ -98,10 +364,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         description: 'Disabled state',
       },
     ],
-    dependencies: {
-      internal: [],
-      external: [],
-    },
+    dependencies: { internal: [], external: [] },
     examples: [
       {
         title: 'Basic Input',
@@ -111,7 +374,6 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Focus-visible ring for keyboard navigation. Pair with Label for accessibility.',
   },
-
   label: {
     props: [
       {
@@ -121,10 +383,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         description: 'ID of the associated form element',
       },
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-label'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-label'] },
     examples: [
       {
         title: 'With Input',
@@ -134,21 +393,12 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Peer-disabled styling for paired disabled inputs. Semantic HTML label element.',
   },
-
   card: {
     props: [
-      {
-        name: 'className',
-        type: 'string',
-        required: false,
-        description: 'Additional CSS classes',
-      },
+      { name: 'className', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     subComponents: ['CardHeader', 'CardTitle', 'CardDescription', 'CardContent', 'CardFooter'],
-    dependencies: {
-      internal: [],
-      external: [],
-    },
+    dependencies: { internal: [], external: [] },
     examples: [
       {
         title: 'Basic Card',
@@ -158,7 +408,6 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Semantic HTML structure for screen readers',
   },
-
   badge: {
     props: [
       {
@@ -175,10 +424,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
       { name: 'variant', value: 'destructive', description: 'Destructive red badge' },
       { name: 'variant', value: 'outline', description: 'Outlined badge' },
     ],
-    dependencies: {
-      internal: [],
-      external: [],
-    },
+    dependencies: { internal: [], external: [] },
     examples: [
       {
         title: 'Status Badge',
@@ -188,21 +434,12 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Focus ring styling for keyboard navigation',
   },
-
   avatar: {
     props: [
-      {
-        name: 'className',
-        type: 'string',
-        required: false,
-        description: 'Additional CSS classes',
-      },
+      { name: 'className', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     subComponents: ['AvatarImage', 'AvatarFallback'],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-avatar'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-avatar'] },
     examples: [
       {
         title: 'With Fallback',
@@ -212,7 +449,6 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Fallback text for image load failures. Alt text support via AvatarImage.',
   },
-
   separator: {
     props: [
       {
@@ -230,13 +466,9 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         description: 'Whether separator is purely decorative',
       },
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-separator'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-separator'] },
     accessibility: 'Decorative prop set for screen readers. ARIA role appropriate to context.',
   },
-
   checkbox: {
     props: [
       {
@@ -259,10 +491,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         description: 'Disabled state',
       },
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-checkbox', 'lucide-react'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-checkbox', 'lucide-react'] },
     examples: [
       {
         title: 'Basic Checkbox',
@@ -272,15 +501,9 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Focus-visible ring. ARIA-checked state management. Keyboard navigation.',
   },
-
   'radio-group': {
     props: [
-      {
-        name: 'value',
-        type: 'string',
-        required: false,
-        description: 'Selected radio value',
-      },
+      { name: 'value', type: 'string', required: false, description: 'Selected radio value' },
       {
         name: 'onValueChange',
         type: '(value: string) => void',
@@ -296,10 +519,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
       },
     ],
     subComponents: ['RadioGroupItem'],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-radio-group', 'lucide-react'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-radio-group', 'lucide-react'] },
     examples: [
       {
         title: 'Basic RadioGroup',
@@ -309,15 +529,9 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Keyboard navigation with arrow keys. ARIA-checked state management.',
   },
-
   switch: {
     props: [
-      {
-        name: 'checked',
-        type: 'boolean',
-        required: false,
-        description: 'Switch state',
-      },
+      { name: 'checked', type: 'boolean', required: false, description: 'Switch state' },
       {
         name: 'onCheckedChange',
         type: '(checked: boolean) => void',
@@ -332,10 +546,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         description: 'Disabled state',
       },
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-switch'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-switch'] },
     examples: [
       {
         title: 'Basic Switch',
@@ -345,15 +556,9 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Focus-visible ring. ARIA-checked state. Smooth animation on toggle.',
   },
-
   textarea: {
     props: [
-      {
-        name: 'placeholder',
-        type: 'string',
-        required: false,
-        description: 'Placeholder text',
-      },
+      { name: 'placeholder', type: 'string', required: false, description: 'Placeholder text' },
       {
         name: 'disabled',
         type: 'boolean',
@@ -361,17 +566,9 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         defaultValue: 'false',
         description: 'Disabled state',
       },
-      {
-        name: 'rows',
-        type: 'number',
-        required: false,
-        description: 'Visible text rows',
-      },
+      { name: 'rows', type: 'number', required: false, description: 'Visible text rows' },
     ],
-    dependencies: {
-      internal: [],
-      external: [],
-    },
+    dependencies: { internal: [], external: [] },
     examples: [
       {
         title: 'Basic Textarea',
@@ -381,7 +578,6 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Focus-visible ring. Minimum height 80px. Pair with Label for accessibility.',
   },
-
   skeleton: {
     props: [
       {
@@ -391,10 +587,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
         description: 'CSS classes for width/height sizing',
       },
     ],
-    dependencies: {
-      internal: [],
-      external: [],
-    },
+    dependencies: { internal: [], external: [] },
     examples: [
       {
         title: 'Card Skeleton',
@@ -404,21 +597,12 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Uses animate-pulse for loading state indication.',
   },
-
   'scroll-area': {
     props: [
-      {
-        name: 'className',
-        type: 'string',
-        required: false,
-        description: 'Additional CSS classes',
-      },
+      { name: 'className', type: 'string', required: false, description: 'Additional CSS classes' },
     ],
     subComponents: ['ScrollBar'],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-scroll-area'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-scroll-area'] },
     examples: [
       {
         title: 'Scrollable Content',
@@ -428,7 +612,6 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Native scrollbar behavior preservation. Touch support for mobile.',
   },
-
   form: {
     props: [
       {
@@ -460,27 +643,16 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     accessibility:
       'aria-describedby for descriptions and errors. aria-invalid for validation. Focus management.',
   },
-
   select: {
     props: [
-      {
-        name: 'value',
-        type: 'string',
-        required: false,
-        description: 'Selected value',
-      },
+      { name: 'value', type: 'string', required: false, description: 'Selected value' },
       {
         name: 'onValueChange',
         type: '(value: string) => void',
         required: false,
         description: 'Change callback',
       },
-      {
-        name: 'defaultValue',
-        type: 'string',
-        required: false,
-        description: 'Initial value',
-      },
+      { name: 'defaultValue', type: 'string', required: false, description: 'Initial value' },
       {
         name: 'disabled',
         type: 'boolean',
@@ -498,10 +670,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
       'SelectItem',
       'SelectSeparator',
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-select', 'lucide-react'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-select', 'lucide-react'] },
     examples: [
       {
         title: 'Basic Select',
@@ -511,16 +680,9 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
     ],
     accessibility: 'Full keyboard navigation. Focus trap within dropdown. ARIA roles and states.',
   },
-
-  // 기존 dialog 데이터 (preview-component에서 이전)
   dialog: {
     props: [
-      {
-        name: 'open',
-        type: 'boolean',
-        required: false,
-        description: 'Controlled open state',
-      },
+      { name: 'open', type: 'boolean', required: false, description: 'Controlled open state' },
       {
         name: 'onOpenChange',
         type: '(open: boolean) => void',
@@ -537,10 +699,7 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
       'DialogFooter',
       'DialogClose',
     ],
-    dependencies: {
-      internal: [],
-      external: ['@radix-ui/react-dialog'],
-    },
+    dependencies: { internal: [], external: ['@radix-ui/react-dialog'] },
     examples: [
       {
         title: 'Basic Dialog',
@@ -552,16 +711,67 @@ const COMPONENT_PROPS_DATA: Record<string, ComponentPropsData> = {
   },
 };
 
-/**
- * 컴포넌트 ID로 props 데이터 조회
- */
-export function getComponentPropsData(componentId: string): ComponentPropsData | undefined {
-  return COMPONENT_PROPS_DATA[componentId];
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const auth = await authenticateMcpRequest(request);
+    if (!auth.valid) {
+      return auth.response;
+    }
+
+    const { id: componentId } = await params;
+    const meta = COMPONENT_CATALOG[componentId];
+
+    if (!meta) {
+      return NextResponse.json(
+        { success: false, error: `Component "${componentId}" not found.` },
+        { status: 404 }
+      );
+    }
+
+    const details = COMPONENT_PROPS[componentId];
+    const subComponents = details?.subComponents;
+
+    const component = {
+      id: meta.id,
+      name: meta.name,
+      category: meta.category,
+      description: meta.description,
+      tier: meta.tier,
+      props: details?.props ?? [],
+      variants: details?.variants,
+      subComponents,
+      importStatement: subComponents
+        ? `import { ${meta.name}, ${subComponents.join(', ')} } from '@framingui/ui';`
+        : `import { ${meta.name} } from '@framingui/ui';`,
+      dependencies: details?.dependencies,
+      examples: details?.examples,
+      accessibility: details?.accessibility,
+    };
+
+    return NextResponse.json(
+      { success: true, component },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, s-maxage=3600',
+          ...auth.rateLimitHeaders,
+        },
+      }
+    );
+  } catch (error) {
+    console.error('[MCP Component Detail] Unexpected error:', error);
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+  }
 }
 
-/**
- * 모든 컴포넌트 props 데이터가 있는 컴포넌트 ID 목록 반환
- */
-export function getComponentIdsWithProps(): string[] {
-  return Object.keys(COMPONENT_PROPS_DATA);
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }

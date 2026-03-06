@@ -5,7 +5,8 @@
  * 자연어 설명에서 최적의 Screen Template을 매칭합니다.
  */
 
-import { templateRegistry } from '@framingui/ui';
+// [SPEC-MCP-007:W-002] @framingui/ui templateRegistry 제거, API 기반으로 마이그레이션
+import { fetchTemplate } from '../api/data-client.js';
 
 /**
  * 키워드-템플릿 매핑 정의
@@ -213,7 +214,8 @@ function calculateMatchScore(
 }
 
 /**
- * 자연어 설명에서 최적의 템플릿 매칭
+ * 자연어 설명에서 최적의 템플릿 매칭 (동기 버전 - 키워드 매핑만 사용)
+ * [SPEC-MCP-007] 템플릿 이름은 키워드 매핑 기반, 상세 정보는 get-screen-generation-context에서 API로 조회
  *
  * @param description - 사용자의 자연어 화면 설명
  * @param topN - 반환할 상위 N개 결과 (기본: 3)
@@ -227,13 +229,18 @@ export function matchTemplates(description: string, topN: number = 3): TemplateM
     const { score, matched } = calculateMatchScore(description, keywords);
 
     if (score > 0) {
-      // 템플릿 메타데이터 가져오기
-      const template = templateRegistry.get(templateId);
       const category = templateId.split('.')[0] || 'core';
+      // 템플릿 이름은 ID에서 추출 (API 비동기 호출 없이 동기 처리)
+      const templateName =
+        templateId
+          .split('.')
+          .slice(1)
+          .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+          .join(' ') || templateId;
 
       results.push({
         templateId,
-        templateName: template?.name || templateId,
+        templateName,
         category,
         confidence: Math.min(100, score), // 0-100 범위로 제한
         matchedKeywords: matched,
@@ -248,6 +255,14 @@ export function matchTemplates(description: string, topN: number = 3): TemplateM
 
   // 신뢰도순 정렬 후 상위 N개 반환
   return results.sort((a, b) => b.confidence - a.confidence).slice(0, topN);
+}
+
+/**
+ * 템플릿 ID로 API에서 상세 정보 조회 (비동기)
+ * get-screen-generation-context에서 사용
+ */
+export async function fetchTemplateDetails(templateId: string): Promise<any | null> {
+  return fetchTemplate(templateId);
 }
 
 /**

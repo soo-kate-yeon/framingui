@@ -1,19 +1,12 @@
 /**
  * Core Resolver for Tier 1 Export
  * SPEC-COMPONENT-001-D: Hybrid Export System
+ * [SPEC-MCP-007:W-003] readFileSync 제거, API 기반으로 마이그레이션
  *
- * Tier 1: UI 라이브러리에서 컴포넌트 코드를 직접 가져옴
- * - @framingui/ui 패키지의 실제 구현을 참조
- * - 사전 정의된 컴포넌트 템플릿 제공
+ * Tier 1: 컴포넌트 예제 코드를 하드코딩 상수로 관리
+ * - 이전에 fs.readFileSync로 패키지 소스를 읽던 방식 제거
+ * - 컴포넌트 상세 정보는 API (fetchComponent)로 조회
  */
-
-import { readFileSync, existsSync } from 'fs';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-// __dirname equivalent for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 /**
  * 컴포넌트 해결 결과 타입
@@ -426,85 +419,13 @@ export function getTier1Example(componentName: string): ComponentResolutionResul
 }
 
 /**
- * @framingui/ui 패키지에서 실제 컴포넌트 소스 코드 가져오기
+ * Tier 1에서 컴포넌트 해결 (예제 기반)
+ * [SPEC-MCP-007:W-003] readFileSync 제거 - 예제 코드만 제공
  *
  * @param componentName - 컴포넌트 이름
- * @returns 컴포넌트 소스 코드
- */
-export function getTier1Source(componentName: string): ComponentResolutionResult {
-  try {
-    // @framingui/ui 패키지 경로 탐색
-    const uiPackagePath = resolve(__dirname, '../../../../ui/src');
-
-    // 컴포넌트 파일 매핑
-    const componentPaths: Record<string, string> = {
-      Button: 'primitives/button.tsx',
-      Input: 'primitives/input.tsx',
-      Checkbox: 'primitives/checkbox.tsx',
-      Switch: 'primitives/switch.tsx',
-      Slider: 'primitives/slider.tsx',
-      Progress: 'primitives/progress.tsx',
-      Avatar: 'primitives/avatar.tsx',
-      Badge: 'primitives/badge.tsx',
-      Text: 'primitives/text.tsx',
-      Heading: 'primitives/heading.tsx',
-      Link: 'primitives/link.tsx',
-      List: 'primitives/list.tsx',
-      Image: 'primitives/image.tsx',
-      Radio: 'primitives/radio.tsx',
-      RadioGroup: 'primitives/radio.tsx',
-      Card: 'components/card.tsx',
-      Modal: 'components/modal.tsx',
-      Dropdown: 'components/dropdown.tsx',
-      Form: 'components/form.tsx',
-      Tabs: 'components/tabs.tsx',
-      Table: 'components/table.tsx',
-    };
-
-    const relativePath = componentPaths[componentName];
-    if (!relativePath) {
-      return {
-        success: false,
-        error: `Component not found in mapping: ${componentName}`,
-      };
-    }
-
-    const fullPath = resolve(uiPackagePath, relativePath);
-
-    if (!existsSync(fullPath)) {
-      return {
-        success: false,
-        error: `Component source file not found: ${fullPath}`,
-      };
-    }
-
-    const sourceCode = readFileSync(fullPath, 'utf-8');
-
-    return {
-      success: true,
-      code: sourceCode,
-      componentName,
-      source: 'tier1-ui',
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error reading component source',
-    };
-  }
-}
-
-/**
- * Tier 1에서 컴포넌트 해결 (예제 우선, 소스 fallback)
- *
- * @param componentName - 컴포넌트 이름
- * @param preferSource - true면 소스 코드 우선, false면 예제 우선
  * @returns 컴포넌트 해결 결과
  */
-export function resolveFromTier1(
-  componentName: string,
-  preferSource = false
-): ComponentResolutionResult {
+export function resolveFromTier1(componentName: string): ComponentResolutionResult {
   if (!isTier1Component(componentName)) {
     return {
       success: false,
@@ -512,16 +433,6 @@ export function resolveFromTier1(
     };
   }
 
-  if (preferSource) {
-    const sourceResult = getTier1Source(componentName);
-    if (sourceResult.success) {
-      return sourceResult;
-    }
-    // Fallback to example
-    return getTier1Example(componentName);
-  }
-
-  // Default: example first
   return getTier1Example(componentName);
 }
 

@@ -1,6 +1,7 @@
 /**
  * Preview Screen Template MCP Tool (SPEC-MCP-003)
  * [TAG-MCP003-009] Preview template with detailed structure
+ * [SPEC-MCP-007:E-002] API 기반 데이터 소스로 마이그레이션
  *
  * Returns detailed template information including:
  * - Skeleton structure (non-customizable)
@@ -10,7 +11,7 @@
  * - Example props
  */
 
-import { templateRegistry } from '@framingui/ui';
+import { fetchTemplate, fetchTemplateList } from '../api/data-client.js';
 import type {
   PreviewScreenTemplateInput,
   PreviewScreenTemplateOutput,
@@ -30,11 +31,12 @@ export async function previewScreenTemplateTool(
     // Set default value for optional parameter
     const includeLayoutTokens = input.includeLayoutTokens ?? true;
 
-    const template = templateRegistry.get(input.templateId);
+    const template = await fetchTemplate(input.templateId);
 
     if (!template) {
       // [TAG-MCP003-013] Return error with available templates
-      const availableTemplates = templateRegistry.getAll().map((t: any) => t.id);
+      const allTemplates = await fetchTemplateList();
+      const availableTemplates = allTemplates.map((t: any) => t.id);
       return {
         success: false,
         error: `Template not found: ${input.templateId}. Available templates: ${availableTemplates.join(', ')}`,

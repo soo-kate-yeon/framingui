@@ -1,8 +1,10 @@
 /**
  * List Tokens MCP Tool
  * SPEC-LAYOUT-002 Phase 4: List available layout tokens from SPEC-LAYOUT-001
+ * [SPEC-MCP-007:E-005] API 기반 데이터 소스로 마이그레이션
  */
 
+import { fetchTokenList } from '../api/data-client.js';
 import type { ListTokensInput, ListTokensOutput, TokenMetadata } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 
@@ -28,7 +30,7 @@ function applyFilter(tokens: TokenMetadata[], filter?: string): TokenMetadata[] 
 }
 
 /**
- * List available layout tokens from @framingui/core
+ * List available layout tokens from framingui.com API
  *
  * @param input - Token type filter and optional pattern filter
  * @returns Categorized list of available tokens
@@ -37,53 +39,12 @@ export async function listTokensTool(input: ListTokensInput): Promise<ListTokens
   try {
     const { tokenType = 'all', filter } = input;
 
-    // Import token getters from @framingui/core
-    const {
-      getAllShellTokens,
-      getAllMobileShellTokens,
-      getAllPageLayoutTokens,
-      getAllSectionPatternTokens,
-    } = await import('@framingui/core');
+    // API를 통해 토큰 조회 [SPEC-MCP-007:E-005]
+    const tokenData = await fetchTokenList(tokenType as 'shell' | 'page' | 'section' | 'all');
 
-    // Get tokens based on type
-    let shells: TokenMetadata[] = [];
-    let pages: TokenMetadata[] = [];
-    let sections: TokenMetadata[] = [];
-
-    if (tokenType === 'all' || tokenType === 'shell') {
-      // Get both web and mobile shell tokens (SPEC-LAYOUT-001 + SPEC-LAYOUT-004)
-      const webShellTokens = getAllShellTokens();
-      const mobileShellTokens = getAllMobileShellTokens();
-
-      const allShellTokens = [...webShellTokens, ...mobileShellTokens];
-
-      shells = allShellTokens.map(token => ({
-        id: token.id,
-        name: token.id.split('.').pop() || token.id, // Extract name from id
-        description: token.description,
-        platform: token.platform,
-      }));
-    }
-
-    if (tokenType === 'all' || tokenType === 'page') {
-      const pageTokens = getAllPageLayoutTokens();
-      pages = pageTokens.map(token => ({
-        id: token.id,
-        name: token.id.split('.').pop() || token.id, // Extract name from id
-        description: token.description,
-        purpose: token.purpose,
-      }));
-    }
-
-    if (tokenType === 'all' || tokenType === 'section') {
-      const sectionTokens = getAllSectionPatternTokens();
-      sections = sectionTokens.map(token => ({
-        id: token.id,
-        name: token.id.split('.').pop() || token.id, // Extract name from id
-        description: token.description,
-        type: token.type,
-      }));
-    }
+    let shells: TokenMetadata[] = tokenData.shells ?? [];
+    let pages: TokenMetadata[] = tokenData.pages ?? [];
+    let sections: TokenMetadata[] = tokenData.sections ?? [];
 
     // Apply filter if provided
     if (filter) {

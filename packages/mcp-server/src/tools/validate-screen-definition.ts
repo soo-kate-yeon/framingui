@@ -3,7 +3,8 @@
  * SPEC-MCP-004 Phase 3.5: Validates screen definitions with helpful feedback
  */
 
-import { COMPONENT_CATALOG } from '@framingui/core';
+// [SPEC-MCP-007:W-001] @framingui/core import 제거, API 기반 컴포넌트 카탈로그로 대체
+import { fetchComponentList, fetchComponent } from '../api/data-client.js';
 import type {
   ValidateScreenDefinitionInput,
   ValidateScreenDefinitionOutput,
@@ -14,7 +15,43 @@ import type {
 } from '../schemas/mcp-schemas.js';
 import { ScreenDefinitionSchema } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
-import { getComponentPropsData } from '../data/component-props.js';
+
+/**
+ * 컴포넌트 카탈로그 로컬 캐시 (validateComponentType에서 사용)
+ * API 결과를 일시적으로 저장하여 반복 검증 시 재사용
+ */
+let _componentCatalogCache: string[] | null = null;
+const _componentPropsCache: Map<string, any> = new Map();
+
+async function getComponentCatalog(): Promise<string[]> {
+  if (_componentCatalogCache) {
+    return _componentCatalogCache;
+  }
+  const components = await fetchComponentList();
+  // API 컴포넌트는 id (소문자)로 저장, 검증에서 name (PascalCase)도 필요
+  _componentCatalogCache = components.map((c: any) => c.name);
+  return _componentCatalogCache;
+}
+
+async function getPropsData(componentId: string): Promise<any | null> {
+  if (_componentPropsCache.has(componentId)) {
+    return _componentPropsCache.get(componentId);
+  }
+  const detail = await fetchComponent(componentId.toLowerCase());
+  if (detail) {
+    const propsData = {
+      props: detail.props ?? [],
+      variants: detail.variants,
+      subComponents: detail.subComponents,
+      dependencies: detail.dependencies,
+      examples: detail.examples,
+      accessibility: detail.accessibility,
+    };
+    _componentPropsCache.set(componentId, propsData);
+    return propsData;
+  }
+  return null;
+}
 
 /**
  * Valid shell tokens from SPEC-LAYOUT-001 and SPEC-LAYOUT-004
@@ -247,22 +284,24 @@ function validateSectionPattern(
 }
 
 /**
- * Validate component type
+ * Validate component type (async - API 기반 카탈로그 사용)
+ * [SPEC-MCP-007:W-001] @framingui/core COMPONENT_CATALOG 제거
  */
-function validateComponentType(
+async function validateComponentType(
   type: string,
   path: string,
   strict: boolean
-): { errors: ValidationError[]; warnings: ValidationWarning[] } {
+): Promise<{ errors: ValidationError[]; warnings: ValidationWarning[] }> {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
+  const catalog = await getComponentCatalog();
   // Check if component type exists in catalog (case-insensitive comparison)
-  const catalogLower = COMPONENT_CATALOG.map(c => c.toLowerCase());
+  const catalogLower = catalog.map((c: string) => c.toLowerCase());
   const typeLower = type.toLowerCase();
 
   if (!catalogLower.includes(typeLower)) {
-    const similar = getSimilarValues(type, COMPONENT_CATALOG as unknown as string[]);
+    const similar = getSimilarValues(type, catalog);
 
     if (strict) {
       errors.push({
@@ -289,7 +328,7 @@ function validateComponentType(
     }
   } else {
     // Check casing
-    const correctCase = COMPONENT_CATALOG.find(c => c.toLowerCase() === typeLower);
+    const correctCase = catalog.find((c: string) => c.toLowerCase() === typeLower);
     if (correctCase && correctCase !== type) {
       warnings.push({
         path,
@@ -304,12 +343,13 @@ function validateComponentType(
 }
 
 /**
- * Validate component props against known prop definitions
+ * Validate component props against known prop definitions (async - API 기반)
+ * [SPEC-MCP-007:W-004] 하드코딩된 props 데이터 제거
  */
-function validateComponentProps(
+async function validateComponentProps(
   component: any,
   path: string
-): { errors: ValidationError[]; warnings: ValidationWarning[] } {
+): Promise<{ errors: ValidationError[]; warnings: ValidationWarning[] }> {
   const errors: ValidationError[] = [];
   const warnings: ValidationWarning[] = [];
 
@@ -318,7 +358,7 @@ function validateComponentProps(
   }
 
   // props 데이터가 없는 컴포넌트는 스킵 (하위 호환성)
-  const propsData = getComponentPropsData(component.type.toLowerCase());
+  const propsData = await getPropsData(component.type.toLowerCase());
   if (!propsData) {
     return { errors, warnings };
   }
@@ -599,7 +639,7 @@ export async function validateScreenDefinitionTool(
             for (let j = 0; j < section.components.length; j++) {
               const component = section.components[j];
               if (component.type) {
-                const typeResult = validateComponentType(
+                const typeResult = await validateComponentType(
                   component.type,
                   `sections[${i}].components[${j}].type`,
                   strict
@@ -609,7 +649,7 @@ export async function validateScreenDefinitionTool(
 
                 // Props 검증 (타입이 유효한 경우에만)
                 if (typeResult.errors.length === 0) {
-                  const propsResult = validateComponentProps(
+                  const propsResult = await validateComponentProps(
                     component,
                     `sections[${i}].components[${j}]`
                   );

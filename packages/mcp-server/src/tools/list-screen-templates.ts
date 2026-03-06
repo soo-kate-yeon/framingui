@@ -1,12 +1,13 @@
 /**
  * List Screen Templates MCP Tool (SPEC-MCP-003)
  * [TAG-MCP003-008] List all available screen templates
+ * [SPEC-MCP-007:E-001] API 기반 데이터 소스로 마이그레이션
  *
- * Lists all screen templates from Template Registry
+ * Lists all screen templates from framingui.com API
  * with category filtering and search capabilities
  */
 
-import { templateRegistry } from '@framingui/ui';
+import { fetchTemplateList } from '../api/data-client.js';
 import type {
   ListScreenTemplatesInput,
   ListScreenTemplatesOutput,
@@ -23,23 +24,19 @@ export async function listScreenTemplatesTool(
   input: ListScreenTemplatesInput
 ): Promise<ListScreenTemplatesOutput> {
   try {
-    // Get templates based on category filter
-    let templates =
-      input.category === 'all' || !input.category
-        ? templateRegistry.getAll()
-        : templateRegistry.getByCategory(input.category as TemplateCategory);
-
-    // Apply search filter if provided
+    // API에서 템플릿 목록 조회
+    const params: { category?: string; search?: string } = {};
+    if (input.category && input.category !== 'all') {
+      params.category = input.category;
+    }
     if (input.search) {
-      templates = templateRegistry
-        .search(input.search)
-        .filter((t: any) =>
-          input.category === 'all' || !input.category ? true : t.category === input.category
-        );
+      params.search = input.search;
     }
 
-    // Calculate category counts
-    const allTemplates = templateRegistry.getAll();
+    const templates = await fetchTemplateList(params);
+
+    // 전체 템플릿에서 카테고리 카운트 계산 (category 필터 없이 조회)
+    const allTemplates = await fetchTemplateList();
     const categories = {
       auth: allTemplates.filter((t: any) => t.category === 'auth').length,
       dashboard: allTemplates.filter((t: any) => t.category === 'dashboard').length,
@@ -48,22 +45,19 @@ export async function listScreenTemplatesTool(
       feedback: allTemplates.filter((t: any) => t.category === 'feedback').length,
     };
 
-    // Map templates to output format
-    const templateMetas = templates.map((t: any) => ({
-      id: t.id,
-      name: t.name,
-      category: t.category as TemplateCategory,
-      description: t.description,
-      requiredComponentsCount: t.requiredComponents.length,
-      layoutType: t.layout.type,
-      version: t.version,
-      tags: t.tags,
-    }));
-
     return {
       success: true,
-      templates: templateMetas,
-      count: templateMetas.length,
+      templates: templates.map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        category: t.category as TemplateCategory,
+        description: t.description,
+        requiredComponentsCount: t.requiredComponentsCount,
+        layoutType: t.layoutType,
+        version: t.version,
+        tags: t.tags,
+      })),
+      count: templates.length,
       categories,
     };
   } catch (error) {

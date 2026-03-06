@@ -5,7 +5,7 @@
  * SPEC-MCP-004 Phase 4: Theme Recipes Auto-Application
  */
 
-import { render, loadTheme } from '@framingui/core';
+import { render } from '@framingui/core';
 import type { Blueprint } from '@framingui/core';
 import type {
   ExportScreenInput,
@@ -19,7 +19,7 @@ import {
   isTier1Component,
   resolveFromTier1,
   resolveFromTier2,
-  generateCSS,
+  generateCSSFromThemeId,
   TIER1_COMPONENTS,
 } from '../generators/index.js';
 import { applyRecipesToBlueprint } from '../data/recipe-resolver.js';
@@ -303,15 +303,12 @@ export async function hybridExportTool(input: HybridExportInput): Promise<Hybrid
       components: [],
     };
 
-    // CSS 생성 (요청된 경우)
+    // CSS 생성 (요청된 경우) - API 기반 [SPEC-MCP-007:E-006]
     if (includeCSS && themeId) {
       try {
-        const theme = loadTheme(themeId);
-        if (theme) {
-          const cssResult = generateCSS(theme);
-          if (cssResult.success && cssResult.css) {
-            result.css = cssResult.css;
-          }
+        const cssResult = await generateCSSFromThemeId(themeId);
+        if (cssResult.success && cssResult.css) {
+          result.css = cssResult.css;
         }
       } catch (cssError) {
         // CSS 생성 실패는 경고만 (전체 실패 아님)

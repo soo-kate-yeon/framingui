@@ -1,16 +1,13 @@
 /**
  * List Components MCP Tool (SPEC-MCP-003)
  * [TAG-MCP003-006] List all available UI components
+ * [SPEC-MCP-007:E-003] API 기반 데이터 소스로 마이그레이션
  *
- * Lists all UI components from @framingui/ui with metadata
+ * Lists all UI components from framingui.com API with metadata
  * including category, tier, and variant information
  */
 
-import {
-  getAllComponents,
-  getComponentsByCategory,
-  searchComponents,
-} from '../data/component-registry.js';
+import { fetchComponentList } from '../api/data-client.js';
 import type { ListComponentsInput, ListComponentsOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 
@@ -23,30 +20,36 @@ export async function listComponentsTool(
   input: ListComponentsInput
 ): Promise<ListComponentsOutput> {
   try {
-    // Get components based on filters
-    let components =
-      input.category === 'all' || !input.category
-        ? getAllComponents()
-        : getComponentsByCategory(input.category);
+    // API에서 전체 컴포넌트 목록 조회
+    const allComponents = await fetchComponentList();
 
-    // Apply search filter if provided
+    // 카테고리 필터 적용
+    let components = allComponents;
+    if (input.category && input.category !== 'all') {
+      components = allComponents.filter((c: any) => c.category === input.category);
+    }
+
+    // 검색 필터 적용
     if (input.search) {
-      components = searchComponents(input.search).filter(c =>
-        input.category === 'all' || !input.category ? true : c.category === input.category
+      const lowerSearch = input.search.toLowerCase();
+      components = components.filter(
+        (c: any) =>
+          c.id.includes(lowerSearch) ||
+          c.name.toLowerCase().includes(lowerSearch) ||
+          c.description.toLowerCase().includes(lowerSearch)
       );
     }
 
-    // Calculate category counts
-    const allComponents = getAllComponents();
+    // 카테고리 카운트 계산
     const categories = {
-      core: allComponents.filter(c => c.category === 'core').length,
-      complex: allComponents.filter(c => c.category === 'complex').length,
-      advanced: allComponents.filter(c => c.category === 'advanced').length,
+      core: allComponents.filter((c: any) => c.category === 'core').length,
+      complex: allComponents.filter((c: any) => c.category === 'complex').length,
+      advanced: allComponents.filter((c: any) => c.category === 'advanced').length,
     };
 
     return {
       success: true,
-      components,
+      components: components as any,
       count: components.length,
       categories,
     };

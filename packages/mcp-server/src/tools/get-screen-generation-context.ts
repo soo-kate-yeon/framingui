@@ -1,10 +1,15 @@
 /**
  * Get Screen Generation Context MCP Tool
  * SPEC-MCP-004 Phase 3.5: Provides complete context for AI agents to generate screen definitions
+ * [SPEC-MCP-007] API 기반 데이터 소스로 마이그레이션
  */
 
-import { templateRegistry } from '@framingui/ui';
-import { fetchTheme } from '../api/data-client.js';
+import {
+  fetchTheme,
+  fetchComponent,
+  fetchScreenExamples,
+  fetchTemplate,
+} from '../api/data-client.js';
 import type {
   GetScreenGenerationContextInput,
   GetScreenGenerationContextOutput,
@@ -16,11 +21,8 @@ import type {
 } from '../schemas/mcp-schemas.js';
 import { matchTemplates } from '../data/template-matcher.js';
 import { getAllRecipes } from '../data/recipe-resolver.js';
-import { getMatchingExamples } from '../data/examples/screen-examples.js';
 import { generateHints } from '../data/hint-generator.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
-import { getComponentById } from '../data/component-registry.js';
-import { getComponentPropsData } from '../data/component-props.js';
 
 /**
  * Screen Definition JSON Schema for reference
@@ -114,32 +116,23 @@ const SCREEN_DEFINITION_SCHEMA = {
 };
 
 /**
- * Get component info from local registry
+ * API에서 컴포넌트 정보 조회
  */
-function getComponentInfo(componentIds: string[]): ContextComponentInfo[] {
+async function getComponentInfo(componentIds: string[]): Promise<ContextComponentInfo[]> {
   const components: ContextComponentInfo[] = [];
 
   for (const id of componentIds) {
-    const component = getComponentById(id.toLowerCase());
+    const component = await fetchComponent(id.toLowerCase());
     if (component) {
-      const propsData = getComponentPropsData(id.toLowerCase());
-
-      // subComponents가 있으면 import에 함께 포함
-      let importStatement: string;
-      if (propsData?.subComponents && propsData.subComponents.length > 0) {
-        importStatement = `import { ${component.name}, ${propsData.subComponents.join(', ')} } from '@framingui/ui';`;
-      } else {
-        importStatement = `import { ${component.name} } from '@framingui/ui';`;
-      }
-
       components.push({
         id: component.id,
         name: component.name,
         category: component.category as 'core' | 'complex' | 'advanced',
         description: component.description,
-        importStatement,
-        props: propsData?.props ?? [],
-        variants: propsData?.variants,
+        importStatement:
+          component.importStatement ?? `import { ${component.name} } from '@framingui/ui';`,
+        props: component.props ?? [],
+        variants: component.variants,
       });
     }
   }
@@ -241,7 +234,8 @@ export async function getScreenGenerationContextTool(
     if (templateMatches.length > 0) {
       const match = templateMatches[0];
       if (match) {
-        const templateData = templateRegistry.get(match.templateId);
+        // API를 통해 템플릿 상세 정보 조회 [SPEC-MCP-007:E-002]
+        const templateData = await fetchTemplate(match.templateId);
 
         bestMatch = {
           templateId: match.templateId,
@@ -265,12 +259,34 @@ export async function getScreenGenerationContextTool(
     if (componentTypes.length === 0) {
       componentTypes = ['card', 'heading', 'text', 'button'];
     }
-    const components = getComponentInfo(componentTypes);
+    const components = await getComponentInfo(componentTypes);
 
     // 3. Get examples if requested
     let examples: ScreenExample[] | undefined;
     if (input.includeExamples !== false) {
-      examples = getMatchingExamples(input.description, 2);
+      // API를 통해 스크린 예제 조회 [SPEC-MCP-007:E-007]
+      const allExamples = await fetchScreenExamples();
+      // 설명과 관련된 예제 필터링 (간단한 키워드 매칭)
+      const lowerDesc = input.description.toLowerCase();
+      const scored = allExamples.map((ex: any) => {
+        let score = 0;
+        const exWords = [
+          ...ex.name.toLowerCase().split(' '),
+          ...ex.description.toLowerCase().split(' '),
+        ];
+        for (const word of exWords) {
+          if (word.length > 3 && lowerDesc.includes(word)) {
+            score++;
+          }
+        }
+        return { ex, score };
+      });
+      const filtered = scored
+        .filter((s: any) => s.score > 0)
+        .sort((a: any, b: any) => b.score - a.score)
+        .slice(0, 2)
+        .map((s: any) => s.ex);
+      examples = filtered.length > 0 ? filtered : undefined;
     }
 
     // 4. Get theme recipes if theme specified
