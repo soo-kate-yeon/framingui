@@ -9,18 +9,33 @@ const distDir = join(packageDir, 'dist', 'bundled');
 
 const sources = [
   {
-    from: join(repoDir, '.moai', 'themes', 'generated'),
+    label: 'themes',
+    required: true,
+    candidates: [join(repoDir, '.moai', 'themes', 'generated')],
     to: join(distDir, 'themes', 'generated'),
   },
   {
-    from: join(repoDir, '.moai', 'icon-libraries', 'generated'),
+    label: 'icon-libraries',
+    required: true,
+    candidates: [
+      join(packageDir, 'data', 'icon-libraries', 'generated'),
+      join(repoDir, '.moai', 'icon-libraries', 'generated'),
+    ],
     to: join(distDir, 'icon-libraries', 'generated'),
   },
 ];
 
-for (const { from, to } of sources) {
-  if (!existsSync(from)) {
-    throw new Error(`Missing generated data directory: ${from}`);
+for (const { label, required, candidates, to } of sources) {
+  const from = candidates.find(candidate => existsSync(candidate));
+
+  if (!from) {
+    if (required) {
+      throw new Error(
+        `Missing generated data directory for ${label}: ${candidates.join(', ')}`
+      );
+    }
+
+    continue;
   }
 
   mkdirSync(dirname(to), { recursive: true });

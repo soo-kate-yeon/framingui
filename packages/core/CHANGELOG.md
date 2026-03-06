@@ -5,6 +5,14 @@ All notable changes to @tekton/core will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.5] - 2026-03-06
+
+### Fixed
+
+- Fixed `copy-bundled-generated-data.mjs` so CI and Vercel builds no longer fail when `.moai/icon-libraries/generated` is absent.
+- Added tracked bundled icon-library data to `@framingui/core` so deployed environments do not depend on repo-local `.moai` files for icon library discovery.
+- Cleared stale build output and `tsconfig.tsbuildinfo` before `@framingui/core` builds so clean local builds continue to emit `dist/*`.
+
 ## [0.4.4] - 2026-03-06
 
 ### Added
