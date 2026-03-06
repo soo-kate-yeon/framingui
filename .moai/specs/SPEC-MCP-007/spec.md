@@ -1,7 +1,7 @@
 ---
 id: SPEC-MCP-007
 version: "1.0.0"
-status: "planned"
+status: "completed"
 created: "2026-03-06"
 updated: "2026-03-06"
 author: "soo-kate-yeon"
@@ -14,6 +14,7 @@ lifecycle: "spec-anchored"
 | Version | Date       | Author        | Changes                              |
 | ------- | ---------- | ------------- | ------------------------------------ |
 | 1.0.0   | 2026-03-06 | soo-kate-yeon | Initial draft (planned)              |
+| 1.1.0   | 2026-03-06 | soo-kate-yeon | Implementation complete: v0.6.0 published |
 
 ---
 
@@ -305,3 +306,18 @@ These packages remain as devDependencies only if needed for type definitions dur
 - `[SPEC-MCP-007:O-001]` - API-driven hint keywords
 - `[SPEC-MCP-007:O-002]` - API-driven validation tokens
 - `[SPEC-MCP-007:O-003]` - Integration test parity
+
+## Implementation Status
+
+**Status**: COMPLETED (v0.6.0)
+**Published**: 2026-03-06
+**npm**: `@framingui/mcp-server@0.6.0`
+
+### Completion Summary
+
+All SPEC requirements have been implemented:
+- ✅ U-001: All data fetched via framingui.com API
+- ✅ U-002: MemoryCache 10-min TTL applied to all responses
+- ✅ E-001~E-007: 7 fetch functions implemented
+- ✅ W-001~W-003: @framingui/core, @framingui/ui, fs.readFileSync removed
+- ✅ S-004: Stale cache fallback implemented via MemoryCache.getStale()
