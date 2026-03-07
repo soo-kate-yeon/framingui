@@ -16,6 +16,7 @@ npx -y @framingui/mcp-server@latest
 
 # 또는 전역 설치 후 실행
 npm install -g @framingui/mcp-server@latest
+framingui-mcp --version
 framingui-mcp
 ```
 
@@ -83,6 +84,8 @@ npx -y @framingui/mcp-server@latest init
 ```
 
 설정 완료 후 Claude Code를 재시작하면, AI에게 자연어로 화면 생성을 요청할 수 있습니다.
+
+이미 `.mcp.json` 에 `framingui` entry 가 있다면, 최신 CLI의 `init` 은 그 entry 를 `npx -y @framingui/mcp-server@latest` 형태로 갱신합니다.
 
 ---
 

@@ -2,6 +2,13 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.6] - 2026-03-07
+
+### Fixed
+
+- Added a real `framingui-mcp --version` / `-v` CLI path so version checks no longer boot the stdio server.
+- Updated `framingui-mcp init` to rewrite stale `framingui` entries in `.mcp.json` to the canonical `npx -y @framingui/mcp-server@latest` config.
+
 ## [0.6.5] - 2026-03-07
 
 ### Fixed

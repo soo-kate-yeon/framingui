@@ -120,6 +120,14 @@ Use the explicit latest tag in the server entry when debugging updates:
 
 This removes ambiguity when a machine has old caches or an older global install.
 
+If you rerun `framingui-mcp init` in a project that already has a `framingui` MCP entry, the current CLI now rewrites that entry to the canonical latest form above instead of leaving an older pinned version behind.
+
+### How do I check the installed CLI version?
+
+```bash
+framingui-mcp --version
+```
+
 ## Package Roles
 
 - `@framingui/tokens`: token types and shared token contract
