@@ -122,6 +122,12 @@ This removes ambiguity when a machine has old caches or an older global install.
 
 If you rerun `framingui-mcp init` in a project that already has a `framingui` MCP entry, the current CLI now rewrites that entry to the canonical latest form above instead of leaving an older pinned version behind.
 
+### Why does MCP now show different `licensedThemes` than old stored licenses?
+
+`licensedThemes` is now the canonical current theme-id set exposed to MCP tools.
+
+This matters because some older licenses were stored with placeholder ids such as `default` or all-access sentinels. The MCP APIs now normalize those stored values before returning access, so `list-themes`, `preview-theme`, and `whoami` stay in sync.
+
 ### How do I check the installed CLI version?
 
 ```bash

@@ -24,6 +24,7 @@ import {
   createRateLimitErrorResponse,
 } from '@/lib/security/rate-limit';
 import type { LicenseTier } from '@/lib/db/types';
+import { CREATOR_ALL_ACCESS_THEME_ID } from '@/lib/mcp/theme-entitlements';
 
 // Paddle 서버 SDK 초기화
 function getPaddleClient(): Paddle | null {
@@ -169,7 +170,18 @@ export async function POST(request: NextRequest) {
         }
 
         const tier = resolveTier(priceId);
-        const themeId = customData.theme_id || 'default';
+        const requestedThemeId = customData.theme_id?.trim();
+        const themeId =
+          tier === 'creator'
+            ? requestedThemeId || CREATOR_ALL_ACCESS_THEME_ID
+            : requestedThemeId || null;
+
+        if (!themeId) {
+          console.error(
+            `[Paddle Webhook] Missing theme_id for scoped purchase: user=${customData.user_id}, tier=${tier}`
+          );
+          return NextResponse.json({ error: 'missing_theme_id' }, { status: 400 });
+        }
 
         // Idempotency: paddle_subscription_id로 중복 확인
         const transactionId = transaction.id;
