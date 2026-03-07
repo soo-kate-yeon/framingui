@@ -18,6 +18,7 @@ import {
   createRateLimitErrorResponse,
   createRateLimitHeaders,
 } from '@/lib/security/rate-limit';
+import { normalizeLicensedThemes } from '@/lib/mcp/theme-entitlements';
 
 /**
  * API 검증 성공 응답
@@ -31,6 +32,7 @@ interface VerifySuccessResponse {
   };
   licenses: Array<{
     themeId: string;
+    resolvedThemeIds?: string[];
     tier: string;
     type: 'trial' | 'individual' | 'creator';
     isActive: boolean;
@@ -311,7 +313,8 @@ export async function GET(request: NextRequest) {
     });
 
     // 10. 응답 구성
-    const licensedThemes = activeLicenses.map((license) => license.theme_id);
+    const normalizedEntitlements = normalizeLicensedThemes(activeLicenses, { logger: console });
+    const licensedThemes = normalizedEntitlements.licensedThemes;
 
     const response: VerifySuccessResponse = {
       valid: true,
@@ -320,8 +323,11 @@ export async function GET(request: NextRequest) {
         email: authUser.email,
         plan: userPlan,
       },
-      licenses: activeLicenses.map((license) => ({
+      licenses: normalizedEntitlements.licenses.map((license) => ({
         themeId: license.theme_id,
+        ...(license.normalization !== 'canonical'
+          ? { resolvedThemeIds: license.resolvedThemeIds }
+          : {}),
         tier: license.tier,
         type: license.type,
         isActive: license.is_active,

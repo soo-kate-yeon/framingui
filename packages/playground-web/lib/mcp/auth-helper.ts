@@ -19,6 +19,7 @@ import {
   createRateLimitErrorResponse,
   createRateLimitHeaders,
 } from '@/lib/security/rate-limit';
+import { normalizeLicensedThemes } from '@/lib/mcp/theme-entitlements';
 
 interface ApiKey {
   id: string;
@@ -290,7 +291,8 @@ export async function authenticateMcpRequest(
     return new Date(license.expires_at) > new Date();
   });
 
-  const licensedThemes = activeLicenses.map((l) => l.theme_id);
+  const normalizedEntitlements = normalizeLicensedThemes(activeLicenses, { logger: console });
+  const licensedThemes = normalizedEntitlements.licensedThemes;
 
   // 10. 인증 결과 캐시 저장
   setCachedAuth(apiKey, {
