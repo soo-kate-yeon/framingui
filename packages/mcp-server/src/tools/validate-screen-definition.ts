@@ -3,6 +3,7 @@
  * SPEC-MCP-004 Phase 3.5: Validates screen definitions with helpful feedback
  */
 
+import { getComponentSchema } from '@framingui/core';
 import { fetchComponent } from '../api/data-client.js';
 import type {
   ValidateScreenDefinitionInput,
@@ -21,25 +22,107 @@ import {
 
 const _componentPropsCache: Map<string, any> = new Map();
 
-async function getPropsData(componentId: string): Promise<any | null> {
-  if (_componentPropsCache.has(componentId)) {
-    return _componentPropsCache.get(componentId);
-  }
-  const result = await fetchComponent(componentId.toLowerCase());
-  if (result.ok) {
-    const detail = result.data;
-    const propsData = {
-      props: detail.props ?? [],
-      variants: detail.variants,
-      subComponents: detail.subComponents,
-      dependencies: detail.dependencies,
-      examples: detail.examples,
-      accessibility: detail.accessibility,
+type ComponentPropsLookupResult =
+  | {
+      status: 'available';
+      data: {
+        props: any[];
+        variants: any;
+        subComponents: any;
+        dependencies: any;
+        examples: any;
+        accessibility: any;
+      };
+    }
+  | {
+      status: 'not-found';
+    }
+  | {
+      status: 'unavailable';
     };
-    _componentPropsCache.set(componentId, propsData);
-    return propsData;
+
+async function getPropsData(componentId: string): Promise<ComponentPropsLookupResult> {
+  const localSchema =
+    getComponentSchema(componentId) ??
+    getScreenComponentTypes()
+      .map(type => getComponentSchema(type))
+      .find(schema => schema?.type.toLowerCase() === componentId.toLowerCase());
+  const localPropsData = localSchema
+    ? {
+        props: localSchema.props,
+        variants: [],
+        subComponents: undefined,
+        dependencies: undefined,
+        examples: undefined,
+        accessibility: localSchema.a11y,
+      }
+    : null;
+
+  if (_componentPropsCache.has(componentId)) {
+    return {
+      status: 'available',
+      data: _componentPropsCache.get(componentId),
+    };
   }
-  return null;
+
+  try {
+    const result = await fetchComponent(componentId.toLowerCase());
+    if (result.ok) {
+      const detail = result.data;
+      const propsData = {
+        props: mergePropDefinitions(localPropsData?.props ?? [], detail.props ?? []),
+        variants: detail.variants ?? [],
+        subComponents: detail.subComponents,
+        dependencies: detail.dependencies,
+        examples: detail.examples,
+        accessibility: detail.accessibility ?? localPropsData?.accessibility,
+      };
+      _componentPropsCache.set(componentId, propsData);
+      return {
+        status: 'available',
+        data: propsData,
+      };
+    }
+  } catch {
+    if (localPropsData) {
+      _componentPropsCache.set(componentId, localPropsData);
+      return {
+        status: 'available',
+        data: localPropsData,
+      };
+    }
+
+    return { status: 'unavailable' };
+  }
+
+  if (localPropsData) {
+    _componentPropsCache.set(componentId, localPropsData);
+    return {
+      status: 'available',
+      data: localPropsData,
+    };
+  }
+
+  return { status: 'not-found' };
+}
+
+function mergePropDefinitions(localProps: any[], remoteProps: any[]): any[] {
+  const merged = new Map<string, any>();
+
+  for (const prop of localProps) {
+    merged.set(prop.name, prop);
+  }
+
+  for (const prop of remoteProps) {
+    const existing = merged.get(prop.name) ?? {};
+    merged.set(prop.name, {
+      ...existing,
+      ...prop,
+      options: prop.options ?? existing.options,
+    });
+  }
+
+  return [...merged.values()];
 }
 
 /**
@@ -344,11 +427,22 @@ async function validateComponentProps(
   }
 
   // props 데이터가 없는 컴포넌트는 스킵 (하위 호환성)
-  const propsData = await getPropsData(component.type.toLowerCase());
-  if (!propsData) {
+  const propsLookup = await getPropsData(component.type.toLowerCase());
+  if (propsLookup.status === 'not-found') {
     return { errors, warnings };
   }
 
+  if (propsLookup.status === 'unavailable') {
+    warnings.push({
+      path,
+      code: 'COMPONENT_METADATA_UNAVAILABLE',
+      message: `Component metadata lookup failed for ${component.type}`,
+      recommendation: 'Retry validation later or continue with contract-level validation only',
+    });
+    return { errors, warnings };
+  }
+
+  const propsData = propsLookup.data;
   const componentProps = component.props || {};
 
   // 1. 필수 props 존재 여부 검증
@@ -375,29 +469,22 @@ async function validateComponentProps(
     }
   }
 
-  // 2. variant 값 유효성 검증
-  if (propsData.variants && propsData.variants.length > 0) {
-    // variant prop 그룹별로 체크
-    const variantGroups = new Map<string, string[]>();
-    for (const v of propsData.variants) {
-      if (!variantGroups.has(v.name)) {
-        variantGroups.set(v.name, []);
-      }
-      variantGroups.get(v.name)!.push(v.value);
+  // 2. enum-like prop 값 유효성 검증
+  for (const propDef of propsData.props) {
+    const validValues = Array.isArray(propDef.options) ? propDef.options : [];
+    const propValue = componentProps[propDef.name];
+
+    if (validValues.length === 0 || propValue === undefined || typeof propValue !== 'string') {
+      continue;
     }
 
-    for (const [variantName, validValues] of variantGroups) {
-      const propValue = componentProps[variantName];
-      if (propValue !== undefined && typeof propValue === 'string') {
-        if (!validValues.includes(propValue)) {
-          warnings.push({
-            path: `${path}.props.${variantName}`,
-            code: 'INVALID_VARIANT',
-            message: `Invalid ${variantName} value "${propValue}" on ${component.type}`,
-            recommendation: `Valid values: ${validValues.join(', ')}`,
-          });
-        }
-      }
+    if (!validValues.includes(propValue)) {
+      warnings.push({
+        path: `${path}.props.${propDef.name}`,
+        code: 'INVALID_VARIANT',
+        message: `Invalid ${propDef.name} value "${propValue}" on ${component.type}`,
+        recommendation: `Valid values: ${validValues.join(', ')}`,
+      });
     }
   }
 

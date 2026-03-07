@@ -62,6 +62,45 @@ async function applyThemeRecipesToScreenDefinition(
   } as GenerateScreenInput['screenDefinition'];
 }
 
+async function generateCodeForFormat(
+  screenDefinition: ScreenDefinition,
+  outputFormat: GenerateScreenInput['outputFormat'],
+  options: GenerateScreenInput['options']
+): Promise<string> {
+  const { resolveScreen, generateReactComponent, generateStyledComponents } =
+    await import('@framingui/core');
+  const resolvedScreen = await resolveScreen(screenDefinition);
+  const generatorOptions = {
+    format: (options?.typescript !== false ? 'typescript' : 'javascript') as
+      | 'typescript'
+      | 'javascript',
+    prettier: options?.prettier ?? false,
+  };
+
+  switch (outputFormat) {
+    case 'css-in-js': {
+      const cssFramework =
+        (options?.cssFramework as 'styled-components' | 'emotion') || 'styled-components';
+      return generateStyledComponents(resolvedScreen, cssFramework, generatorOptions).code;
+    }
+
+    case 'tailwind':
+      // Keep a single supported React code path for both JSX-based outputs.
+      return generateReactComponent(resolvedScreen, {
+        ...generatorOptions,
+        cssFramework: 'tailwind',
+      }).code;
+
+    case 'react':
+      return generateReactComponent(resolvedScreen, generatorOptions).code;
+
+    default: {
+      const unsupportedFormat: never = outputFormat;
+      throw new Error(`Unsupported output format: ${unsupportedFormat}`);
+    }
+  }
+}
+
 /**
  * Generate production-ready code from JSON screen definition
  *
@@ -99,52 +138,13 @@ export async function generateScreenTool(
       };
     }
 
-    // Step 2: Resolve screen with layout and components
-    const { resolveScreen } = await import('@framingui/core');
-    const resolvedScreen = await resolveScreen(screenDefinition as ScreenDefinition);
-
-    // Step 3: Prepare generator options
-    const generatorOptions = {
-      format: (options?.typescript !== false ? 'typescript' : 'javascript') as
-        | 'typescript'
-        | 'javascript',
-      prettier: options?.prettier ?? false,
-    };
-
-    // Step 4: Generate code based on output format
-    let code: string;
+    // Step 2: Generate code through a single supported renderer contract.
+    const code = await generateCodeForFormat(
+      screenDefinition as ScreenDefinition,
+      outputFormat,
+      options
+    );
     const cssVariables: string | undefined = undefined;
-
-    switch (outputFormat) {
-      case 'css-in-js': {
-        const { generateStyledComponents } = await import('@framingui/core');
-        const cssFramework =
-          (options?.cssFramework as 'styled-components' | 'emotion') || 'styled-components';
-        const result = generateStyledComponents(resolvedScreen, cssFramework, generatorOptions);
-        code = result.code;
-        break;
-      }
-
-      case 'tailwind': {
-        const { generateTailwindClasses } = await import('@framingui/core');
-        const result = generateTailwindClasses(resolvedScreen, generatorOptions);
-        code = result.code;
-        break;
-      }
-
-      case 'react': {
-        const { generateReactComponent } = await import('@framingui/core');
-        const result = generateReactComponent(resolvedScreen, generatorOptions);
-        code = result.code;
-        break;
-      }
-
-      default:
-        return {
-          success: false,
-          error: `Unsupported output format: ${outputFormat}`,
-        };
-    }
 
     // Note: CSS variables generation is optional and depends on theme resolution
     // For now, we return the generated code without separate CSS variables

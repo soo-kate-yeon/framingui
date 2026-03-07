@@ -2,6 +2,17 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.9] - 2026-03-07
+
+### Fixed
+
+- Made `generate_screen` use one shared React codegen path for both `react` and `tailwind` outputs so Tailwind generation returns full component code instead of class-map stubs.
+- Hardened `validate-screen-definition` so component metadata outages no longer fail the tool and local core schemas still validate required props and enum-like variants.
+
+### Testing
+
+- Added source and built-`dist` regression tests covering Tailwind code generation, local schema fallback, and validation resilience.
+
 ## [0.6.8] - 2026-03-07
 
 ### Fixed

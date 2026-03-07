@@ -11,6 +11,38 @@ vi.mock('../../src/data/recipe-resolver.ts', () => ({
 import { generateScreenTool } from '../../src/tools/generate-screen.ts';
 
 describe('Phase 4: generate_screen quality', () => {
+  it('returns full React code for tailwind output instead of only class mappings', async () => {
+    const result = await generateScreenTool({
+      screenDefinition: {
+        id: 'quality-tailwind',
+        name: 'Quality Tailwind',
+        shell: 'shell.web.app',
+        page: 'page.detail',
+        sections: [
+          {
+            id: 'main',
+            pattern: 'section.container',
+            components: [
+              {
+                type: 'Text',
+                props: {
+                  children: 'Tailwind screen content',
+                  className: 'text-base',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      outputFormat: 'tailwind',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.code).toContain('export const QualityTailwindScreen');
+    expect(result.code).toContain('Tailwind screen content');
+    expect(result.code).not.toContain('export const componentClasses');
+  });
+
   it('does not emit synthetic Tailwind classes derived from typography token paths', async () => {
     const result = await generateScreenTool({
       screenDefinition: {
