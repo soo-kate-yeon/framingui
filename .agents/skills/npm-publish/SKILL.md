@@ -61,12 +61,15 @@ Check if a changelog exists. If so, add an entry for the new version following t
 ## [X.X.X] - YYYY-MM-DD
 
 ### Added
+
 - New features
 
 ### Changed
+
 - Changes to existing functionality
 
 ### Fixed
+
 - Bug fixes
 ```
 
@@ -79,6 +82,24 @@ Run the project's build command to ensure everything compiles:
 ```bash
 bun run build
 ```
+
+### 5.5 Publish Integrity Gate (Required)
+
+Before any npm publish, run a publish-integrity check that fails on leaked `workspace:` ranges and validates packed manifest integrity.
+
+For this monorepo, run:
+
+```bash
+node ../../scripts/check-publish-integrity.mjs --package <package-name> --skip-lockfile-check --consumer-smoke
+```
+
+Example:
+
+```bash
+node ../../scripts/check-publish-integrity.mjs --package @framingui/mcp-server --skip-lockfile-check --consumer-smoke
+```
+
+If this check fails, stop and fix dependency specifiers before proceeding.
 
 ### 6. Commit and Push FIRST
 

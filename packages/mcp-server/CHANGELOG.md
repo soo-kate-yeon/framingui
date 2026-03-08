@@ -2,6 +2,12 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.14] - 2026-03-08
+
+### Changed
+
+- Added a publish-integrity gate to `prepublishOnly` so `@framingui/mcp-server` runs package-scoped workspace-leak checks and consumer install smoke checks before publish.
+
 ## [0.6.13] - 2026-03-08
 
 ### Fixed

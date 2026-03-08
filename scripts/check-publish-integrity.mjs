@@ -7,9 +7,23 @@ import { spawnSync } from 'node:child_process';
 
 const repoRoot = process.cwd();
 const packagesDir = path.join(repoRoot, 'packages');
-const shouldRunConsumerSmoke = process.argv.includes('--consumer-smoke');
+const args = process.argv.slice(2);
+const shouldRunConsumerSmoke = args.includes('--consumer-smoke');
+const shouldSkipLockfileCheck = args.includes('--skip-lockfile-check');
 const dependencyFields = ['dependencies', 'peerDependencies', 'optionalDependencies'];
 const npmCacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'framingui-npm-cache-'));
+const selectedPackages = [];
+
+for (let i = 0; i < args.length; i += 1) {
+  if (args[i] === '--package') {
+    const value = args[i + 1];
+    if (!value || value.startsWith('--')) {
+      throw new Error('--package requires a package name value');
+    }
+    selectedPackages.push(value);
+    i += 1;
+  }
+}
 
 function run(command, args, cwd = repoRoot) {
   const env = { ...process.env };
@@ -63,7 +77,20 @@ function collectPublishablePackages() {
     });
   }
 
-  return publishable;
+  if (selectedPackages.length === 0) {
+    return publishable;
+  }
+
+  const filtered = publishable.filter((pkg) => selectedPackages.includes(pkg.name));
+  const missing = selectedPackages.filter(
+    (selectedName) => !filtered.some((pkg) => pkg.name === selectedName)
+  );
+
+  if (missing.length > 0) {
+    throw new Error(`Selected package(s) not found or not publishable: ${missing.join(', ')}`);
+  }
+
+  return filtered;
 }
 
 function checkWorkspaceProtocolInManifest(pkg, errors) {
@@ -118,8 +145,10 @@ function runConsumerInstallSmoke(pkg, tarballPath, errors) {
 function main() {
   const errors = [];
 
-  console.log('Checking lockfile consistency...');
-  run('pnpm', ['install', '--frozen-lockfile', '--lockfile-only']);
+  if (!shouldSkipLockfileCheck) {
+    console.log('Checking lockfile consistency...');
+    run('pnpm', ['install', '--frozen-lockfile', '--lockfile-only']);
+  }
 
   const publishablePackages = collectPublishablePackages();
   if (publishablePackages.length === 0) {

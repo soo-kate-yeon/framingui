@@ -1,6 +1,6 @@
 {
   "name": "@framingui/mcp-server",
-  "version": "0.6.13",
+  "version": "0.6.14",
   "description": "Framingui MCP Server with Claude Code integration and timestamp-based preview system",
   "type": "module",
   "main": "./dist/index.js",
@@ -44,7 +44,7 @@
     "lint": "eslint src __tests__ --ext .ts --ignore-pattern 'src/**/*.js' --ignore-pattern 'src/**/*.d.ts'",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --project tsconfig.test.json --noEmit",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build && node ../../scripts/check-publish-integrity.mjs --package @framingui/mcp-server --skip-lockfile-check --consumer-smoke"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.0",
