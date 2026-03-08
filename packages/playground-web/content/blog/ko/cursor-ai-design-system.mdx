@@ -1,0 +1,589 @@
+---
+title: "Setting Up Cursor with Your Design System"
+description: "Complete guide to configuring Cursor AI to generate on-brand UI components using your design tokens. Includes .cursorrules setup and MCP integration."
+date: "2026-03-08"
+author:
+  name: "FramingUI Team"
+tags:
+  - cursor
+  - ai
+  - design-tokens
+  - mcp
+  - workflow
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## The Cursor Design System Problem
+
+You're using Cursor to speed up development. You press `Cmd+K` and ask:
+
+> "Create a notification card component"
+
+Cursor generates beautiful code in seconds:
+
+```tsx
+export function NotificationCard() {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+      <div className="flex items-center gap-3">
+        <Bell className="w-5 h-5 text-blue-600" />
+        <div>
+          <h3 className="font-semibold text-gray-900">New message</h3>
+          <p className="text-sm text-gray-600">You have 3 unread messages</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+Looks great! But...
+- You use `indigo-600`, not `blue-600`
+- Your card padding is `p-6`, not `p-4`
+- Your card background is `bg-neutral-50`, not `bg-white`
+
+**You spend 5 minutes fixing what Cursor generated in 5 seconds.**
+
+This guide shows you how to configure Cursor to generate code that matches your design system on the first try.
+
+## TL;DR
+
+- **`.cursorrules`** tells Cursor your coding standards and design system rules
+- **MCP (Model Context Protocol)** gives Cursor programmatic access to your design tokens
+- **Setup time:** 15 minutes
+- **Result:** Cursor generates on-brand code without manual fixing
+- **Works with:** FramingUI, custom tokens, Tailwind configs, any design system
+
+## Two Approaches: Which One is Right for You?
+
+### Approach 1: `.cursorrules` (Good, 10 minutes)
+
+**Pros:**
+- Simple text file
+- Works immediately
+- No additional dependencies
+
+**Cons:**
+- Cursor might "forget" rules in long sessions
+- Can't query dynamic values (like "what's our primary color HEX?")
+- Requires manual updates when tokens change
+
+**Best for:**
+- Small teams (1-3 people)
+- Stable design systems (tokens don't change often)
+- Simple token structures
+
+### Approach 2: MCP Integration (Better, 15 minutes)
+
+**Pros:**
+- Cursor queries your tokens programmatically
+- Always up-to-date (reads from source of truth)
+- Can answer "what colors are available?" dynamically
+
+**Cons:**
+- Requires MCP server setup
+- Slightly more complex configuration
+
+**Best for:**
+- Growing teams (3+ people)
+- Evolving design systems
+- Multiple projects sharing tokens
+
+**This guide covers both.** Start with `.cursorrules`, upgrade to MCP when needed.
+
+## Setup Part 1: `.cursorrules` (The Foundation)
+
+`.cursorrules` is a file in your project root that tells Cursor your coding conventions.
+
+### Basic Template
+
+Create `.cursorrules` in your project root:
+
+```markdown
+# Project: [Your App Name]
+# Design System: FramingUI + Tailwind
+
+## Design Tokens
+
+### Colors
+- Primary brand: `bg-brand-primary` (#4338CA)
+- Secondary brand: `bg-brand-secondary` (#7C3AED)
+- Neutral backgrounds: `bg-neutral-50`, `bg-neutral-100`, `bg-neutral-900`
+- Semantic colors:
+  - Success: `bg-semantic-success` (#10B981)
+  - Error: `bg-semantic-error` (#EF4444)
+  - Warning: `bg-semantic-warning` (#F59E0B)
+
+### Spacing
+Use named spacing tokens:
+- `xs` = 0.5rem (8px)
+- `sm` = 0.75rem (12px)
+- `md` = 1rem (16px)
+- `lg` = 1.5rem (24px)
+- `xl` = 2rem (32px)
+
+Examples:
+- Padding: `px-md py-sm`
+- Gap: `gap-md`
+- Margin: `mb-lg`
+
+**Never use arbitrary values like `px-[17px]` or `gap-[13px]`.**
+
+### Typography
+- Headings: `font-sans font-bold`
+- Body: `font-sans font-normal`
+- Sizes: `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`
+
+### Component Patterns
+
+#### Buttons
+```tsx
+// Primary button
+<button className="bg-brand-primary hover:bg-brand-primaryHover text-white px-md py-sm rounded-md">
+
+// Secondary button
+<button className="bg-neutral-100 hover:bg-neutral-200 text-neutral-900 px-md py-sm rounded-md">
+```
+
+#### Cards
+```tsx
+<div className="bg-neutral-50 border border-neutral-200 rounded-lg p-lg">
+  {children}
+</div>
+```
+
+#### Inputs
+```tsx
+<input className="border border-neutral-300 rounded-md px-sm py-xs focus:border-brand-primary" />
+```
+
+## Code Style
+
+- Use TypeScript for all components
+- Prefer function components over class components
+- Use Tailwind classes, not inline styles
+- Import types from `@/types`
+- Use `@/components` for shared components
+
+## Imports
+
+```tsx
+// ✅ Good
+import { tokens } from '@/lib/tokens'
+import { Button } from '@/components/ui/button'
+
+// ❌ Avoid
+import * as everything from 'library'
+```
+
+## When Generating Components
+
+1. Check if a similar component already exists in `@/components`
+2. Use design tokens (never hardcode colors or spacing)
+3. Ensure TypeScript types are defined
+4. Include basic accessibility (aria labels, keyboard support)
+5. Make components responsive by default
+```
+
+### Advanced: Project-Specific Rules
+
+Add these for your specific needs:
+
+```markdown
+## API Conventions
+- Use React Query for data fetching
+- API base URL: `process.env.NEXT_PUBLIC_API_URL`
+- Auth token: stored in `useAuthStore`
+
+## Testing
+- Use Vitest for unit tests
+- Use Playwright for E2E tests
+- Co-locate tests: `Button.test.tsx` next to `Button.tsx`
+
+## File Structure
+```
+components/
+  ui/          # Shared UI components (Button, Input, etc.)
+  features/    # Feature-specific components
+  layouts/     # Layout components
+```
+
+## State Management
+- Use Zustand for global state
+- Use React Context for component-tree-scoped state
+- Avoid prop drilling beyond 2 levels
+
+## Performance
+- Use `React.memo` for expensive renders
+- Lazy load routes with `next/dynamic`
+- Optimize images with `next/image`
+```
+
+### Testing Your `.cursorrules`
+
+**Prompt:** "Create a primary button component"
+
+**Bad output (Cursor ignoring rules):**
+```tsx
+<button className="bg-blue-600 px-4 py-2">
+```
+
+**Good output (Cursor following rules):**
+```tsx
+<button className="bg-brand-primary hover:bg-brand-primaryHover px-md py-sm rounded-md">
+```
+
+If Cursor ignores your rules, try:
+1. Make rules more explicit (add examples)
+2. Restart Cursor
+3. Reference your rules in prompts: "Follow .cursorrules for design tokens"
+
+## Setup Part 2: MCP Integration (The Upgrade)
+
+MCP gives Cursor **programmatic access** to your design tokens. Instead of reading a text file, Cursor queries your actual token source.
+
+### Prerequisites
+
+- Node.js 18+
+- FramingUI installed (`npm install @framingui/core`)
+- Cursor IDE
+
+### Step 1: Install MCP Server
+
+```bash
+npm install @framingui/mcp-server
+```
+
+### Step 2: Define Your Tokens
+
+If you haven't already, create your tokens file:
+
+```typescript
+// lib/tokens.ts
+import { createTokens } from '@framingui/core'
+
+export const tokens = createTokens({
+  colors: {
+    brand: {
+      primary: '#4338CA',
+      primaryHover: '#3730A3',
+      secondary: '#7C3AED',
+    },
+    neutral: {
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      // ... full scale
+      900: '#111827',
+    },
+    semantic: {
+      success: '#10B981',
+      error: '#EF4444',
+      warning: '#F59E0B',
+    }
+  },
+  spacing: {
+    xs: '0.5rem',
+    sm: '0.75rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+  },
+  typography: {
+    fontFamily: {
+      sans: 'Inter, system-ui, sans-serif',
+    },
+    fontSize: {
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
+    }
+  }
+})
+```
+
+### Step 3: Configure Cursor to Use MCP
+
+Create or edit `.cursor/mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "command": "npx",
+      "args": [
+        "@framingui/mcp-server",
+        "--tokens",
+        "./lib/tokens.ts",
+        "--project-root",
+        "."
+      ]
+    }
+  }
+}
+```
+
+### Step 4: Restart Cursor
+
+Close and reopen Cursor. The MCP server will start automatically.
+
+### Step 5: Test MCP Integration
+
+**Prompt:** "What colors are available in our design system?"
+
+**Cursor should respond with:**
+```
+Your design system includes:
+
+Brand colors:
+- primary: #4338CA
+- primaryHover: #3730A3
+- secondary: #7C3AED
+
+Neutral colors: 50, 100, ..., 900
+
+Semantic colors:
+- success: #10B981
+- error: #EF4444
+- warning: #F59E0B
+```
+
+If Cursor can't access tokens:
+1. Check that `@framingui/mcp-server` is installed
+2. Verify `.cursor/mcp.json` path is correct
+3. Restart Cursor again
+4. Check MCP logs: `Cursor > View > Output > MCP`
+
+## Real-World Workflow: Building a Feature with Cursor
+
+### Scenario: Build a User Settings Page
+
+**Step 1: Ask Cursor to scaffold the page**
+
+**Prompt:**
+```
+Create a user settings page with:
+- Profile section (avatar, name, email)
+- Appearance section (theme toggle, language selector)
+- Notifications section (email preferences checkboxes)
+
+Use our design tokens. Follow .cursorrules.
+```
+
+**Cursor generates:**
+```tsx
+// app/settings/page.tsx
+import { tokens } from '@/lib/tokens'
+
+export default function SettingsPage() {
+  return (
+    <div className="max-w-2xl mx-auto py-xl">
+      <h1 className="text-2xl font-bold text-neutral-900 mb-lg">
+        Settings
+      </h1>
+
+      {/* Profile Section */}
+      <section className="bg-neutral-50 border border-neutral-200 rounded-lg p-lg mb-md">
+        <h2 className="text-xl font-semibold mb-md">Profile</h2>
+        {/* ... Cursor generates form fields using tokens */}
+      </section>
+
+      {/* More sections... */}
+    </div>
+  )
+}
+```
+
+Notice:
+- Used `text-neutral-900`, not `text-gray-900`
+- Used `py-xl`, `p-lg`, `mb-md` (your spacing tokens)
+- Used `bg-neutral-50` (your background token)
+
+**Step 2: Iterate with Cursor**
+
+**Prompt:** "Add a save button at the bottom. Make it primary variant."
+
+**Cursor generates:**
+```tsx
+<button 
+  className="bg-brand-primary hover:bg-brand-primaryHover text-white px-lg py-sm rounded-md"
+  onClick={handleSave}
+>
+  Save Changes
+</button>
+```
+
+Perfect. No manual fixing needed.
+
+**Step 3: Add dark mode support**
+
+**Prompt:** "Make this component support dark mode using our semantic tokens"
+
+**Cursor updates:**
+```tsx
+<div className="bg-surface-base text-text-primary dark:bg-surface-baseDark dark:text-text-primaryDark">
+```
+
+(Assuming you've defined semantic surface/text tokens in your system)
+
+## Advanced Tips
+
+### Tip 1: Context-Aware Prompts
+
+Include context in your prompts:
+
+```
+Create a delete button for removing user accounts.
+- Use semantic.error color
+- Include confirmation dialog
+- Accessible (keyboard support, aria labels)
+```
+
+Cursor will use `bg-semantic-error` instead of guessing `red-600`.
+
+### Tip 2: Reference Existing Components
+
+```
+Create a modal component similar to our existing Dialog component
+but with a larger max width (max-w-2xl instead of max-w-md).
+```
+
+Cursor will copy your design patterns automatically.
+
+### Tip 3: Batch Refactors
+
+```
+Refactor all button components in /components/ui to use design tokens
+instead of hardcoded Tailwind classes.
+```
+
+Cursor will:
+1. Find all buttons
+2. Replace `bg-blue-600` → `bg-brand-primary`
+3. Replace `px-4 py-2` → `px-md py-sm`
+
+Review carefully, but saves hours of manual work.
+
+### Tip 4: Generate Multiple Variants
+
+```
+Create a Badge component with three variants:
+- default (neutral background)
+- success (semantic.success)
+- error (semantic.error)
+
+Use our spacing tokens for padding.
+```
+
+**Cursor generates:**
+```tsx
+type BadgeVariant = 'default' | 'success' | 'error'
+
+interface BadgeProps {
+  variant?: BadgeVariant
+  children: React.ReactNode
+}
+
+export function Badge({ variant = 'default', children }: BadgeProps) {
+  const variantClasses = {
+    default: 'bg-neutral-100 text-neutral-900',
+    success: 'bg-semantic-success/10 text-semantic-success',
+    error: 'bg-semantic-error/10 text-semantic-error',
+  }
+
+  return (
+    <span className={`inline-flex items-center px-sm py-xs rounded-md text-sm font-medium ${variantClasses[variant]}`}>
+      {children}
+    </span>
+  )
+}
+```
+
+## Common Issues & Fixes
+
+### Issue 1: Cursor Forgets Your Design System
+
+**Symptom:** After a long chat, Cursor starts using `blue-600` again.
+
+**Fix:**
+- Remind Cursor in your prompt: "Use design tokens from .cursorrules"
+- Or use MCP (it never forgets)
+
+### Issue 2: Cursor Generates Invalid Token Names
+
+**Symptom:** `bg-brand-primary-500` (you don't have a `primary-500` token)
+
+**Fix:**
+- Add available token names explicitly in `.cursorrules`:
+  ```
+  Available brand colors:
+  - brand.primary (only this, no numeric scales)
+  - brand.secondary
+  ```
+
+### Issue 3: MCP Server Not Starting
+
+**Check logs:**
+```bash
+# In Cursor
+View > Output > Select "MCP" from dropdown
+```
+
+**Common causes:**
+- Path to `tokens.ts` is wrong (use absolute path if needed)
+- `@framingui/mcp-server` not installed
+- Node.js version <18
+
+### Issue 4: Cursor Generates Inline Styles Instead of Classes
+
+**Symptom:**
+```tsx
+<div style={{ backgroundColor: '#4338CA', padding: '16px' }}>
+```
+
+**Fix:**
+Add to `.cursorrules`:
+```
+Always use Tailwind classes. Never use inline styles unless absolutely necessary (e.g., dynamic values from props).
+```
+
+## Measuring Improvement
+
+Track these metrics before and after setup:
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Time fixing Cursor output | 5 min per component | 30 sec per component |
+| Inconsistent colors generated | 60% of outputs | <5% of outputs |
+| Manual token replacement | 12 edits per component | 0-1 edits per component |
+
+**ROI: ~80% reduction in post-generation fixes**
+
+## The Bottom Line
+
+Cursor is fast. But without configuration, it's fast at generating **generic** code, not **your** code.
+
+15 minutes of setup (`.cursorrules` + MCP) transforms Cursor from "code generator" to "code generator that knows your design system."
+
+**Before:** Cursor is a junior dev who needs constant corrections
+**After:** Cursor is a senior dev who knows your conventions by heart
+
+## Next Steps
+
+1. **Copy the `.cursorrules` template** from this article
+2. **Customize it** with your tokens, spacing, and component patterns
+3. **Install MCP** (if you want dynamic token access)
+4. **Test with a simple prompt**: "Create a primary button"
+5. **Iterate**: Add more rules as you discover edge cases
+
+**Get started**: [FramingUI + Cursor Setup Guide →](/docs/cursor-setup)
+
+**Download starter templates**:
+- [.cursorrules template](https://github.com/framingui/templates/blob/main/.cursorrules)
+- [MCP config template](https://github.com/framingui/templates/blob/main/.cursor/mcp.json)
+
+---
+
+*Questions about Cursor + FramingUI? [Join our Discord](https://discord.gg/framingui) or [tweet at us](https://x.com/framingui).*

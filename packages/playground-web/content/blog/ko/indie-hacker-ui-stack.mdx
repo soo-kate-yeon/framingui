@@ -1,0 +1,580 @@
+---
+title: "The Indie Hacker's UI Stack in 2026"
+description: "The optimal UI stack for solo developers and small teams in 2026: FramingUI + shadcn/ui + Tailwind. Ship fast without sacrificing quality."
+date: "2026-03-08"
+author:
+  name: "FramingUI Team"
+tags:
+  - indie-hacker
+  - stack
+  - tailwind
+  - shadcn
+  - productivity
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+## The Solo Developer's Dilemma
+
+You're building a SaaS product alone (or with one co-founder). You need to:
+
+- Ship fast (investors/users won't wait)
+- Look professional (generic UIs don't convert)
+- Stay consistent (sloppy UIs hurt trust)
+- Keep costs low (no $50k design agency)
+- Avoid maintenance hell (you're the only engineer)
+
+The old advice: "Use a component library like Material-UI or Chakra."
+
+The problem: Generic libraries look generic. Every MUI app looks the same. Your landing page screams "template."
+
+**The 2026 answer:** A **layered stack** that gives you speed AND brand differentiation.
+
+## TL;DR: The Stack
+
+```
+Layer 1: Tailwind CSS (utility framework)
+         ↓
+Layer 2: FramingUI (design tokens + system)
+         ↓
+Layer 3: shadcn/ui (copy-paste components)
+         ↓
+Layer 4: Custom components (your differentiators)
+```
+
+**Setup time:** 2-3 hours
+**Maintenance:** ~1 hour/month
+**Cost:** $0 (all open source)
+**Result:** Professional UI that looks unique, ships fast, stays consistent
+
+## Why This Stack Wins in 2026
+
+### Compared to Material-UI / Chakra
+
+| | Material-UI / Chakra | FramingUI + shadcn |
+|---|---|---|
+| **Setup** | `npm install` → done | 2 hours (tokens + config) |
+| **Customization** | Theme config (limited) | Full control (you own the code) |
+| **Bundle size** | 100-300kb | 20-50kb (tree-shakeable) |
+| **Brand differentiation** | Looks like every other MUI app | Looks unique to your brand |
+| **AI compatibility** | Medium (AI uses generic props) | High (AI uses your tokens) |
+| **Learning curve** | Medium (library-specific APIs) | Low (standard HTML + Tailwind) |
+
+### Compared to Building from Scratch
+
+| | From Scratch | FramingUI + shadcn |
+|---|---|---|
+| **Time to first component** | 4-8 hours | 5 minutes |
+| **Accessibility** | You have to implement | Built-in (shadcn uses Radix) |
+| **Consistency** | Easy to drift | Enforced by tokens |
+| **Dark mode** | Manual implementation | Automatic (token-based) |
+| **Maintenance** | All on you | Community updates |
+
+## The Stack, Layer by Layer
+
+### Layer 1: Tailwind CSS (The Foundation)
+
+**What it does:** Utility classes for styling without leaving HTML
+
+**Why it's essential:**
+- 10x faster than writing CSS
+- Eliminates "what should I name this class?" decision fatigue
+- Tiny bundle (only includes used classes)
+- Industry standard (easy to hire for, easy to learn)
+
+**Setup:**
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+**Verdict:** Non-negotiable. Every modern indie hacker should use Tailwind.
+
+---
+
+### Layer 2: FramingUI (The Design System)
+
+**What it does:** Design tokens + conventions that sit on top of Tailwind
+
+**Why you need it:**
+- Tailwind gives you 1000 options; FramingUI narrows it to YOUR options
+- Enforces consistency across your app
+- Makes rebranding a 5-minute task (change tokens, not code)
+- Enables AI tools (Cursor, Claude) to generate on-brand code
+
+**What you get:**
+```typescript
+// Your design decisions, codified
+const tokens = {
+  colors: {
+    brand: {
+      primary: '#4338CA',    // Your brand color, not random blue
+      secondary: '#7C3AED',
+    }
+  },
+  spacing: {
+    sm: '0.75rem',           // Your spacing scale, not arbitrary px values
+    md: '1rem',
+    lg: '1.5rem',
+  },
+  typography: {
+    fontFamily: {
+      sans: 'Inter, system-ui',  // Your font, not system default
+    }
+  }
+}
+```
+
+**Setup:**
+```bash
+npm install @framingui/core
+```
+
+```typescript
+// framingui.config.ts
+import { defineConfig } from '@framingui/core'
+
+export default defineConfig({
+  tokens: {
+    colors: { /* your brand colors */ },
+    spacing: { /* your spacing scale */ },
+    typography: { /* your fonts */ }
+  }
+})
+```
+
+**Time investment:** 1-2 hours to define your tokens
+
+**Verdict:** Worth it. This is your design system in code form.
+
+---
+
+### Layer 3: shadcn/ui (The Component Library)
+
+**What it does:** Copy-paste React components (not an NPM package)
+
+**Why it's perfect for indie hackers:**
+- You own the code (no vendor lock-in)
+- Fully customizable (edit the source directly)
+- Accessible by default (built on Radix UI primitives)
+- Works seamlessly with Tailwind + FramingUI
+
+**What you get:**
+- ~40 production-ready components (Button, Dialog, Form, Table, etc.)
+- TypeScript support
+- Keyboard navigation and screen reader support
+- Dark mode out of the box
+
+**Setup:**
+```bash
+npx shadcn@latest init
+```
+
+This prompts you for:
+- Style (default, New York, etc.)
+- Base color (slate, zinc, etc.)
+- CSS variables or Tailwind classes
+
+**Pick:** CSS variables + FramingUI tokens for maximum flexibility.
+
+**Adding components:**
+```bash
+npx shadcn@latest add button
+npx shadcn@latest add dialog
+npx shadcn@latest add form
+```
+
+Components are added to `components/ui/` in YOUR codebase. You can edit them freely.
+
+**Verdict:** Game-changer. You get 80% of a component library without the bundle size or lock-in.
+
+---
+
+### Layer 4: Custom Components (Your Differentiators)
+
+**What it does:** Components unique to your product
+
+**Why you need it:**
+- shadcn gives you generic UI (buttons, forms, dialogs)
+- Your product needs domain-specific components (analytics charts, user profiles, pricing tables)
+
+**Examples:**
+```tsx
+// components/features/PricingCard.tsx
+// components/features/AnalyticsDashboard.tsx
+// components/features/UserAvatar.tsx
+```
+
+These use FramingUI tokens and shadcn components as building blocks:
+
+```tsx
+// components/features/PricingCard.tsx
+import { Button } from '@/components/ui/button'
+import { tokens } from '@/lib/tokens'
+
+export function PricingCard({ plan, price, features }) {
+  return (
+    <div className="bg-surface-base border border-neutral-200 rounded-lg p-lg">
+      <h3 className="text-2xl font-bold text-text-primary">{plan}</h3>
+      <p className="text-4xl font-bold text-brand-primary my-md">${price}/mo</p>
+      <ul className="space-y-sm mb-lg">
+        {features.map(f => (
+          <li key={f} className="flex items-center gap-sm">
+            <Check className="w-5 h-5 text-semantic-success" />
+            <span className="text-text-secondary">{f}</span>
+          </li>
+        ))}
+      </ul>
+      <Button variant="primary" className="w-full">
+        Get Started
+      </Button>
+    </div>
+  )
+}
+```
+
+**Verdict:** This is where your brand lives. Generic components get you 80% there; custom components get you to 100%.
+
+---
+
+## The Complete Setup (Step-by-Step)
+
+### Week 1: Foundation (3 hours)
+
+**Day 1: Install Tailwind (30 minutes)**
+```bash
+npm create vite@latest my-saas -- --template react-ts
+cd my-saas
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+**Day 2: Add FramingUI (1 hour)**
+```bash
+npm install @framingui/core
+```
+
+Create `lib/tokens.ts`:
+```typescript
+import { createTokens } from '@framingui/core'
+
+export const tokens = createTokens({
+  colors: {
+    brand: {
+      primary: '#4338CA',
+      primaryHover: '#3730A3',
+    },
+    // Start minimal, expand as needed
+  }
+})
+```
+
+**Day 3: Install shadcn (1.5 hours)**
+```bash
+npx shadcn@latest init
+npx shadcn@latest add button input label card dialog
+```
+
+Test with a simple page:
+```tsx
+import { Button } from '@/components/ui/button'
+
+export default function Home() {
+  return (
+    <div className="container mx-auto py-xl">
+      <h1 className="text-4xl font-bold mb-lg">My SaaS</h1>
+      <Button>Get Started</Button>
+    </div>
+  )
+}
+```
+
+### Week 2: Build Your Core Pages (8-10 hours)
+
+**Day 1: Landing Page (3 hours)**
+- Hero section (custom component using tokens)
+- Features grid (shadcn Card + custom content)
+- Pricing section (custom PricingCard component)
+- CTA (shadcn Button + tokens)
+
+**Day 2: Dashboard Shell (2 hours)**
+- Sidebar navigation (custom component)
+- Header with user menu (shadcn DropdownMenu)
+- Main content area (layout component)
+
+**Day 3: Key Features (3-5 hours)**
+- Authentication forms (shadcn Form components)
+- Settings page (shadcn Tabs + Forms)
+- Data display (shadcn Table or custom cards)
+
+### Week 3: Polish & Launch (4-6 hours)
+
+**Day 1: Dark Mode (1 hour)**
+
+FramingUI makes this trivial:
+```typescript
+// tokens.ts
+colors: {
+  surface: {
+    base: {
+      light: '#FFFFFF',
+      dark: '#111827',
+    }
+  }
+}
+```
+
+```tsx
+// app/layout.tsx
+<html className={theme}>  {/* 'light' or 'dark' */}
+  <body className="bg-surface-base text-text-primary">
+    {children}
+  </body>
+</html>
+```
+
+**Day 2: Responsive Design (2 hours)**
+
+Tailwind's responsive utilities make this fast:
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+```
+
+**Day 3: Final QA (1-3 hours)**
+- Check accessibility (keyboard nav, aria labels)
+- Test on mobile
+- Fix any inconsistencies
+
+**Ship it. 🚀**
+
+## Real-World Example: Building a "GitHub Insights" SaaS
+
+### The Product
+Analyze GitHub repos, show analytics, generate insights.
+
+### The UI Requirements
+- Landing page with hero + pricing
+- Dashboard with charts
+- Repo search and selection
+- Settings page
+- Authentication
+
+### Time Breakdown
+
+| Task | Time |
+|------|------|
+| Setup (Tailwind + FramingUI + shadcn) | 2 hours |
+| Landing page | 3 hours |
+| Auth screens (Login, Signup) | 1.5 hours |
+| Dashboard shell | 2 hours |
+| Analytics components (custom charts) | 4 hours |
+| Settings page | 1 hour |
+| Dark mode | 1 hour |
+| Responsive + polish | 2 hours |
+| **Total** | **16.5 hours** |
+
+**Result:** Professional-looking SaaS ready to show investors or early users.
+
+**With Material-UI alone:** Probably 12-14 hours, but looks generic.
+
+**From scratch:** 40-60 hours, and likely inconsistent.
+
+## Common Pitfalls (and How to Avoid Them)
+
+### Pitfall 1: Customizing shadcn Components Too Early
+
+**Mistake:** You install shadcn, immediately start editing Button.tsx
+
+**Problem:** You lose upstream updates and bug fixes
+
+**Solution:** Use shadcn as-is for 2-4 weeks. Only customize when you have a clear, repeated need.
+
+---
+
+### Pitfall 2: Not Defining Tokens Up Front
+
+**Mistake:** You start building components, decide on colors as you go
+
+**Problem:** Inconsistency creeps in fast
+
+**Solution:** Spend 1 hour defining:
+- 2-3 brand colors
+- 1 full neutral scale (50-900)
+- 3 semantic colors (success, error, warning)
+- 5 spacing values (xs, sm, md, lg, xl)
+- 2 font families (sans, mono)
+
+---
+
+### Pitfall 3: Over-Engineering Too Soon
+
+**Mistake:** You build a Storybook, write tests for every component, create a monorepo
+
+**Problem:** Weeks pass, you haven't shipped
+
+**Solution:** Ship first. Add tooling when you feel pain.
+
+**Build:** Your product  
+**Not:** Your design system infrastructure
+
+---
+
+### Pitfall 4: Ignoring Accessibility
+
+**Mistake:** "I'll add aria labels later"
+
+**Problem:** Later never comes, and users with disabilities can't use your app
+
+**Solution:** shadcn components are accessible by default. Just follow their patterns:
+- Use `<Label>` with `<Input>`
+- Add `aria-label` to icon-only buttons
+- Test with keyboard navigation (Tab, Enter, Esc)
+
+---
+
+## When to Upgrade This Stack
+
+This stack is perfect for 0→$10k MRR. As you grow, consider:
+
+### At $10k MRR: Add Component Testing
+```bash
+npm install -D vitest @testing-library/react
+```
+
+Test critical flows (auth, payments), not every component.
+
+### At $50k MRR: Add Design Documentation
+- Storybook or a simple docs site
+- Document component variants and usage
+- Helpful for onboarding contractors
+
+### At $100k MRR: Consider a Design System Team
+- If you have 5+ developers, it's worth dedicating someone part-time
+- Maintain token quality
+- Review new components
+- Audit for consistency
+
+**But:** Don't prematurely optimize. Most indie SaaS products never need more than this base stack.
+
+## Alternatives Considered (And Why They Don't Win)
+
+### Alternative 1: Material-UI (MUI)
+
+**Pros:**
+- More components out of the box
+- Strong TypeScript support
+- Stable and mature
+
+**Cons:**
+- Looks generic unless you invest heavily in theming
+- Large bundle size (~300kb)
+- Harder to customize deeply
+- Less AI-friendly (props-based, not class-based)
+
+**Verdict:** Good for internal tools where brand doesn't matter. Not ideal for customer-facing SaaS.
+
+### Alternative 2: Chakra UI
+
+**Pros:**
+- Beautiful default styling
+- Excellent DX
+- Accessible components
+
+**Cons:**
+- Props-based styling (slower than Tailwind)
+- Harder to use with AI tools
+- Bundle size bigger than shadcn approach
+
+**Verdict:** Solid choice, but Tailwind + shadcn is faster and more flexible.
+
+### Alternative 3: Radix UI Primitives (No shadcn)
+
+**Pros:**
+- Full control
+- Minimal abstraction
+
+**Cons:**
+- You style everything from scratch
+- Time-consuming for solo devs
+- Reinventing the wheel
+
+**Verdict:** Great for design system teams at big companies. Overkill for indie hackers.
+
+### Alternative 4: Headless UI + Tailwind UI (Paid)
+
+**Pros:**
+- Beautiful pre-built components (if you buy Tailwind UI)
+- Fully customizable
+
+**Cons:**
+- Tailwind UI costs $299-$599
+- Still requires integration work
+- Not significantly faster than shadcn (which is free)
+
+**Verdict:** Worth it if you have budget and want more examples. But shadcn + FramingUI is 90% as good for $0.
+
+## The Cost Breakdown
+
+| Item | Cost |
+|------|------|
+| Tailwind CSS | Free |
+| FramingUI | Free (open source) |
+| shadcn/ui | Free |
+| Radix UI (under the hood) | Free |
+| **Total** | **$0** |
+
+**Compare to:**
+- Tailwind UI: $299-$599
+- Figma design system templates: $50-$200
+- Component library subscriptions: $20-$50/month
+- Design agency: $5,000-$50,000
+
+## The Bottom Line
+
+As a solo founder or small team, your UI stack should be:
+
+1. **Fast to build with** (ship in days, not weeks)
+2. **Cheap** (ideally $0)
+3. **Flexible** (you own the code)
+4. **Professional** (doesn't look like a template)
+5. **Maintainable** (not a house of cards)
+
+**FramingUI + shadcn/ui + Tailwind** hits all five.
+
+You get:
+- ✅ Speed (Tailwind utilities + copy-paste components)
+- ✅ Cost ($0)
+- ✅ Flexibility (you own every line of code)
+- ✅ Professionalism (tokens enforce consistency)
+- ✅ Maintainability (tokens = single source of truth)
+
+**This is the stack I'd use if I were starting a SaaS in 2026.**
+
+And I'd ship in 2 weeks, not 2 months.
+
+## Next Steps
+
+### This Week
+1. **Clone the starter**: `npx create-framingui-app my-saas`
+2. **Customize tokens**: Brand colors, spacing, fonts
+3. **Add shadcn components**: Button, Input, Card, Dialog
+4. **Build one page**: Landing page or dashboard mockup
+
+### Next Week
+1. **Build your core flows**: Auth, dashboard, settings
+2. **Add custom components**: Pricing cards, feature grids, etc.
+3. **Test on mobile**: Make it responsive
+
+### Month 1
+1. **Launch**: Get it in front of users
+2. **Iterate**: Add components as you need them
+3. **Stay consistent**: Use tokens, avoid one-off styles
+
+**Get started**: [FramingUI Quickstart →](/docs/quickstart)
+
+**Clone the repo**: [github.com/framingui/starter](https://github.com/framingui/starter)
+
+---
+
+*Building something with this stack? [Share it in our Discord](https://discord.gg/framingui) or [tag us on X](https://x.com/framingui).*
