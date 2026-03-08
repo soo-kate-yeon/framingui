@@ -44,7 +44,7 @@ const slashCommandRegistry: SlashCommandDefinition[] = [
     name: '/screen',
     summary: 'Generate a full screen from a natural-language description.',
     usage:
-      '/screen <description> [--theme <themeId>] [--platform web|mobile] [--template <id>] [--output draft|code] [--style-contract host-utility|framingui-native|migrate]',
+      '/screen <description> [--theme <themeId>] [--platform web|mobile] [--template-hint <id>] [--output draft|code] [--style-contract host-utility|framingui-native|migrate]',
     args: [
       {
         name: 'description',
@@ -63,8 +63,9 @@ const slashCommandRegistry: SlashCommandDefinition[] = [
         values: ['web', 'mobile'],
       },
       {
-        name: '--template',
-        description: 'Prefer a specific screen template id when one is known.',
+        name: '--template-hint',
+        description:
+          'Optional inspiration template id. Use it as a hint, not a structural requirement.',
       },
       {
         name: '--output',
@@ -154,8 +155,9 @@ const slashCommandRegistry: SlashCommandDefinition[] = [
   },
   {
     name: '/draft',
-    summary: 'Create a screen draft before code generation.',
-    usage: '/draft <description> [--theme <themeId>] [--platform web|mobile] [--variants <n>]',
+    summary: 'Create a component-first structural draft before code generation.',
+    usage:
+      '/draft <description> [--theme <themeId>] [--platform web|mobile] [--template-hint <id>] [--variants <n>]',
     args: [
       {
         name: 'description',
@@ -177,12 +179,16 @@ const slashCommandRegistry: SlashCommandDefinition[] = [
         name: '--variants',
         description: 'Number of draft alternatives to propose.',
       },
+      {
+        name: '--template-hint',
+        description: 'Optional inspiration template id to bias the draft structure.',
+      },
     ],
     examples: [
       '/draft "settings page for team permissions" --theme neutral-workspace',
       '/draft "creator profile page" --variants 3',
     ],
-    workflow: ['get-screen-generation-context', 'list-screen-templates', 'preview-screen-template'],
+    workflow: ['get-screen-generation-context', 'validate-screen-definition'],
     promptRecipe: 'screen-workflow',
   },
   {

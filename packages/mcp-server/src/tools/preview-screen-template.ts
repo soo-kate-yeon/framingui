@@ -111,6 +111,7 @@ export async function previewScreenTemplateTool(
         customizable,
         requiredComponents: template.requiredComponents,
         importStatement,
+        exampleProps: template.exampleProps,
         created: template.created,
         updated: template.updated,
         tags: template.tags,

@@ -51,6 +51,9 @@ describe('get-screen-generation-context Tool', () => {
       expect(result.schema).toBeDefined();
       expect(result.schema?.screenDefinition).toBeDefined();
       expect(result.schema?.description).toContain('Screen Definition');
+      expect(result.definitionStarter).toBeDefined();
+      expect(result.componentPlan).toBeDefined();
+      expect(result.sectionPlan).toBeDefined();
     });
   });
 
@@ -72,6 +75,7 @@ describe('get-screen-generation-context Tool', () => {
         expect(component).toHaveProperty('category');
         expect(component).toHaveProperty('importStatement');
       }
+      expect(result.templateHints).toBeDefined();
     });
 
     it('should return default components when no template match', async () => {

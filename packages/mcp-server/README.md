@@ -150,7 +150,7 @@ See [Package Guide](../../docs/packages/mcp-server.md) for complete setup instru
 
 **Tool**: `generate-blueprint`
 
-**Description**: Generate a UI blueprint from natural language description
+**Description**: Legacy helper for generating a UI blueprint from natural language description. New screen workflows should prefer `get-screen-generation-context` plus `validate-screen-definition`.
 
 **Input**:
 
@@ -285,7 +285,7 @@ See [Package Guide](../../docs/packages/mcp-server.md) for complete setup instru
 
 **Tool**: `generate_screen`
 
-**Description**: Generate production-ready code from JSON screen definition
+**Description**: Optional helper to generate production-ready code from a validated JSON screen definition
 
 **Input**:
 
@@ -785,7 +785,7 @@ framingui-mcp commands --client cursor --command /responsive --format text
 
 ### From Claude Code
 
-**Blueprint & Theme Workflows**:
+**Legacy Blueprint & Theme Workflows**:
 
 ```
 User: "Create a user dashboard with profile card using calm-wellness theme"
@@ -805,8 +805,16 @@ User: "Export that dashboard as TypeScript React"
 
 ```
 User: "Generate a dashboard screen using shell.web.dashboard and page.dashboard"
-→ Claude Code calls generate_screen
-→ Production-ready React code with CSS variables returned
+→ Claude Code calls get-screen-generation-context
+→ Returns template hints, component plan, section plan, definition starter, props contracts
+
+User: "Validate this screen definition before writing code"
+→ Claude Code calls validate-screen-definition
+→ Returns validation results, auto-fix guidance, and component/props issues
+
+User: "Check if my project is ready for this screen"
+→ Claude Code calls validate-environment
+→ Returns package, Tailwind, and style-contract checks
 
 User: "What layout tokens are available for sections?"
 → Claude Code calls list_tokens with tokenType='section'

@@ -62,12 +62,12 @@ After `whoami`, all 17 tools become available.
 | 8   | `list-screen-templates`         | Templates    | Browse 13 screen templates                      |
 | 9   | `preview-screen-template`       | Templates    | Get template structure & customization          |
 | 10  | `list_tokens`                   | Tokens       | List layout tokens (shell/page/section)         |
-| 11  | `generate-blueprint`            | Prototyping  | Generate UI blueprint from natural language     |
+| 11  | `generate-blueprint`            | Legacy Proto | Legacy blueprint helper for old export flows    |
 | 12  | `export-screen`                 | Prototyping  | Export blueprint to JSX/TSX/Vue                 |
 | 13  | `validate_screen`               | Validation   | Basic screen definition validation              |
 | 14  | `get-screen-generation-context` | Workflow 1/3 | Get context for screen generation               |
 | 15  | `validate-screen-definition`    | Workflow 2/3 | Validate screen definition with auto-fix        |
-| 16  | `generate_screen`               | Workflow 3/4 | Generate production code with theme             |
+| 16  | `generate_screen`               | Optional     | Optional helper for constrained codegen         |
 | 17  | `validate-environment`          | Workflow 3/3 | Verify NPM packages & Tailwind config           |
 
 ### Tool Details
@@ -118,7 +118,7 @@ Lists available layout tokens from SPEC-LAYOUT-001.
 
 #### generate-blueprint / export-screen
 
-Lightweight prototyping workflow:
+Legacy prototyping workflow:
 
 1. `generate-blueprint`: Natural language → Blueprint JSON
 2. `export-screen`: Blueprint → JSX/TSX/Vue code
@@ -127,7 +127,7 @@ Lightweight prototyping workflow:
 
 Production workflow:
 
-1. `get-screen-generation-context` **(Step 1/3)**: Get complete context for AI to generate screen definitions — template matches, available components, JSON schema, example definitions, theme recipes
+1. `get-screen-generation-context` **(Step 1/3)**: Get complete context for AI to generate screen definitions — template hints, component plan, section plan, definition starter, available components, JSON schema, example definitions, theme recipes
 2. `validate-screen-definition` **(Step 2/3)**: Validate screen definition JSON with detailed errors, suggestions, and auto-fix patches
 3. Write production-ready React code directly from the validated definition using the components, props, and theme recipes returned in Step 1
 4. `validate-environment` **(Optional Step)**: Check dependencies, Tailwind config, and style contract before delivery
@@ -207,9 +207,9 @@ Use `list-screen-templates` and `preview-screen-template` to explore skeleton st
 
 ## Workflows
 
-### Workflow 1: Quick Prototype
+### Workflow 1: Legacy Prototype
 
-Best for rapid iteration and design exploration.
+Best for legacy blueprint/export integrations and quick experiments.
 
 ```
 1. whoami (verify account)
@@ -228,13 +228,13 @@ You: "Create a user profile card with the minimal-workspace theme"
 
 ### Workflow 2: Production Screen (Recommended)
 
-Best for production-ready code with full theme application and validation.
+Best for production-ready code with component-first guidance and validation.
 
 ```
 1. whoami (verify account)
 2. get-screen-generation-context (gather context from your description)
 3. validate-screen-definition (validate the screen definition JSON)
-4. generate_screen (generate themed production code)
+4. write React code directly from the validated definition and component contracts
 5. validate-environment (optional: check dependencies & Tailwind config)
 ```
 
@@ -243,13 +243,13 @@ Best for production-ready code with full theme application and validation.
 ```
 You: "Build a dashboard with sales metrics, user stats, and activity feed"
 → AI calls get-screen-generation-context
-→ AI writes Screen Definition JSON based on context
+→ AI writes Screen Definition JSON from definition starter + component plan
 → AI calls validate-screen-definition (runs auto-fix if needed)
-→ AI calls generate_screen → Production React code with theme applied
+→ AI writes React code directly using `@framingui/ui` components and validated props
 → AI calls validate-environment → Lists missing packages & install commands
 ```
 
-> **Why use this workflow?** `generate_screen` applies theme recipes (Tailwind classes, component styling). Without it, your code won't have the theme's visual identity.
+> **Why use this workflow?** It keeps the agent anchored to FramingUI component contracts. Templates are hints, not constraints. Prefer `@framingui/ui` primitives over raw HTML whenever an equivalent component exists. `generate_screen` is optional.
 
 ### Workflow 3: Exploration
 

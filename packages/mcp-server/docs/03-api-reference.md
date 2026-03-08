@@ -273,7 +273,7 @@ List available layout tokens from SPEC-LAYOUT-001.
 
 Generate a UI blueprint from natural language description.
 
-> For production-ready code, use the production workflow instead.
+> Legacy helper: keep this only for integrations that still depend on Blueprint artifacts. For new agent workflows, use `get-screen-generation-context`.
 
 **Input**:
 
@@ -318,7 +318,8 @@ Get complete context for AI agents to generate screen definitions from natural l
 
 **Output**:
 
-- Template matches based on description
+- Template hints based on description
+- Component plan, section plan, and definition starter for guided drafting
 - Available components with usage examples
 - JSON schema for Screen Definition
 - Example definitions for reference

@@ -4,6 +4,9 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { validateEnvironmentTool } from '../../src/tools/validate-environment.js';
 import * as packageJsonReader from '../../src/utils/package-json-reader.js';
 import * as styleContractReader from '../../src/utils/style-contract-reader.js';
@@ -237,6 +240,67 @@ describe('validateEnvironmentTool', () => {
       // Assert: 오류가 정상적으로 처리되어야 함
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
+    });
+  });
+
+  describe('코드 생성 계약 검사', () => {
+    it('sourceFiles가 제공되면 raw HTML primitive 사용을 감지해야 함', async () => {
+      const projectDir = mkdtempSync(join(tmpdir(), 'framingui-validate-env-'));
+      const srcDir = join(projectDir, 'src');
+      const filePath = join(srcDir, 'App.tsx');
+
+      mkdirSync(srcDir, { recursive: true });
+      writeFileSync(
+        filePath,
+        `export function App() {
+  return (
+    <main>
+      <button>Save</button>
+      <input aria-label="Email" />
+      <a href="/settings">Settings</a>
+    </main>
+  );
+}
+`
+      );
+
+      vi.mocked(packageJsonReader.readPackageJson).mockReturnValue({
+        success: true,
+        packageJson: {},
+        installedPackages: {},
+      });
+
+      try {
+        const result = await validateEnvironmentTool({
+          projectPath: projectDir,
+          requiredPackages: [],
+          sourceFiles: ['src/App.tsx'],
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.codegen?.checkedFiles).toEqual([filePath]);
+        expect(result.codegen?.rawHtmlTags).toEqual(['a', 'button', 'input']);
+        expect(result.codegen?.detectedComponents).toEqual(['Button', 'Input', 'Link']);
+        expect(result.codegen?.issues.some(issue => issue.includes('raw <button>'))).toBe(true);
+      } finally {
+        rmSync(projectDir, { recursive: true, force: true });
+      }
+    });
+
+    it('sourceFiles가 없으면 codegen 결과를 생략해야 함', async () => {
+      vi.mocked(packageJsonReader.readPackageJson).mockReturnValue({
+        success: true,
+        packageJson: {},
+        installedPackages: {},
+      });
+
+      const result = await validateEnvironmentTool({
+        projectPath: '/project',
+        requiredPackages: [],
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.codegen).toBeUndefined();
     });
   });
 

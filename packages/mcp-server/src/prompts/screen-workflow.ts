@@ -23,7 +23,7 @@ Optional: call \`whoami\` if you want to inspect the current session and license
 ## Overview
 
 The workflow ensures:
-- ✅ Correct component usage with inline props/variants
+- ✅ Correct component-first usage with inline props/variants
 - ✅ Validated screen structure with auto-fix patches
 - ✅ Theme recipes and component contracts are visible before code is written
 - ✅ All dependencies installed
@@ -72,8 +72,10 @@ Block generation when:
 \`\`\`
 
 **Output:**
-- Matching screen templates
+- Template hints for inspiration
+- A component plan and section plan for guided drafting
 - Available components with **inline props and variants**
+- A definition starter object for the first draft
 - Screen Definition JSON schema
 - Example definitions
 - Theme recipes
@@ -82,9 +84,10 @@ Block generation when:
 **When to use:**
 - Beginning of every screen generation
 - When you need component suggestions
-- When exploring available templates
+- When you want template inspiration without hard-coding the screen to a template
 
 **Guardrail:** if the response includes \`warnings\`, do not guess missing props. Resolve the warning first with \`preview-component\` or by retrying the context fetch.
+**Guardrail:** treat \`templateHints\` as inspiration only. \`componentPlan\`, \`components\`, and the validated definition are the contract.
 
 ---
 
@@ -135,6 +138,7 @@ Block generation when:
 - Preserve the validated \`shell\`, \`page\`, \`section\`, and slot structure from Step 2
 - Use only components returned in Step 1 unless you explicitly inspect more with \`preview-component\`
 - Use documented props and variants; do not invent props
+- Prefer \`@framingui/ui\` components over raw HTML when an equivalent FramingUI primitive exists
 - Prefer tokens, theme recipes, and existing FramingUI primitives over raw design values
 - If a screen needs custom JSX beyond the contract, keep it local and explain why FramingUI primitives were insufficient
 
@@ -191,9 +195,9 @@ User: "Create a login page with email/password fields"
    -> Classify style contract and decide host-utility vs framingui-native before generation
 
 1. Call get-screen-generation-context({ description: "login page..." })
-   → Receive template matches, components with inline props, schema
+   → Receive template hints, component plan, section plan, definition starter, and component contracts
 
-2. Generate Screen Definition JSON based on context
+2. Generate Screen Definition JSON based on definitionStarter + componentPlan
    → Call validate-screen-definition({ definition: {...} })
    → Apply autoFixPatches if any, re-validate if needed
 
@@ -215,6 +219,7 @@ User: "Create a login page with email/password fields"
 - Apply autoFixPatches to auto-correct common issues
 - Check token names match SPEC-LAYOUT-001
 - Verify component IDs exist (use list-components)
+- Prefer componentPlan before exploring optional alternatives
 
 **Code writing is blocked in Step 3:**
 - Ensure Screen Definition passed validation in Step 2
@@ -245,12 +250,13 @@ User: "Create a login page with email/password fields"
 6. ✅ Use strict validation mode for production
 7. ✅ Include theme recipes for visual consistency
 8. ✅ Use inline props from context instead of guessing
-9. ✅ Confirm the target style contract before relying on CSS variables or component defaults
+9. ✅ Use template hints only as inspiration, not as structural constraints
+10. ✅ Confirm the target style contract before relying on CSS variables or component defaults
 
 ## Alternative Workflows
 
-**Quick Prototyping (not production):**
-- \`generate-blueprint\` → \`export-screen\` (skips validation and theme engine)
+**Legacy prototyping helper:**
+- \`generate-blueprint\` → \`export-screen\` remains available for backward compatibility, but new agent flows should prefer \`get-screen-generation-context\`
 
 **Production (recommended):**
 - Follow complete 4-step workflow above

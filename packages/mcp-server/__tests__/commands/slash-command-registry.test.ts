@@ -51,6 +51,17 @@ describe('slash command registry', () => {
     expect(command?.preflight?.steps).toContain(
       'validate-environment (checkStyles: true, checkTailwind: true)'
     );
+    expect(command?.options.some(option => option.name === '--template-hint')).toBe(true);
+  });
+
+  it('maps /draft to context-driven drafting instead of blueprint export flow', () => {
+    const command = getSlashCommand('/draft');
+
+    expect(command?.workflow).toEqual([
+      'get-screen-generation-context',
+      'validate-screen-definition',
+    ]);
+    expect(command?.options.some(option => option.name === '--template-hint')).toBe(true);
   });
 
   it('absorbs density options into /responsive', () => {

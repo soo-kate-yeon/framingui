@@ -136,14 +136,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'generate-blueprint',
         description:
-          'Generate a UI blueprint from natural language description.\n\n' +
+          '[LEGACY HELPER] Generate a lightweight UI blueprint from natural language description.\n\n' +
           'WHEN TO CALL:\n' +
-          '- For rapid prototyping and design exploration\n' +
-          '- When user wants a quick visual structure without full Screen Definition\n' +
-          '- As an alternative lightweight workflow to get-screen-generation-context\n\n' +
+          '- Only for legacy prototyping flows that still expect Blueprint artifacts\n' +
+          '- When an existing integration explicitly depends on export-screen input\n\n' +
           'NOTE: For production-ready code, use the main workflow:\n' +
-          'get-screen-generation-context → validate-screen-definition → write code directly\n\n' +
-          'RETURNS: Simplified blueprint object with layout structure and component suggestions',
+          'get-screen-generation-context → validate-screen-definition → write code directly\n' +
+          'The get-screen-generation-context response now includes definitionStarter, componentPlan, and sectionPlan, which replace most Blueprint use cases.\n\n' +
+          'RETURNS: Simplified blueprint object with layout structure and heuristic component suggestions',
         inputSchema: {
           type: 'object',
           properties: {
@@ -467,7 +467,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- Before attempting to generate a Screen Definition JSON\n' +
           '- When you need to know available components, templates, or layout tokens\n\n' +
           'RETURNS:\n' +
-          '- Template matches based on description\n' +
+          '- Template hints based on description\n' +
+          '- Component plan, section plan, and definition starter for guided drafting\n' +
           '- Available components with usage examples\n' +
           '- JSON schema for Screen Definition\n' +
           '- Example definitions for reference\n' +
@@ -598,7 +599,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- installed: Packages already in package.json with versions\n' +
           '- missing: Packages that need to be installed\n' +
           '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n' +
-          '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n\n' +
+          '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n' +
+          '- codegen: Optional raw HTML contract scan for generated React source files\n\n' +
           'TAILWIND VALIDATION (checkTailwind=true by default):\n' +
           '- Checks if tailwind.config.{ts,js,mjs,cjs} exists\n' +
           '- Verifies @framingui/ui content paths are included (prevents missing styles)\n' +
@@ -621,6 +623,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: 'array',
               description:
                 'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
+              items: { type: 'string' },
+            },
+            sourceFiles: {
+              type: 'array',
+              description:
+                'Optional React source files to inspect for raw HTML primitives that should use @framingui/ui',
               items: { type: 'string' },
             },
             checkTailwind: {

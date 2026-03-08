@@ -55,7 +55,7 @@ export async function previewComponentTool(
       description: component.description,
       tier: component.tier,
       props: component.props ?? [],
-      variants: includeExamples ? component.variants : undefined,
+      variants: component.variants,
       subComponents: component.subComponents,
       importStatement: component.importStatement,
       dependencies: includeDependencies ? component.dependencies : undefined,

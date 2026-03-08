@@ -946,6 +946,56 @@ export const ContextTemplateMatchSchema = z.object({
 
 export type ContextTemplateMatch = z.infer<typeof ContextTemplateMatchSchema>;
 
+export const TemplateHintSchema = z.object({
+  templateId: z.string(),
+  templateName: z.string(),
+  category: z.string(),
+  confidence: z.number(),
+  matchedKeywords: z.array(z.string()),
+});
+
+export type TemplateHint = z.infer<typeof TemplateHintSchema>;
+
+export const ComponentPlanItemSchema = z.object({
+  type: z.string(),
+  reason: z.string(),
+  source: z.enum(['default', 'template', 'category', 'theme']),
+});
+
+export type ComponentPlanItem = z.infer<typeof ComponentPlanItemSchema>;
+
+export const SectionPlanItemSchema = z.object({
+  id: z.string(),
+  pattern: z.string(),
+  slot: z.string().optional(),
+  purpose: z.string(),
+  suggestedComponents: z.array(z.string()),
+});
+
+export type SectionPlanItem = z.infer<typeof SectionPlanItemSchema>;
+
+export const DefinitionStarterSchema = z.object({
+  id: z.string(),
+  shell: z.string(),
+  page: z.string(),
+  themeId: z.string().optional(),
+  sections: z.array(
+    z.object({
+      id: z.string(),
+      pattern: z.string(),
+      slot: z.string().optional(),
+      components: z.array(
+        z.object({
+          type: z.string(),
+          props: z.record(z.unknown()).optional(),
+        })
+      ),
+    })
+  ),
+});
+
+export type DefinitionStarter = z.infer<typeof DefinitionStarterSchema>;
+
 /**
  * Component info for generation context
  */
@@ -1068,7 +1118,11 @@ export type WorkflowGuide = z.infer<typeof WorkflowGuideSchema>;
 export const GetScreenGenerationContextOutputSchema = z.object({
   success: z.boolean(),
   templateMatch: ContextTemplateMatchSchema.optional(),
+  templateHints: z.array(TemplateHintSchema).optional(),
   components: z.array(ContextComponentInfoSchema).optional(),
+  componentPlan: z.array(ComponentPlanItemSchema).optional(),
+  sectionPlan: z.array(SectionPlanItemSchema).optional(),
+  definitionStarter: DefinitionStarterSchema.optional(),
   schema: z
     .object({
       screenDefinition: z.unknown(), // JSON Schema representation
@@ -1224,6 +1278,12 @@ export type ValidateScreenDefinitionOutput = z.infer<typeof ValidateScreenDefini
 export const ValidateEnvironmentInputSchema = z.object({
   projectPath: z.string().describe('Path to package.json or project root'),
   requiredPackages: z.array(z.string()).describe('Packages required by the screen components'),
+  sourceFiles: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Optional React source files to inspect for raw HTML usage when equivalent @framingui/ui primitives exist'
+    ),
   checkTailwind: z
     .boolean()
     .optional()
@@ -1277,6 +1337,18 @@ export const ValidateEnvironmentOutputSchema = z.object({
     })
     .optional()
     .describe('Style contract validation for @framingui/ui variable compatibility'),
+  codegen: z
+    .object({
+      checkedFiles: z.array(z.string()),
+      issues: z.array(z.string()),
+      fixes: z.array(z.string()),
+      detectedComponents: z.array(z.string()),
+      rawHtmlTags: z.array(z.string()),
+    })
+    .optional()
+    .describe(
+      'Optional scan of generated React source files for raw HTML primitives that should use @framingui/ui components'
+    ),
   error: z.string().optional(),
 });
 

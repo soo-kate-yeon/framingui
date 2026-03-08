@@ -16,6 +16,8 @@ import type {
   GetScreenGenerationContextOutput,
   ContextTemplateMatch,
   ContextComponentInfo,
+  ComponentPlanItem,
+  SectionPlanItem,
   ThemeRecipeInfo,
   ScreenExample,
   WorkflowGuide,
@@ -35,6 +37,105 @@ const CATEGORY_COMPONENT_HINTS: Record<string, string[]> = {
   marketing: ['Heading', 'Text', 'Card', 'Button', 'Image', 'Badge'],
   core: ['Card', 'Heading', 'Text', 'Button', 'Badge'],
 };
+
+function createComponentPlan(options: {
+  recommendedComponentTypes: string[];
+  bestMatch?: ContextTemplateMatch;
+  themeRecipes?: ThemeRecipeInfo[];
+}): ComponentPlanItem[] {
+  const plan: ComponentPlanItem[] = [];
+  const templateComponents = new Set(options.bestMatch?.requiredComponents ?? []);
+  const categoryComponents = new Set(
+    options.bestMatch?.category ? (CATEGORY_COMPONENT_HINTS[options.bestMatch.category] ?? []) : []
+  );
+  const themeComponents = new Set(
+    (options.themeRecipes ?? []).map(recipe => {
+      const componentType = recipe.componentType;
+      return componentType.charAt(0).toUpperCase() + componentType.slice(1);
+    })
+  );
+
+  for (const componentType of options.recommendedComponentTypes) {
+    if (templateComponents.has(componentType)) {
+      plan.push({
+        type: componentType,
+        source: 'template',
+        reason: 'Required by the strongest matching template hint.',
+      });
+      continue;
+    }
+
+    if (themeComponents.has(componentType)) {
+      plan.push({
+        type: componentType,
+        source: 'theme',
+        reason: 'Has recipe coverage in the selected theme and is safe to style consistently.',
+      });
+      continue;
+    }
+
+    if (categoryComponents.has(componentType)) {
+      plan.push({
+        type: componentType,
+        source: 'category',
+        reason: 'Commonly used for this screen category.',
+      });
+      continue;
+    }
+
+    plan.push({
+      type: componentType,
+      source: 'default',
+      reason: 'Safe default component for contract-first screen composition.',
+    });
+  }
+
+  return plan;
+}
+
+function createSectionPlan(options: {
+  bestMatch?: ContextTemplateMatch;
+  componentPlan: ComponentPlanItem[];
+}): SectionPlanItem[] {
+  if (options.bestMatch?.skeleton?.sections?.length) {
+    return options.bestMatch.skeleton.sections.map((section, index) => ({
+      id: section.id,
+      pattern: index === 0 ? 'section.container' : 'section.container',
+      slot: section.slot,
+      purpose: section.name,
+      suggestedComponents: options.componentPlan.slice(index, index + 3).map(item => item.type),
+    }));
+  }
+
+  return [
+    {
+      id: 'main',
+      pattern: 'section.container',
+      slot: 'main',
+      purpose: 'Primary content region for the screen.',
+      suggestedComponents: options.componentPlan.slice(0, 4).map(item => item.type),
+    },
+  ];
+}
+
+function createDefinitionStarter(options: {
+  input: GetScreenGenerationContextInput;
+  bestMatch?: ContextTemplateMatch;
+  sectionPlan: SectionPlanItem[];
+}): GetScreenGenerationContextOutput['definitionStarter'] {
+  return {
+    id: 'my-screen',
+    shell: options.bestMatch?.skeleton?.shell ?? 'shell.web.app',
+    page: options.bestMatch?.skeleton?.page ?? 'page.dashboard',
+    themeId: options.input.themeId,
+    sections: options.sectionPlan.map(section => ({
+      id: section.id,
+      pattern: section.pattern,
+      slot: section.slot,
+      components: section.suggestedComponents.map(type => ({ type })),
+    })),
+  };
+}
 
 function shouldIncludeTemplateMatch(match: {
   category: string;
@@ -327,6 +428,13 @@ export async function getScreenGenerationContextTool(
     const templateMatches = matchTemplates(input.description, 3);
     let bestMatch: ContextTemplateMatch | undefined;
     let componentTypes: string[] = [];
+    const templateHints = templateMatches.map(match => ({
+      templateId: match.templateId,
+      templateName: match.templateName,
+      category: match.category,
+      confidence: match.confidence,
+      matchedKeywords: match.matchedKeywords,
+    }));
 
     if (templateMatches.length > 0) {
       const match = templateMatches[0];
@@ -400,6 +508,20 @@ export async function getScreenGenerationContextTool(
         ? Array.from(new Set([...recommendedComponentTypes, ...componentTypes]))
         : recommendedComponentTypes;
     const { components, warnings: componentWarnings } = await getComponentInfo(componentTypes);
+    const componentPlan = createComponentPlan({
+      recommendedComponentTypes: componentTypes,
+      bestMatch,
+      themeRecipes,
+    });
+    const sectionPlan = createSectionPlan({
+      bestMatch,
+      componentPlan,
+    });
+    const definitionStarter = createDefinitionStarter({
+      input,
+      bestMatch,
+      sectionPlan,
+    });
 
     // 5. Generate contextual hints
     const hints = generateHints(input.description, input.themeId);
@@ -413,24 +535,14 @@ export async function getScreenGenerationContextTool(
           step: 1,
           action: 'Review Context',
           description:
-            'Review the templateMatch, components (with inline props/variants), schema, examples, and hints provided in this response',
+            'Review the templateHints, componentPlan, sectionPlan, components (with inline props/variants), schema, examples, and hints provided in this response',
         },
         {
           step: 2,
           action: 'Generate Screen Definition',
           description:
-            'Create a JSON Screen Definition following the schema structure. Use templateMatch.skeleton as a starting point if available.',
-          example: JSON.stringify(
-            {
-              id: 'my-screen',
-              shell: 'shell.web.app',
-              page: 'page.dashboard',
-              themeId: input.themeId || 'your-theme-id',
-              sections: [{ id: 'main', pattern: 'section.container', components: [] }],
-            },
-            null,
-            2
-          ),
+            'Create a JSON Screen Definition following the schema structure. Start from definitionStarter and refine it using the componentPlan and sectionPlan.',
+          example: JSON.stringify(definitionStarter, null, 2),
         },
         {
           step: 3,
@@ -459,10 +571,12 @@ export async function getScreenGenerationContextTool(
         },
       ],
       notes: [
-        'Use components from the "components" field - they include inline props and variants',
-        'Apply theme recipes by setting variant props on components',
-        'Write React code directly using the components and context provided',
-        'Check hints for layout and component recommendations',
+        'Use componentPlan as the default shortlist before adding anything new.',
+        'Treat templateHints as inspiration only, not hard constraints.',
+        'Use components from the "components" field - they include inline props and variants.',
+        'Apply theme recipes by setting variant props on components.',
+        'Write React code directly using the validated definition and component context provided.',
+        'Check hints for layout and component recommendations.',
         'Use validate-environment to verify project dependencies before delivering code',
       ],
     };
@@ -470,7 +584,11 @@ export async function getScreenGenerationContextTool(
     return {
       success: true,
       templateMatch: bestMatch,
+      templateHints: templateHints.length > 0 ? templateHints : undefined,
       components: components.length > 0 ? components : undefined,
+      componentPlan: componentPlan.length > 0 ? componentPlan : undefined,
+      sectionPlan: sectionPlan.length > 0 ? sectionPlan : undefined,
+      definitionStarter,
       schema: {
         screenDefinition: SCREEN_DEFINITION_SCHEMA,
         description:

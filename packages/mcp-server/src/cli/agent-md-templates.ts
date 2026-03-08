@@ -84,8 +84,8 @@ export default function Page() {
 - \`validate-screen-definition\` - Step 2/3
 - \`validate-environment\` - Step 3/3 (Optional)
 
-**Quick Prototyping (3 tools):**
-- \`generate-blueprint\` - Quick UI structure
+**Legacy Prototyping (3 tools):**
+- \`generate-blueprint\` - Legacy blueprint helper
 - \`export-screen\` - Export to JSX/TSX/Vue
 - \`list_tokens\` - List layout tokens
 
@@ -310,7 +310,7 @@ These provide context to help you guide users effectively.
 
 **Discovery:** list-themes, preview-theme, list-components, preview-component, list-screen-templates, preview-screen-template
 **Workflow:** get-screen-generation-context, validate-screen-definition, validate-environment
-**Quick:** generate-blueprint, export-screen, validate_screen, list_tokens
+**Legacy:** generate-blueprint, export-screen, validate_screen, list_tokens
 **Icons:** list-icon-libraries, preview-icon-library
 `;
 }

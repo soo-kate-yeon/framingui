@@ -8,10 +8,75 @@ import type {
   ValidateEnvironmentInput,
   ValidateEnvironmentOutput,
 } from '../schemas/mcp-schemas.js';
+import { existsSync, readFileSync } from 'node:fs';
+import { isAbsolute, resolve } from 'node:path';
 import { readPackageJson } from '../utils/package-json-reader.js';
 import { readTailwindConfig } from '../utils/tailwind-config-reader.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 import { readStyleContract } from '../utils/style-contract-reader.js';
+
+const RAW_HTML_COMPONENT_HINTS: Record<string, string> = {
+  a: 'Link',
+  button: 'Button',
+  hr: 'Separator',
+  input: 'Input',
+  label: 'Label',
+  select: 'Select',
+  table: 'Table',
+  textarea: 'Textarea',
+};
+
+function resolveSourceFile(projectPath: string, filePath: string): string {
+  return isAbsolute(filePath) ? filePath : resolve(projectPath, filePath);
+}
+
+function inspectGeneratedCode(
+  projectPath: string,
+  sourceFiles: string[]
+): NonNullable<ValidateEnvironmentOutput['codegen']> {
+  const checkedFiles: string[] = [];
+  const issues = new Set<string>();
+  const fixes = new Set<string>();
+  const detectedComponents = new Set<string>();
+  const rawHtmlTags = new Set<string>();
+
+  for (const filePath of sourceFiles) {
+    const absolutePath = resolveSourceFile(projectPath, filePath);
+    checkedFiles.push(absolutePath);
+
+    if (!existsSync(absolutePath)) {
+      issues.add(`Source file not found for codegen validation: ${absolutePath}`);
+      continue;
+    }
+
+    const source = readFileSync(absolutePath, 'utf8');
+
+    for (const [tag, componentName] of Object.entries(RAW_HTML_COMPONENT_HINTS)) {
+      const tagPattern = new RegExp(`<${tag}(\\s|>)`, 'g');
+      const matches = source.match(tagPattern);
+      if (!matches || matches.length === 0) {
+        continue;
+      }
+
+      detectedComponents.add(componentName);
+      rawHtmlTags.add(tag);
+      issues.add(
+        `${absolutePath}: found raw <${tag}> usage. Prefer FramingUI ${componentName} when the screen should stay within the component contract.`
+      );
+      fixes.add(
+        `${absolutePath}: replace raw <${tag}> with ${componentName} from @framingui/ui, or document why a custom primitive is required.`
+      );
+    }
+  }
+
+  return {
+    checkedFiles,
+    issues: Array.from(issues),
+    fixes: Array.from(fixes),
+    detectedComponents: Array.from(detectedComponents).sort(),
+    rawHtmlTags: Array.from(rawHtmlTags).sort(),
+  };
+}
 
 /**
  * Validate user's environment for required dependencies
@@ -46,7 +111,7 @@ export async function validateEnvironmentTool(
   input: ValidateEnvironmentInput
 ): Promise<ValidateEnvironmentOutput> {
   try {
-    const { projectPath, requiredPackages, checkTailwind, checkStyles } = input;
+    const { projectPath, requiredPackages, sourceFiles, checkTailwind, checkStyles } = input;
 
     // Step 1: Read package.json from the project
     const readResult = readPackageJson(projectPath);
@@ -84,6 +149,7 @@ export async function validateEnvironmentTool(
     // Step 5: Tailwind CSS 설정 검증
     let tailwind: ValidateEnvironmentOutput['tailwind'];
     let styles: ValidateEnvironmentOutput['styles'];
+    let codegen: ValidateEnvironmentOutput['codegen'];
 
     if (checkTailwind !== false) {
       const tailwindResult = readTailwindConfig(projectPath);
@@ -182,6 +248,10 @@ export async function validateEnvironmentTool(
       };
     }
 
+    if (sourceFiles && sourceFiles.length > 0) {
+      codegen = inspectGeneratedCode(projectPath, sourceFiles);
+    }
+
     return {
       success: true,
       installed,
@@ -190,6 +260,7 @@ export async function validateEnvironmentTool(
       warnings: warnings.length > 0 ? warnings : undefined,
       tailwind,
       styles,
+      codegen,
     };
   } catch (error) {
     return {

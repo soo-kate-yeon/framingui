@@ -100,7 +100,7 @@ If your client does not support native slash commands, use the \`slash-commands\
 Follow the 3-step workflow:
 
 **Step 1/3:** Call \`get-screen-generation-context\` with your screen description
-- Returns: Template matches, component suggestions with inline props, schema
+- Returns: Template hints, component plan, section plan, definition starter, component suggestions with inline props, schema
 
 **Step 2/3:** Create Screen Definition JSON, then call \`validate-screen-definition\`
 - Returns: Validation results, errors with auto-fix patches, suggestions
@@ -118,6 +118,11 @@ Follow the 3-step workflow:
 4. ❌ Skipping validate-screen-definition - Always validate before writing code
 5. ❌ Ignoring dependencies warnings - Check required packages before running code
 6. ❌ Using unlicensed themes - Only use themes from whoami licensedThemes list
+
+## Legacy note
+
+- \`generate-blueprint\` remains available for legacy prototype/export integrations, but new agent flows should prefer \`get-screen-generation-context\`
+- Screen templates are hints for inspiration, not hard requirements for the final structure
 
 ## Need Help?
 

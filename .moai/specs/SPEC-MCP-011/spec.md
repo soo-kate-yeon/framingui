@@ -155,11 +155,12 @@ Purpose:
 
 Canonical usage:
 ```text
-/screen <description> [--theme <themeId>] [--platform web|mobile] [--template <id>] [--output draft|code]
+/screen <description> [--theme <themeId>] [--platform web|mobile] [--template-hint <id>] [--output draft|code]
 ```
 
 Primary result:
 - Validated screen definition and generated code when requested.
+ - Template selections are hints for inspiration, not hard structural requirements.
 
 ### `/section`
 
@@ -181,7 +182,7 @@ Purpose:
 
 Canonical usage:
 ```text
-/draft <description> [--theme <themeId>] [--platform web|mobile] [--variants <n>]
+/draft <description> [--theme <themeId>] [--platform web|mobile] [--template-hint <id>] [--variants <n>]
 ```
 
 Primary result:

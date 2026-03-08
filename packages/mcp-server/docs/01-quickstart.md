@@ -105,7 +105,7 @@ You: "Show me the minimal-workspace theme"
 
 ### Step 3: Generate a Screen
 
-**Quick Prototype** (blueprint workflow):
+**Legacy Prototype** (blueprint workflow):
 
 ```
 You: "Create a login page with the classic-magazine theme"
