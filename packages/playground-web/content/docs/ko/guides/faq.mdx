@@ -1,0 +1,87 @@
+---
+title: "FAQ"
+description: "FramingUI에 대한 자주 묻는 질문: shadcn 차이점, 가격, 라이선스, IDE 지원"
+order: 5
+---
+
+# 자주 묻는 질문
+
+## 일반
+
+### FramingUI가 무엇인가요?
+
+FramingUI는 design tokens 기반의 **AI 네이티브 디자인 시스템**입니다. Claude Code, Cursor, Windsurf 같은 AI 도구가 브랜드와 일치하는 일관되고 유지보수 가능한 UI 코드를 생성하도록 돕습니다.
+
+전통적인 컴포넌트 라이브러리와 달리 FramingUI는 Model Context Protocol(MCP)을 통한 AI 협업에 최적화되어 있습니다.
+
+### FramingUI와 shadcn/ui의 차이점은?
+
+| 기능 | FramingUI | shadcn/ui |
+| --- | --- | --- |
+| **Design tokens** | ✅ 일급 토큰 시스템 | ⚠️ 수동 유틸리티 클래스 |
+| **AI 통합** | ✅ MCP 서버 내장 | ❌ AI 도구 없음 |
+| **테마** | ✅ 7개 프로덕션 테마 | ❌ 단일 기본 테마 |
+| **설치** | ✅ npm 패키지 | ⚠️ CLI로 복사-붙여넣기 |
+| **업데이트** | ✅ `npm update` | ⚠️ 수동 재복사 |
+
+**shadcn/ui 사용:** 컴포넌트 소스에 대한 완전한 제어, 복사-붙여넣기 워크플로우 선호
+
+**FramingUI 사용:** AI 기반 개발, 테마 일관성 필요, 토큰 기반 디자인 시스템 원함
+
+## 가격 & 라이선스
+
+### FramingUI는 무료인가요?
+
+**예.** FramingUI는 MIT 라이선스 하의 오픈소스이며 무료로 사용할 수 있습니다.
+
+- ✅ 상업 프로젝트 무료
+- ✅ SaaS 제품 무료
+- ✅ 클라이언트 작업 무료
+- ✅ 저작자 표시 불필요
+
+## IDE & 도구 지원
+
+### 어떤 IDE가 FramingUI를 지원하나요?
+
+FramingUI는 모든 에디터에서 작동합니다. MCP 통합은 다음에서 사용 가능:
+
+| 도구 | MCP 지원 | 참고 |
+| --- | --- | --- |
+| **Claude Code** | ✅ 완전 지원 | 공식 Anthropic 에디터 |
+| **Cursor** | ✅ 완전 지원 | AI 우선 코드 에디터 |
+| **Windsurf** | ✅ 완전 지원 | Codeium AI 에디터 |
+| **VS Code** | ⚠️ 부분 | Cursor 또는 확장 사용 |
+
+**MCP 없이:** FramingUI 컴포넌트와 토큰을 여전히 사용 가능 — AI 제안만 없음.
+
+## 기술
+
+### 어떤 프레임워크가 지원되나요?
+
+FramingUI는 프레임워크에 구애받지 않지만 React 기반 프레임워크에서 가장 잘 작동:
+
+- ✅ **Next.js** (App Router & Pages Router)
+- ✅ **Vite + React**
+- ✅ **Remix**
+- ✅ **Gatsby**
+
+### TypeScript와 작동하나요?
+
+예. FramingUI는 TypeScript로 완전히 타이핑되어 있습니다.
+
+### Tailwind CSS와 사용할 수 있나요?
+
+예! FramingUI는 Tailwind 기반으로 만들어졌으며 design tokens으로 확장합니다.
+
+## 지원
+
+### 어디서 도움을 받을 수 있나요?
+
+- 📖 [문서](https://framingui.com/docs)
+- 💬 [Discord 커뮤니티](https://discord.gg/framingui)
+- 🐛 [GitHub Issues](https://github.com/tektonui/framingui/issues)
+- 📧 이메일: [support@framingui.com](mailto:support@framingui.com)
+
+---
+
+**여전히 질문이 있나요?** [Discord](https://discord.gg/framingui)에 참여하거나 [discussion 열기](https://github.com/tektonui/framingui/discussions).

@@ -1,0 +1,122 @@
+---
+title: "시작하기"
+description: "5분 안에 FramingUI 설치, 첫 테마 설정, MCP 연결"
+order: 1
+---
+
+# 시작하기
+
+5분 만에 AI 네이티브 디자인 시스템을 시작하고 실행합니다.
+
+## 1. FramingUI 설치
+
+```bash
+npm install @framingui/ui @framingui/tokens
+```
+
+또는 선호하는 패키지 매니저로:
+
+```bash
+pnpm add @framingui/ui @framingui/tokens
+# 또는
+yarn add @framingui/ui @framingui/tokens
+```
+
+## 2. 테마 및 스타일 추가
+
+테마를 선택하고 기본 스타일과 함께 앱 루트에 import합니다.
+
+```tsx
+// app/layout.tsx (Next.js App Router)
+import '@framingui/tokens/themes/minimal-workspace.css';
+import '@framingui/ui/styles';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="ko">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+```tsx
+// pages/_app.tsx (Next.js Pages Router)
+import '@framingui/tokens/themes/minimal-workspace.css';
+import '@framingui/ui/styles';
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+```
+
+```tsx
+// main.tsx (Vite/React)
+import '@framingui/tokens/themes/minimal-workspace.css';
+import '@framingui/ui/styles';
+import './index.css';
+```
+
+## 3. 첫 컴포넌트 사용
+
+```tsx
+import { Button } from '@framingui/ui';
+
+export default function HomePage() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <h1 className="text-4xl font-bold">FramingUI에 오신 것을 환영합니다</h1>
+      <div className="flex gap-3">
+        <Button>Primary Action</Button>
+        <Button variant="outline">Secondary</Button>
+      </div>
+    </div>
+  );
+}
+```
+
+## 4. MCP 연결 (선택사항)
+
+Claude Code, Cursor, 또는 Windsurf가 디자인 시스템 토큰과 컴포넌트를 이해하도록 합니다.
+
+```bash
+npx @framingui/mcp-server init
+```
+
+프로젝트 루트에 `.mcp.json`이 생성됩니다. AI 도구를 재시작하고 질문:
+
+> "모든 FramingUI 테마 나열해줘"
+
+## 다음 단계
+
+- [Design Tokens](/docs/ko/guides/design-tokens) — 토큰이 시스템을 구동하는 방법 학습
+- [테마 설정](/docs/ko/guides/theming) — 색상, 간격, 타이포그래피 커스터마이징
+- [MCP 통합](/docs/ko/guides/mcp-integration) — AI 도구 설정 심층 분석
+
+## 문제 해결
+
+### 스타일이 표시되지 않나요?
+
+- 테마 CSS가 `@framingui/ui/styles` **이전에** import되었는지 확인
+- Tailwind config가 FramingUI 경로를 포함하는지 확인 (`init`으로 자동 설정)
+- 설정 변경 후 dev 서버 재시작
+
+### TypeScript 오류?
+
+```bash
+npm install -D @types/react @types/react-dom
+```
+
+### 컴포넌트를 찾을 수 없나요?
+
+설치 확인:
+
+```bash
+npm list @framingui/ui
+```
+
+없으면 재설치:
+
+```bash
+npm install @framingui/ui @framingui/tokens
+```

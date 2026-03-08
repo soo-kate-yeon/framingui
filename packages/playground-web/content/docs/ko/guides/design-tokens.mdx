@@ -1,0 +1,129 @@
+---
+title: "Design Tokens"
+description: "FramingUI가 색상, 타이포그래피, 간격에 design tokens을 사용하는 방법과 AI가 이를 필요로 하는 이유를 이해합니다"
+order: 2
+---
+
+# Design Tokens
+
+Design tokens은 디자인 시스템의 단일 source of truth입니다. 모든 곳에 `#3B82F6`을 하드코딩하는 대신 `--color-primary`를 사용하며 AI가 이를 이해할 수 있습니다.
+
+## Design Tokens이란?
+
+Design tokens은 시각적 디자인 결정을 나타내는 명명된 변수입니다:
+
+```css
+/* 이 대신 ❌ */
+.button {
+  background: #3B82F6;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Tokens 사용 ✅ */
+.button {
+  background: var(--bg-primary);
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+```
+
+`--bg-primary`를 변경하면 모든 컴포넌트가 자동으로 업데이트됩니다.
+
+## AI가 Tokens을 필요로 하는 이유
+
+Claude Code 같은 AI 도구는 UI 코드를 생성합니다. 토큰 없이는 색상과 간격을 하드코딩하여 일관성 없고 유지보수 불가능한 코드를 만듭니다.
+
+토큰이 있으면 AI는:
+- ✅ 브랜드와 즉시 일치하는 UI 생성
+- ✅ 생성된 모든 코드에서 일관성 유지
+- ✅ 컴포넌트 재작성 없이 디자인 변경에 대응
+- ✅ 시맨틱 의도 이해 ("primary action" vs "#3B82F6")
+
+## Token 카테고리
+
+### 1. Colors
+
+Light/dark mode에 적응하는 시맨틱 색상 토큰:
+
+```css
+--bg-background       /* 페이지 배경 */
+--bg-foreground       /* 텍스트 색상 */
+--bg-primary          /* 브랜드 primary */
+--bg-primary-foreground /* Primary 위 텍스트 */
+--bg-destructive      /* 위험 액션 */
+--bg-muted            /* 미묘한 배경 */
+--border-default      /* 기본 테두리 */
+--border-input        /* 폼 테두리 */
+```
+
+### 2. Typography
+
+```css
+--font-sans           /* 본문 폰트 패밀리 */
+--font-mono           /* 코드 폰트 패밀리 */
+
+--text-xs             /* 12px */
+--text-sm             /* 14px */
+--text-base           /* 16px */
+--text-lg             /* 18px */
+```
+
+### 3. Spacing
+
+```css
+--spacing-1           /* 0.25rem (4px) */
+--spacing-2           /* 0.5rem (8px) */
+--spacing-3           /* 0.75rem (12px) */
+--spacing-4           /* 1rem (16px) */
+--spacing-6           /* 1.5rem (24px) */
+```
+
+## 코드에서 Tokens 사용
+
+### CSS에서
+
+```css
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+}
+```
+
+### Tailwind에서 (FramingUI 통해)
+
+FramingUI는 토큰을 Tailwind 유틸리티에 매핑합니다:
+
+```tsx
+<div className="bg-card border border-default rounded-lg p-6 shadow-sm">
+  <h2 className="text-xl font-semibold text-foreground">Card Title</h2>
+  <p className="text-sm text-muted-foreground">Description</p>
+</div>
+```
+
+## Tokens 재정의
+
+전역 CSS에서 모든 토큰을 재정의할 수 있습니다:
+
+```css
+/* app/globals.css */
+:root {
+  --bg-primary: oklch(0.56 0.18 257);       /* 커스텀 브랜드 색상 */
+  --font-sans: 'Inter', system-ui, sans-serif; /* 커스텀 폰트 */
+  --radius-lg: 12px;                         /* 더 둥근 모서리 */
+  --spacing-4: 1.25rem;                      /* 더 여유로운 간격 */
+}
+```
+
+고급 커스터마이징은 [테마 설정](/docs/ko/guides/theming)을 참고하세요.
+
+## 다음 단계
+
+- [테마 설정](/docs/ko/guides/theming) — 테마 커스터마이징
+- [MCP 통합](/docs/ko/guides/mcp-integration) — AI가 토큰을 이해하도록 설정
+- [컴포넌트](/docs/ko/components/button) — 실제 토큰 사용 확인
