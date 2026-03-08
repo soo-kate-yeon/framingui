@@ -108,7 +108,7 @@ This limits discoverability and makes FramingUI feel like a tool bundle rather t
 - WHEN `/screen` is invoked THEN the workflow SHALL follow:
   - `get-screen-generation-context`
   - `validate-screen-definition`
-  - `generate_screen`
+  - direct React code writing from the validated definition and component contracts
   - `validate-environment` when a target project path is known
 - WHEN `/section` is invoked THEN the workflow SHALL support section-scoped generation using component discovery and definition validation before optional codegen.
 - WHEN `/draft` is invoked THEN the workflow SHALL generate a structural draft without requiring code generation by default.

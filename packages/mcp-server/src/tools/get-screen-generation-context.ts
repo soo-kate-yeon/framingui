@@ -168,8 +168,12 @@ function fallbackComponentInfo(componentName: string): ContextComponentInfo {
   };
 }
 
-async function getComponentInfo(componentIds: string[]): Promise<ContextComponentInfo[]> {
+async function getComponentInfo(componentIds: string[]): Promise<{
+  components: ContextComponentInfo[];
+  warnings: string[];
+}> {
   const components: ContextComponentInfo[] = [];
+  const warnings: string[] = [];
 
   for (const name of componentIds) {
     const result = await fetchComponent(componentNameToId(name));
@@ -189,9 +193,12 @@ async function getComponentInfo(componentIds: string[]): Promise<ContextComponen
     }
 
     components.push(fallbackComponentInfo(name));
+    warnings.push(
+      `Component metadata for "${name}" could not be loaded. Props and variants may be incomplete; use preview-component before writing code for this component.`
+    );
   }
 
-  return components;
+  return { components, warnings };
 }
 
 /**
@@ -392,7 +399,7 @@ export async function getScreenGenerationContextTool(
       componentTypes.length > 0
         ? Array.from(new Set([...recommendedComponentTypes, ...componentTypes]))
         : recommendedComponentTypes;
-    const components = await getComponentInfo(componentTypes);
+    const { components, warnings: componentWarnings } = await getComponentInfo(componentTypes);
 
     // 5. Generate contextual hints
     const hints = generateHints(input.description, input.themeId);
@@ -472,6 +479,7 @@ export async function getScreenGenerationContextTool(
       examples: examples && examples.length > 0 ? examples : undefined,
       themeRecipes: themeRecipes && themeRecipes.length > 0 ? themeRecipes : undefined,
       hints: hints.length > 0 ? hints : undefined,
+      warnings: componentWarnings.length > 0 ? componentWarnings : undefined,
       workflow,
     };
   } catch (error) {

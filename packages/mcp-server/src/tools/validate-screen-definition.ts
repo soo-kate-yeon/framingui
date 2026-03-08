@@ -346,6 +346,13 @@ async function validateComponentProps(
   // props 데이터가 없는 컴포넌트는 스킵 (하위 호환성)
   const propsData = await getPropsData(component.type.toLowerCase());
   if (!propsData) {
+    warnings.push({
+      path: `${path}.props`,
+      code: 'COMPONENT_METADATA_UNAVAILABLE',
+      message: `Prop metadata for ${component.type} could not be loaded, so required prop validation was skipped`,
+      recommendation:
+        'Run preview-component or get-screen-generation-context again and verify component props before writing production code',
+    });
     return { errors, warnings };
   }
 

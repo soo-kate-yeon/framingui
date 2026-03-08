@@ -347,11 +347,11 @@ Validate a screen definition JSON with detailed error messages and auto-fix.
 }
 ```
 
-### generate_screen (Step 3/4)
+### generate_screen (Optional Codegen Helper)
 
 Generate production-ready React code with theme applied from validated Screen Definition.
 
-> **Why this tool is essential**: It applies theme recipes to components. Without it, theme styling will not be applied.
+> **Default workflow note**: The recommended `/screen` flow is `get-screen-generation-context` → `validate-screen-definition` → direct code writing → `validate-environment`. Use `generate_screen` when you want reference output or generator-assisted theme application.
 
 **Input**:
 

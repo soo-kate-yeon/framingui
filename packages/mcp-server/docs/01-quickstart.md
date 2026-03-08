@@ -120,9 +120,9 @@ You: "Build a dashboard screen"
 → AI calls:
   1. get-screen-generation-context (gather context)
   2. validate-screen-definition (validate JSON)
-  3. generate_screen (generate themed code)
+  3. write React code directly from validated definition + component contracts
   4. validate-environment (check dependencies)
-→ Returns: Production-ready React code with theme applied
+→ Returns: Production-ready React code aligned to the validated screen contract
 ```
 
 ## Available Themes

@@ -631,7 +631,7 @@ The MCP server provides 9 built-in prompts that work across all MCP clients:
 - Step 0: detect the target style contract
 - Step 1/4: get-screen-generation-context
 - Step 2/4: validate-screen-definition
-- Step 3/4: generate_screen
+- Step 3/4: write React code directly from the validated definition
 - Step 4/4: validate-environment
 - Complete examples and troubleshooting
 

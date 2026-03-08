@@ -68,6 +68,9 @@ describe('Phase 3: screen contract parity', () => {
     expect(mcpValidation.success).toBe(true);
     expect(mcpValidation.valid).toBe(true);
     expect(mcpValidation.errors).toBeUndefined();
+    expect(
+      mcpValidation.warnings?.some(warning => warning.code === 'COMPONENT_METADATA_UNAVAILABLE')
+    ).toBe(true);
   });
 
   it('rejects unsupported compound components consistently in validate-screen-definition and generate_screen', async () => {

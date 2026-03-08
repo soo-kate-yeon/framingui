@@ -1078,6 +1078,7 @@ export const GetScreenGenerationContextOutputSchema = z.object({
   examples: z.array(ScreenExampleSchema).optional(),
   themeRecipes: z.array(ThemeRecipeInfoSchema).optional(),
   hints: z.array(GenerationHintSchema).optional(),
+  warnings: z.array(z.string()).optional(),
   workflow: WorkflowGuideSchema.optional(),
   error: z.string().optional(),
 });

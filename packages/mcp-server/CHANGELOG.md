@@ -2,6 +2,18 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.16] - 2026-03-08
+
+### Changed
+
+- Switched the default `/screen` workflow to guarded direct code writing after validation, while keeping `generate_screen` as an optional helper.
+- Updated MCP prompts, slash-command metadata, docs, and SPEC references to keep the screen-generation contract aligned.
+
+### Fixed
+
+- Exposed warnings when component metadata cannot be loaded cleanly so agents stop silently guessing props.
+- Added explicit validation warnings when required prop checks are skipped because component metadata is unavailable.
+
 ## [0.6.15] - 2026-03-08
 
 ### Fixed

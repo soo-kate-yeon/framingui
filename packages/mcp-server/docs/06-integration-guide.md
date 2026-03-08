@@ -182,7 +182,7 @@ Auto-detected: `pnpm`, `yarn`, `bun`, `npm`
 
 ### Generated Code Missing Theme Styles
 
-Use the production workflow (`get-screen-generation-context` → `validate-screen-definition` → `generate_screen`). The `generate_screen` tool applies theme recipes. Without it, code won't have theme styling.
+Use the production workflow (`get-screen-generation-context` → `validate-screen-definition` → direct write → `validate-environment`). If you need generator-assisted theme application, use `generate_screen` as an optional helper after validation.
 
 ### Missing Dependencies in Project
 

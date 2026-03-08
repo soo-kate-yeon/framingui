@@ -85,7 +85,6 @@ const slashCommandRegistry: SlashCommandDefinition[] = [
     workflow: [
       'get-screen-generation-context',
       'validate-screen-definition',
-      'generate_screen',
       'validate-environment',
     ],
     preflight: {
@@ -140,7 +139,7 @@ const slashCommandRegistry: SlashCommandDefinition[] = [
       'list-components',
       'preview-component',
       'validate-screen-definition',
-      'generate_screen',
+      'validate-environment',
     ],
     preflight: {
       required: true,

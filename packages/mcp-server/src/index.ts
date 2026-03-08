@@ -532,16 +532,20 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'generate_screen',
         description:
-          '[WORKFLOW STEP 3/4] Generate production-ready React code with theme applied from validated Screen Definition.\n\n' +
-          'REQUIRED WORKFLOW:\n' +
-          '1. Call get-screen-generation-context (Step 1/4)\n' +
-          '2. Call validate-screen-definition (Step 2/4)\n' +
-          '3. Call THIS TOOL (Step 3/4) - Theme engine applies styling\n' +
-          '4. Call validate-environment if path known (Step 4/4)\n\n' +
-          'WHY THIS TOOL IS ESSENTIAL:\n' +
+          '[OPTIONAL CODEGEN HELPER] Generate production-ready React code with theme applied from a validated Screen Definition.\n\n' +
+          'DEFAULT WORKFLOW:\n' +
+          '1. Call get-screen-generation-context\n' +
+          '2. Call validate-screen-definition\n' +
+          '3. Write React code directly using the validated definition and component props from context\n' +
+          '4. Call validate-environment if path known\n\n' +
+          'WHEN TO USE THIS TOOL:\n' +
+          '- When you want a reference implementation after validation\n' +
+          '- When you want theme recipe application handled by the generator\n' +
+          '- When you need a fast starting point for further manual refinement\n\n' +
+          'WHAT THIS TOOL DOES WELL:\n' +
           '- Applies theme recipes to components (minimal-workspace, classic-magazine, etc.)\n' +
           '- Converts Screen Definition → Production-ready code with correct Tailwind classes\n' +
-          '- Without this tool, theme styling will not be applied!\n\n' +
+          '- Returns dependency information for environment validation\n\n' +
           'AFTER RECEIVING RESPONSE:\n' +
           '- ALWAYS check the "dependencies" field in the response\n' +
           '- If dependencies.external is non-empty:\n' +
@@ -550,7 +554,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- Display the list of required packages to user before delivering code\n' +
           '- validate-environment also checks Tailwind CSS config\n\n' +
           'CRITICAL:\n' +
-          '- This workflow prevents "Module not found" errors at runtime\n' +
+          '- This tool is optional in the default `/screen` workflow\n' +
           '- Tailwind validation prevents invisible/unstyled @framingui/ui components\n' +
           '- Never deliver code without informing user about dependencies',
         inputSchema: {

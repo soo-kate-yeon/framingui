@@ -44,7 +44,6 @@ describe('slash command registry', () => {
     expect(command?.workflow).toEqual([
       'get-screen-generation-context',
       'validate-screen-definition',
-      'generate_screen',
       'validate-environment',
     ]);
     expect(command?.promptRecipe).toBe('screen-workflow');

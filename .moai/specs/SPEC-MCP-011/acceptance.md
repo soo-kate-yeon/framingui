@@ -41,7 +41,7 @@ When the workflow mapping is resolved
 Then the mapped sequence includes:
 1. `get-screen-generation-context`
 2. `validate-screen-definition`
-3. `generate_screen`
+3. direct React code writing from the validated definition and component contracts
 And `validate-environment` when a target project path is available
 
 ## Scenario 5: Responsive optimization absorbs density controls

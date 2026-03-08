@@ -123,13 +123,14 @@ Lightweight prototyping workflow:
 1. `generate-blueprint`: Natural language → Blueprint JSON
 2. `export-screen`: Blueprint → JSX/TSX/Vue code
 
-#### get-screen-generation-context → validate-screen-definition → generate_screen
+#### get-screen-generation-context → validate-screen-definition → direct write
 
 Production workflow:
 
 1. `get-screen-generation-context` **(Step 1/3)**: Get complete context for AI to generate screen definitions — template matches, available components, JSON schema, example definitions, theme recipes
 2. `validate-screen-definition` **(Step 2/3)**: Validate screen definition JSON with detailed errors, suggestions, and auto-fix patches
-3. `generate_screen` **(Step 3/4)**: Generate production-ready React code with theme engine applied — the theme recipes (Tailwind classes, component styling) are applied here
+3. Write production-ready React code directly from the validated definition using the components, props, and theme recipes returned in Step 1
+4. `validate-environment` **(Optional Step)**: Check dependencies, Tailwind config, and style contract before delivery
 
 #### validate-environment
 

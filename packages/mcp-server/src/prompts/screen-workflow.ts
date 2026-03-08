@@ -4,7 +4,7 @@
  */
 
 /**
- * Screen Workflow prompt with detailed 4-step process
+ * Screen Workflow prompt with guarded direct-write process
  */
 export function getScreenWorkflowPrompt() {
   return {
@@ -25,7 +25,7 @@ Optional: call \`whoami\` if you want to inspect the current session and license
 The workflow ensures:
 - ✅ Correct component usage with inline props/variants
 - ✅ Validated screen structure with auto-fix patches
-- ✅ Theme recipes applied via the theme engine (generate_screen)
+- ✅ Theme recipes and component contracts are visible before code is written
 - ✅ All dependencies installed
 - ✅ Tailwind CSS properly configured
 - ✅ Style contract compatibility checked before relying on FramingUI component defaults
@@ -77,11 +77,14 @@ Block generation when:
 - Screen Definition JSON schema
 - Example definitions
 - Theme recipes
+- Warnings when component metadata could not be loaded cleanly
 
 **When to use:**
 - Beginning of every screen generation
 - When you need component suggestions
 - When exploring available templates
+
+**Guardrail:** if the response includes \`warnings\`, do not guess missing props. Resolve the warning first with \`preview-component\` or by retrying the context fetch.
 
 ---
 
@@ -124,48 +127,18 @@ Block generation when:
 
 ---
 
-## Step 3/4: Generate Screen Code (Theme Engine)
+## Step 3/4: Write React Code Directly
 
-**Tool:** \`generate_screen\`
+**Purpose:** Write production-ready React code using the validated Screen Definition and the component contracts from Step 1.
 
-**Purpose:** Generate production-ready React code with theme styling applied
+**Required constraints:**
+- Preserve the validated \`shell\`, \`page\`, \`section\`, and slot structure from Step 2
+- Use only components returned in Step 1 unless you explicitly inspect more with \`preview-component\`
+- Use documented props and variants; do not invent props
+- Prefer tokens, theme recipes, and existing FramingUI primitives over raw design values
+- If a screen needs custom JSX beyond the contract, keep it local and explain why FramingUI primitives were insufficient
 
-**CRITICAL:** This tool is the **theme application engine**. It:
-- Applies theme recipes to components (minimal-workspace, classic-magazine, etc.)
-- Converts Screen Definition → Production-ready code with correct Tailwind classes
-- Without this tool, theme styling will NOT be applied!
-
-**Input:**
-\`\`\`json
-{
-  "screenDefinition": { /* validated Screen Definition from Step 2 */ },
-  "outputFormat": "tailwind",
-  "options": {
-    "typescript": true,
-    "prettier": false
-  }
-}
-\`\`\`
-
-**Output:**
-- \`success\`: true/false
-- \`code\`: Generated production-ready React code with theme applied
-- \`cssVariables\`: CSS variable definitions (if applicable)
-- \`dependencies\`: Required packages and install commands
-
-**Output Formats:**
-- \`tailwind\`: React + Tailwind CSS classes (recommended)
-- \`css-in-js\`: React + styled-components or emotion
-- \`react\`: Plain React component
-
-**AFTER RECEIVING RESPONSE:**
-- ALWAYS check the \`dependencies\` field
-- If \`dependencies.external\` is non-empty → proceed to Step 4
-- Display required packages to user before delivering code
-
-**When to use:**
-- Always after successful validation (Step 2)
-- This is the core code generation step - do NOT skip it
+**Optional helper:** \`generate_screen\` may still be used as a codegen assistant or reference output, but it is not the default production workflow.
 
 ---
 
@@ -203,7 +176,7 @@ Block generation when:
 - ✅ tailwindcss-animate plugin configured
 
 **When to use:**
-- After generating code (Step 3), when user's package.json path is known
+- After writing code (Step 3), when user's package.json path is known
 - Before delivering code to user
 - When user reports missing styles or animations
 
@@ -224,9 +197,9 @@ User: "Create a login page with email/password fields"
    → Call validate-screen-definition({ definition: {...} })
    → Apply autoFixPatches if any, re-validate if needed
 
-3. Call generate_screen({ screenDefinition: {...}, outputFormat: "tailwind" })
-   → Receive production-ready code WITH theme styling applied
-   → Check dependencies field for required packages
+3. Write React code directly from the validated definition and Step 1 component contracts
+   → Preserve the validated layout structure
+   → Use documented props instead of guessing
 
 4. Call validate-environment({ projectPath: "...", requiredPackages: [...] })
    → Show user missing packages and install commands
@@ -243,10 +216,10 @@ User: "Create a login page with email/password fields"
 - Check token names match SPEC-LAYOUT-001
 - Verify component IDs exist (use list-components)
 
-**Code generation fails in Step 3:**
+**Code writing is blocked in Step 3:**
 - Ensure Screen Definition passed validation in Step 2
-- Check that the outputFormat is one of: tailwind, css-in-js, react
-- Verify @framingui/core is properly installed
+- Resolve any Step 1 metadata warnings before guessing props
+- Use \`preview-component\` when a component contract is incomplete
 
 **Missing dependencies:**
 - Always run Step 4 to verify environment
@@ -265,13 +238,14 @@ User: "Create a login page with email/password fields"
 ## Best Practices
 
 1. ✅ Always run Step 0 preflight before generation when projectPath is known
-2. ✅ Validate before generating code (Step 2)
-3. ✅ Use generate_screen for theme application (Step 3) - do NOT write code manually
-4. ✅ Check environment before delivering code (Step 4)
-5. ✅ Use strict validation mode for production
-6. ✅ Include theme recipes for visual consistency
-7. ✅ Use inline props from context instead of guessing
-8. ✅ Confirm the target style contract before relying on CSS variables or component defaults
+2. ✅ Validate before writing code (Step 2)
+3. ✅ Write code from the validated definition and component contracts (Step 3)
+4. ✅ Use \`generate_screen\` only as an optional helper, not as a required workflow step
+5. ✅ Check environment before delivering code (Step 4)
+6. ✅ Use strict validation mode for production
+7. ✅ Include theme recipes for visual consistency
+8. ✅ Use inline props from context instead of guessing
+9. ✅ Confirm the target style contract before relying on CSS variables or component defaults
 
 ## Alternative Workflows
 
@@ -279,7 +253,10 @@ User: "Create a login page with email/password fields"
 - \`generate-blueprint\` → \`export-screen\` (skips validation and theme engine)
 
 **Production (recommended):**
-- Follow complete 4-step workflow above`,
+- Follow complete 4-step workflow above
+
+**Optional codegen assist:**
+- \`generate_screen\` can be used after validation when you want a reference implementation or a starting point`,
         },
       },
     ],
