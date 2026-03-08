@@ -11,7 +11,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { trackFunnelPrimaryCtaClick } from '../../lib/analytics';
+import { trackFunnelPrimaryCtaClick, trackFunnelFreeTrialStarted } from '../../lib/analytics';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getFreeTrialModalContent } from '../../data/i18n/freeTrialModal';
 
@@ -145,6 +145,10 @@ export function FreeTrialModal({
         // 성공: localStorage에 "본 적 있음" 표시 (이건 하위 호환성을 위해 유지)
         localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
         console.log('[FreeTrialModal] Trial created successfully:', parsedBody);
+        trackFunnelFreeTrialStarted({
+          entry_point: 'free_trial_modal',
+          is_authenticated: true,
+        });
         onStartTrial();
       } else {
         const normalizedError = normalizeTrialError(response, parsedBody, rawBody);

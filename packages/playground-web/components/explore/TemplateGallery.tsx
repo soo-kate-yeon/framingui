@@ -17,6 +17,7 @@ import { TemplateModal } from './TemplateModal';
 import { getTemplateData } from '../../data/templates';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { getExploreContent } from '../../data/i18n/explore';
+import { trackTemplateView } from '../../lib/analytics';
 
 // ============================================================================
 // Types
@@ -84,6 +85,14 @@ export function TemplateGallery({
   const handleCardClick = (templateId: string) => {
     if (!isSelectionMode) {
       // route 대신 모달 띄우기
+      const template = templates.find((t) => t.id === templateId);
+      if (template) {
+        trackTemplateView({
+          template_id: templateId,
+          template_name: template.name,
+          location: 'explore',
+        });
+      }
       setActiveModalId(templateId);
       return;
     }

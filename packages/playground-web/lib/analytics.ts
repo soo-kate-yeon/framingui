@@ -14,6 +14,7 @@ export type AnalyticsEvent =
   | 'page_view'
   | 'cta_click'
   | 'template_select'
+  | 'template_view'
   | 'pricing_view'
   | 'pricing_purchase_clicked'
   | 'pricing_manage_clicked'
@@ -76,6 +77,12 @@ export interface TemplateSelectProps {
   template_name: string;
 }
 
+export interface TemplateViewProps {
+  template_id: string;
+  template_name: string;
+  location: 'landing' | 'explore';
+}
+
 /**
  * 페이지 뷰 이벤트 트래킹
  */
@@ -102,6 +109,17 @@ export const trackCtaClick = (props: CtaClickProps): void => {
 export const trackTemplateSelect = (props: TemplateSelectProps): void => {
   trackGA('template_select', {
     template_name: props.template_name,
+  });
+};
+
+/**
+ * 템플릿 상세 모달 열기 이벤트 트래킹
+ */
+export const trackTemplateView = (props: TemplateViewProps): void => {
+  trackGA('template_view', {
+    template_id: props.template_id,
+    template_name: props.template_name,
+    location: props.location,
   });
 };
 
