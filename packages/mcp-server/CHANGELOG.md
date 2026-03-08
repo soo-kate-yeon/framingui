@@ -2,6 +2,19 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.17] - 2026-03-08
+
+### Changed
+
+- Reframed `/screen` and `/draft` around component-first guided direct writing, with templates treated as inspiration hints instead of structural requirements.
+- Expanded `get-screen-generation-context` to return `templateHints`, `componentPlan`, `sectionPlan`, and `definitionStarter` so legacy blueprint intent is available in the default workflow.
+
+### Fixed
+
+- `preview-component` now always returns component variants, even when examples are omitted.
+- `preview-screen-template` now returns `exampleProps` as documented.
+- `validate-environment` can now optionally scan generated React files for raw HTML primitives that should use `@framingui/ui` components.
+
 ## [0.6.16] - 2026-03-08
 
 ### Changed
