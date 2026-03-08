@@ -1,97 +1,136 @@
 ---
-title: "Theming"
-description: "トークン上書きとダークモード設定で FramingUI テーマをカスタマイズする方法"
+title: "テーマ設定"
+description: "FramingUIテーマのカスタマイズ: 選択、変更、保存、dark mode設定"
+order: 3
 ---
 
-# Theming
+# テーマ設定
 
-FramingUI はトークン中心のデザインシステムです。まずは組み込みテーマを選び、必要なトークンだけ上書きする使い方がおすすめです。
+FramingUIはtoken-firstデザインシステムです。組み込みテーマで開始し、必要なものをカスタマイズして変更を保存します。
 
-## 組み込みテーマ（7種類）
+## 組み込みテーマ
 
-| Theme ID | 用途 |
-| --- | --- |
-| `classic-magazine` | エディトリアルやコンテンツ中心のプロダクト |
-| `editorial-tech` | ドキュメントやナレッジ系プロダクト |
-| `dark-boldness` | コントラストが高いダーク系ダッシュボード |
-| `minimal-workspace` | 集中しやすい生産性インターフェース |
-| `neutral-workspace` | バランス重視の業務アプリ |
-| `pebble` | やわらかく親しみやすいコンシューマー UI |
-| `square-minimalism` | 幾何学ベースでコンパクトな業務 UI |
+FramingUIは7つのプロダクション対応テーマを提供:
 
-## テーマを適用する
+| テーマ | 最適 | 雰囲気 |
+| --- | --- | --- |
+| `classic-magazine` | 編集、ブログ、コンテンツサイト | 伝統的、読みやすい |
+| `editorial-tech` | ドキュメント、ナレッジベース | クリーン、技術的 |
+| `dark-boldness` | ダッシュボード、アナリティクス | ハイコントラスト、劇的 |
+| `minimal-workspace` | 生産性ツール、SaaS | 集中、邪魔なし |
+| `neutral-workspace` | エンタープライズ、ビジネスアプリ | プロフェッショナル、バランス |
+| `pebble` | コンシューマーアプリ、ソーシャル | ソフト、フレンドリー |
+| `square-minimalism` | 管理パネル、フィンテック | 幾何学的、コンパクト |
 
-アプリのルートでテーマ CSS を読み込みます。
+## 1. テーマ選択
+
+アプリエントリーポイントでテーマCSSをimport:
 
 ```tsx
-// app/layout.tsx (Next.js)
-import '@framingui/tokens/themes/square-minimalism.css';
+// app/layout.tsx(Next.js)
+import '@framingui/tokens/themes/minimal-workspace.css';
 import '@framingui/ui/styles';
 ```
 
-## トークンを上書きする
+## 2. Tokens変更
 
-グローバル CSS に上書きを追加します。変数名は `--*` 名前空間を使ってください。
+グローバルCSSファイルでトークンをオーバーライド:
 
 ```css
 /* app/globals.css */
+
+/* ブランドカラー */
 :root {
-  --bg-primary: oklch(0.56 0.18 257);
-  --bg-primary-foreground: oklch(0.98 0 0);
-  --radius-lg: 14px;
-  --spacing-4: 1rem;
+  --bg-primary: oklch(0.56 0.18 257);            /* カスタム紫 */
+  --bg-primary-foreground: oklch(0.98 0 0);      /* Primary上の白テキスト */
+  --bg-accent: oklch(0.72 0.14 200);             /* アクセント青 */
+}
+
+/* タイポグラフィ */
+:root {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --text-base: 15px;                              /* やや大きいbase */
+  --leading-normal: 1.6;                          /* より多いline height */
+}
+
+/* Spacing & Radius */
+:root {
+  --radius-lg: 12px;                              /* より丸いコーナー */
+  --spacing-4: 1.25rem;                           /* よりゆとりのあるスペーシング */
 }
 ```
 
-一部エリアだけ見た目を変える場合は、スコープ付き上書きが便利です。
+## 3. テーマ保存
 
-```css
-.pricing-surface {
-  --bg-card: oklch(0.99 0.01 250);
-  --border-default: oklch(0.88 0.02 250);
-}
+### オプションA: Gitにコミット
+
+テーマはCSS変数だけです。`globals.css`をリポジトリにコミット:
+
+```bash
+git add app/globals.css
+git commit -m "feat: customize theme tokens"
 ```
 
-## ダークモード設定
+## 4. Dark Mode設定
 
-クラスベースで切り替え、変える必要があるトークンだけ上書きします。
+FramingUIテーマはクラスベース切り替えによるdark modeをサポート。
+
+### 基本Dark Mode
+
+`.dark`セレクタ内でトークンをオーバーライド:
 
 ```css
+/* app/globals.css */
+
+/* Light mode(デフォルト) */
 :root {
   --bg-background: oklch(1 0 0);
   --bg-foreground: oklch(0.2 0 0);
+  --bg-card: oklch(0.99 0 0);
+  --border-default: oklch(0.89 0 0);
 }
 
+/* Dark mode */
 .dark {
   --bg-background: oklch(0.16 0.01 260);
   --bg-foreground: oklch(0.96 0.01 260);
   --bg-card: oklch(0.2 0.01 260);
+  --bg-card-foreground: oklch(0.96 0.01 260);
   --border-default: oklch(0.32 0.01 260);
+  --bg-muted: oklch(0.24 0.01 260);
 }
 ```
 
+### Dark Modeトグル
+
 ```tsx
-// app/providers.tsx
+'use client';
 import { useEffect, useState } from 'react';
+import { Button } from '@framingui/ui';
 
 export function ThemeModeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setDark(isDark);
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('theme-mode', dark ? 'dark' : 'light');
   }, [dark]);
 
   return (
-    <button onClick={() => setDark(v => !v)}>
-      {dark ? 'Switch to Light' : 'Switch to Dark'}
-    </button>
+    <Button variant="ghost" onClick={() => setDark(v => !v)}>
+      {dark ? '🌙' : '☀️'}
+    </Button>
   );
 }
 ```
 
-## おすすめの進め方
+## 次のステップ
 
-1. まず近いベーステーマを選ぶ
-2. ブランドカラーとタイポグラフィのトークンから上書きする
-3. ライト/ダーク両方でコントラストを確認する
-4. コンポーネントコードは変えず、見た目はトークンで制御する
+- [Design Tokens](/docs/ja/guides/design-tokens) — トークンシステムの詳細
+- [コンポーネント](/docs/ja/components/button) — テーマ適用コンポーネントを実践
+- [MCP統合](/docs/ja/guides/mcp-integration) — AIがテーマを理解するように設定

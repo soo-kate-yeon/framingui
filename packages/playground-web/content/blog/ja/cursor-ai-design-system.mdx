@@ -1,0 +1,346 @@
+---
+title: "デザインシステムとCursorをセットアップ"
+description: "design tokensを使用してブランドに合ったUIコンポーネントを生成するようにCursor AIを設定する完全ガイド。.cursorrules設定とMCP統合を含みます。"
+date: "2026-03-08"
+author:
+  name: "FramingUI Team"
+tags:
+  - cursor
+  - ai
+  - design-tokens
+  - mcp
+  - workflow
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+## Cursorデザインシステムの問題
+
+Cursorで開発速度を上げています。`Cmd+K`を押してリクエスト:
+
+> "通知カードコンポーネントを作って"
+
+Cursorが数秒で美しいコードを生成:
+
+```tsx
+export function NotificationCard() {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
+      <div className="flex items-center gap-3">
+        <Bell className="w-5 h-5 text-blue-600" />
+        <div>
+          <h3 className="font-semibold text-gray-900">New message</h3>
+          <p className="text-sm text-gray-600">You have 3 unread messages</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+良さそう! でも...
+- `blue-600`ではなく`indigo-600`を使います
+- カードpaddingは`p-4`ではなく`p-6`です
+- カード背景は`bg-white`ではなく`bg-neutral-50`です
+
+**Cursorが5秒で生成したものを修正するのに5分かかります。**
+
+このガイドはCursorが最初の試行でデザインシステムに一致するコードを生成するように設定する方法を示します。
+
+## 要点まとめ
+
+- **`.cursorrules`**はCursorにコーディング標準とデザインシステムルールを伝えます
+- **MCP(Model Context Protocol)**はCursorにdesign tokensへのプログラマティックアクセスを提供
+- **セットアップ時間:** 15分
+- **結果:** Cursorが手動修正なしでブランドに合ったコードを生成
+- **互換性:** FramingUI、カスタムトークン、Tailwind configs、すべてのデザインシステム
+
+## 2つのアプローチ: どちらが適切?
+
+### アプローチ1: `.cursorrules`(良い、10分)
+
+**長所:**
+- シンプルなテキストファイル
+- すぐ動作
+- 追加依存なし
+
+**短所:**
+- 長いセッションでCursorがルールを「忘れる」ことがある
+- 動的値クエリ不可(「primary color HEXは何?」のような)
+- トークン変更時に手動更新が必要
+
+**最適:**
+- 小規模チーム(1〜3人)
+- 安定したデザインシステム(トークンが頻繁に変わらない)
+- シンプルなトークン構造
+
+### アプローチ2: MCP統合(より良い、15分)
+
+**長所:**
+- Cursorがトークンをプログラマティックにクエリ
+- 常に最新(Source of truthから読み取り)
+- 「利用可能なカラーは?」と動的に回答可能
+
+**短所:**
+- MCPサーバーセットアップが必要
+- やや複雑な設定
+
+**最適:**
+- 成長中のチーム(3人以上)
+- 進化するデザインシステム
+- トークンを共有する複数プロジェクト
+
+**このガイドは両方カバー。** `.cursorrules`で開始し、必要に応じてMCPにアップグレード。
+
+## セットアップパート1: `.cursorrules`(基盤)
+
+`.cursorrules`はプロジェクトルートにあるファイルで、Cursorにコーディング規約を伝えます。
+
+### 基本テンプレート
+
+プロジェクトルートに`.cursorrules`を作成:
+
+```markdown
+# Project: [アプリ名]
+# Design System: FramingUI + Tailwind
+
+## Design Tokens
+
+### Colors
+- Primary brand: `bg-brand-primary` (#4338CA)
+- Secondary brand: `bg-brand-secondary` (#7C3AED)
+- Neutral backgrounds: `bg-neutral-50`, `bg-neutral-100`, `bg-neutral-900`
+- Semantic colors:
+  - Success: `bg-semantic-success` (#10B981)
+  - Error: `bg-semantic-error` (#EF4444)
+  - Warning: `bg-semantic-warning` (#F59E0B)
+
+### Spacing
+名前付きspacing tokensを使用:
+- `xs` = 0.5rem (8px)
+- `sm` = 0.75rem (12px)
+- `md` = 1rem (16px)
+- `lg` = 1.5rem (24px)
+- `xl` = 2rem (32px)
+
+例:
+- Padding: `px-md py-sm`
+- Gap: `gap-md`
+- Margin: `mb-lg`
+
+**`px-[17px]`や`gap-[13px]`のような任意値は絶対使用禁止。**
+
+### Typography
+- Headings: `font-sans font-bold`
+- Body: `font-sans font-normal`
+- Sizes: `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`
+
+### Component Patterns
+
+#### Buttons
+```tsx
+// Primary button
+<button className="bg-brand-primary hover:bg-brand-primaryHover text-white px-md py-sm rounded-md">
+
+// Secondary button
+<button className="bg-neutral-100 hover:bg-neutral-200 text-neutral-900 px-md py-sm rounded-md">
+```
+
+#### Cards
+```tsx
+<div className="bg-neutral-50 border border-neutral-200 rounded-lg p-lg">
+  {children}
+</div>
+```
+
+#### Inputs
+```tsx
+<input className="border border-neutral-300 rounded-md px-sm py-xs focus:border-brand-primary" />
+```
+
+## Code Style
+
+- すべてのコンポーネントにTypeScriptを使用
+- クラスコンポーネントより関数コンポーネントを優先
+- インラインスタイルでなくTailwindクラスを使用
+- `@/types`から型をimport
+- 共有コンポーネントは`@/components`を使用
+
+## Imports
+
+```tsx
+// ✅ 良い
+import { tokens } from '@/lib/tokens'
+import { Button } from '@/components/ui/button'
+
+// ❌ 避ける
+import * as everything from 'library'
+```
+
+## コンポーネント生成時
+
+1. `@/components`に類似コンポーネントがすでにあるか確認
+2. Design tokensを使用(カラーやspacingを絶対ハードコードしない)
+3. TypeScript型定義を保証
+4. 基本的なアクセシビリティを含める(aria labels、キーボードサポート)
+5. デフォルトでレスポンシブコンポーネントを作成
+```
+
+### `.cursorrules`テスト
+
+**プロンプト:** "primaryボタンコンポーネントを作って"
+
+**悪い出力(Cursorがルールを無視):**
+```tsx
+<button className="bg-blue-600 px-4 py-2">
+```
+
+**良い出力(Cursorがルールに従う):**
+```tsx
+<button className="bg-brand-primary hover:bg-brand-primaryHover px-md py-sm rounded-md">
+```
+
+Cursorがルールを無視する場合:
+1. ルールをより明示的にする(例を追加)
+2. Cursor再起動
+3. プロンプトでルールを参照: "design tokensについて.cursorrulesに従う"
+
+## セットアップパート2: MCP統合(アップグレード)
+
+MCPはCursorにdesign tokensへの**プログラマティックアクセス**を提供します。テキストファイルを読む代わりに、Cursorが実際のトークンソースをクエリします。
+
+### 前提条件
+
+- Node.js 18+
+- FramingUIインストール済み(`npm install @framingui/core`)
+- Cursor IDE
+
+### ステップ1: MCPサーバーインストール
+
+```bash
+npm install @framingui/mcp-server
+```
+
+### ステップ2: トークン定義
+
+まだの場合、トークンファイルを作成:
+
+```typescript
+// lib/tokens.ts
+import { createTokens } from '@framingui/core'
+
+export const tokens = createTokens({
+  colors: {
+    brand: {
+      primary: '#4338CA',
+      primaryHover: '#3730A3',
+      secondary: '#7C3AED',
+    },
+    neutral: {
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      // ... 全スケール
+      900: '#111827',
+    },
+    semantic: {
+      success: '#10B981',
+      error: '#EF4444',
+      warning: '#F59E0B',
+    }
+  },
+  spacing: {
+    xs: '0.5rem',
+    sm: '0.75rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2rem',
+  },
+  typography: {
+    fontFamily: {
+      sans: 'Inter, system-ui, sans-serif',
+    },
+    fontSize: {
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
+    }
+  }
+})
+```
+
+### ステップ3: MCPを使うようCursor設定
+
+プロジェクトルートに`.cursor/mcp.json`を作成または編集:
+
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "command": "npx",
+      "args": [
+        "@framingui/mcp-server",
+        "--tokens",
+        "./lib/tokens.ts",
+        "--project-root",
+        "."
+      ]
+    }
+  }
+}
+```
+
+### ステップ4: Cursor再起動
+
+Cursorを閉じて再度開きます。MCPサーバーが自動起動します。
+
+### ステップ5: MCP統合テスト
+
+**プロンプト:** "デザインシステムで利用可能なカラーは?"
+
+**Cursorの応答:**
+```
+デザインシステムに含まれるもの:
+
+Brand colors:
+- primary: #4338CA
+- primaryHover: #3730A3
+- secondary: #7C3AED
+
+Neutral colors: 50, 100, ..., 900
+
+Semantic colors:
+- success: #10B981
+- error: #EF4444
+- warning: #F59E0B
+```
+
+Cursorがトークンにアクセスできない場合:
+1. `@framingui/mcp-server`がインストールされているか確認
+2. `.cursor/mcp.json`パスが正しいか確認
+3. Cursorを再度再起動
+4. MCPログを確認: `Cursor > View > Output > MCP`
+
+## まとめ
+
+Cursorは速いです。しかし設定なしでは**汎用**コード生成に速いだけで、**あなたの**コード生成には不向きです。
+
+15分のセットアップ(`.cursorrules` + MCP)でCursorを「コードジェネレーター」から「デザインシステムを知るコードジェネレーター」に変換します。
+
+**以前:** Cursorは継続的な修正が必要なジュニア開発者
+**以降:** Cursorは規約を完璧に知るシニア開発者
+
+## 次のステップ
+
+1. **この記事の`.cursorrules`テンプレートをコピー**
+2. **カスタマイズ** - トークン、spacing、コンポーネントパターンで
+3. **MCPインストール**(動的トークンアクセスが必要な場合)
+4. **シンプルなプロンプトでテスト**: "primaryボタンを作って"
+5. **反復**: エッジケースを発見したらルールを追加
+
+**始めましょう**: [FramingUI + Cursorセットアップガイド →](/docs/cursor-setup)
+
+---
+
+*Cursor + FramingUIに関する質問がありますか? [Discordに参加](https://discord.gg/framingui)または[ツイート](https://x.com/framingui)してください。*

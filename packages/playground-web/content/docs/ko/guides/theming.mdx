@@ -1,97 +1,136 @@
 ---
 title: "테마 설정"
-description: "FramingUI 테마 7종 소개, 토큰 커스터마이징, 다크모드 적용 방법"
+description: "FramingUI 테마 커스터마이징: 선택, 수정, 저장 및 dark mode 설정"
+order: 3
 ---
 
 # 테마 설정
 
-FramingUI는 토큰 중심 디자인 시스템이다. 기본 테마를 고른 다음, 필요한 토큰만 덮어써서 빠르게 브랜드 스타일을 맞추면 된다.
+FramingUI는 token-first 디자인 시스템입니다. 내장 테마로 시작하고 필요한 것을 커스터마이징한 후 변경사항을 저장합니다.
 
-## 기본 테마 7종
+## 내장 테마
 
-| 테마 ID | 추천 용도 |
-| --- | --- |
-| `classic-magazine` | 콘텐츠 중심 서비스, 에디토리얼 레이아웃 |
-| `editorial-tech` | 문서/지식형 제품 |
-| `dark-boldness` | 대비가 강한 다크 대시보드 |
-| `minimal-workspace` | 집중형 생산성 인터페이스 |
-| `neutral-workspace` | 균형 잡힌 업무용 화면 |
-| `pebble` | 부드럽고 친근한 소비자 UI |
-| `square-minimalism` | 각진 인상의 밀도 높은 업무 UI |
+FramingUI는 7개의 프로덕션 준비 테마를 제공합니다:
 
-## 테마 적용
+| 테마 | 최적 | 분위기 |
+| --- | --- | --- |
+| `classic-magazine` | 편집, 블로그, 콘텐츠 사이트 | 전통적, 읽기 쉬움 |
+| `editorial-tech` | 문서, 지식 베이스 | 깔끔, 기술적 |
+| `dark-boldness` | 대시보드, 분석 | 고대비, 극적 |
+| `minimal-workspace` | 생산성 도구, SaaS | 집중, 방해 없음 |
+| `neutral-workspace` | 엔터프라이즈, 비즈니스 앱 | 전문적, 균형 |
+| `pebble` | 소비자 앱, 소셜 | 부드러움, 친근함 |
+| `square-minimalism` | 관리 패널, 핀테크 | 기하학적, 컴팩트 |
 
-앱 루트에서 테마 CSS를 import 한다.
+## 1. 테마 선택
+
+앱 진입점에서 테마 CSS import:
 
 ```tsx
 // app/layout.tsx (Next.js)
-import '@framingui/tokens/themes/square-minimalism.css';
+import '@framingui/tokens/themes/minimal-workspace.css';
 import '@framingui/ui/styles';
 ```
 
-## 토큰 수정 방법
+## 2. Tokens 수정
 
-전역 CSS에서 `--*` 변수를 오버라이드하면 된다.
+전역 CSS 파일에서 토큰 재정의:
 
 ```css
 /* app/globals.css */
+
+/* 브랜드 색상 */
 :root {
-  --bg-primary: oklch(0.56 0.18 257);
-  --bg-primary-foreground: oklch(0.98 0 0);
-  --radius-lg: 14px;
-  --spacing-4: 1rem;
+  --bg-primary: oklch(0.56 0.18 257);            /* 커스텀 보라 */
+  --bg-primary-foreground: oklch(0.98 0 0);      /* Primary 위 흰색 텍스트 */
+  --bg-accent: oklch(0.72 0.14 200);             /* 악센트 파랑 */
+}
+
+/* 타이포그래피 */
+:root {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --text-base: 15px;                              /* 약간 큰 base */
+  --leading-normal: 1.6;                          /* 더 많은 line height */
+}
+
+/* Spacing & Radius */
+:root {
+  --radius-lg: 12px;                              /* 더 둥근 모서리 */
+  --spacing-4: 1.25rem;                           /* 더 여유로운 간격 */
 }
 ```
 
-특정 영역만 다르게 보이게 하려면 범위를 좁혀서 오버라이드한다.
+## 3. 테마 저장
 
-```css
-.pricing-surface {
-  --bg-card: oklch(0.99 0.01 250);
-  --border-default: oklch(0.88 0.02 250);
-}
+### 옵션 A: Git에 커밋
+
+테마는 CSS 변수일 뿐입니다. `globals.css`를 저장소에 커밋:
+
+```bash
+git add app/globals.css
+git commit -m "feat: customize theme tokens"
 ```
 
-## 다크모드 설정
+## 4. Dark Mode 설정
 
-가장 단순한 방법은 `.dark` 클래스로 토큰 값을 교체하는 방식이다.
+FramingUI 테마는 클래스 기반 전환을 통한 dark mode를 지원합니다.
+
+### 기본 Dark Mode
+
+`.dark` 선택자 내에서 토큰 재정의:
 
 ```css
+/* app/globals.css */
+
+/* Light mode (기본) */
 :root {
   --bg-background: oklch(1 0 0);
   --bg-foreground: oklch(0.2 0 0);
+  --bg-card: oklch(0.99 0 0);
+  --border-default: oklch(0.89 0 0);
 }
 
+/* Dark mode */
 .dark {
   --bg-background: oklch(0.16 0.01 260);
   --bg-foreground: oklch(0.96 0.01 260);
   --bg-card: oklch(0.2 0.01 260);
+  --bg-card-foreground: oklch(0.96 0.01 260);
   --border-default: oklch(0.32 0.01 260);
+  --bg-muted: oklch(0.24 0.01 260);
 }
 ```
 
+### Dark Mode 토글
+
 ```tsx
-// app/providers.tsx
+'use client';
 import { useEffect, useState } from 'react';
+import { Button } from '@framingui/ui';
 
 export function ThemeModeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setDark(isDark);
+  }, []);
+
+  useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
+    localStorage.setItem('theme-mode', dark ? 'dark' : 'light');
   }, [dark]);
 
   return (
-    <button onClick={() => setDark(v => !v)}>
-      {dark ? '라이트 모드로 전환' : '다크 모드로 전환'}
-    </button>
+    <Button variant="ghost" onClick={() => setDark(v => !v)}>
+      {dark ? '🌙' : '☀️'}
+    </Button>
   );
 }
 ```
 
-## 추천 순서
+## 다음 단계
 
-1. 제품 성격에 가장 가까운 기본 테마를 고른다.
-2. 브랜드 컬러/타이포 토큰부터 먼저 맞춘다.
-3. 라이트/다크 모두에서 대비를 점검한다.
-4. 컴포넌트 코드는 건드리지 않고 토큰으로 스타일을 제어한다.
+- [Design Tokens](/docs/ko/guides/design-tokens) — 토큰 시스템 심층 분석
+- [컴포넌트](/docs/ko/components/button) — 테마가 적용된 컴포넌트 실습
+- [MCP 통합](/docs/ko/guides/mcp-integration) — AI가 테마를 이해하도록 설정
