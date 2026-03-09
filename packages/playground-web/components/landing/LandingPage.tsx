@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from '@framingui/ui';
@@ -192,7 +192,9 @@ export function LandingPage({ templates }: LandingPageProps) {
       <ExploreLanguageProvider>
         <ExplorePageClient>
           {templates.length > 0 ? (
-            <TemplateGallery templates={templates} />
+            <Suspense fallback={<div className="min-h-[400px]" />}>
+              <TemplateGallery templates={templates} />
+            </Suspense>
           ) : (
             <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
               <div className="text-center py-24">
