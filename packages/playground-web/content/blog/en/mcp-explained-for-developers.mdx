@@ -1,0 +1,248 @@
+---
+title: "What is MCP? A Developer's Guide to Model Context Protocol"
+description: "Understand Model Context Protocol (MCP), how it connects AI tools to your development environment, and why it matters for AI-assisted coding workflows."
+date: "2026-03-09"
+author:
+  name: "FramingUI Team"
+tags:
+  - mcp
+  - ai-coding
+  - claude-code
+  - developer-tools
+category: "Technical"
+coverImage: ""
+published: true
+---
+
+## The Context Problem in AI Coding
+
+You have used Claude, Cursor, or GitHub Copilot. You ask a question about your codebase, and the AI gives a generic answer that does not fit your project. You paste file contents into the chat. You copy-paste error logs. You manually describe your database schema.
+
+Every session starts from zero. The AI does not know your project structure, cannot read your local files, and has no access to your development environment.
+
+This is the context gap. AI models are powerful, but without access to your actual workspace, they operate blindly.
+
+**Model Context Protocol (MCP)** solves this. It is an open standard that lets AI tools connect to your development environment—files, databases, APIs, terminals—through a simple, secure interface.
+
+## What is MCP?
+
+MCP is a protocol that defines how AI applications (like Claude Code or Cursor) can request information from external systems in a standardized way.
+
+Think of it like USB for AI tools. Before USB, every device needed a custom driver. After USB, devices could plug in and work immediately. MCP does the same for AI context:
+
+- **Before MCP:** Each AI tool builds custom integrations for every service (files, Git, databases, APIs). Fragmented, duplicated effort.
+- **With MCP:** Services expose a standard MCP interface. Any MCP-compatible AI tool can connect.
+
+### How It Works
+
+MCP uses a client-server architecture:
+
+1. **MCP Server** – Runs locally or remotely, exposes resources (files, database queries, API endpoints) through a defined interface
+2. **MCP Client** – AI application (Claude Code, Cursor) that requests context via MCP
+3. **Protocol** – Standardized JSON-RPC messages that define how clients ask for resources and servers respond
+
+```plaintext
+┌──────────────┐         MCP Protocol        ┌──────────────┐
+│              │◄────────────────────────────►│              │
+│  AI Client   │   Request: "read file X"    │  MCP Server  │
+│ (Claude Code)│   Response: file contents   │ (filesystem) │
+│              │                              │              │
+└──────────────┘                              └──────────────┘
+```
+
+## Why MCP Matters for AI Coding
+
+### 1. AI Sees Your Actual Project
+
+Without MCP, AI guesses based on what you tell it. With MCP, AI reads your actual files, understands your folder structure, and sees your configuration.
+
+**Example:** You ask "Add authentication to my API."
+
+- **Without MCP:** AI suggests generic Express.js middleware, but your project uses Fastify with a custom auth plugin structure
+- **With MCP:** AI reads your existing routes, sees your Fastify setup, and generates middleware that fits your architecture
+
+### 2. Live Context, Not Stale Snapshots
+
+MCP servers provide real-time access. When you change a file, the AI sees the updated version on the next request. No more "let me paste the latest code" dance.
+
+### 3. Secure Access Control
+
+MCP servers can enforce permissions. A filesystem MCP server might:
+
+- Expose only specific directories (e.g., `/src`, `/docs`)
+- Block sensitive files (`.env`, private keys)
+- Require approval for write operations
+
+You control what AI can see and modify.
+
+### 4. Tool Composability
+
+One AI client can connect to multiple MCP servers simultaneously:
+
+- **Filesystem server** – Read/write code
+- **Database server** – Query schema, run read-only SQL
+- **API server** – Test endpoints, inspect responses
+- **Git server** – Check branch status, view commit history
+
+Each server focuses on one domain. The AI client orchestrates them.
+
+## MCP in Practice: Common Use Cases
+
+### Setting Up Claude Code with Filesystem MCP
+
+Claude Code supports MCP out of the box. To connect it to your local files:
+
+1. **Install MCP filesystem server:**
+
+```bash
+npm install -g @modelcontextprotocol/server-filesystem
+```
+
+2. **Configure Claude Code to use it:**
+
+In `~/.config/claude-code/mcp.json`:
+
+```json
+{
+  "servers": {
+    "filesystem": {
+      "command": "mcp-server-filesystem",
+      "args": ["/Users/you/code/my-project"]
+    }
+  }
+}
+```
+
+3. **Start coding:**
+
+Now Claude Code can:
+- List files in your project
+- Read file contents directly
+- Suggest edits based on your actual code structure
+
+### Connecting to a Database via MCP
+
+Instead of pasting schema definitions, let AI query your database directly:
+
+```bash
+npm install -g @modelcontextprotocol/server-postgres
+```
+
+Configure MCP:
+
+```json
+{
+  "servers": {
+    "database": {
+      "command": "mcp-server-postgres",
+      "args": ["--connection", "postgresql://localhost/mydb"]
+    }
+  }
+}
+```
+
+Now ask: "What tables do I have?" or "Show me users with more than 10 orders." The AI runs read-only SQL and gives accurate answers based on your actual data.
+
+### Building a Custom MCP Server
+
+MCP is extensible. If you have internal APIs or proprietary tools, you can expose them via MCP.
+
+Example: A simple MCP server that exposes project documentation:
+
+```typescript
+import { Server } from '@modelcontextprotocol/sdk';
+
+const server = new Server({
+  name: 'docs-server',
+  version: '1.0.0',
+});
+
+server.resource('docs://architecture', async () => {
+  return {
+    contents: await readFile('./docs/architecture.md'),
+    mimeType: 'text/markdown',
+  };
+});
+
+server.listen();
+```
+
+Now AI tools can request `docs://architecture` and get your project's architecture documentation automatically.
+
+## MCP vs Other AI Context Methods
+
+| Method | Pros | Cons |
+|--------|------|------|
+| **Copy-Paste Context** | Simple, works everywhere | Manual, error-prone, limited size |
+| **RAG (Retrieval-Augmented Generation)** | Good for large knowledge bases | Requires indexing, can be stale |
+| **MCP** | Real-time, standardized, composable | Requires setup, server availability |
+
+MCP shines when you need **live, structured access** to dynamic resources (files, databases, APIs). RAG works better for **static knowledge retrieval** (documentation, past conversations).
+
+## Common MCP Servers You Can Use Today
+
+- **Filesystem** – Read/write local files ([GitHub](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem))
+- **PostgreSQL/MySQL** – Query databases ([GitHub](https://github.com/modelcontextprotocol/servers/tree/main/src/postgres))
+- **Git** – Repository status, commit logs ([GitHub](https://github.com/modelcontextprotocol/servers/tree/main/src/git))
+- **Brave Search** – Web search results ([GitHub](https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search))
+- **GitHub** – Issues, PRs, repo data ([GitHub](https://github.com/modelcontextprotocol/servers/tree/main/src/github))
+
+Full list: [modelcontextprotocol.io/servers](https://modelcontextprotocol.io/servers)
+
+## Getting Started with MCP
+
+1. **Choose an AI client that supports MCP:**
+   - Claude Code (native support)
+   - Cursor (community plugins)
+   - Custom tools via MCP SDK
+
+2. **Pick MCP servers for your workflow:**
+   - Start with filesystem for code access
+   - Add database server if you query data often
+   - Connect Git for repository context
+
+3. **Configure access:**
+   - Set allowed directories
+   - Define read-only vs read-write permissions
+   - Test with simple queries before production use
+
+4. **Iterate:**
+   - Add more servers as needs arise
+   - Build custom servers for internal tools
+   - Share configurations with your team
+
+## Security Considerations
+
+MCP servers run with the permissions of your user account. Best practices:
+
+- **Scope access narrowly** – Only expose directories/databases the AI needs
+- **Use read-only mode when possible** – Prevent accidental modifications
+- **Review server code** – MCP servers are open source; audit what you run
+- **Monitor activity** – Log MCP requests to detect unexpected behavior
+
+## The Future: MCP as AI Infrastructure
+
+MCP is not just for coding assistants. It is a general-purpose protocol for AI-to-system communication:
+
+- **Design tools** could query Figma files via MCP
+- **Data analysis tools** could connect to warehouses
+- **DevOps agents** could inspect Kubernetes clusters
+
+As AI becomes more agentic, MCP provides the standard interface for safe, controlled access to real-world systems.
+
+## Conclusion
+
+Model Context Protocol is the missing link between AI intelligence and your actual development environment. Instead of guessing or relying on manual context-sharing, AI tools can see your files, query your databases, and understand your project structure directly.
+
+For developers using AI coding assistants, MCP is the difference between generic suggestions and context-aware, project-specific code generation.
+
+Start small: connect Claude Code to your filesystem. Experience AI that actually knows your codebase. Then expand to databases, APIs, and custom tools as your workflow evolves.
+
+The future of AI coding is not just smarter models—it is smarter context. MCP makes that possible.
+
+---
+
+**Resources:**
+- [Model Context Protocol Specification](https://modelcontextprotocol.io)
+- [MCP SDK Documentation](https://github.com/modelcontextprotocol/sdk)
+- [Official MCP Servers](https://github.com/modelcontextprotocol/servers)
