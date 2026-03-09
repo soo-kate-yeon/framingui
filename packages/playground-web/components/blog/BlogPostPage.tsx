@@ -243,8 +243,8 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
               </div>
             </article>
 
-            {/* Beta CTA */}
-            <InlineCTA variant="card" />
+            {/* CTA to Landing */}
+            <InlineCTA variant="card" blogSlug={post.slug} />
 
             {/* 공유 버튼 */}
             <div className="mt-10 pt-6 border-t border-neutral-200 dark:border-neutral-800">

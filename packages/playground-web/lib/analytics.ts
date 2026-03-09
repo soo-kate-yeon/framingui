@@ -13,6 +13,7 @@
 export type AnalyticsEvent =
   | 'page_view'
   | 'cta_click'
+  | 'blog_cta_click'
   | 'template_select'
   | 'template_view'
   | 'pricing_view'
@@ -83,6 +84,12 @@ export interface TemplateViewProps {
   location: 'landing' | 'explore';
 }
 
+export interface BlogCtaClickProps {
+  blog_slug: string;
+  cta_type: 'inline' | 'sidebar' | 'footer';
+  destination: string;
+}
+
 /**
  * 페이지 뷰 이벤트 트래킹
  */
@@ -120,6 +127,17 @@ export const trackTemplateView = (props: TemplateViewProps): void => {
     template_id: props.template_id,
     template_name: props.template_name,
     location: props.location,
+  });
+};
+
+/**
+ * 블로그 CTA 클릭 이벤트 트래킹
+ */
+export const trackBlogCtaClick = (props: BlogCtaClickProps): void => {
+  trackGA('blog_cta_click', {
+    blog_slug: props.blog_slug,
+    cta_type: props.cta_type,
+    destination: props.destination,
   });
 };
 

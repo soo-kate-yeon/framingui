@@ -2,9 +2,7 @@
 
 import Link from 'next/link';
 import { ArrowRight, Rocket } from 'lucide-react';
-import { trackFunnelPrimaryCtaClick } from '@/lib/analytics';
-
-const BETA_SIGNUP_URL = 'https://tally.so/r/7R2kz6';
+import { trackFunnelPrimaryCtaClick, trackBlogCtaClick } from '@/lib/analytics';
 
 interface InlineCTAProps {
   variant?: 'minimal' | 'card';
@@ -12,13 +10,14 @@ interface InlineCTAProps {
   description?: string;
   buttonText?: string;
   href?: string;
+  blogSlug?: string;
 }
 
 const defaultContent = {
   heading: 'Ready to build with FramingUI?',
   description:
-    'Join the beta and get early access to agentic design systems that adapt to your needs.',
-  buttonText: 'Join Beta',
+    'Build consistent UI with AI-ready design tokens. No more hallucinated colors or spacing.',
+  buttonText: 'Try FramingUI',
 };
 
 export function InlineCTA({
@@ -26,17 +25,29 @@ export function InlineCTA({
   heading = defaultContent.heading,
   description = defaultContent.description,
   buttonText = defaultContent.buttonText,
-  href = BETA_SIGNUP_URL,
+  href = '/',
+  blogSlug,
 }: InlineCTAProps) {
-  const handleBetaClick = () => {
+  const handleCtaClick = () => {
+    // 블로그 CTA 클릭 이벤트
+    if (blogSlug) {
+      trackBlogCtaClick({
+        blog_slug: blogSlug,
+        cta_type: variant === 'minimal' ? 'inline' : 'footer',
+        destination: href,
+      });
+    }
+    // 기존 퍼널 이벤트도 유지
     trackFunnelPrimaryCtaClick({
-      cta_id: 'inline_beta_signup',
+      cta_id: 'blog_inline_cta',
       cta_label: buttonText,
       location: `inline_cta_${variant}`,
       destination: href,
-      cta_variant: 'beta',
+      cta_variant: 'primary',
     });
   };
+
+  const isExternal = href.startsWith('http');
 
   if (variant === 'minimal') {
     return (
@@ -45,9 +56,9 @@ export function InlineCTA({
           {description}{' '}
           <Link
             href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleBetaClick}
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+            onClick={handleCtaClick}
             className="inline-flex items-center gap-1 font-medium text-neutral-900 dark:text-neutral-100 underline underline-offset-2 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
           >
             {buttonText}
@@ -75,9 +86,9 @@ export function InlineCTA({
         </div>
         <Link
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={handleBetaClick}
+          target={isExternal ? '_blank' : undefined}
+          rel={isExternal ? 'noopener noreferrer' : undefined}
+          onClick={handleCtaClick}
           className="shrink-0 inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
         >
           {buttonText}
