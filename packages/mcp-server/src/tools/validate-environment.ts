@@ -12,6 +12,19 @@ import { readPackageJson } from '../utils/package-json-reader.js';
 import { readTailwindConfig } from '../utils/tailwind-config-reader.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 
+function getInstalledMajor(versionSpec?: string): number | undefined {
+  if (!versionSpec) {
+    return undefined;
+  }
+
+  const match = versionSpec.match(/(\d+)(?:\.\d+)?(?:\.\d+)?/);
+  if (!match) {
+    return undefined;
+  }
+
+  return Number.parseInt(match[1]!, 10);
+}
+
 /**
  * Validate user's environment for required dependencies
  *
@@ -85,9 +98,21 @@ export async function validateEnvironmentTool(
 
     if (checkTailwind !== false) {
       const tailwindResult = readTailwindConfig(projectPath);
+      const installedTailwindVersion = installedPackages.tailwindcss;
+      const installedTailwindMajor = getInstalledMajor(installedTailwindVersion);
 
       const issues: string[] = [];
       const fixes: string[] = [];
+
+      if (installedTailwindMajor && installedTailwindMajor >= 4) {
+        issues.push(
+          `tailwindcss@${installedTailwindVersion} detected — current FramingUI screen-generation setup expects Tailwind CSS v3`
+        );
+        fixes.push(
+          'Downgrade to Tailwind CSS v3 and install the matching toolchain: ' +
+            'npm install -D tailwindcss@^3.4.17 postcss@^8.4.38 autoprefixer@^10.4.19 tailwindcss-animate@^1.0.7'
+        );
+      }
 
       if (!tailwindResult.found) {
         issues.push('tailwind.config.{ts,js,mjs,cjs} not found in project root');

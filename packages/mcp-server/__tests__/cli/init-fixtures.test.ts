@@ -37,7 +37,17 @@ describe('init fixture smoke', () => {
     fs.mkdirSync(path.join(dir, 'app'), { recursive: true });
     writeJson(path.join(dir, 'package.json'), {
       name: 'fixture-pristine-next',
-      dependencies: Object.fromEntries(SCREEN_GENERATION_PACKAGES.map(pkg => [pkg, 'latest'])),
+      dependencies: Object.fromEntries(
+        SCREEN_GENERATION_PACKAGES.filter(
+          pkg => !['tailwindcss', 'postcss', 'autoprefixer', 'tailwindcss-animate'].includes(pkg)
+        ).map(pkg => [pkg, 'latest'])
+      ),
+      devDependencies: {
+        tailwindcss: '^3.4.17',
+        postcss: '^8.4.38',
+        autoprefixer: '^10.4.19',
+        'tailwindcss-animate': '^1.0.7',
+      },
     });
     fs.writeFileSync(path.join(dir, 'app/globals.css'), 'body { margin: 0; }\n');
 
@@ -79,7 +89,12 @@ describe('init fixture smoke', () => {
         '@framingui/ui': 'latest',
         '@framingui/core': 'latest',
         '@framingui/tokens': 'latest',
-        'tailwindcss-animate': 'latest',
+      },
+      devDependencies: {
+        tailwindcss: '^3.4.17',
+        postcss: '^8.4.38',
+        autoprefixer: '^10.4.19',
+        'tailwindcss-animate': '^1.0.7',
       },
     });
     fs.writeFileSync(
@@ -129,5 +144,40 @@ describe('init fixture smoke', () => {
     expect(envResult.missing).toEqual(['@framingui/ui', '@framingui/core', 'tailwindcss-animate']);
     expect(envResult.tailwind?.configFound).toBe(false);
     expect(envResult.tailwind?.issues.length).toBeGreaterThan(0);
+  });
+
+  it('flags Tailwind v4 projects as incompatible with the current FramingUI init flow', async () => {
+    const dir = makeTempProject();
+
+    fs.mkdirSync(path.join(dir, 'app'), { recursive: true });
+    writeJson(path.join(dir, 'package.json'), {
+      name: 'fixture-tailwind-v4',
+      dependencies: {
+        '@framingui/ui': 'latest',
+        '@framingui/core': 'latest',
+        tailwindcss: '^4.1.0',
+      },
+    });
+    fs.writeFileSync(
+      path.join(dir, 'tailwind.config.ts'),
+      `export default { content: ['./app/**/*.{js,ts,jsx,tsx}'], plugins: [] };`
+    );
+    fs.writeFileSync(path.join(dir, 'app/globals.css'), "@import '@framingui/ui/styles';\n");
+
+    const verifyResult = verifyInitSetup(dir);
+    expect(verifyResult.tailwindVersionOk).toBe(false);
+    expect(verifyResult.warnings.some(warning => warning.includes('Tailwind CSS v3 only'))).toBe(
+      true
+    );
+
+    const envResult = await validateEnvironmentTool({
+      projectPath: dir,
+      requiredPackages: ['@framingui/ui', '@framingui/core'],
+      checkTailwind: true,
+    });
+    expect(envResult.success).toBe(true);
+    expect(
+      envResult.tailwind?.issues.some(issue => issue.includes('tailwindcss@^4.1.0 detected'))
+    ).toBe(true);
   });
 });

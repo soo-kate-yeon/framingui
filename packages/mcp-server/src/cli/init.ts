@@ -16,8 +16,12 @@ const FRAMINGUI_UI_CONTENT_PATH = './node_modules/@framingui/ui/dist/**/*.{js,mj
 const FRAMINGUI_STYLE_IMPORT = "@import '@framingui/ui/styles';";
 const EXCLUDED_DIRS = new Set(['node_modules', '.git', '.next', 'dist', 'build', 'coverage']);
 const MAX_SEARCH_DEPTH = 5;
+const FRAMINGUI_TAILWIND_VERSION = '^3.4.17';
+const FRAMINGUI_POSTCSS_VERSION = '^8.4.38';
+const FRAMINGUI_AUTOPREFIXER_VERSION = '^10.4.19';
+const FRAMINGUI_ANIMATE_VERSION = '^1.0.7';
 
-export const SCREEN_GENERATION_PACKAGES = [
+export const SCREEN_GENERATION_RUNTIME_PACKAGES = [
   '@framingui/ui',
   '@framingui/core',
   '@framingui/tokens',
@@ -50,8 +54,19 @@ export const SCREEN_GENERATION_PACKAGES = [
   'react-day-picker',
   'react-hook-form',
   'tailwind-merge',
-  'tailwindcss-animate',
   'zod',
+] as const;
+
+export const TAILWIND_V3_TOOLCHAIN_PACKAGES = {
+  tailwindcss: FRAMINGUI_TAILWIND_VERSION,
+  postcss: FRAMINGUI_POSTCSS_VERSION,
+  autoprefixer: FRAMINGUI_AUTOPREFIXER_VERSION,
+  'tailwindcss-animate': FRAMINGUI_ANIMATE_VERSION,
+} as const;
+
+export const SCREEN_GENERATION_PACKAGES = [
+  ...SCREEN_GENERATION_RUNTIME_PACKAGES,
+  ...Object.keys(TAILWIND_V3_TOOLCHAIN_PACKAGES),
 ] as const;
 
 type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
@@ -64,6 +79,8 @@ type InitVerification = {
   tailwindFound: boolean;
   tailwindUiContentOk: boolean;
   tailwindAnimatePluginOk: boolean;
+  tailwindVersionOk: boolean;
+  detectedTailwindVersion?: string;
   tailwindConfigPath?: string;
   warnings: string[];
 };
@@ -157,16 +174,95 @@ function detectPackageManager(cwd: string): PackageManager {
   return 'npm';
 }
 
-function installPackages(cwd: string, pm: PackageManager): { ok: boolean; command: string } {
-  const command = `${pm} add ${SCREEN_GENERATION_PACKAGES.join(' ')}`;
-  logDetail(command);
+function getInstalledPackageMap(
+  packageJson: Record<string, unknown> | null
+): Record<string, string> {
+  const installed: Record<string, string> = {};
 
+  if (!packageJson) {
+    return installed;
+  }
+
+  const fields = [
+    'dependencies',
+    'devDependencies',
+    'peerDependencies',
+    'optionalDependencies',
+  ] as const;
+  for (const field of fields) {
+    const deps = packageJson[field];
+    if (deps && typeof deps === 'object') {
+      Object.assign(installed, deps);
+    }
+  }
+
+  return installed;
+}
+
+function getInstalledMajor(versionSpec?: string): number | undefined {
+  if (!versionSpec) {
+    return undefined;
+  }
+
+  const match = versionSpec.match(/(\d+)(?:\.\d+)?(?:\.\d+)?/);
+  if (!match) {
+    return undefined;
+  }
+
+  return Number.parseInt(match[1]!, 10);
+}
+
+function runInstallCommand(cwd: string, command: string): boolean {
+  logDetail(command);
   try {
     execSync(command, { cwd, stdio: 'inherit' });
-    return { ok: true, command };
+    return true;
   } catch {
-    return { ok: false, command };
+    return false;
   }
+}
+
+function installPackages(
+  cwd: string,
+  pm: PackageManager
+): { ok: boolean; command: string; reason?: string } {
+  const packageJson = readProjectPackageJson(cwd);
+  const installed = getInstalledPackageMap(packageJson);
+
+  const runtimeMissing = SCREEN_GENERATION_RUNTIME_PACKAGES.filter(pkg => !installed[pkg]);
+  const tailwindVersion = installed.tailwindcss;
+  const tailwindMajor = getInstalledMajor(tailwindVersion);
+
+  if (tailwindMajor && tailwindMajor >= 4) {
+    return {
+      ok: false,
+      command: '',
+      reason:
+        `Detected tailwindcss@${tailwindVersion}. FramingUI init currently targets Tailwind CSS v3. ` +
+        `Remove Tailwind v4 and install tailwindcss@${FRAMINGUI_TAILWIND_VERSION}, ` +
+        `postcss@${FRAMINGUI_POSTCSS_VERSION}, autoprefixer@${FRAMINGUI_AUTOPREFIXER_VERSION}.`,
+    };
+  }
+
+  const toolchainMissing = Object.entries(TAILWIND_V3_TOOLCHAIN_PACKAGES)
+    .filter(([pkg]) => !installed[pkg])
+    .map(([pkg, version]) => `${pkg}@${version}`);
+
+  const commands: string[] = [];
+  if (runtimeMissing.length > 0) {
+    commands.push(`${pm} add ${runtimeMissing.join(' ')}`);
+  }
+  if (toolchainMissing.length > 0) {
+    commands.push(`${pm} add -D ${toolchainMissing.join(' ')}`);
+  }
+
+  if (commands.length === 0) {
+    logDetail('All FramingUI runtime and Tailwind v3 toolchain packages are already installed');
+    return { ok: true, command: '' };
+  }
+
+  const ok = commands.every(command => runInstallCommand(cwd, command));
+  return { ok, command: commands.join(' && ') };
 }
 
 const TAILWIND_CONFIG_CANDIDATES = [
@@ -366,29 +462,19 @@ function readProjectPackageJson(cwd: string): Record<string, unknown> | null {
 }
 
 function getInstalledPackageNames(packageJson: Record<string, unknown> | null): Set<string> {
-  const installed = new Set<string>();
-
-  if (!packageJson) {
-    return installed;
-  }
-
-  const fields = ['dependencies', 'devDependencies', 'peerDependencies'] as const;
-  for (const field of fields) {
-    const deps = packageJson[field];
-    if (deps && typeof deps === 'object') {
-      for (const pkgName of Object.keys(deps)) {
-        installed.add(pkgName);
-      }
-    }
-  }
-
-  return installed;
+  return new Set(Object.keys(getInstalledPackageMap(packageJson)));
 }
 
 export function verifyInitSetup(cwd: string): InitVerification {
   const packageJson = readProjectPackageJson(cwd);
   const installed = getInstalledPackageNames(packageJson);
+  const installedVersions = getInstalledPackageMap(packageJson);
   const missingPackages = SCREEN_GENERATION_PACKAGES.filter(pkg => !installed.has(pkg));
+  const detectedTailwindVersion = installedVersions.tailwindcss;
+  const tailwindVersionOk = (() => {
+    const major = getInstalledMajor(detectedTailwindVersion);
+    return major === undefined || major < 4;
+  })();
 
   const stylesheets = walkFiles(cwd).filter(filePath => /\.(css|scss)$/.test(filePath));
   const stylesheetWithImport = stylesheets.find(filePath =>
@@ -414,6 +500,11 @@ export function verifyInitSetup(cwd: string): InitVerification {
       warnings.push('Tailwind config is missing the tailwindcss-animate plugin');
     }
   }
+  if (!tailwindVersionOk) {
+    warnings.push(
+      `Detected tailwindcss@${detectedTailwindVersion}. FramingUI init currently supports Tailwind CSS v3 only`
+    );
+  }
 
   return {
     installedPackagesOk: missingPackages.length === 0,
@@ -423,6 +514,8 @@ export function verifyInitSetup(cwd: string): InitVerification {
     tailwindFound: tailwind.found,
     tailwindUiContentOk: tailwind.hasUiContentPath,
     tailwindAnimatePluginOk: tailwind.hasAnimatePlugin,
+    tailwindVersionOk,
+    detectedTailwindVersion,
     tailwindConfigPath: tailwind.configPath,
     warnings,
   };
@@ -460,7 +553,10 @@ function printResult(pm: PackageManager, verification: InitVerification): void {
 
   Recovery:
   - Re-run package install:
-    ${pm} add ${SCREEN_GENERATION_PACKAGES.join(' ')}
+    ${pm} add ${SCREEN_GENERATION_RUNTIME_PACKAGES.join(' ')}
+    ${pm} add -D ${Object.entries(TAILWIND_V3_TOOLCHAIN_PACKAGES)
+      .map(([pkg, version]) => `${pkg}@${version}`)
+      .join(' ')}
   - Ensure a global stylesheet imports:
     ${FRAMINGUI_STYLE_IMPORT}
 
@@ -496,6 +592,9 @@ export async function initCommand(): Promise<void> {
   const installResult = installPackages(cwd, pm);
   if (!installResult.ok) {
     console.error('Package installation failed.');
+    if (installResult.reason) {
+      console.error(installResult.reason);
+    }
   }
 
   log(3, totalSteps, 'Configuring Tailwind CSS...');

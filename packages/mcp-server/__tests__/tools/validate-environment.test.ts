@@ -352,6 +352,36 @@ describe('validateEnvironmentTool', () => {
     });
   });
 
+  describe('Tailwind compatibility', () => {
+    it('Tailwind v4를 현재 FramingUI screen-generation setup과 비호환으로 보고해야 함', async () => {
+      vi.mocked(packageJsonReader.readPackageJson).mockReturnValue({
+        success: true,
+        packageJson: {
+          dependencies: {
+            '@framingui/ui': '^0.6.5',
+            tailwindcss: '^4.1.0',
+          },
+        },
+        installedPackages: {
+          '@framingui/ui': '^0.6.5',
+          tailwindcss: '^4.1.0',
+        },
+      });
+
+      const result = await validateEnvironmentTool({
+        projectPath: '/project',
+        requiredPackages: ['@framingui/ui'],
+        checkTailwind: true,
+      });
+
+      expect(result.success).toBe(true);
+      expect(
+        result.tailwind?.issues.some(issue => issue.includes('tailwindcss@^4.1.0 detected'))
+      ).toBe(true);
+      expect(result.tailwind?.fixes.some(fix => fix.includes('tailwindcss@^3.4.17'))).toBe(true);
+    });
+  });
+
   describe('버전 정보', () => {
     it('설치된 패키지의 버전 정보를 포함해야 함', async () => {
       // Arrange: 다양한 버전 형식의 패키지들
