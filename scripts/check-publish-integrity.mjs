@@ -107,6 +107,32 @@ function runConsumerInstallSmoke(pkg, tarballPath, errors) {
       ['install', '--ignore-scripts', '--no-audit', '--fund=false', tarballPath],
       tempDir
     );
+
+    if (pkg.name === '@framingui/mcp-server') {
+      run(
+        'node',
+        [
+          '--input-type=module',
+          '-e',
+          `
+            const schemas = await import('@framingui/mcp-server/schemas');
+            const result = schemas.ValidateScreenDefinitionInputSchema.safeParse({
+              definition: {
+                id: 'smoke-screen',
+                shell: 'shell.web.dashboard',
+                page: 'page.dashboard',
+                sections: [{ id: 'main', pattern: 'section.container', components: [] }]
+              },
+              strict: true
+            });
+            if (!result.success) {
+              throw new Error('schema safeParse failed');
+            }
+          `,
+        ],
+        tempDir
+      );
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     errors.push(`${pkg.name}@${pkg.version} consumer install smoke failed\n${message}`);
