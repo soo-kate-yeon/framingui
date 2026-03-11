@@ -11,9 +11,10 @@ npx -y @framingui/mcp-server@latest login
 
 `init` can:
 
-- install FramingUI UI dependencies
+- install the FramingUI screen-generation runtime and required peer packages
 - configure Tailwind content paths and `tailwindcss-animate`
-- add `@import '@framingui/ui/styles';` when using the FramingUI-native contract
+- add `@import '@framingui/ui/styles';` to a detected global stylesheet
+- verify package installation, Tailwind config, and stylesheet import before exiting
 - create `.mcp.json`
 - generate `FRAMINGUI-GUIDE.md`
 - update `CLAUDE.md` and `AGENTS.md`
