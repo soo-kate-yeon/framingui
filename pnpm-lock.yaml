@@ -193,6 +193,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
     devDependencies:
       '@babel/types':
         specifier: ^7.28.6
@@ -311,9 +314,6 @@ importers:
       vitest:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.19.7)(happy-dom@20.3.9)(jsdom@25.0.1)
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.76
 
   packages/playground-web:
     dependencies:

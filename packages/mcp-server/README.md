@@ -114,9 +114,10 @@ FramingUI exposes guidance for:
 
 `init` can:
 
-- install FramingUI UI dependencies
+- install the FramingUI screen-generation runtime and peer dependencies in one pass
 - configure Tailwind content paths and `tailwindcss-animate`
-- add `@import '@framingui/ui/styles';` when appropriate
+- add `@import '@framingui/ui/styles';` to a detected global stylesheet
+- verify the package install, Tailwind config, and stylesheet import before finishing
 - create `.mcp.json`
 - generate `FRAMINGUI-GUIDE.md`
 - append FramingUI sections to `CLAUDE.md` and `AGENTS.md`

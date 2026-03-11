@@ -1,6 +1,6 @@
 /**
- * framingui-mcp init 명령어
- * 프로젝트에 FramingUI 디자인 시스템을 한 줄로 설정
+ * framingui-mcp init command
+ * Bootstraps the FramingUI screen-generation runtime into a project.
  */
 
 import fs from 'node:fs';
@@ -10,14 +10,63 @@ import readline from 'node:readline';
 import { generateGuide, type Framework } from './guide-template.js';
 import { generateClaudeMdSection, generateAgentsMdSection } from './agent-md-templates.js';
 import { upsertFraminguiServerConfig, type McpConfig } from './mcp-config.js';
-
-// ─── 상수 ──────────────────────────────────────────────
+import { readTailwindConfig } from '../utils/tailwind-config-reader.js';
 
 const FRAMINGUI_UI_CONTENT_PATH = './node_modules/@framingui/ui/dist/**/*.{js,mjs}';
 const FRAMINGUI_STYLE_IMPORT = "@import '@framingui/ui/styles';";
-const PACKAGES_TO_INSTALL = ['@framingui/ui', 'tailwindcss-animate'];
+const EXCLUDED_DIRS = new Set(['node_modules', '.git', '.next', 'dist', 'build', 'coverage']);
+const MAX_SEARCH_DEPTH = 5;
 
-// ─── 유틸리티 ──────────────────────────────────────────
+export const SCREEN_GENERATION_PACKAGES = [
+  '@framingui/ui',
+  '@framingui/core',
+  '@framingui/tokens',
+  '@hookform/resolvers',
+  '@radix-ui/react-alert-dialog',
+  '@radix-ui/react-avatar',
+  '@radix-ui/react-checkbox',
+  '@radix-ui/react-dialog',
+  '@radix-ui/react-dropdown-menu',
+  '@radix-ui/react-label',
+  '@radix-ui/react-navigation-menu',
+  '@radix-ui/react-popover',
+  '@radix-ui/react-progress',
+  '@radix-ui/react-radio-group',
+  '@radix-ui/react-scroll-area',
+  '@radix-ui/react-select',
+  '@radix-ui/react-separator',
+  '@radix-ui/react-slider',
+  '@radix-ui/react-slot',
+  '@radix-ui/react-switch',
+  '@radix-ui/react-tabs',
+  '@radix-ui/react-toast',
+  '@radix-ui/react-tooltip',
+  'class-variance-authority',
+  'clsx',
+  'cmdk',
+  'date-fns',
+  'framer-motion',
+  'lucide-react',
+  'react-day-picker',
+  'react-hook-form',
+  'tailwind-merge',
+  'tailwindcss-animate',
+  'zod',
+] as const;
+
+type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
+
+type InitVerification = {
+  installedPackagesOk: boolean;
+  missingPackages: string[];
+  styleImportOk: boolean;
+  styleImportPath?: string;
+  tailwindFound: boolean;
+  tailwindUiContentOk: boolean;
+  tailwindAnimatePluginOk: boolean;
+  tailwindConfigPath?: string;
+  warnings: string[];
+};
 
 function log(step: number, total: number, message: string): void {
   console.log(`\n[${step}/${total}] ${message}`);
@@ -32,12 +81,38 @@ function fileExists(filePath: string): boolean {
 }
 
 function findFile(dir: string, candidates: string[]): string | undefined {
-  return candidates.find(c => fileExists(path.join(dir, c)));
+  return candidates.find(candidate => fileExists(path.join(dir, candidate)));
 }
 
-/**
- * stdin에서 사용자 선택을 받음
- */
+function walkFiles(dir: string, depth = 0): string[] {
+  if (depth > MAX_SEARCH_DEPTH || !fileExists(dir)) {
+    return [];
+  }
+
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const files: string[] = [];
+
+  for (const entry of entries) {
+    if (EXCLUDED_DIRS.has(entry.name)) {
+      continue;
+    }
+
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...walkFiles(fullPath, depth + 1));
+      continue;
+    }
+
+    files.push(fullPath);
+  }
+
+  return files;
+}
+
+function relativeToCwd(cwd: string, filePath: string): string {
+  return path.relative(cwd, filePath).replaceAll(path.sep, '/');
+}
+
 async function askUser(question: string, options: string[]): Promise<string> {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -56,8 +131,6 @@ async function askUser(question: string, options: string[]): Promise<string> {
   });
 }
 
-// ─── Step 1: 프로젝트 감지 ─────────────────────────────
-
 function detectFramework(cwd: string): Framework | null {
   const nextConfigs = ['next.config.ts', 'next.config.js', 'next.config.mjs'];
   const viteConfigs = ['vite.config.ts', 'vite.config.js', 'vite.config.mjs'];
@@ -70,10 +143,6 @@ function detectFramework(cwd: string): Framework | null {
   }
   return null;
 }
-
-// ─── Step 2: 패키지 매니저 감지 및 설치 ─────────────────
-
-type PackageManager = 'pnpm' | 'yarn' | 'bun' | 'npm';
 
 function detectPackageManager(cwd: string): PackageManager {
   if (fileExists(path.join(cwd, 'pnpm-lock.yaml'))) {
@@ -88,13 +157,17 @@ function detectPackageManager(cwd: string): PackageManager {
   return 'npm';
 }
 
-function installPackages(cwd: string, pm: PackageManager): void {
-  const cmd = `${pm} add ${PACKAGES_TO_INSTALL.join(' ')}`;
-  logDetail(cmd);
-  execSync(cmd, { cwd, stdio: 'inherit' });
-}
+function installPackages(cwd: string, pm: PackageManager): { ok: boolean; command: string } {
+  const command = `${pm} add ${SCREEN_GENERATION_PACKAGES.join(' ')}`;
+  logDetail(command);
 
-// ─── Step 3: Tailwind CSS 설정 ──────────────────────────
+  try {
+    execSync(command, { cwd, stdio: 'inherit' });
+    return { ok: true, command };
+  } catch {
+    return { ok: false, command };
+  }
+}
 
 const TAILWIND_CONFIG_CANDIDATES = [
   'tailwind.config.ts',
@@ -103,26 +176,21 @@ const TAILWIND_CONFIG_CANDIDATES = [
   'tailwind.config.cjs',
 ];
 
-function setupTailwind(cwd: string): void {
+export function setupTailwind(cwd: string): string | undefined {
   const configName = findFile(cwd, TAILWIND_CONFIG_CANDIDATES);
 
   if (configName) {
-    // 기존 파일 수정
     const configPath = path.join(cwd, configName);
     let content = fs.readFileSync(configPath, 'utf-8');
 
-    // content 배열에 @framingui/ui 경로 추가
     if (!content.includes('@framingui/ui')) {
       content = content.replace(/(content\s*:\s*\[)/, `$1\n    '${FRAMINGUI_UI_CONTENT_PATH}',`);
     }
 
-    // plugins에 tailwindcss-animate 추가
     if (!content.includes('tailwindcss-animate')) {
-      // plugins 배열이 있는 경우
       if (/plugins\s*:\s*\[/.test(content)) {
         content = content.replace(/(plugins\s*:\s*\[)/, `$1\n    require('tailwindcss-animate'),`);
       } else {
-        // plugins가 없으면 content 닫는 ] 뒤에 추가
         content = content.replace(
           /(content\s*:\s*\[[\s\S]*?\]\s*,?)/,
           `$1\n  plugins: [require('tailwindcss-animate')],`
@@ -131,10 +199,11 @@ function setupTailwind(cwd: string): void {
     }
 
     fs.writeFileSync(configPath, content, 'utf-8');
-    logDetail(`${configName} 업데이트 완료`);
-  } else {
-    // 새 파일 생성
-    const template = `import type { Config } from 'tailwindcss';
+    logDetail(`${configName} updated`);
+    return configPath;
+  }
+
+  const template = `import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
@@ -148,43 +217,77 @@ const config: Config = {
 
 export default config;
 `;
-    fs.writeFileSync(path.join(cwd, 'tailwind.config.ts'), template, 'utf-8');
-    logDetail('tailwind.config.ts 생성 완료');
-  }
+
+  const newPath = path.join(cwd, 'tailwind.config.ts');
+  fs.writeFileSync(newPath, template, 'utf-8');
+  logDetail('tailwind.config.ts created');
+  return newPath;
 }
 
-// ─── Step 4: CSS 임포트 추가 ────────────────────────────
-
-function setupCSS(cwd: string, framework: Framework): void {
-  const candidates =
+function stylesheetPriority(relativePath: string, framework: Framework): number {
+  const normalized = relativePath.replaceAll('\\', '/');
+  const priorities =
     framework === 'nextjs'
-      ? ['app/globals.css', 'src/app/globals.css', 'styles/globals.css']
-      : ['src/index.css', 'src/main.css', 'index.css'];
+      ? [
+          'app/globals.css',
+          'src/app/globals.css',
+          'styles/globals.css',
+          'app/globals.scss',
+          'src/app/globals.scss',
+        ]
+      : ['src/index.css', 'src/main.css', 'index.css', 'src/index.scss', 'src/main.scss'];
 
-  const cssFile = findFile(cwd, candidates);
+  const exactIndex = priorities.findIndex(candidate => normalized.endsWith(candidate));
+  if (exactIndex >= 0) {
+    return exactIndex;
+  }
+
+  if (normalized.endsWith('globals.css') || normalized.endsWith('globals.scss')) {
+    return 20;
+  }
+  if (normalized.endsWith('index.css') || normalized.endsWith('index.scss')) {
+    return 30;
+  }
+  if (normalized.endsWith('main.css') || normalized.endsWith('main.scss')) {
+    return 40;
+  }
+  if (normalized.endsWith('.css') || normalized.endsWith('.scss')) {
+    return 100;
+  }
+  return 999;
+}
+
+export function findBestStylesheet(cwd: string, framework: Framework): string | undefined {
+  const files = walkFiles(cwd)
+    .filter(filePath => /\.(css|scss)$/.test(filePath))
+    .map(filePath => relativeToCwd(cwd, filePath))
+    .sort((a, b) => stylesheetPriority(a, framework) - stylesheetPriority(b, framework));
+
+  return files[0];
+}
+
+export function setupCSS(cwd: string, framework: Framework): string | undefined {
+  const cssFile = findBestStylesheet(cwd, framework);
 
   if (!cssFile) {
-    logDetail('CSS 파일을 찾을 수 없습니다. 수동으로 추가해 주세요:');
-    logDetail(`  ${FRAMINGUI_STYLE_IMPORT}`);
-    return;
+    logDetail('No stylesheet file found for FramingUI styles import');
+    return undefined;
   }
 
   const cssPath = path.join(cwd, cssFile);
   const content = fs.readFileSync(cssPath, 'utf-8');
 
   if (content.includes(FRAMINGUI_STYLE_IMPORT)) {
-    logDetail(`${cssFile} (이미 설정됨, skip)`);
-    return;
+    logDetail(`${cssFile} (already configured)`);
+    return cssPath;
   }
 
-  // 파일 상단에 import 추가
   fs.writeFileSync(cssPath, `${FRAMINGUI_STYLE_IMPORT}\n\n${content}`, 'utf-8');
-  logDetail(`${cssFile} 업데이트 완료`);
+  logDetail(`${cssFile} updated`);
+  return cssPath;
 }
 
-// ─── Step 5: MCP 설정 ──────────────────────────────────
-
-function setupMCP(cwd: string): void {
+export function setupMCP(cwd: string): void {
   const mcpPath = path.join(cwd, '.mcp.json');
 
   if (fileExists(mcpPath)) {
@@ -193,175 +296,259 @@ function setupMCP(cwd: string): void {
     const result = upsertFraminguiServerConfig(config);
 
     if (!result.updated) {
-      logDetail('.mcp.json (already using latest FramingUI server config)');
+      logDetail('.mcp.json already uses the latest FramingUI server config');
       return;
     }
 
     fs.writeFileSync(mcpPath, JSON.stringify(result.config, null, 2) + '\n', 'utf-8');
-    logDetail(
-      result.created ? '.mcp.json 업데이트 완료' : '.mcp.json framingui 서버를 latest로 갱신 완료'
-    );
-  } else {
-    const result = upsertFraminguiServerConfig({});
-    fs.writeFileSync(mcpPath, JSON.stringify(result.config, null, 2) + '\n', 'utf-8');
-    logDetail('.mcp.json 생성 완료');
+    logDetail(result.created ? '.mcp.json updated' : '.mcp.json FramingUI server refreshed');
+    return;
   }
-}
 
-// ─── Step 6: 가이드 문서 생성 ──────────────────────────
+  const result = upsertFraminguiServerConfig({});
+  fs.writeFileSync(mcpPath, JSON.stringify(result.config, null, 2) + '\n', 'utf-8');
+  logDetail('.mcp.json created');
+}
 
 function setupGuide(cwd: string, framework: Framework): void {
   const guidePath = path.join(cwd, 'FRAMINGUI-GUIDE.md');
 
   if (fileExists(guidePath)) {
-    logDetail('FRAMINGUI-GUIDE.md (이미 존재함, skip)');
+    logDetail('FRAMINGUI-GUIDE.md already exists');
     return;
   }
 
-  const content = generateGuide(framework);
-  fs.writeFileSync(guidePath, content, 'utf-8');
-  logDetail('FRAMINGUI-GUIDE.md 생성 완료');
+  fs.writeFileSync(guidePath, generateGuide(framework), 'utf-8');
+  logDetail('FRAMINGUI-GUIDE.md created');
 }
 
-// ─── Step 7: CLAUDE.md / AGENTS.md 설정 ────────────────
-
 function setupAgentMd(cwd: string, framework: Framework): void {
-  // CLAUDE.md 섹션 추가 (기존 파일이 있으면 append, 없으면 생성)
   const claudeMdPath = path.join(cwd, 'CLAUDE.md');
   const claudeSection = generateClaudeMdSection(framework);
 
   if (fileExists(claudeMdPath)) {
     const existingContent = fs.readFileSync(claudeMdPath, 'utf-8');
     if (existingContent.includes('## FramingUI Workflow')) {
-      logDetail('CLAUDE.md (이미 Framingui 섹션 존재, skip)');
+      logDetail('CLAUDE.md already contains the FramingUI section');
     } else {
       fs.appendFileSync(claudeMdPath, `\n${claudeSection}`, 'utf-8');
-      logDetail('CLAUDE.md에 Framingui 섹션 추가 완료');
+      logDetail('CLAUDE.md FramingUI section appended');
     }
   } else {
     fs.writeFileSync(claudeMdPath, `# Project Instructions\n${claudeSection}`, 'utf-8');
-    logDetail('CLAUDE.md 생성 완료');
+    logDetail('CLAUDE.md created');
   }
 
-  // AGENTS.md 섹션 추가 (기존 파일이 있으면 append, 없으면 생성)
   const agentsMdPath = path.join(cwd, 'AGENTS.md');
   const agentsSection = generateAgentsMdSection(framework);
 
   if (fileExists(agentsMdPath)) {
     const existingContent = fs.readFileSync(agentsMdPath, 'utf-8');
     if (existingContent.includes('## FramingUI Workflow')) {
-      logDetail('AGENTS.md (이미 Framingui 섹션 존재, skip)');
+      logDetail('AGENTS.md already contains the FramingUI section');
     } else {
       fs.appendFileSync(agentsMdPath, `\n${agentsSection}`, 'utf-8');
-      logDetail('AGENTS.md에 Framingui 섹션 추가 완료');
+      logDetail('AGENTS.md FramingUI section appended');
     }
   } else {
     fs.writeFileSync(agentsMdPath, `# AI Agent Instructions\n${agentsSection}`, 'utf-8');
-    logDetail('AGENTS.md 생성 완료');
+    logDetail('AGENTS.md created');
   }
 }
 
-// ─── Step 8: 완료 메시지 (인증 안내 강화) ─────────────────
+function readProjectPackageJson(cwd: string): Record<string, unknown> | null {
+  const packageJsonPath = path.join(cwd, 'package.json');
+  if (!fileExists(packageJsonPath)) {
+    return null;
+  }
 
-function printSuccess(): void {
-  console.log(`
+  return JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8')) as Record<string, unknown>;
+}
+
+function getInstalledPackageNames(packageJson: Record<string, unknown> | null): Set<string> {
+  const installed = new Set<string>();
+
+  if (!packageJson) {
+    return installed;
+  }
+
+  const fields = ['dependencies', 'devDependencies', 'peerDependencies'] as const;
+  for (const field of fields) {
+    const deps = packageJson[field];
+    if (deps && typeof deps === 'object') {
+      for (const pkgName of Object.keys(deps)) {
+        installed.add(pkgName);
+      }
+    }
+  }
+
+  return installed;
+}
+
+export function verifyInitSetup(cwd: string): InitVerification {
+  const packageJson = readProjectPackageJson(cwd);
+  const installed = getInstalledPackageNames(packageJson);
+  const missingPackages = SCREEN_GENERATION_PACKAGES.filter(pkg => !installed.has(pkg));
+
+  const stylesheets = walkFiles(cwd).filter(filePath => /\.(css|scss)$/.test(filePath));
+  const stylesheetWithImport = stylesheets.find(filePath =>
+    fs.readFileSync(filePath, 'utf-8').includes(FRAMINGUI_STYLE_IMPORT)
+  );
+
+  const tailwind = readTailwindConfig(cwd);
+  const warnings: string[] = [];
+
+  if (missingPackages.length > 0) {
+    warnings.push(`Missing packages: ${missingPackages.join(', ')}`);
+  }
+  if (!stylesheetWithImport) {
+    warnings.push(`Missing ${FRAMINGUI_STYLE_IMPORT} in a global stylesheet`);
+  }
+  if (!tailwind.found) {
+    warnings.push('Tailwind config not found');
+  } else {
+    if (!tailwind.hasUiContentPath) {
+      warnings.push('Tailwind config is missing @framingui/ui content paths');
+    }
+    if (!tailwind.hasAnimatePlugin) {
+      warnings.push('Tailwind config is missing the tailwindcss-animate plugin');
+    }
+  }
+
+  return {
+    installedPackagesOk: missingPackages.length === 0,
+    missingPackages,
+    styleImportOk: Boolean(stylesheetWithImport),
+    styleImportPath: stylesheetWithImport,
+    tailwindFound: tailwind.found,
+    tailwindUiContentOk: tailwind.hasUiContentPath,
+    tailwindAnimatePluginOk: tailwind.hasAnimatePlugin,
+    tailwindConfigPath: tailwind.configPath,
+    warnings,
+  };
+}
+
+function printResult(pm: PackageManager, verification: InitVerification): void {
+  if (verification.warnings.length === 0) {
+    console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  FramingUI 설정 완료!
+  FramingUI setup completed.
 
-  다음 단계:
-  1. 먼저 인증하세요: framingui-mcp login
-  2. Claude Code를 재시작하세요
-  3. AI에게 요청하세요: "로그인 화면 만들어줘"
-  4. FRAMINGUI-GUIDE.md에서 전체 가이드를 확인하세요
+  Verified:
+  - screen-generation runtime packages installed
+  - Tailwind content paths updated
+  - tailwindcss-animate configured
+  - @import '@framingui/ui/styles'; present
 
-  중요: 모든 6개 테마는 인증이 필요합니다
+  Next steps:
+  1. Run: framingui-mcp login
+  2. Restart your MCP client
+  3. Start with: get-screen-generation-context
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+    return;
+  }
+
+  console.error(`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  FramingUI setup is incomplete.
+
+  Problems:
+  - ${verification.warnings.join('\n  - ')}
+
+  Recovery:
+  - Re-run package install:
+    ${pm} add ${SCREEN_GENERATION_PACKAGES.join(' ')}
+  - Ensure a global stylesheet imports:
+    ${FRAMINGUI_STYLE_IMPORT}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
 }
 
-// ─── 메인 ──────────────────────────────────────────────
-
 export async function initCommand(): Promise<void> {
   const cwd = process.cwd();
-  const totalSteps = 8;
+  const totalSteps = 9;
 
   console.log('\n@framingui/mcp-server init\n');
 
-  // package.json 확인
   if (!fileExists(path.join(cwd, 'package.json'))) {
-    console.error('package.json을 찾을 수 없습니다. 프로젝트 루트에서 실행해 주세요.');
+    console.error('package.json not found. Run this command from the project root.');
     process.exit(1);
   }
 
-  // Step 1: 프로젝트 감지
-  log(1, totalSteps, '프로젝트 감지 중...');
+  log(1, totalSteps, 'Detecting project...');
   let framework = detectFramework(cwd);
 
   if (!framework) {
-    const answer = await askUser(
-      '프로젝트 유형을 감지할 수 없습니다. 프레임워크를 선택해 주세요:',
-      ['Next.js', 'Vite']
-    );
+    const answer = await askUser('Could not detect the framework. Choose one:', [
+      'Next.js',
+      'Vite',
+    ]);
     framework = answer === 'Vite' ? 'vite' : 'nextjs';
   }
 
-  const frameworkLabel = framework === 'nextjs' ? 'Next.js' : 'Vite';
-  logDetail(`${frameworkLabel} 프로젝트`);
+  logDetail(`Detected ${framework === 'nextjs' ? 'Next.js' : 'Vite'} project`);
 
-  // Step 2: 패키지 설치
-  log(2, totalSteps, '패키지 설치 중...');
+  log(2, totalSteps, 'Installing FramingUI screen-generation runtime...');
   const pm = detectPackageManager(cwd);
-
-  try {
-    installPackages(cwd, pm);
-  } catch {
-    console.error('패키지 설치에 실패했습니다. 수동으로 설치해 주세요:');
-    console.error(`  ${pm} add ${PACKAGES_TO_INSTALL.join(' ')}`);
+  const installResult = installPackages(cwd, pm);
+  if (!installResult.ok) {
+    console.error('Package installation failed.');
   }
 
-  // Step 3: Tailwind CSS 설정
-  log(3, totalSteps, 'Tailwind CSS 설정 중...');
+  log(3, totalSteps, 'Configuring Tailwind CSS...');
   try {
     setupTailwind(cwd);
   } catch {
-    console.error('Tailwind CSS 설정에 실패했습니다. 수동으로 설정해 주세요.');
+    console.error('Failed to update Tailwind CSS configuration.');
   }
 
-  // Step 4: CSS 토큰 임포트
-  log(4, totalSteps, 'CSS 토큰 임포트 추가 중...');
+  log(4, totalSteps, 'Adding FramingUI styles import...');
   try {
-    setupCSS(cwd, framework);
+    const cssPath = setupCSS(cwd, framework);
+    if (!cssPath) {
+      console.error(`Could not find a stylesheet to update with ${FRAMINGUI_STYLE_IMPORT}`);
+    }
   } catch {
-    console.error('CSS 설정에 실패했습니다. 수동으로 추가해 주세요:');
-    console.error(`  ${FRAMINGUI_STYLE_IMPORT}`);
+    console.error('Failed to update the stylesheet import.');
   }
 
-  // Step 5: MCP 설정
-  log(5, totalSteps, 'Claude Code MCP 설정 중...');
+  log(5, totalSteps, 'Configuring MCP server...');
   try {
     setupMCP(cwd);
   } catch {
-    console.error('MCP 설정에 실패했습니다. 수동으로 .mcp.json을 생성해 주세요.');
+    console.error('Failed to update .mcp.json.');
   }
 
-  // Step 6: 가이드 문서 생성
-  log(6, totalSteps, '가이드 문서 생성 중...');
+  log(6, totalSteps, 'Generating project guide...');
   try {
     setupGuide(cwd, framework);
   } catch {
-    console.error('가이드 문서 생성에 실패했습니다.');
+    console.error('Failed to generate FRAMINGUI-GUIDE.md.');
   }
 
-  // Step 7: CLAUDE.md / AGENTS.md 설정
-  log(7, totalSteps, 'AI 에이전트 가이드 설정 중...');
+  log(7, totalSteps, 'Updating AI agent guides...');
   try {
     setupAgentMd(cwd, framework);
   } catch {
-    console.error('AI 에이전트 가이드 설정에 실패했습니다.');
+    console.error('Failed to update CLAUDE.md / AGENTS.md.');
   }
 
-  // Step 8: 완료 메시지
-  log(8, totalSteps, '설정 완료');
-  printSuccess();
+  log(8, totalSteps, 'Verifying FramingUI setup...');
+  const verification = verifyInitSetup(cwd);
+  if (verification.styleImportPath) {
+    logDetail(`Styles import found in ${relativeToCwd(cwd, verification.styleImportPath)}`);
+  }
+  if (verification.tailwindConfigPath) {
+    logDetail(`Tailwind config verified at ${relativeToCwd(cwd, verification.tailwindConfigPath)}`);
+  }
+
+  log(9, totalSteps, verification.warnings.length === 0 ? 'Setup complete' : 'Setup incomplete');
+  printResult(pm, verification);
+
+  if (!installResult.ok || verification.warnings.length > 0) {
+    process.exitCode = 1;
+  }
 }
