@@ -1,7 +1,7 @@
 # E2E Quick Start
 
-Use `pnpm test:e2e:smoke` for CI-safe smoke coverage.
-Use `pnpm test:e2e` for the full local suite when Supabase test credentials are available.
+Use `pnpm test:e2e` for CI-safe smoke coverage.
+Use `pnpm test:e2e:full` for the full local suite when Supabase test credentials are available.
 
 ---
 
@@ -37,13 +37,13 @@ pnpm dev
 
 ```bash
 # CI-safe smoke tests
-pnpm test:e2e:smoke
-
-# Full local E2E suite
 pnpm test:e2e
 
+# Full local E2E suite
+pnpm test:e2e:full
+
 # 또는 특정 테스트만 실행
-pnpm test:e2e api-keys/mcp-verify.spec.ts
+pnpm test:e2e:full api-keys/mcp-verify.spec.ts
 ```
 
 ---
@@ -63,8 +63,8 @@ pnpm playwright show-report
 ### 1. API Key 생성 및 검증
 
 ```bash
-pnpm test:e2e api-keys/create-api-key.spec.ts
-pnpm test:e2e api-keys/mcp-verify.spec.ts
+pnpm test:e2e:full api-keys/create-api-key.spec.ts
+pnpm test:e2e:full api-keys/mcp-verify.spec.ts
 ```
 
 **예상 결과**:
@@ -76,8 +76,8 @@ pnpm test:e2e api-keys/mcp-verify.spec.ts
 ### 2. API Key 목록 및 삭제
 
 ```bash
-pnpm test:e2e api-keys/list-api-keys.spec.ts
-pnpm test:e2e api-keys/revoke-api-key.spec.ts
+pnpm test:e2e:full api-keys/list-api-keys.spec.ts
+pnpm test:e2e:full api-keys/revoke-api-key.spec.ts
 ```
 
 **예상 결과**:
@@ -89,7 +89,7 @@ pnpm test:e2e api-keys/revoke-api-key.spec.ts
 ### 3. 보안 테스트
 
 ```bash
-pnpm test:e2e api-keys/security.spec.ts
+pnpm test:e2e:full api-keys/security.spec.ts
 ```
 
 **예상 결과**:
@@ -121,7 +121,7 @@ Rate Limit이 리셋될 때까지 60초 대기 후 재실행
 
 ```bash
 # 60초 대기 후 재실행
-sleep 60 && pnpm test:e2e api-keys/security.spec.ts
+sleep 60 && pnpm test:e2e:full api-keys/security.spec.ts
 ```
 
 ### 문제: 포트 충돌 (3001)
@@ -148,7 +148,7 @@ PLAYWRIGHT_TEST_BASE_URL=http://localhost:3002
 테스트가 실행되는 모습을 직접 보고 싶다면:
 
 ```bash
-PLAYWRIGHT_HEADLESS=false pnpm test:e2e
+PLAYWRIGHT_HEADLESS=false pnpm test:e2e:full
 ```
 
 또는 디버그 모드:

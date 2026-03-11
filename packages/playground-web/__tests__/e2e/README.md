@@ -2,8 +2,8 @@
 
 This suite is split into two layers:
 
-- `pnpm test:e2e:smoke`: CI-safe browser smoke tests with no Supabase dependency
-- `pnpm test:e2e`: full local suite including integration and auth-adjacent coverage
+- `pnpm test:e2e` / `pnpm test:e2e:smoke`: CI-safe browser smoke tests with no Supabase dependency
+- `pnpm test:e2e:full`: full local suite including integration and auth-adjacent coverage
 
 ## 📋 테스트 개요
 
@@ -89,40 +89,40 @@ PLAYWRIGHT_HEADLESS=true  # false로 설정하면 브라우저 UI 표시
 #### CI-safe smoke tests
 
 ```bash
-pnpm test:e2e:smoke
+pnpm test:e2e
 ```
 
 #### Full local E2E suite
 
 ```bash
-pnpm test:e2e
+pnpm test:e2e:full
 ```
 
 #### Specific test files
 
 ```bash
 # API Key 생성 테스트만 실행
-pnpm test:e2e api-keys/create-api-key.spec.ts
+pnpm test:e2e:full api-keys/create-api-key.spec.ts
 
 # MCP 검증 테스트만 실행
-pnpm test:e2e api-keys/mcp-verify.spec.ts
+pnpm test:e2e:full api-keys/mcp-verify.spec.ts
 
 # 보안 테스트만 실행
-pnpm test:e2e api-keys/security.spec.ts
+pnpm test:e2e:full api-keys/security.spec.ts
 ```
 
 #### Headless 모드 비활성화 (브라우저 UI 표시)
 
 ```bash
-PLAYWRIGHT_HEADLESS=false pnpm test:e2e
+PLAYWRIGHT_HEADLESS=false pnpm test:e2e:full
 ```
 
 #### 특정 브라우저만 테스트
 
 ```bash
-pnpm test:e2e --project=chromium
-pnpm test:e2e --project=firefox
-pnpm test:e2e --project=webkit
+pnpm test:e2e:full --project=chromium
+pnpm test:e2e:full --project=firefox
+pnpm test:e2e:full --project=webkit
 ```
 
 #### 디버그 모드 실행
@@ -149,7 +149,7 @@ OAuth 로그인 테스트는 실제 Google/GitHub 계정이 필요합니다.
 2. **Headless 모드 비활성화**
 
    ```bash
-   PLAYWRIGHT_HEADLESS=false pnpm test:e2e auth/
+   PLAYWRIGHT_HEADLESS=false pnpm test:e2e:full auth/
    ```
 
 3. **브라우저가 열리면 수동으로 로그인**
@@ -265,7 +265,7 @@ OAuth 로그인이 60초 이내에 완료되지 않으면 타임아웃됩니다.
 
 3. **테스트 실행**
    ```bash
-   pnpm test:e2e my-feature/my-test.spec.ts
+   pnpm test:e2e:full my-feature/my-test.spec.ts
    ```
 
 ---

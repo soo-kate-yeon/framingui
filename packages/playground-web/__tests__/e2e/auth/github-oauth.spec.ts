@@ -19,7 +19,7 @@ test.describe('GitHub OAuth Login E2E', () => {
     /**
      * ⚠️ 수동 테스트 가이드
      *
-     * 1. `PLAYWRIGHT_HEADLESS=false pnpm test:e2e auth/github-oauth.spec.ts` 실행
+     * 1. `PLAYWRIGHT_HEADLESS=false pnpm test:e2e:full auth/github-oauth.spec.ts` 실행
      * 2. 테스트 브라우저가 열리면 GitHub 로그인 진행
      * 3. 로그인 성공 후 프로필 페이지 확인
      */
