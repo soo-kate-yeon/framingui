@@ -109,6 +109,7 @@ export function SelectionTopBar({
       userEmail: user.email || '',
       themeId: selectedTemplates.join(','),
       tier: 'double',
+      successPath: `/explore?plan=double&checkout=success&selected=${selectedTemplates.join(',')}`,
     });
   };
 

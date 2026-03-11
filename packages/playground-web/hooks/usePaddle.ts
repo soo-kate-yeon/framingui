@@ -12,6 +12,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { initializePaddle, type Paddle, type PaddleEventData } from '@paddle/paddle-js';
 import { PADDLE_CONFIG, isPaymentsEnabled } from '@/lib/paddle/config';
 import { getPaddleCheckoutErrorMessage } from '@/lib/paddle/errors';
+import { buildCheckoutSuccessUrl } from '@/lib/paddle/urls';
 
 export interface OpenCheckoutParams {
   priceId: string;
@@ -19,6 +20,7 @@ export interface OpenCheckoutParams {
   userEmail?: string | null;
   themeId?: string;
   tier: 'single' | 'double' | 'creator';
+  successPath?: string;
 }
 
 export function usePaddle() {
@@ -58,7 +60,7 @@ export function usePaddle() {
       token: PADDLE_CONFIG.clientToken,
       checkout: {
         settings: {
-          successUrl: `${window.location.origin}/settings/billing?checkout=success`,
+          successUrl: buildCheckoutSuccessUrl(window.location.origin),
         },
       },
       // checkout-service 400 등 Paddle 내부 오류 관측을 위해 이벤트를 남긴다.
@@ -89,7 +91,7 @@ export function usePaddle() {
   }, []);
 
   const openCheckout = useCallback(
-    ({ priceId, userId, userEmail, themeId, tier }: OpenCheckoutParams) => {
+    ({ priceId, userId, userEmail, themeId, tier, successPath }: OpenCheckoutParams) => {
       if (!paddle) {
         console.error('[Paddle] Paddle이 초기화되지 않았습니다');
         return;
@@ -111,7 +113,7 @@ export function usePaddle() {
         ...(trimmedEmail ? { customer: { email: trimmedEmail } } : {}),
         settings: {
           // 결제 완료 후 사용자가 앱으로 복귀할 수 있도록 명시
-          successUrl: `${window.location.origin}/settings/billing?checkout=success`,
+          successUrl: buildCheckoutSuccessUrl(window.location.origin, successPath),
         },
       };
 

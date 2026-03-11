@@ -10,9 +10,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { FreeTrialModal } from '@/components/modals/FreeTrialModal';
 import { GlobalLanguageProvider } from '@/contexts/GlobalLanguageContext';
 
-const { mockUseAuth, mockTrackFunnelPrimaryCtaClick, mockUseGlobalLanguage } = vi.hoisted(() => ({
+const {
+  mockUseAuth,
+  mockTrackFunnelPrimaryCtaClick,
+  mockTrackFunnelFreeTrialStarted,
+  mockUseGlobalLanguage,
+} = vi.hoisted(() => ({
   mockUseAuth: vi.fn(),
   mockTrackFunnelPrimaryCtaClick: vi.fn(),
+  mockTrackFunnelFreeTrialStarted: vi.fn(),
   mockUseGlobalLanguage: vi.fn(),
 }));
 
@@ -22,6 +28,7 @@ vi.mock('@/contexts/AuthContext', () => ({
 
 vi.mock('@/lib/analytics', () => ({
   trackFunnelPrimaryCtaClick: mockTrackFunnelPrimaryCtaClick,
+  trackFunnelFreeTrialStarted: mockTrackFunnelFreeTrialStarted,
 }));
 
 vi.mock('@/contexts/GlobalLanguageContext', async (importOriginal) => {
@@ -105,6 +112,10 @@ describe('FreeTrialModal', () => {
 
     expect(localStorage.getItem('hasSeenFreeTrial')).toBe('true');
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockTrackFunnelFreeTrialStarted).toHaveBeenCalledWith({
+      entry_point: 'free_trial_modal',
+      is_authenticated: true,
+    });
   });
 
   it('빈 에러 payload({})가 와도 자동 생성은 1회만 실행되고 사용자 에러 메시지를 표시한다', async () => {

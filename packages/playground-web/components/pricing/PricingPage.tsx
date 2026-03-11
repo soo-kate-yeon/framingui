@@ -152,6 +152,7 @@ export function PricingPage() {
       userId: user.id,
       userEmail: user.email || '',
       tier: planId,
+      successPath: `/pricing?checkout=success&plan=${planId}`,
     });
   };
 

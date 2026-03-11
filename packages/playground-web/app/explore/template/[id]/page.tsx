@@ -100,6 +100,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
       userEmail: user.email ?? '',
       themeId: templateId,
       tier: 'single',
+      successPath: `/explore/template/${templateId}?checkout=success`,
     });
   };
 

@@ -93,6 +93,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
       userEmail: user.email ?? '',
       themeId: template.id,
       tier: 'single',
+      successPath: `/explore/template/${template.id}?checkout=success`,
     });
   };
 
@@ -120,6 +121,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
       userId: user.id,
       userEmail: user.email ?? '',
       tier: 'creator',
+      successPath: `/explore/template/${template.id}?checkout=success&plan=creator`,
     });
   };
 
