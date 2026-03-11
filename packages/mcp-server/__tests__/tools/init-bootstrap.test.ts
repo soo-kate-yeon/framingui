@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import {
   findBestStylesheet,
   SCREEN_GENERATION_PACKAGES,
+  setupThemeBootstrap,
   verifyInitSetup,
 } from '../../src/cli/init.ts';
 
@@ -71,11 +72,25 @@ describe('init bootstrap helpers', () => {
       path.join(dir, 'app/globals.css'),
       "@import '@framingui/ui/styles';\n\nbody { margin: 0; }\n"
     );
+    fs.writeFileSync(
+      path.join(dir, 'app/layout.tsx'),
+      `export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+`
+    );
+    setupThemeBootstrap(dir, 'nextjs');
 
     const result = verifyInitSetup(dir);
 
     expect(result.installedPackagesOk).toBe(true);
     expect(result.styleImportOk).toBe(true);
+    expect(result.providerBootstrapOk).toBe(true);
+    expect(result.themeModuleOk).toBe(true);
     expect(result.tailwindFound).toBe(true);
     expect(result.tailwindUiContentOk).toBe(true);
     expect(result.tailwindAnimatePluginOk).toBe(true);
@@ -101,6 +116,8 @@ describe('init bootstrap helpers', () => {
 
     expect(result.installedPackagesOk).toBe(false);
     expect(result.styleImportOk).toBe(false);
+    expect(result.providerBootstrapOk).toBe(false);
+    expect(result.themeModuleOk).toBe(false);
     expect(result.tailwindUiContentOk).toBe(false);
     expect(result.tailwindAnimatePluginOk).toBe(false);
     expect(result.warnings.length).toBeGreaterThan(0);

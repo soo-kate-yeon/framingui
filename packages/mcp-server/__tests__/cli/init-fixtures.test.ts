@@ -8,6 +8,7 @@ import {
   setupCSS,
   setupMCP,
   setupTailwind,
+  setupThemeBootstrap,
   verifyInitSetup,
 } from '../../src/cli/init.ts';
 import { validateEnvironmentTool } from '../../src/tools/validate-environment.ts';
@@ -50,16 +51,39 @@ describe('init fixture smoke', () => {
       },
     });
     fs.writeFileSync(path.join(dir, 'app/globals.css'), 'body { margin: 0; }\n');
+    fs.writeFileSync(
+      path.join(dir, 'app/layout.tsx'),
+      `export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+`
+    );
 
     const tailwindPath = setupTailwind(dir);
     const stylesheetPath = setupCSS(dir, 'nextjs');
+    const bootstrap = setupThemeBootstrap(dir, 'nextjs');
     setupMCP(dir);
 
     expect(tailwindPath).toBe(path.join(dir, 'tailwind.config.ts'));
     expect(stylesheetPath).toBe(path.join(dir, 'app/globals.css'));
+    expect(bootstrap.entryPath).toBe(path.join(dir, 'app/layout.tsx'));
+    expect(bootstrap.themeModulePath).toBe(path.join(dir, 'app/framingui-theme.ts'));
 
     const cssContent = fs.readFileSync(path.join(dir, 'app/globals.css'), 'utf8');
     expect(cssContent.startsWith("@import '@framingui/ui/styles';")).toBe(true);
+    const layoutContent = fs.readFileSync(path.join(dir, 'app/layout.tsx'), 'utf8');
+    expect(layoutContent).toContain("import { FramingUIProvider } from '@framingui/ui';");
+    expect(layoutContent).toContain("import framinguiTheme from './framingui-theme';");
+    expect(layoutContent).toContain(
+      '<FramingUIProvider theme={framinguiTheme}>{children}</FramingUIProvider>'
+    );
+    const themeModule = fs.readFileSync(path.join(dir, 'app/framingui-theme.ts'), 'utf8');
+    expect(themeModule).toContain('const framinguiTheme =');
+    expect(themeModule).toContain('"id": "neutral-workspace"');
 
     const mcpConfig = JSON.parse(fs.readFileSync(path.join(dir, '.mcp.json'), 'utf8')) as {
       mcpServers?: Record<string, unknown>;
@@ -68,6 +92,8 @@ describe('init fixture smoke', () => {
 
     const verifyResult = verifyInitSetup(dir);
     expect(verifyResult.warnings).toHaveLength(0);
+    expect(verifyResult.providerBootstrapOk).toBe(true);
+    expect(verifyResult.themeModuleOk).toBe(true);
 
     const envResult = await validateEnvironmentTool({
       projectPath: dir,
@@ -120,6 +146,59 @@ describe('init fixture smoke', () => {
     expect(verifyResult.styleImportOk).toBe(true);
     expect(verifyResult.tailwindUiContentOk).toBe(true);
     expect(verifyResult.tailwindAnimatePluginOk).toBe(true);
+  });
+
+  it('bootstraps a Vite fixture with FramingUIProvider and a generated theme module', () => {
+    const dir = makeTempProject();
+
+    fs.mkdirSync(path.join(dir, 'src'), { recursive: true });
+    writeJson(path.join(dir, 'package.json'), {
+      name: 'fixture-vite',
+      dependencies: Object.fromEntries(
+        SCREEN_GENERATION_PACKAGES.filter(
+          pkg => !['tailwindcss', 'postcss', 'autoprefixer', 'tailwindcss-animate'].includes(pkg)
+        ).map(pkg => [pkg, 'latest'])
+      ),
+      devDependencies: {
+        tailwindcss: '^3.4.17',
+        postcss: '^8.4.38',
+        autoprefixer: '^10.4.19',
+        'tailwindcss-animate': '^1.0.7',
+      },
+    });
+    fs.writeFileSync(path.join(dir, 'src/index.css'), 'body { margin: 0; }\n');
+    fs.writeFileSync(
+      path.join(dir, 'src/main.tsx'),
+      `import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+`
+    );
+
+    setupTailwind(dir);
+    setupCSS(dir, 'vite');
+    const bootstrap = setupThemeBootstrap(dir, 'vite');
+
+    expect(bootstrap.entryPath).toBe(path.join(dir, 'src/main.tsx'));
+    expect(bootstrap.themeModulePath).toBe(path.join(dir, 'src/framingui-theme.ts'));
+
+    const entryContent = fs.readFileSync(path.join(dir, 'src/main.tsx'), 'utf8');
+    expect(entryContent).toContain("import { FramingUIProvider } from '@framingui/ui';");
+    expect(entryContent).toContain("import framinguiTheme from './framingui-theme';");
+    expect(entryContent).toContain(
+      '<FramingUIProvider theme={framinguiTheme}><App /></FramingUIProvider>'
+    );
+
+    const verifyResult = verifyInitSetup(dir);
+    expect(verifyResult.providerBootstrapOk).toBe(true);
+    expect(verifyResult.themeModuleOk).toBe(true);
   });
 
   it('keeps validate-environment actionable when the fixture is incomplete', async () => {

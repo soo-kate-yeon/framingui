@@ -5,6 +5,16 @@ All notable changes to @framingui/ui will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.11] - 2026-03-12
+
+### Added
+
+- Added `FramingUIProvider` to centralize runtime theme CSS injection and `data-theme` synchronization for consumer apps.
+
+### Testing
+
+- Added provider regression coverage for theme CSS injection, `data-theme` syncing, and mismatch warnings.
+
 ## [0.6.10] - 2026-03-11
 
 ### Fixed

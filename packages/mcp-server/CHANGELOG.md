@@ -2,6 +2,17 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.24] - 2026-03-12
+
+### Added
+
+- Updated `framingui-mcp init` to generate a local `framingui-theme` module and wire `FramingUIProvider` into the app root for both Next.js and Vite projects.
+
+### Changed
+
+- Expanded `validate-environment` so it now checks for `FramingUIProvider` bootstrap and the generated theme module, not just package install and stylesheet import.
+- Updated generated setup guides and package docs to use the provider-based install path as the primary FramingUI-native contract.
+
 ## [0.6.8] - 2026-03-07
 
 ### Fixed

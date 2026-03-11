@@ -8,6 +8,8 @@ import type {
   ValidateEnvironmentInput,
   ValidateEnvironmentOutput,
 } from '../schemas/mcp-schemas.js';
+import * as fs from 'fs';
+import * as path from 'path';
 import { readPackageJson } from '../utils/package-json-reader.js';
 import { readTailwindConfig } from '../utils/tailwind-config-reader.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
@@ -23,6 +25,21 @@ function getInstalledMajor(versionSpec?: string): number | undefined {
   }
 
   return Number.parseInt(match[1]!, 10);
+}
+
+function findBootstrapEntry(projectPath: string): string | undefined {
+  const candidates = [
+    'app/layout.tsx',
+    'app/layout.jsx',
+    'src/app/layout.tsx',
+    'src/app/layout.jsx',
+    'src/main.tsx',
+    'src/main.jsx',
+    'src/main.ts',
+    'src/main.js',
+  ];
+
+  return candidates.find(candidate => fs.existsSync(path.join(projectPath, candidate)));
 }
 
 /**
@@ -143,6 +160,49 @@ export async function validateEnvironmentTool(
               "import animate from 'tailwindcss-animate'; plugins: [animate]"
           );
         }
+      }
+
+      const bootstrapEntry = findBootstrapEntry(projectPath);
+      if (!bootstrapEntry) {
+        issues.push('No app root entry found for FramingUIProvider bootstrap');
+        fixes.push(
+          'Create app/layout.tsx (Next.js) or src/main.tsx (Vite) and wrap the app with ' +
+            '<FramingUIProvider theme={framinguiTheme}>...</FramingUIProvider>'
+        );
+      } else {
+        const bootstrapContent = fs.readFileSync(path.join(projectPath, bootstrapEntry), 'utf-8');
+        if (
+          !bootstrapContent.includes('FramingUIProvider') ||
+          !bootstrapContent.includes('framinguiTheme') ||
+          !bootstrapContent.includes('theme={framinguiTheme}')
+        ) {
+          issues.push(
+            `${bootstrapEntry} does not mount FramingUIProvider with the generated framinguiTheme`
+          );
+          fixes.push(
+            `Update ${bootstrapEntry} to import { FramingUIProvider } from '@framingui/ui', ` +
+              "import framinguiTheme from './framingui-theme', and wrap the app root with " +
+              '<FramingUIProvider theme={framinguiTheme}>...</FramingUIProvider>'
+          );
+        }
+      }
+
+      const themeModuleCandidates = [
+        'app/framingui-theme.ts',
+        'app/framingui-theme.js',
+        'src/app/framingui-theme.ts',
+        'src/app/framingui-theme.js',
+        'src/framingui-theme.ts',
+        'src/framingui-theme.js',
+      ];
+      const hasThemeModule = themeModuleCandidates.some(candidate =>
+        fs.existsSync(path.join(projectPath, candidate))
+      );
+      if (!hasThemeModule) {
+        issues.push('Generated framingui-theme module not found');
+        fixes.push(
+          'Generate a local framingui-theme module that exports a theme object and pass it to FramingUIProvider'
+        );
       }
 
       tailwind = {
