@@ -236,27 +236,34 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         '@framingui/core': 'latest',
         tailwindcss: '^4.1.0',
       },
+      devDependencies: {
+        'tailwindcss-animate': '^1.0.7',
+      },
     });
-    fs.writeFileSync(
-      path.join(dir, 'tailwind.config.ts'),
-      `export default { content: ['./app/**/*.{js,ts,jsx,tsx}'], plugins: [] };`
-    );
     fs.writeFileSync(path.join(dir, 'app/globals.css'), "@import '@framingui/ui/styles';\n");
 
     const verifyResult = verifyInitSetup(dir);
     expect(verifyResult.tailwindVersionOk).toBe(true);
+    expect(verifyResult.tailwindUiContentOk).toBe(true);
+    expect(verifyResult.tailwindAnimatePluginOk).toBe(true);
+    expect(verifyResult.warnings.some(warning => warning.includes('Tailwind config'))).toBe(false);
     expect(
-      verifyResult.warnings.some(warning => warning.includes('Tailwind v4 CSS-first configuration'))
-    ).toBe(true);
+      verifyResult.warnings.some(warning => warning.includes('tailwindcss-animate plugin'))
+    ).toBe(false);
 
     const envResult = await validateEnvironmentTool({
       projectPath: dir,
-      requiredPackages: ['@framingui/ui', '@framingui/core'],
+      requiredPackages: ['@framingui/ui', '@framingui/core', 'tailwindcss-animate'],
       checkTailwind: true,
     });
     expect(envResult.success).toBe(true);
     expect(
       envResult.tailwind?.issues.some(issue => issue.includes('expects Tailwind CSS v3'))
+    ).toBe(false);
+    expect(
+      envResult.tailwind?.issues.some(issue =>
+        issue.includes('tailwindcss-animate is not installed')
+      )
     ).toBe(false);
   });
 });

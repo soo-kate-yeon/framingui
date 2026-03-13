@@ -60,15 +60,19 @@ export const SCREEN_GENERATION_RUNTIME_PACKAGES = [
   'zod',
 ] as const;
 
+export const TAILWIND_BUILD_PACKAGES = {
+  'tailwindcss-animate': FRAMINGUI_ANIMATE_VERSION,
+} as const;
+
 export const TAILWIND_V3_TOOLCHAIN_PACKAGES = {
   tailwindcss: FRAMINGUI_TAILWIND_VERSION,
   postcss: FRAMINGUI_POSTCSS_VERSION,
   autoprefixer: FRAMINGUI_AUTOPREFIXER_VERSION,
-  'tailwindcss-animate': FRAMINGUI_ANIMATE_VERSION,
 } as const;
 
 export const SCREEN_GENERATION_PACKAGES = [
   ...SCREEN_GENERATION_RUNTIME_PACKAGES,
+  ...Object.keys(TAILWIND_BUILD_PACKAGES),
   ...Object.keys(TAILWIND_V3_TOOLCHAIN_PACKAGES),
 ] as const;
 
@@ -334,12 +338,18 @@ function installPackages(
   const runtimeMissing = SCREEN_GENERATION_RUNTIME_PACKAGES.filter(pkg => !installed[pkg]);
   const tailwindVersion = installed.tailwindcss;
   const tailwindV4 = usesTailwindV4(tailwindVersion);
+  const buildMissing = Object.entries(TAILWIND_BUILD_PACKAGES)
+    .filter(([pkg]) => !installed[pkg])
+    .map(([pkg, version]) => `${pkg}@${version}`);
 
-  const toolchainMissing = tailwindV4
-    ? []
-    : Object.entries(TAILWIND_V3_TOOLCHAIN_PACKAGES)
-        .filter(([pkg]) => !installed[pkg])
-        .map(([pkg, version]) => `${pkg}@${version}`);
+  const toolchainMissing = [
+    ...buildMissing,
+    ...(tailwindV4
+      ? []
+      : Object.entries(TAILWIND_V3_TOOLCHAIN_PACKAGES)
+          .filter(([pkg]) => !installed[pkg])
+          .map(([pkg, version]) => `${pkg}@${version}`)),
+  ];
 
   const commands: string[] = [];
   if (runtimeMissing.length > 0) {
@@ -352,7 +362,7 @@ function installPackages(
   if (commands.length === 0) {
     logDetail(
       tailwindV4
-        ? 'All FramingUI runtime packages are already installed for the detected Tailwind v4 project'
+        ? 'All FramingUI runtime packages and Tailwind v4 build helpers are already installed'
         : 'All FramingUI runtime and Tailwind v3 toolchain packages are already installed'
     );
     return { ok: true, command: '' };
@@ -370,6 +380,14 @@ const TAILWIND_CONFIG_CANDIDATES = [
 ];
 
 export function setupTailwind(cwd: string): string | undefined {
+  const installed = getInstalledPackageMap(readProjectPackageJson(cwd));
+  if (usesTailwindV4(installed.tailwindcss)) {
+    logDetail(
+      'Tailwind v4 detected; skipping tailwind.config mutation because @framingui/ui/styles now provides source scanning and the animate plugin hook'
+    );
+    return undefined;
+  }
+
   const configName = findFile(cwd, TAILWIND_CONFIG_CANDIDATES);
 
   if (configName) {
@@ -676,7 +694,7 @@ export function verifyInitSetup(cwd: string): InitVerification {
   const detectedTailwindVersion = installedVersions.tailwindcss;
   const tailwindV4 = usesTailwindV4(detectedTailwindVersion);
   const requiredPackages = tailwindV4
-    ? SCREEN_GENERATION_RUNTIME_PACKAGES
+    ? [...SCREEN_GENERATION_RUNTIME_PACKAGES, ...Object.keys(TAILWIND_BUILD_PACKAGES)]
     : SCREEN_GENERATION_PACKAGES;
   const missingPackages = requiredPackages.filter(pkg => !installed.has(pkg));
   const tailwindVersionOk = true;
@@ -717,9 +735,9 @@ export function verifyInitSetup(cwd: string): InitVerification {
   if (!themeModule) {
     warnings.push('Missing framingui-theme module for runtime theme injection');
   }
-  if (!tailwind.found) {
+  if (!tailwindV4 && !tailwind.found) {
     warnings.push('Tailwind config not found');
-  } else {
+  } else if (!tailwindV4) {
     if (!tailwind.hasUiContentPath) {
       warnings.push('Tailwind config is missing @framingui/ui content paths');
     }
@@ -727,12 +745,6 @@ export function verifyInitSetup(cwd: string): InitVerification {
       warnings.push('Tailwind config is missing the tailwindcss-animate plugin');
     }
   }
-  if (tailwindV4) {
-    warnings.push(
-      `Detected tailwindcss@${detectedTailwindVersion}. FramingUI init will skip Tailwind v3-only toolchain setup and rely on your existing Tailwind v4 CSS-first configuration`
-    );
-  }
-
   return {
     installedPackagesOk: missingPackages.length === 0,
     missingPackages,
@@ -742,17 +754,24 @@ export function verifyInitSetup(cwd: string): InitVerification {
     providerEntryPath: providerEntry,
     themeModuleOk: Boolean(themeModule),
     themeModulePath: themeModule,
-    tailwindFound: tailwind.found,
-    tailwindUiContentOk: tailwind.hasUiContentPath,
-    tailwindAnimatePluginOk: tailwind.hasAnimatePlugin,
+    tailwindFound: tailwind.found || tailwindV4,
+    tailwindUiContentOk: tailwindV4 ? true : tailwind.hasUiContentPath,
+    tailwindAnimatePluginOk: tailwindV4
+      ? installed.has('tailwindcss-animate')
+      : tailwind.hasAnimatePlugin,
     tailwindVersionOk,
     detectedTailwindVersion,
-    tailwindConfigPath: tailwind.configPath,
+    tailwindConfigPath: tailwindV4 ? undefined : tailwind.configPath,
     warnings,
   };
 }
 
 function printResult(pm: PackageManager, verification: InitVerification): void {
+  const tailwindSummary =
+    verification.detectedTailwindVersion && usesTailwindV4(verification.detectedTailwindVersion)
+      ? '- @framingui/ui/styles is providing Tailwind v4 source scanning and animate plugin registration'
+      : '- Tailwind content paths updated\n  - tailwindcss-animate configured';
+
   if (verification.warnings.length === 0) {
     console.log(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -761,8 +780,7 @@ function printResult(pm: PackageManager, verification: InitVerification): void {
 
   Verified:
   - screen-generation runtime packages installed
-  - Tailwind content paths updated
-  - tailwindcss-animate configured
+  ${tailwindSummary}
   - @import '@framingui/ui/styles'; present
 
   Next steps:
@@ -787,8 +805,13 @@ function printResult(pm: PackageManager, verification: InitVerification): void {
     ${pm} add ${SCREEN_GENERATION_RUNTIME_PACKAGES.join(' ')}
     ${
       verification.detectedTailwindVersion && usesTailwindV4(verification.detectedTailwindVersion)
-        ? '(Tailwind v4 detected: keeping your existing Tailwind toolchain)'
-        : `${pm} add -D ${Object.entries(TAILWIND_V3_TOOLCHAIN_PACKAGES)
+        ? `${pm} add -D ${Object.entries(TAILWIND_BUILD_PACKAGES)
+            .map(([pkg, version]) => `${pkg}@${version}`)
+            .join(' ')}`
+        : `${pm} add -D ${Object.entries({
+            ...TAILWIND_BUILD_PACKAGES,
+            ...TAILWIND_V3_TOOLCHAIN_PACKAGES,
+          })
             .map(([pkg, version]) => `${pkg}@${version}`)
             .join(' ')}`
     }

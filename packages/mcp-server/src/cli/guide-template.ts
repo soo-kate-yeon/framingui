@@ -52,6 +52,33 @@ Your global stylesheet should import:
 
 Your root app entry should also mount \`FramingUIProvider\` with the generated \`framingui-theme\` module.
 
+This contract assumes:
+
+- \`tailwindcss-animate\` is installed
+- the stylesheet import happens exactly once at the app root
+- \`FramingUIProvider\` is mounted exactly once near the root
+- the generated \`framingui-theme\` module is the source of truth for theme tokens
+
+For Tailwind v4 projects, \`@import '@framingui/ui/styles';\` already provides FramingUI package source scanning and the animate plugin hook. Do not copy manual \`@source\` blocks for \`@framingui/ui\` into app CSS unless you are debugging the package itself.
+
+Do not:
+
+- duplicate \`FramingUIProvider\` inside pages or sections
+- re-declare FramingUI theme tokens by hand in \`globals.css\`
+- mix \`framingui-native\` and ad hoc host-utility overrides without intent
+- diagnose missing padding or height first as a theme bug; check the runtime contract before editing recipes
+
+## Runtime Contract Checklist
+
+When FramingUI components look unstyled or partially styled, check these first:
+
+1. \`@import '@framingui/ui/styles';\` exists in the global stylesheet and only once.
+2. \`tailwindcss-animate\` is installed.
+3. The app root mounts \`FramingUIProvider theme={framinguiTheme}\`.
+4. The project uses the generated \`framingui-theme\` module instead of copied CSS variables.
+5. Host CSS is not overriding \`body\`, \`button\`, \`input\`, or other primitives in a way that defeats the theme contract.
+6. Page code is not reimplementing FramingUI recipes with stale utility classes.
+
 ## Slash Commands
 
 FramingUI guidance is available for:
@@ -96,5 +123,7 @@ export default function Page() {
 - Treat templates as hints, not the final structure.
 - Treat the validated screen definition as the production contract.
 - Keep semantic wrappers as HTML only when there is no FramingUI primitive to replace them.
+- Treat \`@framingui/ui/styles\` and \`framingui-theme\` as the installation contract for \`framingui-native\`.
+- If a Tailwind v4 app shows broken shape or missing motion, check the runtime contract before editing component code.
 `;
 }

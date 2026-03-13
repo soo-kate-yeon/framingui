@@ -137,14 +137,13 @@ describe('init bootstrap helpers', () => {
             '@framingui/core': 'latest',
             tailwindcss: '^4.0.0',
           },
+          devDependencies: {
+            'tailwindcss-animate': '^1.0.7',
+          },
         },
         null,
         2
       )
-    );
-    fs.writeFileSync(
-      path.join(dir, 'tailwind.config.ts'),
-      `export default { content: ['./app/**/*.{js,ts,jsx,tsx}'], plugins: [] };`
     );
     fs.writeFileSync(
       path.join(dir, 'app/globals.css'),
@@ -155,8 +154,11 @@ describe('init bootstrap helpers', () => {
 
     expect(result.tailwindVersionOk).toBe(true);
     expect(result.detectedTailwindVersion).toBe('^4.0.0');
-    expect(
-      result.warnings.some(warning => warning.includes('Tailwind v4 CSS-first configuration'))
-    ).toBe(true);
+    expect(result.tailwindUiContentOk).toBe(true);
+    expect(result.tailwindAnimatePluginOk).toBe(true);
+    expect(result.warnings.some(warning => warning.includes('Tailwind config'))).toBe(false);
+    expect(result.warnings.some(warning => warning.includes('tailwindcss-animate plugin'))).toBe(
+      false
+    );
   });
 });

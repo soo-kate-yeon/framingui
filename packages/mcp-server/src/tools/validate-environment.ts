@@ -133,7 +133,7 @@ export async function validateEnvironmentTool(
             'See https://tailwindcss.com/docs/configuration for setup guide.'
         );
       } else if (tailwindResult.found) {
-        if (!tailwindResult.hasUiContentPath) {
+        if (!tailwindV4 && !tailwindResult.hasUiContentPath) {
           issues.push(
             'tailwind.config content paths do not include @framingui/ui — ' +
               'component styles (Dialog, AlertDialog, Popover, etc.) will not be compiled'
@@ -145,7 +145,7 @@ export async function validateEnvironmentTool(
           );
         }
 
-        if (!tailwindResult.hasAnimatePlugin) {
+        if (!tailwindV4 && !tailwindResult.hasAnimatePlugin) {
           issues.push(
             'tailwindcss-animate plugin is not configured — ' +
               'Radix UI component animations (Dialog open/close, Popover, Tooltip) will not work'
@@ -157,8 +157,15 @@ export async function validateEnvironmentTool(
         }
       } else if (tailwindV4) {
         fixes.push(
-          'Tailwind v4 detected. Keep your existing CSS-first setup and ensure your global stylesheet imports FramingUI styles.'
+          'Tailwind v4 detected. Keep your CSS-first setup and import @framingui/ui/styles once.'
         );
+      }
+
+      if (tailwindV4 && installedPackages['tailwindcss-animate'] === undefined) {
+        issues.push(
+          'tailwindcss-animate is not installed — FramingUI overlay motion classes will not compile in Tailwind v4'
+        );
+        fixes.push('Install tailwindcss-animate (npm install -D tailwindcss-animate).');
       }
 
       const bootstrapEntry = findBootstrapEntry(projectPath);

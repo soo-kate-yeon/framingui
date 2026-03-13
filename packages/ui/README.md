@@ -8,6 +8,7 @@ Use this package when you want FramingUI components directly in an app, whether 
 
 ```bash
 pnpm add @framingui/ui
+pnpm add -D tailwindcss-animate
 ```
 
 Import the shared styles once at the app root when your app uses the FramingUI-native style contract:
@@ -16,6 +17,8 @@ Import the shared styles once at the app root when your app uses the FramingUI-n
 /* app/globals.css */
 @import '@framingui/ui/styles';
 ```
+
+In Tailwind v4 projects, that import also registers FramingUI's packaged utility sources and the `tailwindcss-animate` plugin hook.
 
 Then mount `FramingUIProvider` near your root layout. Pass a full theme object when you want FramingUI to inject the CSS variables for you.
 

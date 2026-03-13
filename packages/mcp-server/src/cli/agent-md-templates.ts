@@ -36,7 +36,20 @@ framingui-mcp login
 ### Style Contract Rules
 
 - If the project stays \`host-utility\`, keep utility classes explicit.
-- If the project uses \`framingui-native\`, ensure the global stylesheet imports \`@framingui/ui/styles\` and the app root mounts \`FramingUIProvider\` with the generated \`framingui-theme\`.
+- If the project uses \`framingui-native\`, ensure the global stylesheet imports \`@framingui/ui/styles\`, \`tailwindcss-animate\` is installed, and the app root mounts \`FramingUIProvider\` with the generated \`framingui-theme\`.
+- In Tailwind v4 apps, do not add manual \`@source\` entries for \`@framingui/ui\` unless you are debugging the package itself. The shared styles import is the source of truth.
+- Do not duplicate \`FramingUIProvider\` or re-declare theme tokens in app CSS.
+
+### Runtime Contract
+
+Before changing recipes or component code, verify:
+
+1. \`@import '@framingui/ui/styles';\` exists exactly once in the global stylesheet.
+2. \`tailwindcss-animate\` is installed.
+3. The root layout or entry mounts \`FramingUIProvider theme={framinguiTheme}\`.
+4. The generated \`framingui-theme\` module is still the theme source of truth.
+5. Host CSS is not overriding base primitives in a way that defeats FramingUI styles.
+6. Page code is not carrying stale copied recipe utilities.
 
 ### Slash Commands
 
@@ -103,8 +116,15 @@ FramingUI is available in this project through MCP.
 ### Style Contract
 
 - \`host-utility\`: keep explicit utility styling
-- \`framingui-native\`: import \`@framingui/ui/styles\`, mount \`FramingUIProvider\`, then rely on FramingUI variants
+- \`framingui-native\`: import \`@framingui/ui/styles\`, install \`tailwindcss-animate\`, mount \`FramingUIProvider\`, and treat the generated \`framingui-theme\` module as the source of truth
 - \`migrate\`: stop and clarify the migration path
+
+### Runtime Contract
+
+- In Tailwind v4 apps, the shared FramingUI stylesheet import already handles package source scanning and animate plugin registration.
+- Do not duplicate \`FramingUIProvider\` inside pages.
+- Do not hand-copy FramingUI CSS variables into app stylesheets.
+- If component shape or motion looks broken, check the install/runtime contract before editing recipes.
 
 ### Allowed HTML
 

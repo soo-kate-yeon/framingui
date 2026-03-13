@@ -7,6 +7,9 @@
  * @import '@framingui/styles';
  */
 
+@source "../dist/**/*.mjs";
+@plugin "tailwindcss-animate";
+
 :root {
   /* ========================================
      Layer 1: Atomic Tokens

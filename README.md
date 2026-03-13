@@ -32,7 +32,8 @@ npx @framingui/mcp-server@latest login
 This setup flow can:
 
 - install `@framingui/ui`
-- configure Tailwind content paths and `tailwindcss-animate`
+- install `tailwindcss-animate`
+- configure Tailwind content paths for Tailwind v3 projects
 - add `@import '@framingui/ui/styles';` when using the FramingUI-native style contract
 - generate a local `framingui-theme` module and mount `FramingUIProvider` in the app root
 - register the MCP server in `.mcp.json`

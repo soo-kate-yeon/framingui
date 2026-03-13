@@ -115,7 +115,8 @@ FramingUI exposes guidance for:
 `init` can:
 
 - install the FramingUI screen-generation runtime and peer dependencies in one pass
-- configure Tailwind content paths and `tailwindcss-animate`
+- install `tailwindcss-animate`
+- configure Tailwind content paths for Tailwind v3 projects
 - add `@import '@framingui/ui/styles';` to a detected global stylesheet
 - generate a local `framingui-theme` module
 - wire `FramingUIProvider` into `app/layout.tsx` or `src/main.tsx`

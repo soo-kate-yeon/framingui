@@ -594,11 +594,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           '- installed: Packages already in package.json with versions\n' +
           '- missing: Packages that need to be installed\n' +
           '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n' +
-          '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n\n' +
+          '- tailwind: Tailwind CSS config validation (content paths, animate plugin / package)\n\n' +
           'TAILWIND VALIDATION (checkTailwind=true by default):\n' +
-          '- Checks if tailwind.config.{ts,js,mjs,cjs} exists\n' +
-          '- Verifies @framingui/ui content paths are included (prevents missing styles)\n' +
-          '- Verifies tailwindcss-animate plugin is configured (required for Dialog, Popover animations)\n' +
+          '- Checks if tailwind.config.{ts,js,mjs,cjs} exists for Tailwind v3 projects\n' +
+          '- Verifies @framingui/ui content paths are included for Tailwind v3 projects\n' +
+          '- Verifies tailwindcss-animate is available for FramingUI overlay animations\n' +
           '- Returns actionable issues[] and fixes[] for each problem found\n\n' +
           'EXAMPLE WORKFLOW:\n' +
           '1. get-screen-generation-context → get component info and context\n' +
