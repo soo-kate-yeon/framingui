@@ -1,0 +1,533 @@
+---
+title: "Dark Mode with Design Tokens"
+description: "Implement automatic dark mode support using FramingUI's semantic token system"
+order: 9
+---
+
+# Dark Mode with Design Tokens
+
+FramingUI provides automatic dark mode support through semantic design tokens. Your components adapt to light and dark themes without code changes.
+
+## How It Works
+
+FramingUI uses a **semantic token system** where colors are defined by purpose, not appearance:
+
+```css
+/* Light mode (default) */
+:root {
+  --bg-background: oklch(1 0 0);           /* White */
+  --bg-foreground: oklch(0.2 0 0);         /* Near-black text */
+  --bg-card: oklch(0.99 0 0);              /* Off-white */
+  --border-default: oklch(0.89 0 0);       /* Light gray border */
+}
+
+/* Dark mode - automatically inverts */
+.dark {
+  --bg-background: oklch(0.16 0.01 260);   /* Dark blue-gray */
+  --bg-foreground: oklch(0.96 0.01 260);   /* Off-white text */
+  --bg-card: oklch(0.20 0.01 260);         /* Slightly lighter card */
+  --border-default: oklch(0.32 0.01 260);  /* Subtle border */
+}
+```
+
+When you use semantic tokens in your components, they automatically adapt:
+
+```tsx
+<div className="bg-background text-foreground border border-border">
+  This adapts to dark mode automatically
+</div>
+```
+
+**No extra work needed** — the `.dark` class toggles the entire theme.
+
+## Enabling Dark Mode
+
+### Next.js (App Router)
+
+FramingUI uses `next-themes` for theme switching:
+
+```tsx
+// app/layout.tsx
+import { ThemeProvider } from 'next-themes';
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+**Key props:**
+- `attribute="class"` — Adds `.dark` class to `<html>`
+- `defaultTheme="system"` — Follows OS preference
+- `enableSystem` — Respects OS dark/light mode
+- `disableTransitionOnChange` — Prevents flash during theme switch
+
+### Theme Toggle Button
+
+Add a theme switcher to your UI:
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { Button } from '@framingui/ui';
+import { IconMoon, IconSun } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <Button size="icon" variant="ghost" />;
+  }
+
+  return (
+    <Button
+      size="icon"
+      variant="ghost"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+    >
+      {theme === 'dark' ? (
+        <IconSun className="w-5 h-5" />
+      ) : (
+        <IconMoon className="w-5 h-5" />
+      )}
+    </Button>
+  );
+}
+```
+
+### Theme Selector Dropdown
+
+Offer light/dark/system options:
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { Button } from '@framingui/ui';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@framingui/ui';
+import { IconMoon, IconSun, IconDeviceDesktop } from '@tabler/icons-react';
+
+export function ThemeSelector() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button size="icon" variant="ghost">
+          <IconSun className="w-5 h-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <IconMoon className="absolute w-5 h-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          <IconSun className="w-4 h-4 mr-2" />
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          <IconMoon className="w-4 h-4 mr-2" />
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          <IconDeviceDesktop className="w-4 h-4 mr-2" />
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+```
+
+## Semantic Token Reference
+
+FramingUI provides semantic tokens that adapt automatically:
+
+### Background Tokens
+
+| Token | Light Mode | Dark Mode | Usage |
+| --- | --- | --- | --- |
+| `--bg-background` | White | Dark gray | Page background |
+| `--bg-foreground` | Near-black | Off-white | Primary text |
+| `--bg-card` | Off-white | Slightly lighter | Card backgrounds |
+| `--bg-card-foreground` | Near-black | Off-white | Text on cards |
+| `--bg-popover` | White | Dark gray | Dropdown/tooltip bg |
+| `--bg-popover-foreground` | Near-black | Off-white | Dropdown text |
+| `--bg-primary` | Brand color | Brand color | Primary buttons |
+| `--bg-primary-foreground` | White | White | Text on primary |
+| `--bg-secondary` | Light gray | Dark gray | Secondary buttons |
+| `--bg-destructive` | Red | Red | Delete buttons |
+| `--bg-muted` | Light gray | Dark gray | Disabled, code blocks |
+| `--bg-muted-foreground` | Mid-gray | Mid-gray | Placeholders, captions |
+| `--bg-accent` | Light accent | Dark accent | Badges, notifications |
+| `--bg-accent-foreground` | Dark text | Light text | Badge text |
+
+### Border Tokens
+
+| Token | Light Mode | Dark Mode | Usage |
+| --- | --- | --- | --- |
+| `--border-default` | Light gray | Dark gray | Standard borders |
+| `--border-input` | Mid-gray | Mid-gray | Form field borders |
+| `--border-focus` | Brand color | Brand color | Focused state |
+| `--border-destructive` | Red | Red | Error borders |
+
+### Using Semantic Tokens
+
+**In Tailwind classes:**
+
+```tsx
+<div className="bg-background text-foreground border border-border">
+  This adapts to dark mode automatically
+</div>
+
+<Card className="bg-card text-card-foreground">
+  Card content
+</Card>
+
+<Button className="bg-primary text-primary-foreground">
+  Primary action
+</Button>
+```
+
+**In raw CSS:**
+
+```css
+.custom-component {
+  background: var(--bg-background);
+  color: var(--bg-foreground);
+  border: 1px solid var(--border-default);
+}
+
+.custom-component:hover {
+  background: var(--bg-muted);
+}
+```
+
+## Testing Dark Mode
+
+### Manual Testing
+
+Toggle theme and verify:
+
+1. **Text contrast** — All text readable on backgrounds
+2. **Border visibility** — Borders visible but subtle
+3. **Interactive states** — Hover/focus states work
+4. **Images/logos** — Switch logos for dark mode if needed
+5. **Shadows** — Reduce or remove shadows in dark mode
+
+### Conditional Rendering
+
+Render different content per theme:
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+
+export function ThemedLogo() {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="w-32 h-8" />; // Placeholder
+  }
+
+  return theme === 'dark' ? (
+    <img src="/logo-dark.svg" alt="Logo" />
+  ) : (
+    <img src="/logo-light.svg" alt="Logo" />
+  );
+}
+```
+
+### Theme-Specific Classes
+
+Use Tailwind's `dark:` prefix for theme-specific styles:
+
+```tsx
+<div className="bg-white dark:bg-gray-900">
+  <h1 className="text-gray-900 dark:text-white">
+    Heading
+  </h1>
+  <p className="text-gray-600 dark:text-gray-400">
+    Paragraph text
+  </p>
+</div>
+```
+
+## Customizing Dark Mode Colors
+
+### Override Semantic Tokens
+
+Customize dark mode colors while preserving semantic names:
+
+```css
+/* app/globals.css */
+.dark {
+  --bg-background: oklch(0.12 0.01 240);   /* Deeper blue-black */
+  --bg-card: oklch(0.18 0.01 240);         /* Slightly lighter card */
+  --bg-foreground: oklch(0.98 0 0);        /* Pure white text */
+  --border-default: oklch(0.28 0.01 240);  /* Subtle blue border */
+}
+```
+
+### Preserve Primitive Tokens
+
+Brand colors should stay consistent across themes:
+
+```css
+:root {
+  --color-primary: oklch(0.56 0.18 257);   /* Purple */
+  --color-secondary: oklch(0.72 0.14 200); /* Blue */
+}
+
+/* Use the same values in dark mode */
+.dark {
+  --color-primary: oklch(0.56 0.18 257);
+  --color-secondary: oklch(0.72 0.14 200);
+}
+```
+
+However, you may adjust **lightness** for better dark mode contrast:
+
+```css
+.dark {
+  --color-primary: oklch(0.65 0.18 257);   /* Lighter purple for dark bg */
+  --color-secondary: oklch(0.78 0.14 200); /* Lighter blue */
+}
+```
+
+## OKLCH in Dark Mode
+
+### Why OKLCH Matters
+
+OKLCH (Oklab Lightness Chroma Hue) provides **perceptually uniform** colors, making dark mode easier to design:
+
+```css
+/* Bad: HSL lightness is not perceptual */
+.dark {
+  --bg-background: hsl(240, 10%, 10%);  /* Looks muddy */
+  --bg-card: hsl(240, 10%, 15%);        /* Subtle contrast lost */
+}
+
+/* Good: OKLCH lightness is perceptual */
+.dark {
+  --bg-background: oklch(0.16 0.01 260); /* Clean dark blue-gray */
+  --bg-card: oklch(0.20 0.01 260);       /* Noticeable contrast */
+}
+```
+
+### Adjusting Lightness
+
+Create dark mode variants by tweaking lightness:
+
+```css
+:root {
+  --color-primary: oklch(0.56 0.18 257);  /* Light mode: mid-tone */
+}
+
+.dark {
+  --color-primary: oklch(0.68 0.18 257);  /* Dark mode: lighter (+0.12) */
+}
+```
+
+**Rule of thumb:** Increase lightness by 0.10-0.15 for dark mode.
+
+### Adjusting Chroma
+
+Slightly reduce saturation in dark mode for comfort:
+
+```css
+:root {
+  --color-accent: oklch(0.65 0.20 145);  /* Light mode: vivid green */
+}
+
+.dark {
+  --color-accent: oklch(0.70 0.16 145);  /* Dark mode: softer green */
+}
+```
+
+**Rule of thumb:** Reduce chroma by 0.02-0.04 for dark mode.
+
+## Accessibility in Dark Mode
+
+### Contrast Ratios
+
+FramingUI semantic tokens meet WCAG AA standards in both modes:
+
+| Combination | Light Mode | Dark Mode | WCAG |
+| --- | --- | --- | --- |
+| `foreground` on `background` | 14:1 | 13:1 | AAA ✅ |
+| `card-foreground` on `card` | 13:1 | 12:1 | AAA ✅ |
+| `primary-foreground` on `primary` | 4.8:1 | 4.6:1 | AA ✅ |
+| `muted-foreground` on `background` | 5.2:1 | 5.0:1 | AA ✅ |
+
+### Testing Contrast
+
+Use browser DevTools or online checkers:
+
+```bash
+# Chrome DevTools
+Inspect Element → Accessibility → Contrast Ratio
+
+# Online tools
+https://contrast-ratio.com/
+https://webaim.org/resources/contrastchecker/
+```
+
+### Avoid Pure Black
+
+Pure black (`#000000`) backgrounds cause **halation** (glow around white text):
+
+```css
+/* Bad: pure black */
+.dark {
+  --bg-background: oklch(0 0 0);  /* Eye strain */
+}
+
+/* Good: dark gray with subtle tint */
+.dark {
+  --bg-background: oklch(0.16 0.01 260);  /* Comfortable */
+}
+```
+
+## Common Patterns
+
+### Dark Mode Shadows
+
+Reduce shadow intensity in dark mode:
+
+```tsx
+<Card className="shadow-lg dark:shadow-none dark:border dark:border-border">
+  Card content
+</Card>
+```
+
+### Dark Mode Images
+
+Invert or replace images:
+
+```tsx
+<img
+  src={theme === 'dark' ? '/hero-dark.jpg' : '/hero-light.jpg'}
+  alt="Hero"
+  className="dark:opacity-80"
+/>
+```
+
+### Dark Mode Code Blocks
+
+Swap syntax highlighting themes:
+
+```tsx
+'use client';
+
+import { useTheme } from 'next-themes';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+export function CodeBlock({ code, language }) {
+  const { theme } = useTheme();
+
+  return (
+    <SyntaxHighlighter
+      language={language}
+      style={theme === 'dark' ? oneDark : oneLight}
+    >
+      {code}
+    </SyntaxHighlighter>
+  );
+}
+```
+
+## Best Practices
+
+✅ **Use semantic tokens** — `bg-background` not hardcoded colors
+
+✅ **Test in both modes** — Verify contrast and readability
+
+✅ **Respect system preference** — Use `defaultTheme="system"`
+
+✅ **Provide manual toggle** — Let users override system
+
+✅ **Avoid pure black** — Use dark gray with subtle tint
+
+✅ **Reduce shadows in dark mode** — Less depth needed
+
+✅ **Increase lightness for accents** — Brand colors need adjustment
+
+## Common Mistakes
+
+❌ **Hardcoding colors**
+
+```tsx
+{/* Wrong - doesn't adapt */}
+<div className="bg-white text-black">
+  Content
+</div>
+```
+
+✅ **Use semantic tokens**
+
+```tsx
+{/* Correct */}
+<div className="bg-background text-foreground">
+  Content
+</div>
+```
+
+❌ **Forgetting hydration**
+
+```tsx
+{/* Wrong - hydration mismatch */}
+export function ThemeToggle() {
+  const { theme } = useTheme();
+  return <Button>{theme}</Button>;
+}
+```
+
+✅ **Wait for mount**
+
+```tsx
+{/* Correct */}
+export function ThemeToggle() {
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return <Button>{theme}</Button>;
+}
+```
+
+## Next Steps
+
+- [Color Tokens](/docs/en/guides/color-tokens) — OKLCH color system deep dive
+- [Component Customization](/docs/en/guides/component-customization) — Override dark mode styles
+- [Theming](/docs/en/guides/theming) — Build custom themes
+- [Accessibility](/docs/en/guides/accessibility) — Contrast and readability

@@ -1,0 +1,650 @@
+---
+title: "Icon Integration Guide"
+description: "Use icons effectively in FramingUI — from buttons to navigation, with Tabler Icons, Lucide, and custom SVGs"
+order: 10
+---
+
+# Icon Integration Guide
+
+Icons improve usability, reduce cognitive load, and add visual interest. FramingUI works seamlessly with popular icon libraries and custom SVGs.
+
+## Recommended Icon Libraries
+
+FramingUI works best with these icon sets:
+
+### Tabler Icons
+
+**500+ MIT-licensed icons, stroke-based, customizable**
+
+```bash
+npm install @tabler/icons-react
+```
+
+```tsx
+import { IconSearch, IconUser, IconSettings } from '@tabler/icons-react';
+
+<IconSearch className="w-5 h-5" />
+<IconUser className="w-5 h-5" />
+<IconSettings className="w-5 h-5" />
+```
+
+**Why Tabler:**
+- Consistent stroke width
+- Clean, modern aesthetic
+- Fully tree-shakable
+- TypeScript support
+
+### Lucide Icons
+
+**1000+ MIT-licensed icons, forked from Feather**
+
+```bash
+npm install lucide-react
+```
+
+```tsx
+import { Search, User, Settings } from 'lucide-react';
+
+<Search className="w-5 h-5" />
+<User className="w-5 h-5" />
+<Settings className="w-5 h-5" />
+```
+
+**Why Lucide:**
+- Extensive icon set
+- Active development
+- Tree-shakable
+- Great for diverse needs
+
+### Heroicons
+
+**300+ MIT-licensed icons by Tailwind Labs**
+
+```bash
+npm install @heroicons/react
+```
+
+```tsx
+import { MagnifyingGlassIcon, UserIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+
+<MagnifyingGlassIcon className="w-5 h-5" />
+<UserIcon className="w-5 h-5" />
+<Cog6ToothIcon className="w-5 h-5" />
+```
+
+**Why Heroicons:**
+- Designed for Tailwind CSS
+- Solid and outline variants
+- Smaller library (faster install)
+
+## Icon Sizing
+
+FramingUI uses consistent icon sizes across components:
+
+```tsx
+import { IconHome } from '@tabler/icons-react';
+
+{/* Extra small - 12px */}
+<IconHome className="w-3 h-3" />
+
+{/* Small - 16px */}
+<IconHome className="w-4 h-4" />
+
+{/* Default - 20px */}
+<IconHome className="w-5 h-5" />
+
+{/* Large - 24px */}
+<IconHome className="w-6 h-6" />
+
+{/* Extra large - 32px */}
+<IconHome className="w-8 h-8" />
+```
+
+### Sizing Guidelines
+
+| Context | Size Class | Pixels | Example |
+| --- | --- | --- | --- |
+| Inline text | `w-4 h-4` | 16px | Icon next to paragraph |
+| Buttons (default) | `w-4 h-4` | 16px | Button with label |
+| Buttons (large) | `w-5 h-5` | 20px | Hero CTA buttons |
+| Icon-only buttons | `w-5 h-5` | 20px | Toolbar actions |
+| Navigation | `w-5 h-5` | 20px | Sidebar menu items |
+| Headers | `w-6 h-6` | 24px | Section titles |
+| Hero sections | `w-8 h-8` | 32px | Feature highlights |
+
+## Icons in Buttons
+
+### Button with Icon + Text
+
+Standard pattern for labeled buttons:
+
+```tsx
+import { Button } from '@framingui/ui';
+import { IconDownload, IconShare, IconTrash } from '@tabler/icons-react';
+
+<Button>
+  <IconDownload className="w-4 h-4 mr-2" />
+  Download
+</Button>
+
+<Button variant="outline">
+  <IconShare className="w-4 h-4 mr-2" />
+  Share
+</Button>
+
+<Button variant="destructive">
+  <IconTrash className="w-4 h-4 mr-2" />
+  Delete
+</Button>
+```
+
+**Spacing:** Use `mr-2` for left icon, `ml-2` for right icon.
+
+### Icon-Only Buttons
+
+Use `size="icon"` for square buttons:
+
+```tsx
+import { IconEdit, IconCopy, IconTrash } from '@tabler/icons-react';
+
+<Button size="icon" variant="outline">
+  <IconEdit className="w-4 h-4" />
+</Button>
+
+<Button size="icon" variant="ghost">
+  <IconCopy className="w-4 h-4" />
+</Button>
+
+<Button size="icon" variant="destructive">
+  <IconTrash className="w-4 h-4" />
+</Button>
+```
+
+**Accessibility:** Always add `aria-label`:
+
+```tsx
+<Button size="icon" variant="outline" aria-label="Edit item">
+  <IconEdit className="w-4 h-4" />
+</Button>
+```
+
+### Loading State Icon
+
+Animated spinner for async actions:
+
+```tsx
+import { IconLoader2 } from '@tabler/icons-react';
+
+<Button disabled={isLoading}>
+  {isLoading && <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />}
+  {isLoading ? 'Saving...' : 'Save Changes'}
+</Button>
+```
+
+## Icons in Forms
+
+### Input with Icon
+
+Prefix icon for context:
+
+```tsx
+import { Input } from '@framingui/ui';
+import { IconSearch, IconMail, IconLock } from '@tabler/icons-react';
+
+<div className="relative">
+  <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+  <Input
+    type="search"
+    placeholder="Search..."
+    className="pl-9"
+  />
+</div>
+
+<div className="relative">
+  <IconMail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+  <Input
+    type="email"
+    placeholder="Email"
+    className="pl-9"
+  />
+</div>
+```
+
+### Suffix Icon (Action)
+
+Clickable icon inside input:
+
+```tsx
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import { useState } from 'react';
+
+export function PasswordInput() {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div className="relative">
+      <Input
+        type={visible ? 'text' : 'password'}
+        placeholder="Password"
+        className="pr-10"
+      />
+      <button
+        type="button"
+        onClick={() => setVisible(!visible)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+      >
+        {visible ? (
+          <IconEyeOff className="w-4 h-4" />
+        ) : (
+          <IconEye className="w-4 h-4" />
+        )}
+      </button>
+    </div>
+  );
+}
+```
+
+### Status Icons
+
+Show validation state:
+
+```tsx
+import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
+
+{/* Error state */}
+<div className="relative">
+  <Input
+    type="email"
+    aria-invalid="true"
+    className="pr-10 border-destructive"
+  />
+  <IconAlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-destructive" />
+</div>
+<p className="text-sm text-destructive mt-1 flex items-center gap-1">
+  <IconAlertCircle className="w-4 h-4" />
+  Invalid email address
+</p>
+
+{/* Success state */}
+<div className="relative">
+  <Input
+    type="text"
+    defaultValue="johndoe"
+    className="pr-10 border-green-500"
+  />
+  <IconCircleCheck className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
+</div>
+```
+
+## Icons in Navigation
+
+### Sidebar Menu
+
+Icon + label pattern:
+
+```tsx
+import { IconHome, IconUsers, IconSettings, IconLogout } from '@tabler/icons-react';
+
+<nav className="space-y-1">
+  <a href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted">
+    <IconHome className="w-5 h-5" />
+    <span>Home</span>
+  </a>
+
+  <a href="/users" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted">
+    <IconUsers className="w-5 h-5" />
+    <span>Users</span>
+  </a>
+
+  <a href="/settings" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted">
+    <IconSettings className="w-5 h-5" />
+    <span>Settings</span>
+  </a>
+
+  <button className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-muted text-destructive w-full">
+    <IconLogout className="w-5 h-5" />
+    <span>Logout</span>
+  </button>
+</nav>
+```
+
+### Active State
+
+Highlight current page:
+
+```tsx
+<a
+  href="/users"
+  className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-primary-foreground"
+>
+  <IconUsers className="w-5 h-5" />
+  <span>Users</span>
+</a>
+```
+
+### Collapsed Sidebar (Icon-Only)
+
+Show tooltip on hover:
+
+```tsx
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@framingui/ui';
+
+<TooltipProvider>
+  <nav className="space-y-1">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <a href="/" className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-muted">
+          <IconHome className="w-5 h-5" />
+        </a>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        Home
+      </TooltipContent>
+    </Tooltip>
+
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <a href="/users" className="flex items-center justify-center w-12 h-12 rounded-lg hover:bg-muted">
+          <IconUsers className="w-5 h-5" />
+        </a>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        Users
+      </TooltipContent>
+    </Tooltip>
+  </nav>
+</TooltipProvider>
+```
+
+## Icons in Cards
+
+### Header Icon
+
+Identify card type:
+
+```tsx
+import { Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
+import { IconZap } from '@tabler/icons-react';
+
+<Card>
+  <CardHeader>
+    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+      <IconZap className="w-6 h-6 text-primary" />
+    </div>
+    <CardTitle>Lightning Fast</CardTitle>
+    <CardDescription>
+      Optimized for performance
+    </CardDescription>
+  </CardHeader>
+</Card>
+```
+
+### Stat Icon
+
+Icon next to metric:
+
+```tsx
+import { IconArrowUpRight, IconUsers } from '@tabler/icons-react';
+
+<Card>
+  <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <CardTitle className="text-sm font-medium text-muted-foreground">
+      Total Users
+    </CardTitle>
+    <IconUsers className="w-4 h-4 text-muted-foreground" />
+  </CardHeader>
+  <CardContent>
+    <div className="text-2xl font-bold">2,847</div>
+    <p className="text-xs text-muted-foreground flex items-center mt-1">
+      <IconArrowUpRight className="w-3 h-3 text-green-500 mr-1" />
+      <span className="text-green-500">12%</span> from last month
+    </p>
+  </CardContent>
+</Card>
+```
+
+### Action Icons
+
+Menu or options:
+
+```tsx
+import { IconDotsVertical } from '@tabler/icons-react';
+
+<Card>
+  <CardHeader className="flex flex-row items-start justify-between">
+    <div>
+      <CardTitle>Project Name</CardTitle>
+      <CardDescription>Last updated 2 hours ago</CardDescription>
+    </div>
+    <Button size="icon" variant="ghost">
+      <IconDotsVertical className="w-4 h-4" />
+    </Button>
+  </CardHeader>
+</Card>
+```
+
+## Custom SVG Icons
+
+### Inline SVG
+
+Use custom SVGs as React components:
+
+```tsx
+export function CustomIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 2L2 7l10 5 10-5-10-5z" />
+      <path d="M2 17l10 5 10-5" />
+      <path d="M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+
+// Usage
+<CustomIcon className="w-5 h-5" />
+```
+
+### SVG Icon Component Wrapper
+
+Reusable wrapper for consistency:
+
+```tsx
+interface IconProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function Icon({ children, className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {children}
+    </svg>
+  );
+}
+
+// Usage
+<Icon className="w-5 h-5">
+  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+  <path d="M2 17l10 5 10-5" />
+</Icon>
+```
+
+## Icon Colors
+
+### Inherit from Text
+
+Icons inherit text color by default:
+
+```tsx
+<div className="text-primary">
+  <IconHome className="w-5 h-5" />
+</div>
+
+<div className="text-muted-foreground">
+  <IconSettings className="w-5 h-5" />
+</div>
+
+<div className="text-destructive">
+  <IconTrash className="w-5 h-5" />
+</div>
+```
+
+### Explicit Colors
+
+Override with specific colors:
+
+```tsx
+<IconCircleCheck className="w-5 h-5 text-green-500" />
+<IconAlertCircle className="w-5 h-5 text-red-500" />
+<IconInfoCircle className="w-5 h-5 text-blue-500" />
+```
+
+### Semantic Token Colors
+
+Use design tokens for consistency:
+
+```tsx
+<IconHome className="w-5 h-5 text-[var(--bg-primary)]" />
+<IconSettings className="w-5 h-5 text-[var(--bg-muted-foreground)]" />
+```
+
+## Accessibility
+
+### Icon-Only Elements
+
+Always provide accessible labels:
+
+```tsx
+{/* Button with aria-label */}
+<Button size="icon" aria-label="Close dialog">
+  <IconX className="w-4 h-4" />
+</Button>
+
+{/* Link with aria-label */}
+<a href="/profile" aria-label="View profile">
+  <IconUser className="w-5 h-5" />
+</a>
+```
+
+### Decorative Icons
+
+Hide decorative icons from screen readers:
+
+```tsx
+<div className="flex items-center gap-2">
+  <IconCheck className="w-4 h-4 text-green-500" aria-hidden="true" />
+  <span>Task completed</span>
+</div>
+```
+
+### Icon + Text Labels
+
+When icon accompanies text, make icon decorative:
+
+```tsx
+<Button>
+  <IconDownload className="w-4 h-4 mr-2" aria-hidden="true" />
+  Download
+</Button>
+```
+
+## Animation
+
+### Spin Animation
+
+For loading states:
+
+```tsx
+import { IconLoader2 } from '@tabler/icons-react';
+
+<IconLoader2 className="w-5 h-5 animate-spin" />
+```
+
+### Hover Effects
+
+Rotate or scale on hover:
+
+```tsx
+<Button size="icon" variant="ghost" className="group">
+  <IconSettings className="w-5 h-5 group-hover:rotate-45 transition-transform" />
+</Button>
+
+<Button className="group">
+  <IconArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+</Button>
+```
+
+## Best Practices
+
+✅ **Use consistent sizes** — Stick to 16px, 20px, 24px scale
+
+✅ **Match icon style** — Use same icon set throughout app
+
+✅ **Provide labels** — Icon-only elements need `aria-label`
+
+✅ **Consider context** — Icons should be obvious or have labels
+
+✅ **Use semantic colors** — Leverage design tokens
+
+✅ **Optimize SVGs** — Minify custom icons with SVGO
+
+## Common Mistakes
+
+❌ **Mixing icon styles**
+
+```tsx
+{/* Wrong - inconsistent sources */}
+<IconHome /> {/* Tabler */}
+<Search /> {/* Lucide */}
+<MagnifyingGlassIcon /> {/* Heroicons */}
+```
+
+✅ **Stick to one library**
+
+```tsx
+{/* Correct */}
+<IconHome />
+<IconSearch />
+<IconSettings />
+```
+
+❌ **Missing accessibility labels**
+
+```tsx
+{/* Wrong */}
+<Button size="icon">
+  <IconX className="w-4 h-4" />
+</Button>
+```
+
+✅ **Add aria-label**
+
+```tsx
+{/* Correct */}
+<Button size="icon" aria-label="Close">
+  <IconX className="w-4 h-4" />
+</Button>
+```
+
+## Next Steps
+
+- [Button Variants](/docs/en/guides/button-variants) — Icons in buttons
+- [Form Patterns](/docs/en/guides/form-patterns) — Icons in forms
+- [Card Layouts](/docs/en/guides/card-layouts) — Icons in cards
+- [Component Customization](/docs/en/guides/component-customization) — Custom icon styles

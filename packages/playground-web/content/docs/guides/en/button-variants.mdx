@@ -1,0 +1,354 @@
+---
+title: "Button Variants and Usage Patterns"
+description: "Learn how to use FramingUI button variants effectively — from primary actions to destructive warnings"
+order: 6
+---
+
+# Button Variants and Usage Patterns
+
+FramingUI provides semantic button variants that communicate intent and hierarchy clearly. Each variant serves a specific purpose in the UI.
+
+## Core Variants
+
+### Primary Buttons
+
+Use for the main action on a page or section:
+
+```tsx
+import { Button } from '@framingui/ui';
+
+<Button>Save Changes</Button>
+<Button>Continue</Button>
+<Button>Create Account</Button>
+```
+
+**When to use:**
+- Primary call-to-action (CTA)
+- Form submission
+- Main workflow progression
+- One per section/modal
+
+**Visual hierarchy:** Highest contrast, draws attention immediately.
+
+### Secondary Buttons
+
+Use for alternative or less critical actions:
+
+```tsx
+<Button variant="secondary">Cancel</Button>
+<Button variant="secondary">Learn More</Button>
+<Button variant="secondary">Preview</Button>
+```
+
+**When to use:**
+- Supporting actions alongside primary
+- Navigation options
+- Alternative paths
+- Multiple actions with equal weight
+
+**Visual hierarchy:** Moderate contrast, less attention-grabbing than primary.
+
+### Outline Buttons
+
+Use for tertiary actions or toggles:
+
+```tsx
+<Button variant="outline">Export</Button>
+<Button variant="outline">Filter</Button>
+<Button variant="outline">Settings</Button>
+```
+
+**When to use:**
+- Tertiary actions
+- Toggle states (active/inactive)
+- Actions in toolbars
+- Repeating actions in lists
+
+**Visual hierarchy:** Minimal weight, blends with surrounding content.
+
+### Ghost Buttons
+
+Use for subtle actions that blend into the interface:
+
+```tsx
+<Button variant="ghost">Dismiss</Button>
+<Button variant="ghost">Skip</Button>
+<Button variant="ghost">View All</Button>
+```
+
+**When to use:**
+- Navigation links
+- Dismissible actions
+- Actions within dense UI
+- Secondary options in dropdowns
+
+**Visual hierarchy:** Lowest visual weight, nearly invisible until hover.
+
+### Destructive Buttons
+
+Use for dangerous or irreversible actions:
+
+```tsx
+<Button variant="destructive">Delete Account</Button>
+<Button variant="destructive">Remove User</Button>
+<Button variant="destructive">Revoke Access</Button>
+```
+
+**When to use:**
+- Delete operations
+- Irreversible actions
+- Warnings that require caution
+- Always pair with confirmation dialogs
+
+**Visual hierarchy:** High contrast with red/danger color, signals caution.
+
+### Link Buttons
+
+Use for actions that behave like hyperlinks:
+
+```tsx
+<Button variant="link">View Documentation</Button>
+<Button variant="link">Forgot Password?</Button>
+<Button variant="link">Terms of Service</Button>
+```
+
+**When to use:**
+- Inline navigation
+- Help text links
+- Footer actions
+- Text-heavy interfaces
+
+**Visual hierarchy:** Styled like underlined links, minimal visual weight.
+
+## Size Variants
+
+FramingUI buttons support multiple sizes for different contexts:
+
+```tsx
+<Button size="sm">Small</Button>
+<Button size="default">Default</Button>
+<Button size="lg">Large</Button>
+<Button size="icon">
+  <IconPlus />
+</Button>
+```
+
+### Size Guidelines
+
+| Size | Height | Padding | Use Case |
+| --- | --- | --- | --- |
+| `sm` | 32px | 12px horizontal | Compact UIs, toolbars |
+| `default` | 40px | 16px horizontal | Standard forms, modals |
+| `lg` | 48px | 24px horizontal | Hero sections, landing pages |
+| `icon` | 40px | Square | Icon-only actions |
+
+## Common Patterns
+
+### Primary + Secondary Pair
+
+Standard form footer pattern:
+
+```tsx
+<div className="flex gap-3 justify-end">
+  <Button variant="secondary">Cancel</Button>
+  <Button>Save</Button>
+</div>
+```
+
+**Rule:** Primary on the right (forward direction), secondary on the left.
+
+### Destructive with Confirmation
+
+Always confirm destructive actions:
+
+```tsx
+import { Button } from '@framingui/ui';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel } from '@framingui/ui';
+
+<AlertDialog>
+  <AlertDialogTrigger asChild>
+    <Button variant="destructive">Delete Project</Button>
+  </AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This action cannot be undone. All project data will be permanently deleted.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
+### Icon + Text
+
+Combine icons with labels for clarity:
+
+```tsx
+import { IconDownload, IconShare, IconTrash } from '@tabler/icons-react';
+
+<Button>
+  <IconDownload className="w-4 h-4 mr-2" />
+  Download
+</Button>
+
+<Button variant="outline">
+  <IconShare className="w-4 h-4 mr-2" />
+  Share
+</Button>
+
+<Button variant="destructive">
+  <IconTrash className="w-4 h-4 mr-2" />
+  Delete
+</Button>
+```
+
+**Spacing:** Use `mr-2` or `gap-2` for icon-text spacing.
+
+### Icon-Only Buttons
+
+Use `size="icon"` for icon-only buttons:
+
+```tsx
+import { IconEdit, IconTrash, IconCopy } from '@tabler/icons-react';
+
+<div className="flex gap-2">
+  <Button size="icon" variant="outline">
+    <IconEdit className="w-4 h-4" />
+  </Button>
+  <Button size="icon" variant="outline">
+    <IconCopy className="w-4 h-4" />
+  </Button>
+  <Button size="icon" variant="destructive">
+    <IconTrash className="w-4 h-4" />
+  </Button>
+</div>
+```
+
+**Accessibility:** Always add `aria-label` for icon-only buttons:
+
+```tsx
+<Button size="icon" variant="outline" aria-label="Edit item">
+  <IconEdit className="w-4 h-4" />
+</Button>
+```
+
+### Loading State
+
+Disable button during async operations:
+
+```tsx
+import { IconLoader2 } from '@tabler/icons-react';
+
+<Button disabled={isLoading}>
+  {isLoading && <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />}
+  {isLoading ? 'Saving...' : 'Save'}
+</Button>
+```
+
+### Full-Width Buttons
+
+Use for mobile or single-column layouts:
+
+```tsx
+<Button className="w-full">Continue</Button>
+<Button variant="secondary" className="w-full">Go Back</Button>
+```
+
+## Button Groups
+
+Group related actions visually:
+
+```tsx
+<div className="flex gap-2">
+  <Button variant="outline">Left</Button>
+  <Button variant="outline">Center</Button>
+  <Button variant="outline">Right</Button>
+</div>
+```
+
+**Segmented control style:**
+
+```tsx
+<div className="inline-flex rounded-lg border border-border overflow-hidden">
+  <Button variant="ghost" className="rounded-none border-r">
+    Day
+  </Button>
+  <Button variant="ghost" className="rounded-none border-r">
+    Week
+  </Button>
+  <Button variant="ghost" className="rounded-none">
+    Month
+  </Button>
+</div>
+```
+
+## Accessibility Best Practices
+
+1. **Use semantic labels** — "Save Changes" not "Click Here"
+2. **Add `aria-label` for icon-only** — Screen readers need text
+3. **Disable during loading** — Prevent double-submission
+4. **Maintain contrast** — All variants meet WCAG AA
+5. **Focus visible** — Keyboard navigation support built-in
+
+## Variant Selection Guide
+
+| Scenario | Variant |
+| --- | --- |
+| Primary action in a form | `default` |
+| Cancel or go back | `secondary` |
+| Toolbar action | `outline` |
+| Dismiss or skip | `ghost` |
+| Delete or remove | `destructive` |
+| Navigation link | `link` |
+| Icon-only action | `size="icon"` with `outline` or `ghost` |
+
+## Common Mistakes
+
+❌ **Multiple primary buttons** — Use only one per section
+
+```tsx
+{/* Wrong */}
+<Button>Save</Button>
+<Button>Publish</Button>
+```
+
+✅ **Use secondary for alternative actions**
+
+```tsx
+{/* Correct */}
+<Button>Publish</Button>
+<Button variant="secondary">Save Draft</Button>
+```
+
+❌ **Destructive without confirmation**
+
+```tsx
+{/* Wrong */}
+<Button variant="destructive" onClick={deleteAll}>
+  Delete All
+</Button>
+```
+
+✅ **Always confirm destructive actions**
+
+```tsx
+{/* Correct */}
+<AlertDialog>
+  <AlertDialogTrigger asChild>
+    <Button variant="destructive">Delete All</Button>
+  </AlertDialogTrigger>
+  {/* ... confirmation dialog ... */}
+</AlertDialog>
+```
+
+## Next Steps
+
+- [Form Patterns](/docs/en/guides/form-patterns) — Button usage in forms
+- [Icon Integration](/docs/en/guides/icon-integration) — Icon + button patterns
+- [Component Customization](/docs/en/guides/component-customization) — Style overrides
+- [Dark Mode](/docs/en/guides/dark-mode-tokens) — Button appearance in dark mode

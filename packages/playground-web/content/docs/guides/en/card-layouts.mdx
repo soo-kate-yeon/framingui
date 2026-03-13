@@ -1,0 +1,507 @@
+---
+title: "Card Component Layouts"
+description: "Master card component patterns — from simple content cards to complex dashboard layouts"
+order: 7
+---
+
+# Card Component Layouts
+
+Cards are versatile containers for grouping related content. FramingUI's Card component provides a flexible foundation for building dashboards, product grids, settings panels, and more.
+
+## Basic Card Structure
+
+A card consists of three main parts:
+
+```tsx
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@framingui/ui';
+
+<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Optional description text</CardDescription>
+  </CardHeader>
+  <CardContent>
+    {/* Main content goes here */}
+  </CardContent>
+  <CardFooter>
+    {/* Footer actions or metadata */}
+  </CardFooter>
+</Card>
+```
+
+**Each part is optional** — use only what you need.
+
+## Common Card Patterns
+
+### Simple Content Card
+
+Basic text container:
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Getting Started</CardTitle>
+    <CardDescription>Install FramingUI in your project</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p className="text-muted-foreground">
+      Run <code className="bg-muted px-1 py-0.5 rounded">npm install @framingui/ui</code> to add FramingUI to your React project.
+    </p>
+  </CardContent>
+</Card>
+```
+
+### Card with Action
+
+Single primary action in footer:
+
+```tsx
+import { Button } from '@framingui/ui';
+
+<Card>
+  <CardHeader>
+    <CardTitle>Free Trial</CardTitle>
+    <CardDescription>Try all features for 14 days</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <ul className="space-y-2 text-sm">
+      <li>✓ Unlimited projects</li>
+      <li>✓ Full component library</li>
+      <li>✓ Email support</li>
+    </ul>
+  </CardContent>
+  <CardFooter>
+    <Button className="w-full">Start Free Trial</Button>
+  </CardFooter>
+</Card>
+```
+
+### Card with Multiple Actions
+
+Footer with primary + secondary actions:
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Unsaved Changes</CardTitle>
+    <CardDescription>You have unsaved changes in your draft</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p className="text-sm text-muted-foreground">
+      Your changes will be lost if you leave without saving.
+    </p>
+  </CardContent>
+  <CardFooter className="flex gap-3 justify-end">
+    <Button variant="secondary">Discard</Button>
+    <Button>Save Draft</Button>
+  </CardFooter>
+</Card>
+```
+
+### Card with Header Action
+
+Inline action in header (settings, edit, etc.):
+
+```tsx
+import { IconDotsVertical } from '@tabler/icons-react';
+import { Button } from '@framingui/ui';
+
+<Card>
+  <CardHeader className="flex flex-row items-start justify-between">
+    <div>
+      <CardTitle>Project Settings</CardTitle>
+      <CardDescription>Configure project preferences</CardDescription>
+    </div>
+    <Button size="icon" variant="ghost">
+      <IconDotsVertical className="w-4 h-4" />
+    </Button>
+  </CardHeader>
+  <CardContent>
+    {/* Settings form */}
+  </CardContent>
+</Card>
+```
+
+### Statistics Card
+
+Display metrics or KPIs:
+
+```tsx
+import { IconArrowUpRight, IconUsers } from '@tabler/icons-react';
+
+<Card>
+  <CardHeader className="flex flex-row items-center justify-between pb-2">
+    <CardTitle className="text-sm font-medium text-muted-foreground">
+      Total Users
+    </CardTitle>
+    <IconUsers className="w-4 h-4 text-muted-foreground" />
+  </CardHeader>
+  <CardContent>
+    <div className="text-2xl font-bold">2,847</div>
+    <p className="text-xs text-muted-foreground flex items-center mt-1">
+      <IconArrowUpRight className="w-3 h-3 text-green-500 mr-1" />
+      <span className="text-green-500">12%</span> from last month
+    </p>
+  </CardContent>
+</Card>
+```
+
+### Product Card
+
+E-commerce or catalog item:
+
+```tsx
+import { Badge } from '@framingui/ui';
+
+<Card>
+  <div className="aspect-square bg-muted rounded-t-lg overflow-hidden">
+    <img src="/product.jpg" alt="Product name" className="w-full h-full object-cover" />
+  </div>
+  <CardHeader>
+    <div className="flex items-start justify-between">
+      <CardTitle className="text-base">Product Name</CardTitle>
+      <Badge>New</Badge>
+    </div>
+    <CardDescription>Brief product description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="text-2xl font-bold">$49</div>
+  </CardContent>
+  <CardFooter>
+    <Button className="w-full">Add to Cart</Button>
+  </CardFooter>
+</Card>
+```
+
+### Feature Card
+
+Landing page feature highlight:
+
+```tsx
+import { IconZap } from '@tabler/icons-react';
+
+<Card>
+  <CardHeader>
+    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+      <IconZap className="w-6 h-6 text-primary" />
+    </div>
+    <CardTitle>Lightning Fast</CardTitle>
+    <CardDescription>
+      Built with performance in mind. Components load instantly and render smoothly.
+    </CardDescription>
+  </CardHeader>
+</Card>
+```
+
+### List Card
+
+Grouped list items:
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Recent Activity</CardTitle>
+  </CardHeader>
+  <CardContent className="p-0">
+    <div className="divide-y divide-border">
+      <div className="p-4 hover:bg-muted/50 transition-colors">
+        <p className="font-medium">New user registered</p>
+        <p className="text-sm text-muted-foreground">2 minutes ago</p>
+      </div>
+      <div className="p-4 hover:bg-muted/50 transition-colors">
+        <p className="font-medium">Payment received</p>
+        <p className="text-sm text-muted-foreground">15 minutes ago</p>
+      </div>
+      <div className="p-4 hover:bg-muted/50 transition-colors">
+        <p className="font-medium">Project deployed</p>
+        <p className="text-sm text-muted-foreground">1 hour ago</p>
+      </div>
+    </div>
+  </CardContent>
+  <CardFooter>
+    <Button variant="link" className="w-full">View All Activity</Button>
+  </CardFooter>
+</Card>
+```
+
+## Grid Layouts
+
+### Equal Column Grid
+
+Responsive card grid:
+
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <Card>
+    <CardHeader>
+      <CardTitle>Card 1</CardTitle>
+    </CardHeader>
+    <CardContent>Content</CardContent>
+  </Card>
+  <Card>
+    <CardHeader>
+      <CardTitle>Card 2</CardTitle>
+    </CardHeader>
+    <CardContent>Content</CardContent>
+  </Card>
+  <Card>
+    <CardHeader>
+      <CardTitle>Card 3</CardTitle>
+    </CardHeader>
+    <CardContent>Content</CardContent>
+  </Card>
+</div>
+```
+
+**Breakpoints:**
+- Mobile: 1 column
+- Tablet: 2 columns
+- Desktop: 3 columns
+
+### Dashboard Layout
+
+Combine different card sizes:
+
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {/* Stat cards - 1 column each */}
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-sm font-medium text-muted-foreground">Revenue</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">$12,450</div>
+    </CardContent>
+  </Card>
+  
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-sm font-medium text-muted-foreground">Users</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">2,847</div>
+    </CardContent>
+  </Card>
+  
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-sm font-medium text-muted-foreground">Orders</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">347</div>
+    </CardContent>
+  </Card>
+  
+  <Card>
+    <CardHeader>
+      <CardTitle className="text-sm font-medium text-muted-foreground">Growth</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">+23%</div>
+    </CardContent>
+  </Card>
+
+  {/* Chart card - spans 3 columns */}
+  <Card className="md:col-span-2 lg:col-span-3">
+    <CardHeader>
+      <CardTitle>Sales Overview</CardTitle>
+    </CardHeader>
+    <CardContent>
+      {/* Chart component */}
+    </CardContent>
+  </Card>
+
+  {/* Activity card - 1 column */}
+  <Card className="md:col-span-2 lg:col-span-1">
+    <CardHeader>
+      <CardTitle>Recent Activity</CardTitle>
+    </CardHeader>
+    <CardContent>
+      {/* Activity list */}
+    </CardContent>
+  </Card>
+</div>
+```
+
+## Interactive Cards
+
+### Clickable Card
+
+Entire card as clickable element:
+
+```tsx
+<Card className="cursor-pointer hover:shadow-lg transition-shadow">
+  <a href="/project/123" className="block">
+    <CardHeader>
+      <CardTitle>Project Name</CardTitle>
+      <CardDescription>Click to view details</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <p className="text-sm text-muted-foreground">
+        Last updated 2 hours ago
+      </p>
+    </CardContent>
+  </a>
+</Card>
+```
+
+### Selectable Card
+
+Card with checkbox or radio:
+
+```tsx
+import { Checkbox } from '@framingui/ui';
+
+<Card className="cursor-pointer hover:border-primary">
+  <CardHeader className="flex flex-row items-start gap-4">
+    <Checkbox id="plan-pro" />
+    <label htmlFor="plan-pro" className="flex-1 cursor-pointer">
+      <CardTitle>Pro Plan</CardTitle>
+      <CardDescription>For growing teams</CardDescription>
+    </label>
+  </CardHeader>
+  <CardContent className="pl-10">
+    <div className="text-2xl font-bold">$49/mo</div>
+  </CardContent>
+</Card>
+```
+
+### Expandable Card
+
+Show/hide additional content:
+
+```tsx
+import { useState } from 'react';
+import { IconChevronDown } from '@tabler/icons-react';
+import { Button } from '@framingui/ui';
+
+function ExpandableCard() {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <CardTitle>Advanced Settings</CardTitle>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setExpanded(!expanded)}
+          >
+            <IconChevronDown
+              className={`w-4 h-4 transition-transform ${
+                expanded ? 'rotate-180' : ''
+              }`}
+            />
+          </Button>
+        </div>
+      </CardHeader>
+      {expanded && (
+        <CardContent>
+          {/* Additional content */}
+          <p className="text-sm text-muted-foreground">
+            Configure advanced options here.
+          </p>
+        </CardContent>
+      )}
+    </Card>
+  );
+}
+```
+
+## Styling Variations
+
+### Bordered Card
+
+Subtle border emphasis:
+
+```tsx
+<Card className="border-2 border-primary">
+  <CardHeader>
+    <CardTitle>Featured Plan</CardTitle>
+  </CardHeader>
+  <CardContent>Content</CardContent>
+</Card>
+```
+
+### Elevated Card
+
+Stronger shadow for hierarchy:
+
+```tsx
+<Card className="shadow-lg">
+  <CardHeader>
+    <CardTitle>Important Notice</CardTitle>
+  </CardHeader>
+  <CardContent>Content</CardContent>
+</Card>
+```
+
+### Card with Background
+
+Use muted background for secondary content:
+
+```tsx
+<Card className="bg-muted">
+  <CardHeader>
+    <CardTitle>Draft Mode</CardTitle>
+  </CardHeader>
+  <CardContent>Content</CardContent>
+</Card>
+```
+
+## Accessibility
+
+1. **Use semantic HTML** — Cards are `<div>` containers, not landmarks
+2. **Make clickable cards keyboard-accessible** — Wrap in `<a>` or `<button>`
+3. **Label interactive elements** — Checkboxes, buttons need labels
+4. **Maintain contrast** — Text on card backgrounds meets WCAG AA
+5. **Screen reader support** — Use proper heading hierarchy
+
+## Best Practices
+
+✅ **Keep card content focused** — One topic per card
+
+✅ **Use consistent spacing** — CardHeader, CardContent, CardFooter have default padding
+
+✅ **Group related cards** — Use grids for visual hierarchy
+
+✅ **Limit nesting** — Avoid cards inside cards (use borders/sections instead)
+
+✅ **Maintain aspect ratios** — Use `aspect-square` or `aspect-video` for images
+
+## Common Mistakes
+
+❌ **Too much content** — Cards should be scannable, not essays
+
+```tsx
+{/* Wrong - too much text */}
+<Card>
+  <CardContent>
+    <p>Lorem ipsum dolor sit amet...</p>
+    {/* 10 more paragraphs */}
+  </CardContent>
+</Card>
+```
+
+✅ **Use summary + expand pattern**
+
+```tsx
+{/* Correct */}
+<Card>
+  <CardHeader>
+    <CardTitle>Article Title</CardTitle>
+    <CardDescription>Brief summary in 1-2 lines</CardDescription>
+  </CardHeader>
+  <CardFooter>
+    <Button variant="link">Read More</Button>
+  </CardFooter>
+</Card>
+```
+
+## Next Steps
+
+- [Button Variants](/docs/en/guides/button-variants) — Card footer actions
+- [Form Patterns](/docs/en/guides/form-patterns) — Forms inside cards
+- [Typography Scale](/docs/en/guides/typography-scale) — Card text hierarchy
+- [Spacing System](/docs/en/guides/spacing-system) — Card layout spacing
