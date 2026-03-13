@@ -21,8 +21,7 @@ export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       >
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-[1.1] tracking-tighter text-neutral-950">
-          {hero.title.part1}{' '}
-          <span className="text-neutral-500">{hero.title.part2}</span>
+          {hero.title.part1} <span className="text-neutral-500">{hero.title.part2}</span>
         </h1>
         <p className="text-base md:text-lg text-neutral-500 leading-relaxed tracking-tight mb-7 max-w-xl mx-auto">
           {hero.description}
@@ -33,29 +32,38 @@ export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
         >
           {hero.buttons.browseThemes}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 3L8 13M8 13L4 9M8 13L12 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M8 3L8 13M8 13L4 9M8 13L12 9"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </motion.div>
 
-      {/* Demo GIF — desktop: 16:9, mobile: 2:3 */}
+      {/* Demo Video — desktop: 16:9, mobile: 2:3 */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
       >
         {/* 데스크탑 (md+): 16:9 */}
-        <div className="hidden md:flex aspect-video w-full bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden items-center justify-center">
-          <div className="text-neutral-400 font-medium text-lg">
-            {content.mainImage.placeholder}
-          </div>
+        <div className="hidden md:block aspect-video w-full bg-neutral-100 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden">
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/video/landing_hero_demo.webm" type="video/webm" />
+          </video>
         </div>
 
-        {/* 모바일 (< md): 2:3 세로형 */}
-        <div className="flex md:hidden w-full bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-2xl shadow-xl border border-neutral-200 overflow-hidden items-center justify-center" style={{ aspectRatio: '2/3' }}>
-          <div className="text-neutral-400 font-medium text-base">
-            {content.mainImage.placeholder}
-          </div>
+        {/* 모바일 (< md): 2:3 세로형 (비디오가 16:9일 경우 object-cover로 중앙 포커스) */}
+        <div
+          className="block md:hidden w-full bg-neutral-100 rounded-2xl shadow-xl border border-neutral-200 overflow-hidden"
+          style={{ aspectRatio: '2/3' }}
+        >
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/video/landing_hero_demo_mobile.webm" type="video/webm" />
+          </video>
         </div>
       </motion.div>
     </section>

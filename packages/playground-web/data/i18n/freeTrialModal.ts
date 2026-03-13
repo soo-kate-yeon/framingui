@@ -91,34 +91,6 @@ const freeTrialModalContent: Record<GlobalLocale, FreeTrialModalContent> = {
       dismissForever: '다시 보지 않기',
     },
   },
-  ja: {
-    title: {
-      part1: 'ログインすると',
-      part2: '3日間無料で試せます',
-    },
-    subtitle: {
-      line1:
-        '無料体験を開始すると、選択したデザインテンプレートを MCP で読み込み、3日間すべての機能を無料で使えます。',
-      line2: 'クレジットカード登録なしですぐに始められます。',
-    },
-    noCreditCard: 'クレジットカード不要',
-    buttons: {
-      startTrial: '無料トライアル開始',
-      startFree: '無料で始める',
-      loggingIn: 'ログイン中...',
-      creatingTrial: 'トライアル作成中...',
-    },
-    errors: {
-      trialAlreadyExists: 'すでにトライアルをご利用済みです',
-      loginRequired: 'ログインが必要です',
-      trialCreationFailed: 'トライアル作成中にエラーが発生しました',
-      networkError: 'ネットワークエラーが発生しました',
-    },
-    infoText: {
-      alreadyLoggedIn: 'すでにログインしています',
-      dismissForever: '二度と表示しない',
-    },
-  },
 };
 
 export function getFreeTrialModalContent(locale: GlobalLocale): FreeTrialModalContent {

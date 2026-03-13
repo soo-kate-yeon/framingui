@@ -50,15 +50,11 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
   const paymentNotReadyMessage =
     locale === 'ko'
       ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
-      : locale === 'ja'
-        ? '決済システムを利用できません。しばらくしてから再試行してください。'
-        : 'Payment system is not ready. Please try again later.';
+      : 'Payment system is not ready. Please try again later.';
   const priceConfigMissingMessage =
     locale === 'ko'
       ? '결제 가격 설정이 누락되었습니다. 관리자에게 문의해 주세요.'
-      : locale === 'ja'
-        ? '価格設定が見つかりません。管理者にお問い合わせください。'
-        : 'Price configuration is missing. Please contact support.';
+      : 'Price configuration is missing. Please contact support.';
 
   // Next.js 16: params is a Promise
   useEffect(() => {
@@ -132,12 +128,7 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
 
               {/* Description (통합된 소개글) */}
               <p className="text-base sm:text-lg text-neutral-700 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-2">
-                {getLocalizedTemplateText(
-                  locale,
-                  template.description,
-                  template.descriptionKo,
-                  template.descriptionJa
-                )}
+                {getLocalizedTemplateText(locale, template.description, template.descriptionKo)}
               </p>
 
               {/* CTA Buttons - Mobile Optimized */}
@@ -223,32 +214,17 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
 
                   {/* Title - Bold, Prominent */}
                   <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 leading-tight">
-                    {getLocalizedTemplateText(
-                      locale,
-                      feature.title,
-                      feature.titleKo,
-                      feature.titleJa
-                    )}
+                    {getLocalizedTemplateText(locale, feature.title, feature.titleKo)}
                   </h3>
 
                   {/* Subtitle - 1 Sentence Tagline */}
                   <p className="text-base sm:text-lg font-medium text-neutral-700 leading-snug">
-                    {getLocalizedTemplateText(
-                      locale,
-                      feature.subtitle,
-                      feature.subtitleKo,
-                      feature.subtitleJa
-                    )}
+                    {getLocalizedTemplateText(locale, feature.subtitle, feature.subtitleKo)}
                   </p>
 
                   {/* Body Text - 2-3 Sentences Detailed Explanation */}
                   <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
-                    {getLocalizedTemplateText(
-                      locale,
-                      feature.description,
-                      feature.descriptionKo,
-                      feature.descriptionJa
-                    )}
+                    {getLocalizedTemplateText(locale, feature.description, feature.descriptionKo)}
                   </p>
                 </div>
               </ScrollReveal>
@@ -272,22 +248,12 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                 <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
                   {/* Title */}
                   <h3 className="text-lg sm:text-xl font-bold text-neutral-900 leading-tight">
-                    {getLocalizedTemplateText(
-                      locale,
-                      useCase.title,
-                      useCase.titleKo,
-                      useCase.titleJa
-                    )}
+                    {getLocalizedTemplateText(locale, useCase.title, useCase.titleKo)}
                   </h3>
 
                   {/* Description - Why this template is good for this use case */}
                   <p className="text-sm sm:text-base text-neutral-600 leading-relaxed">
-                    {getLocalizedTemplateText(
-                      locale,
-                      useCase.description,
-                      useCase.descriptionKo,
-                      useCase.descriptionJa
-                    )}
+                    {getLocalizedTemplateText(locale, useCase.description, useCase.descriptionKo)}
                   </p>
                 </div>
               </ScrollReveal>
@@ -319,15 +285,10 @@ export default function TemplateLandingPage({ params }: TemplatePageProps) {
                   {/* Step Content - Mobile Optimized */}
                   <div className="flex-1 min-w-0">
                     <h3 className="text-lg sm:text-xl font-bold text-neutral-900 mb-2">
-                      {getLocalizedTemplateText(locale, step.title, step.titleKo, step.titleJa)}
+                      {getLocalizedTemplateText(locale, step.title, step.titleKo)}
                     </h3>
                     <p className="text-sm sm:text-base text-neutral-600 mb-3 sm:mb-4">
-                      {getLocalizedTemplateText(
-                        locale,
-                        step.description,
-                        step.descriptionKo,
-                        step.descriptionJa
-                      )}
+                      {getLocalizedTemplateText(locale, step.description, step.descriptionKo)}
                     </p>
 
                     {step.code && (

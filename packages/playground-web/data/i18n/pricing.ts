@@ -272,7 +272,8 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       },
       double: {
         name: '1+1 혜택가',
-        description: '2개 이상 프로젝트를 진행하시는 분들을 위해 개별 구매보다 합리적인 가격으로 준비했어요.',
+        description:
+          '2개 이상 프로젝트를 진행하시는 분들을 위해 개별 구매보다 합리적인 가격으로 준비했어요.',
         priceLabel: '$99',
         priceSub: '1회 결제',
         cta: '템플릿 선택하기',
@@ -287,7 +288,8 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       },
       creator: {
         name: '크리에이터 패스',
-        description: '여러개 프로젝트를 동시에 진행하거나, 다양한 템플릿을 동시에 이용해보고 싶으시다면 추천드려요.',
+        description:
+          '여러개 프로젝트를 동시에 진행하거나, 다양한 템플릿을 동시에 이용해보고 싶으시다면 추천드려요.',
         priceLabel: '$149',
         priceSub: '/년',
         cta: '구독하기',
@@ -380,146 +382,6 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       getBetaAccess: '베타 무료로 시작하기',
       paymentNotReady: '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.',
       priceConfigMissing: '가격 설정을 찾을 수 없습니다. 지원팀에 문의해 주세요.',
-    },
-  },
-  ja: {
-    nav: {
-      brandName: 'framingui',
-      getStarted: '始める',
-    },
-    hero: {
-      title: 'プランを選択',
-      description:
-        'MCP インストールに対応し、エージェントコーディングに特化したデザインシステムが含まれます。デザイントークン、レイアウト、30 以上の既製コンポーネントで、一貫した本番 UI をすぐ作れます。',
-    },
-    betaBanner: {
-      mobile: 'テンプレート1つを3日間、無制限で使えます',
-      desktop: 'テンプレート1つを3日間、無制限で使えます',
-    },
-    plans: {
-      single: {
-        name: 'テンプレート単品',
-        description: 'プロジェクトに適用するテンプレートを1つ選んで、無制限で使えます。',
-        priceLabel: '$59',
-        priceSub: '買い切り',
-        cta: 'テンプレートを見る',
-        features: [
-          '好きなテンプレート 1 つ',
-          '1年間のアップデート',
-          '商用利用可',
-          'メールサポート（72時間）',
-        ],
-      },
-      double: {
-        name: '1+1 お得プラン',
-        description: '2つ以上のプロジェクトを進める方に向けて、個別購入より手頃な価格でご用意しました。',
-        priceLabel: '$99',
-        priceSub: '買い切り',
-        cta: 'テンプレートを選ぶ',
-        badge: '人気プラン',
-        features: [
-          '好きなテンプレート 2 つ',
-          '1年間のアップデート',
-          '商用利用可',
-          'メールサポート（72時間）',
-          '個別購入より16% 割引',
-        ],
-      },
-      creator: {
-        name: 'Creator Pass',
-        description: '複数プロジェクトを同時進行したい方や、いろいろなテンプレートを試したい方におすすめです。',
-        priceLabel: '$149',
-        priceSub: '/年',
-        cta: '購読する',
-        badge: 'ベストバリュー',
-        features: [
-          '現在の全テンプレート',
-          '今後のテンプレートも含む',
-          '購読期間中アップデート提供',
-          '優先メールサポート（48時間）',
-          '優先サポートキュー',
-        ],
-        renewalNotice: '毎年 $149 で自動更新されます。いつでも解約できます。',
-      },
-    },
-    comparison: {
-      title: 'プラン比較',
-      tableHeaders: {
-        feature: '機能',
-        single: 'Single',
-        double: 'Double',
-        creator: 'Creator Pass',
-      },
-      features: {
-        templatesIncluded: '含まれるテンプレート',
-        futureTemplates: '今後のテンプレート',
-        updateDuration: 'アップデート期間',
-        commercialUse: '商用利用',
-        emailSupport: 'メールサポート',
-        priorityQueue: '優先キュー',
-        communityDiscord: 'コミュニティ Discord',
-        documentation: 'ドキュメント',
-      },
-      values: {
-        single: {
-          templatesIncluded: '1',
-          updateDuration: '1年',
-          emailSupport: '72時間',
-        },
-        double: {
-          templatesIncluded: '2',
-          updateDuration: '1年',
-          emailSupport: '72時間',
-        },
-        creator: {
-          templatesIncluded: 'すべて',
-          updateDuration: '購読期間',
-          emailSupport: '48時間',
-        },
-      },
-    },
-    faq: {
-      title: 'よくある質問',
-      subtitle: '料金とプランに関する主な質問をまとめました。',
-      items: [
-        {
-          title: 'テンプレートはどう使いますか？',
-          content:
-            'テンプレート購入後、プロジェクトルートで「npx @framingui/mcp-server init」を実行してください。MCP サーバーのセットアップと、Claude Code や Codex など使用中の AI コーディングツールへの接続が自動で完了します。その後ブラウザ認証を済ませれば、保有テンプレートで画面生成を依頼できます。',
-        },
-        {
-          title: 'アップデート期間終了後はどうなりますか？',
-          content:
-            'ダウンロード済みテンプレートは継続利用できます。期間終了後は新規アップデートのみ停止されます。必要な時に更新プランへ切り替えられます。',
-        },
-        {
-          title: 'クライアント案件で使えますか？',
-          content:
-            'はい。すべてのプランに商用ライセンスが含まれます。個人案件とクライアント案件の両方で使えます。テンプレート自体の再販売・再配布のみ不可です。',
-        },
-        {
-          title: 'Creator Pass の自動更新はどうなりますか？',
-          content:
-            'Creator Pass は毎年 $149 で自動更新されます。アカウント設定からいつでも解約でき、解約は現在の請求期間終了時に反映されます。',
-        },
-        {
-          title: '返金ポリシーはどうなっていますか？',
-          content:
-            'テンプレートはデジタル商品なので、購入後14日以内かつ未ダウンロードの場合に返金できます。技術的欠陥と重複購入は常に返金対象です。',
-        },
-        {
-          title: 'チーム割引や教育割引はありますか？',
-          content:
-            'チームライセンスと教育割引は準備中です。早期導入や個別見積りは soo.kate.yeon@gmail.com までお問い合わせください。',
-        },
-      ],
-    },
-    ui: {
-      freeLabel: '無料',
-      duringBeta: 'ベータ期間限定',
-      getBetaAccess: 'ベータ無料トライアル開始',
-      paymentNotReady: '決済システムを利用できません。しばらくしてから再試行してください。',
-      priceConfigMissing: '価格設定が見つかりません。サポートへお問い合わせください。',
     },
   },
 };

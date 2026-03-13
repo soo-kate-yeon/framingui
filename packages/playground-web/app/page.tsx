@@ -50,7 +50,6 @@ export default function HomePage() {
     name: t.name,
     description: t.description,
     descriptionKo: t.descriptionKo,
-    descriptionJa: t.descriptionJa,
     category: 'Design System',
     thumbnail: `/screenshots/${t.id}/thumbnail.webp`,
     price: t.price,

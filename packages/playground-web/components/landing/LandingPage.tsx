@@ -13,14 +13,13 @@ import { HeroSection } from './HeroSection';
 import { TemplateGallery } from '../explore/TemplateGallery';
 import { ExplorePageClient } from '../explore/ExplorePageClient';
 import { ExploreLanguageProvider } from '../../contexts/ExploreLanguageContext';
-import { trackFunnelPrimaryCtaClick, trackFunnelHomeEntered } from '../../lib/analytics';
+import { trackFunnelPrimaryCtaClick } from '../../lib/analytics';
 
 interface Template {
   id: string;
   name: string;
   description: string;
   descriptionKo?: string;
-  descriptionJa?: string;
   category: string;
   thumbnail?: string;
   price?: number;
@@ -74,21 +73,30 @@ function AvatarDropdown() {
             <p className="text-sm font-medium text-neutral-900 truncate">{user.email}</p>
           </div>
           <button
-            onClick={() => { setIsOpen(false); router.push('/explore/account'); }}
+            onClick={() => {
+              setIsOpen(false);
+              router.push('/explore/account');
+            }}
             className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             <User size={16} />
             Account
           </button>
           <button
-            onClick={() => { setIsOpen(false); router.push('/settings'); }}
+            onClick={() => {
+              setIsOpen(false);
+              router.push('/settings');
+            }}
             className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
           >
             <Settings size={16} />
             Settings
           </button>
           <button
-            onClick={() => { setIsOpen(false); logout(); }}
+            onClick={() => {
+              setIsOpen(false);
+              logout();
+            }}
             className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
           >
             <LogOut size={16} />
@@ -110,11 +118,6 @@ export function LandingPage({ templates }: LandingPageProps) {
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setIsScrolled(latest > 50);
   });
-
-  // Track home page entry
-  useEffect(() => {
-    trackFunnelHomeEntered();
-  }, []);
 
   const handleNavigateWithTracking = (
     destination: string,
@@ -203,9 +206,7 @@ export function LandingPage({ templates }: LandingPageProps) {
           ) : (
             <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
               <div className="text-center py-24">
-                <p className="text-lg font-medium text-neutral-600 mb-4">
-                  No themes found
-                </p>
+                <p className="text-lg font-medium text-neutral-600 mb-4">No themes found</p>
               </div>
             </div>
           )}

@@ -7,7 +7,6 @@ interface GalleryItem {
   name: string;
   description: string;
   descriptionKo?: string;
-  descriptionJa?: string;
   category: string;
   thumbnail?: string;
   price?: number;

@@ -8,7 +8,7 @@ import { createHeadingIdFactory } from '../heading';
 
 export type { BlogFrontmatter };
 
-export type BlogLocale = 'en' | 'ko' | 'ja';
+export type BlogLocale = 'en' | 'ko';
 
 export interface TocItem {
   id: string;
@@ -86,52 +86,45 @@ function parseBlogFile(
 }
 
 /**
- * 개별 포스트 읽기 (en/ko/ja)
+ * 개별 포스트 읽기 (en/ko)
  */
 export function getBlogPost(slug: string): BlogPost | null {
   const en = parseBlogFile(slug, 'en');
   const ko = parseBlogFile(slug, 'ko');
-  const ja = parseBlogFile(slug, 'ja');
 
   if (!en) {
     return null;
   }
   const koResolved = ko ?? en;
-  const jaResolved = ja ?? en;
 
   return {
     slug,
-    frontmatter: { en: en.frontmatter, ko: koResolved.frontmatter, ja: jaResolved.frontmatter },
-    content: { en: en.content, ko: koResolved.content, ja: jaResolved.content },
+    frontmatter: { en: en.frontmatter, ko: koResolved.frontmatter },
+    content: { en: en.content, ko: koResolved.content },
     toc: {
       en: extractToc(en.content),
       ko: extractToc(koResolved.content),
-      ja: extractToc(jaResolved.content),
     },
     readingTime: {
       en: Math.ceil(readingTime(en.content).minutes),
       ko: Math.ceil(readingTime(koResolved.content).minutes),
-      ja: Math.ceil(readingTime(jaResolved.content).minutes),
     },
   };
+}
+
+function isTranslated(locale: BlogLocale, text: string): boolean {
+  if (locale === 'en') {
+    return true;
+  }
+  if (locale === 'ko') {
+    return /[\uAC00-\uD7A3]/.test(text);
+  }
+  return true;
 }
 
 /**
  * 전체 포스트 목록 (날짜 내림차순)
  */
-const LOCALE_SCRIPT_REGEX: Partial<Record<BlogLocale, RegExp>> = {
-  ko: /[\uAC00-\uD7A3]/,
-  ja: /[\u3040-\u30FF\u4E00-\u9FFF]/,
-};
-
-function isTranslated(locale: BlogLocale, content: string): boolean {
-  const regex = LOCALE_SCRIPT_REGEX[locale];
-  if (!regex) {
-    return true;
-  } // 'en' has no script requirement
-  return regex.test(content);
-}
-
 export function getAllBlogPosts(locale: BlogLocale): BlogPostSummary[] {
   const slugs = getAllBlogSlugs();
   const posts: BlogPostSummary[] = [];
@@ -139,7 +132,6 @@ export function getAllBlogPosts(locale: BlogLocale): BlogPostSummary[] {
   for (const slug of slugs) {
     const parsed = parseBlogFile(slug, locale);
 
-    // Non-en locales: only include if the locale file actually has target-language text
     if (locale !== 'en') {
       if (!parsed || !isTranslated(locale, parsed.content + parsed.frontmatter.title)) {
         continue;

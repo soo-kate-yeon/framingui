@@ -28,7 +28,7 @@ export function ExploreLanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const toggleLocale = () => {
-    const order: Locale[] = ['en', 'ko', 'ja'];
+    const order: Locale[] = ['en', 'ko'];
     const currentIndex = order.indexOf(locale);
     const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % order.length;
     setGlobalLocale(order[nextIndex] ?? 'en');

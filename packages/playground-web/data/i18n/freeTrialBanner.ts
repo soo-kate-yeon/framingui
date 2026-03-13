@@ -14,10 +14,6 @@ export const freeTrialBannerContent: Record<BlogLocale, FreeTrialBannerContent> 
     label: '어떤 템플릿이 있는지 둘러보세요. 모든 템플릿은 3일 무료체험이 가능해요.',
     cta: '둘러보기',
   },
-  ja: {
-    label: 'FramingUIのすべての機能を3日間無料でお試しください。',
-    cta: '無料トライアルを開始',
-  },
 };
 
 export function getFreeTrialBannerContent(locale: BlogLocale): FreeTrialBannerContent {

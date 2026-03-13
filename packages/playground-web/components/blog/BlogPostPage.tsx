@@ -20,7 +20,7 @@ import type { BlogPost, BlogPostSummary } from '@/lib/blog';
 
 interface BlogPostPageProps {
   post: BlogPost;
-  relatedPosts: { en: BlogPostSummary[]; ko: BlogPostSummary[]; ja: BlogPostSummary[] };
+  relatedPosts: { en: BlogPostSummary[]; ko: BlogPostSummary[] };
 }
 
 export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {

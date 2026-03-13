@@ -14,11 +14,10 @@ const POSTS_PER_PAGE = 12;
 const CATEGORIES = ['How-to', 'Concept', 'Deep Dive', 'Comparison'];
 
 interface BlogListPageProps {
-  posts: { en: BlogPostSummary[]; ko: BlogPostSummary[]; ja: BlogPostSummary[] };
+  posts: { en: BlogPostSummary[]; ko: BlogPostSummary[] };
   allTags: {
     en: { tag: string; count: number }[];
     ko: { tag: string; count: number }[];
-    ja: { tag: string; count: number }[];
   };
   activeTag?: string;
 }

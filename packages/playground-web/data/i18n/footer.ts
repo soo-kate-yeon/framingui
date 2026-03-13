@@ -62,24 +62,6 @@ export const footerContent: Record<GlobalLocale, FooterContent> = {
       email: '이메일: soo.kate.yeon@gmail.com',
     },
   },
-  ja: {
-    brandName: 'framingui',
-    copyright: 'framingui. All rights reserved.',
-    links: {
-      pricing: '料金',
-      docs: 'ドキュメント',
-      blog: 'ブログ',
-      terms: '利用規約',
-      privacy: 'プライバシー',
-      refund: '返金ポリシー',
-    },
-    businessInfo: {
-      operatedBy: '運営: Morak',
-      representative: '代表: Sooyeon Kim',
-      address: '住所: 30, Art Center-daero 97beon-gil, Yeonsu-gu, Incheon, Republic of Korea',
-      email: 'メール: soo.kate.yeon@gmail.com',
-    },
-  },
 };
 
 export function getFooterContent(locale: GlobalLocale): FooterContent {

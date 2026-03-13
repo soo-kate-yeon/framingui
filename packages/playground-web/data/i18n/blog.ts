@@ -159,56 +159,6 @@ const blogContent: Record<GlobalLocale, BlogContent> = {
       of: '/',
     },
   },
-  ja: {
-    header: {
-      title: 'ブログ',
-      backToHome: 'ホームへ戻る',
-      toggleDarkMode: 'ダークモード切り替え',
-      toggleLanguage: '言語切り替え',
-    },
-    list: {
-      latestPosts: '最新記事',
-      tagPosts: '#',
-      description: 'AI 開発、デザインシステム、モダン Web エンジニアリングの実践を共有します。',
-      noPosts: '記事が見つかりません。',
-    },
-    post: {
-      backToBlog: 'ブログ一覧へ戻る',
-      relatedPosts: '関連記事',
-      onThisPage: '目次',
-      openToc: '目次を開く',
-    },
-    meta: {
-      readingTime: '分で読めます',
-      minRead: '分',
-      minutesRequired: '分で読めます',
-    },
-    card: {
-      readMore: '続きを読む',
-    },
-    share: {
-      title: 'この記事を共有',
-      twitter: 'X で共有',
-      facebook: 'Facebook で共有',
-      linkedin: 'LinkedIn で共有',
-      copyLink: 'リンクをコピー',
-      copied: 'コピーしました',
-    },
-    search: {
-      placeholder: '記事を検索...',
-      noResults: '該当する結果がありません。',
-    },
-    tags: {
-      allPosts: 'すべての記事',
-      filterByTag: 'タグで絞り込み',
-    },
-    pagination: {
-      previous: '前へ',
-      next: '次へ',
-      page: 'ページ',
-      of: '/',
-    },
-  },
 };
 
 /**

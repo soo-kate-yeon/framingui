@@ -47,12 +47,6 @@ export function GlobalLanguageSwitcher({
         >
           English
         </SelectItem>
-        <SelectItem
-          value="ja"
-          className="rounded-lg focus:bg-neutral-100 dark:focus:bg-neutral-800 !font-sans"
-        >
-          日本語
-        </SelectItem>
       </SelectContent>
     </Select>
   );
