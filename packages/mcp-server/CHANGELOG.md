@@ -2,6 +2,17 @@
 
 All notable changes to `@framingui/mcp-server` will be documented in this file.
 
+## [0.6.26] - 2026-03-13
+
+### Fixed
+
+- Updated `framingui-mcp init` to install `tailwindcss-animate` for Tailwind CSS v4 projects while skipping legacy Tailwind v3-only config mutation.
+- Updated init verification and environment validation so Tailwind v4 projects rely on `@framingui/ui/styles` for package source scanning and animate plugin registration instead of reporting false config failures.
+
+### Changed
+
+- Expanded generated `FRAMINGUI-GUIDE.md`, `CLAUDE.md`, and `AGENTS.md` sections with the concrete FramingUI-native runtime contract, including `tailwindcss-animate`, single-provider expectations, and debugging guidance.
+
 ## [0.6.25] - 2026-03-12
 
 ### Fixed

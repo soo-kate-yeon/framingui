@@ -188,8 +188,8 @@ importers:
         specifier: ^0.4.3
         version: 0.4.8
       '@framingui/ui':
-        specifier: ^0.6.11
-        version: 0.6.11(b7f5249645dcdc07e1a9f0d3677f6414)
+        specifier: ^0.6.12
+        version: 0.6.12(b7f5249645dcdc07e1a9f0d3677f6414)
       '@modelcontextprotocol/sdk':
         specifier: ^1.26.0
         version: 1.26.0(zod@3.25.76)
@@ -1508,8 +1508,8 @@ packages:
     resolution: {integrity: sha512-ORcwkKvdGxH87ig77PzhZizPPmmHKeBr55y5NVoOAfDS3i6j6F08hTVSN9mkXV3zEKvKyO8iulvMkhO16xJ5dA==}
     engines: {node: '>=20.0.0'}
 
-  '@framingui/ui@0.6.11':
-    resolution: {integrity: sha512-RV113kVTNgz66qtymtmzQh72NF4j4FNdV/XMLrFBqzSCOdFqlqaROj5Mxgvewr4R1nU3009gR1vYjayxjQt9Dw==}
+  '@framingui/ui@0.6.12':
+    resolution: {integrity: sha512-V7q413ED/8OmraZ88tbduZ1mpM/oWYpd2Pgu3MH8JfLXanHNALn5ZDJvil6MM624kpGu35FhLk0fS6NeGngUsQ==}
     peerDependencies:
       '@radix-ui/react-alert-dialog': ^1.0.0
       '@radix-ui/react-avatar': ^1.0.0
@@ -7275,7 +7275,7 @@ snapshots:
 
   '@framingui/tokens@0.3.5': {}
 
-  '@framingui/ui@0.6.11(b7f5249645dcdc07e1a9f0d3677f6414)':
+  '@framingui/ui@0.6.12(b7f5249645dcdc07e1a9f0d3677f6414)':
     dependencies:
       '@framingui/core': 0.4.8
       '@framingui/tokens': 0.3.5
