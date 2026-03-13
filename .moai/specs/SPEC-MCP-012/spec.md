@@ -1,7 +1,7 @@
 ---
 id: SPEC-MCP-012
 version: "1.0.0"
-status: "in_progress"
+status: "complete"
 created: "2026-03-14"
 updated: "2026-03-14"
 author: "Codex + soo-kate-yeon"

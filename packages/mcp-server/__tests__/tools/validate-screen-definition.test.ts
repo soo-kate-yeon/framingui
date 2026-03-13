@@ -3,7 +3,70 @@
  * SPEC-MCP-004 Phase 3.5
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+const componentDetails = {
+  heading: {
+    props: [{ name: 'children', type: 'ReactNode', required: true }],
+    variants: [{ name: 'level', value: '1' }],
+  },
+  text: {
+    props: [{ name: 'children', type: 'ReactNode', required: false }],
+    variants: [],
+  },
+  button: {
+    props: [{ name: 'children', type: 'ReactNode', required: true }],
+    variants: [
+      { name: 'variant', value: 'default' },
+      { name: 'variant', value: 'primary' },
+      { name: 'size', value: 'lg' },
+    ],
+  },
+  form: {
+    props: [{ name: 'control', type: 'Control', required: true }],
+    variants: [],
+  },
+  input: {
+    props: [{ name: 'type', type: 'string', required: true, defaultValue: 'text' }],
+    variants: [],
+  },
+  avatar: {
+    props: [{ name: 'src', type: 'string', required: false }],
+    variants: [],
+  },
+  card: {
+    props: [{ name: 'children', type: 'ReactNode', required: false }],
+    variants: [{ name: 'variant', value: 'default' }],
+  },
+} as const;
+
+vi.mock('../../src/api/data-client.js', () => ({
+  fetchComponent: vi.fn(async (componentId: string) => {
+    const detail = componentDetails[componentId as keyof typeof componentDetails];
+    if (!detail) {
+      return {
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: `Component not found: ${componentId}`,
+        },
+      };
+    }
+
+    return {
+      ok: true,
+      data: {
+        id: componentId,
+        name: componentId.charAt(0).toUpperCase() + componentId.slice(1),
+        category: 'core',
+        description: 'Test component',
+        tier: 1,
+        ...detail,
+      },
+    };
+  }),
+}));
+
 import { validateScreenDefinitionTool } from '../../src/tools/validate-screen-definition.js';
 
 describe('validate-screen-definition Tool', () => {
@@ -249,7 +312,7 @@ describe('validate-screen-definition Tool', () => {
 
       const componentError = result.errors!.find(e => e.code === 'UNKNOWN_COMPONENT');
       expect(componentError).toBeDefined();
-      expect(componentError?.suggestion).toContain('list-components');
+      expect(componentError?.suggestion).toContain('shared screen-generation component contract');
     });
 
     it('should suggest similar component names', async () => {
