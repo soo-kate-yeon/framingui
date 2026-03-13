@@ -8,368 +8,97 @@ tags:
   - design-tokens
   - mcp
   - ai
-  - tutorial
-category: "Tutorial"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## The Problem with AI-Generated UI Code
+Ask Claude to build a profile card and it generates clean, working code—then you spend ten minutes replacing `bg-blue-500`, `#3B82F6`, and `px-4` with the actual tokens from your design system. Every time. The AI isn't making mistakes; it genuinely has no idea what your design decisions are.
 
-You've experienced this: you ask Claude to build a user profile card. It generates clean, working code—but with hardcoded colors like `#3B82F6` and arbitrary spacing like `px-4`. When you copy-paste it into your codebase, it doesn't match your design system at all.
+Model Context Protocol changes that. It gives AI tools a live connection to your design system so the first output uses your actual tokens, not training data defaults.
 
-Why? **AI tools have no context about your design decisions.** They generate based on generic patterns from training data, not your brand's specific tokens, color palettes, or spacing scales.
+## What MCP Does
 
-What if AI could read your design system and generate perfectly on-brand code every single time?
+Model Context Protocol is Anthropic's open standard for connecting AI assistants to external data sources. Instead of pasting your token list into every prompt, the AI queries your design system on demand through a local server.
 
-## TL;DR
-
-- **Model Context Protocol (MCP)** lets AI tools access your design tokens programmatically
-- **framingui** provides an MCP server that exposes your design system to Claude Code, Cursor, and other MCP-compatible tools
-- Setup takes **5 minutes** and works with any design token format (CSS variables, Tailwind, styled-components)
-- Result: AI generates code using your actual design tokens instead of hardcoded values
-- No more manual token replacement—AI understands your design system from the start
-
-## What is Model Context Protocol (MCP)?
-
-Model Context Protocol is Anthropic's open standard for connecting AI tools to external data sources. Think of it as a **USB port for AI assistants**—it provides a standardized way for AI to query information without you copy-pasting context into every prompt.
-
-### How MCP Works
+The flow looks like this:
 
 ```
-┌─────────────────┐         MCP          ┌─────────────────┐
-│   AI Assistant  │ ◄──────────────────► │   MCP Server    │
-│  (Claude Code)  │   JSON-RPC Protocol  │ (Design Tokens) │
-└─────────────────┘                       └─────────────────┘
-        ▲                                          │
-        │                                          │
-        │                                          ▼
-        │                                  ┌──────────────┐
-        └──────────────────────────────────│ Your Design  │
-                Generates code             │   System     │
-                using real tokens          └──────────────┘
+Claude Code ◄──── MCP ────► @framingui/mcp-server ◄──── tokens.json
 ```
 
-**Key Benefits:**
+When you ask the AI to build a component, it queries the MCP server, receives your token names and values, and generates code using those names from the start. No manual substitution after the fact.
 
-1. **Contextual Awareness**: AI reads your design tokens on-demand, always getting the latest values
-2. **No Context Window Waste**: Design tokens don't consume your prompt context—they're fetched externally
-3. **Automatic Updates**: When you change tokens, AI immediately sees the new values (no re-pasting)
-4. **Bi-directional**: AI can both read tokens and validate generated code against your design system
+The tokens are read on demand, so when you update `tokens.json`, the next AI generation automatically uses the new values. There's no re-pasting context into prompts and no stale token list to maintain.
 
-## Why Design Tokens Need MCP Integration
+## Setting Up the MCP Server
 
-### The Traditional Workflow (Painful)
-
-1. Ask AI to generate a component
-2. AI produces code with hardcoded values (`bg-blue-500`, `#3B82F6`, `16px`)
-3. You manually replace all values with design tokens (`bg-primary-500`, `var(--color-primary)`, `spacing-4`)
-4. Repeat for every component AI generates
-5. Design tokens drift as you inevitably miss some replacements
-
-**Time wasted per component:** 5-10 minutes
-**Result:** Inconsistent token usage, design system violations
-
-### The MCP Workflow (Effortless)
-
-1. AI assistant connects to your design tokens via MCP
-2. You ask AI to generate a component
-3. AI queries available tokens (colors, spacing, typography)
-4. AI generates code using your actual tokens from the start
-5. Code is design system compliant immediately
-
-**Time wasted per component:** 0 minutes
-**Result:** 100% token compliance, zero manual replacement
-
-## Setting Up framingui with MCP
-
-### Prerequisites
-
-- Node.js 20+ installed
-- Claude Code, Cursor, or any MCP-compatible AI tool
-- A project with design tokens (or generate them with framingui)
-
-### Step 1: Install framingui
+The fastest path is the `init` command, which handles framework detection, package installation, and MCP configuration in one step:
 
 ```bash
-# Install framingui core packages
-npm install @framingui/core @framingui/mcp-server
-
-# Or with yarn
-yarn add @framingui/core @framingui/mcp-server
-
-# Or with pnpm
-pnpm add @framingui/core @framingui/mcp-server
+npx -y @framingui/mcp-server@latest init
 ```
 
-### Step 2: Generate Design Tokens (Optional)
-
-If you don't have design tokens yet, framingui can generate them:
-
-```bash
-# Initialize framingui with interactive prompts
-npx @framingui/cli init
-
-# Follow prompts:
-# - Primary color (OKLCH format)
-# - Contrast level (AA or AAA)
-# - Border radius style
-# - Typography scale
-```
-
-This creates:
-- `tokens.css` - CSS custom properties
-- `tokens.json` - Token metadata for MCP
-- `tailwind.config.js` - Tailwind integration (if detected)
-
-**Example generated tokens:**
-
-```css
-/* tokens.css */
-:root {
-  /* Primary color scale */
-  --color-primary-50: oklch(0.95 0.03 240);
-  --color-primary-500: oklch(0.5 0.15 240);
-  --color-primary-900: oklch(0.25 0.08 240);
-
-  /* Spacing scale */
-  --spacing-1: 0.25rem;
-  --spacing-4: 1rem;
-  --spacing-6: 1.5rem;
-
-  /* Component tokens */
-  --button-bg-primary: var(--color-primary-500);
-  --button-fg-primary: oklch(0.98 0.01 240);
-}
-```
-
-### Step 3: Configure MCP Server
-
-Create or update your MCP configuration file. The location depends on your AI tool:
-
-**For Claude Code:**
+This writes `.mcp.json` at your project root:
 
 ```json
-// .claude/mcp.json
-{
-  "servers": {
-    "tekton-design-tokens": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "TEKTON_PROJECT_PATH": ".",
-        "TEKTON_TOKEN_PATH": "./tokens.json"
-      }
-    }
-  }
-}
-```
-
-**For Cursor:**
-
-```json
-// .cursor/mcp.json
 {
   "mcpServers": {
-    "tekton-design-tokens": {
+    "framingui": {
+      "type": "stdio",
       "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "TEKTON_PROJECT_PATH": ".",
-        "TEKTON_TOKEN_PATH": "./tokens.json"
-      }
+      "args": ["-y", "@framingui/mcp-server@latest"]
     }
   }
 }
 ```
 
-**Configuration Options:**
+Restart Claude Code. The MCP server is now running and the AI can query your design system.
 
-- `TEKTON_PROJECT_PATH`: Root directory of your project (default: current directory)
-- `TEKTON_TOKEN_PATH`: Path to token metadata JSON (default: `./tokens.json`)
-- `TEKTON_STRICT_MODE`: Fail if tokens are missing (default: `false`)
+If you're adding FramingUI to an existing project without using `init`, install the packages manually:
 
-### Step 4: Verify MCP Connection
-
-Restart your AI tool and verify the MCP connection:
-
-**In Claude Code:**
-
-```
-You: Can you list available design tokens?
-
-Claude: I'll query the tekton design tokens via MCP.
-
-[Claude queries MCP server]
-
-Available design tokens:
-- Color scales: primary (10 steps), success, warning, error
-- Spacing: 1, 2, 3, 4, 6, 8, 12, 16
-- Typography: xs, sm, base, lg, xl, 2xl, 3xl
-- Component tokens: button, card, input, badge
+```bash
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-**In Cursor:**
+Then create `.mcp.json` with the config above.
 
-Type `@framingui` in chat to see available MCP commands:
-- `@framingui/tokens` - List all tokens
-- `@framingui/components` - List component knowledge
-- `@framingui/validate` - Validate code against design system
+## What the AI Receives
 
-### Step 5: Generate Components with AI
+When Claude queries the MCP server, it gets your token data in structured JSON—names, values, types, and descriptions. That structure is what makes the difference between a generic response and a design-system-aware one.
 
-Now AI can generate components using your actual design tokens:
-
-**Prompt:**
-
-```
-Create a user profile card component using our design tokens
-```
-
-**AI Response (Before MCP):**
+Without MCP:
 
 ```tsx
-export function ProfileCard() {
-  return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <img src="/avatar.jpg" className="w-16 h-16 rounded-full" />
-      <h3 className="text-lg font-semibold text-gray-900">John Doe</h3>
-      <p className="text-gray-600">Software Engineer</p>
-      <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-        View Profile
-      </button>
-    </div>
-  );
-}
+<div className="p-4 bg-white rounded-lg shadow-md">
+  <h3 className="text-lg font-semibold text-gray-900">John Doe</h3>
+  <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+    View Profile
+  </button>
+</div>
 ```
 
-**AI Response (With MCP):**
+With MCP:
 
 ```tsx
-import { tokens } from '@/design-system/tokens';
-
-export function ProfileCard() {
-  return (
-    <div
-      style={{
-        padding: tokens.spacing[4],
-        background: tokens.bg.surface.elevated,
-        borderRadius: tokens.radius.lg,
-        boxShadow: tokens.shadow.md,
-      }}
-    >
-      <img
-        src="/avatar.jpg"
-        style={{
-          width: tokens.spacing[16],
-          height: tokens.spacing[16],
-          borderRadius: tokens.radius.full,
-        }}
-      />
-      <h3
-        style={{
-          fontSize: tokens.fontSize.lg,
-          fontWeight: tokens.fontWeight.semibold,
-          color: tokens.fg.primary,
-        }}
-      >
-        John Doe
-      </h3>
-      <p style={{ color: tokens.fg.secondary }}>Software Engineer</p>
-      <button
-        style={{
-          marginTop: tokens.spacing[4],
-          padding: `${tokens.spacing[2]} ${tokens.spacing[4]}`,
-          background: tokens.button.bg.primary,
-          color: tokens.button.fg.primary,
-          borderRadius: tokens.radius.md,
-        }}
-      >
-        View Profile
-      </button>
-    </div>
-  );
-}
+<div className="bg-surface-elevated p-6 rounded-lg shadow-sm">
+  <h3 className="text-lg font-semibold text-fg-primary">John Doe</h3>
+  <button className="mt-4 px-spacing-4 py-spacing-2 bg-primary-500 text-white rounded-md">
+    View Profile
+  </button>
+</div>
 ```
 
-Notice:
-- Zero hardcoded colors or spacing
-- All values reference actual design tokens
-- Component matches your design system exactly
-- No manual token replacement needed
+The difference is that every value in the second version maps to a token you defined. Change the token, and every AI-generated component using it updates on the next generation.
 
-## Advanced MCP Usage Patterns
+Token descriptions matter here. A token named `color.primary.500` with a description "Primary brand color. Use for CTAs, links, and focus states" tells the AI both the value and the intent. It can choose `primary-500` for a button and `surface-elevated` for a card background because it understands what each token is for.
 
-### Pattern 1: Component Knowledge Integration
+## Validating Existing Code
 
-framingui's MCP server exposes not just tokens but **component knowledge**—semantic metadata about when and how to use components.
-
-**Query component metadata:**
+Beyond generation, MCP lets you validate existing components against your design system. Prompt the AI with a component you want to audit:
 
 ```
-You: What's the difference between primary and ghost button variants?
-
-Claude: [Queries MCP component knowledge]
-
-Button Variants:
-- primary: Main call-to-action, high visual emphasis
-  - Use case: Primary action in a context (max one per screen)
-  - Tokens: button.bg.primary, button.fg.primary
-  - Constraint: Maximum one primary button per viewport
-
-- ghost: Low-emphasis action for secondary operations
-  - Use case: Actions that shouldn't compete with primary CTA
-  - Tokens: button.bg.ghost (transparent), button.fg.ghost
-  - Visual impact: Low (no background fill)
-```
-
-**Component generation with context:**
-
-```
-You: Create a modal footer with save and cancel actions
-
-Claude: [Understands from component knowledge that save = primary, cancel = ghost]
-```
-
-```tsx
-import { Button } from '@/components/button';
-import { tokens } from '@/design-system/tokens';
-
-export function ModalFooter({ onSave, onCancel }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        gap: tokens.spacing[2],
-        justifyContent: 'flex-end',
-        padding: tokens.spacing[4],
-      }}
-    >
-      <Button variant="ghost" onClick={onCancel}>
-        Cancel
-      </Button>
-      <Button variant="primary" onClick={onSave}>
-        Save Changes
-      </Button>
-    </div>
-  );
-}
-```
-
-AI automatically:
-- Places primary button on the right (modal convention)
-- Uses ghost variant for cancel (low emphasis)
-- Applies correct spacing between buttons
-- Respects "max one primary per viewport" constraint
-
-### Pattern 2: Token Validation
-
-Use MCP to validate existing code against your design system:
-
-**Prompt:**
-
-```
-Validate this component for token compliance:
+Check this component for design system compliance:
 
 const Card = () => (
   <div style={{ background: '#ffffff', padding: '16px' }}>
@@ -378,376 +107,46 @@ const Card = () => (
 );
 ```
 
-**AI Response:**
+The AI queries your tokens and identifies the mismatches:
 
 ```
-Token compliance violations found:
-
-1. Line 2: Hardcoded color `#ffffff`
-   → Replace with: tokens.bg.surface.base
-
-2. Line 2: Hardcoded spacing `16px`
-   → Replace with: tokens.spacing[4]
-
-3. Line 3: Hardcoded color `#1a1a1a`
-   → Replace with: tokens.fg.primary
-
-Suggested fix:
+Hardcoded color #ffffff → use var(--bg-surface-base)
+Hardcoded spacing 16px  → use var(--spacing-4)
+Hardcoded color #1a1a1a → use var(--fg-primary)
 ```
 
-```tsx
-const Card = () => (
-  <div
-    style={{
-      background: tokens.bg.surface.base,
-      padding: tokens.spacing[4],
-    }}
-  >
-    <h2 style={{ color: tokens.fg.primary }}>Title</h2>
-  </div>
-);
-```
+This is useful for codebase audits, onboarding new team members to the token system, and catching regressions when someone introduces a hardcoded value.
 
-### Pattern 3: Multi-Theme Generation
+## Troubleshooting
 
-Generate components that work across multiple themes:
+**AI still generates hardcoded values.** Add explicit instruction to your prompt: "Use only tokens from the MCP server. Do not use hardcoded colors, spacing, or sizing." The AI will query tokens before generating.
 
-**Prompt:**
-
-```
-Create a theme switcher that toggles between light and dark themes
-```
-
-**AI Response (queries theme tokens via MCP):**
-
-```tsx
-import { tokens } from '@/design-system/tokens';
-import { useState } from 'react';
-
-export function ThemeSwitcher() {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.dataset.theme = newTheme;
-  };
-
-  return (
-    <button
-      onClick={toggleTheme}
-      style={{
-        padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
-        background: tokens.button.bg.ghost,
-        color: tokens.button.fg.ghost,
-        border: `1px solid ${tokens.border.default}`,
-        borderRadius: tokens.radius.md,
-        cursor: 'pointer',
-      }}
-    >
-      {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-    </button>
-  );
-}
-```
-
-```css
-/* AI knows to generate theme-aware CSS from token metadata */
-[data-theme='light'] {
-  --bg-surface-base: oklch(0.98 0.01 240);
-  --fg-primary: oklch(0.25 0.03 240);
-}
-
-[data-theme='dark'] {
-  --bg-surface-base: oklch(0.18 0.01 240);
-  --fg-primary: oklch(0.92 0.02 240);
-}
-```
-
-AI automatically:
-- Generates theme-switching logic
-- Uses semantic tokens that adapt to theme
-- Creates corresponding CSS for both themes
-- Respects WCAG contrast requirements in both modes
-
-## Integrating with Existing Design Systems
-
-You don't need to use framingui's token generator—MCP works with any design token format.
-
-### From Existing Design Tokens
-
-If you already have design tokens (from Figma Tokens plugin or other sources):
+**MCP server not connecting.** Verify the server starts cleanly:
 
 ```bash
-# Export your tokens as JSON
-# Structure them following W3C Design Token format
-# Or use framingui templates as a starting point
+npx -y @framingui/mcp-server@latest
 ```
 
-```json
-// .claude/mcp.json
-{
-  "servers": {
-    "tekton": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "TEKTON_TOKEN_PATH": "./design-tokens.json"
-      }
-    }
-  }
-}
-```
+Check that `.mcp.json` is at the project root and that you've restarted Claude Code after creating it. For debugging, check Help → Toggle Developer Tools → Console in Claude Code for MCP connection errors.
 
-### From Style Dictionary
+**Tokens not found.** Confirm your `tokens.json` path is correct relative to the project root. The MCP server reads the file on demand—if the path is wrong, queries return empty results rather than an error.
 
-If you use Style Dictionary:
+## Using Your Existing Tokens
+
+The MCP server works with any JSON token structure, not just tokens generated by FramingUI. If you already have tokens from Tokens Studio, Style Dictionary, or another source, point the server at your existing file.
+
+For projects using Style Dictionary, the MCP server accepts a `--format style-dictionary` flag and reads the build output directly. For Tailwind-only projects, FramingUI can extract a token representation from your `tailwind.config.js`.
+
+The goal is that wherever your design decisions currently live, the MCP server can make them available to your AI tools without requiring you to change your existing workflow.
+
+## Authentication
+
+The six available themes (classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism) require authentication. Run the login command after setup:
 
 ```bash
-# Build tokens with Style Dictionary
-npm run build-tokens
-
-# Output: build/tokens.json
-
-# Point MCP to Style Dictionary output
+framingui-mcp login
 ```
 
-```json
-{
-  "servers": {
-    "tekton-design-tokens": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server", "--format", "style-dictionary"],
-      "env": {
-        "TEKTON_TOKEN_PATH": "./build/tokens.json"
-      }
-    }
-  }
-}
-```
+This opens browser-based authentication and saves credentials to `~/.framingui/credentials.json`. Alternatively, set the `FRAMINGUI_API_KEY` environment variable directly if you're working in a CI environment or prefer not to use browser authentication.
 
-### From Tailwind Config
-
-If you use Tailwind CSS:
-
-```bash
-# Extract tokens from tailwind.config.js
-npx @framingui/cli extract-tailwind
-
-# Output: tokens.json with Tailwind token mappings
-```
-
-```typescript
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          500: '#3B82F6',
-        },
-      },
-      spacing: {
-        4: '1rem',
-      },
-    },
-  },
-};
-
-// MCP automatically reads Tailwind config and exposes as tokens
-```
-
-## Troubleshooting Common Issues
-
-### Issue 1: MCP Server Not Connecting
-
-**Symptom:** AI tool doesn't recognize MCP commands
-
-**Solution:**
-
-```bash
-# Verify MCP server starts correctly
-npx @framingui/mcp-server --test
-
-# Check for errors in AI tool logs
-# Claude Code: Help → Toggle Developer Tools → Console
-# Cursor: View → Output → Select "MCP Servers"
-
-# Ensure TEKTON_PROJECT_PATH is absolute
-{
-  "env": {
-    "TEKTON_PROJECT_PATH": "/absolute/path/to/project"
-  }
-}
-```
-
-### Issue 2: Tokens Not Found
-
-**Symptom:** AI says "No tokens available" when querying
-
-**Solution:**
-
-```bash
-# Verify tokens.json exists and is valid JSON
-cat tokens.json | jq
-
-# Check token file path in MCP config
-# Path should be relative to TEKTON_PROJECT_PATH
-```
-
-### Issue 3: AI Still Generates Hardcoded Values
-
-**Symptom:** AI generates `#ffffff` instead of token references
-
-**Solution:**
-
-Add explicit instruction in your prompt:
-
-```
-Create a card component using ONLY design tokens from the MCP server.
-Do not use any hardcoded colors, spacing, or design values.
-```
-
-Or configure strict mode:
-
-```json
-{
-  "env": {
-    "TEKTON_STRICT_MODE": "true"
-  }
-}
-```
-
-This makes MCP server return an error if AI tries to generate code without tokens.
-
-## FAQ
-
-### Can I use MCP with AI tools other than Claude?
-
-Yes! MCP is an open standard. Any tool that supports Model Context Protocol can connect to framingui's MCP server. Currently supported:
-
-- Claude Code (official)
-- Cursor (experimental MCP support)
-- Cline / Windsurf (community support)
-- Any tool implementing MCP client specification
-
-### Does MCP slow down AI responses?
-
-No. MCP queries happen in parallel with AI generation and typically complete in <50ms. The AI doesn't wait for MCP—it streams responses while fetching token data.
-
-### What if my tokens change frequently?
-
-MCP reads tokens on-demand, so AI always sees the latest values. No need to restart your AI tool or re-configure MCP when tokens change. Just save your token files and AI will pick up changes on the next query.
-
-### Can AI generate new tokens via MCP?
-
-Not yet. MCP currently provides read-only access to design tokens. Token generation still requires using framingui CLI or your existing design system workflow. Bi-directional MCP (read + write) is planned for a future release.
-
-### Does this work with component libraries like shadcn/ui?
-
-Yes! framingui's MCP server includes component knowledge for shadcn/ui components. When you ask AI to generate a component, it automatically:
-
-1. Queries available shadcn components via MCP
-2. Selects the appropriate component variant
-3. Applies your design tokens to the component
-4. Follows shadcn's composition patterns
-
-Example:
-
-```
-You: Create a data table with sorting
-
-AI: [Queries MCP for DataTable component knowledge]
-    [Generates shadcn Table component with your tokens]
-```
-
-### How do I add custom component knowledge?
-
-Create a `component-knowledge.json` file:
-
-```json
-{
-  "components": [
-    {
-      "name": "CustomCard",
-      "category": "layout",
-      "purpose": "Displays content in an elevated container",
-      "variants": [
-        {
-          "name": "elevated",
-          "tokens": {
-            "bg": "bg.surface.elevated",
-            "shadow": "shadow.md"
-          }
-        }
-      ]
-    }
-  ]
-}
-```
-
-Configure MCP to load it:
-
-```json
-{
-  "env": {
-    "TEKTON_COMPONENT_KNOWLEDGE_PATH": "./component-knowledge.json"
-  }
-}
-```
-
-Now AI will understand your custom components and use them in generated code.
-
-## Get Started with framingui MCP
-
-Ready to connect your design system to AI?
-
-### Option 1: Try the Playground
-
-Visit [framingui.com/studio](https://framingui.com/studio) to:
-- Generate design tokens from pre-built archetypes
-- Preview components with your tokens
-- Test MCP integration in the browser
-
-### Option 2: Install in Your Project
-
-```bash
-# Install framingui
-npm install @framingui/core @framingui/mcp-server
-
-# Initialize design tokens
-npx @framingui/cli init
-
-# Configure MCP (see Step 3 above)
-
-# Start generating on-brand code with AI
-```
-
-### Option 3: Join the Beta
-
-Get early access to advanced MCP features:
-
-👉 **[Sign up for beta access](https://tally.so/r/7R2kz6)**
-
-Beta features include:
-- Bi-directional MCP (AI can propose token changes)
-- Visual token editor with AI suggestions
-- Multi-project token synchronization
-- Team collaboration on design systems
-
----
-
-**Documentation:**
-
-- [MCP Integration Guide](https://framingui.com/docs/mcp) — Complete setup documentation
-- [API Reference](https://framingui.com/docs/api) — MCP server API specification
-- [Component Knowledge](https://framingui.com/docs/components) — Available components and metadata
-
-**Community:**
-
-- [GitHub Discussions](https://github.com/framingui/discussions) — Ask questions
-- [Discord](https://framingui.com/discord) — Real-time help from the community
-
----
-
-*Built with [framingui](https://framingui.com) — AI-powered design systems with MCP integration.*
+Token querying and design system features work immediately after `init`. Authentication is required specifically for the licensed theme catalog.

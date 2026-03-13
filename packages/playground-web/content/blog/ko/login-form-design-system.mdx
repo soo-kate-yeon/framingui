@@ -5,34 +5,32 @@ date: "2026-02-27"
 author:
   name: "FramingUI Team"
 tags:
-  - login-form
-  - authentication
-  - form-design
-category: "Tutorial"
+  - design-system
+  - components
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## 로그인 폼이 중요한 이유
+로그인 폼은 대부분의 사용자가 제품과 처음 만나는 지점이에요. 포커스 링이 깨져 있거나, 에러 메시지가 스크린 리더에게 전달되지 않거나, 로딩 중에 버튼이 아무 반응도 안 하는 것들 — 이런 디테일이 제품을 보여주기도 전에 신뢰를 깎아요.
 
-로그인 폼은 사용자가 앱과 처음 상호작용하는 UI인 경우가 많습니다. 잘못 디자인된 폼은 마찰을 일으키지만, 잘 만들어진 폼은 신뢰를 구축합니다. FramingUI를 사용하면:
+FramingUI의 폼 컴포넌트는 접근성 계약을 자동으로 처리해줘요. 레이블 연결, aria-describedby 연결, 에러 role 알림이 컴포넌트 구조에서 나오기 때문에 따로 유지보수할 커스텀 코드가 필요 없어요.
 
-- 디자인 토큰을 통한 **일관된 스타일링**
-- Radix UI 프리미티브의 **내장 접근성**
-- react-hook-form + zod로 **타입 안전 검증**
-- 쉬운 테마 적용을 위한 **하드코딩 값 제로**
-
-## 기본 로그인 폼
-
-간단한 이메일/비밀번호 로그인 폼부터 시작해봅시다.
-
-### 1단계: 의존성 설치
+## 의존성 설치
 
 ```bash
-pnpm add @framingui/ui react-hook-form zod @hookform/resolvers
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-### 2단계: 컴포넌트 생성
+검증을 위해 react-hook-form과 zod도 추가해요.
+
+```bash
+pnpm add react-hook-form zod @hookform/resolvers
+```
+
+## 기본 로그인 폼 만들기
+
+아래 컴포넌트는 검증, 로딩 상태, 접근 가능한 에러 메시지를 최소한의 코드로 연결해요.
 
 ```tsx
 'use client';
@@ -50,7 +48,6 @@ import {
   CardFooter,
   Button,
   Input,
-  Label,
   Form,
   FormField,
   FormItem,
@@ -59,7 +56,6 @@ import {
   FormMessage,
 } from '@framingui/ui';
 
-// 검증 스키마
 const loginSchema = z.object({
   email: z.string().email('올바른 이메일을 입력하세요'),
   password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
@@ -72,18 +68,17 @@ export function LoginForm() {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      // TODO: 인증 API 호출
-      console.log('로그인 데이터:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // API 호출 시뮬레이션
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('잘못된 자격 증명');
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +127,7 @@ export function LoginForm() {
             <div className="text-sm text-center">
               <a
                 href="/forgot-password"
-                className="text-[var(--bg-primary)] hover:underline"
+                className="text-[var(--foreground-accent)] hover:underline"
               >
                 비밀번호를 잊으셨나요?
               </a>
@@ -145,16 +140,11 @@ export function LoginForm() {
 }
 ```
 
-### 주요 기능
+구현에서 알아두면 좋은 점 몇 가지예요. 간격은 모두 `var(--spacing-*)` CSS 변수를 사용해요. `FormMessage` 컴포넌트는 각 필드의 검증 상태와 연결되고, `role="alert"`으로 렌더링돼서 제출 시 스크린 리더가 에러를 알려줘요. 버튼은 비동기 호출 중에 비활성화돼서 중복 제출을 막아요.
 
-✅ **디자인 토큰**: 모든 간격이 `var(--spacing-*)`, 색상이 `var(--bg-*)` 사용
-✅ **타입 안전성**: Zod 스키마가 런타임 검증 + TypeScript 타입 제공
-✅ **접근성**: FramingUI Form 컴포넌트가 레이블, 입력, 오류 메시지 연결
-✅ **로딩 상태**: 제출 중 버튼 비활성화
+## 소셜 로그인과 로그인 유지 추가하기
 
-## 소셜 인증이 있는 향상된 로그인 폼
-
-소셜 인증 버튼과 "로그인 유지" 체크박스를 추가해봅시다.
+확장 버전에는 OAuth 버튼과 세션 유지 옵션이 추가돼요.
 
 ```tsx
 'use client';
@@ -172,7 +162,6 @@ import {
   CardFooter,
   Button,
   Input,
-  Label,
   Checkbox,
   Separator,
   Form,
@@ -197,26 +186,20 @@ export function EnhancedLoginForm() {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      remember: false,
-    },
+    defaultValues: { email: '', password: '', remember: false },
   });
 
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      console.log('로그인 데이터:', data);
-      // TODO: 인증 구현
+      // 인증 API 호출
     } finally {
       setIsLoading(false);
     }
   }
 
   async function handleSocialLogin(provider: 'github' | 'google') {
-    console.log(`${provider}로 로그인 중`);
-    // TODO: OAuth 흐름 구현
+    // OAuth 흐름 시작
   }
 
   return (
@@ -226,21 +209,12 @@ export function EnhancedLoginForm() {
         <CardDescription>선호하는 로그인 방법을 선택하세요</CardDescription>
       </CardHeader>
       <CardContent className="space-y-[var(--spacing-4)]">
-        {/* 소셜 로그인 버튼 */}
         <div className="grid grid-cols-2 gap-[var(--spacing-4)]">
-          <Button
-            variant="outline"
-            onClick={() => handleSocialLogin('github')}
-            type="button"
-          >
+          <Button variant="outline" onClick={() => handleSocialLogin('github')} type="button">
             <Github className="mr-[var(--spacing-2)] h-4 w-4" />
             GitHub
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleSocialLogin('google')}
-            type="button"
-          >
+          <Button variant="outline" onClick={() => handleSocialLogin('google')} type="button">
             <Mail className="mr-[var(--spacing-2)] h-4 w-4" />
             Google
           </Button>
@@ -251,13 +225,12 @@ export function EnhancedLoginForm() {
             <Separator />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[var(--bg-background)] px-[var(--spacing-2)] text-[var(--bg-muted-foreground)]">
+            <span className="bg-[var(--background-page)] px-[var(--spacing-2)] text-[var(--foreground-secondary)]">
               또는 계속하기
             </span>
           </div>
         </div>
 
-        {/* 이메일/비밀번호 폼 */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[var(--spacing-4)]">
             <FormField
@@ -307,9 +280,9 @@ export function EnhancedLoginForm() {
         </Form>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <p className="text-sm text-[var(--bg-muted-foreground)]">
+        <p className="text-sm text-[var(--foreground-secondary)]">
           계정이 없으신가요?{' '}
-          <a href="/signup" className="text-[var(--bg-primary)] hover:underline">
+          <a href="/signup" className="text-[var(--foreground-accent)] hover:underline">
             가입하기
           </a>
         </p>
@@ -319,80 +292,36 @@ export function EnhancedLoginForm() {
 }
 ```
 
-### 새로운 기능
+## 접근성이 내부적으로 작동하는 방식
 
-✅ **소셜 인증 버튼**: GitHub과 Google 로그인 옵션
-✅ **시각적 구분선**: Separator 컴포넌트를 사용한 "또는 계속하기" 구분선
-✅ **로그인 유지**: 적절한 폼 통합을 갖춘 체크박스
-✅ **가입 링크**: 신규 사용자를 위한 명확한 행동 유도
-
-## 접근성 기능
-
-FramingUI의 Form 컴포넌트는 자동으로 제공합니다:
-
-### 1. 레이블 연결
+FramingUI의 `Form` 컴포넌트는 전체 ARIA 관계를 자동으로 만들어요. 이렇게 쓰면:
 
 ```tsx
 <FormLabel>이메일</FormLabel>
 <FormControl>
   <Input type="email" {...field} />
 </FormControl>
-```
-
-생성 결과:
-
-```html
-<label for="email-form-item">이메일</label>
-<input id="email-form-item" aria-describedby="email-form-item-message" />
-```
-
-### 2. 오류 알림
-
-```tsx
 <FormMessage />
 ```
 
-`aria-describedby` 연결 생성:
+렌더링된 HTML은 모든 요소를 연결해요.
 
 ```html
-<input aria-invalid="true" aria-describedby="email-form-item-message" />
-<p id="email-form-item-message" role="alert">올바른 이메일을 입력하세요</p>
+<label for="email-form-item">이메일</label>
+<input
+  id="email-form-item"
+  aria-describedby="email-form-item-message"
+/>
+<p id="email-form-item-message" role="alert">
+  올바른 이메일을 입력하세요
+</p>
 ```
 
-### 3. 키보드 내비게이션
+에러 메시지의 `role="alert"`는 추가 설정 없이도 제출 시 검증 실패를 스크린 리더가 알려주게 해줘요.
 
-모든 FramingUI 컴포넌트 지원:
-- `Tab`으로 필드 간 이동
-- `Enter`로 폼 제출
-- `Space`로 체크박스 토글
+## API 에러 처리
 
-## 스타일 커스터마이징
-
-### 카드 너비 변경
-
-```tsx
-<Card className="w-full max-w-sm"> {/* 더 작게: 384px */}
-<Card className="w-full max-w-md"> {/* 기본: 448px */}
-<Card className="w-full max-w-lg"> {/* 더 크게: 512px */}
-```
-
-### 그림자 추가
-
-```tsx
-<Card className="shadow-lg"> {/* 더 큰 그림자 */}
-```
-
-### 페이지 중앙 배치
-
-```tsx
-<div className="flex min-h-screen items-center justify-center p-[var(--spacing-4)]">
-  <EnhancedLoginForm />
-</div>
-```
-
-## 오류 처리 패턴
-
-### API 오류 표시
+검증 스키마 에러는 자동으로 표시돼요. 서버 측 에러는 별도 상태가 필요해요.
 
 ```tsx
 const [apiError, setApiError] = useState('');
@@ -405,38 +334,28 @@ async function onSubmit(data: LoginFormData) {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    if (!response.ok) {
-      throw new Error('잘못된 자격 증명');
-    }
+    if (!response.ok) throw new Error('잘못된 자격 증명');
   } catch (error) {
-    setApiError(error.message);
+    setApiError(error instanceof Error ? error.message : '문제가 발생했습니다');
   } finally {
     setIsLoading(false);
   }
 }
 
-// JSX에서:
+// JSX에서 제출 버튼 위에:
 {apiError && (
-  <p className="text-sm text-[var(--bg-destructive)]" role="alert">
+  <p className="text-sm text-[var(--border-error)]" role="alert">
     {apiError}
   </p>
 )}
 ```
 
-## 다음 단계
+폼을 페이지 중앙에 배치하는 건 레이아웃 래퍼 하나면 충분해요.
 
-1. **인증 제공자 통합**: NextAuth.js, Supabase, Firebase
-2. **2FA 지원 추가**: TOTP 입력 필드
-3. **비밀번호 강도 표시기 구현**: 실시간 검증
-4. **로딩 스켈레톤 추가**: 체감 성능 최적화
+```tsx
+<div className="flex min-h-screen items-center justify-center p-[var(--spacing-4)]">
+  <EnhancedLoginForm />
+</div>
+```
 
-## 완전한 예제
-
-다음이 포함된 완전한 인증 흐름 예제는 [FramingUI GitHub 저장소](https://github.com/soo-kate-yeon/tekton)를 확인하세요:
-
-- 로그인 폼 (이 튜토리얼)
-- 가입 폼
-- 비밀번호 재설정 흐름
-- 이메일 인증
-
-FramingUI를 사용하면 프로덕션 준비 폼을 빠르고, 접근 가능하며, 유지보수하기 쉽게 구축할 수 있습니다 — 디자인 시스템과 100% 일관성을 유지하면서.
+위 구조는 출발점이에요. 실제 작업은 `onSubmit`을 인증 프로바이더 — NextAuth.js, Supabase, Firebase, 또는 커스텀 API — 와 연결하는 거예요. 컴포넌트가 UI 계약을 담당하고, 인증 로직은 직접 연결해야 해요.

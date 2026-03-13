@@ -6,345 +6,113 @@ author:
   name: "FramingUI Team"
 tags:
   - indie-hacker
-  - stack
   - tailwind
-  - shadcn
-  - productivity
-category: "Guide"
+  - workflow
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## 솔로 개발자의 딜레마
+Material-UI를 쓰는 솔로 개발자는 처음부터 만드는 것보다 빨리 출시해요. 그런데 몇 달이 지나면 또 다른 문제가 생기죠. 랜딩 페이지가 "부트스트랩 템플릿"처럼 보인다는 거예요. 방문자 입장에서는 이미 어디선가 본 UI거든요.
 
-혼자(또는 공동 창업자 1명과) SaaS 제품을 만들고 있습니다. 필요한 것:
+아래 레이어드 스택은 두 문제를 함께 해결해요. Tailwind CSS가 유틸리티를 담당하고, FramingUI가 디자인 토큰 레이어를 추가하고, shadcn/ui가 직접 소유하는 컴포넌트를 제공해요. 설정은 몇 시간이면 충분하고, 그 이후엔 스스로 굴러가요.
 
-- 빠르게 출시 (투자자/사용자는 기다리지 않음)
-- 전문적으로 보이기 (일반적인 UI는 전환하지 않음)
-- 일관성 유지 (허술한 UI는 신뢰를 해침)
-- 비용 절감 ($50k 디자인 에이전시 없음)
-- 유지보수 지옥 피하기 (당신이 유일한 엔지니어)
+## 세 도구가 함께여야 하는 이유
 
-기존 조언: "Material-UI나 Chakra 같은 컴포넌트 라이브러리 사용."
+Tailwind는 1,000가지 스타일링 옵션을 줘요. 그 자유로움이 일관성을 무너뜨리죠. FramingUI는 그 선택지를 브랜드가 실제로 사용하는 집합으로 좁혀줘요 — 특정 neutral 스케일, 두 가지 브랜드 색상, 하나의 간격 리듬 — 그리고 그 결정을 CSS 변수로 고정해요. shadcn/ui는 Radix UI 프리미티브를 기반으로 접근성이 갖춰진 컴포넌트를 코드베이스에 직접 복사해서 쓸 수 있게 해줘요.
 
-문제: 일반 라이브러리는 일반적으로 보입니다. 모든 MUI 앱이 똑같이 보입니다. 랜딩 페이지가 "템플릿"이라고 외칩니다.
+shadcn의 핵심 특성은 소스를 직접 소유한다는 거예요. 싸워야 할 npm 패키지가 없어요. `Button`의 모양을 바꾸고 싶으면 `components/ui/button.tsx`를 직접 수정하면 돼요. 테마 오버라이드 시스템도, `!important` 꼼수도 필요 없어요.
 
-**2026 답변:** 속도와 브랜드 차별화를 모두 제공하는 **레이어드 스택**.
+이 조합이 만드는 또 다른 이점은 AI 도구예요. Cursor나 Claude가 코드를 생성할 때 임의의 팔레트 값 대신 토큰 이름 — `--foreground-accent`, `--background-page` — 이 컨텍스트에 있으니까, 기본값부터 브랜드에 맞는 결과가 나와요.
 
-## 핵심 요약: 스택
+## Layer 1: Tailwind CSS
 
-```
-Layer 1: Tailwind CSS (유틸리티 프레임워크)
-         ↓
-Layer 2: FramingUI (design tokens + 시스템)
-         ↓
-Layer 3: shadcn/ui (복사-붙여넣기 컴포넌트)
-         ↓
-Layer 4: Custom components (차별화 요소)
-```
+유틸리티 클래스는 네이밍 결정을 없애줘요. `.card-header-title`로 할지 `.content-heading`으로 할지 고민할 필요가 없어요. 번들은 실제로 사용한 클래스만 포함해요.
 
-**설정 시간:** 2~3시간
-**유지보수:** 월 1시간
-**비용:** $0 (모두 오픈소스)
-**결과:** 독특하게 보이고, 빠르게 출시되고, 일관성을 유지하는 전문 UI
-
-## 왜 이 스택이 2026년에 이기는가
-
-### Material-UI / Chakra와 비교
-
-| | Material-UI / Chakra | FramingUI + shadcn |
-|---|---|---|
-| **설정** | `npm install` → 완료 | 2시간 (tokens + config) |
-| **커스터마이징** | 테마 설정 (제한적) | 완전한 제어 (코드 소유) |
-| **번들 크기** | 100-300kb | 20-50kb (tree-shakeable) |
-| **브랜드 차별화** | 다른 모든 MUI 앱처럼 보임 | 브랜드에 독특하게 보임 |
-| **AI 호환성** | 중간 (AI가 일반 props 사용) | 높음 (AI가 토큰 사용) |
-| **학습 곡선** | 중간 (라이브러리별 API) | 낮음 (표준 HTML + Tailwind) |
-
-### 처음부터 구축과 비교
-
-| | 처음부터 | FramingUI + shadcn |
-|---|---|---|
-| **첫 컴포넌트까지 시간** | 4~8시간 | 5분 |
-| **접근성** | 직접 구현 필요 | 내장 (shadcn이 Radix 사용) |
-| **일관성** | 쉽게 표류 | 토큰으로 강제 |
-| **Dark mode** | 수동 구현 | 자동 (토큰 기반) |
-| **유지보수** | 모두 당신 몫 | 커뮤니티 업데이트 |
-
-## 스택, 레이어별로
-
-### Layer 1: Tailwind CSS (기반)
-
-**역할:** HTML을 떠나지 않고 스타일링하는 유틸리티 클래스
-
-**필수인 이유:**
-- CSS 작성보다 10배 빠름
-- "이 클래스 이름을 뭐라고 할까?" 결정 피로 제거
-- 작은 번들 (사용된 클래스만 포함)
-- 업계 표준 (채용 쉬움, 학습 쉬움)
-
-**설정:**
 ```bash
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init -p
 ```
 
-**판결:** 협상 불가. 모든 현대 인디 해커는 Tailwind를 써야 합니다.
+모든 레이어의 기반이 돼요.
 
----
+## Layer 2: FramingUI
 
-### Layer 2: FramingUI (디자인 시스템)
+FramingUI는 Tailwind와 컴포넌트 사이에 위치해요. 디자인 결정을 모든 컴포넌트가 사용할 수 있는 CSS 변수로 변환해줘요.
 
-**역할:** Tailwind 위에 위치하는 design tokens + 규칙
+pnpm으로 설치해요.
 
-**필요한 이유:**
-- Tailwind는 1000개 옵션을 제공; FramingUI는 당신의 옵션으로 좁힙니다
-- 앱 전체에 일관성 강제
-- 리브랜딩을 5분 작업으로 만듦 (코드가 아니라 토큰 변경)
-- AI 도구(Cursor, Claude)가 브랜드에 맞는 코드 생성 가능
-
-**얻는 것:**
-```typescript
-// 코드화된 디자인 결정
-const tokens = {
-  colors: {
-    brand: {
-      primary: '#4338CA',    // 무작위 파란색이 아닌 브랜드 색상
-      secondary: '#7C3AED',
-    }
-  },
-  spacing: {
-    sm: '0.75rem',           // 임의 px 값이 아닌 간격 스케일
-    md: '1rem',
-    lg: '1.5rem',
-  },
-  typography: {
-    fontFamily: {
-      sans: 'Inter, system-ui',  // 시스템 기본값이 아닌 폰트
-    }
-  }
-}
-```
-
-**설정:**
 ```bash
-npm install @framingui/core
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-**시간 투자:** 토큰 정의에 1~2시간
+`init` 명령어는 전체 런타임 계약을 자동으로 연결해줘요 — 프로바이더 bootstrap, 전역 스타일시트 임포트, AI 도구를 위한 MCP 연결까지요.
 
-**판결:** 가치 있음. 이것이 코드 형태의 디자인 시스템입니다.
+```bash
+npx -y @framingui/mcp-server@latest init
+```
 
----
+토큰은 `var(--foreground-accent)`이나 `var(--background-page)` 같은 CSS 변수가 돼요. 브랜드 색상을 바꿀 때 컴포넌트 파일을 뒤지는 게 아니라 토큰 정의 하나만 수정하면 돼요.
 
-### Layer 3: shadcn/ui (컴포넌트 라이브러리)
+## Layer 3: shadcn/ui
 
-**역할:** 복사-붙여넣기 React 컴포넌트 (NPM 패키지가 아님)
-
-**인디 해커에게 완벽한 이유:**
-- 코드 소유 (vendor lock-in 없음)
-- 완전히 커스터마이징 가능 (소스 직접 편집)
-- 기본적으로 접근 가능 (Radix UI primitives 기반)
-- Tailwind + FramingUI와 완벽하게 작동
-
-**얻는 것:**
-- 약 40개 프로덕션 준비 컴포넌트 (Button, Dialog, Form, Table 등)
-- TypeScript 지원
-- 키보드 탐색 및 스크린 리더 지원
-- 기본 제공 dark mode
-
-**설정:**
 ```bash
 npx shadcn@latest init
 ```
 
-**컴포넌트 추가:**
+스타일 선호도와 기본 색상을 물어봐요. FramingUI 토큰 레이어와 최대 호환을 위해 CSS variables를 선택하세요.
+
+필요한 컴포넌트를 하나씩 추가해요.
+
 ```bash
-npx shadcn@latest add button
-npx shadcn@latest add dialog
-npx shadcn@latest add form
+npx shadcn@latest add button input label card dialog form
 ```
 
-컴포넌트가 당신의 코드베이스의 `components/ui/`에 추가됩니다. 자유롭게 편집 가능합니다.
+각 컴포넌트는 코드베이스의 `components/ui/`에 추가돼요. 완전히 소유하는 코드예요. Radix UI 프리미티브 기반이라 키보드 탐색과 스크린 리더 지원이 기본으로 들어가 있어요.
 
-**판결:** 게임 체인저. 번들 크기나 lock-in 없이 컴포넌트 라이브러리의 80%를 얻습니다.
+## Layer 4: 제품 전용 컴포넌트
 
----
+범용 컴포넌트가 80%를 커버해요. 나머지 20%는 제품을 구별되게 만드는 UI예요 — 가격 카드, 분석 대시보드, 도메인 특화 데이터 뷰.
 
-### Layer 4: Custom Components (차별화 요소)
-
-**역할:** 제품 고유의 컴포넌트
-
-**필요한 이유:**
-- shadcn은 일반 UI 제공 (버튼, 폼, 다이얼로그)
-- 제품에는 도메인별 컴포넌트 필요 (분석 차트, 사용자 프로필, 가격 테이블)
-
-**예시:**
-```tsx
-// components/features/PricingCard.tsx
-// components/features/AnalyticsDashboard.tsx
-// components/features/UserAvatar.tsx
-```
-
-FramingUI 토큰과 shadcn 컴포넌트를 빌딩 블록으로 사용:
+이것들은 `components/features/`에 위치하고 아래 레이어를 조합해요.
 
 ```tsx
-// components/features/PricingCard.tsx
-import { Button } from '@/components/ui/button'
-import { tokens } from '@/lib/tokens'
+import { Button } from '@/components/ui/button';
 
-export function PricingCard({ plan, price, features }) {
+export function PricingCard({ plan, price, features }: PricingCardProps) {
   return (
-    <div className="bg-surface-base border border-neutral-200 rounded-lg p-lg">
-      <h3 className="text-2xl font-bold text-text-primary">{plan}</h3>
-      <p className="text-4xl font-bold text-brand-primary my-md">${price}/mo</p>
-      <ul className="space-y-sm mb-lg">
-        {features.map(f => (
-          <li key={f} className="flex items-center gap-sm">
-            <Check className="w-5 h-5 text-semantic-success" />
-            <span className="text-text-secondary">{f}</span>
+    <div className="bg-[var(--background-page)] border border-[var(--border-default)] rounded-lg p-[var(--spacing-6)]">
+      <h3 className="text-2xl font-bold text-[var(--foreground-primary)]">{plan}</h3>
+      <p className="text-4xl font-bold text-[var(--foreground-accent)] my-[var(--spacing-4)]">
+        ${price}/mo
+      </p>
+      <ul className="space-y-[var(--spacing-2)] mb-[var(--spacing-6)]">
+        {features.map((f) => (
+          <li key={f} className="text-[var(--foreground-secondary)]">
+            {f}
           </li>
         ))}
       </ul>
-      <Button variant="primary" className="w-full">
-        Get Started
-      </Button>
+      <Button className="w-full">시작하기</Button>
     </div>
-  )
+  );
 }
 ```
 
-**판결:** 여기가 브랜드가 사는 곳입니다. 일반 컴포넌트가 80%까지 데려감; 커스텀 컴포넌트가 100%로 만듭니다.
+모든 값이 토큰을 참조해요. 리브랜딩은 컴포넌트가 아니라 토큰을 바꾸는 일이 돼요.
 
----
+## 이 스택을 망가뜨리는 세 가지
 
-## 완전한 설정 (단계별)
+**shadcn 컴포넌트를 바로 커스터마이징하는 것.** 설치하고 한 달은 그대로 써봐요. 명확하고 반복되는 필요가 생길 때만 커스터마이징하세요. 너무 일찍 수정하면 업스트림 버그 수정을 잃어요.
 
-### 1주차: 기반 (3시간)
+**토큰 정의를 건너뛰는 것.** 첫 컴포넌트를 만들기 전에 브랜드 색상, neutral 스케일, 간격 리듬을 결정하세요. 초반 토큰 없는 일관성은 의지력으로 유지할 수 없어요.
 
-**1일차: Tailwind 설치 (30분)**
-**2일차: FramingUI 추가 (1시간)**
-**3일차: shadcn 설치 (1.5시간)**
+**출시 전에 과잉 설계하는 것.** Storybook, 컴포넌트 테스트, 모노레포 구조는 규모가 커지면 유용해요. 출시가 급할 때는 몇 주를 잡아먹어요. 제품 먼저 만들고, 구체적인 고통을 느낄 때 도구를 추가하세요.
 
-### 2주차: 핵심 페이지 구축 (8~10시간)
+## 추가 작업 없는 접근성
 
-**1일차: 랜딩 페이지 (3시간)**
-**2일차: 대시보드 Shell (2시간)**
-**3일차: 주요 기능 (3~5시간)**
+shadcn 컴포넌트는 기본으로 접근 가능해요. Dialog가 포커스 트래핑과 Escape 키 처리를 담당해요. 폼 컴포넌트가 레이블 연결과 에러 알림을 자동으로 연결해줘요. Checkbox와 Switch는 키보드에 올바르게 반응해요.
 
-### 3주차: 다듬기 & 출시 (4~6시간)
+직접 구현하지 않아도 완전한 키보드 탐색이 돼요. 주로 추가해야 할 것은 아이콘만 있는 버튼에 `aria-label` 정도예요.
 
-**1일차: Dark Mode (1시간)**
-**2일차: 반응형 디자인 (2시간)**
-**3일차: 최종 QA (1~3시간)**
-
-**출시하세요. 🚀**
-
-## 실제 예시: "GitHub Insights" SaaS 만들기
-
-### 제품
-GitHub 저장소 분석, 분석 표시, 인사이트 생성.
-
-### 시간 분석
-
-| 작업 | 시간 |
-|------|------|
-| 설정 (Tailwind + FramingUI + shadcn) | 2시간 |
-| 랜딩 페이지 | 3시간 |
-| 인증 화면 (Login, Signup) | 1.5시간 |
-| 대시보드 shell | 2시간 |
-| 분석 컴포넌트 (커스텀 차트) | 4시간 |
-| 설정 페이지 | 1시간 |
-| Dark mode | 1시간 |
-| 반응형 + 다듬기 | 2시간 |
-| **총** | **16.5시간** |
-
-**결과:** 투자자나 초기 사용자에게 보여줄 준비가 된 전문적인 SaaS.
-
-**Material-UI만 사용:** 아마 12~14시간, 하지만 일반적으로 보임.
-
-**처음부터:** 40~60시간, 그리고 일관성 없을 가능성.
-
-## 흔한 함정 (그리고 피하는 방법)
-
-### 함정 1: shadcn 컴포넌트를 너무 일찍 커스터마이징
-
-**실수:** shadcn 설치 후 즉시 Button.tsx 편집 시작
-
-**문제:** 업스트림 업데이트와 버그 수정을 잃음
-
-**해결:** shadcn을 2~4주 동안 그대로 사용. 명확하고 반복적인 필요가 생길 때만 커스터마이징.
-
-### 함정 2: 토큰을 미리 정의하지 않음
-
-**실수:** 컴포넌트 구축 시작, 진행하면서 색상 결정
-
-**문제:** 일관성이 빠르게 침투
-
-**해결:** 1시간을 들여 정의:
-- 2~3개 브랜드 색상
-- 1개 완전한 neutral 스케일 (50~900)
-- 3개 시맨틱 색상 (success, error, warning)
-- 5개 spacing 값 (xs, sm, md, lg, xl)
-- 2개 font families (sans, mono)
-
-## 이 스택을 업그레이드할 때
-
-이 스택은 0→$10k MRR에 완벽합니다. 성장하면 고려:
-
-### $10k MRR: 컴포넌트 테스팅 추가
-### $50k MRR: 디자인 문서화 추가
-### $100k MRR: 디자인 시스템 팀 고려
-
-**하지만:** 조기 최적화하지 마세요. 대부분의 인디 SaaS 제품은 이 기본 스택 이상이 필요하지 않습니다.
-
-## 비용 분석
-
-| 항목 | 비용 |
-|------|------|
-| Tailwind CSS | 무료 |
-| FramingUI | 무료 (오픈소스) |
-| shadcn/ui | 무료 |
-| Radix UI (내부) | 무료 |
-| **총** | **$0** |
-
-**비교:**
-- Tailwind UI: $299~$599
-- 디자인 에이전시: $5,000~$50,000
-
-## 결론
-
-솔로 창업자나 작은 팀으로서 UI 스택은:
-
-1. **빠르게 구축** (몇 주가 아닌 며칠에 출시)
-2. **저렴** (이상적으로 $0)
-3. **유연** (코드 소유)
-4. **전문적** (템플릿처럼 보이지 않음)
-5. **유지보수 가능** (카드로 만든 집이 아님)
-
-**FramingUI + shadcn/ui + Tailwind**는 5가지 모두 충족합니다.
-
-얻는 것:
-- ✅ 속도 (Tailwind 유틸리티 + 복사-붙여넣기 컴포넌트)
-- ✅ 비용 ($0)
-- ✅ 유연성 (모든 코드 라인 소유)
-- ✅ 전문성 (토큰이 일관성 강제)
-- ✅ 유지보수성 (토큰 = single source of truth)
-
-**이것이 2026년에 SaaS를 시작한다면 사용할 스택입니다.**
-
-그리고 2개월이 아닌 2주에 출시할 것입니다.
-
-## 다음 단계
-
-### 이번 주
-1. **스타터 복제**: `npx create-framingui-app my-saas`
-2. **토큰 커스터마이징**: 브랜드 색상, 간격, 폰트
-3. **shadcn 컴포넌트 추가**: Button, Input, Card, Dialog
-4. **한 페이지 구축**: 랜딩 페이지 또는 대시보드 목업
-
-**시작하세요**: [FramingUI 빠른 시작 →](/docs/quickstart)
-
----
-
-*이 스택으로 뭔가 만들고 있나요? [Discord에 공유](https://discord.gg/framingui)하거나 [X에서 태그](https://x.com/framingui)하세요.*
+전체 스택 비용은 $0이고, 몇 주가 아닌 며칠 안에 출시할 수 있어요. 그게 이 스택을 쓰는 이유예요.

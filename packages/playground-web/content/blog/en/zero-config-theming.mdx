@@ -8,300 +8,94 @@ tags:
   - theming
   - design-tokens
   - mcp
-  - tailwind
-category: "Guide"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## The Theme Setup Tax
+Every new project starts with the same ritual: edit `tailwind.config.js`, define CSS variables for light and dark mode, manually sync TypeScript types, and pray nothing breaks when the designer tweaks a color next week.
 
-If you've ever set up a design system, you know the drill:
+This setup tax eats hours before you write a single line of UI. FramingUI eliminates it.
 
-1. Edit `tailwind.config.js` to add brand colors
-2. Define CSS variables for light/dark modes
-3. Update TypeScript types for autocomplete
-4. Sync everything manually when design changes
-5. Hope nothing breaks
+## The Three-Source Problem
 
-This "theme setup tax" eats hours before you write a single line of UI code. And every time your designer tweaks a color or spacing value, you repeat the cycle.
+Traditional theme setup forces you to maintain three separate sources of truth simultaneously.
 
-**What if you could skip all of this?**
+The Tailwind config holds raw color values. A separate CSS variables file maps those values to semantic names. TypeScript declaration files try to keep autocomplete in sync with both. When your designer changes a single brand color, you touch all three files—and hope you didn't miss anything.
 
-## The Traditional Approach: Configuration Hell
+The configuration looks substantial and feels productive, but it produces only one outcome: a fragile system where a typo in any of the three files causes silent failures or broken styles.
 
-Let's look at what typical theme setup looks like.
+## How FramingUI Works Instead
 
-### Tailwind Config Editing
-
-```js
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          // ...10 more shades
-          900: '#0c4a6e',
-        },
-        // Repeat for secondary, accent, etc.
-      },
-      spacing: {
-        // Custom spacing values
-      },
-      fontFamily: {
-        // Custom fonts
-      },
-    },
-  },
-};
-```
-
-### CSS Variables Setup
-
-```css
-:root {
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  /* ...50+ more variables */
-}
-
-[data-theme='dark'] {
-  --color-primary-50: #0c4a6e;
-  /* ...reverse the palette */
-}
-```
-
-### TypeScript Sync
-
-```ts
-// types/theme.d.ts
-declare module 'tailwindcss/defaultTheme' {
-  interface DefaultColors {
-    primary: {
-      50: string;
-      100: string;
-      // ...manually sync with config
-    };
-  }
-}
-```
-
-**The problem?** Three sources of truth. Manual sync. No single source. One typo breaks everything.
-
-## The FramingUI Way: Zero-Config Theming
-
-FramingUI eliminates configuration files entirely. You define tokens **once**, and everything else is automatic.
-
-### 1. Define Your Theme (Once)
-
-```typescript
-// framingui.config.ts
-import { defineConfig } from '@framingui/core';
-
-export default defineConfig({
-  themes: {
-    light: {
-      colors: {
-        primary: '#0066cc',
-        secondary: '#6b7280',
-        background: '#ffffff',
-        text: '#111827',
-      },
-      spacing: {
-        base: '1rem',
-        scale: 1.5,
-      },
-    },
-    dark: {
-      colors: {
-        primary: '#3b82f6',
-        background: '#1f2937',
-        text: '#f9fafb',
-      },
-    },
-  },
-});
-```
-
-That's it. No Tailwind config. No CSS variables file. No TypeScript declarations.
-
-### 2. Everything Generates Automatically
-
-When you run `npx @framingui/cli build`, FramingUI:
-
-- Generates Tailwind config
-- Creates CSS variables for both themes
-- Builds TypeScript types with autocomplete
-- Outputs color scales (50-900 shades)
-- Handles dark mode switching
-
-All from one config file.
-
-### 3. MCP Integration: Theme Without Thinking
-
-When you connect FramingUI's MCP server to Claude Code (or any MCP client), AI agents can access your theme tokens directly.
-
-**Example prompt:**
-
-> "Create a pricing card with primary background and secondary text"
-
-**Claude Code output:**
-
-```tsx
-<div className="bg-primary-500 text-secondary-700 dark:bg-primary-600 dark:text-secondary-200">
-  {/* Pricing content */}
-</div>
-```
-
-No hallucinated colors. No manual lookup. Claude knows your exact theme.
-
-## How It Works: Single Source of Truth
-
-FramingUI uses a **token-first architecture**:
-
-1. **You define tokens** in `framingui.config.ts` (semantic, human-readable)
-2. **FramingUI compiles** tokens into platform-specific formats (CSS, Tailwind, JS)
-3. **MCP exposes tokens** to AI agents for generation
-4. **Your UI stays consistent** across design, code, and AI output
-
-```
-framingui.config.ts
-       ↓
-  [FramingUI Build]
-       ↓
-  ├── tailwind.config.js (auto-generated)
-  ├── tokens.css (CSS variables)
-  ├── tokens.ts (TypeScript types)
-  └── MCP schema (AI-readable)
-```
-
-Every output is **derived**, not manually written. Change one token, everything updates.
-
-## Practical Example: Adding a New Theme
-
-Let's say your designer hands you a new "midnight" theme.
-
-### Traditional Approach (30+ minutes)
-
-1. Edit `tailwind.config.js` (add new color palette)
-2. Update CSS variables file (light + dark variants)
-3. Adjust TypeScript types
-4. Test manually
-5. Fix typos and mismatches
-6. Re-deploy
-
-### FramingUI Approach (2 minutes)
-
-```typescript
-// framingui.config.ts
-export default defineConfig({
-  themes: {
-    light: { /* existing */ },
-    dark: { /* existing */ },
-    midnight: {  // ← Just add this
-      colors: {
-        primary: '#a78bfa',
-        background: '#0f0a1e',
-        text: '#e0e7ff',
-      },
-    },
-  },
-});
-```
-
-Run `npx @framingui/cli build`. Done.
-
-- Tailwind config: updated
-- CSS variables: generated
-- TypeScript types: in sync
-- MCP schema: ready for AI
-
-**No manual edits. No risk of mismatch.**
-
-## Why Zero-Config Matters
-
-### For Developers
-
-- **Faster setup** — minutes, not hours
-- **Less maintenance** — one file to update
-- **Type safety** — autocomplete always matches reality
-- **No manual sync** — everything derives from tokens
-
-### For Teams
-
-- **Single source of truth** — designers and developers use the same tokens
-- **Easier onboarding** — new devs don't need to learn fragile config patterns
-- **Scalable** — adding themes or tokens doesn't exponentially increase complexity
-
-### For AI Workflows
-
-- **Consistent output** — AI agents use real tokens, not guesses
-- **No hallucination** — Claude can't invent `bg-brand-purple` when your brand color is `primary`
-- **Instant updates** — change tokens, AI immediately knows new values
-
-## Getting Started
-
-Want to eliminate theme setup pain in your project?
-
-### 1. Install FramingUI
+FramingUI connects your project through a single runtime contract. One command wires everything together:
 
 ```bash
-npm install @framingui/core @framingui/mcp-server
+npx -y @framingui/mcp-server@latest init
 ```
 
-### 2. Initialize Config
+This detects your framework (Next.js or Vite), installs `@framingui/ui` and `tailwindcss-animate`, adds the CSS import to your global stylesheet, mounts `FramingUIProvider` in your app root, creates a local `framingui-theme` module, and registers the MCP server in `.mcp.json`. Ten steps, one command.
+
+The resulting runtime contract is explicit and minimal:
+
+- `@import '@framingui/ui/styles'` appears exactly once in your global stylesheet
+- `FramingUIProvider` mounts exactly once at the app root
+- A local `framingui-theme` module passes your theme configuration to the provider
+- `tailwindcss-animate` is installed for overlay animations
+
+Change the theme by updating the `framingui-theme` module. Everything downstream updates automatically.
+
+## Tokens as CSS Variables
+
+FramingUI exposes design tokens as CSS custom properties—not JavaScript objects with hardcoded hex values. Your theme file contains references like `var(--background-page)` and `var(--foreground-accent)`, not `{ background: '#ffffff' }`.
+
+This matters for how AI generates code. When Claude queries your design system through the MCP server, it retrieves actual CSS variable names with semantic meaning—not raw color values to guess from. The model asks what token applies to a primary button background and gets a definitive answer. No approximation, no hallucination.
+
+## Adding a Theme Without Config Files
+
+Suppose you want to switch from the default `square-minimalism` theme to `dark-boldness`. With traditional setup, you'd update Tailwind, CSS variables, and TypeScript declarations. With FramingUI, you update one value in your `framingui-theme` module.
+
+FramingUI ships six production themes: `classic-magazine`, `dark-boldness`, `minimal-workspace`, `neutral-workspace`, `pebble`, and `square-minimalism`. Each is fully licensed and accessible through the MCP server after authentication.
 
 ```bash
-npx @framingui/cli init
+framingui-mcp login
 ```
 
-This scaffolds `framingui.config.ts` with starter tokens.
+Authentication uses an API key stored in `~/.framingui/credentials.json`. Once authenticated, Claude Code can preview themes, list components, and generate screen blueprints using whichever licensed theme your project references.
 
-### 3. Build Tokens
+## What the MCP Server Provides
+
+The MCP server exposes 16 tools to Claude Code and other MCP-compatible editors. The tools cover four categories: blueprint and theme exploration, icon library browsing, the four-step screen generation workflow, and environment validation.
+
+The screen generation workflow is what makes FramingUI distinct from copy-paste approaches:
+
+1. `get-screen-generation-context` — queries matching templates and components for a natural-language description
+2. `validate-screen-definition` — validates the structured screen definition JSON before generation
+3. `generate_screen` — produces React component code from a validated definition
+4. `validate-environment` — confirms your project has the required packages and Tailwind configuration
+
+The environment validation step is worth noting specifically. It checks for the runtime contract conditions—global stylesheet import, provider mount, theme module, animate package—rather than just checking whether packages are installed. A project can have the right packages and still fail at runtime if the wiring is wrong.
+
+## For Tailwind v4 Projects
+
+Tailwind v4 projects do not need manual `@source` entries for `@framingui/ui`. The `@import '@framingui/ui/styles'` line carries the scanning contract internally. Adding extra source entries will not break anything, but they're unnecessary and should be omitted to keep configuration minimal.
+
+If button padding or dialog animations look wrong after installation, check the runtime contract first before investigating packages. The four conditions—stylesheet import, provider mount, theme module, animate package—cover the majority of runtime issues.
+
+## The Install Path
+
+For a new project, the full setup sequence is:
 
 ```bash
-npx @framingui/cli build
+npx -y @framingui/mcp-server@latest init
+framingui-mcp login
 ```
 
-Your Tailwind config, CSS variables, and TypeScript types are now auto-generated.
+Restart Claude Code. Ask it to generate a screen. The MCP server handles the rest.
 
-### 4. (Optional) Connect MCP
+For existing projects that only need the React components without the MCP workflow:
 
-If you use Claude Code or other MCP clients:
-
-```json
-{
-  "mcpServers": {
-    "framingui": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server"]
-    }
-  }
-}
+```bash
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-Now AI agents can access your theme tokens directly.
-
-## Conclusion
-
-Theme setup shouldn't be a tax on every project. With FramingUI's zero-config approach:
-
-- **No Tailwind config editing** — auto-generated
-- **No CSS variables files** — auto-generated
-- **No TypeScript sync issues** — auto-generated
-- **One source of truth** — your `framingui.config.ts`
-
-Define tokens once. Let FramingUI handle the rest.
-
-**Ready to eliminate theme setup pain?** [Get started with FramingUI →](https://framingui.dev/docs/getting-started)
-
----
-
-**Next Steps:**
-
-- [FramingUI MCP Setup Guide](/blog/en/claude-code-mcp-setup-guide) — Connect AI agents to your theme
-- [Design Tokens Best Practices](/blog/en/design-tokens-best-practices) — Learn token architecture
-- [Building Consistent UI with Claude](/blog/en/building-consistent-ui-with-claude) — AI-powered component generation
+Theme setup shouldn't be the hardest part of building a product. FramingUI makes it the fastest.

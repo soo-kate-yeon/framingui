@@ -8,480 +8,125 @@ tags:
   - cursor
   - ai
   - design-tokens
-  - mcp
-  - workflow
-category: "Tutorial"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## Cursor 디자인 시스템 문제
+`Cmd+K`를 눌러서 알림 카드를 만들어달라고 했더니 5초 만에 코드가 나왔어요. 근데 배경색, 패딩, 아이콘 색상이 다 틀렸죠. 5초 만에 만든 걸 고치는 데 5분이 걸렸어요.
 
-Cursor로 개발 속도를 높이고 있습니다. `Cmd+K`를 누르고 요청합니다:
+Cursor는 일반적인 코드 생성에는 빠르거든요. 이 가이드는 *내 코드* 생성에도 빠르게 만들어줘요.
 
-> "알림 카드 컴포넌트 만들어줘"
+## 두 가지 접근법
 
-Cursor가 몇 초 만에 아름다운 코드를 생성합니다:
+Cursor의 기본 동작과 내 디자인 시스템 사이의 간격을 좁히는 방법이 두 가지예요.
 
-```tsx
-export function NotificationCard() {
-  return (
-    <div className="bg-white p-4 rounded-lg shadow-md border border-gray-200">
-      <div className="flex items-center gap-3">
-        <Bell className="w-5 h-5 text-blue-600" />
-        <div>
-          <h3 className="font-semibold text-gray-900">New message</h3>
-          <p className="text-sm text-gray-600">You have 3 unread messages</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-```
+**`.cursorrules`**는 프로젝트 루트에 있는 일반 텍스트 파일이에요. Cursor가 매번 생성하기 전에 읽거든요. 설정에 10분이면 돼요. 다만 한계가 있어요. 긴 세션에서 Cursor가 규칙을 잊어버릴 수 있고, 토큰이 바뀌면 파일을 수동으로 업데이트해야 해요.
 
-좋아 보입니다! 하지만...
-- `blue-600`이 아니라 `indigo-600`을 씁니다
-- 카드 padding은 `p-4`가 아니라 `p-6`입니다
-- 카드 배경은 `bg-white`가 아니라 `bg-neutral-50`입니다
+**MCP 통합**은 Cursor를 토큰 소스에 프로그래밍 방식으로 연결해요. 정적 파일을 읽는 대신 실제 디자인 시스템을 직접 쿼리하죠. 항상 최신 상태고 "사용 가능한 간격 값이 뭐야?"같은 질문에도 동적으로 답할 수 있어요.
 
-**Cursor가 5초 만에 생성한 것을 고치는 데 5분을 씁니다.**
+`.cursorrules`로 시작하고, 팀이 커지거나 토큰이 자주 바뀌면 MCP를 추가해요.
 
-이 가이드는 Cursor가 첫 시도에서 디자인 시스템과 일치하는 코드를 생성하도록 설정하는 방법을 보여줍니다.
+## 1단계: `.cursorrules` 설정
 
-## 핵심 요약
-
-- **`.cursorrules`**는 Cursor에게 코딩 표준과 디자인 시스템 규칙을 알려줍니다
-- **MCP (Model Context Protocol)**는 Cursor에게 design tokens에 대한 프로그래밍 방식 접근을 제공합니다
-- **설정 시간:** 15분
-- **결과:** Cursor가 수동 수정 없이 브랜드에 맞는 코드를 생성합니다
-- **호환:** FramingUI, 커스텀 토큰, Tailwind configs, 모든 디자인 시스템
-
-## 두 가지 방식: 어느 것이 적합한가?
-
-### 방식 1: `.cursorrules` (좋음, 10분)
-
-**장점:**
-- 간단한 텍스트 파일
-- 즉시 작동
-- 추가 종속성 없음
-
-**단점:**
-- 긴 세션에서 Cursor가 규칙을 "잊을" 수 있음
-- 동적 값 쿼리 불가 ("primary color HEX가 뭐지?" 같은)
-- 토큰 변경 시 수동 업데이트 필요
-
-**최적:**
-- 작은 팀 (1~3명)
-- 안정적인 디자인 시스템 (토큰이 자주 바뀌지 않음)
-- 단순한 토큰 구조
-
-### 방식 2: MCP 통합 (더 좋음, 15분)
-
-**장점:**
-- Cursor가 토큰을 프로그래밍 방식으로 쿼리
-- 항상 최신 상태 (source of truth에서 읽음)
-- "사용 가능한 색상이 뭐지?" 동적으로 답변 가능
-
-**단점:**
-- MCP 서버 설정 필요
-- 약간 더 복잡한 설정
-
-**최적:**
-- 성장하는 팀 (3명 이상)
-- 진화하는 디자인 시스템
-- 토큰을 공유하는 여러 프로젝트
-
-**이 가이드는 둘 다 다룹니다.** `.cursorrules`로 시작하고 필요할 때 MCP로 업그레이드하세요.
-
-## 설정 1부: `.cursorrules` (기반)
-
-`.cursorrules`는 프로젝트 루트에 있는 파일로 Cursor에게 코딩 규칙을 알려줍니다.
-
-### 기본 템플릿
-
-프로젝트 루트에 `.cursorrules` 생성:
+프로젝트 루트에 `.cursorrules`를 만들어요:
 
 ```markdown
-# Project: [앱 이름]
-# Design System: FramingUI + Tailwind
+# 프로젝트 디자인 시스템
 
-## Design Tokens
+## 색상
+- 브랜드 primary: bg-brand-primary
+- 중립 배경: bg-neutral-50, bg-neutral-100, bg-neutral-900
+- 시맨틱: bg-semantic-success, bg-semantic-error, bg-semantic-warning
 
-### Colors
-- Primary brand: `bg-brand-primary` (#4338CA)
-- Secondary brand: `bg-brand-secondary` (#7C3AED)
-- Neutral backgrounds: `bg-neutral-50`, `bg-neutral-100`, `bg-neutral-900`
-- Semantic colors:
-  - Success: `bg-semantic-success` (#10B981)
-  - Error: `bg-semantic-error` (#EF4444)
-  - Warning: `bg-semantic-warning` (#F59E0B)
+## 간격
+명명된 spacing 토큰만 사용 — px-[17px] 같은 임의 값 절대 금지:
+- xs = 0.5rem
+- sm = 0.75rem
+- md = 1rem
+- lg = 1.5rem
+- xl = 2rem
 
-### Spacing
-명명된 spacing tokens 사용:
-- `xs` = 0.5rem (8px)
-- `sm` = 0.75rem (12px)
-- `md` = 1rem (16px)
-- `lg` = 1.5rem (24px)
-- `xl` = 2rem (32px)
+## 컴포넌트 패턴
 
-예시:
-- Padding: `px-md py-sm`
-- Gap: `gap-md`
-- Margin: `mb-lg`
+버튼:
+- Primary: bg-brand-primary hover:bg-brand-primaryHover text-white px-md py-sm rounded-md
+- Secondary: bg-neutral-100 hover:bg-neutral-200 text-neutral-900 px-md py-sm rounded-md
 
-**`px-[17px]`나 `gap-[13px]` 같은 임의 값 절대 사용 금지.**
+카드:
+- bg-neutral-50 border border-neutral-200 rounded-lg p-lg
 
-### Typography
-- Headings: `font-sans font-bold`
-- Body: `font-sans font-normal`
-- Sizes: `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`
+인풋:
+- border border-neutral-300 rounded-md px-sm py-xs focus:border-brand-primary
 
-### Component Patterns
-
-#### Buttons
-```tsx
-// Primary button
-<button className="bg-brand-primary hover:bg-brand-primaryHover text-white px-md py-sm rounded-md">
-
-// Secondary button
-<button className="bg-neutral-100 hover:bg-neutral-200 text-neutral-900 px-md py-sm rounded-md">
-```
-
-#### Cards
-```tsx
-<div className="bg-neutral-50 border border-neutral-200 rounded-lg p-lg">
-  {children}
-</div>
-```
-
-#### Inputs
-```tsx
-<input className="border border-neutral-300 rounded-md px-sm py-xs focus:border-brand-primary" />
-```
-
-## Code Style
-
+## 코드 규칙
 - 모든 컴포넌트에 TypeScript 사용
-- 클래스 컴포넌트보다 함수 컴포넌트 선호
-- 인라인 스타일이 아닌 Tailwind 클래스 사용
-- `@/types`에서 타입 import
-- 공유 컴포넌트는 `@/components` 사용
-
-## Imports
-
-```tsx
-// ✅ 좋음
-import { tokens } from '@/lib/tokens'
-import { Button } from '@/components/ui/button'
-
-// ❌ 피하기
-import * as everything from 'library'
+- Tailwind 클래스만 — 인라인 스타일 금지
+- 색상이나 간격 절대 하드코딩하지 않기
+- 공유 컴포넌트는 @/components에서 임포트
 ```
 
-## 컴포넌트 생성 시
+테스트해봐요. Cursor에게 "primary 버튼 컴포넌트 만들어줘"라고 해보세요. `bg-blue-600`이 나오면 규칙에 예시가 더 필요해요. `bg-brand-primary`가 나오면 설정 완료예요.
 
-1. `@/components`에 유사한 컴포넌트가 이미 있는지 확인
-2. Design tokens 사용 (색상이나 spacing 절대 하드코딩하지 말 것)
-3. TypeScript 타입 정의 보장
-4. 기본 접근성 포함 (aria labels, 키보드 지원)
-5. 기본적으로 반응형 컴포넌트 만들기
-```
+긴 세션에서 Cursor가 흐트러지면 프롬프트에 명시적으로 넣어요: ".cursorrules의 design tokens를 따라줘."
 
-### 고급: 프로젝트별 규칙
+## 2단계: MCP 통합 설정
 
-필요에 따라 추가:
-
-```markdown
-## API 규칙
-- 데이터 페칭에 React Query 사용
-- API base URL: `process.env.NEXT_PUBLIC_API_URL`
-- Auth token: `useAuthStore`에 저장
-
-## Testing
-- 단위 테스트에 Vitest 사용
-- E2E 테스트에 Playwright 사용
-- 테스트 위치: `Button.tsx` 옆에 `Button.test.tsx`
-
-## File Structure
-```
-components/
-  ui/          # 공유 UI 컴포넌트 (Button, Input 등)
-  features/    # 기능별 컴포넌트
-  layouts/     # 레이아웃 컴포넌트
-```
-
-## State Management
-- 전역 상태에 Zustand 사용
-- 컴포넌트 트리 범위 상태에 React Context 사용
-- 2단계 이상 prop drilling 피하기
-
-## Performance
-- 비용 높은 렌더에 `React.memo` 사용
-- `next/dynamic`으로 경로 lazy load
-- `next/image`로 이미지 최적화
-```
-
-### `.cursorrules` 테스트
-
-**프롬프트:** "primary 버튼 컴포넌트 만들어줘"
-
-**나쁜 출력 (Cursor가 규칙 무시):**
-```tsx
-<button className="bg-blue-600 px-4 py-2">
-```
-
-**좋은 출력 (Cursor가 규칙 따름):**
-```tsx
-<button className="bg-brand-primary hover:bg-brand-primaryHover px-md py-sm rounded-md">
-```
-
-Cursor가 규칙을 무시하면 시도:
-1. 규칙을 더 명시적으로 만들기 (예시 추가)
-2. Cursor 재시작
-3. 프롬프트에서 규칙 참조: "design tokens에 대한 .cursorrules 따르기"
-
-## 설정 2부: MCP 통합 (업그레이드)
-
-MCP는 Cursor에게 design tokens에 대한 **프로그래밍 방식 접근**을 제공합니다. 텍스트 파일을 읽는 대신 Cursor가 실제 토큰 소스를 쿼리합니다.
-
-### 전제조건
-
-- Node.js 18+
-- FramingUI 설치됨 (`npm install @framingui/core`)
-- Cursor IDE
-
-### 1단계: MCP 서버 설치
+MCP는 Cursor에게 디자인 토큰에 대한 프로그래밍 방식 접근을 제공해요. FramingUI MCP 서버를 설치해요:
 
 ```bash
-npm install @framingui/mcp-server
+npx -y @framingui/mcp-server@latest init
 ```
 
-### 2단계: 토큰 정의
+이 명령어는 프로젝트 유형(Next.js 또는 Vite)을 자동으로 감지하고, 필요한 패키지 설치, CSS 임포트 설정, 프로바이더 설정, `.mcp.json` MCP 서버 등록까지 한 번에 처리해줘요.
 
-아직 하지 않았다면 토큰 파일 생성:
-
-```typescript
-// lib/tokens.ts
-import { createTokens } from '@framingui/core'
-
-export const tokens = createTokens({
-  colors: {
-    brand: {
-      primary: '#4338CA',
-      primaryHover: '#3730A3',
-      secondary: '#7C3AED',
-    },
-    neutral: {
-      50: '#F9FAFB',
-      100: '#F3F4F6',
-      // ... 전체 스케일
-      900: '#111827',
-    },
-    semantic: {
-      success: '#10B981',
-      error: '#EF4444',
-      warning: '#F59E0B',
-    }
-  },
-  spacing: {
-    xs: '0.5rem',
-    sm: '0.75rem',
-    md: '1rem',
-    lg: '1.5rem',
-    xl: '2rem',
-  },
-  typography: {
-    fontFamily: {
-      sans: 'Inter, system-ui, sans-serif',
-    },
-    fontSize: {
-      sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-      xl: '1.25rem',
-    }
-  }
-})
-```
-
-### 3단계: MCP 사용하도록 Cursor 설정
-
-프로젝트 루트에 `.cursor/mcp.json` 생성 또는 편집:
+생성되는 `.mcp.json`은 이렇게 생겼어요:
 
 ```json
 {
   "mcpServers": {
     "framingui": {
+      "type": "stdio",
       "command": "npx",
-      "args": [
-        "@framingui/mcp-server",
-        "--tokens",
-        "./lib/tokens.ts",
-        "--project-root",
-        "."
-      ]
+      "args": ["-y", "@framingui/mcp-server@latest"]
     }
   }
 }
 ```
 
-### 4단계: Cursor 재시작
+`init` 실행 후 Cursor를 재시작해요. MCP 서버가 자동으로 시작되고, Cursor가 디자인 시스템을 동적으로 쿼리할 수 있게 돼요.
 
-Cursor를 닫고 다시 엽니다. MCP 서버가 자동으로 시작됩니다.
+## 실제 워크플로우: 설정 페이지 만들기
 
-### 5단계: MCP 통합 테스트
+`.cursorrules`와 MCP가 모두 설정된 상태에서 실제 생성이 어떻게 이뤄지는지 볼게요.
 
-**프롬프트:** "디자인 시스템에서 사용 가능한 색상이 뭐야?"
+Cursor에게 요청해요:
 
-**Cursor가 응답해야 함:**
-```
-디자인 시스템에 포함된 것:
-
-Brand colors:
-- primary: #4338CA
-- primaryHover: #3730A3
-- secondary: #7C3AED
-
-Neutral colors: 50, 100, ..., 900
-
-Semantic colors:
-- success: #10B981
-- error: #EF4444
-- warning: #F59E0B
-```
-
-Cursor가 토큰에 접근할 수 없으면:
-1. `@framingui/mcp-server`가 설치되었는지 확인
-2. `.cursor/mcp.json` 경로가 맞는지 확인
-3. Cursor 다시 재시작
-4. MCP 로그 확인: `Cursor > View > Output > MCP`
-
-## 실제 워크플로우: Cursor로 기능 만들기
-
-### 시나리오: 사용자 설정 페이지 만들기
-
-**1단계: Cursor에게 페이지 스캐폴딩 요청**
-
-**프롬프트:**
 ```
 사용자 설정 페이지를 만들어줘:
 - 프로필 섹션 (아바타, 이름, 이메일)
 - 외관 섹션 (테마 토글, 언어 선택기)
 - 알림 섹션 (이메일 환경설정 체크박스)
 
-우리 design tokens 사용. .cursorrules 따르기.
+.cursorrules의 design tokens를 따라줘.
 ```
 
-**Cursor 생성:**
-```tsx
-// app/settings/page.tsx
-import { tokens } from '@/lib/tokens'
+Cursor가 `text-gray-900` 대신 `text-neutral-900`, `py-xl`과 `p-lg` 같은 spacing 토큰, 배경 토큰 `bg-neutral-50`를 쓰는 컴포넌트를 만들어요. 수동 수정 없이요.
 
-export default function SettingsPage() {
-  return (
-    <div className="max-w-2xl mx-auto py-xl">
-      <h1 className="text-2xl font-bold text-neutral-900 mb-lg">
-        Settings
-      </h1>
+이어서 요청해요: "하단에 저장 버튼 추가해줘, primary variant로." Cursor가 `bg-brand-primary hover:bg-brand-primaryHover`를 바로 만들어줘요 — 첫 시도에 디자인 시스템에 맞아요.
 
-      {/* Profile Section */}
-      <section className="bg-neutral-50 border border-neutral-200 rounded-lg p-lg mb-md">
-        <h2 className="text-xl font-semibold mb-md">Profile</h2>
-        {/* ... Cursor가 토큰을 사용하여 폼 필드 생성 */}
-      </section>
+## 문제 해결
 
-      {/* 더 많은 섹션... */}
-    </div>
-  )
-}
-```
+**긴 세션에서 Cursor가 규칙을 잊어요.** `.cursorrules`의 알려진 한계예요. MCP로 업그레이드하거나(잊지 않아요), 프롬프트에 상기시켜줘요: ".cursorrules의 design tokens 써줘."
 
-주목:
-- `text-gray-900`이 아닌 `text-neutral-900` 사용
-- `py-xl`, `p-lg`, `mb-md` 사용 (당신의 spacing tokens)
-- `bg-neutral-50` 사용 (당신의 배경 토큰)
+**Cursor가 잘못된 토큰 이름을 만들어요.** `brand.primary`만 있는데 `bg-brand-primary-500`을 생성한다면 `.cursorrules`에 사용 가능한 토큰 목록을 명시해요 — "사용 가능한 brand colors: brand.primary, brand.secondary (숫자 스케일 없음)."
 
-**2단계: Cursor와 반복**
+**MCP 서버가 시작이 안 돼요.** `Cursor > View > Output > MCP`에서 에러 로그를 확인해요. 주요 원인: 토큰 경로 오류, Node.js 18 미만, `@framingui/mcp-server` 미설치.
 
-**프롬프트:** "하단에 저장 버튼 추가. primary variant로 만들어줘."
-
-**Cursor 생성:**
-```tsx
-<button 
-  className="bg-brand-primary hover:bg-brand-primaryHover text-white px-lg py-sm rounded-md"
-  onClick={handleSave}
->
-  Save Changes
-</button>
-```
-
-완벽합니다. 수동 수정 필요 없음.
-
-## 고급 팁
-
-### 팁 1: 컨텍스트 인식 프롬프트
-
-프롬프트에 컨텍스트 포함:
-
-```
-사용자 계정 삭제용 delete 버튼 만들어줘.
-- semantic.error 색상 사용
-- 확인 다이얼로그 포함
-- 접근 가능 (키보드 지원, aria labels)
-```
-
-Cursor가 `red-600`을 추측하는 대신 `bg-semantic-error`를 사용합니다.
-
-### 팁 2: 기존 컴포넌트 참조
-
-```
-기존 Dialog 컴포넌트와 유사한 modal 컴포넌트 만들되
-최대 너비를 더 크게 (max-w-md 대신 max-w-2xl).
-```
-
-Cursor가 디자인 패턴을 자동으로 복사합니다.
-
-## 흔한 문제 & 해결책
-
-### 문제 1: Cursor가 디자인 시스템을 잊음
-
-**증상:** 긴 채팅 후 Cursor가 다시 `blue-600`을 사용하기 시작.
-
-**해결:**
-- 프롬프트에서 Cursor에게 상기: ".cursorrules에서 design tokens 사용"
-- 또는 MCP 사용 (절대 잊지 않음)
-
-### 문제 2: Cursor가 잘못된 토큰 이름 생성
-
-**증상:** `bg-brand-primary-500` (당신에게 `primary-500` 토큰이 없음)
-
-**해결:**
-- `.cursorrules`에 사용 가능한 토큰 이름을 명시적으로 추가:
-  ```
-  사용 가능한 brand colors:
-  - brand.primary (이것만, 숫자 스케일 없음)
-  - brand.secondary
-  ```
+**Cursor가 Tailwind 클래스 대신 인라인 스타일을 생성해요.** `.cursorrules`에 추가해요: "항상 Tailwind 클래스를 써. prop에서 오는 동적 값이 아니면 인라인 스타일 절대 금지."
 
 ## 결론
 
-Cursor는 빠릅니다. 하지만 설정 없이는 **일반적인** 코드 생성에 빠를 뿐, **당신의** 코드 생성에는 아닙니다.
+이 설정 전에는 Cursor가 일반적인 출력을 내는 빠른 코드 생성기예요. 설정 후에는 내 규칙을 아는 빠른 코드 생성기가 되는 거예요.
 
-15분의 설정(`.cursorrules` + MCP)으로 Cursor를 "코드 생성기"에서 "디자인 시스템을 아는 코드 생성기"로 변환합니다.
-
-**이전:** Cursor는 지속적인 수정이 필요한 주니어 개발자
-**이후:** Cursor는 규칙을 완벽히 아는 시니어 개발자
-
-## 다음 단계
-
-1. **이 글의 `.cursorrules` 템플릿 복사**
-2. **커스터마이징** - 토큰, spacing, 컴포넌트 패턴으로
-3. **MCP 설치** (동적 토큰 접근 원하면)
-4. **간단한 프롬프트로 테스트**: "primary 버튼 만들어줘"
-5. **반복**: 엣지 케이스를 발견하면 규칙 추가
-
-**시작하세요**: [FramingUI + Cursor 설정 가이드 →](/docs/cursor-setup)
-
----
-
-*Cursor + FramingUI에 대한 질문이 있나요? [Discord에 참여](https://discord.gg/framingui)하거나 [트윗](https://x.com/framingui)하세요.*
+`.cursorrules` 방식이 대부분의 팀에 맞아요. MCP는 나머지를 커버해요 — 규모가 큰 팀, 계속 바뀌는 토큰 시스템, 세션 간 일관성이 타협의 여지가 없는 프로젝트들이요.

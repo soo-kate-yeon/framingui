@@ -1,319 +1,74 @@
 ---
-title: "Component Variants: The Pattern AI Understands Best"
-description: "Master the component variant pattern for AI code generation. Build predictable, maintainable components from Radix to Tailwind."
+title: "컴포넌트 Variants: AI가 가장 잘 이해하는 패턴"
+description: "AI 코드 생성을 위한 컴포넌트 variant 패턴을 마스터하세요. Radix부터 Tailwind까지 예측 가능하고 유지보수하기 좋은 컴포넌트를 만드세요."
 date: "2026-03-11"
 author:
   name: "FramingUI Team"
 tags:
   - components
   - ai
-  - patterns
   - design-tokens
-category: "Tutorial"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## The Component Chaos
+구조 없이 AI에게 버튼 컴포넌트를 만들어달라고 하면 뭔가를 발명해요. `<Button variant="primary" size="lg">`처럼 정의된 API로 요청하면 정확히 그걸 만들어내고요. 차이는 컴포넌트 variants — AI 출력의 일관성에 가장 큰 영향을 미치는 단일 패턴이에요.
 
-You're building a design system. Your button component starts simple:
+## Boolean Props의 문제
 
-```tsx
-<Button>Click me</Button>
-```
-
-Then requirements arrive:
-
-- "We need a secondary button style"
-- "Add a small and large size"
-- "Can we have an icon-only version?"
-- "What about a loading state?"
-- "Oh, and danger buttons for destructive actions"
-
-Six months later, your component looks like this:
+디자인 시스템 컴포넌트는 단순하게 시작해서 점점 복잡해져요. 프로젝트 6개월 차가 되면 버튼 컴포넌트가 이렇게 변해 있기 일쑤예요:
 
 ```tsx
 <Button
-  variant="primary"
-  size="md"
-  iconOnly={false}
+  primary
+  large
+  rounded
   loading={false}
   danger={false}
   outline={false}
-  rounded={true}
   fullWidth={false}
   disabled={false}
 >
-  Click me
+  클릭하세요
 </Button>
 ```
 
-**Nine boolean props. Infinite combinations. Complete chaos.**
+Boolean prop이 아홉 개예요. 무효한 조합도 무한히 가능하죠. AI가 이 컴포넌트를 생성하면 존재하지 않는 조합을 만들어내요 — `primary secondary large small`처럼 말이 안 되는 조합이요. TypeScript도 잡지 못해요. 각 prop이 개별적으로는 유효하니까요.
 
-Worse: when you ask AI to generate a button, it invents random prop combinations that don't exist in your system.
+컴포넌트 variant 패턴은 boolean 플래그를 상호 배타적인 명명된 옵션으로 교체해서 이 문제를 해결해요.
 
-There's a better way: the **component variant pattern**—a structured approach that both humans and AI understand.
+## 컴포넌트 Variants가 뭐냐고요
 
-## TL;DR
+Variants는 컴포넌트 설정을 **축(axis)** 으로 정리해요 — 고정된 세트에서 하나를 고르는 독립적인 차원들이에요.
 
-- **Component variants** define all possible visual/behavioral combinations as named presets
-- **Key principle:** Variants are **mutually exclusive** (can only pick one per axis)
-- **Pattern:** `variant` (style), `size` (dimension), `state` (interaction)
-- **AI benefits:** Structured variants help AI generate valid component code (no invalid prop combos)
-- **Best practice:** Use design tokens to define variant styles, keep components dumb
-- **Libraries:** Radix Variants, CVA (class-variance-authority), Stitches, Tailwind Variants
-- **FramingUI approach:** Tokens define variants → auto-generate TypeScript types + Tailwind classes → AI reads via MCP
-
-## What Are Component Variants?
-
-Component variants are **named visual/behavioral configurations** for a component. Instead of boolean flags, you define discrete options along specific **axes**.
-
-### Example: Button Component
-
-**Bad (boolean hell):**
-
-```tsx
-<Button primary secondary outline large small icon loading disabled />
-```
-
-**Good (variant axes):**
-
-```tsx
-<Button variant="primary" size="lg" state="loading" />
-```
-
-**Variant axes:**
-
-- **variant** (visual style): `primary`, `secondary`, `ghost`, `outline`
-- **size** (dimensions): `sm`, `md`, `lg`
-- **state** (interaction): `default`, `loading`, `disabled`
-
-Each axis has a fixed set of options. You pick **one** from each axis.
-
-### Why This Works
-
-1. **Mutually exclusive:** You can't have `variant="primary"` AND `variant="secondary"` at once
-2. **Type-safe:** TypeScript enforces valid combinations
-3. **Self-documenting:** Variant names explain what they do
-4. **AI-friendly:** AI knows the exact options available (reads from tokens)
-5. **Maintainable:** Adding a new variant is a single new entry, not a combinatorial explosion
-
-## The Variant Pattern Structure
-
-### Three Core Axes
-
-Most components need these three variant axes:
+버튼은 보통 세 가지 축이 필요해요:
 
 ```tsx
 type ButtonProps = {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline';  // Visual style
-  size?: 'sm' | 'md' | 'lg';                                // Dimensions
-  state?: 'default' | 'loading' | 'disabled';               // Interaction state
-};
-```
-
-**Visual style (variant):**
-
-- Defines colors, borders, backgrounds
-- Examples: `primary`, `secondary`, `danger`, `ghost`, `outline`
-
-**Dimensions (size):**
-
-- Defines padding, font size, icon size
-- Examples: `sm`, `md`, `lg`, `xl`
-
-**Interaction state (state):**
-
-- Defines hover, active, disabled, loading styles
-- Examples: `default`, `hover`, `active`, `loading`, `disabled`
-
-### Optional Axes
-
-Depending on the component:
-
-- **iconPosition:** `left`, `right`, `none` (buttons with icons)
-- **radius:** `none`, `sm`, `md`, `full` (border radius variations)
-- **elevation:** `flat`, `raised`, `floating` (shadow depth)
-
-**Rule:** Only add axes that represent **meaningful visual differences**. Don't create axes for every prop.
-
-## Defining Variants in Design Tokens
-
-### Step 1: Base Component Tokens
-
-```json
-{
-  "component": {
-    "button": {
-      "base": {
-        "fontFamily": { "value": "{typography.fontFamily.base}" },
-        "fontWeight": { "value": "{typography.fontWeight.medium}" },
-        "borderRadius": { "value": "{border.radius.md}" },
-        "transition": { "value": "all 0.2s ease" }
-      }
-    }
-  }
-}
-```
-
-These apply to **all** button variants.
-
-### Step 2: Variant Styles
-
-Define each variant's unique properties:
-
-```json
-{
-  "component": {
-    "button": {
-      "variant": {
-        "primary": {
-          "background": { "value": "{color.primary.500}" },
-          "backgroundHover": { "value": "{color.primary.600}" },
-          "text": { "value": "{color.white}" },
-          "border": { "value": "none" }
-        },
-        "secondary": {
-          "background": { "value": "{color.secondary.500}" },
-          "backgroundHover": { "value": "{color.secondary.600}" },
-          "text": { "value": "{color.white}" },
-          "border": { "value": "none" }
-        },
-        "outline": {
-          "background": { "value": "transparent" },
-          "backgroundHover": { "value": "{color.gray.100}" },
-          "text": { "value": "{color.primary.500}" },
-          "border": { "value": "1px solid {color.primary.500}" }
-        },
-        "ghost": {
-          "background": { "value": "transparent" },
-          "backgroundHover": { "value": "{color.gray.100}" },
-          "text": { "value": "{color.text.primary}" },
-          "border": { "value": "none" }
-        }
-      }
-    }
-  }
-}
-```
-
-### Step 3: Size Variants
-
-```json
-{
-  "component": {
-    "button": {
-      "size": {
-        "sm": {
-          "paddingX": { "value": "{spacing.sm}" },
-          "paddingY": { "value": "{spacing.xs}" },
-          "fontSize": { "value": "{typography.fontSize.sm}" },
-          "iconSize": { "value": "16px" }
-        },
-        "md": {
-          "paddingX": { "value": "{spacing.md}" },
-          "paddingY": { "value": "{spacing.sm}" },
-          "fontSize": { "value": "{typography.fontSize.base}" },
-          "iconSize": { "value": "20px" }
-        },
-        "lg": {
-          "paddingX": { "value": "{spacing.lg}" },
-          "paddingY": { "value": "{spacing.md}" },
-          "fontSize": { "value": "{typography.fontSize.lg}" },
-          "iconSize": { "value": "24px" }
-        }
-      }
-    }
-  }
-}
-```
-
-### Step 4: State Variants
-
-```json
-{
-  "component": {
-    "button": {
-      "state": {
-        "default": {
-          "opacity": { "value": "1" },
-          "cursor": { "value": "pointer" }
-        },
-        "loading": {
-          "opacity": { "value": "0.7" },
-          "cursor": { "value": "wait" }
-        },
-        "disabled": {
-          "opacity": { "value": "0.5" },
-          "cursor": { "value": "not-allowed" }
-        }
-      }
-    }
-  }
-}
-```
-
-## Implementing Variants in Code
-
-### Manual Implementation (No Library)
-
-```tsx
-type ButtonProps = {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';  // 시각적 스타일
+  size?: 'sm' | 'md' | 'lg';                                // 크기
   children: React.ReactNode;
 };
-
-export function Button({ variant = 'primary', size = 'md', children }: ButtonProps) {
-  const variantClasses = {
-    primary: 'bg-primary-500 hover:bg-primary-600 text-white',
-    secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white',
-    outline: 'bg-transparent hover:bg-gray-100 text-primary-500 border border-primary-500',
-    ghost: 'bg-transparent hover:bg-gray-100 text-text-primary',
-  };
-
-  const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-base',
-    lg: 'px-6 py-3 text-lg',
-  };
-
-  return (
-    <button className={`${variantClasses[variant]} ${sizeClasses[size]} rounded-md font-medium transition`}>
-      {children}
-    </button>
-  );
-}
 ```
 
-**Usage:**
+각 축은 상호 배타적이에요. `primary`이면서 동시에 `secondary`일 수 없죠. TypeScript가 컴파일 시점에 강제해요. AI도 정확히 어떤 값이 유효한지 알아요. 타입에 열거되어 있으니까요.
 
-```tsx
-<Button variant="primary" size="lg">Get Started</Button>
-<Button variant="outline" size="sm">Learn More</Button>
-```
+## CVA로 Variants 구현하기
 
-**Problems with manual approach:**
-
-- Hardcoded class strings (not token-based)
-- No TypeScript safety for class combinations
-- Hard to test all combinations
-
-### Using CVA (class-variance-authority)
-
-CVA is a tiny library (0.5kb) for managing variants cleanly:
+CVA(class-variance-authority)는 Tailwind 프로젝트에서 variants를 관리하는 표준 라이브러리예요. 0.5kb짜리고 variant 로직을 선언적으로 만들어줘요:
 
 ```tsx
 import { cva, type VariantProps } from 'class-variance-authority';
 
 const buttonVariants = cva(
-  'rounded-md font-medium transition', // Base classes
+  'rounded-md font-medium transition', // 기본 클래스, 항상 적용
   {
     variants: {
       variant: {
         primary: 'bg-primary-500 hover:bg-primary-600 text-white',
         secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white',
-        outline: 'bg-transparent hover:bg-gray-100 text-primary-500 border border-primary-500',
+        outline: 'bg-transparent border border-primary-500 text-primary-500 hover:bg-gray-50',
         ghost: 'bg-transparent hover:bg-gray-100 text-text-primary',
       },
       size: {
@@ -342,307 +97,46 @@ export function Button({ variant, size, children }: ButtonProps) {
 }
 ```
 
-**Benefits:**
+TypeScript가 `buttonVariants`에서 유효한 옵션을 추론해요. `variant="blue"`를 넘기면 컴파일 에러가 나요. `variant="primary"`를 넘기면 올바른 Tailwind 클래스로 변환돼요.
 
-- Type-safe variant combinations (TypeScript infers valid options)
-- Composable (can extend variants)
-- Default variants (no need to specify every time)
+## AI가 Variants로 더 나은 결과를 내는 이유
 
-### Using Radix UI Themes
-
-Radix provides built-in variant support:
+구조화된 API 없이 AI가 "primary 버튼"을 생성하면 이것들 중 뭔가가 나올 수 있어요:
 
 ```tsx
-import { Button } from '@radix-ui/themes';
-
-<Button variant="solid" size="3">Click me</Button>
-<Button variant="soft" size="2" color="red">Delete</Button>
+<button className="bg-blue-500 text-white px-4 py-2 rounded">
+<button type="primary" className="...">
+<Button primary={true} color="primary" type="button">
 ```
 
-Radix handles variants internally using a similar pattern.
+같은 개념의 세 가지 다른 표현이에요. 실제 컴포넌트 API와는 하나도 맞지 않아요.
 
-## Why AI Loves Variants
-
-### Without Variants (Prop Soup)
-
-**Prompt:** "Create a primary button"
-
-**AI output:**
-
-```tsx
-<button
-  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded font-medium"
-  primary={true}
-  type="primary"
-  color="primary"
->
-  Click me
-</button>
-```
-
-**Problems:**
-
-- AI invented three different ways to set "primary" style (`className`, `primary`, `type`, `color`)
-- No consistency across generated components
-- Mixing Tailwind classes with custom props
-
-### With Variants (Structured)
-
-**AI reads your design tokens:**
+디자인 토큰이나 MCP를 통해 variants가 정의되면:
 
 ```json
 {
-  "component": {
-    "button": {
-      "variants": ["primary", "secondary", "outline", "ghost"],
-      "sizes": ["sm", "md", "lg"],
-      "defaultVariant": "primary",
-      "defaultSize": "md"
-    }
+  "component": "button",
+  "variants": {
+    "variant": ["primary", "secondary", "outline", "ghost"],
+    "size": ["sm", "md", "lg"]
   }
 }
 ```
 
-**AI output:**
+AI가 만드는 건 이거예요:
 
 ```tsx
-<Button variant="primary" size="md">
-  Click me
-</Button>
+<Button variant="primary" size="md">제출</Button>
+<Button variant="ghost" size="sm">취소</Button>
 ```
 
-**Benefits:**
+이 패턴은 AI에게 디자인 결정을 내릴 만큼의 시맨틱 정보도 줘요. `ghost` variant에 `description: "Low-emphasis actions, tertiary buttons"`가 있으면 취소 버튼에는 `ghost`를, 주요 액션에는 `primary`를 써야 한다는 걸 알아요.
 
-- AI knows **exactly** which props exist
-- AI uses **standard naming** (`variant`, `size`)
-- AI picks valid values (`primary` exists in variants list)
-- Consistent across all generated components
+## Compound Variants
 
-## Real-World Example: Card Component
+특정 variant 조합이 개별 variant와는 다른 스타일이 필요할 때가 있어요.
 
-Let's build a card with multiple variants:
-
-### Step 1: Define Token Structure
-
-```json
-{
-  "component": {
-    "card": {
-      "base": {
-        "background": { "value": "{color.surface.primary}" },
-        "border": { "value": "1px solid {color.border.default}" },
-        "borderRadius": { "value": "{border.radius.lg}" },
-        "padding": { "value": "{spacing.md}" }
-      },
-      "variant": {
-        "default": {
-          "background": { "value": "{color.surface.primary}" },
-          "border": { "value": "1px solid {color.border.default}" }
-        },
-        "elevated": {
-          "background": { "value": "{color.surface.elevated}" },
-          "border": { "value": "none" },
-          "shadow": { "value": "{shadow.md}" }
-        },
-        "bordered": {
-          "background": { "value": "{color.surface.primary}" },
-          "border": { "value": "2px solid {color.primary.500}" }
-        },
-        "filled": {
-          "background": { "value": "{color.gray.100}" },
-          "border": { "value": "none" }
-        }
-      },
-      "size": {
-        "sm": {
-          "padding": { "value": "{spacing.sm}" }
-        },
-        "md": {
-          "padding": { "value": "{spacing.md}" }
-        },
-        "lg": {
-          "padding": { "value": "{spacing.lg}" }
-        }
-      }
-    }
-  }
-}
-```
-
-### Step 2: Implement with CVA
-
-```tsx
-import { cva, type VariantProps } from 'class-variance-authority';
-
-const cardVariants = cva(
-  'rounded-lg', // Base
-  {
-    variants: {
-      variant: {
-        default: 'bg-surface-primary border border-border-default',
-        elevated: 'bg-surface-elevated shadow-md',
-        bordered: 'bg-surface-primary border-2 border-primary-500',
-        filled: 'bg-gray-100',
-      },
-      size: {
-        sm: 'p-3',
-        md: 'p-4',
-        lg: 'p-6',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'md',
-    },
-  }
-);
-
-type CardProps = VariantProps<typeof cardVariants> & {
-  children: React.ReactNode;
-};
-
-export function Card({ variant, size, children }: CardProps) {
-  return (
-    <div className={cardVariants({ variant, size })}>
-      {children}
-    </div>
-  );
-}
-```
-
-### Step 3: Usage
-
-```tsx
-<Card variant="elevated" size="lg">
-  <h3>Premium Feature</h3>
-  <p>This card has elevation and large padding</p>
-</Card>
-
-<Card variant="bordered" size="sm">
-  <span>Compact card with border</span>
-</Card>
-```
-
-**TypeScript enforces:**
-
-- `variant` must be one of: `default`, `elevated`, `bordered`, `filled`
-- `size` must be one of: `sm`, `md`, `lg`
-
-You can't pass `variant="blue"` or `size="huge"` — TypeScript error at compile time.
-
-## AI Generation with Variants
-
-### Without Variant Metadata
-
-**Prompt:** "Create a pricing card component"
-
-**AI output:**
-
-```tsx
-<div className="bg-white p-6 rounded-lg shadow-lg border-2 border-blue-500">
-  <h3 className="text-2xl font-bold">Pro Plan</h3>
-  <p className="text-4xl font-bold mt-4">$49/mo</p>
-  <ul className="mt-6 space-y-2">
-    <li>Feature 1</li>
-    <li>Feature 2</li>
-  </ul>
-  <button className="mt-6 w-full bg-blue-500 text-white py-3 rounded">
-    Subscribe
-  </button>
-</div>
-```
-
-**Problems:**
-
-- AI invented a visual style (shadow + thick border + blue accent)
-- Doesn't match your design system's card variants
-- Hardcoded colors and spacing
-
-### With Variant Tokens
-
-**AI reads design tokens via MCP:**
-
-```json
-{
-  "component": {
-    "card": {
-      "variants": {
-        "default": "Standard card with border",
-        "elevated": "Card with shadow, no border",
-        "filled": "Card with background fill"
-      },
-      "sizes": {
-        "sm": "Compact padding (12px)",
-        "md": "Standard padding (16px)",
-        "lg": "Large padding (24px)"
-      }
-    }
-  }
-}
-```
-
-**AI output:**
-
-```tsx
-<Card variant="elevated" size="lg">
-  <h3 className="text-2xl font-bold">Pro Plan</h3>
-  <p className="text-4xl font-bold mt-4">$49/mo</p>
-  <ul className="mt-6 space-y-2">
-    <li>Feature 1</li>
-    <li>Feature 2</li>
-  </ul>
-  <Button variant="primary" size="lg" className="mt-6 w-full">
-    Subscribe
-  </Button>
-</Card>
-```
-
-**Benefits:**
-
-- AI used `variant="elevated"` (a valid option from your design system)
-- AI used `Button` component with correct variant/size props
-- No hardcoded styles, all design-system compliant
-
-## Compound Variants (Advanced)
-
-Sometimes variant combinations need **special styles**.
-
-### Example: Small + Outline Button
-
-```tsx
-<Button variant="outline" size="sm">Cancel</Button>
-```
-
-Small outline buttons need a thinner border (2px looks too heavy on small buttons).
-
-**Token definition:**
-
-```json
-{
-  "component": {
-    "button": {
-      "variant": {
-        "outline": {
-          "border": { "value": "2px solid {color.primary.500}" }
-        }
-      },
-      "size": {
-        "sm": {
-          "padding": { "value": "6px 12px" }
-        }
-      },
-      "compound": {
-        "outline-sm": {
-          "border": { "value": "1px solid {color.primary.500}" },
-          "description": "Thinner border for small outline buttons"
-        }
-      }
-    }
-  }
-}
-```
-
-**CVA implementation:**
+작은 outline 버튼(2px 테두리)은 `sm` 크기에서 너무 두꺼워 보여요. 거기선 1px이 맞아요:
 
 ```tsx
 const buttonVariants = cva('rounded-md font-medium', {
@@ -660,309 +154,68 @@ const buttonVariants = cva('rounded-md font-medium', {
     {
       variant: 'outline',
       size: 'sm',
-      className: 'border', // Override to 1px border
+      className: 'border', // border-2 대신 border(1px)로 오버라이드
     },
   ],
 });
 ```
 
-**Result:** `<Button variant="outline" size="sm">` gets `border` (1px) instead of `border-2` (2px).
+`<Button variant="outline" size="sm">`은 compound 클래스 오버라이드를 받아요. 나머지 조합은 개별 variant 스타일을 써요.
 
-## Pattern Examples from Popular Libraries
+## 시맨틱하게 Variants 이름 짓기
 
-### shadcn/ui Button
+Variant 이름은 외관이 아니라 목적을 설명해야 해요.
 
-```tsx
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md font-medium transition',
-  {
-    variants: {
-      variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-input bg-background hover:bg-accent',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline',
-      },
-      size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 rounded-md px-3',
-        lg: 'h-11 rounded-md px-8',
-        icon: 'h-10 w-10',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-    },
-  }
-);
-```
+**피해야 할 것:** `variant: 'blue' | 'red' | 'gray'`
 
-**Notice:**
+버튼이 어떻게 생겼는지를 설명해요. 브랜드 색상이 바뀌면 이름이 오해를 일으켜요. AI가 `variant="blue"`를 보면 이게 정보성 액션인지 브랜드 액션인지 알 방법이 없어요.
 
-- Clear variant names (`destructive`, not `red`)
-- Semantic token references (`bg-primary`, not `bg-blue-500`)
-- `size="icon"` for icon-only buttons (fixed width + height)
+**써야 할 것:** `variant: 'primary' | 'destructive' | 'ghost'`
 
-### Radix Themes Badge
+버튼이 무엇을 하는지를 설명해요. `destructive`는 "이건 위험한 동작"이라는 뜻이에요. 디자인 시스템이 danger 상태에 어떤 색을 쓰든 상관없이요. AI가 이름만 보고도 각 variant를 언제 써야 하는지 추론할 수 있어요.
+
+Variants는 작게 유지해요. 축당 4~5개 옵션이면 보통 충분해요. 더 필요하다 싶으면 기존 축에 값을 더 추가하는 대신 새 축(예: `intent`)을 추가할지 고민해봐요.
+
+## Boolean Props에서 마이그레이션하기
+
+이미 boolean props가 있는 컴포넌트라면 마이그레이션 경로는 간단해요.
+
+각 boolean을 축에 매핑해요:
+- `primary`, `secondary`, `danger` → `variant` 축
+- `large`, `small` → `size` 축
+- `loading` → boolean 유지 (시각적 variant가 아닌 상태니까요)
+
+기존 props에 deprecation 경고를 추가해요:
 
 ```tsx
-<Badge variant="solid" color="blue" size="2">New</Badge>
-<Badge variant="soft" color="green" size="1">Success</Badge>
-<Badge variant="outline" color="red" size="3">Error</Badge>
-```
+type ButtonProps = {
+  variant?: 'primary' | 'secondary' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
 
-**Variant axes:**
+  /** @deprecated variant="primary" 를 사용하세요 */
+  primary?: boolean;
 
-- **variant:** `solid`, `soft`, `outline`, `surface`
-- **color:** `blue`, `green`, `red`, `gray`, etc.
-- **size:** `1`, `2`, `3`
-
-### Chakra UI Button
-
-```tsx
-<Button colorScheme="blue" variant="solid" size="md">Click me</Button>
-<Button colorScheme="red" variant="outline" size="lg">Delete</Button>
-```
-
-**Variant axes:**
-
-- **variant:** `solid`, `outline`, `ghost`, `link`
-- **colorScheme:** `blue`, `red`, `green`, etc. (theme colors)
-- **size:** `xs`, `sm`, `md`, `lg`, `xl`
-
-**Pattern:** Consistent across libraries. Variants are the standard way to configure components.
-
-## Generating Variants from Tokens with FramingUI
-
-FramingUI automates the entire workflow:
-
-### Step 1: Define Tokens
-
-```json
-{
-  "component": {
-    "button": {
-      "variant": {
-        "primary": { "background": "{color.primary.500}" },
-        "secondary": { "background": "{color.secondary.500}" }
-      },
-      "size": {
-        "sm": { "padding": "{spacing.sm} {spacing.md}" },
-        "md": { "padding": "{spacing.md} {spacing.lg}" }
-      }
-    }
-  }
-}
-```
-
-### Step 2: Build
-
-```bash
-npx framingui build
-```
-
-**FramingUI generates:**
-
-1. **CSS variables**
-
-```css
-:root {
-  --component-button-variant-primary-background: #3b82f6;
-  --component-button-size-md-padding: 12px 16px;
-}
-```
-
-2. **TypeScript types**
-
-```ts
-export type ButtonVariant = 'primary' | 'secondary';
-export type ButtonSize = 'sm' | 'md';
-
-export type ButtonProps = {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
+  /** @deprecated size="lg" 를 사용하세요 */
+  large?: boolean;
 };
 ```
 
-3. **Tailwind utilities** (optional)
+사용처를 점진적으로 마이그레이션해요. deprecated props는 여전히 동작하니까 아무것도 즉시 깨지지 않아요.
 
-```js
-// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      backgroundColor: {
-        'button-primary': 'var(--component-button-variant-primary-background)',
-      }
-    }
-  }
-}
-```
+## 모든 조합 테스트하기
 
-4. **AI-readable metadata** (MCP)
-
-```json
-{
-  "component": "button",
-  "variants": {
-    "variant": ["primary", "secondary"],
-    "size": ["sm", "md"]
-  }
-}
-```
-
-### Step 3: AI Generates Components
-
-When AI sees this structure, it generates:
+Variants는 완전한 테스트를 간단하게 만들어줘요:
 
 ```tsx
-<Button variant="primary" size="md">
-  Get Started
-</Button>
-```
-
-Not:
-
-```tsx
-<button className="blue large primary-button">Click me</button>
-```
-
-AI follows **your** component API.
-
-## Best Practices
-
-### 1. **Keep Variants Small**
-
-Don't create 20 variants. Most components need 3-5.
-
-**Bad:**
-
-```tsx
-variant: 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'danger' | 
-         'info' | 'light' | 'dark' | 'link' | 'ghost' | 'outline' | 'subtle'
-```
-
-13 variants! Overwhelming. Hard to remember which to use.
-
-**Good:**
-
-```tsx
-variant: 'primary' | 'secondary' | 'outline' | 'ghost'
-```
-
-4 variants. Clear purpose. Easy to choose.
-
-**For semantic states** (success, danger), use a separate `colorScheme` or `intent` axis:
-
-```tsx
-<Button variant="primary" intent="danger">Delete</Button>
-```
-
-### 2. **Use Semantic Names**
-
-**Bad:**
-
-```tsx
-variant: 'blue' | 'red' | 'gray'
-```
-
-Describes appearance, not purpose.
-
-**Good:**
-
-```tsx
-variant: 'primary' | 'destructive' | 'ghost'
-```
-
-Describes **what the button does**, not what it looks like.
-
-### 3. **Establish Defaults**
-
-Always provide default variants:
-
-```tsx
-defaultVariants: {
-  variant: 'primary',
-  size: 'md',
-}
-```
-
-**Why:** Developers (and AI) can use `<Button>` without specifying props, and it still looks correct.
-
-### 4. **Document Intended Use**
-
-Add descriptions to tokens:
-
-```json
-{
-  "component": {
-    "button": {
-      "variant": {
-        "primary": {
-          "description": "Main CTAs, primary actions",
-          "background": "{color.primary.500}"
-        },
-        "ghost": {
-          "description": "Low-emphasis actions, tertiary buttons",
-          "background": "transparent"
-        }
-      }
-    }
-  }
-}
-```
-
-When AI reads this via MCP, it knows **when** to use each variant:
-
-```
-AI sees:
-- primary: "Main CTAs, primary actions"
-- ghost: "Low-emphasis actions, tertiary buttons"
-
-User prompt: "Create a submit button"
-AI reasoning: "Submit is a primary action → variant='primary'"
-
-Output: <Button variant="primary">Submit</Button>
-```
-
-### 5. **Avoid Boolean Props**
-
-**Bad:**
-
-```tsx
-<Button primary secondary outline large small icon loading />
-```
-
-Allows invalid combinations: `primary={true} secondary={true}` — what does that even mean?
-
-**Good:**
-
-```tsx
-<Button variant="primary" size="large" state="loading" />
-```
-
-Mutually exclusive. Can't have `variant="primary"` AND `variant="secondary"`.
-
-## Testing All Variant Combinations
-
-With variants, you can programmatically test all combinations:
-
-```tsx
-import { render } from '@testing-library/react';
-import { Button } from './Button';
-
 const variants = ['primary', 'secondary', 'outline', 'ghost'] as const;
 const sizes = ['sm', 'md', 'lg'] as const;
 
 describe('Button variants', () => {
   variants.forEach(variant => {
     sizes.forEach(size => {
-      it(`renders ${variant} ${size} correctly`, () => {
+      it(`${variant} ${size} 렌더링`, () => {
         const { container } = render(
-          <Button variant={variant} size={size}>Test</Button>
+          <Button variant={variant} size={size}>테스트</Button>
         );
         expect(container.firstChild).toMatchSnapshot();
       });
@@ -971,433 +224,6 @@ describe('Button variants', () => {
 });
 ```
 
-**Result:** Automatic snapshot tests for all 12 combinations (4 variants × 3 sizes).
+12개 조합이 자동으로 커버돼요. 새 variant를 추가하면 루프가 자동으로 잡아줘요. 테스트 코드는 건드릴 필요가 없어요.
 
-## Migration Path: Props → Variants
-
-### Step 1: Audit Current Component
-
-```tsx
-// Before
-<Button
-  primary
-  large
-  rounded
-  icon={<Icon />}
-  loading={isLoading}
-/>
-```
-
-**Identify variant axes:**
-
-- `primary` → variant
-- `large` → size
-- `rounded` → radius (or fold into base style)
-- `icon` → iconPosition (or separate IconButton component)
-- `loading` → state
-
-### Step 2: Define Variant Schema
-
-```json
-{
-  "component": {
-    "button": {
-      "variant": ["primary", "secondary", "outline", "ghost"],
-      "size": ["sm", "md", "lg"],
-      "state": ["default", "loading", "disabled"]
-    }
-  }
-}
-```
-
-### Step 3: Refactor Component
-
-```tsx
-// After
-<Button
-  variant="primary"
-  size="lg"
-  state={isLoading ? 'loading' : 'default'}
-  icon={<Icon />}
-/>
-```
-
-### Step 4: Deprecate Old Props
-
-Add deprecation warnings:
-
-```tsx
-type ButtonProps = {
-  variant?: 'primary' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-  
-  /** @deprecated Use variant="primary" instead */
-  primary?: boolean;
-  
-  /** @deprecated Use size="lg" instead */
-  large?: boolean;
-};
-```
-
-Over time, migrate all usages to variant-based API.
-
-## FramingUI Variant Workflow
-
-### 1. Define Variants in Tokens
-
-```bash
-npx framingui init
-```
-
-**Edit `tokens.json`:**
-
-```json
-{
-  "component": {
-    "button": {
-      "variants": {
-        "primary": { "bg": "{color.primary.500}" },
-        "secondary": { "bg": "{color.secondary.500}" }
-      },
-      "sizes": {
-        "sm": { "padding": "{spacing.sm} {spacing.md}" },
-        "md": { "padding": "{spacing.md} {spacing.lg}" }
-      }
-    }
-  }
-}
-```
-
-### 2. Generate Component Scaffold
-
-```bash
-npx framingui generate-component button
-```
-
-**Output:** `Button.tsx` with CVA variants pre-configured:
-
-```tsx
-import { cva } from 'class-variance-authority';
-
-const buttonVariants = cva('rounded-md font-medium transition', {
-  variants: {
-    variant: {
-      primary: 'bg-primary-500 hover:bg-primary-600 text-white',
-      secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white',
-    },
-    size: {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-    },
-  },
-  defaultVariants: { variant: 'primary', size: 'md' },
-});
-
-export function Button({ variant, size, children }) {
-  return (
-    <button className={buttonVariants({ variant, size })}>
-      {children}
-    </button>
-  );
-}
-```
-
-### 3. AI Reads Variants via MCP
-
-```bash
-npx @framingui/mcp-server
-```
-
-AI queries:
-
-```
-AI: "What component variants are available?"
-MCP: "button has variants: [primary, secondary], sizes: [sm, md]"
-AI: "Got it. I'll use those."
-```
-
-### 4. AI Generates Code Using Variants
-
-**Prompt:** "Create a settings page with save and cancel buttons"
-
-**AI output:**
-
-```tsx
-export function SettingsPage() {
-  return (
-    <div>
-      <h1 className="text-h1 font-bold">Settings</h1>
-      
-      <form className="mt-8 space-y-6">
-        {/* Form fields */}
-      </form>
-
-      <div className="mt-8 flex gap-4">
-        <Button variant="primary" size="md">Save Changes</Button>
-        <Button variant="ghost" size="md">Cancel</Button>
-      </div>
-    </div>
-  );
-}
-```
-
-**Notice:** AI used `variant="ghost"` for cancel (low-emphasis action) and `variant="primary"` for save (main action). This matches design system best practices.
-
-## Common Patterns
-
-### Pattern 1: Intent-Based Variants
-
-For actions with semantic meaning:
-
-```tsx
-<Button intent="default">Click me</Button>
-<Button intent="success">Submit</Button>
-<Button intent="danger">Delete</Button>
-```
-
-**Token structure:**
-
-```json
-{
-  "component": {
-    "button": {
-      "intent": {
-        "default": { "bg": "{color.primary.500}" },
-        "success": { "bg": "{color.success.500}" },
-        "danger": { "bg": "{color.danger.500}" }
-      }
-    }
-  }
-}
-```
-
-### Pattern 2: Visual Weight Hierarchy
-
-For emphasis levels:
-
-```tsx
-<Button weight="high">Primary Action</Button>
-<Button weight="medium">Secondary Action</Button>
-<Button weight="low">Tertiary Action</Button>
-```
-
-Maps to visual styles:
-
-- `high` → solid fill, strong contrast
-- `medium` → outline or soft background
-- `low` → ghost or link style
-
-### Pattern 3: Loading State Built-In
-
-```tsx
-<Button variant="primary" loading>
-  Saving...
-</Button>
-```
-
-**Implementation:**
-
-```tsx
-const buttonVariants = cva('...', {
-  variants: {
-    variant: { /* ... */ },
-    loading: {
-      true: 'opacity-70 cursor-wait pointer-events-none',
-      false: '',
-    },
-  },
-});
-```
-
-AI knows: when generating forms, add `loading={isSubmitting}` to buttons.
-
-## Debugging Variant Issues
-
-### Issue: Variants Not Applied
-
-**Symptom:** `<Button variant="outline">` looks like default button.
-
-**Cause:** CSS class not generated or not imported.
-
-**Fix:**
-
-1. Check `tailwind.config.js` includes your component styles
-2. Rebuild: `npm run build:tokens`
-3. Verify CSS file is imported in your app
-
-### Issue: TypeScript Errors on Valid Variants
-
-**Symptom:** TypeScript complains `variant="outline"` is invalid, but it's defined in tokens.
-
-**Cause:** Generated TypeScript types not imported or outdated.
-
-**Fix:**
-
-```bash
-npx framingui build --typescript
-```
-
-Import generated types:
-
-```tsx
-import type { ButtonVariant } from '@/generated/tokens.types';
-```
-
-### Issue: AI Generates Invalid Variants
-
-**Symptom:** AI generates `<Button variant="blue">` when only `primary`, `secondary` exist.
-
-**Cause:** AI doesn't have variant metadata (MCP not configured).
-
-**Fix:**
-
-1. Start MCP server: `npx @framingui/mcp-server`
-2. Configure AI tool to connect to MCP
-3. Verify: prompt AI with "What button variants are available?"
-
-## Real-World Case Study: Refactoring a Button Component
-
-### Before (Boolean Hell)
-
-```tsx
-type ButtonProps = {
-  primary?: boolean;
-  secondary?: boolean;
-  danger?: boolean;
-  outline?: boolean;
-  ghost?: boolean;
-  large?: boolean;
-  small?: boolean;
-  loading?: boolean;
-  disabled?: boolean;
-  fullWidth?: boolean;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-};
-
-export function Button(props: ButtonProps) {
-  const classes = [];
-  
-  if (props.primary) classes.push('bg-blue-500');
-  if (props.secondary) classes.push('bg-purple-500');
-  if (props.danger) classes.push('bg-red-500');
-  if (props.outline) classes.push('border-2 border-blue-500 bg-transparent');
-  if (props.large) classes.push('px-6 py-3 text-lg');
-  if (props.small) classes.push('px-2 py-1 text-sm');
-  if (props.loading) classes.push('opacity-50 cursor-wait');
-  // ... more conditional logic
-  
-  return <button className={classes.join(' ')}>{props.children}</button>;
-}
-```
-
-**Problems:**
-
-- 10+ boolean props (can combine in invalid ways)
-- Conditional logic scattered across component
-- Hardcoded colors (not token-based)
-- No type safety for combinations
-
-**Generated by AI:**
-
-```tsx
-<Button primary secondary large small /> {/* What does this even mean? */}
-```
-
-### After (Variant Pattern)
-
-```tsx
-import { cva, type VariantProps } from 'class-variance-authority';
-
-const buttonVariants = cva(
-  'rounded-md font-medium transition-colors',
-  {
-    variants: {
-      variant: {
-        primary: 'bg-primary-500 hover:bg-primary-600 text-white',
-        secondary: 'bg-secondary-500 hover:bg-secondary-600 text-white',
-        danger: 'bg-danger-500 hover:bg-danger-600 text-white',
-        outline: 'border-2 border-primary-500 text-primary-500 hover:bg-primary-50',
-        ghost: 'hover:bg-gray-100 text-text-primary',
-      },
-      size: {
-        sm: 'px-3 py-1.5 text-sm',
-        md: 'px-4 py-2 text-base',
-        lg: 'px-6 py-3 text-lg',
-      },
-    },
-    defaultVariants: {
-      variant: 'primary',
-      size: 'md',
-    },
-  }
-);
-
-type ButtonProps = VariantProps<typeof buttonVariants> & {
-  loading?: boolean;
-  disabled?: boolean;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-};
-
-export function Button({ variant, size, loading, disabled, icon, children }: ButtonProps) {
-  return (
-    <button
-      className={buttonVariants({ variant, size })}
-      disabled={disabled || loading}
-    >
-      {loading && <Spinner />}
-      {icon && <span className="mr-2">{icon}</span>}
-      {children}
-    </button>
-  );
-}
-```
-
-**Benefits:**
-
-- Type-safe: `variant="primary"` AND `variant="secondary"` at once is a compile error
-- Token-based: All colors reference design tokens
-- Clean API: `<Button variant="primary" size="lg">` is intuitive
-- AI-friendly: Structured variant options
-
-**Generated by AI:**
-
-```tsx
-<Button variant="primary" size="lg">Submit</Button>
-<Button variant="ghost" size="sm">Cancel</Button>
-```
-
-Valid, type-safe, matches design system.
-
-## Conclusion
-
-Component variants are the pattern that makes design systems scalable and AI-friendly.
-
-**Key principles:**
-
-1. **Variants over booleans**: `variant="primary"` beats `primary={true}`
-2. **Mutually exclusive axes**: Can't be both `primary` and `secondary`
-3. **Semantic naming**: Names describe purpose, not appearance
-4. **Token-driven**: Variant styles come from design tokens
-5. **Type-safe**: TypeScript enforces valid combinations
-
-**Benefits:**
-
-- ✅ AI generates valid component code (no invalid prop combos)
-- ✅ Type-safe at compile time (catch errors early)
-- ✅ Maintainable (add variants without breaking existing code)
-- ✅ Testable (programmatically test all combinations)
-- ✅ Self-documenting (variant names explain purpose)
-
-**Start here:**
-
-1. Identify your most-used components (Button, Card, Badge)
-2. Define variant axes (variant, size, state)
-3. Store variant styles in design tokens
-4. Implement with CVA or similar library
-5. Expose variants to AI via MCP
-
-Your components will be cleaner, your design system more consistent, and AI will generate perfect code on the first try.
-
-Ready to eliminate prop soup? [Try FramingUI](https://framingui.com).
+Variant 패턴은 빠르게 값어치를 해요 — 깔끔한 API, 나은 TypeScript 커버리지, 더 예측 가능한 AI 출력, 그리고 컴포넌트 라이브러리가 커져도 자동으로 따라오는 테스트 스위트.

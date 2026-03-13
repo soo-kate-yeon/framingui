@@ -1,46 +1,28 @@
 ---
-title: "Design Tokens vs CSS Variables: What's the Difference?"
-description: "Learn the key differences between design tokens and CSS variables, when to use each, and how FramingUI bridges both for AI-friendly design systems."
+title: "Design Tokens vs CSS Variables: 무엇이 다른가요?"
+description: "디자인 토큰과 CSS 변수의 핵심 차이, 각각 언제 사용해야 하는지, FramingUI가 둘을 AI 친화적인 디자인 시스템으로 어떻게 연결하는지 알아보세요."
 date: "2026-03-11"
 author:
   name: "FramingUI Team"
 tags:
   - design-tokens
-  - css-variables
   - design-system
-  - fundamentals
-category: "Tutorial"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## The Confusion
+"디자인 토큰이랑 CSS 변수는 같은 거 아닌가요?" 자주 듣는 질문이에요. 둘 다 재사용 가능한 디자인 값을 저장한다는 점에서 혼동하는 게 이해는 돼요. 그런데 이 둘은 서로 다른 추상화 수준에서 작동하고, 같은 것으로 취급하면 확장하기 어렵고 플랫폼 간에 공유할 수 없는 디자인 시스템이 돼요.
 
-If you've been researching design systems, you've probably encountered both terms: **design tokens** and **CSS variables**. They seem to do the same thing—store reusable design values. So what's the actual difference?
+짧게 정리하면 이렇게요. 디자인 토큰은 소스 데이터예요. CSS 변수는 그 소스의 출력 형식 중 하나고요.
 
-Many developers use them interchangeably. Articles blur the lines. Tools like Figma Variables and Tokens Studio add to the confusion. You might be wondering: "Are they the same thing? Do I need both? Which one should I use?"
+## CSS 변수: 브라우저 기능
 
-Here's the truth: **design tokens and CSS variables are related but fundamentally different concepts.** Understanding the distinction will help you build more maintainable design systems and make better decisions for your project.
-
-## TL;DR
-
-- **Design tokens** are platform-agnostic design decisions (JSON, YAML, or any data format)
-- **CSS variables** are a browser implementation technology (`--variable-name: value`)
-- Design tokens can be **transformed into** CSS variables, Sass variables, iOS/Android constants, etc.
-- Use **design tokens** for design system source of truth
-- Use **CSS variables** for runtime theming and dynamic values
-- FramingUI uses design tokens as source and generates CSS variables + AI-readable metadata automatically
-
-## What Are CSS Variables?
-
-CSS custom properties (commonly called CSS variables) are a browser feature introduced in 2016. They let you store values and reuse them throughout your stylesheets.
-
-### Basic CSS Variables Example
+CSS 커스텀 프로퍼티—흔히 CSS 변수라고 부르는—는 2016년에 브라우저에 도입됐어요. 값을 한 번 정의하고 스타일시트 전체에서 참조할 수 있게 해주죠.
 
 ```css
 :root {
   --color-primary: #3b82f6;
-  --color-secondary: #8b5cf6;
   --spacing-base: 8px;
 }
 
@@ -48,41 +30,17 @@ CSS custom properties (commonly called CSS variables) are a browser feature intr
   background: var(--color-primary);
   padding: calc(var(--spacing-base) * 2);
 }
-
-.card {
-  border-color: var(--color-secondary);
-  margin: var(--spacing-base);
-}
 ```
 
-**Key characteristics:**
+브라우저가 렌더링 시에 이 값들을 계산해요. JavaScript로 재정의할 수도 있고, 특정 선택자에 범위를 한정할 수도 있고, `:root` 선언 몇 줄만 바꿔서 전체 UI를 바꿀 수도 있어요. 빌드 과정이 필요 없고요.
 
-- **Runtime values**: Calculated by the browser at render time
-- **CSS-only**: Cannot be accessed outside CSS without JavaScript
-- **Dynamic**: Can be changed with JavaScript (`element.style.setProperty('--color-primary', '#red')`)
-- **Scoped**: Can be redefined per element or selector
-- **Browser-native**: No build step required
+이 단순함이 장점이자 한계예요. CSS 변수는 브라우저 네이티브 문자열이에요. 여러분이 수동으로 만드는 구조 외에는 타입도, 설명도, 구조도 없어요. `--blue-500`이라는 이름의 변수는 그냥 색상스러운 이름을 가진 문자열이에요. 프라이머리 버튼 배경으로 의도됐어도 보더, 그림자, 호버 상태에 쓰는 걸 막을 방법이 없어요. 바로 옆에 `--blue-500-new`가 생겨나는 것도 막을 수 없고요.
 
-### When CSS Variables Shine
+브라우저를 벗어나지도 못해요. CSS 파일에서 iOS Swift 상수나 Android 색상 리소스를 생성할 수는 없어요.
 
-1. **Runtime theming**: User toggles dark mode → update one variable, entire UI changes
-2. **Dynamic values**: Calculate spacing or colors based on viewport size
-3. **Scoped overrides**: Change button color within a specific section
-4. **No build step**: Works directly in the browser, great for prototyping
+## 디자인 토큰: 구조화된 소스 데이터
 
-### CSS Variables Limitations
-
-1. **CSS-only**: Can't generate iOS/Android/Flutter design systems from CSS variables
-2. **No semantic meaning**: A variable named `--blue-500` doesn't tell you it's for primary actions
-3. **Hard to validate**: No type safety, no structure—just strings
-4. **Not AI-friendly**: AI tools can't understand the intent behind `var(--spacing-4)` without extra context
-5. **Platform-locked**: Can't transform into other formats (JSON, Swift, Kotlin)
-
-## What Are Design Tokens?
-
-Design tokens are **named design decisions stored in a platform-agnostic format** (usually JSON or YAML). They represent the source of truth for your design system and can be transformed into any platform-specific format.
-
-### Basic Design Tokens Example
+디자인 토큰은 플랫폼에 종속되지 않는 형식—일반적으로 JSON—으로 저장된 이름 붙은 디자인 결정이에요. 디자인 시스템의 공식 소스이자, 어떤 플랫폼 형식으로도 변환될 수 있을 만큼 충분한 구조를 갖고 있어요.
 
 ```json
 {
@@ -90,370 +48,84 @@ Design tokens are **named design decisions stored in a platform-agnostic format*
     "primary": {
       "value": "#3b82f6",
       "type": "color",
-      "description": "Primary brand color used for CTAs and links"
-    },
-    "secondary": {
-      "value": "#8b5cf6",
-      "type": "color",
-      "description": "Secondary accent color"
+      "description": "프라이머리 브랜드 색상. CTA, 링크, 포커스 상태에 사용."
     }
   },
   "spacing": {
-    "base": {
-      "value": "8px",
-      "type": "dimension"
-    },
-    "md": {
-      "value": "16px",
-      "type": "dimension"
-    }
+    "base": { "value": "8px", "type": "dimension" },
+    "md": { "value": "16px", "type": "dimension" }
   }
 }
 ```
 
-**Key characteristics:**
+`type` 필드는 빌드 도구에게 토큰을 어떻게 변환할지 알려줘요. `color` 토큰은 CSS에서 헥스값이 되고, Swift에서는 `UIColor`가 되고, Android XML에서는 `<color>` 리소스가 돼요. `description` 필드는 사람과 AI 도구에게 이 토큰이 *무엇인지*가 아니라 *무엇을 위한 것인지*를 알려주고요.
 
-- **Platform-agnostic**: Not tied to CSS, iOS, Android, or any specific technology
-- **Structured data**: Typed, documented, and organized
-- **Transformable**: Can be converted to CSS, Sass, Swift, Kotlin, XML, etc.
-- **Semantic**: Token names describe purpose (`color.primary`) not appearance (`color.blue.500`)
-- **Tooling-friendly**: AI, design tools, and build systems can read and generate tokens
+이 구조가 디자인 토큰을 단순한 재사용 그 이상으로 가치 있게 만들어요. 토큰은 쿼리 가능하고, 검증 가능하고, 원시 CSS 파일로는 불가능한 방식으로 변환 가능해요.
 
-### When Design Tokens Shine
+## 관계: 소스와 출력
 
-1. **Multi-platform design systems**: One source → CSS, iOS, Android, Flutter, React Native
-2. **Design-to-code handoff**: Designers define tokens in Figma → developers import directly
-3. **AI code generation**: AI reads tokens and generates on-brand components automatically
-4. **Version control**: Track design changes in Git, review design decisions in PRs
-5. **Documentation**: Each token has type, description, and metadata
-6. **Validation**: Enforce naming conventions, contrast ratios, accessibility rules
-
-### Design Tokens Structure (W3C Standard)
-
-The W3C Design Tokens Community Group defines a standard format:
-
-```json
-{
-  "token-name": {
-    "value": "actual-value",
-    "type": "color | dimension | fontFamily | fontWeight | ...",
-    "description": "Human-readable explanation",
-    "$extensions": {
-      "custom-metadata": "any additional data"
-    }
-  }
-}
-```
-
-This structure enables:
-
-- **Type safety**: Tools can validate that colors are valid hex/rgb, dimensions have units, etc.
-- **Discoverability**: Developers and AI can browse all available tokens
-- **Transformation**: Build tools know how to convert each type to platform-specific code
-
-## The Relationship: Tokens → Variables
-
-Here's the mental model:
+이런 모델로 이해하면 돼요.
 
 ```
-┌─────────────────────┐
-│  Design Tokens      │  ← Source of truth (JSON/YAML)
-│  (JSON)             │     Platform-agnostic
-└──────────┬──────────┘     Versioned in Git
-           │                 Documented & typed
-           │
-           ├──────────────────────────┐
-           │                          │
-           ▼                          ▼
-  ┌────────────────┐        ┌────────────────┐
-  │ CSS Variables  │        │  iOS/Android   │
-  │ :root { ... }  │        │  Constants     │
-  └────────────────┘        └────────────────┘
-           │                          │
-           ▼                          ▼
-      Web Apps                 Mobile Apps
+디자인 토큰 (JSON)
+        │
+        ├──► CSS 변수         → 웹
+        ├──► Swift 상수       → iOS
+        └──► XML 리소스       → Android
 ```
 
-**Design tokens are the source.** CSS variables are one possible output format.
+디자인 토큰이 단일 진실 공급원이에요. CSS 변수는 파생 출력 형식 중 하나고요. JSON에서 토큰 값을 바꾸고 빌드를 실행하면 모든 플랫폼 형식이 동기화되어 업데이트돼요.
 
-### Transformation Example
+실용적으로 이게 중요한 이유가 있어요. 디자인 시스템이 CSS 변수로만 존재한다면 모바일 팀과 공유할 수 없어요. AI 도구에 디자인 결정에 대한 구조화되고 타입이 있고 설명이 있는 맥락을 줄 수 없어요. 토큰이 유효한 색상값인지 배포 전에 검증할 수도 없고요.
 
-**Input (design tokens):**
+## 각각 어디에 맞는가
+
+CSS 변수는 *런타임* 문제에서 강해요. 사용자가 다크 모드로 전환하면? `document.documentElement.setAttribute('data-theme', 'dark')`만 하면 그 선택자 아래의 CSS 변수가 즉시 적용돼요. 리빌드도 없고 지연도 없어요. 뷰포트 크기에 따른 동적 간격? CSS `calc()`와 커스텀 프로퍼티가 자연스럽게 처리해요. 빌드 도구 없는 빠른 프로토타입? CSS 변수는 브라우저에서 바로 작동해요.
+
+디자인 토큰은 *작성*과 *배포* 문제에서 강해요. 웹과 모바일이 디자인 결정을 공유해야 하는 멀티 플랫폼 제품? 토큰만이 작업을 중복하지 않고 갈 수 있는 길이에요. AI 코드 생성이 임의의 Tailwind 기본값 대신 실제 색상 팔레트를 사용해서 컴포넌트를 만들기를 원해요? 토큰이 AI에게 필요한 구조화되고 시맨틱한 맥락을 줘요. `--color-primary`가 항상 유효한 헥스 또는 OKLCH 값인지 보장하고 싶어요? 토큰 스키마가 빌드 시에 검증해요.
+
+대부분의 프로덕트 팀에게 실용적인 답은 둘 다예요. 토큰을 소스로, CSS 변수를 웹 출력으로 쓰는 거죠.
+
+## FramingUI가 둘을 생성하는 방식
+
+FramingUI는 디자인 토큰을 입력으로 받아서 하나의 소스에서 스택에 필요한 모든 것을 생성해요.
 
 ```json
 {
   "color": {
     "primary": {
-      "value": "#3b82f6",
-      "type": "color"
+      "500": { "value": "#3b82f6", "type": "color" }
     }
   }
 }
 ```
 
-**Output (CSS variables):**
+여기서 빌드 단계가 라이트 모드와 다크 모드 변형이 있는 CSS 변수, 그 변수를 참조하는 Tailwind config, 토큰 이름에 대한 TypeScript 타입 정의, 그리고 MCP 서버가 AI 쿼리에 답하는 데 사용하는 메타데이터를 만들어내요.
+
+AI 통합은 특히 CSS 출력이 아닌 토큰 구조에 의존해요. Claude Code가 MCP 서버에 "어떤 색상이 사용 가능해요?"라고 물으면, JSON 토큰 데이터—이름, 값, 타입, 설명—를 돌려받아요. 그게 `bg-blue-500` 대신 `bg-primary-500`을 선택하게 하고, `primary-500`이 배경이 아니라 CTA에 적합하다는 걸 알게 해주는 거예요.
+
+## CSS 변수에서 토큰으로 마이그레이션
+
+이미 CSS 변수 시스템이 있고 토큰 기반 워크플로우로 옮기고 싶다면, 마이그레이션은 기계적으로 할 수 있어요.
+
+기존 변수를 JSON으로 추출하는 것부터 시작해요.
 
 ```css
-:root {
-  --color-primary: #3b82f6;
-}
-```
-
-**Output (iOS Swift):**
-
-```swift
-extension UIColor {
-    static let primary = UIColor(hex: "3b82f6")
-}
-```
-
-**Output (Android Kotlin):**
-
-```xml
-<color name="primary">#3b82f6</color>
-```
-
-Same token, different output formats. This is the power of design tokens.
-
-## When to Use Which?
-
-| Scenario | Use This | Why |
-|----------|----------|-----|
-| Building a multi-platform product | **Design tokens** | Single source of truth for web + mobile |
-| Runtime theme switching (dark mode) | **CSS variables** | Dynamic, no rebuild needed |
-| AI-generated components | **Design tokens** | AI can read structured data + semantic meaning |
-| Design-to-code workflow | **Design tokens** | Export from Figma → import into codebase |
-| Quick prototype with no build step | **CSS variables** | Browser-native, no tooling required |
-| Design system with documentation | **Design tokens** | Types, descriptions, metadata built-in |
-| Dynamic spacing based on viewport | **CSS variables** | `calc()` and viewport units work natively |
-
-### The Ideal Approach: Both
-
-Most modern design systems use **design tokens as the source** and **generate CSS variables** as one output format.
-
-```
-Design Tokens (JSON) → Build Step → CSS Variables + Docs + Mobile Constants
-```
-
-This gives you:
-
-- ✅ Single source of truth (design tokens)
-- ✅ Runtime theming (CSS variables)
-- ✅ Multi-platform support (iOS, Android)
-- ✅ AI-friendly (structured data)
-- ✅ Type safety (validated tokens)
-
-## How FramingUI Handles Both
-
-FramingUI uses design tokens as the foundation and automatically generates everything you need:
-
-### 1. Define Tokens Once (JSON)
-
-```json
-{
-  "color": {
-    "primary": {
-      "50": { "value": "#eff6ff", "type": "color" },
-      "500": { "value": "#3b82f6", "type": "color" },
-      "900": { "value": "#1e3a8a", "type": "color" }
-    }
-  }
-}
-```
-
-### 2. FramingUI Generates CSS Variables
-
-```css
-:root {
-  --color-primary-50: #eff6ff;
-  --color-primary-500: #3b82f6;
-  --color-primary-900: #1e3a8a;
-}
-
-[data-theme="dark"] {
-  --color-primary-50: #1e3a8a;
-  --color-primary-500: #3b82f6;
-  --color-primary-900: #eff6ff;
-}
-```
-
-### 3. AND Tailwind Classes
-
-```js
-// tailwind.config.js
-module.exports = {
-  theme: {
-    colors: {
-      primary: {
-        50: 'var(--color-primary-50)',
-        500: 'var(--color-primary-500)',
-        900: 'var(--color-primary-900)',
-      }
-    }
-  }
-}
-```
-
-### 4. AND AI-Readable Metadata
-
-```json
-{
-  "tools": [
-    {
-      "name": "list_design_tokens",
-      "description": "Get all available design tokens (colors, spacing, typography)",
-      "inputSchema": { "type": "object", "properties": {} }
-    }
-  ]
-}
-```
-
-When Claude or Cursor calls this MCP tool, it gets structured token data and can generate components like:
-
-```tsx
-// AI generates this using your actual tokens
-<Button className="bg-primary-500 hover:bg-primary-600 px-4 py-2">
-  Click me
-</Button>
-```
-
-No hardcoded values. No manual replacement. AI reads your design tokens and uses them automatically.
-
-## Common Misconceptions
-
-### "CSS Variables ARE Design Tokens"
-
-**Not quite.** CSS variables are a runtime implementation. Design tokens are the source data. You can generate CSS variables FROM design tokens, but raw CSS variables lack the structure, types, and cross-platform capabilities of design tokens.
-
-### "I Only Need CSS Variables"
-
-This works **if** you only build web apps and don't care about:
-
-- AI code generation (AI can't read CSS files easily)
-- Multi-platform (iOS/Android need different formats)
-- Design tool integration (Figma can't export to raw CSS variables)
-- Validation and documentation (CSS variables are just strings)
-
-For solo web projects or quick prototypes, CSS variables alone are fine. For scalable design systems, design tokens are essential.
-
-### "Design Tokens Require Complex Tooling"
-
-Not anymore. FramingUI makes it as simple as:
-
-```bash
-npx framingui init
-```
-
-Define tokens in JSON → FramingUI generates CSS, Tailwind, docs, and AI integration automatically.
-
-## Real-World Example: Building a Button
-
-### Approach 1: CSS Variables Only
-
-```css
-:root {
-  --btn-bg: #3b82f6;
-  --btn-text: white;
-  --btn-padding: 12px 24px;
-}
-
-.button {
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  padding: var(--btn-padding);
-}
-```
-
-**Problems:**
-
-- Can't validate `--btn-bg` is actually a valid color
-- Can't generate Android/iOS button styles from this
-- AI doesn't know `--btn-bg` is for buttons (could be anything)
-- No documentation or semantic meaning
-
-### Approach 2: Design Tokens → CSS Variables
-
-**tokens.json:**
-
-```json
-{
-  "component": {
-    "button": {
-      "primary": {
-        "background": {
-          "value": "{color.primary.500}",
-          "type": "color",
-          "description": "Primary button background"
-        },
-        "text": {
-          "value": "{color.white}",
-          "type": "color"
-        },
-        "padding": {
-          "value": "{spacing.md} {spacing.lg}",
-          "type": "dimension"
-        }
-      }
-    }
-  }
-}
-```
-
-**Generated CSS:**
-
-```css
-:root {
-  --component-button-primary-background: #3b82f6;
-  --component-button-primary-text: white;
-  --component-button-primary-padding: 12px 24px;
-}
-
-.button-primary {
-  background: var(--component-button-primary-background);
-  color: var(--component-button-primary-text);
-  padding: var(--component-button-primary-padding);
-}
-```
-
-**Benefits:**
-
-- ✅ Tokens reference other tokens (`{color.primary.500}`)
-- ✅ Type-safe (color, dimension validated)
-- ✅ Documented (description field)
-- ✅ Can generate iOS/Android/Flutter versions
-- ✅ AI can read token structure and understand button styling
-
-## Migration Path: CSS Variables → Design Tokens
-
-Already using CSS variables? Here's how to migrate:
-
-### Step 1: Extract Variables to JSON
-
-**Before (CSS):**
-
-```css
+/* 이전 */
 :root {
   --color-blue-500: #3b82f6;
   --spacing-md: 16px;
 }
 ```
 
-**After (JSON):**
-
 ```json
 {
-  "color": {
-    "blue": {
-      "500": { "value": "#3b82f6", "type": "color" }
-    }
-  },
-  "spacing": {
-    "md": { "value": "16px", "type": "dimension" }
-  }
+  "color": { "blue": { "500": { "value": "#3b82f6", "type": "color" } } },
+  "spacing": { "md": { "value": "16px", "type": "dimension" } }
 }
 ```
 
-### Step 2: Add Semantic Aliases
+그리고 원시 값을 참조하는 시맨틱 별칭을 추가해요.
 
 ```json
 {
@@ -461,61 +133,10 @@ Already using CSS variables? Here's how to migrate:
     "primary": {
       "value": "{color.blue.500}",
       "type": "color",
-      "description": "Primary brand color"
+      "description": "프라이머리 브랜드 색상"
     }
   }
 }
 ```
 
-### Step 3: Generate CSS Variables from Tokens
-
-Use FramingUI or Style Dictionary:
-
-```bash
-npx framingui build
-```
-
-Output: Same CSS variables as before, but now generated from structured tokens.
-
-### Step 4: Extend to Other Platforms
-
-Now you can generate mobile tokens:
-
-```bash
-npx framingui build --platform ios
-npx framingui build --platform android
-```
-
-Same design system, multiple platforms.
-
-## Conclusion
-
-**Design tokens and CSS variables serve different purposes:**
-
-- **Design tokens** = source of truth (structured, platform-agnostic, AI-friendly)
-- **CSS variables** = runtime implementation (dynamic, browser-native, themeable)
-
-**Use design tokens when:**
-
-- Building design systems for multiple platforms
-- Enabling AI code generation
-- Integrating with Figma or design tools
-- You need documentation and type safety
-
-**Use CSS variables when:**
-
-- Quick prototypes with no build step
-- Runtime theming (dark mode toggles)
-- Dynamic calculations (`calc()`, viewport units)
-
-**Best practice:** Define design tokens as source → generate CSS variables + other formats automatically.
-
-FramingUI does this out of the box. You get structured tokens, CSS variables, Tailwind classes, TypeScript types, AND AI integration—all from a single source of truth.
-
-Want to see it in action? Try the [FramingUI playground](https://framingui.com) or run:
-
-```bash
-npx framingui init
-```
-
-Your design system (and AI code generation) will thank you.
+빌드 단계를 실행하면 토큰에서 CSS 변수가 생성돼요. 출력물은 이전과 동일하게 보이지만, 이제는 변환 가능하고 검증 가능하며 공유 가능하고 쿼리 가능한 구조화된 소스에서 나오는 거예요.

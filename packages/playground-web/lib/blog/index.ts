@@ -119,14 +119,34 @@ export function getBlogPost(slug: string): BlogPost | null {
 /**
  * 전체 포스트 목록 (날짜 내림차순)
  */
+const LOCALE_SCRIPT_REGEX: Partial<Record<BlogLocale, RegExp>> = {
+  ko: /[\uAC00-\uD7A3]/,
+  ja: /[\u3040-\u30FF\u4E00-\u9FFF]/,
+};
+
+function isTranslated(locale: BlogLocale, content: string): boolean {
+  const regex = LOCALE_SCRIPT_REGEX[locale];
+  if (!regex) {
+    return true;
+  } // 'en' has no script requirement
+  return regex.test(content);
+}
+
 export function getAllBlogPosts(locale: BlogLocale): BlogPostSummary[] {
   const slugs = getAllBlogSlugs();
   const posts: BlogPostSummary[] = [];
 
   for (const slug of slugs) {
     const parsed = parseBlogFile(slug, locale);
-    const fallback = locale === 'en' ? null : parseBlogFile(slug, 'en');
-    const resolved = parsed ?? fallback;
+
+    // Non-en locales: only include if the locale file actually has target-language text
+    if (locale !== 'en') {
+      if (!parsed || !isTranslated(locale, parsed.content + parsed.frontmatter.title)) {
+        continue;
+      }
+    }
+
+    const resolved = parsed ?? parseBlogFile(slug, 'en');
     if (resolved && resolved.frontmatter.published) {
       posts.push({
         slug,

@@ -1,484 +1,100 @@
 ---
 title: "Why AI Can't Maintain UI Consistency (Yet)"
-description: "Understanding why Claude, ChatGPT, and Cursor generate inconsistent UI code—and how design tokens solve the problem."
+description: "AI generates beautiful UI code — just not consistently. Design tokens via MCP fix the context gap."
 date: "2026-03-08"
 author:
   name: "FramingUI Team"
 tags:
   - ai
   - design-tokens
-  - consistency
-  - cursor
-  - claude
-category: "AI"
+  - ui-consistency
+category: "Concept"
 coverImage: ""
 published: true
 ---
 
-## The AI Consistency Problem
+## The Problem in Two Prompts
 
-You're building a dashboard with Cursor. You ask Claude:
-
-> "Create a user profile card with a name, avatar, and status badge"
-
-Claude generates beautiful code:
+You ask Claude to create a profile card. It generates:
 
 ```tsx
 <div className="bg-white rounded-lg p-6 shadow-md">
-  <img src="/avatar.jpg" className="w-16 h-16 rounded-full" />
   <h3 className="text-xl font-bold text-gray-900">John Doe</h3>
-  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-    Active
-  </span>
+  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm">Active</span>
 </div>
 ```
 
-Perfect! You copy it into your codebase.
-
-Two days later, you ask:
-
-> "Create a notification card with an icon, message, and timestamp"
-
-Claude generates:
+Two days later, you ask for a notification card:
 
 ```tsx
 <div className="bg-slate-50 rounded-xl p-4 border border-gray-200">
-  <div className="flex items-center gap-3">
-    <Bell className="w-5 h-5 text-blue-600" />
-    <p className="text-base text-slate-800">New message received</p>
-  </div>
+  <p className="text-base text-slate-800">New message received</p>
   <time className="text-xs text-gray-500">2 minutes ago</time>
 </div>
 ```
 
-Also looks great! But wait...
+Both look fine in isolation. But side by side: `bg-white` vs. `bg-slate-50`. `rounded-lg` vs. `rounded-xl`. `p-6` vs. `p-4`. `text-gray-900` vs. `text-slate-800`. Your AI just produced two components that look like they belong to different apps.
 
-- Profile card: `bg-white`, Notification: `bg-slate-50`
-- Profile: `rounded-lg`, Notification: `rounded-xl`
-- Profile: `p-6`, Notification: `p-4`
-- Profile: `text-gray-900`, Notification: `text-slate-800`
+This isn't a bug. It's a context gap.
 
-**Your AI just generated two cards with completely different design languages.**
+## Why AI Drifts
 
-## Why This Happens: How AI Generates UI Code
+LLMs generate UI code by pattern-matching against training data — thousands of card implementations from Material Design, Tailwind UI, shadcn/ui, and random GitHub repos. Each uses different color palettes, spacing scales, and border radii. When you say "card component," the model samples from all of them.
 
-### The Pattern Matching Problem
+The model has no way to know which pattern is *yours*.
 
-LLMs like Claude, GPT-4, and Gemini don't "remember" your design system. They generate code by:
+The obvious fix is to paste your design system into the prompt. This helps for a single generation, but it breaks down fast. In long conversations, early context loses influence — a phenomenon sometimes called context decay. Your tokens from message one carry less weight by message ten. And pasting 2,000+ tokens of design definitions into every conversation is tedious, expensive, and doesn't scale across a team.
 
-1. **Pattern matching** against training data (GitHub, documentation, tutorials)
-2. **Predicting** the most statistically likely next token
-3. **Optimizing** for what "looks reasonable" in isolation
+You could also try telling the AI to "be consistent." But "consistent" is vague. The model will be internally consistent within one response. Across sessions, across developers, across weeks — it drifts back to statistical defaults. Blue-600 for buttons. Rounded-md for corners. The internet's median design system.
 
-When you ask for a "card component," the AI samples from thousands of card implementations it's seen:
+## The Fix: Give AI Programmatic Access
 
-- Material Design cards (Google's patterns)
-- Tailwind UI examples
-- shadcn/ui components
-- Random GitHub repos
-- Stack Overflow snippets
+The core insight is simple. Instead of describing your design system in natural language and hoping the model remembers, you connect it as a structured data source the model can query on demand.
 
-Each of these uses different:
-- Color palettes (`blue-500` vs. `indigo-600` vs. `#4F46E5`)
-- Spacing scales (`p-4` vs. `p-6` vs. `px-5 py-3`)
-- Border radius values (`rounded-md` vs. `rounded-lg` vs. `rounded-xl`)
-- Typography scales (`text-sm` vs. `text-base` vs. `text-lg`)
-
-**The AI has no way to know which one is YOUR pattern.**
-
-### The Context Window Limitation
-
-Even if you paste your design system into the chat, you face two issues:
-
-**1. Context Decay**
-
-The further back your design system is in the conversation, the less "weight" it has in the AI's generation:
-
-```
-Message 1: [Your design tokens - 2000 tokens]
-Message 2-5: [Other implementation details]
-Message 6: "Create a new card component"
-         ↑
-         AI has "forgotten" your tokens
-```
-
-**2. Token Budget**
-
-Every message consumes tokens. Pasting your entire design system (colors, spacing, typography, components) might use:
-- 2,000-5,000 tokens for comprehensive design tokens
-- Leaves less room for actual implementation context
-- Costs add up fast (especially with Claude Opus / GPT-4)
-
-### The Implicit Assumptions Problem
-
-AI fills in blanks with "reasonable defaults" when you don't specify:
-
-**You say:** "Create a button"
-
-**AI assumes:**
-- Primary color: probably blue (`blue-600`)
-- Padding: probably `px-4 py-2` (Tailwind default)
-- Border radius: probably `rounded-md`
-- Font weight: probably `font-medium`
-
-These assumptions are based on **statistical frequency in training data**, not your design decisions.
-
-## Real-World Inconsistency Examples
-
-### Case 1: The Color Drift
-
-Building an analytics dashboard with Claude Code over 2 weeks:
-
-**Week 1 components:**
-- Used `blue-600` for primary actions
-- `gray-100` for backgrounds
-- `green-500` for success states
-
-**Week 2 components (same prompts, fresh chat):**
-- Used `indigo-600` for primary actions
-- `slate-50` for backgrounds  
-- `emerald-500` for success states
-
-**Result:** The app looked like it was designed by two different people.
-
-### Case 2: The Spacing Chaos
-
-Using Cursor to build a SaaS onboarding flow:
-
-```tsx
-// Step 1 (generated Monday)
-<div className="p-6 space-y-4">
-
-// Step 2 (generated Tuesday)  
-<div className="p-8 space-y-6">
-
-// Step 3 (generated Wednesday)
-<div className="p-4 space-y-3">
-```
-
-Same flow, same designer intent, **three different spacing systems**.
-
-### Case 3: The Typography Jungle
-
-Asking ChatGPT to create form components:
-
-- Input label: `text-sm font-medium text-gray-700`
-- Error message: `text-xs text-red-600`
-- Helper text: `text-sm text-gray-500`
-- Placeholder: `text-base text-gray-400`
-
-Four different font sizes for supporting text. No system, just vibes.
-
-## Why Current Solutions Don't Work
-
-### ❌ Solution 1: "Just Tell AI to Be Consistent"
-
-```
-Prompt: "Use consistent spacing and colors across all components"
-```
-
-**Problem:** "Consistent" is vague. AI will be internally consistent within ONE response but not across multiple generations.
-
-### ❌ Solution 2: "Paste Your Design System Every Time"
-
-```
-Prompt: [2000 tokens of design system]
-"Now create a button using these tokens"
-```
-
-**Problems:**
-- Tedious and slow
-- Burns through token limits
-- Doesn't scale beyond 1-2 developers
-- Context decay still happens in long conversations
-
-### ❌ Solution 3: "Use AI's Built-in Memory"
-
-Claude Projects and ChatGPT Memory help, but:
-- Limited memory size (can't hold comprehensive design systems)
-- No programmatic access (can't query "what's our primary color?")
-- Inconsistent recall (might remember your color palette but forget your spacing scale)
-
-### ❌ Solution 4: "Fine-Tune a Model"
-
-Technically possible, but:
-- Requires ML expertise
-- Expensive (thousands of dollars)
-- Needs retraining every time your design system updates
-- Overkill for 99% of teams
-
-## The Design Token Solution
-
-Design tokens solve this by giving AI **programmatic access** to your design system.
-
-### How It Works: MCP (Model Context Protocol)
-
-Instead of pasting tokens into chat, you **connect** your design system to AI tools:
+This is what MCP (Model Context Protocol) enables:
 
 ```
 ┌──────────────┐         MCP          ┌─────────────────┐
-│   Cursor     │ ◄─────────────────► │  Design Token   │
+│   Cursor /   │ ◄─────────────────► │  Design Token   │
 │   Claude     │  "What's primary?"   │     Server      │
-│   ChatGPT    │ ◄─────────────────► │  (FramingUI)    │
+│              │ ◄─────────────────► │                 │
 └──────────────┘    Returns: #4338CA  └─────────────────┘
 ```
 
-**Before (copy-paste approach):**
-```
-User: "Create a button with our brand colors"
-AI: *guesses* → generates bg-blue-600
-```
+When the AI detects it's generating a UI component, it queries your token server. Instead of guessing `bg-blue-600`, it receives `primary: '#4338CA'` and uses your actual value. Every time, every session, every developer on the team.
 
-**After (MCP approach):**
-```
-User: "Create a button with our brand colors"
-AI: *queries token server* → receives primary: '#4338CA'
-AI: generates → bg-[#4338CA] OR uses your custom Tailwind class bg-brand-primary
-```
+The result: two components generated a month apart produce identical design language — same spacing classes, same color tokens, same border radii — without anyone copy-pasting anything.
 
-### The FramingUI Approach
+## Setup in One Command
 
-FramingUI provides an MCP server that exposes your design tokens as queryable resources:
-
-**1. Define Your Tokens Once**
-
-```typescript
-// tokens/config.ts
-export const tokens = {
-  colors: {
-    brand: {
-      primary: '#4338CA',
-      secondary: '#7C3AED',
-    },
-    neutral: {
-      50: '#F9FAFB',
-      900: '#111827',
-    }
-  },
-  spacing: {
-    sm: '0.5rem',
-    md: '1rem',
-    lg: '1.5rem',
-  },
-  typography: {
-    fontFamily: {
-      sans: 'Inter, system-ui',
-    },
-    fontSize: {
-      sm: '0.875rem',
-      base: '1rem',
-      lg: '1.125rem',
-    }
-  }
-}
-```
-
-**2. AI Queries Tokens Automatically**
-
-When you ask Cursor or Claude Code to create a component, it:
-1. Detects you're working on a UI component
-2. Queries your token server: "What colors are available?"
-3. Receives your token structure
-4. Generates code using YOUR tokens, not generic ones
-
-**3. Consistent Output Every Time**
-
-```tsx
-// First generation (Day 1)
-<button className="bg-brand-primary text-white px-md py-sm rounded-md">
-  Primary Button
-</button>
-
-// Second generation (Day 30, different chat session)
-<button className="bg-brand-primary text-white px-md py-sm rounded-md">
-  Another Button
-</button>
-```
-
-Same classes, same design language, **zero copy-pasting**.
-
-## Setting Up Token-Aware AI (5 Minutes)
-
-### Step 1: Install FramingUI
+FramingUI's `init` command handles the entire setup — package installation, Tailwind configuration, MCP connection, and guide generation:
 
 ```bash
-npm install @framingui/tokens @framingui/mcp-server
+npx -y @framingui/mcp-server@latest init
 ```
 
-### Step 2: Define Your Tokens
-
-```typescript
-// lib/tokens.ts
-import { createTokens } from '@framingui/tokens'
-
-export const tokens = createTokens({
-  colors: {
-    brand: {
-      primary: '#4338CA',
-      secondary: '#7C3AED',
-    },
-    // ... your color system
-  },
-  spacing: {
-    xs: '0.25rem',
-    sm: '0.5rem',
-    md: '1rem',
-    lg: '1.5rem',
-    xl: '2rem',
-  }
-})
-```
-
-### Step 3: Configure MCP Server
+This detects your project type (Next.js / Vite), installs `@framingui/ui`, configures Tailwind CSS, and registers the MCP server in `.mcp.json`:
 
 ```json
-// claude_desktop_config.json (for Claude Code)
 {
   "mcpServers": {
     "framingui": {
+      "type": "stdio",
       "command": "npx",
-      "args": ["@framingui/mcp-server", "--tokens", "./lib/tokens.ts"]
+      "args": ["-y", "@framingui/mcp-server@latest"]
     }
   }
 }
 ```
 
-For Cursor, add to `.cursorrules`:
+After restarting Claude Code, the AI can query your design tokens directly — CSS variables like `var(--bg-primary-default)` and `var(--spacing-4)` instead of guessing `bg-blue-600` or `p-4`.
 
-```
-This project uses FramingUI design tokens.
-Always query available tokens before generating UI code.
-Use token variables instead of hardcoded values.
-```
+The tokens follow a semantic structure: backgrounds (`bg.surface`, `bg.primary`), foregrounds (`fg.primary`, `fg.muted`), spacing (4px-based scale), radius, typography, shadows, and motion. The AI reads these from the MCP server on every generation, so it never has to guess.
 
-### Step 4: Test It
+## What Changes in Practice
 
-**Prompt:** "Create a primary button"
+The shift is subtle but compounding. Individual prompts don't feel different — you still ask for buttons and cards in plain English. But across a week of development, you stop finding color mismatches during design review. New team members generate components that match existing ones without reading a style guide. The codebase converges on a single spacing scale instead of accumulating twelve variations of padding.
 
-**AI Output (Before MCP):**
-```tsx
-<button className="bg-blue-600 px-4 py-2">Click me</button>
-```
+The underlying principle applies beyond any specific tool. If your AI workflow involves generating UI code repeatedly, the highest-leverage investment is making your design decisions queryable — not repeatable in conversation, but *accessible as structured data*. MCP is one protocol for doing this. The pattern matters more than the implementation.
 
-**AI Output (After MCP):**
-```tsx
-<button className="bg-brand-primary px-md py-sm">Click me</button>
-```
-
-## Measurable Improvement
-
-Teams using FramingUI MCP report:
-
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Inconsistent color usage | 47% of components | 8% of components | 83% reduction |
-| Spacing variations | 23 unique values | 6 unique values | 74% reduction |
-| Manual token fixes | 12 hrs/month | 2 hrs/month | 83% reduction |
-| Design QA time | 8 hrs/month | 2 hrs/month | 75% reduction |
-
-## The Future: Fully Autonomous Design Systems
-
-The next frontier is AI that not only **reads** your design system but **maintains** it:
-
-**Today (2026):**
-- AI reads your tokens → generates consistent code ✅
-- You update tokens manually
-- You create new components manually
-
-**Near Future (2026-2027):**
-- AI suggests token updates: "You've used `#4F46E5` 5 times this week. Should we add it as `brand.accent`?"
-- AI generates component variants: "I noticed you need a `ghost` button variant. Here's an implementation based on your existing primary button."
-- AI audits consistency: "12 components use hardcoded colors. Should I refactor them to use tokens?"
-
-**Long-term (2027+):**
-- Design systems that evolve autonomously based on usage patterns
-- AI that detects drift and self-corrects
-- Natural language design system queries: "Show me all components using deprecated spacing values"
-
-## Best Practices for AI + Design Tokens
-
-### 1. Start with Tokens, Not Components
-
-Define your color palette, spacing scale, and typography system BEFORE letting AI generate components. Otherwise, you're reverse-engineering a design system from AI output.
-
-### 2. Use Semantic Naming
-
-```typescript
-// ❌ Bad (AI can't infer intent)
-colors: {
-  blue500: '#3B82F6',
-  blue600: '#2563EB',
-}
-
-// ✅ Good (AI understands purpose)
-colors: {
-  brand: {
-    primary: '#2563EB',
-    primaryHover: '#1D4ED8',
-  }
-}
-```
-
-### 3. Provide Usage Context
-
-```typescript
-// ✅ Include comments for AI context
-export const tokens = {
-  spacing: {
-    sm: '0.5rem',  // Use for compact UIs, mobile
-    md: '1rem',    // Default spacing for most components
-    lg: '1.5rem',  // Use for spacious layouts, marketing pages
-  }
-}
-```
-
-### 4. Integrate with Linting
-
-Catch AI hallucinations automatically:
-
-```javascript
-// eslint-plugin-design-tokens
-{
-  "rules": {
-    "design-tokens/no-hardcoded-colors": "error",
-    "design-tokens/no-arbitrary-spacing": "warn"
-  }
-}
-```
-
-### 5. Audit Regularly
-
-```bash
-# Find hardcoded colors in your codebase
-npx @framingui/audit colors
-
-# Output:
-# ❌ src/components/Button.tsx:12 - Hardcoded #3B82F6
-# ❌ src/pages/Dashboard.tsx:45 - Hardcoded rgb(59, 130, 246)
-# ✅ 47 components using tokens correctly
-```
-
-## The Bottom Line
-
-AI is incredible at generating UI code—but terrible at maintaining consistency without guardrails.
-
-**The problem isn't AI's intelligence. It's AI's lack of context.**
-
-Design tokens + MCP give AI the context it needs to generate code that matches your design system every single time.
-
-**Without tokens:** AI is a junior developer who keeps forgetting your style guide.
-
-**With tokens:** AI is a senior developer who knows your design system by heart.
-
-## Next Steps
-
-1. **Audit your current AI-generated code**: How many inconsistencies can you find?
-2. **Define your core tokens**: Colors, spacing, typography (30 minutes)
-3. **Set up FramingUI MCP**: Connect your tokens to Cursor/Claude (5 minutes)
-4. **Test the difference**: Generate the same component with and without MCP
-
-**Get started**: [FramingUI MCP Setup Guide →](/docs/mcp-setup)
-
----
-
-*Questions about integrating AI with your design system? [Join our Discord](https://discord.gg/framingui) or [DM us on X](https://x.com/framingui).*
+**The problem was never AI's capability. It was AI's context.** Give it your design system as a live data source, and consistency becomes the default instead of the exception.

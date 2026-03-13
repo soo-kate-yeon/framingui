@@ -1,6 +1,6 @@
 ---
 title: "5 Design System Mistakes That Break AI Code Generation"
-description: "Discover common design system anti-patterns that cause AI coding tools to generate inconsistent UI code, and learn practical fixes to make your system AI-proof."
+description: "Common design system patterns that cause AI tools to generate inconsistent UI, and the structural fixes that prevent it."
 date: "2026-03-09"
 author:
   name: "FramingUI Team"
@@ -8,179 +8,91 @@ tags:
   - design-system
   - ai-coding
   - design-tokens
-  - ui-consistency
-category: "Technical"
+category: "Concept"
 coverImage: ""
 published: true
 ---
 
-## When AI Ignores Your Design System
+# 5 Design System Mistakes That Break AI Code Generation
 
-You have a design system. Components in Figma. Style guide documentation. Reusable React components. Everything looks clean—until you ask Claude or Cursor to generate a new feature.
+You have a design system. Documented components, style guides, reusable primitives. Then you ask Claude or Cursor to generate a new feature, and the output uses the wrong blue, inconsistent spacing, and border radii that belong to a different product entirely.
 
-The AI creates a modal dialog. The padding is wrong. The button colors do not match. The border radius feels off. You did not ask for a random design—you have standards. But the AI did not follow them.
+This is not an AI capability problem. AI code generators are good at producing plausible UI. The issue is that "plausible" and "consistent with your system" are different things. If your design system is not structured for machine consumption, AI defaults to patterns learned from public repositories—and none of those match your product.
 
-This is not an AI problem. It is a design system problem.
+Here are five structural mistakes that cause this, and how to fix each one.
 
-AI code generation tools are good at producing plausible UI code. But "plausible" and "consistent with your system" are different things. If your design system is not structured for machine consumption, AI will default to generic patterns learned from millions of public repositories.
+## Mistake 1: Tokens Only Exist in Figma
 
-Here are five common design system mistakes that break AI code generation—and how to fix them.
-
-## Mistake #1: Design Tokens Live Only in Figma
-
-**The Problem:**
-
-Your designer maintains color palettes, typography scales, and spacing values in Figma. Developers eyeball the inspector panel and hardcode values:
+Your designer maintains colors, spacing, and type in Figma. Developers check the inspector and hardcode values:
 
 ```tsx
-<button style={{ 
-  padding: '12px 24px', 
-  background: '#3b82f6',
-  borderRadius: '8px'
-}}>
+<button style={{ padding: '12px 24px', background: '#3b82f6', borderRadius: '8px' }}>
   Submit
 </button>
 ```
 
-When AI generates code, it has no access to Figma. It cannot see your design tokens. So it guesses:
+When AI generates code, it has no access to Figma. It produces what seems reasonable based on training data:
 
 ```tsx
-// AI-generated code
-<button className="px-6 py-3 bg-blue-500 rounded-lg">
-  Submit
-</button>
+<button className="px-6 py-3 bg-blue-500 rounded-lg">Submit</button>
 ```
 
-Close, but not your system. `blue-500` is not your primary color. `px-6` is not your spacing scale.
+Close, but wrong. `blue-500` is not your primary color. `px-6` is not your spacing scale.
 
-**The Fix:**
-
-Export design tokens to code. Use a format AI can read:
+**The fix:** Export tokens to a TypeScript file the AI can import:
 
 ```typescript
-// tokens.ts
+// src/design-system/tokens.ts
 export const tokens = {
   color: {
-    primary: {
-      solid: '#2563eb',
-      hover: '#1d4ed8',
-    },
+    primary: { solid: 'var(--foreground-accent)', hover: 'var(--color-primary-700)' },
+    neutral: { text: 'var(--foreground-primary)', muted: 'var(--foreground-secondary)' },
   },
-  spacing: {
-    3: '12px',
-    5: '20px',
-  },
-  radius: {
-    md: '6px',
-  },
-};
+  spacing: { sm: '0.5rem', md: '1rem', lg: '1.5rem' },
+  radius: { md: '0.375rem', lg: '0.5rem' },
+}
 ```
 
-Now when AI generates code, it can import and reference tokens:
+Now the AI can import and reference real values instead of guessing. Point to this file in your `CLAUDE.md` or AI config so the tool knows where to look.
 
-```tsx
-import { tokens } from './tokens';
+## Mistake 2: Inconsistent Component Naming
 
-<button style={{
-  padding: `${tokens.spacing[3]} ${tokens.spacing[5]}`,
-  background: tokens.color.primary.solid,
-  borderRadius: tokens.radius.md,
-}}>
-  Submit
-</button>
-```
+Your codebase has `PrimaryButton`, `ButtonPrimary`, and `MainButton`—all doing roughly the same thing. Humans infer the equivalence. AI cannot.
 
-**Tools:**
-- [Style Dictionary](https://amzn.github.io/style-dictionary/) – Transform design tokens to code
-- [Figma Tokens Plugin](https://www.figma.com/community/plugin/843461159747178978/Figma-Tokens) – Sync Figma variables to JSON
-- FramingUI – Design system with AI-optimized token structure
+When you ask for "a primary action button," the AI might generate a generic `<button>` instead of using your component, because it does not recognize which of the three names is canonical.
 
-## Mistake #2: Inconsistent Component Naming
-
-**The Problem:**
-
-Your team uses different names for the same concept:
-
-- `PrimaryButton`, `ButtonPrimary`, `MainButton`
-- `Modal`, `Dialog`, `Popup`
-- `Card`, `Panel`, `Container`
-
-Humans can infer these mean similar things. AI cannot. When you ask for a "dialog," AI might generate a generic `<div>` instead of using your `Modal` component.
-
-**The Fix:**
-
-Establish canonical naming conventions and document them:
-
-```markdown
-# Component Naming Standards
-
-- **Buttons:** `Button` (variant prop: `primary`, `secondary`, `ghost`)
-- **Dialogs:** `Dialog` (not Modal, Popup, Overlay)
-- **Cards:** `Card` (not Panel, Container, Box)
-```
-
-Use TypeScript to enforce this:
+**The fix:** Pick one name and enforce it:
 
 ```typescript
-// ❌ Avoid
-export const PrimaryButton = () => { /* ... */ };
-export const ButtonPrimary = () => { /* ... */ };
-
-// ✅ Do
-export const Button = ({ variant }: { variant: 'primary' | 'secondary' }) => {
+// One component, one name, variants via props
+export const Button = ({ variant }: { variant: 'primary' | 'secondary' | 'ghost' }) => {
   /* ... */
-};
+}
 ```
 
-Now AI sees one clear pattern. When it needs a button, it uses `<Button variant="primary">`.
+Document this in your README: "Use `<Button variant="primary">`, not `PrimaryButton` or `MainButton`." AI reads this. When it needs a button, it generates `<Button variant="primary">` consistently.
 
-## Mistake #3: No Machine-Readable Component Documentation
+## Mistake 3: Components Without Machine-Readable Documentation
 
-**The Problem:**
+Storybook looks great in a browser. AI does not browse Storybook. It reads code.
 
-Your component docs look great in Storybook. But AI does not browse Storybook. It reads code.
-
-If your component lacks JSDoc or TypeScript types, AI has to guess how to use it:
+A component without JSDoc or explicit TypeScript types forces the AI to guess the API:
 
 ```tsx
-// What does this component do? AI has no idea.
-export const TextField = (props) => { /* ... */ };
+// AI has to guess every prop name
+export const TextField = (props) => { /* ... */ }
 ```
 
-AI might generate:
+The AI generates `<TextField text="Email" onChange={setEmail} />`. Your actual API is `label` and `onValueChange`. A user reports a bug. You spend time debugging a prop name.
 
-```tsx
-<TextField text="Email" value={email} onChange={setEmail} />
-```
-
-But your actual API is:
-
-```tsx
-<TextField label="Email" value={email} onValueChange={setEmail} />
-```
-
-Close, but wrong prop names. User reports a bug. You debug. Time wasted.
-
-**The Fix:**
-
-Add JSDoc comments and strong TypeScript types:
+**The fix:** Add types and a usage example:
 
 ```tsx
 /**
- * A text input field with label and validation support.
- * 
- * @param label - Visible label above the input
- * @param value - Controlled input value
- * @param onValueChange - Callback when value changes
- * @param error - Error message to display below input
- * 
+ * Text input with label and validation support.
+ *
  * @example
- * <TextField 
- *   label="Email" 
- *   value={email} 
- *   onValueChange={setEmail}
- *   error={errors.email}
- * />
+ * <TextField label="Email" value={email} onValueChange={setEmail} error={errors.email} />
  */
 export const TextField = ({
   label,
@@ -188,189 +100,113 @@ export const TextField = ({
   onValueChange,
   error,
 }: {
-  label: string;
-  value: string;
-  onValueChange: (value: string) => void;
-  error?: string;
-}) => { /* ... */ };
+  label: string
+  value: string
+  onValueChange: (value: string) => void
+  error?: string
+}) => { /* ... */ }
 ```
 
-AI reads this. It knows the prop names. It sees the example. It generates correct code.
+The AI reads the JSDoc example and generates the correct prop names. The type signature catches any deviation.
 
-## Mistake #4: Magic Numbers Instead of Semantic Tokens
+## Mistake 4: Magic Numbers in Existing Components
 
-**The Problem:**
-
-Your spacing system exists, but developers hardcode values:
+Your spacing system is well defined. But existing components hardcode values:
 
 ```tsx
 <div style={{ marginTop: '24px', paddingLeft: '16px' }}>
-  {/* ... */}
-</div>
 ```
 
-When AI generates new UI, it copies this pattern. You end up with dozens of one-off spacing values: `12px`, `18px`, `24px`, `32px`—all close to your 8px grid, but none exact.
+AI learns from context. When it sees hardcoded values in your codebase, it produces the same pattern for new components. You end up with `12px`, `18px`, `20px`, and `24px` scattered throughout—all approximating your 8px grid, none matching exactly.
 
-**The Fix:**
-
-Use semantic token names that explain intent:
+**The fix:** Replace hardcoded values with semantic token names:
 
 ```typescript
 export const spacing = {
-  xs: '4px',   // Tight spacing (icon + text)
-  sm: '8px',   // Compact lists
-  md: '16px',  // Default component padding
-  lg: '24px',  // Section spacing
-  xl: '32px',  // Page-level margins
-};
+  xs:  '0.25rem', // 4px — icon gap, tight labels
+  sm:  '0.5rem',  // 8px — compact list items
+  md:  '1rem',    // 16px — default component padding
+  lg:  '1.5rem',  // 24px — section spacing
+  xl:  '2rem',    // 32px — page-level margins
+}
 ```
 
-And enforce usage in components:
+With comments explaining intent, AI understands not just the value but when to use it. New UI generation stays on the grid.
 
-```tsx
-<div style={{ marginTop: spacing.lg, paddingLeft: spacing.md }}>
-  {/* ... */}
-</div>
-```
+## Mistake 5: Colors Named by Hue, Not Intent
 
-AI learns the pattern. It stops inventing random pixel values. Your spacing stays consistent.
+Defining colors like `--blue-500` or `gray-700` gives AI no signal about usage context. Is `blue-500` for primary actions, links, info states, or chart fills?
 
-## Mistake #5: Color Tokens Without Context
+Result: AI picks `blue-500` whenever it needs something blue, regardless of semantic meaning. Your primary action color appears in decorative elements. Your link color ends up on status badges.
 
-**The Problem:**
-
-You define colors like this:
-
-```css
---blue-500: #3b82f6;
---gray-700: #374151;
-```
-
-AI sees these and uses them—but it does not know *when* to use them. Is `blue-500` for primary actions? Links? Info messages?
-
-Result: AI uses `blue-500` everywhere it needs "some blue," regardless of semantic meaning.
-
-**The Fix:**
-
-Define semantic color tokens:
+**The fix:** Name tokens by their semantic role:
 
 ```typescript
 export const color = {
-  // Semantic tokens (use these)
   primary: {
-    solid: '#2563eb',      // Primary actions (buttons, links)
-    hover: '#1d4ed8',
-    text: '#1e40af',
+    solid:   'var(--foreground-accent)',   // primary actions, CTAs
+    hover:   'var(--color-primary-700)',
+    text:    'var(--foreground-inverse)', // primary color on light bg
   },
   neutral: {
-    solid: '#374151',      // Default text, borders
-    muted: '#6b7280',      // Secondary text
-    subtle: '#9ca3af',     // Disabled states
+    solid:   'var(--foreground-primary)',     // default text, borders
+    muted:   'var(--foreground-secondary)',   // secondary text
+    subtle:  'var(--foreground-muted)',    // disabled, placeholder
   },
-  success: {
-    solid: '#059669',      // Success states, confirmations
-    surface: '#d1fae5',    // Success backgrounds
+  feedback: {
+    success: 'var(--color-success-500)',
+    error:   'var(--border-error)',
   },
-  // Base palette (internal use only, not for components)
-  _base: {
-    blue: { 500: '#3b82f6' },
-    gray: { 700: '#374151' },
-  },
-};
+}
 ```
 
-Now when AI needs a primary button color, it uses `color.primary.solid`. When it needs muted text, it uses `color.neutral.muted`. Intent is explicit.
+When AI needs a primary button color, it uses `color.primary.solid`. When it needs secondary text, `color.neutral.muted`. The intent is explicit, and the AI makes the right choice without additional instruction.
 
-## Bonus Mistake: No Clear "Source of Truth" File
+## The Structural Fix That Ties Everything Together
 
-AI does not explore your entire codebase to find design patterns. It looks for a clear entry point.
+AI does not explore your entire codebase to find design conventions. It looks for a clear entry point. If tokens are scattered across `styles/colors.css`, `theme/spacing.ts`, and `constants/typography.js`, the AI will not connect them.
 
-If your tokens are scattered across:
-- `styles/colors.css`
-- `theme/spacing.ts`
-- `constants/typography.js`
-
-...AI will not find them. It will default to generic values.
-
-**The Fix:**
-
-Create a single source of truth:
+Create a single import point:
 
 ```
 src/
   design-system/
-    tokens.ts          ← All design tokens here
+    tokens.ts      ← everything in one place
     components/
-      Button.tsx       ← Import from tokens.ts
-      TextField.tsx    ← Import from tokens.ts
+      Button.tsx   ← imports from tokens.ts
+      TextField.tsx
 ```
 
-In your project README or AI coding assistant config, point to this file:
+In your `CLAUDE.md` or project README:
 
 ```markdown
-# Design System
+## Design System
 
-All design tokens are defined in `src/design-system/tokens.ts`.
-
-When generating UI code, always import tokens from this file.
+All tokens are in `src/design-system/tokens.ts`.
+All components import from that file.
+When generating UI, import tokens from this path.
 ```
 
-Claude, Cursor, and other AI tools can read this and prioritize the correct file.
+One file. One instruction. The AI can follow it consistently.
 
-## Making Your Design System AI-Proof: Checklist
+## What Changes After These Fixes
 
-- ✅ Export design tokens to code (not just Figma)
-- ✅ Use consistent component naming across the codebase
-- ✅ Add JSDoc + TypeScript types to all components
-- ✅ Replace magic numbers with semantic tokens
-- ✅ Define color tokens by intent, not hue
-- ✅ Create a single source-of-truth file for tokens
-- ✅ Document your design system in README or AI config
-
-## The Result: AI That Respects Your Design
-
-When you fix these mistakes, AI-generated code changes:
-
-**Before:**
+Before:
 
 ```tsx
-// Generic, inconsistent
-<button className="px-6 py-3 bg-blue-500 rounded-lg">
-  Submit
-</button>
+// AI guesses from public patterns
+<button className="px-6 py-3 bg-blue-500 rounded-lg font-semibold">Submit</button>
 ```
 
-**After:**
+After:
 
 ```tsx
-// Consistent with your system
-import { Button } from '@/design-system/components';
+// AI references your actual system
+import { Button } from '@/design-system/components'
 
 <Button variant="primary">Submit</Button>
 ```
 
-AI stops guessing. It follows your system. Your UI stays consistent, even when generated at high velocity.
+The AI stops improvising and starts following your system. Consistency holds even when you are generating UI at high velocity, because the constraints are structural rather than instruction-dependent.
 
-## Conclusion
-
-AI code generation is fast. But speed without consistency creates design debt. The mistakes above are not obvious—they only surface when AI starts generating code that "looks fine" but does not match your standards.
-
-The fix is not better AI. It is better design system architecture:
-
-1. Tokens in code, not just design tools
-2. Consistent naming conventions
-3. Machine-readable documentation
-4. Semantic tokens over magic numbers
-5. Clear source of truth
-
-Make these changes, and AI becomes a force multiplier for your design system—not a threat to it.
-
-Your design system should not just guide humans. It should guide machines. Build for both, and you get consistent UI at AI speed.
-
----
-
-**Ready to build an AI-proof design system?**
-
-FramingUI provides pre-built design tokens, AI-optimized components, and MCP integration so AI tools understand your design system from day one.
-
-[Explore FramingUI](https://tekton.sh) →
+The five mistakes above are easy to miss because they only surface when AI code generation reaches a certain volume. Fix them before that point, and AI becomes a reliable way to extend your design system rather than a source of drift.

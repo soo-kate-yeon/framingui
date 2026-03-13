@@ -1,131 +1,95 @@
 ---
 title: "Claude Code + FramingUI: Complete MCP Setup Guide"
-description: "Learn how to install and configure FramingUI MCP server with Claude Code for AI-powered UI generation with zero design hallucination."
+description: "Learn how to connect FramingUI's MCP server to Claude Code and eliminate design hallucinations in AI-generated UI."
 date: "2025-03-05"
 author:
   name: "FramingUI Team"
 tags:
   - claude-code
   - mcp
-  - tutorial
-  - setup
-category: "Tutorial"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## What You Will Build
+Every team using Claude Code to generate UI runs into the same wall: the output works, but it doesn't match the product. Colors are close but wrong. Spacing is arbitrary. Components don't use your primitives. You spend the next thirty minutes fixing code that was supposed to save you time.
 
-By the end of this guide, you will have Claude Code connected to FramingUI's MCP server. This means Claude Code can:
+The underlying problem is that Claude Code has no access to your design system. It invents values from training data, producing code that is plausible but off-system. FramingUI's MCP server solves this by giving Claude direct, structured access to your tokens and components at generation time.
 
-- Access your design tokens directly
-- Generate UI components that match your design system
-- Avoid hallucinating colors, spacing, or typography values
+## What You're Setting Up
 
-No more fixing `bg-blue-500` when your brand color is `bg-primary`.
+By the end of this guide, Claude Code will query your design system before generating any UI. Instead of `bg-blue-500`, you get `var(--bg-primary)`. Instead of `p-6`, your actual spacing scale. Token access is automatic — no manual pasting, no stale guidelines.
 
-## Prerequisites
+## Step 1: Initialize FramingUI in Your Project
 
-Before starting, make sure you have:
-
-- Claude Code installed (via `npm install -g @anthropic/claude-code` or Anthropic's installer)
-- Node.js 18+ installed
-- A project where you want consistent UI generation
-
-## Step 1: Install FramingUI MCP Server
-
-Install the MCP server globally or in your project:
+Run the init command from your project root:
 
 ```bash
-# Global installation (recommended for multiple projects)
-npm install -g @framingui/mcp-server
-
-# Or project-local
-npm install --save-dev @framingui/mcp-server
+npx -y @framingui/mcp-server@latest init
 ```
 
-Verify installation:
+This single command does most of the work:
 
-```bash
-npx @framingui/mcp-server --version
-```
+- Installs `@framingui/ui` and `tailwindcss-animate`
+- Adds `@import '@framingui/ui/styles'` to your global stylesheet
+- Mounts `FramingUIProvider` in your app root
+- Creates a local `framingui-theme` module
+- Writes the MCP server entry to `.mcp.json`
+- Generates `FRAMINGUI-GUIDE.md` and updates `CLAUDE.md`
 
-## Step 2: Configure Claude Code
+If you already have some of these set up, `init` is safe to re-run — it updates existing entries rather than duplicating them.
 
-Claude Code reads MCP server configuration from `~/.claude/claude_desktop_config.json` or your project's `.claude/config.json`.
+## Step 2: Verify the MCP Configuration
 
-Create or edit the config file:
+After `init`, check that `.mcp.json` in your project root contains:
 
 ```json
 {
   "mcpServers": {
     "framingui": {
+      "type": "stdio",
       "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "PROJECT_PATH": "."
-      }
+      "args": ["-y", "@framingui/mcp-server@latest"]
     }
   }
 }
 ```
 
-For project-specific config, create `.claude/config.json` in your repo root.
+The key is `"framingui"`, not `"tekton"`. The `"-y"` flag prevents interactive prompts during npx execution. Both are required for reliable Claude Code integration.
 
-## Step 3: Initialize Your Design System
+## Step 3: Authenticate
 
-If you do not have a design system yet, FramingUI can scaffold one:
-
-```bash
-npx @framingui/cli init
-```
-
-This creates:
-
-- `framingui.config.ts` — your token definitions
-- `tokens/` — generated token files
-- Basic theme with colors, spacing, typography
-
-If you already have tokens, point the MCP server to them via config.
-
-## Step 4: Verify Connection
-
-Start Claude Code in your project directory:
+The MCP server requires authentication to access licensed themes:
 
 ```bash
-claude
+framingui-mcp login
 ```
 
-Test the MCP connection with a simple prompt:
+This opens a browser prompt. Credentials are stored in `~/.framingui/credentials.json`. Alternatively, set `FRAMINGUI_API_KEY` as an environment variable if you're working in a CI or shared environment.
+
+## Step 4: Restart Claude Code and Test
+
+Restart Claude Code so it picks up the new `.mcp.json`. Then verify the connection with a direct question:
 
 ```
 What design tokens are available in this project?
 ```
 
-Claude Code should list your tokens. If it cannot, check:
-
-- MCP server is installed correctly
-- Config file path is correct
-- `PROJECT_PATH` points to your project root
+Claude should respond with your token list from the MCP server. If it can't, confirm the `.mcp.json` path and that `init` completed without errors.
 
 ## Step 5: Generate UI with Design System Context
 
-Now the powerful part. Ask Claude Code to build UI:
+With the MCP server connected, prompt Claude Code with explicit constraints:
 
 ```
-Build a pricing card component using the existing design tokens.
-Use semantic colors only. Include hover and focus states.
+Build a pricing card component.
+Use semantic tokens only. Do not invent new color values.
+Include hover and focus states.
 ```
 
-Claude Code will:
+Claude will query the MCP server for available tokens and generate code that uses your actual design system. The difference is immediate.
 
-1. Query FramingUI MCP server for available tokens
-2. Generate code using your actual `primary`, `secondary`, `background` values
-3. Apply your spacing scale instead of arbitrary pixel values
-
-## Example: Before and After
-
-### Without MCP (hallucinated values)
+### Without MCP
 
 ```tsx
 <div className="bg-blue-600 p-4 rounded-lg">
@@ -134,87 +98,50 @@ Claude Code will:
 </div>
 ```
 
-### With MCP (design system aligned)
+### With MCP
 
 ```tsx
-<div className="bg-primary p-md rounded-lg">
-  <h3 className="text-primary-foreground text-heading-sm font-semibold">Pro Plan</h3>
-  <p className="text-primary-foreground/80">$29/month</p>
+<div className="bg-[var(--bg-primary)] p-[var(--spacing-4)] rounded-[var(--radius-md)]">
+  <h3 className="text-[var(--text-primary-foreground)] text-heading-sm font-semibold">Pro Plan</h3>
+  <p className="text-[var(--text-primary-foreground)]/80">$29/month</p>
 </div>
 ```
 
-The second version uses your actual tokens. No manual fixes needed.
+The second version uses tokens from your actual design system. No manual fixes needed.
 
-## Advanced: Custom Token Paths
+## Prompting for Better Results
 
-If your tokens live in a non-standard location:
+Token access is necessary but not sufficient. The quality of generated code also depends on how you prompt. Constrained prompts consistently produce better output than open-ended ones.
 
-```json
-{
-  "mcpServers": {
-    "framingui": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "PROJECT_PATH": ".",
-        "TOKEN_PATH": "./src/styles/tokens.json"
-      }
-    }
-  }
-}
-```
+Effective pattern:
 
-## Prompt Patterns That Work Best
-
-MCP is most effective with constrained prompts:
-
-**Good:**
 ```
 Build a settings form with email and password fields.
-Use existing form primitives.
+Use existing form primitives from @framingui/ui.
 Use semantic tokens only.
 Include validation error states.
 ```
 
-**Less effective:**
-```
-Build a form.
-```
-
-The more constraints you provide, the better Claude Code leverages MCP context.
+The more constraints you provide, the more Claude Code leverages MCP context rather than falling back on training data patterns.
 
 ## Troubleshooting
 
-### "MCP server not found"
+**"MCP server not found"** — Confirm `.mcp.json` exists in the project root and has the correct `"framingui"` key. Restart Claude Code after any config changes.
 
-- Verify installation: `npx @framingui/mcp-server --version`
-- Check config path: `~/.claude/claude_desktop_config.json`
-- Restart Claude Code after config changes
+**"No tokens available"** — Verify that `init` completed successfully. Check that `@framingui/ui/styles` is imported in your global stylesheet and `FramingUIProvider` is mounted in the app root.
 
-### "No tokens available"
+**"Claude ignores tokens"** — Be explicit in prompts: "Use semantic tokens only. Do not invent new color values." Then ask Claude to list available tokens to confirm the MCP connection is active.
 
-- Ensure `PROJECT_PATH` points to your project
-- Run `npx @framingui/cli init` if no tokens exist
-- Check `framingui.config.ts` has valid token definitions
+## Migrating Existing Code
 
-### "Claude Code ignores tokens"
+Once connected, you can use Claude Code to clean up previously generated components:
 
-- Be explicit in prompts: "Use semantic tokens only"
-- Add constraint: "Do not invent new color values"
-- Verify MCP is connected: ask "List available design tokens"
+```
+Review src/components/ui/ and replace any hardcoded color or spacing values with semantic tokens from the FramingUI design system.
+```
 
-## Next Steps
+This works well as a one-time migration pass before switching to token-first generation going forward.
 
-Once connected, explore:
+---
 
-- **Component generation**: Build full components with proper variants
-- **Refactoring**: Ask Claude Code to migrate hardcoded values to tokens
-- **Documentation**: Generate component docs that reference your design system
-
-## Summary
-
-FramingUI MCP server bridges your design system and Claude Code. Instead of hoping AI guesses your tokens correctly, you give it direct access to the source of truth.
-
-Setup takes 5 minutes. The time saved on manual fixes pays back immediately.
-
-Start with `npm install -g @framingui/mcp-server` and never fix hallucinated colors again.
+The five minutes it takes to run `init` and configure the MCP server pays back on the first component you no longer have to fix by hand.

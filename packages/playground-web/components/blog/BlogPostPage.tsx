@@ -15,7 +15,7 @@ import { InlineCTA } from '@/components/shared/InlineCTA';
 import { GlobalLanguageSwitcher } from '@/components/shared/GlobalLanguageSwitcher';
 import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
 import { getBlogContent } from '@/data/i18n/blog';
-import { createHeadingIdFactory } from '@/lib/heading';
+import { slugifyHeading } from '@/lib/heading';
 import type { BlogPost, BlogPostSummary } from '@/lib/blog';
 
 interface BlogPostPageProps {
@@ -34,7 +34,13 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
   const toc = post.toc[locale];
   const rt = post.readingTime[locale];
   const related = relatedPosts[locale];
-  const nextHeadingId = createHeadingIdFactory();
+
+  // Use pre-computed toc IDs to guarantee SSR/client parity.
+  // A mutable index is safe here: it resets to 0 on each render invocation,
+  // so both the server render and client hydration produce identical ID sequences.
+  const tocIds = toc.map((item) => item.id);
+  let tocIndex = 0;
+  const nextHeadingId = (_text: string) => tocIds[tocIndex++] ?? slugifyHeading(_text);
 
   // 다크모드 persistence
   useEffect(() => {
@@ -64,7 +70,10 @@ export function BlogPostPage({ post, relatedPosts }: BlogPostPageProps) {
       <ReadingProgressBar />
 
       {/* 헤더 */}
-      <header className="sticky top-1 z-30 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800">
+      <header
+        className="sticky z-30 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800"
+        style={{ top: 'var(--banner-h, 0px)' }}
+      >
         <div className="flex items-center justify-between px-4 sm:px-6 py-3">
           <div className="flex items-center gap-1 sm:gap-2">
             <button

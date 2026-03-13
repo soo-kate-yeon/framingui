@@ -5,34 +5,32 @@ date: "2026-02-27"
 author:
   name: "FramingUI Team"
 tags:
-  - login-form
-  - authentication
-  - form-design
-category: "Tutorial"
+  - design-system
+  - components
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## Why Login Forms Matter
+The login form is the first thing most users interact with. A broken focus ring, a missing error announcement, or a submit button that goes silent during loading — these details cost you user trust before anyone sees your product.
 
-The login form is often the first UI interaction users have with your app. A poorly designed form creates friction, while a well-crafted one builds trust. With FramingUI, you get:
+FramingUI's form components handle the accessibility contract automatically: label association, aria-describedby wiring, and error role announcements come from the component structure, not custom code you have to maintain.
 
-- **Consistent styling** through design tokens
-- **Built-in accessibility** from Radix UI primitives
-- **Type-safe validation** with react-hook-form + zod
-- **Zero hardcoded values** for easy theming
-
-## Basic Login Form
-
-Let's start with a simple email/password login form.
-
-### Step 1: Install Dependencies
+## Installing Dependencies
 
 ```bash
-pnpm add @framingui/ui react-hook-form zod @hookform/resolvers
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-### Step 2: Create the Component
+Then add react-hook-form and zod for validation:
+
+```bash
+pnpm add react-hook-form zod @hookform/resolvers
+```
+
+## Building the Basic Login Form
+
+The component below wires validation, loading state, and accessible error messages with minimal boilerplate.
 
 ```tsx
 'use client';
@@ -50,7 +48,6 @@ import {
   CardFooter,
   Button,
   Input,
-  Label,
   Form,
   FormField,
   FormItem,
@@ -59,10 +56,9 @@ import {
   FormMessage,
 } from '@framingui/ui';
 
-// Validation schema
 const loginSchema = z.object({
-  email: z.string().email('올바른 이메일을 입력하세요'),
-  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  email: z.string().email('Please enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -72,18 +68,17 @@ export function LoginForm() {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      // TODO: Call your authentication API
-      console.log('Login data:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Invalid credentials');
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +127,7 @@ export function LoginForm() {
             <div className="text-sm text-center">
               <a
                 href="/forgot-password"
-                className="text-[var(--bg-primary)] hover:underline"
+                className="text-[var(--foreground-accent)] hover:underline"
               >
                 Forgot your password?
               </a>
@@ -145,16 +140,11 @@ export function LoginForm() {
 }
 ```
 
-### Key Features
+A few things worth noting about this implementation. All spacing uses `var(--spacing-*)` CSS variables, not arbitrary pixel values. The `FormMessage` component connects to each field's validation state and renders with `role="alert"` so screen readers announce errors on submission. The submit button disables during the async call to prevent double-submission.
 
-✅ **Design Tokens**: All spacing uses `var(--spacing-*)`, colors use `var(--bg-*)`
-✅ **Type Safety**: Zod schema provides runtime validation + TypeScript types
-✅ **Accessibility**: FramingUI Form components connect labels, inputs, and error messages
-✅ **Loading States**: Button disables during submission
+## Adding Social Auth and Remember Me
 
-## Enhanced Login Form with Social Auth
-
-Let's add social authentication buttons and a "Remember me" checkbox.
+The enhanced version adds OAuth buttons and a persistent session option:
 
 ```tsx
 'use client';
@@ -172,7 +162,6 @@ import {
   CardFooter,
   Button,
   Input,
-  Label,
   Checkbox,
   Separator,
   Form,
@@ -197,26 +186,20 @@ export function EnhancedLoginForm() {
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      remember: false,
-    },
+    defaultValues: { email: '', password: '', remember: false },
   });
 
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      console.log('Login data:', data);
-      // TODO: Implement authentication
+      // Call your authentication API here
     } finally {
       setIsLoading(false);
     }
   }
 
   async function handleSocialLogin(provider: 'github' | 'google') {
-    console.log(`Logging in with ${provider}`);
-    // TODO: Implement OAuth flow
+    // Initiate OAuth flow
   }
 
   return (
@@ -226,21 +209,12 @@ export function EnhancedLoginForm() {
         <CardDescription>Choose your preferred sign in method</CardDescription>
       </CardHeader>
       <CardContent className="space-y-[var(--spacing-4)]">
-        {/* Social Login Buttons */}
         <div className="grid grid-cols-2 gap-[var(--spacing-4)]">
-          <Button
-            variant="outline"
-            onClick={() => handleSocialLogin('github')}
-            type="button"
-          >
+          <Button variant="outline" onClick={() => handleSocialLogin('github')} type="button">
             <Github className="mr-[var(--spacing-2)] h-4 w-4" />
             GitHub
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleSocialLogin('google')}
-            type="button"
-          >
+          <Button variant="outline" onClick={() => handleSocialLogin('google')} type="button">
             <Mail className="mr-[var(--spacing-2)] h-4 w-4" />
             Google
           </Button>
@@ -251,13 +225,12 @@ export function EnhancedLoginForm() {
             <Separator />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[var(--bg-background)] px-[var(--spacing-2)] text-[var(--bg-muted-foreground)]">
+            <span className="bg-[var(--background-page)] px-[var(--spacing-2)] text-[var(--foreground-secondary)]">
               Or continue with
             </span>
           </div>
         </div>
 
-        {/* Email/Password Form */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-[var(--spacing-4)]">
             <FormField
@@ -307,9 +280,9 @@ export function EnhancedLoginForm() {
         </Form>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <p className="text-sm text-[var(--bg-muted-foreground)]">
+        <p className="text-sm text-[var(--foreground-secondary)]">
           Don't have an account?{' '}
-          <a href="/signup" className="text-[var(--bg-primary)] hover:underline">
+          <a href="/signup" className="text-[var(--foreground-accent)] hover:underline">
             Sign up
           </a>
         </p>
@@ -319,80 +292,36 @@ export function EnhancedLoginForm() {
 }
 ```
 
-### What's New
+## How Accessibility Works Under the Hood
 
-✅ **Social Auth Buttons**: GitHub and Google login options
-✅ **Visual Separator**: "Or continue with" divider using Separator component
-✅ **Remember Me**: Checkbox with proper form integration
-✅ **Sign Up Link**: Clear call-to-action for new users
-
-## Accessibility Features
-
-FramingUI's Form components automatically provide:
-
-### 1. Label Association
+FramingUI's `Form` components build the full ARIA relationship automatically. When you write this:
 
 ```tsx
 <FormLabel>Email</FormLabel>
 <FormControl>
   <Input type="email" {...field} />
 </FormControl>
-```
-
-Generates:
-
-```html
-<label for="email-form-item">Email</label>
-<input id="email-form-item" aria-describedby="email-form-item-message" />
-```
-
-### 2. Error Announcements
-
-```tsx
 <FormMessage />
 ```
 
-Creates an `aria-describedby` connection:
+The rendered HTML connects every piece:
 
 ```html
-<input aria-invalid="true" aria-describedby="email-form-item-message" />
-<p id="email-form-item-message" role="alert">Please enter a valid email</p>
+<label for="email-form-item">Email</label>
+<input
+  id="email-form-item"
+  aria-describedby="email-form-item-message"
+/>
+<p id="email-form-item-message" role="alert">
+  Please enter a valid email
+</p>
 ```
 
-### 3. Keyboard Navigation
+The `role="alert"` on the error message ensures screen readers announce validation failures on submission without requiring any additional configuration.
 
-All FramingUI components support:
-- `Tab` to navigate between fields
-- `Enter` to submit form
-- `Space` to toggle checkbox
+## Handling API Errors
 
-## Styling Customization
-
-### Change Card Width
-
-```tsx
-<Card className="w-full max-w-sm"> {/* Smaller: 384px */}
-<Card className="w-full max-w-md"> {/* Default: 448px */}
-<Card className="w-full max-w-lg"> {/* Larger: 512px */}
-```
-
-### Add Shadow
-
-```tsx
-<Card className="shadow-lg"> {/* Larger shadow */}
-```
-
-### Center on Page
-
-```tsx
-<div className="flex min-h-screen items-center justify-center p-[var(--spacing-4)]">
-  <EnhancedLoginForm />
-</div>
-```
-
-## Error Handling Patterns
-
-### Display API Errors
+Validation schema errors display automatically. Server-side errors need a separate state:
 
 ```tsx
 const [apiError, setApiError] = useState('');
@@ -405,38 +334,28 @@ async function onSubmit(data: LoginFormData) {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    if (!response.ok) {
-      throw new Error('Invalid credentials');
-    }
+    if (!response.ok) throw new Error('Invalid credentials');
   } catch (error) {
-    setApiError(error.message);
+    setApiError(error instanceof Error ? error.message : 'Something went wrong');
   } finally {
     setIsLoading(false);
   }
 }
 
-// In JSX:
+// In JSX, above the submit button:
 {apiError && (
-  <p className="text-sm text-[var(--bg-destructive)]" role="alert">
+  <p className="text-sm text-[var(--border-error)]" role="alert">
     {apiError}
   </p>
 )}
 ```
 
-## Next Steps
+Centering the form on a page is one layout wrapper:
 
-1. **Integrate with auth provider**: NextAuth.js, Supabase, Firebase
-2. **Add 2FA support**: TOTP input field
-3. **Implement password strength indicator**: Real-time validation
-4. **Add loading skeleton**: Optimize perceived performance
+```tsx
+<div className="flex min-h-screen items-center justify-center p-[var(--spacing-4)]">
+  <EnhancedLoginForm />
+</div>
+```
 
-## Complete Example
-
-Check out the [FramingUI GitHub repository](https://github.com/soo-kate-yeon/tekton) for a complete authentication flow example with:
-
-- Login form (this tutorial)
-- Sign up form
-- Password reset flow
-- Email verification
-
-With FramingUI, building production-ready forms is fast, accessible, and maintainable — all while staying 100% consistent with your design system.
+The form structure above is a starting point. The real work is connecting `onSubmit` to your auth provider — NextAuth.js, Supabase, Firebase, or a custom API. The component handles the UI contract; the auth logic is yours to wire.

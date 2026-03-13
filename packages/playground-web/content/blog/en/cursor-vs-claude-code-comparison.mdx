@@ -5,89 +5,56 @@ date: "2026-02-12"
 author:
   name: "FramingUI Team"
 tags:
-  - ai-tools
-  - comparison
-  - developer-experience
-category: "AI Tools"
+  - cursor
+  - claude-code
+  - ai-coding
+category: "Concept"
 coverImage: ""
 published: true
 ---
 
-## The AI Coding Tool Landscape
+Most developers pick one AI coding tool and stick with it. That's the wrong approach.
 
-The AI-assisted development space has matured significantly. Two tools stand out for professional developers: **Cursor** (the AI-native IDE) and **Claude Code** (Anthropic's CLI-based coding agent). Both are powerful, but they serve different workflows.
+Cursor and Claude Code solve different problems. Choosing between them isn't a preference — it's a workflow decision. Here's how to make it correctly.
 
-Let's break down where each tool shines.
+## What Each Tool Actually Does
 
-## Cursor: The AI-Native IDE
+**Cursor** is a fork of VS Code with deep AI integration. It suggests code as you type, edits multiple files simultaneously, and stays inside your editor. The mental model is a co-pilot sitting next to you, watching your screen in real time.
 
-Cursor builds on VS Code's foundation, adding AI capabilities directly into the editor experience.
+**Claude Code** is a CLI-based coding agent. You give it a task, it reads your entire codebase, plans an approach, executes across files, and commits the result. The mental model is a contractor who takes a brief and comes back with finished work.
 
-### Strengths
+Both use Claude models under the hood. The difference is the interaction pattern, not the underlying intelligence.
 
-- **Visual workflow** — See AI suggestions inline, accept or reject changes with a click
-- **Tab completion** — Predictive code completion that feels natural
-- **Multi-file editing** — AI understands your entire project context through the IDE
-- **Low barrier to entry** — Familiar VS Code interface, easy to adopt
+## Where Cursor Wins
 
-### Best For
+Cursor's tab autocomplete is legitimately fast. You type a function signature, and Cursor fills in the body. You accept with a keystroke. For building repetitive components — forms, list items, similar cards — this flow saves real time.
 
-Cursor excels when you want AI assistance woven into a traditional IDE workflow. It's great for visual learners who prefer seeing changes before applying them.
+Multi-file editing is also strong. Select a set of files, describe a change in Composer, and Cursor applies it across all of them. Adding a `data-testid` prop to 20 components takes a single prompt.
 
-## Claude Code: The Terminal-Native Agent
+The VS Code foundation matters too. Same keybindings, same extensions, zero learning curve. Teams already using VS Code can adopt Cursor in an afternoon.
 
-Claude Code takes a fundamentally different approach — it's a CLI tool that acts as an autonomous coding agent.
+## Where Claude Code Wins
 
-### Strengths
+Claude Code's 200K token context window means it can hold your entire codebase in mind before making a single suggestion. When you ask it to "add a size variant to Button," it reads your existing components, sees you use `sm`/`md`/`lg` naming, and matches that convention — rather than guessing.
 
-- **Agentic workflow** — Give it a task, and it plans, implements, and tests autonomously
-- **Deep context** — 200K token context window means it can understand entire codebases
-- **Git-native** — Creates commits, branches, and PRs as part of its workflow
-- **Composable** — Integrates with any editor, any terminal, any CI/CD pipeline
-- **Extensible** — Custom skills, hooks, and MCP server integrations
+For systemic changes, the gap is significant. Converting all color tokens from HSL to OKLCH, or refactoring 20 form components to share a consistent API, requires coordinating changes across dozens of files. Claude Code does this in a single pass. Cursor requires manual iteration.
 
-### Best For
+Claude Code also supports MCP (Model Context Protocol) natively. This means it can connect to filesystem servers, database servers, and custom context providers — giving it programmatic access to external context that Cursor cannot reach.
 
-Claude Code shines for complex, multi-file tasks. When you need to refactor an authentication system, implement a new feature across multiple files, or debug a tricky issue — the agentic approach saves significant time.
+## The Practical Split
 
-## Head-to-Head Comparison
+Most productive teams use both, not one. The workflow looks like this:
 
-| Feature | Cursor | Claude Code |
-|---------|--------|-------------|
-| Interface | GUI (VS Code fork) | CLI (Terminal) |
-| AI Model | Multiple (GPT-4, Claude) | Claude (Opus, Sonnet, Haiku) |
-| Context Window | Varies by model | Up to 200K tokens |
-| Multi-file Editing | Yes (visual) | Yes (agentic) |
-| Git Integration | Basic | Deep (commits, PRs) |
-| Extensibility | Extensions | Skills, Hooks, MCP |
-| Offline Mode | Partial | No |
-| Pricing | $20/mo Pro | Usage-based |
+Claude Code handles architecture. When you're designing a new token structure or making a systemic refactoring decision, you want an agent that can read everything, reason about trade-offs, and execute across files consistently.
 
-## When to Use Which?
+Cursor handles execution. Once the structure is decided, building individual components with real-time autocomplete is faster and more fluid than round-tripping through a CLI.
 
-### Choose Cursor when:
+Claude Code comes back for review. After a sprint of Cursor-driven component work, Claude Code can scan for inconsistencies — token names that drifted, prop APIs that diverged — and correct them in bulk.
 
-- You prefer visual feedback and inline suggestions
-- You're making small, targeted changes
-- You want AI assistance without changing your workflow
-- You work primarily in a single file at a time
+## Picking One If You Must
 
-### Choose Claude Code when:
+If you spend most of your time implementing well-defined components from existing specs, Cursor is the right daily driver. The inline experience is simply faster for isolated tasks.
 
-- You have complex, multi-step tasks
-- You need to work across many files simultaneously
-- You want autonomous task execution
-- You're comfortable with the terminal
-- You need deep integration with Git workflows
+If you're building a new system from scratch, doing large refactors, or need MCP integrations to pull in external context, Claude Code produces more consistent results and saves significant cleanup time.
 
-## Our Experience at Tekton
-
-At Tekton, we use both tools depending on the task. For quick UI tweaks and component styling, Cursor's inline suggestions are invaluable. For implementing new features, running our SPEC-driven development workflow, and managing multi-file refactors, Claude Code's agentic approach is significantly more productive.
-
-The tools aren't mutually exclusive — they complement each other well.
-
-## Conclusion
-
-There's no single "best" AI coding tool. The right choice depends on your workflow, the complexity of your tasks, and your comfort level with different interfaces. Try both, and use whichever makes you most productive for the task at hand.
-
-The real win is that developers now have access to AI tools that genuinely accelerate their work. Whether you choose Cursor, Claude Code, or both — the era of AI-assisted development is here, and it's only getting better.
+The tools complement each other. Used together, they cover the full development cycle — from architectural decisions to the final component implementation.

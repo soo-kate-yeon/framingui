@@ -1,118 +1,101 @@
 ---
-title: "AI로 대시보드 레이아웃 레시피"
-description: "빠른 개발을 위해 AI 지원과 함께 FramingUI 템플릿을 사용하여 전문적인 관리자 대시보드 레이아웃을 만드세요."
+title: "FramingUI와 AI로 대시보드 레이아웃 만들기"
+description: "FramingUI 컴포넌트로 관리자 대시보드를 구성하는 과정을, 토큰이 있을 때 AI 도구가 어떻게 일관된 코드를 생성하는지와 함께 정리했습니다."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
 tags:
-  - dashboard
-  - admin-panel
-  - layout-templates
-category: "Tutorial"
+  - ai
+  - design-system
+  - components
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## 대시보드가 어려운 이유
+# FramingUI와 AI로 대시보드 레이아웃 만들기
 
-대시보드를 처음부터 빌드하려면 다음이 필요합니다:
+대시보드 레이아웃은 디자인 토큰 규율이 가장 눈에 띄게 성과를 내는 곳이에요. 사이드바, 헤더, 통계 카드 그리드, 데이터 테이블—각각 따로 만들더라도 결국 하나의 일관된 화면이 되어야 합니다. 디자인 시스템 없이 AI 도구가 이 컴포넌트들을 생성하면 불일치가 빠르게 쌓여요.
 
-1. **레이아웃 구조** — 사이드바, 헤더, 메인 콘텐츠 영역
-2. **반응형 디자인** — 모바일, 태블릿, 데스크톱 브레이크포인트
-3. **컴포넌트 구성** — 통계 카드, 테이블, 차트
-4. **내비게이션 상태** — 활성 링크, 접을 수 있는 메뉴
-5. **일관된 스타일링** — 색상, 간격, 타이포그래피
+이 글에서는 FramingUI 컴포넌트로 대시보드의 각 레이어를 만드는 방법을 단계별로 살펴보고, AI 보조 코드가 인터페이스 나머지 부분과 일관되게 유지되도록 프로젝트를 구조화하는 방법도 함께 다룹니다.
 
-FramingUI + AI를 사용하면 몇 시간이 아닌 몇 분 만에 완전한 대시보드를 생성할 수 있습니다.
+## 시작하기
 
-## 대시보드 구조
+패키지 설치:
 
-일반적인 관리자 대시보드는 다음과 같습니다:
-
-```
-┌─────────────────────────────────────────┐
-│ 헤더 (내비게이션, 사용자 메뉴)            │
-├──────────┬──────────────────────────────┤
-│          │                              │
-│ 사이드바 │ 메인 콘텐츠 영역              │
-│          │  - 통계 카드                 │
-│ (내비)   │  - 차트                      │
-│          │  - 데이터 테이블              │
-│          │                              │
-└──────────┴──────────────────────────────┘
+```bash
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-FramingUI로 단계별로 빌드해봅시다.
+AI 도구 통합을 위한 MCP 서버 설정:
 
-## 1단계: 기본 레이아웃 구조
+```bash
+npx -y @framingui/mcp-server@latest init
+```
+
+이 명령어 하나가 전체 런타임 계약을 잡아줍니다. 프로바이더 설정, CSS 임포트, Claude Code MCP 설정까지요. Claude Code를 재시작하면 AI 생성 컴포넌트도 직접 작성한 컴포넌트와 동일한 디자인 토큰을 참조합니다.
+
+## 레이아웃 셸
+
+바깥 구조가 레이아웃의 형태를 만들어요. 왼쪽의 고정 사이드바, 오른쪽의 flex 컬럼이 헤더와 스크롤 가능한 콘텐츠를 담습니다.
 
 ```tsx
-import { Card, Separator } from '@framingui/ui';
+import { Separator } from '@framingui/ui'
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
-      {/* 사이드바 */}
       <aside className="w-64 border-r border-[var(--border-default)] bg-[var(--bg-card)]">
         <div className="p-[var(--spacing-6)]">
           <h2 className="text-lg font-bold">MyApp</h2>
         </div>
         <Separator />
-        {/* 내비게이션이 여기에 들어갑니다 */}
       </aside>
 
-      {/* 메인 콘텐츠 */}
       <div className="flex-1 flex flex-col">
-        {/* 헤더 */}
         <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center px-[var(--spacing-6)]">
           <h1 className="text-xl font-semibold">대시보드</h1>
         </header>
-
-        {/* 콘텐츠 */}
         <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
           {children}
         </main>
       </div>
     </div>
-  );
+  )
 }
 ```
 
-### 주요 기능
+간격과 테두리 값이 CSS 커스텀 프로퍼티에서 옵니다. 테마가 바뀌면 모든 치수가 자동으로 업데이트돼요.
 
-✅ **고정 사이드바**: `w-64` (256px 너비)
-✅ **스크롤 가능한 콘텐츠**: main에 `overflow-auto`
-✅ **디자인 토큰**: 모든 테두리와 간격이 토큰 사용
+## 사이드바 내비게이션
 
-## 2단계: 사이드바 내비게이션
+사이드바는 활성 상태 추적이 필요해요. FramingUI `Button` 컴포넌트의 variant 전환을 사용하면 커스텀 CSS 없이 활성 항목을 시각적으로 구분할 수 있습니다.
 
 ```tsx
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Home, Users, BarChart3, Settings, ChevronDown } from 'lucide-react';
-import { Button, Separator } from '@framingui/ui';
-import { cn } from '@framingui/ui/lib/utils';
+import { useState } from 'react'
+import { Home, Users, BarChart3, Settings, ChevronDown } from 'lucide-react'
+import { Button, Separator } from '@framingui/ui'
+import { cn } from '@framingui/ui/lib/utils'
 
 const navItems = [
-  { icon: Home, label: '대시보드', href: '/dashboard' },
-  { icon: Users, label: '사용자', href: '/users' },
-  { icon: BarChart3, label: '분석', href: '/analytics' },
-  { icon: Settings, label: '설정', href: '/settings' },
-];
+  { icon: Home,      label: '대시보드', href: '/dashboard' },
+  { icon: Users,     label: '사용자',   href: '/users' },
+  { icon: BarChart3, label: '분석',     href: '/analytics' },
+  { icon: Settings,  label: '설정',     href: '/settings' },
+]
 
 export function DashboardSidebar() {
-  const [activeItem, setActiveItem] = useState('/dashboard');
+  const [activeItem, setActiveItem] = useState('/dashboard')
 
   return (
     <aside className="w-64 border-r border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col h-screen">
-      {/* 로고 */}
       <div className="p-[var(--spacing-6)]">
         <h2 className="text-lg font-bold">MyApp 관리자</h2>
       </div>
       <Separator />
 
-      {/* 내비게이션 */}
       <nav className="flex-1 p-[var(--spacing-4)] space-y-[var(--spacing-2)]">
         {navItems.map((item) => (
           <Button
@@ -131,8 +114,6 @@ export function DashboardSidebar() {
       </nav>
 
       <Separator />
-
-      {/* 사용자 섹션 */}
       <div className="p-[var(--spacing-4)]">
         <Button variant="ghost" className="w-full justify-between">
           <div className="flex items-center">
@@ -148,52 +129,25 @@ export function DashboardSidebar() {
         </Button>
       </div>
     </aside>
-  );
+  )
 }
 ```
 
-### 내비게이션 기능
+## 통계 카드 그리드
 
-✅ **활성 상태 강조**: 활성 항목에 `variant="default"` 사용
-✅ **아이콘 지원**: Lucide React 아이콘
-✅ **사용자 프로필 섹션**: 하단에 아바타 포함
-
-## 3단계: 통계 카드 그리드
+통계 그리드는 토큰 기반 간격이 왜 중요한지 잘 보여주는 예시예요. 모든 gap, padding, 아이콘 배경이 동일한 디자인 토큰 스케일을 사용하기 때문에, 카드들이 각자 스타일링된 요소가 아니라 하나의 통합된 시스템처럼 느껴집니다.
 
 ```tsx
-import { Card, CardContent } from '@framingui/ui';
-import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Card, CardContent } from '@framingui/ui'
+import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react'
+import { cn } from '@framingui/ui/lib/utils'
 
 const stats = [
-  {
-    title: '총 수익',
-    value: '₩45,231,000',
-    change: '+20.1%',
-    icon: DollarSign,
-    trend: 'up' as const,
-  },
-  {
-    title: '총 사용자',
-    value: '2,350',
-    change: '+12.5%',
-    icon: Users,
-    trend: 'up' as const,
-  },
-  {
-    title: '총 주문',
-    value: '1,234',
-    change: '-4.3%',
-    icon: ShoppingCart,
-    trend: 'down' as const,
-  },
-  {
-    title: '전환율',
-    value: '3.24%',
-    change: '+0.5%',
-    icon: TrendingUp,
-    trend: 'up' as const,
-  },
-];
+  { title: '총 수익',   value: '₩45,231,000', change: '+20.1%', icon: DollarSign,   trend: 'up'   },
+  { title: '총 사용자', value: '2,350',        change: '+12.5%', icon: Users,        trend: 'up'   },
+  { title: '총 주문',   value: '1,234',        change: '-4.3%',  icon: ShoppingCart, trend: 'down' },
+  { title: '전환율',    value: '3.24%',        change: '+0.5%',  icon: TrendingUp,   trend: 'up'   },
+] as const
 
 export function StatsGrid() {
   return (
@@ -208,14 +162,10 @@ export function StatsGrid() {
                 </p>
                 <div className="flex items-baseline space-x-[var(--spacing-2)]">
                   <p className="text-2xl font-bold">{stat.value}</p>
-                  <span
-                    className={cn(
-                      'text-xs font-medium',
-                      stat.trend === 'up'
-                        ? 'text-[var(--bg-primary)]'
-                        : 'text-[var(--bg-destructive)]'
-                    )}
-                  >
+                  <span className={cn(
+                    'text-xs font-medium',
+                    stat.trend === 'up' ? 'text-[var(--bg-primary)]' : 'text-[var(--bg-destructive)]'
+                  )}>
                     {stat.change}
                   </span>
                 </div>
@@ -228,41 +178,29 @@ export function StatsGrid() {
         </Card>
       ))}
     </div>
-  );
+  )
 }
 ```
 
-### 통계 카드 기능
+반응형 그리드가 컬럼 수를 자동으로 처리해요. 모바일 1열, 태블릿 2열, 데스크톱 4열로.
 
-✅ **반응형 그리드**: 1열 모바일 → 2열 태블릿 → 4열 데스크톱
-✅ **트렌드 표시기**: 상승은 녹색, 하락은 빨간색
-✅ **아이콘 배지**: 불투명도가 있는 색상 배경
+## 데이터 테이블
 
-## 4단계: 데이터 테이블
+테이블을 `Card`로 감싸면 위의 통계 카드들과 시각적으로 일관됩니다. 상태 배지는 디자인 시스템이 적절한 색상으로 매핑하는 시맨틱 variant를 사용해요.
 
 ```tsx
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-  Button,
-} from '@framingui/ui';
-import { MoreHorizontal } from 'lucide-react';
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Card, CardHeader, CardTitle, CardContent, Badge, Button,
+} from '@framingui/ui'
+import { MoreHorizontal } from 'lucide-react'
 
-const recentOrders = [
-  { id: '#3210', customer: '김철수', amount: '₩250,000', status: 'completed', date: '2026-02-27' },
-  { id: '#3211', customer: '이영희', amount: '₩120,500', status: 'pending', date: '2026-02-27' },
-  { id: '#3212', customer: '박민수', amount: '₩89,990', status: 'completed', date: '2026-02-26' },
+const orders = [
+  { id: '#3210', customer: '김철수', amount: '₩250,000', status: 'completed',  date: '2026-02-27' },
+  { id: '#3211', customer: '이영희', amount: '₩120,500', status: 'pending',    date: '2026-02-27' },
+  { id: '#3212', customer: '박민수', amount: '₩89,990',  status: 'completed',  date: '2026-02-26' },
   { id: '#3213', customer: '최지원', amount: '₩340,000', status: 'processing', date: '2026-02-26' },
-];
+]
 
 export function RecentOrdersTable() {
   return (
@@ -279,31 +217,24 @@ export function RecentOrdersTable() {
               <TableHead>금액</TableHead>
               <TableHead>상태</TableHead>
               <TableHead>날짜</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentOrders.map((order) => (
+            {orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">{order.id}</TableCell>
                 <TableCell>{order.customer}</TableCell>
                 <TableCell>{order.amount}</TableCell>
                 <TableCell>
-                  <Badge
-                    variant={
-                      order.status === 'completed'
-                        ? 'default'
-                        : order.status === 'pending'
-                        ? 'secondary'
-                        : 'outline'
-                    }
-                  >
+                  <Badge variant={
+                    order.status === 'completed' ? 'default' :
+                    order.status === 'pending'   ? 'secondary' : 'outline'
+                  }>
                     {order.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-[var(--bg-muted-foreground)]">
-                  {order.date}
-                </TableCell>
+                <TableCell className="text-[var(--bg-muted-foreground)]">{order.date}</TableCell>
                 <TableCell>
                   <Button variant="ghost" size="icon">
                     <MoreHorizontal className="h-4 w-4" />
@@ -315,65 +246,26 @@ export function RecentOrdersTable() {
         </Table>
       </CardContent>
     </Card>
-  );
+  )
 }
 ```
 
-### 테이블 기능
+## 모바일 사이드바
 
-✅ **상태 배지**: 색상 코딩된 주문 상태
-✅ **액션 버튼**: 행 액션용 아이콘 버튼
-✅ **카드 래퍼**: 일관된 스타일링을 위한 Card 내부 테이블
-
-## 5단계: 완전한 대시보드 페이지
+소형 화면에는 드로어 형태의 사이드바가 필요해요. FramingUI의 `Sheet` 컴포넌트가 오버레이를 처리합니다.
 
 ```tsx
-import { DashboardLayout } from './dashboard-layout';
-import { DashboardSidebar } from './dashboard-sidebar';
-import { StatsGrid } from './stats-grid';
-import { RecentOrdersTable } from './recent-orders-table';
+'use client'
 
-export default function DashboardPage() {
-  return (
-    <div className="flex h-screen">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col">
-        {/* 헤더 */}
-        <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center justify-between px-[var(--spacing-6)]">
-          <h1 className="text-xl font-semibold">대시보드 개요</h1>
-          <Button variant="default">보고서 다운로드</Button>
-        </header>
-
-        {/* 메인 콘텐츠 */}
-        <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
-          <div className="space-y-[var(--spacing-6)]">
-            <StatsGrid />
-            <RecentOrdersTable />
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-```
-
-## 반응형 개선
-
-### 모바일 우선 사이드바
-
-```tsx
-'use client';
-
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Button, Sheet, SheetContent, SheetTrigger } from '@framingui/ui';
+import { useState } from 'react'
+import { Menu } from 'lucide-react'
+import { Button, Sheet, SheetContent, SheetTrigger } from '@framingui/ui'
 
 export function MobileSidebar({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <>
-      {/* 모바일 트리거 */}
       <div className="lg:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -386,109 +278,55 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
           </SheetContent>
         </Sheet>
       </div>
-
-      {/* 데스크톱 사이드바 */}
       <div className="hidden lg:block">{children}</div>
     </>
-  );
+  )
 }
 ```
 
-## AI 프롬프팅 팁
+## AI로 대시보드 확장하기
 
-### 통계 카드 생성
-
-**Claude/Cursor용 프롬프트:**
+MCP를 설정하면 Claude Code에게 추가 대시보드 섹션을 생성해달라고 요청할 수 있고, 결과물이 위의 컴포넌트들과 동일한 토큰을 참조해요. 이런 프롬프트가 잘 작동합니다.
 
 ```
-다음을 표시하는 FramingUI Card를 사용한 통계 그리드 컴포넌트를 만들어줘:
-- 총 사용자 (12,345)
-- 활성 세션 (1,234)
-- 수익 (₩54,321,000)
-- 전환율 (3.2%)
-
-모든 스타일링에 var(--*) 토큰을 사용해줘.
+대시보드에 수익 차트 섹션을 추가해줘.
+래퍼로 FramingUI Card를 사용해줘.
+차트 선 색상으로 var(--bg-primary)를 사용해줘.
+내부 패딩에 var(--spacing-6)를 사용해줘.
+차트 라이브러리는 Recharts를 사용해줘.
 ```
 
-### 데이터 테이블 생성
+프롬프트에 구체적인 토큰 참조를 넣는 게 핵심이에요. 없으면 AI가 `stroke="#3b82f6"`이나 `padding: "24px"`를 선택할 수 있는데, 지금은 맞아 보여도 테마가 바뀌면 깨지는 값들이거든요.
 
-**프롬프트:**
-
-```
-다음 컬럼을 가진 FramingUI Table 컴포넌트를 사용한 사용자 테이블을 만들어줘:
-- 이름, 이메일, 역할, 상태 (배지), 액션 (버튼)
-
-간격과 색상에 디자인 토큰을 사용해줘.
-```
-
-### 완전한 대시보드 생성
-
-**프롬프트:**
-
-```
-다음을 포함한 FramingUI를 사용한 완전한 관리자 대시보드를 만들어줘:
-- 사이드바 내비게이션 (대시보드, 사용자, 분석, 설정)
-- 제목과 액션 버튼이 있는 헤더
-- 반응형 그리드의 4개 통계 카드
-- 최근 주문 테이블
-- 모든 스타일링에 var(--*) 토큰 사용
-```
-
-## 고급: 차트 통합
+## 최종 페이지 조합
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { DashboardSidebar }  from './dashboard-sidebar'
+import { StatsGrid }         from './stats-grid'
+import { RecentOrdersTable } from './recent-orders-table'
+import { Button }            from '@framingui/ui'
 
-const chartData = [
-  { month: '1월', revenue: 4000 },
-  { month: '2월', revenue: 3000 },
-  { month: '3월', revenue: 5000 },
-  { month: '4월', revenue: 4500 },
-  { month: '5월', revenue: 6000 },
-  { month: '6월', revenue: 5500 },
-];
-
-export function RevenueChart() {
+export default function DashboardPage() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>수익 개요</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="var(--bg-primary)"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
-  );
+    <div className="flex h-screen">
+      <DashboardSidebar />
+      <div className="flex-1 flex flex-col">
+        <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center justify-between px-[var(--spacing-6)]">
+          <h1 className="text-xl font-semibold">대시보드 개요</h1>
+          <Button variant="default">보고서 다운로드</Button>
+        </header>
+        <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
+          <div className="space-y-[var(--spacing-6)]">
+            <StatsGrid />
+            <RecentOrdersTable />
+          </div>
+        </main>
+      </div>
+    </div>
+  )
 }
 ```
 
-✅ **디자인 토큰 사용**: `stroke="var(--bg-primary)"`
+각 섹션이 독립적으로 만들어졌고 여기서 조합됩니다. 모든 컴포넌트가 동일한 토큰 세트를 참조하기 때문에, 컴포넌트 사이의 명시적인 조율 없이도 시각적으로 일관된 결과가 나와요.
 
-## 다음 단계
-
-1. **다크 모드 토글 추가**: FramingUI 테마 전환 사용
-2. **데이터 페칭 구현**: React Query 또는 SWR
-3. **필터링/검색 추가**: 검색 입력이 있는 테이블
-4. **상세 페이지 빌드**: 사용자 프로필, 주문 상세
-
-## 리소스
-
-- [FramingUI 문서](https://framingui.com)
-- [GitHub 저장소](https://github.com/soo-kate-yeon/tekton)
-- [Recharts 문서](https://recharts.org)
-
-FramingUI + AI를 사용하면 모든 컴포넌트에서 완벽한 디자인 일관성을 유지하면서 프로덕션 준비 대시보드를 몇 분 만에 빌드할 수 있습니다.
+실용적인 장점은 기능을 추가할 때 드러납니다. 새 섹션도 같은 패턴을 따르면—`@framingui/ui`에서 임포트하고, 모든 스타일 값에 CSS 커스텀 프로퍼티 사용—자동으로 나머지 대시보드와 맞아떨어져요.

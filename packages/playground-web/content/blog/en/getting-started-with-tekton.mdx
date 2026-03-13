@@ -1,70 +1,74 @@
 ---
-title: "Getting Started with Tekton: AI-Powered Design Token Generator"
-description: "Learn how to use Tekton to generate OKLCH-based design tokens and build consistent design systems for your web applications."
+title: "Getting Started with FramingUI: AI-Powered Design Token Generator"
+description: "Learn how to use FramingUI to generate OKLCH-based design tokens and build consistent design systems for your web applications."
 date: "2026-02-10"
 author:
   name: "FramingUI Team"
 tags:
-  - tutorial
   - design-system
-  - getting-started
-category: "Tutorial"
+category: "How-to"
 coverImage: ""
 published: true
 ---
 
-## What is Tekton?
+Most color tools still generate palettes that look mismatched across hues—a problem baked into HSL itself. FramingUI takes a different approach, using the OKLCH color space to build perceptually uniform palettes that your whole team can trust.
 
-Tekton is an AI-powered design token generator that uses the OKLCH color space to create perceptually uniform, accessible color palettes. Whether you're building a design system from scratch or refining an existing one, Tekton helps you generate consistent, production-ready tokens in seconds.
+OKLCH corrects a fundamental flaw in older color models. In HSL, "50% lightness" looks dramatically brighter in yellow than in blue. OKLCH maps lightness to how humans actually perceive it, so a color at L=0.5 reads as equally bright regardless of hue. The practical result: your primary, success, warning, and error palettes feel visually balanced without manual tweaking.
 
-### Why OKLCH?
+## Generating Your First Token Set
 
-Traditional color spaces like HSL and RGB don't account for human color perception. A "50% lightness" in HSL can look drastically different across hues. OKLCH solves this by providing **perceptual uniformity** — colors with the same lightness value actually appear equally bright to the human eye.
+Open the interactive playground at [framingui.com](https://framingui.com). Choose a base hue for your brand's primary color—FramingUI handles the rest.
 
-## Quick Start
+From that single input, the generator builds:
 
-Getting started with Tekton takes just a few steps:
+- A **primary palette** with 10 perceptually uniform shades
+- **Semantic color roles**: success, warning, error, info
+- A **neutral scale** calibrated against the same lightness curve
 
-### Step 1: Open the Playground
+Every color combination is checked against WCAG 2.1 contrast ratios in real time. Pairs that fall below the AA threshold are flagged before you export anything. Dark mode palettes are generated alongside light mode, maintaining the same visual hierarchy and contrast across both.
 
-Visit [framingui.com](https://framingui.com) and open the interactive playground. You'll see a real-time preview of your design tokens as you adjust parameters.
+The component preview panel applies your tokens to real UI elements—buttons, form fields, cards, badges—so you can validate decisions in context rather than in the abstract.
 
-### Step 2: Configure Your Base Colors
+## Exporting Your Tokens
 
-Choose your brand's primary color, and Tekton will automatically generate:
+FramingUI exports in three formats, each suited to a different part of your stack:
 
-- **Primary palette** — 10 shades from lightest to darkest
-- **Semantic colors** — Success, warning, error, info
-- **Neutral scale** — For text, backgrounds, and borders
+**CSS Custom Properties** drop directly into any project. The generated file uses `var(--token-name)` references throughout, so theming works without JavaScript.
 
-### Step 3: Export Your Tokens
+**Tailwind CSS** output extends your `tailwind.config.js` with a colors object keyed to your token names. Every Tailwind utility class maps back to a token.
 
-Export your design tokens in multiple formats:
+**JSON** gives you the raw token structure following the W3C Design Token format. Use it with Style Dictionary, import it into Figma via Tokens Studio, or feed it to FramingUI's MCP server so AI tools can read your design system directly.
 
-- **CSS Custom Properties** — Ready to drop into any project
-- **Tailwind CSS** — Direct integration with your Tailwind config
-- **JSON** — For design tools and custom integrations
+## Connecting to AI Tools
 
-## Key Features
+Once you have a `tokens.json` file, you can wire it to Claude Code or Cursor through FramingUI's MCP server. The server exposes your tokens over the Model Context Protocol so AI can query them on demand rather than relying on training data defaults.
 
-### Accessibility First
+The one-time setup looks like this:
 
-Every color combination is checked against WCAG 2.1 contrast ratios. Tekton flags any pairs that don't meet AA or AAA standards, so you can fix accessibility issues before they ship.
+```bash
+npx -y @framingui/mcp-server@latest init
+```
 
-### Dark Mode Support
+This command detects your project framework, installs the necessary packages, and writes a `.mcp.json` at the project root:
 
-Generate light and dark mode palettes simultaneously. Tekton ensures both modes maintain the same visual hierarchy and contrast ratios.
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server@latest"]
+    }
+  }
+}
+```
 
-### Component Preview
+Restart Claude Code, then ask it to build any component. Instead of generating `bg-blue-500` or `#3B82F6`, the AI queries your tokens and uses the actual names from your design system.
 
-See your tokens applied to real UI components — buttons, cards, forms, and more. This helps you validate your design decisions in context before committing to them.
+## What the Workflow Looks Like in Practice
 
-## What's Next?
+A typical session: you pick a brand hue, adjust the contrast level target (AA or AAA), and preview the generated palette against your component set. Satisfied with the result, you export to JSON and run `init`. From that point, every AI-generated component starts from your tokens rather than from generic Tailwind defaults.
 
-Now that you have your design tokens, here are some next steps:
+The playground is non-destructive—you can iterate on hue, chroma, and neutral balance without touching your codebase. Commit the `tokens.json` when you're ready. The MCP server reads the file on demand, so the next AI generation automatically picks up any changes.
 
-1. **Integrate with your codebase** — Copy the generated CSS or Tailwind config into your project
-2. **Share with your team** — Export and share the token specification with designers and developers
-3. **Iterate** — Use the playground to experiment with different color schemes and find the perfect palette
-
-Tekton is designed to grow with your project. Start simple, and expand your design system as your needs evolve.
+Start with a single brand color. Build a complete, accessible, AI-ready design system in one session.

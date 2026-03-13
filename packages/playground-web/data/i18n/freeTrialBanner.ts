@@ -7,12 +7,12 @@ export interface FreeTrialBannerContent {
 
 export const freeTrialBannerContent: Record<BlogLocale, FreeTrialBannerContent> = {
   en: {
-    label: 'Try all FramingUI features free for 3 days.',
-    cta: 'Start Free Trial',
+    label: 'See what you can build — browse our UI templates',
+    cta: 'Explore',
   },
   ko: {
-    label: 'FramingUI의 모든 기능을 3일 동안 무료로 체험해보세요.',
-    cta: '무료 체험 시작하기',
+    label: '어떤 템플릿이 있는지 둘러보세요. 모든 템플릿은 3일 무료체험이 가능해요.',
+    cta: '둘러보기',
   },
   ja: {
     label: 'FramingUIのすべての機能を3日間無料でお試しください。',
