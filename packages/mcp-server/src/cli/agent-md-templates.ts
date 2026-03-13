@@ -33,6 +33,20 @@ framingui-mcp login
 7. Verify project integration:
    - \`validate-environment\` with \`sourceFiles\`
 
+### React Native Direct-Write Flow
+
+For Expo or React Native targets:
+
+1. Call \`get-screen-generation-context\` with \`platform: "react-native"\`
+2. Review only React Native compatible components and guidance
+3. Write the screen directly with \`react-native\` primitives or local app abstractions
+4. Run \`validate-environment\` with:
+   - \`platform: "react-native"\`
+   - \`projectPath\`
+   - \`requiredPackages\`
+   - \`sourceFiles\`
+5. Fix any hardcoded style drift or web-only patterns before handoff
+
 ### Style Contract Rules
 
 - If the project stays \`host-utility\`, keep utility classes explicit.
@@ -54,6 +68,7 @@ framingui-mcp login
 ### Component Rule
 
 Do not claim a FramingUI component is unavailable without checking \`list-components\` or \`preview-component\`.
+Do not recommend \`@framingui/ui\` imports for React Native targets.
 
 ### Example
 
@@ -98,6 +113,16 @@ FramingUI is available in this project through MCP.
 8. Write React code directly from the validated definition.
 9. Run \`validate-environment\` with \`sourceFiles\` before final handoff.
 
+### React Native Projects
+
+If the target project is Expo or React Native:
+
+- call \`get-screen-generation-context\` with \`platform: "react-native"\`
+- write the screen directly using host app primitives or local abstractions
+- do **not** import \`@framingui/ui\`
+- run \`validate-environment\` with \`platform: "react-native"\` and \`sourceFiles\`
+- fix hardcoded colors, spacing, radius values, and web-only patterns such as \`className\`
+
 ### Style Contract
 
 - \`host-utility\`: keep explicit utility styling
@@ -108,6 +133,7 @@ FramingUI is available in this project through MCP.
 
 Semantic wrappers such as \`header\`, \`nav\`, \`section\`, and \`footer\` may remain HTML.
 Interactive and form primitives should use FramingUI components when they exist.
+For React Native targets, use host app/native primitives instead of HTML or \`@framingui/ui\`.
 
 ### Example
 

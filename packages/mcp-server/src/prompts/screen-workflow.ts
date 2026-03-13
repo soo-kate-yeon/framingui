@@ -25,6 +25,12 @@ The production workflow is **guarded direct write**:
 - ✅ Write React code directly using FramingUI components and props from context
 - ✅ Verify dependencies, Tailwind setup, and raw HTML/style escapes before delivery
 
+React Native is also supported through a **direct-write contract path**:
+- ✅ Gather platform-aware component guidance with \`platform: "react-native"\`
+- ✅ Write Expo / React Native code directly using host primitives or app abstractions
+- ✅ Use \`validate-environment\` with \`sourceFiles\` for package checks and QC
+- 🚫 Do not import \`@framingui/ui\` into React Native projects
+
 This is **not** the old \`generate_screen\`-first workflow.
 \`generate_screen\` may still be used as an optional helper, but the default production path is:
 
@@ -46,6 +52,15 @@ Use this at the start of every screen task.
 \`\`\`
 
 Set \`includeExamples: false\` when you want a smaller response and do not need example screen definitions.
+
+For React Native direct-write work, pass:
+\`\`\`json
+{
+  "description": "Profile screen with subscription card and settings actions",
+  "platform": "react-native",
+  "includeExamples": false
+}
+\`\`\`
 
 **What to review from the response:**
 - \`templateMatch\` as a layout hint only
@@ -137,6 +152,25 @@ Use it to verify:
 
 If the tool reports missing setup or raw primitive drift, fix the code before delivery.
 
+## React Native Direct-Write Path
+
+Use this instead of the web screen-definition path when the target app is Expo or React Native.
+
+1. Call \`get-screen-generation-context\` with \`platform: "react-native"\`
+2. Review React Native compatible components and hints
+3. Write the screen directly using \`react-native\` primitives or local app abstractions
+4. Run \`validate-environment\` with:
+   - \`platform: "react-native"\`
+   - \`projectPath\`
+   - \`requiredPackages\`
+   - \`sourceFiles\`
+5. Fix missing packages, hardcoded color/spacing/radius values, and web-only patterns such as \`className\`
+
+React Native rules:
+- Do **not** import \`@framingui/ui\`
+- Do **not** require Tailwind or CSS imports
+- Prefer \`StyleSheet\` or host app token helpers over raw style literals
+
 ## Best Practices
 
 1. Start with \`get-screen-generation-context\`
@@ -146,6 +180,7 @@ If the tool reports missing setup or raw primitive drift, fix the code before de
 5. Validate the definition before writing JSX
 6. Never parse MCP transcript text with shell or Python JSON tooling
 7. Run \`validate-environment\` before handoff
+8. Use the React Native direct-write path when the target project is Expo or React Native
 
 ## Optional Helper Path
 

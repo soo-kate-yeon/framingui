@@ -6,6 +6,8 @@ FramingUI is a design system for AI-assisted product teams. Instead of asking an
 
 The goal is simple: use MCP to build production UI with stronger contracts, fewer hallucinated components, and clearer integration steps.
 
+FramingUI currently ships a web React component runtime, and it also supports Expo / React Native through a guarded direct-write workflow: platform-aware component guidance, token constraints, and MCP validation without requiring a new native styling framework.
+
 ## What FramingUI Includes
 
 - `@framingui/mcp-server`: MCP server for discovery, screen workflows, validation, and project setup
@@ -48,6 +50,8 @@ The production screen workflow is component-first and validation-first:
 5. `validate-screen-definition`
 6. write React code directly from the validated definition
 7. `validate-environment` for dependency, style-contract, and code-audit checks
+
+For Expo / React Native projects, use the same MCP entry points with `platform: "react-native"` and write native code directly. In that path, FramingUI acts as the contract, discovery, and QC layer rather than the runtime UI package.
 
 FramingUI also provides slash-command guidance for common actions such as:
 
