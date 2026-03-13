@@ -14,213 +14,90 @@ coverImage: ""
 published: true
 ---
 
-## The Traditional Figma-to-Code Workflow
+Copy-paste from Figma feels fast. It is fast—right up until you need to change your brand's primary color and discover it lives in 47 different files.
 
-Most developers are familiar with this workflow:
+The problem with copying CSS values directly from the Inspect panel is that you're capturing raw numbers, not meaning. `#3B82F6` says nothing about why that color is used. `24px` doesn't explain whether it's card padding, section spacing, or an icon size. Hardcoded values accumulate silently, and the codebase slowly diverges from the design.
 
-1. Designer creates mockup in Figma
-2. Developer inspects element → copies CSS
-3. Paste into codebase as hardcoded values
-4. Repeat for every component
+## What Copy-Paste Actually Costs
+
+A new component might take 20 minutes to copy values and paste them into CSS. That feels efficient. The hidden cost appears later:
+
+**Rebrand work.** Changing a brand color requires a find-replace across every file that hardcoded it. Miss one instance and the visual breaks.
+
+**Dark mode.** Every hardcoded color needs a manual counterpart in your dark theme. The list grows with every component.
+
+**Design drift.** One developer uses `12px` padding; another uses `16px` because it "looked close." Over six months, nothing is consistent.
+
+**Maintenance.** A year from now, `#3B82F6` appears in a PR and nobody remembers whether it's the primary, an accent, or something legacy.
+
+## The Semantic Naming Shift
+
+Design tokens flip the relationship between value and meaning. Instead of asking "what is this value?" you ask "what does this value do?"
+
+A token named `--color-primary` can change its hex without breaking anything that references it. The name encodes the intent. When your brand moves from blue to purple:
 
 ```css
-/* Copied from Figma inspector */
-.button-primary {
-  background: #3B82F6;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.card-container {
-  background: #FFFFFF;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-```
-
-**This seems efficient.** Click, copy, paste. But it creates hidden debt:
-
-- **No single source of truth** — `#3B82F6` gets scattered across 47 files
-- **Design drift** — One button uses `12px` padding, another uses `16px`
-- **Rebrand nightmare** — Changing brand colors means find-replace across hundreds of components
-- **Dark mode hell** — Every hardcoded color needs manual adjustment
-- **Inconsistent spacing** — Designers use `24px`, developers pick `20px` because it "looks close enough"
-
-## Why Design Tokens Are Different
-
-Design tokens flip the relationship. Instead of copying **values**, you reference **semantic names**.
-
-### Before (Copy-Paste)
-
-```tsx
-<button className="bg-[#3B82F6] text-white rounded-lg px-6 py-3">
-  Click me
-</button>
-```
-
-**Problem:** What does `#3B82F6` mean? Is this the primary action color? An accent? A one-off choice?
-
-### After (Design Tokens)
-
-```tsx
-<button className="bg-primary text-primary-foreground rounded-md px-spacing-4 py-spacing-3">
-  Click me
-</button>
-```
-
-**Benefit:** The code describes **intent**, not appearance.
-
-## The Real Power: Semantic Naming
-
-Good design tokens use **semantic names**, not descriptive ones:
-
-❌ **Bad (Descriptive)**
-```css
---color-blue-500: #3B82F6;
---spacing-24px: 24px;
-```
-
-What happens when your brand color changes from blue to purple? Now `--color-blue-500` is purple. Confusing.
-
-✅ **Good (Semantic)**
-```css
+/* Before */
 --color-primary: #3B82F6;
---spacing-card-padding: 24px;
-```
 
-When the brand changes to purple, you update **one value**:
-```css
+/* After */
 --color-primary: #9333EA;
 ```
 
-Every button, every link, every primary element updates instantly.
+Every button, link, and focus state updates immediately. The name stays meaningful because it describes role, not appearance.
 
-## The FramingUI Approach
+Compare that to renaming `--color-blue-500` to `--color-purple-500`—you'd have to find and update every reference anyway, which defeats the purpose.
 
-FramingUI builds design tokens directly into components:
+## How FramingUI Uses Tokens
 
-### 1. Token-First Component API
+FramingUI builds design tokens directly into its component API. When you use a `Button` component with `variant="primary"`, it applies the right tokens internally:
 
-```tsx
-import { Button } from '@framingui/ui';
-
-<Button variant="primary" size="md">
-  Click me
-</Button>
-```
-
-Behind the scenes:
 ```css
 .button-primary {
-  background: var(--bg-primary);
-  color: var(--fg-primary);
+  background: var(--bg-primary-default);
+  color: var(--fg-on-primary);
   border-radius: var(--radius-md);
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-6);
 }
 ```
 
-**No manual token lookup.** The component already knows the right tokens.
+You never look up which token goes with which element. The component already knows. Change the token value in one place; every button in the application reflects the update.
 
-### 2. Automatic Theme Switching
-
-```tsx
-// Light mode
-:root {
-  --bg-primary: #3B82F6;
-  --bg-card: #FFFFFF;
-}
-
-// Dark mode
-[data-theme="dark"] {
-  --bg-primary: #60A5FA;
-  --bg-card: #1F2937;
-}
-```
-
-Same component, zero code changes:
-```tsx
-<Card>
-  <Button variant="primary">Works in both themes</Button>
-</Card>
-```
-
-### 3. Figma Sync (Coming Soon)
-
-The future workflow:
-1. Designer updates tokens in Figma (using Figma Variables)
-2. Export token JSON
-3. Run `framingui sync`
-4. All components update automatically
-
-**No manual copying.** The design system is the single source of truth.
-
-## When Copy-Paste Is Still Valid
-
-Design tokens aren't always the answer:
-
-✅ **Use copy-paste for:**
-- One-off marketing pages
-- Quick prototypes
-- External CSS you don't control
-
-✅ **Use design tokens for:**
-- Product UI (apps, dashboards)
-- Component libraries
-- Multi-theme systems
-- Long-term codebases
-
-## Migrating from Copy-Paste to Tokens
-
-### Step 1: Audit Your Hardcoded Values
-
-```bash
-# Find all hardcoded colors
-rg '#[0-9A-Fa-f]{6}' --type css
-```
-
-### Step 2: Group by Intent
-
-```
-#3B82F6 → primary actions (12 instances)
-#EF4444 → destructive actions (8 instances)
-#10B981 → success states (5 instances)
-```
-
-### Step 3: Create Tokens
+Theme switching works the same way. The tokens resolve to different values under different data attributes:
 
 ```css
 :root {
-  --color-primary: #3B82F6;
-  --color-destructive: #EF4444;
-  --color-success: #10B981;
+  --bg-primary-default: #3B82F6;
+  --bg-canvas: #FFFFFF;
+}
+
+[data-theme="dark"] {
+  --bg-primary-default: #60A5FA;
+  --bg-canvas: #1F2937;
 }
 ```
 
-### Step 4: Replace Gradually
+The component code doesn't change. The CSS variable resolves differently based on the active theme.
 
-```diff
-- <button className="bg-[#3B82F6]">Save</button>
-+ <button className="bg-primary">Save</button>
+## Migrating an Existing Codebase
+
+If you already have a codebase full of hardcoded values, a full rewrite isn't necessary. You can migrate incrementally.
+
+Start by auditing colors—they have the highest consistency impact:
+
+```bash
+# Find all hardcoded hex colors
+rg '#[0-9A-Fa-f]{6}' --type css --type tsx
 ```
 
-**Pro tip:** Start with colors (highest impact), then spacing, then typography.
+Group the values by intent. If `#3B82F6` appears in 12 places and always means "primary action," that's your `--color-primary` token. Define the tokens, then replace the hardcoded values one component at a time.
 
-## The Bottom Line
+Start with the most-used components (buttons, inputs, cards). Each one you migrate reduces future maintenance overhead. Typography and spacing follow the same pattern—find the values that repeat, name them semantically, replace the literals.
 
-Copy-paste from Figma is fast **today**. Design tokens are fast **forever**.
+## When Copy-Paste Still Makes Sense
 
-- **Rebrand in minutes**, not days
-- **Dark mode without tears**
-- **Consistency by default**
-- **Designer-developer sync** without Slack messages
+Design tokens aren't the right tool for every situation. One-off marketing pages with custom art direction, external CSS you don't control, and quick throw-away prototypes don't justify the overhead of a token system.
 
-FramingUI makes this the default. No token lookup, no manual syncing—just components that work.
+The dividing line is longevity and reuse. If the code will be maintained, if multiple developers will touch it, if it will need to work across themes or platforms—tokens pay for themselves quickly. If it's a one-day experiment that will be discarded, copying values directly is fine.
 
----
-
-**Try FramingUI:** [github.com/tektonui/tekton-ui](https://github.com/tektonui/tekton-ui)
-
-**Read next:** [Building Consistent UI with Claude](/blog/building-consistent-ui-with-claude)
+Product UIs, component libraries, and any codebase that needs to evolve over months or years are where the token approach compounds in value. The upfront cost is defining the names. The ongoing benefit is that intent is encoded in the code itself, and changes propagate automatically.

@@ -14,360 +14,137 @@ coverImage: ""
 published: true
 ---
 
-## The Color Problem No One Talks About
+Two buttons, both set to "50% lightness." The yellow one looks blindingly bright. The blue one looks dim and understated. You adjust by eye until they feel balanced—but now the numbers are inconsistent and the next person on the team can't understand why.
 
-You define a color palette. Primary blue, secondary purple, neutral grays. You apply it across your UI. Everything looks balanced—until you add yellow.
+This is the HSL problem. The lightness channel doesn't correspond to perceived brightness. OKLCH fixes this at the foundation, and that's why Tailwind v4, Radix Colors, and shadcn/ui have all moved to it.
 
-Suddenly yellow buttons feel louder than blue ones, even though both are set to the same "saturation." Text on yellow backgrounds is harder to read than text on blue, even though both pass WCAG contrast checks in your design tool.
+## What OKLCH Actually Measures
 
-This is not a design mistake. It is a limitation of how we define colors.
-
-Most design systems use **HSL** (Hue, Saturation, Lightness) or **RGB** (Red, Green, Blue). These color models are not perceptually uniform—meaning a change in numeric value does not produce a consistent change in perceived brightness or vibrancy.
-
-**OKLCH** solves this. It is a perceptually uniform color space designed to match how humans actually see color. When you adjust lightness in OKLCH, the perceived brightness changes consistently across all hues. When you set chroma (saturation), colors feel equally vibrant.
-
-Modern design systems—Tailwind CSS v4, Radix Colors, shadcn/ui—are switching to OKLCH. Here is why you should too.
-
-## What is OKLCH?
-
-OKLCH stands for **OK Lightness Chroma Hue**. It is a cylindrical representation of the **Oklab** color space, which was designed by Björn Ottosson to be perceptually uniform and computationally efficient.
-
-### How OKLCH Works
-
-OKLCH has three components:
-
-1. **L (Lightness)** – 0 (black) to 1 (white), perceptually uniform
-2. **C (Chroma)** – 0 (grayscale) to ~0.4 (highly saturated), represents vibrancy
-3. **H (Hue)** – 0° to 360°, same circular hue wheel as HSL
-
-Example:
+OKLCH uses three channels: **L** (lightness, 0–1), **C** (chroma, vibrancy), and **H** (hue, 0–360°).
 
 ```css
-/* OKLCH: oklch(L C H) */
 color: oklch(0.65 0.2 250);
+/* 0.65 = 65% lightness, 0.2 = moderately saturated, 250 = blue */
 ```
 
-- `0.65` = Lightness (65% brightness)
-- `0.2` = Chroma (moderately saturated)
-- `250` = Hue (blue-purple range)
-
-### Why "Perceptually Uniform" Matters
-
-**HSL is not perceptually uniform.** Two colors with the same lightness value can look drastically different in brightness:
+What makes it different is that L is *perceptually uniform*. Two colors with `L = 0.65` look equally bright regardless of hue:
 
 ```css
-/* Both are HSL lightness 50%, but perceived brightness differs */
-hsl(60, 100%, 50%)  /* Yellow – looks bright */
-hsl(240, 100%, 50%) /* Blue – looks darker */
+oklch(0.65 0.2 60)   /* yellow */
+oklch(0.65 0.2 250)  /* blue  */
+/* Both read as the same perceived brightness */
 ```
 
-Yellow at 50% lightness looks much brighter than blue at 50% lightness because human vision is more sensitive to yellow wavelengths.
-
-**OKLCH is perceptually uniform.** Two colors with the same OKLCH lightness have the same perceived brightness:
+Compare to HSL, where both of these are "50% lightness" but look wildly different on screen:
 
 ```css
-/* Both have OKLCH lightness 0.7 – perceived brightness is equal */
-oklch(0.7 0.15 100)  /* Yellow */
-oklch(0.7 0.15 250)  /* Blue */
+hsl(60, 100%, 50%)   /* yellow — looks almost white */
+hsl(240, 100%, 50%)  /* blue   — looks noticeably darker */
 ```
 
-This makes color systems predictable. You can generate shades programmatically and trust they will look balanced.
+The mismatch exists because human vision is more sensitive to yellow wavelengths. HSL's lightness channel doesn't account for this. OKLCH's does.
 
-## OKLCH vs HSL vs RGB: Side-by-Side
+## Three Problems OKLCH Solves
 
-| Feature | RGB | HSL | OKLCH |
-|---------|-----|-----|-------|
-| **Perceptually Uniform** | ❌ No | ❌ No | ✅ Yes |
-| **Predictable Lightness** | ❌ No | ❌ No | ✅ Yes |
-| **Easy to Reason About** | ❌ No | ✅ Yes | ✅ Yes |
-| **Consistent Saturation** | ❌ No | ❌ No | ✅ Yes |
-| **Browser Support** | ✅ Full | ✅ Full | ⚠️ Modern (polyfill available) |
-| **Design Tool Support** | ✅ Full | ✅ Full | ⚠️ Limited (improving) |
-
-## Why Design Systems Are Switching to OKLCH
-
-### 1. Predictable Color Scales
-
-Design systems need color scales—light to dark variations of a base color. With HSL, adjusting lightness produces uneven results:
+**Predictable color scales.** Design systems need 9- or 11-step color ramps from lightest to darkest. With HSL, evenly spaced lightness steps produce visually uneven jumps—the step from 90% to 70% looks different from the step from 50% to 30%. With OKLCH, equal numeric steps produce equal perceived steps:
 
 ```css
-/* HSL: adjusting lightness by fixed steps */
-hsl(220, 80%, 90%)  /* Very light blue */
-hsl(220, 80%, 70%)  /* Light blue */
-hsl(220, 80%, 50%)  /* Medium blue */
-hsl(220, 80%, 30%)  /* Dark blue */
+oklch(0.9 0.1 250)  /* lightest */
+oklch(0.7 0.1 250)
+oklch(0.5 0.1 250)  /* mid */
+oklch(0.3 0.1 250)
+oklch(0.1 0.1 250)  /* darkest */
 ```
 
-Visually, the steps from 90% → 70% and 70% → 50% do not feel equal. The perceived brightness change is inconsistent.
+Each shade feels one visual step darker than the last. You can generate the entire scale programmatically and trust that it looks balanced.
 
-With OKLCH, equal lightness steps produce equal perceived brightness steps:
+**Consistent saturation across hues.** HSL saturation doesn't mean the same thing for every hue. Setting chroma to `0.2` in OKLCH produces visually similar vibrancy for yellow, blue, purple, and red:
 
 ```css
-/* OKLCH: perceptually uniform steps */
-oklch(0.9 0.1 250)  /* Very light blue */
-oklch(0.7 0.1 250)  /* Light blue */
-oklch(0.5 0.1 250)  /* Medium blue */
-oklch(0.3 0.1 250)  /* Dark blue */
+oklch(0.65 0.2 60)   /* yellow   — feels equally saturated */
+oklch(0.65 0.2 150)  /* green    — feels equally saturated */
+oklch(0.65 0.2 250)  /* blue     — feels equally saturated */
+oklch(0.65 0.2 330)  /* magenta  — feels equally saturated */
 ```
 
-Each step feels visually balanced. This is critical for auto-generating themes or accessible color ramps.
+This lets you define multiple accent colors with a single chroma value and have them feel visually matched without manual adjustment.
 
-### 2. Accessible Contrast Without Trial-and-Error
-
-WCAG contrast ratios are based on perceptual lightness, not HSL values. OKLCH's lightness channel aligns with WCAG calculations, making it easier to predict contrast:
-
-- Text needs a contrast ratio of 4.5:1 (AA) or 7:1 (AAA)
-- In OKLCH, a lightness difference of ~0.4 usually hits AA contrast
-- In HSL, lightness difference does not map cleanly to contrast ratios
-
-Example: Creating accessible text on a blue background.
-
-**HSL approach (trial-and-error):**
+**Better gradients.** RGB and HSL gradients pass through desaturated mid-tones when the hue rotates far. OKLCH gradients stay vibrant:
 
 ```css
-background: hsl(220, 80%, 50%);
-color: hsl(220, 80%, 95%);  /* Check contrast – might fail */
-```
+/* Muddy in HSL */
+background: linear-gradient(90deg, hsl(0, 100%, 50%), hsl(240, 100%, 50%));
 
-**OKLCH approach (predictable):**
-
-```css
-background: oklch(0.5 0.15 250);
-color: oklch(0.95 0.02 250);  /* Lightness delta = 0.45 → likely passes AA */
-```
-
-You still need to verify contrast, but OKLCH gives you a better starting point.
-
-### 3. Consistent Saturation Across Hues
-
-HSL saturation does not feel consistent across hues. 100% saturation yellow looks more vibrant than 100% saturation blue:
-
-```css
-hsl(60, 100%, 50%)   /* Yellow – feels very bright */
-hsl(240, 100%, 50%)  /* Blue – feels less vibrant */
-```
-
-OKLCH chroma is perceptually uniform. Setting chroma to `0.2` produces similar vibrancy across all hues:
-
-```css
-oklch(0.65 0.2 60)   /* Yellow */
-oklch(0.65 0.2 240)  /* Blue */
-/* Both feel equally saturated */
-```
-
-This makes it easy to build color palettes where all accent colors have equal visual weight.
-
-### 4. Better Gradients and Transitions
-
-CSS gradients in RGB or HSL can produce muddy mid-tones:
-
-```css
-/* HSL gradient – muddy middle */
-background: linear-gradient(90deg, 
-  hsl(0, 100%, 50%),    /* Red */
-  hsl(240, 100%, 50%)   /* Blue */
+/* Vibrant in OKLCH */
+background: linear-gradient(90deg in oklch,
+  oklch(0.6 0.25 30),
+  oklch(0.6 0.25 270)
 );
 ```
 
-OKLCH gradients interpolate through perceptually uniform space, producing cleaner transitions:
+## Migrating to OKLCH
+
+**Convert existing colors.** [oklch.com](https://oklch.com/) is a visual converter; paste a hex value and get OKLCH back. [colorjs.io](https://colorjs.io/apps/convert/) handles batch conversion.
 
 ```css
-/* OKLCH gradient – smooth, vibrant */
-background: linear-gradient(90deg in oklch, 
-  oklch(0.6 0.25 30),   /* Red */
-  oklch(0.6 0.25 270)   /* Blue */
-);
-```
-
-The intermediate colors look more vibrant and natural.
-
-## Migrating Your Design System to OKLCH
-
-### Step 1: Convert Existing Colors
-
-Use a tool to convert your current palette:
-
-- [OKLCH Color Picker](https://oklch.com/) – Visual converter
-- [Colorjs.io](https://colorjs.io/apps/convert/) – Batch conversion
-
-Example conversion:
-
-```css
-/* Before (HSL) */
+/* Before */
 --primary: hsl(220, 90%, 56%);
 
-/* After (OKLCH) */
+/* After */
 --primary: oklch(0.6 0.22 250);
 ```
 
-### Step 2: Build Perceptually Uniform Scales
-
-Instead of hardcoding shades, generate them programmatically:
+**Generate scales programmatically.** Once you have a base color in OKLCH, building a full ramp is arithmetic:
 
 ```javascript
-function generateScale(baseL, baseC, baseH, steps = 9) {
+function generateScale(baseC, baseH) {
   const lightnesses = [0.95, 0.85, 0.75, 0.65, 0.55, 0.45, 0.35, 0.25, 0.15];
   return lightnesses.map((l, i) => ({
-    name: `scale-${i + 1}`,
+    step: i + 1,
     value: `oklch(${l} ${baseC} ${baseH})`,
   }));
 }
 
-const blueScale = generateScale(0.6, 0.2, 250);
+const blue = generateScale(0.2, 250);
+// blue[0].value = "oklch(0.95 0.2 250)"  ← lightest
+// blue[4].value = "oklch(0.55 0.2 250)"  ← mid
+// blue[8].value = "oklch(0.15 0.2 250)"  ← darkest
 ```
 
-Output:
+**Use color-mix for interactive states.** The `color-mix()` function respects color space. Mixing in OKLCH keeps hues stable while adjusting brightness:
 
 ```css
---blue-1: oklch(0.95 0.2 250);  /* Lightest */
---blue-5: oklch(0.55 0.2 250);  /* Base */
---blue-9: oklch(0.15 0.2 250);  /* Darkest */
+:root { --primary: oklch(0.6 0.22 250); }
+
+.button:hover  { background: color-mix(in oklch, var(--primary), black 10%); }
+.button:active { background: color-mix(in oklch, var(--primary), black 20%); }
 ```
 
-Each step has equal perceived brightness differences.
+RGB-space mixing often shifts hues unexpectedly. OKLCH-space mixing stays on-hue.
 
-### Step 3: Use CSS Color-Mix for Variants
-
-CSS `color-mix()` works beautifully with OKLCH:
+**Browser support and fallbacks.** Chrome 111+, Safari 15.4+, and Firefox 113+ support OKLCH natively—covering well over 90% of users as of 2026. For older browsers, the `@csstools/postcss-oklab-function` plugin adds RGB fallbacks automatically:
 
 ```css
-:root {
-  --primary: oklch(0.6 0.22 250);
-}
-
-.button-hover {
-  background: color-mix(in oklch, var(--primary), black 10%);
-}
-
-.button-active {
-  background: color-mix(in oklch, var(--primary), black 20%);
-}
-```
-
-Mixing in OKLCH space produces perceptually accurate results (unlike mixing in RGB, which can shift hues unexpectedly).
-
-### Step 4: Ensure Browser Support
-
-OKLCH is supported in:
-- ✅ Chrome 111+
-- ✅ Safari 15.4+
-- ✅ Firefox 113+
-
-For older browsers, use a PostCSS plugin:
-
-```bash
-npm install @csstools/postcss-oklab-function
-```
-
-```css
-/* Before PostCSS */
+/* Input */
 color: oklch(0.6 0.2 250);
 
-/* After PostCSS (fallback added) */
-color: rgb(66, 135, 245);
-color: oklch(0.6 0.2 250);
+/* PostCSS output */
+color: rgb(66, 135, 245);        /* fallback */
+color: oklch(0.6 0.2 250);       /* modern */
 ```
 
-## OKLCH in Design Tools
+## When Not to Switch
 
-Figma and Sketch do not natively support OKLCH yet. Workaround:
+OKLCH works poorly when you're bound to exact hex values from a brand guideline. You can convert the hex to OKLCH and confirm it renders identically, but any programmatic scale generation will produce new values that need sign-off. If your brand team owns the palette and specifies colors by hex, coordinate before migrating.
 
-1. Define colors in OKLCH in your codebase
-2. Use a plugin to sync tokens to Figma (e.g., [Figma Tokens](https://www.figma.com/community/plugin/843461159747178978))
-3. Or define semantic tokens in Figma, then convert to OKLCH in code
+Print workflows stay with CMYK. OKLCH is a display color space.
 
-Example workflow:
+Legacy browser requirements below the support thresholds above are manageable with the PostCSS plugin, but the plugin doesn't cover CSS `color-mix()` or gradient interpolation. If those are on your roadmap, coordinate with the browsers you need to support.
 
-**Figma:** Define semantic names (`primary`, `neutral-5`)  
-**Code:** Convert to OKLCH:
+## How This Changes Design Token Workflows
 
-```typescript
-export const colors = {
-  primary: 'oklch(0.6 0.22 250)',
-  neutral: {
-    5: 'oklch(0.55 0.02 270)',
-  },
-};
-```
+The practical shift is that you define fewer raw colors manually. You pick a base hue and chroma, generate a scale, and store the OKLCH values as tokens. The token file shrinks because you're not hardcoding nine individually adjusted shades—you're storing a generation function's output.
 
-## Real-World Example: Tailwind CSS v4
+That output is also easier to audit. You can look at a token and immediately see its brightness (`L`), vibrancy (`C`), and hue (`H`) without running a converter. Changes to the scale are a change to one number, not nine manual adjustments.
 
-Tailwind CSS v4 uses OKLCH internally for its color palette. Here is how they define `blue`:
-
-```css
---blue-500: oklch(0.6 0.22 250);
---blue-600: oklch(0.52 0.22 250);
---blue-700: oklch(0.44 0.22 250);
-```
-
-Notice:
-- Lightness decreases linearly (0.6 → 0.52 → 0.44)
-- Chroma stays constant (0.22)
-- Hue stays constant (250)
-
-Result: Perceptually uniform blue shades that feel evenly spaced.
-
-## Common Questions
-
-### Does OKLCH support transparency?
-
-Yes. Use the slash syntax:
-
-```css
-color: oklch(0.6 0.2 250 / 0.8);  /* 80% opacity */
-```
-
-### Can I animate OKLCH colors?
-
-Yes. CSS transitions work:
-
-```css
-.button {
-  background: oklch(0.6 0.2 250);
-  transition: background 0.2s;
-}
-
-.button:hover {
-  background: oklch(0.5 0.25 250);
-}
-```
-
-### What about P3 or other wide-gamut colors?
-
-OKLCH supports P3 and Rec. 2020 gamuts. Just ensure values are within the displayable range (chroma > ~0.35 may exceed sRGB).
-
-## When NOT to Use OKLCH
-
-OKLCH is excellent for design systems, but there are edge cases:
-
-- **Legacy browser support required** – Stick with RGB/HSL, or use PostCSS fallbacks
-- **Exact color matching to brand guidelines** – If your brand mandates specific hex codes, convert them but verify visually
-- **Designing for print (CMYK)** – OKLCH is display-focused; print workflows still use CMYK
-
-## Conclusion
-
-OKLCH is not a trend. It is a better foundation for color systems.
-
-**Why switch:**
-- Predictable lightness and saturation across all hues
-- Easier to generate accessible color scales
-- Cleaner gradients and color mixing
-- Future-proof (browsers, frameworks adopting it)
-
-**How to start:**
-1. Convert your existing palette to OKLCH
-2. Generate scales using perceptual lightness steps
-3. Use `color-mix()` for hover/active states
-4. Add PostCSS fallbacks for older browsers
-
-Your design system will be more consistent, more accessible, and easier to maintain—whether you are designing manually or generating UI with AI.
-
-Color is one of the hardest parts of design systems to get right. OKLCH makes it predictable.
-
----
-
-**Want a design system with OKLCH built in?**
-
-FramingUI ships with perceptually uniform color tokens, ready for modern browsers and AI code generation.
-
-[Explore FramingUI](https://tekton.sh) →
+For teams using AI tools to generate UI: color tokens in OKLCH are more interpretable by models because the channels carry semantic meaning. `oklch(0.6 0.22 250)` is clearly a medium-brightness, moderately saturated blue. A model can reason about contrast and pairing without needing external lookup. That makes generated color usage more consistent.

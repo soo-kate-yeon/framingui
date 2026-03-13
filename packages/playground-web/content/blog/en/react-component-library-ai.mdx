@@ -14,96 +14,34 @@ coverImage: ""
 published: true
 ---
 
-## The AI Code Generation Problem
+AI coding tools generate buttons with the wrong padding, colors that are close but not quite your brand, spacing that follows no pattern. The fix isn't a better prompt—it's a better component library.
 
-Your team uses AI coding tools—Claude, Cursor, GitHub Copilot. You ask for a new feature. AI generates a form, a modal, a dashboard. The code works, but it does not look right.
+Most component libraries are built for human developers. They assume readers who can open Storybook, follow documentation links, and infer conventions from context. AI tools read TypeScript types and code structure. What's obvious to a developer who knows your system is invisible to a model that hasn't seen it. Here's what to change.
 
-Buttons have the wrong padding. Colors do not match your palette. Spacing is inconsistent. The AI did not use your component library—it invented new components from scratch.
+## Semantic Tokens Instead of Hardcoded Values
 
-This is not the AI's fault. Your component library is optimized for humans, not machines.
+This is the single highest-leverage change you can make. When an AI reads a component that uses inline pixel values and hex codes, it extracts those numbers and reuses them—approximately. The next time it generates a button, it will use `14px 28px` because it saw `12px 24px` and approximated. Colors shift. Spacing drifts. Over many generations, the codebase diverges from the design system.
 
-**AI cannot read Storybook.** It cannot infer conventions from Figma. It reads TypeScript types and code structure. If your components are not structured for machine consumption, AI defaults to generic patterns learned from public repositories.
-
-Here is how to build a React component library that AI understands—so generated code respects your design system from day one.
-
-## Principle 1: Semantic Tokens Over Magic Numbers
-
-AI sees this:
-
-```tsx
-<button style={{ padding: '12px 24px', background: '#3b82f6', borderRadius: '8px' }}>
-  Submit
-</button>
-```
-
-It learns: "Buttons use 12px/24px padding, blue-ish backgrounds, 8px border radius."
-
-Next time it generates a button:
-
-```tsx
-<button style={{ padding: '14px 28px', background: '#4f9af7', borderRadius: '6px' }}>
-  Cancel
-</button>
-```
-
-Close, but wrong. Your spacing is `12px`/`24px`, not `14px`/`28px`. Your blue is `#3b82f6`, not `#4f9af7`. Each generation drifts further from your system.
-
-### Solution: Export Semantic Tokens
-
-Define tokens in code, not just design tools:
+The fix is to give tokens names and put those names in the code:
 
 ```typescript
 // tokens.ts
 export const tokens = {
   spacing: {
-    xs: '4px',
     sm: '8px',
     md: '12px',
     lg: '24px',
     xl: '32px',
   },
   color: {
-    primary: {
-      solid: '#3b82f6',
-      hover: '#2563eb',
-      text: '#1e40af',
-    },
-    neutral: {
-      solid: '#374151',
-      muted: '#6b7280',
-    },
+    primary: { solid: '#3b82f6', hover: '#2563eb' },
+    neutral: { solid: '#374151', muted: '#6b7280' },
   },
-  radius: {
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-  },
+  radius: { sm: '4px', md: '8px', lg: '12px' },
 };
 ```
 
-Use them in components:
-
 ```tsx
-import { tokens } from './tokens';
-
-export const Button = ({ children }: { children: React.ReactNode }) => (
-  <button
-    style={{
-      padding: `${tokens.spacing.md} ${tokens.spacing.lg}`,
-      background: tokens.color.primary.solid,
-      borderRadius: tokens.radius.md,
-    }}
-  >
-    {children}
-  </button>
-);
-```
-
-**Result:** AI learns the pattern. Next time it generates a button, it imports tokens and uses them:
-
-```tsx
-import { tokens } from './tokens';
-
 <button
   style={{
     padding: `${tokens.spacing.md} ${tokens.spacing.lg}`,
@@ -111,163 +49,71 @@ import { tokens } from './tokens';
     borderRadius: tokens.radius.md,
   }}
 >
-  Cancel
+  {children}
 </button>
 ```
 
-Consistent. No drift.
+Now the AI reads the token names. It learns that buttons use `tokens.spacing.md` for vertical padding and `tokens.spacing.lg` for horizontal. When it generates a new button, it imports the same token file and uses the same names. The generated code stays in system.
 
-## Principle 2: Predictable Prop Naming
+## Explicit TypeScript Variants
 
-AI reads prop names to understand how components work. Inconsistent names confuse it.
+Open-ended string props let AI guess, and guessing means inconsistency. A `variant: string` prop could accept `"primary"`, `"solid"`, `"filled"`, `"blue"`, or `"default"`. The AI picks whichever seems most plausible based on patterns from other codebases.
 
-### Bad (inconsistent):
-
-```tsx
-<TextInput label="Email" val={email} change={setEmail} />
-<NumberInput text="Age" value={age} onChange={setAge} />
-<Checkbox caption="Subscribe" checked={subscribed} onCheck={setSubscribed} />
-```
-
-AI cannot predict the pattern. Is the value prop called `val`, `value`, or something else? Is the change handler `change`, `onChange`, or `onCheck`?
-
-### Good (consistent):
-
-```tsx
-<TextField label="Email" value={email} onValueChange={setEmail} />
-<NumberField label="Age" value={age} onValueChange={setAge} />
-<Checkbox label="Subscribe" checked={subscribed} onCheckedChange={setSubscribed} />
-```
-
-**Pattern:**
-- Text inputs use `value` + `onValueChange`
-- Checkboxes use `checked` + `onCheckedChange`
-- All use `label` (not `text`, `caption`, or `title`)
-
-AI learns this. When it needs a new input, it follows the same convention.
-
-### Standardize Across Component Categories
-
-| Component Type | Value Prop | Change Handler |
-|----------------|------------|----------------|
-| Text inputs | `value` | `onValueChange` |
-| Checkboxes/Switches | `checked` | `onCheckedChange` |
-| Selects/Radios | `value` | `onValueChange` |
-| Sliders | `value` | `onValueChange` |
-
-Consistency makes AI-generated code predictable.
-
-## Principle 3: Explicit Variants Over Arbitrary Props
-
-AI struggles with open-ended props. It does not know which values are valid.
-
-### Bad (arbitrary):
-
-```tsx
-<Button color="blue" size="medium" style="filled" />
-```
-
-AI will generate:
-
-```tsx
-<Button color="lightblue" size="large" style="outline" />
-```
-
-Close, but your system uses `primary`, not `lightblue`. `lg`, not `large`. `ghost`, not `outline`.
-
-### Good (explicit TypeScript enums):
+String literal types close the gap:
 
 ```tsx
 type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
-};
-
-export const Button = ({ variant = 'primary', size = 'md' }: ButtonProps) => {
-  // ...
-};
+  children: React.ReactNode;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 ```
 
-**Result:** AI reads the TypeScript types. It knows the valid options:
+When AI reads this type definition, it knows exactly which values are valid. Generated code will use `variant="primary"` or `variant="ghost"`, not `variant="solid"` or `variant="outline"`. This applies to every prop that has a finite set of valid values—never reach for `string` when you can enumerate.
 
-```tsx
-<Button variant="primary" size="lg" />
-```
+## JSDoc as Machine-Readable Documentation
 
-No guessing. No invalid values.
-
-### Use String Literal Types, Not `string`
-
-```tsx
-// ❌ Bad: AI doesn't know what's valid
-type ButtonProps = {
-  variant: string;
-};
-
-// ✅ Good: AI knows the exact options
-type ButtonProps = {
-  variant: 'primary' | 'secondary' | 'ghost';
-};
-```
-
-## Principle 4: JSDoc for Machine-Readable Documentation
-
-AI does not browse Storybook. It reads code. Add JSDoc comments directly to components:
+Storybook is for human readers. AI tools read source code. JSDoc comments placed directly on exported components travel with the code and get picked up by every tool that reads TypeScript:
 
 ```tsx
 /**
- * A primary action button.
- * 
+ * Button for primary actions.
+ *
  * @param variant - Visual style: `primary` (default), `secondary`, `ghost`
- * @param size - Button size: `sm`, `md` (default), `lg`
- * @param children - Button label
- * 
+ * @param size - Dimensions: `sm`, `md` (default), `lg`
+ * @param children - Button label text
+ *
  * @example
- * <Button variant="primary" size="lg">
- *   Submit Form
- * </Button>
+ * <Button variant="primary" size="lg">Save Changes</Button>
  */
 export const Button = ({
   variant = 'primary',
   size = 'md',
   children,
-}: ButtonProps) => {
-  // ...
-};
+  ...props
+}: ButtonProps) => { ... };
 ```
 
-AI reads this. It knows:
-- Valid `variant` and `size` values
-- What `children` represents (button label)
-- How to use it (the example)
+The `@example` tag is especially useful. When the AI has seen a working example of how to use the component, generated code follows the pattern rather than inferring it.
 
-When generating code, AI references the JSDoc and follows the pattern.
+## Composition Over Configuration
 
-## Principle 5: Composition Over Configuration
+Props like `title`, `subtitle`, `footer`, and `padding="large"` are ambiguous. Is the content area prop called `body` or `content`? Does footer take a ReactNode or a string? When a component accepts many configuration props, the AI has to guess prop names and nesting.
 
-Complex props are hard for AI to predict. Simple composition is easier.
-
-### Bad (configuration-heavy):
+Composable sub-components eliminate that ambiguity:
 
 ```tsx
-<Card 
-  title="User Profile" 
-  subtitle="Edit your information"
+// Configuration-heavy (hard for AI)
+<Card
+  title="User Profile"
   footer={<Button>Save</Button>}
   padding="large"
-  shadow="medium"
 />
-```
 
-AI has to guess prop names: `title` or `heading`? `footer` or `actions`? `padding` or `spacing`?
-
-### Good (composition):
-
-```tsx
+// Compositional (easy for AI)
 <Card>
   <CardHeader>
     <CardTitle>User Profile</CardTitle>
-    <CardSubtitle>Edit your information</CardSubtitle>
   </CardHeader>
   <CardContent>
     {/* form fields */}
@@ -278,275 +124,55 @@ AI has to guess prop names: `title` or `heading`? `footer` or `actions`? `paddin
 </Card>
 ```
 
-**Why it is better for AI:**
-- Clear component hierarchy (Header → Title, Subtitle)
-- No ambiguous prop names
-- Easier to extend (add `CardActions`, `CardImage`, etc.)
+The compositional API is self-documenting. The component tree mirrors the visual structure. AI tools that have seen one card composed this way will replicate the pattern across all cards, regardless of content.
 
-AI sees this structure once and replicates it consistently.
+## Consistent Prop Naming Across Components
 
-## Principle 6: Single Source of Truth for Tokens
+When `TextInput` uses `val` and `NumberInput` uses `value`, the AI has to learn two conventions. When `TextInput` uses `change` and `Checkbox` uses `onCheck`, generated forms will mix conventions randomly.
 
-Do not scatter token definitions across multiple files:
+Pick a convention and enforce it everywhere:
 
-### Bad (scattered):
+| Component type | Value prop | Change handler |
+|---|---|---|
+| Text, Number inputs | `value` | `onValueChange` |
+| Checkboxes, Switches | `checked` | `onCheckedChange` |
+| Selects, Radio groups | `value` | `onValueChange` |
 
-```
-src/
-  styles/
-    colors.css      ← Some colors here
-  theme/
-    spacing.ts      ← Spacing here
-  constants/
-    typography.js   ← Typography here
-```
+All label props should be `label`, not `text`, `caption`, or `title`. The uniformity means the AI's mental model of your library generalizes from one component to all others.
 
-AI does not know where to look. It defaults to hardcoded values.
+## A Single Entry Point
 
-### Good (single source):
-
-```
-src/
-  design-system/
-    tokens.ts       ← All tokens here
-    components/
-      Button.tsx    ← Imports from tokens.ts
-      TextField.tsx ← Imports from tokens.ts
-```
-
-In your README or AI config:
-
-```markdown
-# Design System
-
-All design tokens are in `src/design-system/tokens.ts`.
-
-When generating UI code, always import tokens from this file.
-```
-
-Claude, Cursor, and other AI tools can read this and prioritize the correct file.
-
-## Principle 7: Avoid Styled-Components for AI Generation
-
-Styled-components are great for humans. Not for AI.
-
-### Bad (styled-components):
-
-```tsx
-const StyledButton = styled.button`
-  padding: ${props => props.size === 'lg' ? '16px 32px' : '12px 24px'};
-  background: ${props => props.variant === 'primary' ? '#3b82f6' : '#6b7280'};
-  border-radius: 8px;
-`;
-```
-
-AI cannot easily extract token values from template strings. It sees inline styles and copies them inconsistently.
-
-### Good (inline styles or utility classes):
-
-```tsx
-<button
-  style={{
-    padding: size === 'lg' ? `${tokens.spacing.lg} ${tokens.spacing.xl}` : `${tokens.spacing.md} ${tokens.spacing.lg}`,
-    background: variant === 'primary' ? tokens.color.primary.solid : tokens.color.neutral.solid,
-    borderRadius: tokens.radius.md,
-  }}
->
-  {children}
-</button>
-```
-
-Or use utility classes (Tailwind, custom CSS):
-
-```tsx
-<button className={cn(
-  'rounded-md',
-  size === 'lg' ? 'px-8 py-4' : 'px-6 py-3',
-  variant === 'primary' ? 'bg-primary' : 'bg-neutral'
-)}>
-  {children}
-</button>
-```
-
-AI can parse this. It understands the logic. It replicates it consistently.
-
-## Principle 8: Document Component Relationships
-
-AI needs to know how components relate.
-
-### Example: Form Field Pattern
-
-```tsx
-/**
- * Form field wrapper. Includes label, input, and error message.
- * 
- * Always use this pattern for form inputs:
- * 
- * @example
- * <Field label="Email" error={errors.email}>
- *   <TextField value={email} onValueChange={setEmail} />
- * </Field>
- */
-export const Field = ({ label, error, children }: FieldProps) => (
-  <div className="field">
-    <label>{label}</label>
-    {children}
-    {error && <span className="error">{error}</span>}
-  </div>
-);
-```
-
-Now AI knows: "Form inputs always wrap in `<Field>`."
-
-When it generates a form:
-
-```tsx
-<Field label="Name" error={errors.name}>
-  <TextField value={name} onValueChange={setName} />
-</Field>
-
-<Field label="Email" error={errors.email}>
-  <TextField value={email} onValueChange={setEmail} />
-</Field>
-```
-
-Consistent. No random label placements or error message styles.
-
-## Principle 9: Export a Component Index
-
-AI does not explore your folder structure. Give it an entry point:
+AI tools don't explore directory trees. When a model needs to import a component, it either knows the import path or falls back to generic components. A single barrel export solves this:
 
 ```typescript
 // src/design-system/index.ts
 export { Button } from './components/Button';
 export { TextField } from './components/TextField';
-export { Card, CardHeader, CardTitle, CardContent } from './components/Card';
+export { Card, CardHeader, CardTitle, CardContent, CardFooter } from './components/Card';
+export { Field } from './components/Field';
 export { tokens } from './tokens';
 ```
 
-In your README:
+Add one line to your README or `CLAUDE.md`:
 
 ```markdown
-# Component Library
-
-Import components from `@/design-system`:
-
-\`\`\`tsx
-import { Button, TextField, tokens } from '@/design-system';
-\`\`\`
+Import all components from `@/design-system`. Never import from subpaths.
 ```
 
-AI reads this. It knows where to import from. No more `import Button from '../../components/ui/button'`.
+Claude, Cursor, and Copilot read project documentation. This instruction gets followed.
 
-## Principle 10: Test AI Generation with Real Prompts
+## Testing the Library Against AI
 
-Build your component library, then test it:
+After making these changes, run a real test. Prompt the AI with: "Create a user registration form with email, password, confirm password, and a submit button. Use our design system."
 
-**Prompt AI:**
-
-> "Create a user registration form with email, password, and submit button. Use our design system."
-
-**Check:**
-
+Check the output against four criteria:
 - Does it import from the correct path?
-- Does it use tokens, not hardcoded values?
-- Are prop names correct?
-- Is the structure consistent with your existing components?
+- Does it use token references, not hardcoded values?
+- Are variant and size props spelled correctly?
+- Does it follow the `<Field>` wrapper pattern for form inputs?
 
-If AI generates incorrect code, identify the pattern it missed and improve your component structure or documentation.
+If any check fails, trace the failure back to the library structure. Missing or ambiguous JSDoc is the most common cause. The token file not being visible in context is the second most common.
 
-## Real-World Example: Button Component
+Every failure is a structural signal. Fix the library, not the prompt.
 
-Here is an AI-friendly Button component:
-
-```tsx
-import { tokens } from '../tokens';
-
-/**
- * Button component for primary actions.
- * 
- * @param variant - `primary` (default), `secondary`, `ghost`
- * @param size - `sm`, `md` (default), `lg`
- * @param children - Button label
- * 
- * @example
- * <Button variant="primary" size="lg">
- *   Submit Form
- * </Button>
- */
-export const Button = ({
-  variant = 'primary',
-  size = 'md',
-  children,
-  ...props
-}: ButtonProps) => {
-  const styles = {
-    padding:
-      size === 'sm' ? `${tokens.spacing.sm} ${tokens.spacing.md}` :
-      size === 'lg' ? `${tokens.spacing.lg} ${tokens.spacing.xl}` :
-      `${tokens.spacing.md} ${tokens.spacing.lg}`,
-    background:
-      variant === 'primary' ? tokens.color.primary.solid :
-      variant === 'secondary' ? tokens.color.neutral.solid :
-      'transparent',
-    borderRadius: tokens.radius.md,
-  };
-
-  return (
-    <button style={styles} {...props}>
-      {children}
-    </button>
-  );
-};
-
-type ButtonProps = {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
-```
-
-**Why it is AI-friendly:**
-
-- ✅ Uses semantic tokens (`tokens.spacing.md`, not `12px`)
-- ✅ Explicit variant types (`'primary' | 'secondary' | 'ghost'`)
-- ✅ JSDoc with examples
-- ✅ Predictable prop names (`variant`, `size`, `children`)
-- ✅ Inline styles (AI can parse easily)
-
-## Checklist: Is Your Component Library AI-Friendly?
-
-- ✅ Design tokens exported to code (not just Figma)
-- ✅ Consistent prop naming across all components
-- ✅ TypeScript enums for variants (no arbitrary strings)
-- ✅ JSDoc comments with examples
-- ✅ Composition over configuration
-- ✅ Single source of truth for tokens
-- ✅ Avoid styled-components (use inline styles or utility classes)
-- ✅ Document component relationships (e.g., Field + TextField)
-- ✅ Export all components from a single index file
-- ✅ Test with real AI prompts
-
-## Conclusion
-
-AI code generation is fast. But fast, inconsistent code creates design debt.
-
-Your component library needs to be structured for machines, not just humans:
-
-- Semantic tokens, not magic numbers
-- Explicit types, not open-ended strings
-- JSDoc documentation, not just Storybook
-- Composition, not complex props
-- Single source of truth
-
-Make these changes, and AI-generated code will respect your design system from day one. You get velocity without chaos.
-
-Your component library is not just for developers. It is for the AI tools those developers use. Build for both, and you get consistent UI at AI speed.
-
----
-
-**Want an AI-ready component library out of the box?**
-
-FramingUI is built for AI code generation—semantic tokens, predictable component APIs, JSDoc everywhere.
-
-[Explore FramingUI](https://tekton.sh) →
+A component library built this way gives AI tools the same affordances it gives human developers: clear contracts, explicit conventions, and a single source of truth. Generated code inherits your system's quality by default.

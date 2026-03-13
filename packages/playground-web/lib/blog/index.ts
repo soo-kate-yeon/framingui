@@ -8,7 +8,7 @@ import { createHeadingIdFactory } from '../heading';
 
 export type { BlogFrontmatter };
 
-export type BlogLocale = 'en' | 'ko' | 'ja';
+export type BlogLocale = 'en' | 'ko';
 
 export interface TocItem {
   id: string;
@@ -86,32 +86,28 @@ function parseBlogFile(
 }
 
 /**
- * 개별 포스트 읽기 (en/ko/ja)
+ * 개별 포스트 읽기 (en/ko)
  */
 export function getBlogPost(slug: string): BlogPost | null {
   const en = parseBlogFile(slug, 'en');
   const ko = parseBlogFile(slug, 'ko');
-  const ja = parseBlogFile(slug, 'ja');
 
   if (!en) {
     return null;
   }
   const koResolved = ko ?? en;
-  const jaResolved = ja ?? en;
 
   return {
     slug,
-    frontmatter: { en: en.frontmatter, ko: koResolved.frontmatter, ja: jaResolved.frontmatter },
-    content: { en: en.content, ko: koResolved.content, ja: jaResolved.content },
+    frontmatter: { en: en.frontmatter, ko: koResolved.frontmatter },
+    content: { en: en.content, ko: koResolved.content },
     toc: {
       en: extractToc(en.content),
       ko: extractToc(koResolved.content),
-      ja: extractToc(jaResolved.content),
     },
     readingTime: {
       en: Math.ceil(readingTime(en.content).minutes),
       ko: Math.ceil(readingTime(koResolved.content).minutes),
-      ja: Math.ceil(readingTime(jaResolved.content).minutes),
     },
   };
 }

@@ -13,135 +13,92 @@ coverImage: ""
 published: true
 ---
 
-## The Problem with AI + Shadcn UI
+Ask Claude Code or Cursor to build a button, and it will reach for `bg-blue-600`. Ask it to build a card, and it will use `bg-white`. Ask it to build an error message, and it will use `text-red-500`. Every choice is reasonable. None of them are your design system.
 
-Shadcn UI is fantastic for human developers — you copy components, paste them into your project, and customize as needed. But when AI tools like Claude Code or Cursor generate UI code, they face a critical challenge: **how do you ensure consistency across hundreds of generated components?**
+This is the specific failure mode of AI-assisted UI development without design system context. AI tools pattern-match against training data. Without explicit constraints, they produce generically correct code—code that compiles and renders, but doesn't belong to your product.
 
-AI can hallucinate color values, spacing, and styling patterns that don't match your design system. One component might use `bg-blue-500`, another `bg-indigo-600`, and a third `#4F46E5` — all intended to be your "primary" color.
+## Why shadcn Alone Isn't Enough for AI Workflows
 
-## FramingUI: The Missing Bridge
+shadcn is excellent at what it does. It gives you component source code that you own and customize directly. The Radix UI foundation handles accessibility. The Tailwind-based styling is familiar and well-documented.
 
-FramingUI solves this by forking shadcn UI and integrating **design tokens** directly into every component. Instead of arbitrary Tailwind classes, every style references a semantic token:
+The problem is that shadcn's design language is expressed as raw Tailwind class names. When AI generates code in a shadcn project, it writes `bg-blue-500` instead of `bg-brand-primary`. It writes `text-gray-600` instead of `text-text-secondary`. These classes work, but they don't carry intent. Six generated components later, you have six different interpretations of what "secondary text" means.
 
-```tsx
-// ❌ Shadcn UI (original)
-<button className="bg-blue-500 hover:bg-blue-600 text-white">
-  Click me
-</button>
+What's missing is a layer that tells AI not just which components to use, but which design decisions to apply.
 
-// ✅ FramingUI (token-powered)
-<Button variant="default">
-  Click me
-</Button>
+## How Design Tokens Fix AI Code Generation
 
-// Under the hood:
-// bg-[var(--bg-primary)]
-// hover:bg-[var(--bg-primary)]/90
+Design tokens name your decisions explicitly. Instead of a color existing only as a hex value or a Tailwind class, it has a semantic name that describes its purpose.
+
+```css
+/* Without tokens: AI must guess */
+bg-blue-500  /* Is this brand primary? CTA hover? A random blue? */
+
+/* With tokens: intent is explicit */
+var(--color-brand-primary)  /* This is the primary brand action color */
 ```
 
-## Real-World Example: Button Component
+When AI has access to your token definitions—the names, their values, and the contexts where they apply—it can make correct decisions rather than statistically likely ones.
 
-Here's how FramingUI's Button component uses tokens:
+FramingUI's components use CSS variables throughout. The `Button` component's primary variant references `var(--bg-primary-default)` rather than a hardcoded Tailwind class. When AI imports and uses that component, the token binding is already in place.
 
 ```tsx
 import { Button } from '@framingui/ui';
 
+// AI generates this — tokens are already wired inside the component
 function LoginForm() {
   return (
     <div className="space-y-[var(--spacing-4)]">
       <Button variant="default">Sign In</Button>
       <Button variant="outline">Create Account</Button>
-      <Button variant="destructive">Delete</Button>
+      <Button variant="destructive">Delete Account</Button>
     </div>
   );
 }
 ```
 
-Every button automatically inherits your theme's colors, spacing, and border radius — **zero hardcoded values**.
+No `bg-blue-600`. No `hover:bg-blue-700`. The correct colors are a property of the component, derived from your token system.
 
-## How Design Tokens Prevent AI Hallucination
+## The MCP Layer
 
-When AI generates code using FramingUI, it can't hallucinate colors because:
+The token enforcement inside components is one piece. The other is giving AI tools real-time access to your design system definition before they generate code.
 
-1. **Single source of truth**: All colors come from `var(--*)` tokens
-2. **Semantic naming**: `--bg-primary` is unambiguous
-3. **OKLCH foundation**: Colors are perceptually uniform, ensuring consistent brightness
+FramingUI's MCP server does this. Once configured, Claude Code can query your available components, inspect token values, and understand your design system structure before writing a single line.
 
-### Example: AI-Generated Card
+Setup:
 
-```tsx
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@framingui/ui';
+```bash
+npx -y @framingui/mcp-server@latest init
+```
 
-// AI-generated component using FramingUI
-function ProductCard({ title, description, price }: ProductCardProps) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-2xl font-bold text-[var(--bg-primary)]">
-          ${price}
-        </p>
-      </CardContent>
-    </Card>
-  );
+This writes the MCP config and wires the runtime contract. The resulting `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server@latest"]
+    }
+  }
 }
 ```
 
-Notice how the AI uses tokens (`var(--bg-primary)`) instead of guessing `text-blue-600` or `#3B82F6`.
+After restarting Claude Code, it has tool access to list components, preview themes, and inspect your token definitions. When you ask it to build a pricing card, it can look up what components are available and what tokens govern their appearance—then generate code that belongs to your system.
 
-## OKLCH: The Secret Sauce
+## OKLCH and Why Color Consistency Matters
 
-FramingUI uses **OKLCH color space** for design tokens, which provides:
+FramingUI tokens use OKLCH color space. This matters for AI code generation in a subtle but important way.
 
-- **Perceptual uniformity**: L=0.5 looks equally bright across all hues
-- **Wider gamut**: Access to more vibrant colors than sRGB
-- **WCAG compliance**: Easier to hit AA/AAA contrast ratios
+HSL lightness isn't perceptually uniform. `hsl(220, 100%, 50%)` looks noticeably darker than `hsl(60, 100%, 50%)` even though both specify 50% lightness. This means maintaining consistent visual weight across your palette requires manual tuning at every step.
 
-Traditional color spaces like HSL fail here — `hsl(220, 100%, 50%)` (blue) looks darker than `hsl(60, 100%, 50%)` (yellow) despite both having 50% lightness.
+OKLCH lightness is perceptually uniform. `oklch(0.5 0.15 220)` and `oklch(0.5 0.15 60)` actually look equally bright. When AI generates a new component that should have "medium emphasis," it can use the 0.5 lightness tier and be confident the result will look consistent with the rest of your palette.
 
-## Integration with AI Tools
+It also makes WCAG contrast compliance more predictable. Text at lightness 0.9 on a background at lightness 0.25 will reliably pass AA contrast requirements regardless of hue.
 
-### Cursor IDE Setup
+## Migrating from shadcn
 
-```bash
-# Install FramingUI
-pnpm add @framingui/ui @framingui/core
-
-# Generate design tokens from your brand color
-npx framingui generate --color "#FF6B35"
-```
-
-Then add this to your Cursor rules (`.cursorrules`):
-
-```
-When generating UI components:
-- Always import from @framingui/ui
-- Use var(--*) tokens for colors, spacing, and radius
-- Never hardcode color values or spacing
-```
-
-### Claude Code Setup
-
-Create a `.claude/skills/framingui.md` file:
-
-```markdown
-## FramingUI Component Library
-
-Import components from @framingui/ui:
-- Button, Input, Card, Form, Dialog, etc.
-
-Design tokens (use these instead of Tailwind colors):
-- Colors: var(--bg-primary), var(--bg-secondary)
-- Spacing: var(--spacing-2), var(--spacing-4)
-- Radius: var(--radius-md), var(--radius-lg)
-```
-
-## Migration from Shadcn UI
-
-Already using shadcn UI? FramingUI is a drop-in replacement:
+If you're already using shadcn components, you don't need to abandon them. You can adopt FramingUI components incrementally—they share compatible import patterns.
 
 ```tsx
 // Before (shadcn)
@@ -149,14 +106,8 @@ import { Button } from '@/components/ui/button';
 
 // After (FramingUI)
 import { Button } from '@framingui/ui';
-// Same API, token-powered internals
 ```
 
-## Next Steps
+The API surface is similar by design. The difference is internal: FramingUI components reference your CSS variable tokens rather than raw Tailwind classes. As you add FramingUI components, AI-generated code using them will automatically use your design system instead of guessing.
 
-1. **Try the playground**: Visit [framingui.com](https://framingui.com) to generate your design tokens
-2. **Install FramingUI**: `pnpm add @framingui/ui`
-3. **Configure your AI**: Add FramingUI rules to Cursor or Claude Code
-4. **Generate UI**: Let AI create components with 0% hallucination
-
-FramingUI gives AI the constraints it needs to generate consistent, production-ready UI — bridging the gap between shadcn UI's flexibility and AI's need for structure.
+The combination of token-bound components and AI tool access to your design system definition is what closes the gap. Generated code that is both structurally correct and visually on-brand, without manual correction after each generation.

@@ -46,8 +46,6 @@ interface TemplateCardProps {
   description: string;
   /** 한국어 설명 (선택적) */
   descriptionKo?: string;
-  /** 일본어 설명 (선택적) */
-  descriptionJa?: string;
   /** 썸네일 이미지 URL (선택적) */
   thumbnail?: string;
   /** 카테고리 (deprecated: 블로그 레이아웃에서는 사용하지 않음) */
@@ -75,7 +73,6 @@ export function TemplateCard({
   name,
   description,
   descriptionKo,
-  descriptionJa,
   thumbnail,
   onClick,
   className = '',
@@ -91,12 +88,7 @@ export function TemplateCard({
   const isLiked = userData?.likedTemplates.includes(id) ?? false;
 
   // 현재 언어에 맞는 설명 텍스트
-  const displayDescription = getLocalizedTemplateText(
-    locale,
-    description,
-    descriptionKo,
-    descriptionJa
-  );
+  const displayDescription = getLocalizedTemplateText(locale, description, descriptionKo);
 
   // 데모 앱 라우트 확인
   const demoRoute = DEMO_ROUTES[id];

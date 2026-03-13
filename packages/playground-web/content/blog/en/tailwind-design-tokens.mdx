@@ -14,588 +14,159 @@ coverImage: ""
 published: true
 ---
 
-## The Tailwind Trap
+Six months into a Tailwind project, most codebases have drifted: 20-plus shades of blue, buttons with four different padding values, and spacing that differs between every layout section. Tailwind didn't cause this. The absence of decisions did.
 
-You love Tailwind. It's fast, intuitive, and you can build UIs without leaving your HTML.
+Tailwind is a utility toolkit. A design system is a set of decisions. These are different things. You can use Tailwind without a design system, but you'll accumulate inconsistency debt that compounds over time. This post shows how design tokens layer structure on top of Tailwind without giving up its speed.
 
-```tsx
-<button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-  Click me
-</button>
-```
+## Why Tailwind Alone Isn't Enough
 
-Ship. Done. Beautiful.
+Tailwind ships with 22 shades of every color. That's a feature, not a constraint. The problem is that without an explicit rule, different developers will reach for different shades when building the same type of component.
 
-But after 6 months, you have:
-- 23 different shades of blue
-- Buttons with `px-4 py-2`, `px-5 py-2.5`, `px-6 py-3`, and `px-4 py-1.5`
-- Forms using `gap-4`, cards using `gap-6`, grids using `gap-3`
+Developer A writes `bg-blue-600` for the primary button. Developer B, working on a different screen, writes `bg-blue-500`. Both look fine in isolation. Side-by-side, they produce a product that feels hand-assembled rather than designed.
 
-**You thought Tailwind WAS your design system. It's not.**
+The same fragmentation happens with spacing. `px-4`, `px-5`, and `px-6` are all valid Tailwind classes. Without a rule distinguishing them, you'll find all three on buttons across the same app.
 
-Tailwind is a **utility toolkit**. A design system is a set of **decisions**. This article shows you how to layer decisions on top of Tailwind without losing its speed.
-
-## TL;DR
-
-- Tailwind provides utilities, not design constraints
-- Without tokens, teams drift into inconsistency (even with Tailwind)
-- Design tokens layer brand decisions on top of Tailwind's utility classes
-- FramingUI connects tokens to Tailwind's config, giving you both structure and speed
-- You keep writing `bg-primary`, `px-md`—but now they're YOUR decisions, not Tailwind's defaults
-
-## Why Tailwind Alone Isn't a Design System
-
-### Problem 1: Too Many Choices
-
-Tailwind gives you 22 shades of each color:
-
-```javascript
-colors: {
-  blue: {
-    50: '#eff6ff',
-    100: '#dbeafe',
-    // ...
-    900: '#1e3a8a',
-    950: '#172554'
-  }
-}
-```
-
-**Question: When do you use `blue-600` vs. `blue-700`?**
-
-If your answer is "whatever looks good," you don't have a design system. You have chaos with pretty gradients.
-
-### Problem 2: The Copy-Paste Lottery
-
-Developer 1 builds a primary button:
-```tsx
-<button className="bg-blue-600 hover:bg-blue-700 ...">
-```
-
-Developer 2, in a different file, needs a primary button:
-```tsx
-<button className="bg-blue-500 hover:bg-blue-600 ...">
-```
-
-Both look "fine" in isolation. But side-by-side? They're different buttons with the same purpose.
-
-### Problem 3: Changing Your Brand Color is a Nightmare
-
-Your designer says: "Let's switch from blue to indigo."
-
-**With raw Tailwind classes**, you're doing a find-and-replace:
-- `blue-600` → `indigo-600`
-- `blue-700` → `indigo-700`
-- `blue-500` → `indigo-500` (wait, should this be 500 or 600?)
-
-**Time spent:** 2-4 hours  
-**Risk of missing instances:** High  
-**Chance of breaking something:** Moderate
-
-### Problem 4: Dark Mode Becomes a Disaster
-
-```tsx
-// Light mode uses blue-600
-<div className="bg-blue-600 text-white">
-
-// Dark mode... what color should this be?
-<div className="bg-blue-600 dark:bg-blue-400 text-white dark:text-black">
-// Wait, should text be black? Or gray-900? Or white?
-```
-
-Without **semantic tokens**, you're guessing contrast ratios and visual hierarchy every time.
+Dark mode compounds the problem. When you've written `bg-blue-600` for light mode, you have to manually decide what the dark mode equivalent should be for every single component. There's no system connecting them.
 
 ## What Design Tokens Actually Solve
 
-Design tokens are **named decisions** that map to values:
+A design token is a named decision: `--color-brand-primary` maps to a specific value. When you reference the token instead of the raw class, you make the intent explicit.
 
-```typescript
-// Instead of:
+```css
+/* Before: what is this blue? */
 bg-blue-600
 
-// You write:
-bg-brand-primary
-
-// Which maps to:
-colors.brand.primary = '#2563EB'  // (or blue-600, indigo-700, whatever)
+/* After: this is the primary brand action color */
+bg-[var(--color-brand-primary)]
 ```
 
-**The magic:** When you change `colors.brand.primary`, every component updates automatically.
+When you need to change the brand color, you update one value. Every component using that token updates automatically. No grep-and-replace, no missed instances.
 
-### Semantic Naming = Design Intent
+The semantic naming also communicates intent. When a developer reads `bg-surface-elevated`, they understand this is for modals and popovers. When they read `bg-gray-50`, they have to guess.
 
-```typescript
-// ❌ Implementation-focused (Tailwind default)
-colors: {
-  blue: { 600: '#2563EB' }
-}
+## The Two-Layer Architecture
 
-// ✅ Intent-focused (Design Tokens)
-colors: {
-  brand: {
-    primary: '#2563EB',      // Main CTA, links
-    primaryHover: '#1D4ED8', // Hover states
-  },
-  semantic: {
-    success: '#10B981',
-    error: '#EF4444',
-    warning: '#F59E0B',
-  },
-  surface: {
-    base: '#FFFFFF',         // Card backgrounds
-    elevated: '#F9FAFB',     // Modals, popovers
-  }
-}
-```
+The cleanest pattern combines Tailwind's utility layer with a token layer above it.
 
-Now when you see `bg-surface-elevated`, you know **why** that color exists, not just **what** it is.
-
-## The Missing Link: Tailwind + Tokens
-
-You don't have to choose between Tailwind's speed and a design system's consistency. You can have both.
-
-### Architecture
-
-```
-Design Tokens (source of truth)
-         ↓
-   Tailwind Config (utilities)
-         ↓
-   Your Components (classes)
-```
-
-### Step 1: Define Tokens (YAML, JSON, or TypeScript)
-
-```typescript
-// tokens/colors.ts
-export const colorTokens = {
-  brand: {
-    primary: '#4338CA',
-    primaryHover: '#3730A3',
-    secondary: '#7C3AED',
-  },
-  neutral: {
-    50: '#F9FAFB',
-    100: '#F3F4F6',
-    200: '#E5E7EB',
-    // ... full scale
-    900: '#111827',
-  },
-  semantic: {
-    success: '#10B981',
-    successBg: '#D1FAE5',
-    error: '#EF4444',
-    errorBg: '#FEE2E2',
-  }
-}
-```
-
-### Step 2: Inject Tokens into Tailwind Config
-
-```javascript
-// tailwind.config.js
-import { colorTokens } from './tokens/colors'
-
-export default {
-  theme: {
-    extend: {
-      colors: {
-        brand: colorTokens.brand,
-        neutral: colorTokens.neutral,
-        semantic: colorTokens.semantic,
-      }
-    }
-  }
-}
-```
-
-### Step 3: Use Semantic Classes
-
-```tsx
-// ❌ Before (raw Tailwind)
-<button className="bg-blue-600 hover:bg-blue-700 text-white">
-  Save
-</button>
-
-// ✅ After (Token-powered Tailwind)
-<button className="bg-brand-primary hover:bg-brand-primaryHover text-white">
-  Save
-</button>
-```
-
-**Now changing your brand color is a one-line edit:**
-
-```diff
-// tokens/colors.ts
-export const colorTokens = {
-  brand: {
--   primary: '#4338CA',
-+   primary: '#7C3AED',  // Switch to purple
-  }
-}
-```
-
-All buttons, links, and CTAs update instantly. Zero find-and-replace.
-
-## Spacing, Typography, and Beyond
-
-Colors are just the start. Tokens work for **every design decision**.
-
-### Spacing Tokens
-
-```typescript
-// tokens/spacing.ts
-export const spacingTokens = {
-  '3xs': '0.125rem',  // 2px
-  '2xs': '0.25rem',   // 4px
-  'xs': '0.5rem',     // 8px
-  'sm': '0.75rem',    // 12px
-  'md': '1rem',       // 16px
-  'lg': '1.5rem',     // 24px
-  'xl': '2rem',       // 32px
-  '2xl': '3rem',      // 48px
-  '3xl': '4rem',      // 64px
-}
-
-// tailwind.config.js
-export default {
-  theme: {
-    spacing: spacingTokens,
-  }
-}
-```
-
-**Usage:**
-```tsx
-// ❌ Before: arbitrary values
-<div className="px-4 py-3 gap-5">
-
-// ✅ After: named decisions
-<div className="px-md py-sm gap-lg">
-```
-
-### Typography Tokens
-
-```typescript
-// tokens/typography.ts
-export const typographyTokens = {
-  fontFamily: {
-    sans: ['Inter', 'system-ui', 'sans-serif'],
-    mono: ['JetBrains Mono', 'monospace'],
-  },
-  fontSize: {
-    'xs': ['0.75rem', { lineHeight: '1rem' }],
-    'sm': ['0.875rem', { lineHeight: '1.25rem' }],
-    'base': ['1rem', { lineHeight: '1.5rem' }],
-    'lg': ['1.125rem', { lineHeight: '1.75rem' }],
-    'xl': ['1.25rem', { lineHeight: '1.75rem' }],
-    '2xl': ['1.5rem', { lineHeight: '2rem' }],
-  },
-  fontWeight: {
-    normal: '400',
-    medium: '500',
-    semibold: '600',
-    bold: '700',
-  }
-}
-
-// tailwind.config.js
-export default {
-  theme: {
-    extend: {
-      fontFamily: typographyTokens.fontFamily,
-      fontSize: typographyTokens.fontSize,
-      fontWeight: typographyTokens.fontWeight,
-    }
-  }
-}
-```
-
-**Usage:**
-```tsx
-<h1 className="font-sans text-2xl font-bold">
-  Heading
-</h1>
-<p className="font-sans text-base font-normal text-neutral-700">
-  Body text with consistent line height.
-</p>
-```
-
-## Dark Mode with Tokens
-
-This is where tokens truly shine. Instead of guessing dark mode colors, you define **semantic roles**:
-
-```typescript
-// tokens/colors.ts
-export const colorTokens = {
-  surface: {
-    base: {
-      light: '#FFFFFF',
-      dark: '#111827',
-    },
-    elevated: {
-      light: '#F9FAFB',
-      dark: '#1F2937',
-    }
-  },
-  text: {
-    primary: {
-      light: '#111827',
-      dark: '#F9FAFB',
-    },
-    secondary: {
-      light: '#6B7280',
-      dark: '#9CA3AF',
-    }
-  }
-}
-```
-
-**Tailwind config with CSS variables:**
-
-```javascript
-// tailwind.config.js
-export default {
-  theme: {
-    extend: {
-      colors: {
-        surface: {
-          base: 'var(--color-surface-base)',
-          elevated: 'var(--color-surface-elevated)',
-        },
-        text: {
-          primary: 'var(--color-text-primary)',
-          secondary: 'var(--color-text-secondary)',
-        }
-      }
-    }
-  }
-}
-```
-
-**CSS:**
+**Layer 1: Base palette**
 
 ```css
 :root {
-  --color-surface-base: #FFFFFF;
-  --color-surface-elevated: #F9FAFB;
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
-}
-
-.dark {
-  --color-surface-base: #111827;
-  --color-surface-elevated: #1F2937;
-  --color-text-primary: #F9FAFB;
-  --color-text-secondary: #9CA3AF;
+  --color-blue-600: #2563EB;
+  --color-blue-700: #1D4ED8;
+  --color-gray-50:  #F9FAFB;
+  --color-gray-900: #111827;
 }
 ```
 
-**Component:**
-```tsx
-<div className="bg-surface-base text-text-primary">
-  This automatically adapts to light/dark mode
-</div>
+**Layer 2: Semantic aliases**
+
+```css
+:root {
+  --color-brand-primary:       var(--color-blue-600);
+  --color-brand-primary-hover: var(--color-blue-700);
+  --color-surface-base:        var(--color-gray-50);
+  --color-text-primary:        var(--color-gray-900);
+}
+
+[data-theme="dark"] {
+  --color-surface-base:  var(--color-gray-900);
+  --color-text-primary:  var(--color-gray-50);
+}
 ```
 
-No `dark:bg-gray-900 dark:text-white` needed. The token handles it.
+**Layer 3: Tailwind config**
 
-## The FramingUI Approach
-
-FramingUI automates this entire workflow.
-
-### 1. Define Tokens Once
-
-```typescript
-// framingui.config.ts
-import { defineConfig } from '@framingui/core'
-
-export default defineConfig({
-  tokens: {
-    colors: {
-      brand: {
-        primary: '#4338CA',
-        secondary: '#7C3AED',
+```javascript
+// tailwind.config.js
+export default {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          primary:       'var(--color-brand-primary)',
+          primaryHover:  'var(--color-brand-primary-hover)',
+        },
+        surface: {
+          base: 'var(--color-surface-base)',
+        },
+        text: {
+          primary: 'var(--color-text-primary)',
+        },
       },
-      // ... your colors
     },
-    spacing: {
-      sm: '0.5rem',
-      md: '1rem',
-      lg: '1.5rem',
-    },
-    typography: {
-      fontFamily: {
-        sans: 'Inter, system-ui',
-      }
-    }
-  }
-})
-```
-
-### 2. Auto-Generate Tailwind Config
-
-```bash
-npx framingui generate
-```
-
-This outputs:
-- `tailwind.config.js` with your tokens
-- CSS variables for dark mode
-- TypeScript types for autocomplete
-
-### 3. Use in Components
-
-```tsx
-import { tokens } from '@/framingui'
-
-// Tailwind classes (autocomplete works)
-<button className="bg-brand-primary px-md py-sm">
-
-// Or programmatic access
-<button style={{ backgroundColor: tokens.colors.brand.primary }}>
-```
-
-### 4. Change Tokens, Rebuild Instantly
-
-```diff
-// framingui.config.ts
-colors: {
-  brand: {
--   primary: '#4338CA',
-+   primary: '#DC2626',  // Red rebrand
-  }
+  },
 }
 ```
 
-```bash
-npx framingui generate
+Now you write `bg-brand-primary` and get the Tailwind class experience with the token system underneath.
+
+## Spacing and Typography
+
+Color is where most developers start, but the same principle applies to spacing and typography.
+
+Instead of choosing between `px-4` and `px-5` based on what looks right, define a spacing scale:
+
+```css
+:root {
+  --spacing-sm: 0.75rem;  /* 12px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+}
 ```
 
-Every component using `bg-brand-primary` updates. No manual find-and-replace.
+Map these into Tailwind:
 
-## Real-World Example: Rebrand in 5 Minutes
-
-**Scenario:** Your startup gets acquired. New brand colors, new typography, new spacing system.
-
-**Before (Raw Tailwind):**
-1. Find all instances of `blue-600` → 2 hours
-2. Find all instances of `px-4` and decide which to keep → 3 hours
-3. Update typography classes → 1 hour
-4. QA for missed instances → 2 hours
-**Total: 8 hours**
-
-**After (Tailwind + Tokens):**
-1. Update `framingui.config.ts` (10 minutes)
-2. Run `npx framingui generate` (5 seconds)
-3. QA visually (20 minutes)
-**Total: 30 minutes**
-
-**Time saved: 7.5 hours**
-
-## Common Objections
-
-### "Tailwind classes are already semantic enough"
-
-`bg-blue-600` tells you **what** (a shade of blue), not **why** (primary brand color? link color? decorative accent?).
-
-`bg-brand-primary` tells you **intent**. When you see it in code, you know its role.
-
-### "This adds extra abstraction"
-
-True, but the right kind. You're abstracting **decisions**, not **implementation**.
-
-With tokens, changing your mind is cheap. Without tokens, changing your mind is expensive.
-
-### "I like Tailwind's arbitrary values"
-
-Keep them for one-offs:
-```tsx
-<div className="w-[47.5%]">  // Fine for unique layouts
+```javascript
+theme: {
+  extend: {
+    spacing: {
+      sm: 'var(--spacing-sm)',
+      md: 'var(--spacing-md)',
+      lg: 'var(--spacing-lg)',
+    },
+  },
+}
 ```
 
-But for repeated decisions (brand colors, spacing scale), use tokens.
+Your component now uses `px-md` instead of `px-4`. When someone reads it six months later, the name communicates a decision. It's the medium padding, not an arbitrary value.
 
-### "Our team is too small for this"
+## Dark Mode Becomes Simple
 
-Small teams benefit the most. You're the perfect size to set a foundation without bureaucracy.
+With semantic tokens, dark mode is a CSS variable swap rather than a class-name audit.
 
-**2-person team:** Prevents you and your co-founder from drifting apart
-**5-person team:** Onboards new hires instantly
-**10-person team:** Essential for consistency
+```css
+:root {
+  --color-surface-base:    #FFFFFF;
+  --color-surface-elevated: #F9FAFB;
+  --color-text-primary:    #111827;
+  --color-text-secondary:  #6B7280;
+}
 
-## Migration Strategy: Add Tokens Without Rewriting Everything
-
-You don't have to refactor your entire codebase overnight.
-
-### Phase 1: Define Tokens (1 hour)
-
-Extract your most-used colors, spacing, and typography into tokens.
-
-### Phase 2: Extend Tailwind Config (30 minutes)
-
-Add your tokens to Tailwind's theme. Old classes still work.
-
-### Phase 3: Adopt Gradually
-
-**New components:** Use tokens (`bg-brand-primary`)
-**Old components:** Leave as-is (`bg-blue-600`)
-
-Both work simultaneously. No breaking changes.
-
-### Phase 4: Refactor Hot Paths (ongoing)
-
-When you touch a file for another reason, update its classes to use tokens.
-
-Over 2-3 months, your codebase converges naturally.
-
-## Measuring Success
-
-After adopting tokens, track:
-
-| Metric | Before | After |
-|--------|--------|-------|
-| Unique color values in codebase | 47 | 12 |
-| Unique spacing values | 23 | 8 |
-| Time to rebrand | 8 hours | 30 minutes |
-| New developer onboarding | "just match existing components" | "use these token classes" |
-
-## The Future: AI-Powered Token Management
-
-With FramingUI + MCP, AI tools (Cursor, Claude Code) can:
-
-1. **Query your tokens** before generating code
-2. **Suggest token additions** when you use a value repeatedly
-3. **Audit your codebase** for hardcoded values and propose migrations
-
-**Example:**
-```
-Cursor AI: "I noticed you've used #F59E0B in 5 places. 
-Should I add it as colors.semantic.warning?"
+[data-theme="dark"] {
+  --color-surface-base:    #111827;
+  --color-surface-elevated: #1F2937;
+  --color-text-primary:    #F9FAFB;
+  --color-text-secondary:  #9CA3AF;
+}
 ```
 
-Tailwind becomes even faster when AI knows your design system.
+A component using `bg-surface-base text-text-primary` adapts automatically when the theme attribute changes. No `dark:` prefixes scattered through JSX.
 
-## The Bottom Line
+## Migrating Without a Rewrite
 
-**Tailwind gives you speed.**  
-**Design tokens give you consistency.**  
-**Together, you get both.**
+You don't have to refactor everything at once. Tailwind's `extend` key means your existing classes still work while you introduce token-powered ones alongside them.
 
-You don't have to choose between moving fast and building a coherent design system.
+Start by identifying your most-used color in the codebase. Define a semantic token for it. Update Tailwind's config to add the new class name. From that point forward, use the semantic class in new components.
 
-Layer semantic tokens on top of Tailwind's utility classes. Keep the DX you love, add the structure you need.
+When you touch an existing file for another reason, migrate its color classes. Over a few months, the codebase converges naturally. No dedicated refactor sprint required.
 
-## Next Steps
+## AI Tools Work Better with Tokens
 
-1. **Audit your Tailwind usage**: How many shades of blue do you have?
-2. **Extract repeated values**: Colors, spacing, typography
-3. **Install FramingUI**: `npm install @framingui/core`
-4. **Define tokens**: Start with colors, add spacing and typography next
-5. **Generate Tailwind config**: `npx framingui generate`
+When AI tools like Claude Code or Cursor generate UI components, they pattern-match against common Tailwind classes. Without context, they'll pick `bg-blue-600` because it's common across training data—not because it's your brand color.
 
-**Get started now**: [FramingUI + Tailwind Setup Guide →](/docs/tailwind-integration)
+When your design system is expressed as CSS variables and mapped into Tailwind, you can give AI tools explicit guidance: use `bg-brand-primary`, not raw color classes. The token name communicates intent that a hex value cannot. Generated components land closer to your system on the first attempt.
 
----
+FramingUI's MCP server surfaces your design tokens directly to AI tools, so component generation happens within your system's constraints from the start.
 
-*Have questions about integrating design tokens with Tailwind? [Join our Discord](https://discord.gg/framingui) or [tweet at us](https://x.com/framingui).*
+Tailwind's speed comes from removing friction between thought and code. Design tokens add the structure that prevents entropy from accumulating. The two are complementary, not competing.

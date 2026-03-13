@@ -21,9 +21,9 @@ import { getLegalPageContent } from '../../data/i18n/legal';
 import { GlobalLanguageSwitcher } from '../shared/GlobalLanguageSwitcher';
 
 interface LegalPageLayoutProps {
-  title: { en: string; ko: string; ja: string };
-  content: { en: string; ko: string; ja: string };
-  toc: { en: TocItem[]; ko: TocItem[]; ja: TocItem[] };
+  title: { en: string; ko: string };
+  content: { en: string; ko: string };
+  toc: { en: TocItem[]; ko: TocItem[] };
 }
 
 export function LegalPageLayout({ title, content, toc }: LegalPageLayoutProps) {

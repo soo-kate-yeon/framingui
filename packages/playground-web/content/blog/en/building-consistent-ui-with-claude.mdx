@@ -1,6 +1,6 @@
 ---
 title: "Building Consistent UI with Claude"
-description: "How to use FramingUI with Claude Code to generate pixel-perfect, consistent UI components every time."
+description: "How to use FramingUI with Claude Code to generate design-system-aligned UI components every time."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
@@ -13,95 +13,77 @@ coverImage: ""
 published: true
 ---
 
-## The Claude Code Challenge
+Left unconstrained, Claude Code generates a different design system on every run. Ask it for a card component on Monday, a table on Wednesday, and a form on Friday — you get three color palettes, three spacing rhythms, and three interpretations of what a "button" should look like. The code works. The product doesn't cohere.
 
-Claude Code is exceptional at understanding context and generating production-ready code. However, without explicit design constraints, it will:
+The root issue is that Claude optimizes for plausibility, not your system. It fills in missing context from training data, which means public codebases, not your design decisions. Giving Claude structured access to your actual tokens and components changes what "plausible" means.
 
-1. **Invent color schemes** — "I'll make this button blue" → `bg-blue-600`
-2. **Guess spacing patterns** — Mix `p-4`, `px-5`, `gap-3` inconsistently
-3. **Create one-off styles** — Each component gets unique styling
+## What FramingUI Provides
 
-The result? A codebase where every AI-generated component looks different.
+FramingUI gives Claude a concrete vocabulary to work from:
 
-## FramingUI: Claude's Design Guardrails
+- **Type-safe components** from `@framingui/ui` with enumerated variants and sizes
+- **Semantic CSS variables** like `var(--bg-primary)` and `var(--spacing-4)` that carry intent
+- **Consistent component APIs** that constrain generation at the interface level
 
-FramingUI provides Claude with a **structured design vocabulary** through:
+When Claude has this vocabulary, it composes from your building blocks instead of inventing new ones.
 
-- **Type-safe components** from `@framingui/ui`
-- **Semantic design tokens** like `var(--bg-primary)`
-- **Consistent patterns** enforced through component APIs
+## Teaching Claude About Your Design System
 
-## Setup: Teaching Claude About FramingUI
-
-### Step 1: Create a Project Knowledge File
-
-Create `.claude/project-knowledge.md`:
+The fastest way to get consistent output is a project knowledge file that Claude reads at the start of every session. Create `.claude/project-knowledge.md`:
 
 ```markdown
 # Project Design System
 
-## FramingUI Component Library
+This project uses FramingUI — a component library built on shadcn-ui with integrated design tokens.
 
-This project uses **FramingUI**, a shadcn-ui fork with integrated design tokens.
-
-### Available Components
+## Components
 
 Import from `@framingui/ui`:
 - Layout: Card, Sheet, Dialog, Tabs, Separator
 - Forms: Button, Input, Label, Checkbox, RadioGroup, Select, Switch, Textarea
 - Data: Table, Avatar, Badge
 - Feedback: Toast, Tooltip, Progress
-- Navigation: Breadcrumb, NavigationMenu
 
-### Design Tokens
+## Design Tokens
 
 All styling uses CSS custom properties:
 
-**Colors:**
-- `var(--bg-primary)` - Primary brand color
-- `var(--bg-secondary)` - Secondary accent
-- `var(--bg-destructive)` - Error/danger state
-- `var(--bg-muted)` - Muted backgrounds
-- `var(--bg-accent)` - Accent highlights
-- `var(--bg-card)` - Card backgrounds
+**Colors:** `var(--bg-primary)`, `var(--bg-secondary)`, `var(--bg-destructive)`,
+`var(--bg-muted)`, `var(--bg-card)`, `var(--bg-accent)`
 
-**Spacing:**
-- `var(--spacing-1)` through `var(--spacing-8)`
+**Spacing:** `var(--spacing-1)` through `var(--spacing-8)`
 
-**Border Radius:**
-- `var(--radius-sm)`, `var(--radius-md)`, `var(--radius-lg)`, `var(--radius-xl)`
+**Border radius:** `var(--radius-sm)`, `var(--radius-md)`, `var(--radius-lg)`
 
-### Code Generation Rules
+## Rules for Code Generation
 
-1. **Never hardcode colors** - Always use `var(--*)` tokens
-2. **Import from @framingui/ui** - Not from local component files
-3. **Use semantic names** - `primary`, not `blue`
-4. **Prefer components over HTML** - Use `<Button>` instead of `<button>`
+- Never hardcode colors. Always use `var(--*)` tokens.
+- Import components from `@framingui/ui`, not local files.
+- Use semantic names: `primary`, not `blue`.
+- Use `<Button>` instead of `<button>`.
 ```
 
-### Step 2: Install FramingUI
+### Install the Package
 
 ```bash
-pnpm add @framingui/ui @framingui/core
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-### Step 3: Import Tokens
+### Import Tokens
 
 ```tsx
 // app/layout.tsx
-import '@framingui/ui/styles/tokens.css';
+import '@framingui/ui/styles';
 ```
 
-## Example: Prompting Claude for Consistent UI
+## The Difference Explicit Context Makes
 
-### ❌ Without FramingUI
+Here's what the same prompt produces with and without FramingUI context.
 
-**Prompt:**
-```
-Create a user profile card with name, email, and edit button
-```
+**Prompt:** `Create a user profile card with name, email, and edit button`
 
-**Claude generates:**
+### Without FramingUI context
+
 ```tsx
 export function ProfileCard({ name, email }: ProfileCardProps) {
   return (
@@ -116,19 +98,10 @@ export function ProfileCard({ name, email }: ProfileCardProps) {
 }
 ```
 
-**Issues:**
-- Hardcoded colors: `bg-white`, `text-gray-900`, `bg-blue-600`
-- Arbitrary spacing: `p-6`, `px-4 py-2`
-- Won't adapt to theme changes
+Hardcoded colors, arbitrary spacing, won't adapt to theme changes.
 
-### ✅ With FramingUI
+### With FramingUI context
 
-**Prompt:**
-```
-Create a user profile card using FramingUI components with name, email, and edit button
-```
-
-**Claude generates:**
 ```tsx
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button } from '@framingui/ui';
 
@@ -149,24 +122,20 @@ export function ProfileCard({ name, email }: ProfileCardProps) {
 }
 ```
 
-**Benefits:**
-- Uses FramingUI Card components
-- Semantic tokens: `var(--bg-muted-foreground)`
-- Automatically adapts to theme
-- Consistent with other components
+Semantic tokens, FramingUI primitives, automatic theme adaptation.
 
-## Real-World Example: Building a Dashboard
+## Building a Dashboard in Two Prompts
 
-Let's build a complete dashboard with Claude using FramingUI.
+Constrained prompts let Claude build complex, coherent UIs without drift.
 
-### Prompt 1: Stats Cards
+**Prompt 1: Stats cards**
 
 ```
 Create 4 stat cards showing Total Users, Revenue, Active Sessions, and Conversion Rate.
-Use FramingUI Card component and design tokens.
+Use FramingUI Card component. Use design tokens for all spacing and color.
 ```
 
-**Claude generates:**
+Claude generates:
 
 ```tsx
 import { Card, CardContent } from '@framingui/ui';
@@ -187,15 +156,9 @@ export function StatsGrid() {
           <CardContent className="p-[var(--spacing-6)]">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[var(--bg-muted-foreground)]">
-                  {stat.title}
-                </p>
-                <p className="text-2xl font-bold mt-[var(--spacing-2)]">
-                  {stat.value}
-                </p>
-                <p className="text-sm text-[var(--bg-primary)] mt-[var(--spacing-1)]">
-                  {stat.change}
-                </p>
+                <p className="text-sm text-[var(--bg-muted-foreground)]">{stat.title}</p>
+                <p className="text-2xl font-bold mt-[var(--spacing-2)]">{stat.value}</p>
+                <p className="text-sm text-[var(--bg-primary)] mt-[var(--spacing-1)]">{stat.change}</p>
               </div>
               <div className="p-[var(--spacing-3)] bg-[var(--bg-primary)]/10 rounded-[var(--radius-lg)]">
                 <stat.icon className="w-6 h-6 text-[var(--bg-primary)]" />
@@ -209,74 +172,24 @@ export function StatsGrid() {
 }
 ```
 
-✅ **Notice:** All spacing uses tokens, colors are semantic
+All spacing uses tokens. Colors are semantic.
 
-### Prompt 2: Data Table
+**Prompt 2: Users table**
 
 ```
-Add a users table below the stats with columns: Name, Email, Role, Status.
-Use FramingUI Table component.
+Add a users table with Name, Email, Role, and Status columns.
+Use FramingUI Table and Badge components.
 ```
 
-**Claude generates:**
+Claude generates consistent output — same token vocabulary, same component primitives, visually coherent with the stats cards above.
 
-```tsx
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Badge } from '@framingui/ui';
+## Extending with Custom Tokens
 
-const users = [
-  { name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin', status: 'active' },
-  { name: 'Bob Smith', email: 'bob@example.com', role: 'User', status: 'active' },
-  { name: 'Carol White', email: 'carol@example.com', role: 'User', status: 'inactive' },
-];
-
-export function UsersTable() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Users</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.email}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell className="text-[var(--bg-muted-foreground)]">
-                  {user.email}
-                </TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>
-                  <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
-                    {user.status}
-                  </Badge>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
-}
-```
-
-✅ **Notice:** Badge variants, semantic color tokens, consistent spacing
-
-## Advanced: Custom Token Extensions
-
-You can guide Claude to use custom tokens for app-specific patterns:
+For app-specific layout constants, define them alongside the FramingUI token import:
 
 ```css
 /* globals.css */
-@import '@framingui/ui/styles/tokens.css';
+@import '@framingui/ui/styles';
 
 :root {
   --app-sidebar-width: 280px;
@@ -284,81 +197,40 @@ You can guide Claude to use custom tokens for app-specific patterns:
 }
 ```
 
-Update project knowledge:
-
-```markdown
-### Custom Tokens
-- `--app-sidebar-width` - Sidebar width (280px)
-- `--app-header-height` - Header height (64px)
-```
-
-**Prompt:**
-```
-Create a dashboard layout with sidebar and header using our custom tokens
-```
-
-**Claude generates:**
-
-```tsx
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex h-screen">
-      <aside className="w-[var(--app-sidebar-width)] border-r border-[var(--border-default)]">
-        {/* Sidebar content */}
-      </aside>
-      <div className="flex-1 flex flex-col">
-        <header className="h-[var(--app-header-height)] border-b border-[var(--border-default)]">
-          {/* Header content */}
-        </header>
-        <main className="flex-1 overflow-auto p-[var(--spacing-6)]">
-          {children}
-        </main>
-      </div>
-    </div>
-  );
-}
-```
-
-## Tips for Better Claude + FramingUI Results
-
-### 1. Be Specific About Components
-
-❌ "Create a modal"
-✅ "Create a modal using FramingUI Dialog component"
-
-### 2. Reference Design Tokens in Prompts
-
-❌ "Make the text gray"
-✅ "Use var(--bg-muted-foreground) for the text color"
-
-### 3. Ask for Semantic Variants
-
-❌ "Make the button red"
-✅ "Use Button variant='destructive'"
-
-### 4. Iterate with Consistency Checks
+Add these to your project knowledge file, and Claude will use them in layout prompts:
 
 ```
-Review the code and ensure all colors use var(--*) tokens
+Create a dashboard layout with sidebar and header using our custom layout tokens.
 ```
 
-## Measuring Success
+The result will reference `var(--app-sidebar-width)` and `var(--app-header-height)` correctly.
 
-After setting up FramingUI with Claude, audit your components:
+## Prompting Patterns That Work
+
+A few patterns that consistently improve output quality:
+
+**Name the component explicitly.** "Create a modal using FramingUI Dialog" produces better results than "Create a modal."
+
+**Reference tokens directly.** "Use `var(--bg-muted-foreground)` for secondary text" is clearer than "make the text gray."
+
+**Use variant names.** "Button variant='destructive'" communicates intent better than "make the button red."
+
+**Add a consistency check.** After generating a complex component, follow up with: "Review the code and replace any hardcoded color or spacing values with semantic tokens."
+
+## Auditing for Token Usage
+
+Check generated code for token compliance:
 
 ```bash
-# Check for hardcoded colors (should be 0)
-grep -r "bg-blue\|text-red\|#[0-9A-F]\{6\}" src/
+# Hardcoded colors (should return no matches)
+grep -r "bg-blue\|text-red\|#[0-9A-Fa-f]\{6\}" src/
 
-# Check for token usage (should be everywhere)
+# Token usage (should return many matches)
 grep -r "var(--" src/
 ```
 
-## Next Steps
+Run this after any large generation session. If you find violations, ask Claude to fix them before committing.
 
-1. **Add project knowledge** - Create `.claude/project-knowledge.md`
-2. **Install FramingUI** - `pnpm add @framingui/ui`
-3. **Test with prompts** - Ask Claude to generate components
-4. **Verify consistency** - Check that all components use tokens
+---
 
-With FramingUI, Claude Code becomes a **design-system-aware** code generator, producing consistent, production-ready UI every single time.
+The project knowledge file does most of the work. Fifteen minutes to write it, and every subsequent Claude Code session starts with a shared vocabulary instead of a blank slate.

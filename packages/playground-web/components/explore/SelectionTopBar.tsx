@@ -44,11 +44,6 @@ const messages = {
     checkout: '결제하기 - $99',
     selectMore: (remaining: number) => `${remaining}개 더 선택하세요`,
   },
-  ja: {
-    selected: (count: number, max: number) => `${max}件中 ${count}件を選択`,
-    checkout: '購入手続き - $99',
-    selectMore: (remaining: number) => `あと ${remaining}件を選択`,
-  },
 };
 
 // ============================================================================
@@ -65,19 +60,15 @@ export function SelectionTopBar({
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady, notReadyReason } = usePaddle();
   const { locale } = useExploreLanguage();
-  const t = locale === 'ko' ? messages.ko : locale === 'ja' ? messages.ja : messages.en;
+  const t = locale === 'ko' ? messages.ko : messages.en;
   const paymentNotReadyMessage =
     locale === 'ko'
       ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
-      : locale === 'ja'
-        ? '決済システムを利用できません。しばらくしてから再試行してください。'
-        : 'Payment system is not ready. Please try again later.';
+      : 'Payment system is not ready. Please try again later.';
   const priceConfigMissingMessage =
     locale === 'ko'
       ? '결제 가격 설정이 누락되었습니다. 관리자에게 문의해 주세요.'
-      : locale === 'ja'
-        ? '価格設定が見つかりません。管理者にお問い合わせください。'
-        : 'Price configuration is missing. Please contact support.';
+      : 'Price configuration is missing. Please contact support.';
 
   const isComplete = selectedTemplates.length === maxSelection;
   const remaining = maxSelection - selectedTemplates.length;

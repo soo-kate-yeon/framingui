@@ -14,96 +14,34 @@ coverImage: ""
 published: true
 ---
 
-## The AI Code Generation Problem
+AI가 생성한 버튼은 패딩이 미묘하게 다르고, 색이 브랜드 컬러랑 비슷하지만 딱 맞지 않고, 여백은 어떤 패턴도 따르지 않아요. 문제는 프롬프트가 아니에요 — 컴포넌트 라이브러리 구조가 문제예요.
 
-Your team uses AI coding tools—Claude, Cursor, GitHub Copilot. You ask for a new feature. AI generates a form, a modal, a dashboard. The code works, but it does not look right.
+대부분의 컴포넌트 라이브러리는 사람 개발자를 위해 만들어졌어요. Storybook을 열거나, 문서 링크를 따라가거나, 문맥에서 관례를 추론할 수 있는 독자를 전제하죠. AI 도구는 TypeScript 타입과 코드 구조를 읽어요. 여러분 시스템을 아는 사람에게는 당연한 것들이, 그걸 본 적 없는 모델에게는 보이지 않아요.
 
-Buttons have the wrong padding. Colors do not match your palette. Spacing is inconsistent. The AI did not use your component library—it invented new components from scratch.
+## 시맨틱 토큰 vs 하드코딩된 값
 
-This is not the AI's fault. Your component library is optimized for humans, not machines.
+이게 가장 효과가 큰 변화예요. AI가 픽셀 값과 hex 코드가 박힌 컴포넌트를 읽으면, 그 숫자를 추출해서 대략적으로 재사용해요. 다음에 버튼을 생성할 때 `12px 24px`를 봤으니까 `14px 28px`을 쓰는 거죠. 색이 미끄러지고, 여백이 흘러가고, 생성을 반복할수록 코드베이스가 디자인 시스템에서 멀어져요.
 
-**AI cannot read Storybook.** It cannot infer conventions from Figma. It reads TypeScript types and code structure. If your components are not structured for machine consumption, AI defaults to generic patterns learned from public repositories.
-
-Here is how to build a React component library that AI understands—so generated code respects your design system from day one.
-
-## Principle 1: Semantic Tokens Over Magic Numbers
-
-AI sees this:
-
-```tsx
-<button style={{ padding: '12px 24px', background: '#3b82f6', borderRadius: '8px' }}>
-  Submit
-</button>
-```
-
-It learns: "Buttons use 12px/24px padding, blue-ish backgrounds, 8px border radius."
-
-Next time it generates a button:
-
-```tsx
-<button style={{ padding: '14px 28px', background: '#4f9af7', borderRadius: '6px' }}>
-  Cancel
-</button>
-```
-
-Close, but wrong. Your spacing is `12px`/`24px`, not `14px`/`28px`. Your blue is `#3b82f6`, not `#4f9af7`. Each generation drifts further from your system.
-
-### Solution: Export Semantic Tokens
-
-Define tokens in code, not just design tools:
+해결책은 토큰에 이름을 주고, 그 이름을 코드에 넣는 거예요:
 
 ```typescript
 // tokens.ts
 export const tokens = {
   spacing: {
-    xs: '4px',
     sm: '8px',
     md: '12px',
     lg: '24px',
     xl: '32px',
   },
   color: {
-    primary: {
-      solid: '#3b82f6',
-      hover: '#2563eb',
-      text: '#1e40af',
-    },
-    neutral: {
-      solid: '#374151',
-      muted: '#6b7280',
-    },
+    primary: { solid: '#3b82f6', hover: '#2563eb' },
+    neutral: { solid: '#374151', muted: '#6b7280' },
   },
-  radius: {
-    sm: '4px',
-    md: '8px',
-    lg: '12px',
-  },
+  radius: { sm: '4px', md: '8px', lg: '12px' },
 };
 ```
 
-Use them in components:
-
 ```tsx
-import { tokens } from './tokens';
-
-export const Button = ({ children }: { children: React.ReactNode }) => (
-  <button
-    style={{
-      padding: `${tokens.spacing.md} ${tokens.spacing.lg}`,
-      background: tokens.color.primary.solid,
-      borderRadius: tokens.radius.md,
-    }}
-  >
-    {children}
-  </button>
-);
-```
-
-**Result:** AI learns the pattern. Next time it generates a button, it imports tokens and uses them:
-
-```tsx
-import { tokens } from './tokens';
-
 <button
   style={{
     padding: `${tokens.spacing.md} ${tokens.spacing.lg}`,
@@ -111,394 +49,19 @@ import { tokens } from './tokens';
     borderRadius: tokens.radius.md,
   }}
 >
-  Cancel
-</button>
-```
-
-Consistent. No drift.
-
-## Principle 2: Predictable Prop Naming
-
-AI reads prop names to understand how components work. Inconsistent names confuse it.
-
-### Bad (inconsistent):
-
-```tsx
-<TextInput label="Email" val={email} change={setEmail} />
-<NumberInput text="Age" value={age} onChange={setAge} />
-<Checkbox caption="Subscribe" checked={subscribed} onCheck={setSubscribed} />
-```
-
-AI cannot predict the pattern. Is the value prop called `val`, `value`, or something else? Is the change handler `change`, `onChange`, or `onCheck`?
-
-### Good (consistent):
-
-```tsx
-<TextField label="Email" value={email} onValueChange={setEmail} />
-<NumberField label="Age" value={age} onValueChange={setAge} />
-<Checkbox label="Subscribe" checked={subscribed} onCheckedChange={setSubscribed} />
-```
-
-**Pattern:**
-- Text inputs use `value` + `onValueChange`
-- Checkboxes use `checked` + `onCheckedChange`
-- All use `label` (not `text`, `caption`, or `title`)
-
-AI learns this. When it needs a new input, it follows the same convention.
-
-### Standardize Across Component Categories
-
-| Component Type | Value Prop | Change Handler |
-|----------------|------------|----------------|
-| Text inputs | `value` | `onValueChange` |
-| Checkboxes/Switches | `checked` | `onCheckedChange` |
-| Selects/Radios | `value` | `onValueChange` |
-| Sliders | `value` | `onValueChange` |
-
-Consistency makes AI-generated code predictable.
-
-## Principle 3: Explicit Variants Over Arbitrary Props
-
-AI struggles with open-ended props. It does not know which values are valid.
-
-### Bad (arbitrary):
-
-```tsx
-<Button color="blue" size="medium" style="filled" />
-```
-
-AI will generate:
-
-```tsx
-<Button color="lightblue" size="large" style="outline" />
-```
-
-Close, but your system uses `primary`, not `lightblue`. `lg`, not `large`. `ghost`, not `outline`.
-
-### Good (explicit TypeScript enums):
-
-```tsx
-type ButtonProps = {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-};
-
-export const Button = ({ variant = 'primary', size = 'md' }: ButtonProps) => {
-  // ...
-};
-```
-
-**Result:** AI reads the TypeScript types. It knows the valid options:
-
-```tsx
-<Button variant="primary" size="lg" />
-```
-
-No guessing. No invalid values.
-
-### Use String Literal Types, Not `string`
-
-```tsx
-// ❌ Bad: AI doesn't know what's valid
-type ButtonProps = {
-  variant: string;
-};
-
-// ✅ Good: AI knows the exact options
-type ButtonProps = {
-  variant: 'primary' | 'secondary' | 'ghost';
-};
-```
-
-## Principle 4: JSDoc for Machine-Readable Documentation
-
-AI does not browse Storybook. It reads code. Add JSDoc comments directly to components:
-
-```tsx
-/**
- * A primary action button.
- * 
- * @param variant - Visual style: `primary` (default), `secondary`, `ghost`
- * @param size - Button size: `sm`, `md` (default), `lg`
- * @param children - Button label
- * 
- * @example
- * <Button variant="primary" size="lg">
- *   Submit Form
- * </Button>
- */
-export const Button = ({
-  variant = 'primary',
-  size = 'md',
-  children,
-}: ButtonProps) => {
-  // ...
-};
-```
-
-AI reads this. It knows:
-- Valid `variant` and `size` values
-- What `children` represents (button label)
-- How to use it (the example)
-
-When generating code, AI references the JSDoc and follows the pattern.
-
-## Principle 5: Composition Over Configuration
-
-Complex props are hard for AI to predict. Simple composition is easier.
-
-### Bad (configuration-heavy):
-
-```tsx
-<Card 
-  title="User Profile" 
-  subtitle="Edit your information"
-  footer={<Button>Save</Button>}
-  padding="large"
-  shadow="medium"
-/>
-```
-
-AI has to guess prop names: `title` or `heading`? `footer` or `actions`? `padding` or `spacing`?
-
-### Good (composition):
-
-```tsx
-<Card>
-  <CardHeader>
-    <CardTitle>User Profile</CardTitle>
-    <CardSubtitle>Edit your information</CardSubtitle>
-  </CardHeader>
-  <CardContent>
-    {/* form fields */}
-  </CardContent>
-  <CardFooter>
-    <Button>Save</Button>
-  </CardFooter>
-</Card>
-```
-
-**Why it is better for AI:**
-- Clear component hierarchy (Header → Title, Subtitle)
-- No ambiguous prop names
-- Easier to extend (add `CardActions`, `CardImage`, etc.)
-
-AI sees this structure once and replicates it consistently.
-
-## Principle 6: Single Source of Truth for Tokens
-
-Do not scatter token definitions across multiple files:
-
-### Bad (scattered):
-
-```
-src/
-  styles/
-    colors.css      ← Some colors here
-  theme/
-    spacing.ts      ← Spacing here
-  constants/
-    typography.js   ← Typography here
-```
-
-AI does not know where to look. It defaults to hardcoded values.
-
-### Good (single source):
-
-```
-src/
-  design-system/
-    tokens.ts       ← All tokens here
-    components/
-      Button.tsx    ← Imports from tokens.ts
-      TextField.tsx ← Imports from tokens.ts
-```
-
-In your README or AI config:
-
-```markdown
-# Design System
-
-All design tokens are in `src/design-system/tokens.ts`.
-
-When generating UI code, always import tokens from this file.
-```
-
-Claude, Cursor, and other AI tools can read this and prioritize the correct file.
-
-## Principle 7: Avoid Styled-Components for AI Generation
-
-Styled-components are great for humans. Not for AI.
-
-### Bad (styled-components):
-
-```tsx
-const StyledButton = styled.button`
-  padding: ${props => props.size === 'lg' ? '16px 32px' : '12px 24px'};
-  background: ${props => props.variant === 'primary' ? '#3b82f6' : '#6b7280'};
-  border-radius: 8px;
-`;
-```
-
-AI cannot easily extract token values from template strings. It sees inline styles and copies them inconsistently.
-
-### Good (inline styles or utility classes):
-
-```tsx
-<button
-  style={{
-    padding: size === 'lg' ? `${tokens.spacing.lg} ${tokens.spacing.xl}` : `${tokens.spacing.md} ${tokens.spacing.lg}`,
-    background: variant === 'primary' ? tokens.color.primary.solid : tokens.color.neutral.solid,
-    borderRadius: tokens.radius.md,
-  }}
->
   {children}
 </button>
 ```
 
-Or use utility classes (Tailwind, custom CSS):
+이제 AI가 토큰 이름을 읽어요. 버튼이 세로 패딩에 `tokens.spacing.md`, 가로 패딩에 `tokens.spacing.lg`를 쓴다는 걸 학습하죠. 새 버튼을 만들 때 같은 토큰 파일을 임포트하고 같은 이름을 써요. 생성된 코드가 시스템 안에 남아요.
+
+## 명시적인 TypeScript 변형(Variant)
+
+열려있는 string 타입은 AI가 추측하게 만들고, 추측은 불일치를 만들어요. `variant: string` prop은 `"primary"`, `"solid"`, `"filled"`, `"blue"`, `"default"` 중 뭐든 받을 수 있어요. AI는 다른 코드베이스 패턴 기반으로 가장 그럴듯한 걸 골라요.
+
+리터럴 타입이 그 틈을 닫아줘요:
 
 ```tsx
-<button className={cn(
-  'rounded-md',
-  size === 'lg' ? 'px-8 py-4' : 'px-6 py-3',
-  variant === 'primary' ? 'bg-primary' : 'bg-neutral'
-)}>
-  {children}
-</button>
-```
-
-AI can parse this. It understands the logic. It replicates it consistently.
-
-## Principle 8: Document Component Relationships
-
-AI needs to know how components relate.
-
-### Example: Form Field Pattern
-
-```tsx
-/**
- * Form field wrapper. Includes label, input, and error message.
- * 
- * Always use this pattern for form inputs:
- * 
- * @example
- * <Field label="Email" error={errors.email}>
- *   <TextField value={email} onValueChange={setEmail} />
- * </Field>
- */
-export const Field = ({ label, error, children }: FieldProps) => (
-  <div className="field">
-    <label>{label}</label>
-    {children}
-    {error && <span className="error">{error}</span>}
-  </div>
-);
-```
-
-Now AI knows: "Form inputs always wrap in `<Field>`."
-
-When it generates a form:
-
-```tsx
-<Field label="Name" error={errors.name}>
-  <TextField value={name} onValueChange={setName} />
-</Field>
-
-<Field label="Email" error={errors.email}>
-  <TextField value={email} onValueChange={setEmail} />
-</Field>
-```
-
-Consistent. No random label placements or error message styles.
-
-## Principle 9: Export a Component Index
-
-AI does not explore your folder structure. Give it an entry point:
-
-```typescript
-// src/design-system/index.ts
-export { Button } from './components/Button';
-export { TextField } from './components/TextField';
-export { Card, CardHeader, CardTitle, CardContent } from './components/Card';
-export { tokens } from './tokens';
-```
-
-In your README:
-
-```markdown
-# Component Library
-
-Import components from `@/design-system`:
-
-\`\`\`tsx
-import { Button, TextField, tokens } from '@/design-system';
-\`\`\`
-```
-
-AI reads this. It knows where to import from. No more `import Button from '../../components/ui/button'`.
-
-## Principle 10: Test AI Generation with Real Prompts
-
-Build your component library, then test it:
-
-**Prompt AI:**
-
-> "Create a user registration form with email, password, and submit button. Use our design system."
-
-**Check:**
-
-- Does it import from the correct path?
-- Does it use tokens, not hardcoded values?
-- Are prop names correct?
-- Is the structure consistent with your existing components?
-
-If AI generates incorrect code, identify the pattern it missed and improve your component structure or documentation.
-
-## Real-World Example: Button Component
-
-Here is an AI-friendly Button component:
-
-```tsx
-import { tokens } from '../tokens';
-
-/**
- * Button component for primary actions.
- * 
- * @param variant - `primary` (default), `secondary`, `ghost`
- * @param size - `sm`, `md` (default), `lg`
- * @param children - Button label
- * 
- * @example
- * <Button variant="primary" size="lg">
- *   Submit Form
- * </Button>
- */
-export const Button = ({
-  variant = 'primary',
-  size = 'md',
-  children,
-  ...props
-}: ButtonProps) => {
-  const styles = {
-    padding:
-      size === 'sm' ? `${tokens.spacing.sm} ${tokens.spacing.md}` :
-      size === 'lg' ? `${tokens.spacing.lg} ${tokens.spacing.xl}` :
-      `${tokens.spacing.md} ${tokens.spacing.lg}`,
-    background:
-      variant === 'primary' ? tokens.color.primary.solid :
-      variant === 'secondary' ? tokens.color.neutral.solid :
-      'transparent',
-    borderRadius: tokens.radius.md,
-  };
-
-  return (
-    <button style={styles} {...props}>
-      {children}
-    </button>
-  );
-};
-
 type ButtonProps = {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -506,47 +69,110 @@ type ButtonProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 ```
 
-**Why it is AI-friendly:**
+이 타입 정의를 읽으면 AI는 정확히 어떤 값이 유효한지 알아요. `variant="solid"`나 `variant="outline"` 대신 `variant="primary"` 또는 `variant="ghost"`가 나오죠. 유한한 유효값을 가진 prop에는 항상 이렇게 해야 해요 — `string`을 열거형으로 표현할 수 있을 때 `string`을 쓰는 건 피해요.
 
-- ✅ Uses semantic tokens (`tokens.spacing.md`, not `12px`)
-- ✅ Explicit variant types (`'primary' | 'secondary' | 'ghost'`)
-- ✅ JSDoc with examples
-- ✅ Predictable prop names (`variant`, `size`, `children`)
-- ✅ Inline styles (AI can parse easily)
+## JSDoc이 기계가 읽는 문서예요
 
-## Checklist: Is Your Component Library AI-Friendly?
+Storybook은 사람이 읽는 거예요. AI 도구는 소스 코드를 읽어요. 내보내는 컴포넌트에 직접 달린 JSDoc 주석은 코드와 함께 이동하고, TypeScript를 읽는 모든 도구가 가져가죠:
 
-- ✅ Design tokens exported to code (not just Figma)
-- ✅ Consistent prop naming across all components
-- ✅ TypeScript enums for variants (no arbitrary strings)
-- ✅ JSDoc comments with examples
-- ✅ Composition over configuration
-- ✅ Single source of truth for tokens
-- ✅ Avoid styled-components (use inline styles or utility classes)
-- ✅ Document component relationships (e.g., Field + TextField)
-- ✅ Export all components from a single index file
-- ✅ Test with real AI prompts
+```tsx
+/**
+ * 주요 액션용 버튼.
+ *
+ * @param variant - 시각 스타일: `primary` (기본값), `secondary`, `ghost`
+ * @param size - 크기: `sm`, `md` (기본값), `lg`
+ * @param children - 버튼 레이블 텍스트
+ *
+ * @example
+ * <Button variant="primary" size="lg">저장</Button>
+ */
+export const Button = ({
+  variant = 'primary',
+  size = 'md',
+  children,
+  ...props
+}: ButtonProps) => { ... };
+```
 
-## Conclusion
+`@example` 태그가 특히 유용해요. 컴포넌트를 어떻게 사용하는지 실제 예시를 본 AI는 그 패턴을 추론하는 대신 따라가거든요.
 
-AI code generation is fast. But fast, inconsistent code creates design debt.
+## 설정 중심 말고 조합 중심으로
 
-Your component library needs to be structured for machines, not just humans:
+`title`, `subtitle`, `footer`, `padding="large"` 같은 props는 모호해요. 콘텐츠 영역 prop이 `body`인지 `content`인지? footer는 ReactNode를 받나요 string을 받나요? 설정 prop이 많은 컴포넌트는 AI가 prop 이름과 중첩 방식을 추측해야 해요.
 
-- Semantic tokens, not magic numbers
-- Explicit types, not open-ended strings
-- JSDoc documentation, not just Storybook
-- Composition, not complex props
-- Single source of truth
+서브 컴포넌트 조합 방식이 그 모호함을 없애줘요:
 
-Make these changes, and AI-generated code will respect your design system from day one. You get velocity without chaos.
+```tsx
+// 설정 중심 (AI에게 어려움)
+<Card
+  title="사용자 프로필"
+  footer={<Button>저장</Button>}
+  padding="large"
+/>
 
-Your component library is not just for developers. It is for the AI tools those developers use. Build for both, and you get consistent UI at AI speed.
+// 조합 방식 (AI에게 쉬움)
+<Card>
+  <CardHeader>
+    <CardTitle>사용자 프로필</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {/* 폼 필드들 */}
+  </CardContent>
+  <CardFooter>
+    <Button>저장</Button>
+  </CardFooter>
+</Card>
+```
 
----
+조합 API는 자기 설명적이에요. 컴포넌트 트리가 시각 구조를 그대로 반영해요. 이 방식으로 만들어진 카드를 한 번 본 AI는 내용이 달라도 같은 패턴을 그대로 씁니다.
 
-**Want an AI-ready component library out of the box?**
+## 컴포넌트 전반에 걸친 일관된 Prop 이름
 
-FramingUI is built for AI code generation—semantic tokens, predictable component APIs, JSDoc everywhere.
+`TextInput`이 `val`을 쓰고 `NumberInput`이 `value`를 쓰면, AI는 관례 두 개를 따로 배워야 해요. `TextInput`이 `change`를 쓰고 `Checkbox`가 `onCheck`를 쓰면, 생성된 폼에 관례가 뒤섞여요.
 
-[Explore FramingUI](https://tekton.sh) →
+관례를 하나 정하고 전체에 적용하세요:
+
+| 컴포넌트 유형 | 값 prop | 변경 핸들러 |
+|---|---|---|
+| 텍스트, 숫자 입력 | `value` | `onValueChange` |
+| 체크박스, 스위치 | `checked` | `onCheckedChange` |
+| 셀렉트, 라디오 | `value` | `onValueChange` |
+
+모든 레이블 prop은 `text`나 `caption`이 아니라 `label`로 통일해요. 이 일관성 덕분에 컴포넌트 하나에서 학습한 AI의 멘탈 모델이 라이브러리 전체로 일반화돼요.
+
+## 단일 진입점
+
+AI 도구는 디렉토리 트리를 탐색하지 않아요. 컴포넌트를 임포트해야 할 때 경로를 알거나, 모르면 범용 컴포넌트로 넘어가거든요. 배럴 익스포트 하나가 이를 해결해요:
+
+```typescript
+// src/design-system/index.ts
+export { Button } from './components/Button';
+export { TextField } from './components/TextField';
+export { Card, CardHeader, CardTitle, CardContent, CardFooter } from './components/Card';
+export { Field } from './components/Field';
+export { tokens } from './tokens';
+```
+
+README나 `CLAUDE.md`에 한 줄 추가하세요:
+
+```markdown
+모든 컴포넌트는 `@/design-system`에서 임포트하세요. 서브경로에서 직접 임포트하지 마세요.
+```
+
+Claude, Cursor, Copilot은 프로젝트 문서를 읽어요. 이 지시가 지켜져요.
+
+## 라이브러리를 AI로 테스트하기
+
+변경 완료 후 실제 테스트를 해보세요. AI에게 이렇게 프롬프트하세요: "이메일, 비밀번호, 비밀번호 확인, 제출 버튼이 있는 회원가입 폼을 우리 디자인 시스템으로 만들어줘."
+
+출력물을 네 가지 기준으로 확인해요:
+- 올바른 경로에서 임포트하고 있나?
+- 하드코딩된 값 대신 토큰 참조를 쓰고 있나?
+- variant와 size prop 철자가 맞나?
+- 폼 입력에 `<Field>` 래퍼 패턴을 따르고 있나?
+
+기준을 못 통과하면 라이브러리 구조로 거슬러 올라가 원인을 찾아요. 가장 흔한 원인은 JSDoc이 없거나 모호한 거예요. 두 번째는 토큰 파일이 컨텍스트에서 보이지 않는 경우예요.
+
+모든 실패는 구조적 신호예요. 프롬프트가 아니라 라이브러리를 고치세요.
+
+이렇게 만든 컴포넌트 라이브러리는 AI 도구에게 사람 개발자에게 주는 것과 같은 어포던스를 줘요: 명확한 계약, 명시적인 관례, 단일 진실 공급원. 생성된 코드가 기본적으로 여러분 시스템의 품질을 상속해요.

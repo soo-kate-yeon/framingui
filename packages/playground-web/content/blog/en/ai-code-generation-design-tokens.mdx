@@ -1,6 +1,6 @@
 ---
 title: "AI Code Generation and Design Tokens: Why Hallucinations Happen"
-description: "Understand why AI-generated UI hallucinates without design tokens and how token-driven context improves consistency, correctness, and maintainability."
+description: "Why AI-generated UI hallucinates without design tokens and how token-driven context improves consistency and correctness."
 date: "2026-02-28"
 author:
   name: "FramingUI Team"
@@ -14,222 +14,113 @@ coverImage: ""
 published: true
 ---
 
-## The Real Reason AI UI Code Breaks Your Design System
+Ask an AI to build a dashboard card, and you'll get something that looks reasonable but doesn't match your product. Wrong shade of blue. Spacing that's close but off. Border radius that's fine in isolation but inconsistent with everything else on the screen.
 
-AI-generated UI code looks impressive in demos, yet many teams see the same production problem: the code works, but it does not match their product.
-
-You ask for a "simple pricing card" and get:
-
-- Hardcoded palette values
-- Random spacing increments
-- Inconsistent radius and shadow choices
-- Variant naming that does not map to existing components
-
-This is often described as hallucination, but in UI generation the root cause is usually **context starvation**. The model is forced to guess design decisions because your design system is not available in a structured way.
+This gets labeled "hallucination," which is accurate but incomplete. The deeper cause is context starvation. The model doesn't have access to your design system, so it fills the gap with the most statistically plausible values from training data. The result is code that's generic rather than correct.
 
 ## What Hallucination Means in UI Generation
 
-In this context, hallucination is not only factual error. It is any confident UI decision that is plausible in general but wrong for your system.
+In factual domains, hallucination means the model invents false information. In UI generation, it means the model makes confident design decisions that are plausible in general but wrong for your system.
 
-### Semantic Hallucination
+**Semantic hallucination:** The model generates token names that look valid but don't exist. `color.brand.700` when your system uses `color.primary.solid`. `spacing.large` when your scale uses numeric keys.
 
-The model uses valid-looking token names that do not exist, like `color.brand.700` when your system uses `color.primary.600`.
+**Visual hallucination:** The model picks arbitrary values for color, spacing, and radius that conflict with your established patterns. The code runs. The design breaks.
 
-### Visual Hallucination
+**Structural hallucination:** The model invents component APIs and variants that resemble popular libraries but don't align with your primitives. `<Button type="submit" color="blue">` when your API is `<Button variant="primary">`.
 
-The model picks arbitrary color/spacing/radius values that conflict with your established patterns.
+All three forms become significantly less common when design tokens are present in model context.
 
-### Structural Hallucination
+## Why Missing Tokens Cause Hallucination
 
-The model invents component APIs and variants that resemble popular libraries but do not align with your primitives.
+### The Model Generates the Most Probable Token, Not the Right One
 
-All three are common when design tokens are absent from model context.
-
-## Why Missing Tokens Causes Hallucination
-
-### The Model Optimizes for Probability, Not Your Intent
-
-LLMs generate the most likely next token given prompt context and prior training, not your hidden internal standards.
-
-If your prompt says "build a dashboard card" without token data, the model defaults to commonly seen patterns from public code.
+LLMs generate output by predicting the most likely next token given the current context. When your prompt says "build a dashboard card" without token data, the most likely output is what dashboard cards look like across millions of training examples. That's a reasonable blue hex code. That's `padding: 16px`. That's whatever is statistically common, not what your system specifies.
 
 ### Natural Language Is Too Ambiguous
 
-"Use our brand colors" means little to a model unless brand colors are provided as concrete machine-readable values.
+"Use our brand colors" is ambiguous even to a human who has seen your design system once. To a model with no system access, it's nearly meaningless. Brand could mean primary. It could mean the full semantic palette. Text could be `color.text.primary` or `color.primary.fg`. Hover states, focus rings, and disabled variants are invisible without explicit specification.
 
-### Unstructured Guidelines Are Hard to Enforce
+Structured token data resolves this ambiguity. Machine-readable names and values carry precision that natural language can't.
 
-A paragraph in a wiki saying "use 8px spacing" does not reliably govern generated JSX unless the model has explicit schema-like constraints.
+### Guidelines in Prose Don't Enforce Constraints
 
-### Context Windows Are Limited
+A sentence in your wiki saying "use 8px spacing increments" doesn't reliably govern generated JSX. The model has to parse that guideline, determine what it means for this specific component, and then apply it. Each step introduces potential error. A token schema with `spacing.2 = 8px` provides the same constraint with no inference required.
 
-Even if you paste long guidelines manually, they compete with feature requirements inside the same context window. Structured token retrieval scales better.
+### Context Window Competition
+
+Pasting long design guidelines into every prompt works against you in two ways. It competes with your actual feature specification for context window space. And it still requires inference to apply, which means variance between generations even with identical guidelines.
+
+Structured token retrieval, whether via a file reference or a protocol like MCP, provides dense, queryable constraint that scales across sessions.
 
 ## Design Tokens as a Constraint Interface
 
-Design tokens act as a contract between your design system and AI code generation.
+Design tokens aren't just for theming or design-development handoff. In AI workflows, they function as a constraint interface between your design system and code generation.
 
-A good token model provides:
+A good token schema does three things for AI generation: it provides **stable, semantic names** that carry role rather than appearance, it defines **explicit values** that eliminate the need for inference, and it establishes **component-level semantics** that map design intent to implementation.
 
-- Stable names (semantic, not ad hoc)
-- Explicit values (color, type, spacing, motion, elevation)
-- Theme mappings (light/dark)
-- Component-level semantics where needed
+When AI can query this contract, generation shifts from probabilistic guessing to constrained composition. The model isn't less capable — it's better directed.
 
-When AI can query this contract, generation shifts from guessing to constrained composition.
+## From Guess-and-Patch to Generate-and-Ship
 
-## From "Guess and Patch" to "Generate and Ship"
+Without token context, the typical workflow is:
 
-### Without Tokens
-
-Workflow:
-
-1. Prompt AI for component
+1. Prompt AI for a component
 2. Receive plausible but off-system code
-3. Manually replace values and variants
+3. Manually identify and replace values
 4. Repeat for every output
 
-Cost:
+This creates review overhead on every AI-generated component. Engineers spend time on style cleanup instead of behavior and logic. The overhead compounds as AI usage scales.
 
-- High review overhead
-- Inconsistent code quality
-- Slow velocity in UI-heavy work
-
-### With Tokens
-
-Workflow:
+With token context:
 
 1. AI reads token definitions and component contracts
 2. Generates with valid semantic references
-3. Human reviews behavior and copy, not style cleanup
+3. Review focuses on behavior, copy, and composition — not style violations
 
-Result:
+The shift is asymmetric. Better context at generation time eliminates a disproportionate amount of downstream correction.
 
-- Lower hallucination rate
-- Better design system compliance
-- Faster iteration
+## Minimum Token Schema for Reliable Generation
 
-## Minimum Token Schema for AI Reliability
+The minimum viable schema that meaningfully reduces hallucination covers five areas.
 
-You do not need a huge enterprise schema to improve output quality. Start with minimum viable structure.
+**Color:** Separate text, surface, border, and semantic action tokens. `color.text.primary`, `color.text.secondary`. `color.surface.default`, `color.surface.elevated`. `color.border.default`, `color.border.focus`. `color.intent.success`, `color.intent.warning`, `color.intent.danger`.
 
-### Color Tokens
+**Spacing and size:** A consistent numeric scale. `spacing.1` through `spacing.10`. `radius.sm`, `radius.md`, `radius.lg`. `size.control.sm`, `size.control.md`, `size.control.lg`.
 
-- `color.text.primary`, `color.text.secondary`, `color.text.inverse`
-- `color.surface.default`, `color.surface.elevated`
-- `color.border.default`, `color.border.focus`
-- `color.intent.success`, `color.intent.warning`, `color.intent.danger`
+**Typography:** `font.size.body`, `font.size.label`, `font.size.title`. `font.weight.regular`, `font.weight.medium`, `font.weight.semibold`. `lineHeight.body`, `lineHeight.heading`.
 
-### Spacing and Size Tokens
+**Component semantic tokens:** `button.primary.bg`, `button.primary.fg`, `input.border.default`, `input.border.focus`.
 
-- `spacing.1` through `spacing.10` with consistent scale
-- `radius.sm`, `radius.md`, `radius.lg`
-- `size.control.sm`, `size.control.md`, `size.control.lg`
-
-### Typography Tokens
-
-- `font.size.body`, `font.size.label`, `font.size.title`
-- `font.weight.regular`, `font.weight.medium`, `font.weight.semibold`
-- `lineHeight.body`, `lineHeight.heading`
-
-### Component Semantic Tokens
-
-- `button.primary.bg`
-- `button.primary.fg`
-- `input.border.default`
-- `input.border.focus`
-
-This is enough to remove most random stylistic guesses.
+This covers the vast majority of common UI generation scenarios. Add layers as your system grows, but start here.
 
 ## How to Feed Tokens to AI Tools
 
-There are three common approaches.
+There are three approaches, each with different tradeoffs.
 
-### 1. Static Prompt Injection
+**Static prompt injection** — Paste token JSON directly into each prompt. Easy to test, impossible to scale. Token data goes stale as the system evolves, and discipline breaks down across a team.
 
-You paste token JSON in every prompt.
+**Repo-colocated token files** — Store tokens in versioned files and reference them in workflow instructions. More reliable than manual pasting, but still depends on prompt discipline and goes stale if files aren't maintained.
 
-- Fast to test
-- Hard to scale
-- Easy to go stale
+**Protocol-based retrieval (MCP)** — AI clients query token data through a structured interface at generation time. Context is always current, team members don't need prompt discipline around token inclusion, and the system scales without manual overhead. For sustained AI-assisted development, this approach wins.
 
-### 2. Repo-Co-Located Token Files
+## Guardrails Beyond Tokens
 
-You store tokens in versioned files and reference them in workflow instructions.
+Tokens reduce hallucination significantly but don't eliminate all errors. A complete setup adds:
 
-- Better than manual copy-paste
-- Still depends on prompt discipline
+**Constrained component APIs** that make invalid generation fail at compile time. If `<Button>` only accepts defined variants and sizes, an AI that invents `variant="super-primary"` produces a type error, not a running app with wrong styles.
 
-### 3. Protocol-Based Retrieval (MCP)
+**Lint rules** that detect hardcoded hex colors, arbitrary pixel values, and unapproved utility combinations. These catch what token context misses.
 
-AI clients query token data through a structured interface at generation time.
+**Snapshot or visual regression tests** that catch unintended visual drift during rapid generation cycles. Useful during sprints where many components are being generated in quick succession.
 
-- Consistent and up-to-date context
-- Better for team workflows
-- Lower manual overhead
+**Prompt templates with explicit constraints.** Standardize the instruction set: "Use existing primitives only. Do not invent variants. Use token references, not hardcoded values." Encode this in team-shared templates rather than relying on individual prompt authors.
 
-For sustained AI-assisted development, retrieval-based context usually wins.
+## Where FramingUI Fits
 
-## Practical Guardrails Beyond Tokens
+FramingUI is useful in this context because it combines token-first design system architecture with tooling designed for AI workflows. It makes it straightforward to define and evolve semantic tokens, keep component primitives aligned with those tokens, and connect token context to AI tools at generation time.
 
-Tokens reduce hallucination but do not eliminate all errors. Add guardrails.
+The combination addresses the core problem: AI generation that starts from your system's actual constraints rather than from statistical averages across the web.
 
-### Guardrail 1: Constrained Component APIs
+---
 
-If components only accept approved variants and sizes, invalid generation fails fast.
-
-### Guardrail 2: Lint Rules for Raw Values
-
-Detect hardcoded hex colors, arbitrary spacing, and unapproved utility combinations.
-
-### Guardrail 3: Snapshot or Visual Regression Tests
-
-Catch unintended visual drift during rapid generation cycles.
-
-### Guardrail 4: Prompt Templates with Explicit Constraints
-
-Include clear instructions: "Use existing primitives. Do not invent variants. Use token references only."
-
-## Where FramingUI Helps in This Stack
-
-FramingUI is useful because it combines token-first design system structure with AI-friendly workflows.
-
-In practice it helps teams:
-
-- Define and evolve semantic tokens clearly
-- Keep primitives aligned with token contracts
-- Connect token context to AI tooling so generation follows system constraints
-
-That combination is what reduces hallucination from repeated manual cleanup into predictable output quality.
-
-## A Simple Adoption Plan
-
-If your current AI-generated UI feels noisy, use this sequence.
-
-### Step 1: Audit Generated Code
-
-Measure how often generated code violates token usage and component APIs.
-
-### Step 2: Establish Minimum Token Schema
-
-Do not over-model. Start with color, spacing, typography, and core semantic component tokens.
-
-### Step 3: Integrate Token Context into Generation
-
-Use a stable retrieval method, ideally protocol-based, so context is always current.
-
-### Step 4: Add Automated Checks
-
-Reject code that bypasses tokens or invents unsupported variants.
-
-### Step 5: Iterate on Token Semantics
-
-When repeated edge cases appear, refine semantic token layers instead of patching one-off values.
-
-## Closing Thought
-
-When teams say AI hallucinated their UI, they often blame the model quality alone. But the bigger issue is usually missing system context.
-
-Design tokens are not just for handoff or theming. In AI-assisted development, they are the control surface that turns generative output from generic guesswork into system-aligned implementation.
-
-If you want AI code generation to scale inside a real product, tokenized design system context is no longer optional. It is the baseline.
+When AI generates generic UI, the instinct is to blame the model. But the more productive frame is to ask what context was missing. Design tokens are the answer to that question. They're not a workaround for AI limitations — they're the baseline that any AI-assisted UI workflow requires.

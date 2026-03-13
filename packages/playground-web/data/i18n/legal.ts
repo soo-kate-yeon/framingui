@@ -110,40 +110,6 @@ const legalPageContent: Record<GlobalLocale, LegalPageContent> = {
       copyrightNotice: '© 2026 모락. 모든 권리 보유.',
     },
   },
-  ja: {
-    pages: {
-      terms: {
-        title: '利用規約',
-        description:
-          'Tekton サービス利用に関する規約です。アカウント登録、ライセンス、知的財産、紛争解決などを定めています。',
-      },
-      privacy: {
-        title: 'プライバシーポリシー',
-        description:
-          'Tekton が個人情報を収集・利用・保護する方法を説明します。保管期間、利用者の権利、越境移転を含みます。',
-      },
-      refund: {
-        title: '返金ポリシー',
-        description:
-          'Tekton で購入したデジタル商品の返金条件と手続きを案内します。サブスクリプション解約とチャージバック方針を含みます。',
-      },
-    },
-    ui: {
-      backButton: '戻る',
-      darkModeToggle: 'ダークモード切り替え',
-      languageToggle: '言語切り替え',
-      tocToggle: '目次切り替え',
-      tocHeading: '目次',
-      lastUpdated: '最終更新日',
-      effectiveDate: '施行日',
-      contactUs: 'お問い合わせ',
-    },
-    notices: {
-      languageDisclaimer:
-        '本書は日本語・英語・韓国語で提供されます。内容に差異がある場合、韓国国内利用者には韓国語版を優先して適用します。',
-      copyrightNotice: '© 2026 Morak. All rights reserved.',
-    },
-  },
 };
 
 export function getLegalPageContent(locale: GlobalLocale): LegalPageContent {

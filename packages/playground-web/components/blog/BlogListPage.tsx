@@ -11,11 +11,10 @@ import { GlobalLanguageSwitcher } from '@/components/shared/GlobalLanguageSwitch
 import type { BlogPostSummary } from '@/lib/blog';
 
 interface BlogListPageProps {
-  posts: { en: BlogPostSummary[]; ko: BlogPostSummary[]; ja: BlogPostSummary[] };
+  posts: { en: BlogPostSummary[]; ko: BlogPostSummary[] };
   allTags: {
     en: { tag: string; count: number }[];
     ko: { tag: string; count: number }[];
-    ja: { tag: string; count: number }[];
   };
   activeTag?: string;
 }

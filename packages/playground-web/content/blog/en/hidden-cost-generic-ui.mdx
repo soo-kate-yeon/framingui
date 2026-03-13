@@ -14,223 +14,76 @@ coverImage: ""
 published: true
 ---
 
-## The $10,000 Color Mistake
+You ask Claude Code to build a dashboard. It generates twenty components in minutes. Everything looks good until you notice the primary buttons disagree: `bg-blue-500` in one place, `bg-indigo-600` in another, `#4F46E5` hardcoded in a third.
 
-You ask Claude Code to build a dashboard. It generates 20 components. Everything looks good — until you notice button colors are inconsistent. Some use `bg-blue-500`, others use `bg-indigo-600`, and a few have hardcoded hex values like `#4F46E5`.
+This isn't a model quality problem. It's a structural problem with how generic UI libraries interact with probabilistic code generation.
 
-You spend the next 3 hours fixing it manually. Then you generate 10 more components next week, and the problem returns.
+## Why AI Gets Colors Wrong Consistently
 
-**This isn't a bug. It's a fundamental design flaw in how AI works with generic UI libraries.**
+Generic component libraries are built for human readers, not machine consumers. When a human reads an example using `bg-blue-500`, they understand from context that this is "the primary color in this project." When an AI reads the same example, it records a correlation: buttons sometimes use `bg-blue-500`. Next time it generates a button, it draws from the probability distribution of values it has seen — which might produce `bg-blue-500`, `bg-blue-600`, `bg-indigo-500`, or `#3B82F6`.
 
-## Why AI Keeps Getting Colors Wrong
+There's no design intent encoded in the value. The AI cannot distinguish "this is your primary brand color" from "this was the example in the docs."
 
-When AI generates UI code using libraries like shadcn UI, Tailwind, or Material UI, it faces three critical problems:
+The second problem is context window limits. Even with fifty existing components in context, an AI might misremember the exact shade used in component twelve, mix patterns from two different sections, or interpolate a value that doesn't exist in your system. The drift is gradual and hard to catch in code review because each individual choice looks plausible.
 
-### 1. **No Semantic Context**
+## What Semantic Tokens Change
 
-Generic component libraries use arbitrary values:
+A semantic token encodes meaning, not just value. `bg-primary` tells the AI something `bg-blue-500` cannot: this is the primary brand color, use it wherever primary brand color is appropriate.
+
+The difference in generated code is categorical, not incremental. When semantic token names appear consistently in the codebase, AI generates consistent names. The output is anchored by the token vocabulary rather than floating across a probability distribution of color names.
 
 ```tsx
-// AI sees this in the docs
-<Button className="bg-blue-500 hover:bg-blue-600">
-  Primary Action
-</Button>
+// Without semantic tokens — what AI produces across sessions
+<Button className="bg-blue-500 hover:bg-blue-600 text-white">Sign In</Button>
+<Button className="bg-indigo-600 hover:bg-indigo-700 text-white">Create Account</Button>
+<Button className="bg-primary-600 hover:bg-primary-700 text-white">Continue</Button>
 ```
 
-The AI doesn't know that `blue-500` is your "primary" color. It just sees an example. Next time it generates a button, it might use:
-- `bg-blue-600` (darker blue)
-- `bg-indigo-500` (different hue)
-- `#3B82F6` (hardcoded)
-- `bg-primary` (guessing a non-existent token)
-
-**Result:** Inconsistent colors across your codebase.
-
-### 2. **Hardcoded Values Everywhere**
-
-Look at any generic UI library:
-
 ```tsx
-// Typical shadcn UI component
-<div className="rounded-md border border-gray-200 bg-white p-4">
-  <h3 className="text-lg font-semibold text-gray-900">Title</h3>
-  <p className="text-sm text-gray-600">Description</p>
-</div>
-```
-
-Every value is hardcoded:
-- `gray-200` for border
-- `white` for background
-- `gray-900` for heading
-- `gray-600` for text
-
-When AI generates similar components, it hallucinates variations:
-- Sometimes `gray-100`, sometimes `slate-200`
-- Sometimes `text-gray-700` instead of `gray-600`
-
-**Result:** Your design system degrades with every AI-generated component.
-
-### 3. **Context Window Limitations**
-
-AI can't remember every color choice across a large codebase. Even if you include 50 existing components in the context, the AI might:
-- Misremember the exact shade
-- Mix patterns from different components
-- Interpolate "in-between" values that don't exist in your system
-
-**Result:** Gradual style drift that's hard to catch in code review.
-
-## The Hidden Cost of "Free" Components
-
-Generic UI libraries seem free and flexible. But when you build with AI, they create hidden costs:
-
-| Problem | Time Cost | Frequency |
-|---------|-----------|-----------|
-| Fixing inconsistent colors | 2-4 hours | Every sprint |
-| Code review for style issues | 1-2 hours | Every PR |
-| Refactoring hardcoded values | 8-16 hours | Quarterly |
-| Designer-developer alignment | 4-8 hours | Monthly |
-
-**That's 20-40 hours per month** — or $2,000-$10,000 in engineering time — just managing color consistency.
-
-## How Semantic Tokens Solve This
-
-FramingUI takes a different approach: **every color, spacing, and style is a semantic token.**
-
-Instead of hardcoded values:
-
-```tsx
-// ❌ Generic library (hardcoded)
-<div className="bg-blue-500 text-white">
-  Primary content
-</div>
-```
-
-You use semantic tokens:
-
-```tsx
-// ✅ FramingUI (semantic)
-<div className="bg-primary text-on-primary">
-  Primary content
-</div>
-```
-
-### Why This Works for AI
-
-1. **Clear Intent**
-   - `bg-primary` tells AI "this is the primary brand color"
-   - Not "blue-500" which could mean anything
-
-2. **Self-Documenting**
-   - `text-error` is obviously for error states
-   - `bg-surface-raised` is clearly an elevated surface
-   - AI doesn't have to guess
-
-3. **Automatically Consistent**
-   - AI uses `bg-primary` everywhere → all primary colors match
-   - Change the token value → everything updates
-
-4. **Theme-Aware**
-   - Tokens adapt to light/dark mode automatically
-   - AI doesn't need to think about theme variations
-
-## Real Example: Before & After
-
-### Before (Generic UI + AI)
-
-AI generates a login form:
-
-```tsx
-// First component
-<Button className="bg-blue-500 hover:bg-blue-600 text-white">
-  Sign In
-</Button>
-
-// Second component (generated later)
-<Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
-  Create Account
-</Button>
-
-// Third component (hallucinated)
-<Button className="bg-primary-600 hover:bg-primary-700 text-white">
-  Continue
-</Button>
-```
-
-**Result:** Three "primary" buttons, three different colors. Manual fix required.
-
-### After (FramingUI + AI)
-
-AI generates with semantic tokens:
-
-```tsx
-// All components
+// With semantic tokens — what AI produces with a token-aware system
 <Button variant="primary">Sign In</Button>
 <Button variant="primary">Create Account</Button>
 <Button variant="primary">Continue</Button>
-
-// Internally uses: bg-primary text-on-primary
 ```
 
-**Result:** Perfect consistency. Zero manual fixes.
+The second pattern requires no manual cleanup. The token resolves to whatever your system defines as primary — and changes to that definition propagate everywhere.
 
-## The Economics of Semantic Tokens
+## The Additional Cost That Doesn't Show Up in Estimates
 
-Let's do the math:
+Teams that generate UI code with AI tend to estimate the generation time but not the cleanup time. The cleanup is consistent: finding hardcoded values, aligning colors back to the system, explaining in PR review why one button is a different shade than the others.
 
-**Without Semantic Tokens:**
-- Time fixing inconsistencies: 30 hours/month
-- Cost at $100/hour: $3,000/month
-- Annual cost: $36,000
+With semantic tokens, the cleanup loop breaks. AI generates `variant="primary"` because that's what appears in the codebase. The color comes from the token definition. Design system intent transfers from the token to the output without an intermediate human correction step.
 
-**With Semantic Tokens:**
-- Initial setup: 4-8 hours ($400-800)
-- Ongoing maintenance: ~2 hours/month ($200/month)
-- Annual cost: $3,200
+The other cost that's easy to miss is theme support. If your tokens map to CSS variables — `var(--foreground-accent)`, `var(--background-page)` — then dark mode comes from redefining the variables, not from duplicating component logic. AI-generated components inherit this automatically because they use the same token names.
 
-**Savings: $32,800/year** for a small team.
+## Setting Up Semantic Tokens with FramingUI
 
-For a team of 5 engineers building with AI, the ROI is massive.
+FramingUI's components use semantic CSS variables throughout. Install with pnpm:
 
-## Getting Started with Semantic Tokens
+```bash
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
+```
 
-FramingUI makes it easy:
-
-1. **Install FramingUI** (it's a fork of shadcn UI)
-2. **Use semantic variants** instead of hardcoded classes
-3. **Let AI generate components** — they'll be consistent by default
-
-Example:
+Button variants map directly to semantic roles:
 
 ```tsx
-import { Button } from '@/components/ui/button'
-
-// AI can generate this reliably
 <Button variant="primary">Primary Action</Button>
 <Button variant="secondary">Secondary Action</Button>
 <Button variant="destructive">Delete</Button>
 ```
 
-Every variant maps to semantic tokens:
-- `primary` → `bg-primary`, `text-on-primary`
-- `destructive` → `bg-error`, `text-on-error`
-- `secondary` → `bg-secondary`, `text-on-secondary`
+Each variant resolves through the token layer — `primary` uses `var(--foreground-accent)`, `destructive` uses `var(--border-error)`. AI tools working with FramingUI components generate these variants by name rather than guessing color values.
 
-## Conclusion
+The MCP server extends this further by making your token definitions queryable at generation time:
 
-Generic UI libraries work great when humans write code carefully. But **AI doesn't work carefully** — it works probabilistically.
+```bash
+npx -y @framingui/mcp-server@latest init
+```
 
-The hidden cost isn't the library itself. It's the **hundreds of hours fixing AI-generated inconsistencies** because the library wasn't designed for AI.
+After running `init`, Claude Code can retrieve your actual token catalog when generating UI, rather than relying on training data patterns.
 
-Semantic tokens aren't just a nice-to-have. They're **the difference between AI that helps and AI that creates technical debt.**
+## The Practical Implication
 
-FramingUI gives you the best of both worlds:
-- ✅ All the components you love (shadcn UI fork)
-- ✅ Semantic tokens for AI consistency
-- ✅ Automatic theme support
-- ✅ Zero runtime overhead
+Generic UI libraries work well when humans write code carefully. Careful is not a property of probabilistic generation. The cleanup cost is not a one-time debt — it recurs with every generation session until the underlying signal problem is fixed.
 
-Stop fixing AI's color mistakes. Start building with semantic tokens.
-
----
-
-**Try FramingUI:** [framingui.com](https://framingui.com)  
-**Read the docs:** [framingui.com/docs](https://framingui.com/docs)
+Semantic tokens fix the signal. AI generates consistent names because consistent names are what the codebase contains. That's the mechanism, and it doesn't require prompting discipline or post-generation review to enforce.

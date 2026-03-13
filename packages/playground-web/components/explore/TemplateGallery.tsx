@@ -28,7 +28,6 @@ interface Template {
   name: string;
   description: string;
   descriptionKo?: string;
-  descriptionJa?: string;
   thumbnail?: string;
   category: string;
   price?: number;
@@ -184,7 +183,6 @@ export function TemplateGallery({
                   name={template.name}
                   description={template.description}
                   descriptionKo={template.descriptionKo}
-                  descriptionJa={template.descriptionJa}
                   thumbnail={template.thumbnail}
                   category={template.category}
                   price={template.price}

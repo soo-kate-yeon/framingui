@@ -1,6 +1,6 @@
 ---
-title: "Semantic Color Naming: A Guide for Developers"
-description: "Stop using 'blue-500' everywhere. Learn semantic color naming for design systems that scale, support dark mode, and make AI code generation actually work."
+title: "시맨틱 컬러 네이밍: 개발자를 위한 실전 가이드"
+description: "bg-blue-500을 곳곳에 쓰는 것을 멈추세요. 스케일 가능하고 다크 모드를 지원하며 AI 코드 생성이 실제로 작동하는 디자인 시스템을 위한 시맨틱 컬러 네이밍을 알려드립니다."
 date: "2026-03-11"
 author:
   name: "FramingUI Team"
@@ -14,860 +14,141 @@ coverImage: ""
 published: true
 ---
 
-## The Problem
+코드베이스에 파란색 계열이 47가지 있어요. 대부분은 그때그때 "좋아 보이는 것"을 고른 결과죠. 이제 브랜드 색상을 바꿔야 하는데, 빠진 것 없이 전부 찾을 수 있을지 걱정하면서 하루를 search-and-replace에 써야 할 것 같아요.
 
-You're building a button component. What color do you use?
+이게 리터럴 컬러 네이밍이 치르는 비용이에요. 해결책은 더 많은 기율이 아니라 다른 네이밍 시스템이에요.
 
-**Option 1:** Hardcoded hex  
-```tsx
-<button style={{ background: '#3B82F6' }}>Click me</button>
-```
+## 리터럴 vs. 시맨틱 네이밍
 
-**Option 2:** Literal color name  
-```tsx
-<button className="bg-blue-500">Click me</button>
-```
+리터럴 이름은 색상이 어떻게 생겼는지를 묘사해요. `blue-500`, `gray-700`, `#3B82F6`. 베이스 팔레트에서는 괜찮지만, 컴포넌트에서 직접 사용하는 순간 부채가 돼요.
 
-**Option 3:** Semantic name  
-```tsx
-<button className="bg-primary-500">Click me</button>
-```
+시맨틱 이름은 색상이 무엇을 하는지를 묘사해요. `primary`, `text-secondary`, `surface-elevated`, `border-subtle`. 의도를 전달하죠. 컴포넌트에서 `bg-surface-elevated`를 읽으면 이게 상승된 서피스, 즉 모달, 팝오버, 플로팅 요소용이라는 걸 알아요. `bg-gray-50`을 읽으면 추측해야 하죠.
 
-Most developers pick option 1 or 2. Then six months later:
+실용적인 차이: 리터럴 이름에서는 브랜드 색상을 바꾸면 이전 색상의 모든 인스턴스를 찾아서 교체해야 해요. 시맨틱 이름에서는 매핑 하나를 업데이트하면 모든 컴포넌트가 자동으로 바뀌어요.
 
-- The brand color changes from blue to purple
-- Dark mode is added, and `blue-500` doesn't work on dark backgrounds
-- AI generates components using `bg-blue-500` in random places
-- You have 50+ hardcoded blues scattered across the codebase
+## 2계층 시스템
 
-**The root cause:** Non-semantic color naming.
+가장 유지보수하기 좋은 구조는 원시 색상 값과 시맨틱 의미를 분리하는 거예요.
 
-This guide teaches you how to name colors **by purpose, not appearance**—a skill that makes design systems scalable, themeable, and AI-friendly.
+**1계층: 베이스 팔레트**
 
-## TL;DR
-
-- **Bad naming:** `blue-500`, `gray-700`, `#3B82F6` (describes appearance)
-- **Good naming:** `primary`, `text-primary`, `surface-elevated` (describes purpose)
-- **Semantic naming** means colors are named by **role** (what they do) not **value** (what they look like)
-- Benefits: Easy theme switching, dark mode support, brand color changes don't break everything
-- AI tools generate better code with semantic names (they understand **intent**)
-- Use a two-tier system: **base palette** (literal names) → **semantic aliases** (role-based names)
-
-## Why Literal Color Names Fail
-
-### Scenario 1: Brand Color Change
-
-Your startup launches with blue as the primary color:
-
-```css
-/* All over your codebase */
-.button { background: blue-500; }
-.link { color: blue-600; }
-.badge { border-color: blue-400; }
-.focus-ring { ring-color: blue-500; }
-```
-
-Six months later, your designer says: "We're rebranding to purple."
-
-**How many files do you need to update?** All of them. And you'll miss some, guaranteed.
-
-**With semantic naming:**
-
-```css
-.button { background: var(--color-primary-500); }
-.link { color: var(--color-primary-600); }
-.badge { border-color: var(--color-primary-400); }
-.focus-ring { ring-color: var(--color-primary-500); }
-```
-
-**To rebrand:** Change one line in your design tokens:
-
-```json
-{
-  "color": {
-    "primary": {
-      "500": { "value": "#8B5CF6" } // Changed from blue to purple
-    }
-  }
-}
-```
-
-Rebuild → entire app updates. No find-and-replace nightmares.
-
-### Scenario 2: Dark Mode
-
-You use `gray-100` for card backgrounds in light mode. Looks great.
-
-Then you add dark mode. Now `gray-100` (a light gray) makes no sense on a dark background.
-
-**Literal naming:**
-
-```tsx
-<div className="bg-gray-100 dark:bg-gray-800">
-  <!-- Every component needs manual dark mode overrides -->
-</div>
-```
-
-**Semantic naming:**
-
-```tsx
-<div className="bg-surface-primary">
-  <!-- Color automatically adapts to theme -->
-</div>
-```
+리터럴 이름을 가진 원시 색상 값이에요. 이게 구성 요소예요. 컴포넌트에서 직접 쓰지 않아요.
 
 ```css
 :root {
-  --color-surface-primary: #F9FAFB; /* light mode */
-}
-
-[data-theme="dark"] {
-  --color-surface-primary: #1F2937; /* dark mode */
+  --palette-blue-400: #60A5FA;
+  --palette-blue-500: #3B82F6;
+  --palette-blue-600: #2563EB;
+  --palette-red-500:  #EF4444;
+  --palette-red-600:  #DC2626;
+  --palette-gray-50:  #F9FAFB;
+  --palette-gray-100: #F3F4F6;
+  --palette-gray-900: #111827;
 }
 ```
 
-One class. No dark: prefix needed. Scales to infinite themes (high contrast, colorblind-friendly, etc.).
+**2계층: 시맨틱 별칭**
 
-### Scenario 3: AI Code Generation
+1계층 값을 참조하는 역할 기반 이름이에요. 컴포넌트에서 사용하는 게 이거예요.
 
-**Prompt:** "Create a call-to-action button"
+```css
+:root {
+  /* 브랜드 */
+  --color-primary:       var(--palette-blue-500);
+  --color-primary-hover: var(--palette-blue-600);
 
-**AI with literal colors:**
+  /* 텍스트 */
+  --color-text-primary:   var(--palette-gray-900);
+  --color-text-secondary: var(--palette-gray-600);
+  --color-text-disabled:  var(--palette-gray-400);
+
+  /* 서피스 */
+  --color-surface-base:     var(--palette-gray-50);
+  --color-surface-card:     #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+
+  /* 보더 */
+  --color-border-default: var(--palette-gray-200);
+  --color-border-subtle:  var(--palette-gray-100);
+  --color-border-strong:  var(--palette-gray-400);
+
+  /* 피드백 */
+  --color-danger:         var(--palette-red-500);
+  --color-danger-hover:   var(--palette-red-600);
+  --color-danger-surface: #FEF2F2;
+}
+```
+
+파란색에서 보라색으로 리브랜딩할 때는 1계층을 업데이트해요.
+
+```css
+--palette-blue-500: #8B5CF6;  /* 이제 보라색 */
+```
+
+`--color-primary`를 참조하는 모든 것이 자동으로 바뀌어요. 컴포넌트 파일에서 바꿀 게 없어요.
+
+## 수동 오버라이드 없이 다크 모드 구현
+
+시맨틱 시스템은 다크 모드를 수동으로 힘들게 처리하는 대신 구조적으로 단순하게 만들어줘요.
+
+잘못된 방식:
 
 ```tsx
-<button className="bg-blue-500 hover:bg-blue-600 text-white">
-  Get Started
-</button>
-```
-
-AI picked `blue-500` because that's common in examples. But is that your brand's CTA color? Maybe. Maybe not.
-
-**AI with semantic colors:**
-
-AI reads your design tokens via MCP:
-
-```json
-{
-  "component": {
-    "button": {
-      "primary": {
-        "background": { "value": "color.primary.500" }
-      }
-    }
-  }
-}
-```
-
-**AI output:**
-
-```tsx
-<button className="bg-primary-500 hover:bg-primary-600 text-white">
-  Get Started
-</button>
-```
-
-AI used the **correct** color because the token name describes **purpose** (primary CTA), not appearance (blue).
-
-## Semantic vs. Literal Naming: Core Concepts
-
-### Literal Naming (Bad)
-
-Names describe what the color **looks like**:
-
-```
-blue-500, red-600, gray-900, teal-400
-```
-
-**Problems:**
-
-- Doesn't tell you **where** to use it
-- Breaks when color changes (blue → purple? Now the name is wrong)
-- Requires manual mapping to UI roles
-
-### Semantic Naming (Good)
-
-Names describe what the color **does**:
-
-```
-primary, danger, text-primary, surface-elevated, border-subtle
-```
-
-**Benefits:**
-
-- Describes **purpose** (primary CTA, error state, card background)
-- Works with any color value (blue, purple, green—name stays the same)
-- Self-documenting (developers know when to use it)
-
-## The Two-Tier Color System
-
-Best practice: **Base palette + semantic aliases**
-
-```
-┌─────────────────────┐
-│   Base Palette      │  ← Literal names (blue-500, gray-700)
-│   (Color values)    │     Pure colors with no meaning
-└──────────┬──────────┘
-           │
-           │  Reference (alias)
-           │
-           ▼
-┌─────────────────────┐
-│  Semantic Tokens    │  ← Role-based names (primary, danger, text-primary)
-│  (Aliases)          │     What the color is FOR
-└─────────────────────┘
-```
-
-### Example
-
-**Base palette (literal):**
-
-```json
-{
-  "color": {
-    "blue": {
-      "400": { "value": "#60A5FA", "type": "color" },
-      "500": { "value": "#3B82F6", "type": "color" },
-      "600": { "value": "#2563EB", "type": "color" }
-    },
-    "red": {
-      "500": { "value": "#EF4444", "type": "color" },
-      "600": { "value": "#DC2626", "type": "color" }
-    },
-    "gray": {
-      "100": { "value": "#F3F4F6", "type": "color" },
-      "900": { "value": "#111827", "type": "color" }
-    }
-  }
-}
-```
-
-**Semantic aliases:**
-
-```json
-{
-  "color": {
-    "primary": {
-      "400": { "value": "{color.blue.400}", "type": "color" },
-      "500": { "value": "{color.blue.500}", "type": "color" },
-      "600": { "value": "{color.blue.600}", "type": "color" }
-    },
-    "danger": {
-      "500": { "value": "{color.red.500}", "type": "color" },
-      "600": { "value": "{color.red.600}", "type": "color" }
-    },
-    "text": {
-      "primary": { "value": "{color.gray.900}", "type": "color" },
-      "secondary": { "value": "{color.gray.600}", "type": "color" }
-    }
-  }
-}
-```
-
-**In code:**
-
-```tsx
-// ❌ Bad: literal name
-<button className="bg-blue-500">Submit</button>
-
-// ✅ Good: semantic name
-<button className="bg-primary-500">Submit</button>
-```
-
-To rebrand, update the alias:
-
-```json
-{
-  "color": {
-    "primary": {
-      "500": { "value": "{color.purple.500}" } // Changed reference
-    }
-  }
-}
-```
-
-All components using `primary-500` now show purple. Zero code changes.
-
-## Semantic Color Categories
-
-### 1. **Brand Colors** (Intentional Actions)
-
-Use for primary CTAs, links, focus states, brand elements.
-
-```json
-{
-  "color": {
-    "primary": {
-      "50": { "value": "#EFF6FF" },
-      "500": { "value": "#3B82F6" },
-      "900": { "value": "#1E3A8A" }
-    },
-    "secondary": {
-      "500": { "value": "#8B5CF6" }
-    }
-  }
-}
-```
-
-**When to use:**
-
-- `primary`: Main CTA buttons, active navigation, links
-- `secondary`: Secondary actions, accents, highlights
-
-**Naming variations:**
-
-- `primary-hover`, `primary-active`, `primary-disabled`
-- `primary-text` (text on primary background)
-
-### 2. **Feedback Colors** (System States)
-
-Use for success, error, warning, info messages.
-
-```json
-{
-  "color": {
-    "success": {
-      "50": { "value": "#F0FDF4" },
-      "500": { "value": "#22C55E" },
-      "700": { "value": "#15803D" }
-    },
-    "danger": {
-      "50": { "value": "#FEF2F2" },
-      "500": { "value": "#EF4444" },
-      "700": { "value": "#B91C1C" }
-    },
-    "warning": {
-      "500": { "value": "#F59E0B" }
-    },
-    "info": {
-      "500": { "value": "#3B82F6" }
-    }
-  }
-}
-```
-
-**When to use:**
-
-- `success`: Success messages, confirmations, positive actions
-- `danger` (or `error`): Errors, destructive actions, validation failures
-- `warning`: Warnings, cautionary messages
-- `info`: Informational messages, tips
-
-**Common mistake:** Using `error` for both error text AND error backgrounds. Be specific:
-
-```json
-{
-  "color": {
-    "error": {
-      "text": { "value": "#B91C1C" },
-      "bg": { "value": "#FEF2F2" },
-      "border": { "value": "#FCA5A5" }
-    }
-  }
-}
-```
-
-### 3. **Text Colors** (Content Hierarchy)
-
-Use for body text, headings, labels, disabled text.
-
-```json
-{
-  "color": {
-    "text": {
-      "primary": { "value": "#111827" },
-      "secondary": { "value": "#6B7280" },
-      "tertiary": { "value": "#9CA3AF" },
-      "disabled": { "value": "#D1D5DB" },
-      "inverse": { "value": "#FFFFFF" }
-    }
-  }
-}
-```
-
-**When to use:**
-
-- `text-primary`: Main headings, body text
-- `text-secondary`: Subheadings, descriptions, metadata
-- `text-tertiary`: Captions, placeholders, hints
-- `text-disabled`: Disabled buttons, inactive states
-- `text-inverse`: Text on dark backgrounds
-
-### 4. **Surface Colors** (Backgrounds & Layers)
-
-Use for page backgrounds, card backgrounds, modals, elevated surfaces.
-
-```json
-{
-  "color": {
-    "surface": {
-      "primary": { "value": "#FFFFFF" },
-      "secondary": { "value": "#F9FAFB" },
-      "tertiary": { "value": "#F3F4F6" },
-      "elevated": { "value": "#FFFFFF" },
-      "overlay": { "value": "rgba(0, 0, 0, 0.5)" }
-    }
-  }
-}
-```
-
-**When to use:**
-
-- `surface-primary`: Page background, main canvas
-- `surface-secondary`: Card backgrounds, sections
-- `surface-tertiary`: Nested cards, input backgrounds
-- `surface-elevated`: Modals, dropdowns, tooltips (with shadow)
-- `surface-overlay`: Modal backdrops, dimmed backgrounds
-
-### 5. **Border Colors** (Dividers & Outlines)
-
-Use for borders, dividers, focus rings.
-
-```json
-{
-  "color": {
-    "border": {
-      "default": { "value": "#E5E7EB" },
-      "subtle": { "value": "#F3F4F6" },
-      "strong": { "value": "#D1D5DB" },
-      "focus": { "value": "#3B82F6" }
-    }
-  }
-}
-```
-
-**When to use:**
-
-- `border-default`: Standard borders (cards, inputs, dividers)
-- `border-subtle`: Barely-visible separators
-- `border-strong`: Emphasized borders
-- `border-focus`: Focus rings on interactive elements
-
-## Dark Mode with Semantic Colors
-
-### The Wrong Way
-
-```tsx
-// ❌ Manual dark mode overrides everywhere
 <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-200 dark:border-gray-700">
-  <h2 className="text-gray-900 dark:text-white">Title</h2>
-  <p className="text-gray-600 dark:text-gray-400">Description</p>
-</div>
 ```
 
-**Problems:**
+작동하긴 해요. 하지만 모든 컴포넌트에 개별 다크 모드 변형이 필요해요. 일부는 빠뜨리게 돼요. 다른 건 잘못 처리하고요.
 
-- 3x the class names
-- Easy to forget dark: overrides
-- Doesn't scale (what about high-contrast mode? Colorblind themes?)
-
-### The Right Way
-
-```tsx
-// ✅ Semantic colors adapt automatically
-<div className="bg-surface-primary text-text-primary border-border-default">
-  <h2 className="text-text-primary">Title</h2>
-  <p className="text-text-secondary">Description</p>
-</div>
-```
-
-**Token definitions:**
+올바른 방식:
 
 ```css
-/* Light mode (default) */
 :root {
-  --color-surface-primary: #FFFFFF;
-  --color-text-primary: #111827;
-  --color-text-secondary: #6B7280;
+  --color-surface-card:   #FFFFFF;
+  --color-text-primary:   #111827;
   --color-border-default: #E5E7EB;
 }
 
-/* Dark mode */
 [data-theme="dark"] {
-  --color-surface-primary: #111827;
-  --color-text-primary: #F9FAFB;
-  --color-text-secondary: #D1D5DB;
+  --color-surface-card:   #1F2937;
+  --color-text-primary:   #F9FAFB;
   --color-border-default: #374151;
 }
 ```
 
-**Result:** Change `data-theme` attribute → entire app re-themes. Zero component changes.
-
-## Common Semantic Naming Mistakes
-
-### Mistake 1: Too Many Shades
-
-```json
-{
-  "color": {
-    "primary": {
-      "50": "...",
-      "100": "...",
-      "200": "...",
-      "300": "...",
-      "400": "...",
-      "500": "...",  // Which one is the "main" primary?
-      "600": "...",
-      "700": "...",
-      "800": "...",
-      "900": "..."
-    }
-  }
-}
-```
-
-**Problem:** Developers don't know which shade to use. Is `primary-500` for buttons? Or `primary-600`?
-
-**Solution:** Define semantic aliases for each use case:
-
-```json
-{
-  "component": {
-    "button": {
-      "primary": {
-        "background": { "value": "{color.primary.500}" },
-        "background-hover": { "value": "{color.primary.600}" },
-        "text": { "value": "{color.white}" }
-      }
-    }
-  }
-}
-```
-
-Now developers use `button-primary-background`, not `primary-500`.
-
-### Mistake 2: Mixing Literal and Semantic Names
-
-```json
-{
-  "color": {
-    "blue-500": "#3B82F6",  // Literal
-    "primary": "#3B82F6",   // Semantic
-    "cta-button": "#3B82F6" // Overly specific
-  }
-}
-```
-
-**Problem:** Inconsistent. Developers won't know which to use.
-
-**Solution:** Stick to one system (semantic) and use the two-tier approach:
-
-```json
-{
-  "color": {
-    "blue": { "500": "#3B82F6" },        // Base palette (literal)
-    "primary": { "value": "{color.blue.500}" }  // Semantic alias
-  }
-}
-```
-
-### Mistake 3: Component-Specific Colors
-
-```json
-{
-  "color": {
-    "button-primary-background": "#3B82F6",
-    "button-secondary-background": "#8B5CF6",
-    "card-background": "#FFFFFF",
-    "modal-background": "#FFFFFF",
-    "input-background": "#F9FAFB"
-  }
-}
-```
-
-**Problem:** This explodes into hundreds of tokens. Every component gets its own color, even when many use the same value.
-
-**Solution:** Use **layered semantics**—base colors + component tokens that **reference** base colors:
-
-```json
-{
-  "color": {
-    "primary": { "500": "#3B82F6" },
-    "surface": { "primary": "#FFFFFF", "secondary": "#F9FAFB" }
-  },
-  "component": {
-    "button": {
-      "primary": { "background": { "value": "{color.primary.500}" } }
-    },
-    "card": {
-      "background": { "value": "{color.surface.primary}" }
-    },
-    "modal": {
-      "background": { "value": "{color.surface.primary}" }
-    }
-  }
-}
-```
-
-Now `card` and `modal` share the same base color, but you can override individually if needed.
-
-## Naming Conventions
-
-### Pattern 1: Role-Based
-
-```
-{category}-{role}[-{variant}]
-```
-
-Examples:
-
-- `text-primary`, `text-secondary`, `text-disabled`
-- `surface-primary`, `surface-elevated`, `surface-overlay`
-- `border-default`, `border-subtle`, `border-focus`
-
-### Pattern 2: State-Based
-
-```
-{category}-{state}
-```
-
-Examples:
-
-- `button-hover`, `button-active`, `button-disabled`
-- `link-hover`, `link-visited`
-- `input-focus`, `input-error`
-
-### Pattern 3: Component-Specific
-
-```
-component.{component}.{property}
-```
-
-Examples:
-
-- `component.button.primary.background`
-- `component.card.border`
-- `component.badge.success.text`
-
-### Recommended Structure
-
-```json
-{
-  "color": {
-    // Base palette (literal names)
-    "blue": { "500": "#3B82F6" },
-    "gray": { "100": "#F3F4F6", "900": "#111827" },
-
-    // Semantic aliases (role-based)
-    "primary": { "500": "{color.blue.500}" },
-    "text": {
-      "primary": "{color.gray.900}",
-      "secondary": "{color.gray.600}"
-    },
-    "surface": {
-      "primary": "{color.white}",
-      "secondary": "{color.gray.100}"
-    },
-
-    // Component-specific (references semantic)
-    "component": {
-      "button": {
-        "primary": {
-          "background": "{color.primary.500}",
-          "text": "{color.white}"
-        }
-      }
-    }
-  }
-}
-```
-
-## AI Benefits of Semantic Naming
-
-### AI Without Semantic Colors
-
-**Prompt:** "Create a card with a title, description, and a danger button"
-
-**AI output:**
-
 ```tsx
-<div className="bg-white p-4 rounded border border-gray-200">
-  <h3 className="text-xl font-bold text-gray-900">Title</h3>
-  <p className="text-gray-600 mt-2">Description</p>
-  <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
-    Delete
-  </button>
-</div>
+<div className="bg-[var(--color-surface-card)] text-[var(--color-text-primary)] border-[var(--color-border-default)]">
 ```
 
-**Problems:**
+루트 엘리먼트의 속성 하나를 바꾸면 앱 전체가 리테마돼요. 컴포넌트 코드를 건드리지 않고 하이 컨트라스트, 색각 이상 친화적, 브랜드 변형 등 원하는 수만큼 테마를 만들 수 있어요.
 
-- `bg-white` might not be your card background token
-- `text-gray-600` might not be your secondary text color
-- `bg-red-500` might not be your danger color
+## 알아두면 좋은 시맨틱 카테고리
 
-You have to manually fix 4+ color classes.
+**브랜드 색상**은 의도적인 액션을 이끌어요. primary CTA, 활성 내비게이션 상태, 포커스 링, 링크 등이에요. 호버, 활성, 비활성 상태 변형을 포함해요.
 
-### AI With Semantic Colors
+**피드백 색상**은 시스템 상태를 전달해요. 성공 확인, 에러 메시지, 경고, 정보 알림이죠. 각각 텍스트, 배경, 보더 변형이 필요해요. 에러 텍스트와 에러 배경 둘 다에 `--color-error` 하나를 쓰면 대비 문제가 생겨요.
 
-**AI reads your design tokens:**
+**텍스트 색상**은 콘텐츠 계층을 만들어요. 3단계 시스템이면 대부분의 경우를 커버해요. primary (제목, 본문 텍스트), secondary (메타데이터, 설명), disabled (비활성 상태). 어두운 배경 위의 텍스트를 위한 inverse 색상도 있으면 완성돼요.
 
-```json
-{
-  "color": {
-    "surface": { "secondary": "#FFFFFF" },
-    "text": { "primary": "#111827", "secondary": "#6B7280" },
-    "border": { "default": "#E5E7EB" },
-    "danger": { "500": "#EF4444" }
-  }
-}
-```
+**서피스 색상**은 배경 레이어를 정의해요. 서피스마다 시각적 무게감이 달라요. 페이지 배경, 카드, 모달과 툴팁 같은 상승된 요소, 오버레이 배경 각각에 고유한 토큰이 필요해요.
 
-**AI output:**
+**보더 색상**은 구분선, 외곽선, 포커스 링을 다루어요. Subtle, default, strong 변형으로 과도하게 세부화하지 않으면서 필요한 범위를 커버해요.
 
-```tsx
-<div className="bg-surface-secondary p-4 rounded border border-border-default">
-  <h3 className="text-xl font-bold text-text-primary">Title</h3>
-  <p className="text-text-secondary mt-2">Description</p>
-  <button className="mt-4 bg-danger-500 text-white px-4 py-2 rounded">
-    Delete
-  </button>
-</div>
-```
+## 흔한 실수들
 
-**Result:** Every color class is correct on the first try. AI understood **intent** from token names.
+**시맨틱 레이어에 너무 많은 shade.** `primary-50`부터 `primary-900`을 시맨틱 토큰으로 만들면, 개발자들은 버튼 배경에 어떤 것을 쓸지, 호버 상태에 어떤 것을 쓸지 모르게 돼요. 시맨틱 레이어는 얇고 구체적으로 유지하세요. `--color-primary`, `--color-primary-hover`, `--color-primary-surface`. 전체 범위는 베이스 팔레트가 가지게 하면 돼요.
 
-## How to Migrate Existing Codebases
+**네이밍 시스템 혼합.** `--blue-500`과 `--color-primary`가 같은 값으로 둘 다 존재하면 혼란이 생겨요. 개발자들은 그 순간 더 적합해 보이는 것을 집어요. 하나의 시스템을 선택하고 유지하세요.
 
-### Step 1: Audit Current Colors
+**컴포넌트별 토큰 폭발.** `--button-primary-background`, `--card-background`, `--modal-background`, `--input-background`를 별도 토큰으로 만들면 이득 없이 표면적만 늘어나요. 카드 배경과 모달 배경은 보통 같은 서피스 색상을 공유해요. 시맨틱 토큰을 참조하고, 진짜 필요할 때만 컴포넌트별 오버라이드를 만드세요.
 
-Find all hardcoded colors:
+## AI 코드 생성에 이게 중요한 이유
 
-```bash
-# Search for hex codes
-rg "#[0-9A-Fa-f]{6}" --type tsx
+디자인 시스템 컨텍스트 없이 AI 도구가 UI 컴포넌트를 생성하면, 통계적으로 그럴듯한 색상 선택을 해요. 카드에는 `bg-white`, 보조 텍스트에는 `text-gray-600`, 에러에는 `bg-red-500`. 흔하니까요.
 
-# Search for Tailwind color classes
-rg "bg-(blue|red|gray|green)-\d+" --type tsx
-```
+이 선택들이 추상적으로 틀린 건 아니에요. 내 특정 시스템에 맞지 않는 거죠.
 
-### Step 2: Group by Purpose
+MCP 연결로 시맨틱 토큰이 표면화되면, AI 도구가 코드를 생성하기 전에 디자인 시스템을 조회할 수 있어요. 보조 텍스트가 아마도 `text-gray-600`일 거라고 추론하는 대신, 토큰 정의를 읽어요. `--color-text-secondary`가 특정 값에 매핑되어 있고, 그걸 쓰는 거죠. 생성된 컴포넌트가 처음부터 내 시스템 안에 착지해요.
 
-Categorize colors by role:
+토큰 이름이 의도를 담아요. `--color-danger`가 파괴적인 액션을 의미한다고 아는 AI는, 빨간색이 적절해 보이는 곳 어디서나가 아니라 올바른 자리에 `bg-[var(--color-danger)]`를 쓸 거예요.
 
-- Primary CTAs → `color.primary`
-- Error states → `color.danger`
-- Card backgrounds → `color.surface.secondary`
-- Body text → `color.text.primary`
-
-### Step 3: Define Semantic Tokens
-
-```json
-{
-  "color": {
-    "primary": { "500": "#3B82F6" },
-    "danger": { "500": "#EF4444" },
-    "text": { "primary": "#111827" },
-    "surface": { "secondary": "#FFFFFF" }
-  }
-}
-```
-
-### Step 4: Replace Gradually
-
-Don't try to update everything at once. Replace component-by-component:
-
-```diff
-- <button className="bg-blue-500 hover:bg-blue-600">
-+ <button className="bg-primary-500 hover:bg-primary-600">
-```
-
-Use codemod tools (e.g., [jscodeshift](https://github.com/facebook/jscodeshift)) for bulk replacements.
-
-### Step 5: Enforce with Linting
-
-Add ESLint rules to prevent hardcoded colors:
-
-```js
-// .eslintrc.js
-module.exports = {
-  rules: {
-    "no-hex-colors": "error", // Custom rule
-    "no-literal-colors": "error"
-  }
-}
-```
-
-## Real-World Example: GitHub's Color System
-
-GitHub uses a sophisticated semantic color system. Here's a simplified version:
-
-```json
-{
-  "color": {
-    "text": {
-      "primary": "#1F2328",
-      "secondary": "#656D76",
-      "link": "#0969DA",
-      "danger": "#CF222E"
-    },
-    "bg": {
-      "default": "#FFFFFF",
-      "subtle": "#F6F8FA",
-      "emphasis": "#1F2328"
-    },
-    "border": {
-      "default": "#D0D7DE",
-      "muted": "#D0D7DE"
-    },
-    "btn": {
-      "primary": {
-        "bg": "#1F883D",
-        "text": "#FFFFFF",
-        "hover": "#1A7F37"
-      },
-      "danger": {
-        "bg": "#CF222E",
-        "text": "#FFFFFF",
-        "hover": "#A40E26"
-      }
-    }
-  }
-}
-```
-
-**Key takeaways:**
-
-- Role-based names (`text-primary`, `bg-default`)
-- Component-specific overrides (`btn.primary.bg`)
-- Dark mode support (GitHub swaps these values for dark theme)
-
-## Tools & Resources
-
-### Token Validators
-
-- **Style Dictionary:** Transform design tokens into platform-specific code
-- **FramingUI:** Auto-generate CSS, Tailwind, TypeScript types, and AI integration from tokens
-
-### Naming Generators
-
-- **Token Namer (coming soon):** Analyze your colors, suggest semantic names
-- **Figma Tokens Studio:** Plugin for managing semantic tokens in Figma
-
-### Linters
-
-- **ESLint rules:** Enforce semantic color usage, ban hardcoded hex values
-
-## Conclusion
-
-Semantic color naming is one of the highest-leverage improvements you can make to your design system.
-
-**Benefits:**
-
-- ✅ Rebrand in minutes (change one value, not hundreds)
-- ✅ Dark mode with zero manual overrides
-- ✅ AI generates on-brand code automatically
-- ✅ Self-documenting (names explain purpose)
-- ✅ Scales to any theme (high-contrast, colorblind-friendly, etc.)
-
-**The key:** Name colors by **what they do**, not **what they look like**.
-
-**Start simple:**
-
-1. Define base palette (literal names: `blue-500`, `gray-900`)
-2. Add semantic aliases (`primary`, `text-primary`, `surface-primary`)
-3. Use semantic names in components
-4. Never hardcode hex values again
-
-Your future self (and AI tools) will thank you.
-
-Want automatic semantic color generation? [Try FramingUI](https://framingui.com).
+시맨틱 컬러 네이밍은 프로젝트 초반에 할 수 있는 레버리지 높은 구조적 선택 중 하나예요. 네이밍 규약 자체는 비용이 없어요. 색상을 바꾸거나, 테마를 추가하거나, AI에 컴포넌트 생성을 요청할 때마다 돌아와요.

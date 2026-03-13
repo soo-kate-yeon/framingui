@@ -70,7 +70,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
         part2: 'for AI Agents',
       },
       description:
-        'Tired of AI-generated UIs that look like every other AI app? Install framingui\'s design system and ship clean, consistent UI—without a designer. The Canva for agentic coding.',
+        "Tired of AI-generated UIs that look like every other AI app? Install framingui's design system and ship clean, consistent UI—without a designer. The Canva for agentic coding.",
       buttons: {
         tryStudio: 'Try Explore Free',
         getStarted: 'Start Free Trial',
@@ -227,94 +227,6 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
           title: 'Figma 가져오기 기능이 있나요?',
           content:
             '아직 제공하지 않습니다. 커스텀 디자인을 AI가 읽을 수 있는 토큰으로 변환하는 Figma-to-Tekton 브리지를 개발하고 있습니다.',
-        },
-      ],
-    },
-  },
-  ja: {
-    nav: {
-      brandName: 'framingui',
-      pricing: '料金',
-      docs: 'ドキュメント',
-      tryStudio: 'Exploreを試す',
-      getStarted: '始める',
-    },
-    hero: {
-      brandName: 'framingui',
-      title: {
-        part1: 'AI エージェント向け',
-        part2: 'デザインテンプレート',
-      },
-      description:
-        'AI で開発するとき、どこかで見たような AI っぽいデザインに悩んだことはありませんか？framingui のデザインシステムを導入するだけで、デザイナーなしでもシンプルで一貫した UI を作れます。',
-      buttons: {
-        tryStudio: 'Exploreを無料で試す',
-        getStarted: '始める',
-        browseThemes: 'テンプレートを見る',
-      },
-      noCreditCard: 'クレジットカード不要',
-    },
-    mainImage: {
-      alt: 'メインダッシュボードのプレビュー',
-      placeholder: 'メインダッシュボードのプレビュー',
-    },
-    sections: {
-      s1: {
-        title: 'デザインシステムの中核、トークン',
-        description:
-          'カラー、タイポグラフィ、余白をトークンで体系化しました。OKLCH ベースの構造で、エージェントが基準を正確に適用できます。',
-      },
-      s2: {
-        title: '本番品質を支えるレイアウト',
-        description:
-          'App/Web Shell 構造を基準にレスポンシブレイアウトを構成します。モバイルからデスクトップまでトークンスケールを一貫して保てます。',
-      },
-      s3: {
-        title: '30+ shadcn/ui コンポーネントを標準搭載',
-        description:
-          'デザインガイドを自動反映し、サービスのトーンに合う UI を構成します。基本コンポーネントだけでも実用レベルの画面を作れます。',
-      },
-      s4: {
-        title: 'MCP ですぐ実運用へ',
-        description:
-          'Figma がなくても始められます。IDE、CLI、OpenClaw で自然言語で指示すれば、エージェントがフロントエンドコードをすぐ生成します。',
-      },
-    },
-    section5: {
-      badge: '3月ローンチ ベータ特典',
-      title: 'デザインシステムを1つ無料で使えます。',
-      description:
-        'レビューを残すと 1 年間の Creator Pass を提供します。期間中は制限なく利用できます。',
-      cta: 'デザインシステムを見る',
-    },
-    faq: {
-      title: 'よくある質問',
-      subtitle: 'framingui を始める前によく確認される内容です。',
-      items: [
-        {
-          title: 'テンプレートはどう使いますか？',
-          content:
-            'テンプレートを選んでコマンド1つで MCP サーバーをインストールできます。すぐに AI コーディングツールで本番 UI を生成でき、ベータ期間は最初のテンプレートを無料で提供します。',
-        },
-        {
-          title: 'framingui は無料ですか？',
-          content:
-            'framingui は有料サービスです。MCP サーバーへのアクセスと実運用 UI 生成には、最低1つのテンプレート購入が必要です。',
-        },
-        {
-          title: 'アプリ開発でも使えますか？',
-          content:
-            '現在は React エコシステム（Next.js、Vite）をサポートしています。init CLI がフレームワークを自動検出して設定します。ネイティブモバイル向けデザインシステム対応も準備中です。',
-        },
-        {
-          title: '既存プロジェクトに適用できますか？',
-          content:
-            '適用できます。プロジェクトルートで npx @framingui/mcp-server init を実行すると、フレームワーク認識、依存関係インストール、設定を自動で行います。既存コードは壊しません。',
-        },
-        {
-          title: 'Figma 取り込み機能はありますか？',
-          content:
-            '現在は提供していません。カスタムデザインを AI が読めるトークンへ変換する Figma-to-Tekton ブリッジを開発中です。',
         },
       ],
     },

@@ -14,1008 +14,199 @@ coverImage: ""
 published: true
 ---
 
-## 혼자 개발하고 있다 (그래도 괜찮다)
+보더 레디어스 값이 네 가지. 각각 "그때는 맞았던" 파란색이 세 가지. 시간이 갈수록 뒤죽박죽이 된 색상 팔레트. 시스템 없이 UI를 만들면 자연스럽게 나타나는 결과예요.
 
-1인 개발자로 일하고 계신가요? SaaS 제품을 만들거나, 사이드 프로젝트를 하거나, 프리랜서로 활동 중이실 겁니다. 코드도 직접 짜고, 배포도 관리하고, 지원도 처리하면서 *동시에* UI까지 전문적으로 만들어야 합니다.
+디자이너가 없어도 고칠 수 있어요. 필요한 건 명확한 결정들을 기록하는 것, 그리고 6주 뒤에 자기 자신이 그 결정을 뒤집지 못하게 하는 형식이에요. 그게 디자인 토큰이 해주는 일이거든요. 오후 반나절이면 기반을 다질 수 있어요.
 
-**문제:** 디자인 배경이 없습니다. Tailwind 문서에서 클래스를 복붙합니다. 버튼 스타일이 12페이지에 걸쳐 7가지나 됩니다. 색상 팔레트는 "그때그때 괜찮아 보이는 것"입니다.
+## 왜 일관성이 무너지는가
 
-**해결책:** 디자이너가 필요한 게 아닙니다. **디자인 시스템**이 필요합니다. 오후 한나절이면 만들 수 있습니다.
+1인 개발에는 특유의 실패 패턴이 있어요. 스타일 결정을 내리는 사람이 나 혼자이니, 비일관성을 잡아낼 사람도 나 혼자예요. 새벽 3시에 기능 구현에 집중하다 보면 색상 값을 감사할 여유가 없죠. "좋아 보이는 것"을 쓰고 넘어가요.
 
-## 요약: 2시간 만에 완성하는 디자인 시스템
+1일차: `<button className="bg-blue-500 px-4 py-2 rounded">Submit</button>`
 
-**만들게 될 것:**
-- 전문적인 색상 팔레트 (WCAG AA 준수)
-- 일관된 간격과 타이포그래피 스케일
-- 재사용 가능한 컴포넌트 토큰
-- 자동 토큰 검증 (스타일 불일치 방지)
+15일차: `<button className="bg-blue-600 px-6 py-3 rounded-lg">Continue</button>`
 
-**얻게 될 것:**
-- 디자이너가 만든 것 같은 UI (디자이너가 아니어도)
-- 브랜드에 맞는 컴포넌트를 자동 생성하는 AI 도구
-- "스타일 조정하다 시간 다 보내기" 제로
-- 디자인 리뷰 없이도 UI를 배포할 수 있는 자신감
+30일차: `<button style={{ background: '#3B82F6', padding: '12px 24px' }}>Next</button>`
 
-**시간 투자:** 설정 2시간, 유지보수 0시간 (토큰이 알아서 강제)
+그 시점마다 각자 "맞는" 선택이었어요. 모아놓고 보면 세 명이 따로따로 만든 것처럼 보이는 제품이 되죠. 과거의 나, 현재의 나, 새벽 3시의 나가 디자인 위원회인 셈이에요.
 
-**기술 요구사항:**
-- 기본적인 React 지식
-- 커맨드 라인 사용 경험
-- 아무 텍스트 에디터
+디자인 토큰은 사용 시점에서의 결정을 없애서 이 문제를 해결해요. `var(--color-brand-primary)`를 쓸 때 색상을 고르는 게 아니에요. 이미 한 번 고른 거예요. 토큰이 곧 결정이고, 한 번 만들면 어디서든 적용돼요.
 
-**디자인 스킬은 필요 없습니다.** 진심입니다.
+## 토큰 기반 만들기
 
-## 1인 개발자에게 디자인 시스템이 필요한 이유
+디자인 토큰 기반은 두 레이어로 구성돼요. 원시 색상 값의 베이스 팔레트와, 그 값에 의미를 부여하는 시맨틱 레이어예요.
 
-### 문제: 점점 퍼지는 비일관성
-
-프로젝트 1일차:
-```tsx
-<button className="bg-blue-500 px-4 py-2 rounded">Submit</button>
-```
-
-15일차:
-```tsx
-<button className="bg-blue-600 px-6 py-3 rounded-lg">Continue</button>
-```
-
-30일차:
-```tsx
-<button style={{ background: '#3B82F6', padding: '12px 24px' }}>Next</button>
-```
-
-**파란색이 세 가지. 크기도 세 가지. 보더 레디어스도 세 가지.**
-
-이제 이걸 50개 컴포넌트, 200개 파일, 6개월 개발 기간에 적용해 보세요.
-
-**결과:** UI가 세 명이 각각 디자인한 것처럼 보입니다. 실제로 그렇거든요 (과거의 나, 현재의 나, 새벽 3시에 지친 나).
-
-### 디자인 시스템이 해결하는 것
-
-디자인 토큰을 쓰면 이렇게 작성합니다:
-
-```tsx
-import { tokens } from '@/design-system/tokens';
-
-<button style={{
-  background: tokens.button.bg.primary,
-  padding: `${tokens.spacing[2]} ${tokens.spacing[4]}`,
-  borderRadius: tokens.radius.md,
-}}>
-  Submit
-</button>
-```
-
-**모든 버튼이 이제:**
-- 같은 파란색 (토큰에서)
-- 같은 간격 (스케일에서)
-- 같은 보더 레디어스 (토큰에서)
-
-**장점:**
-- ✅ 앱 전체에서 일관된 UI
-- ✅ 토큰 하나 바꾸면 전체 업데이트
-- ✅ AI 도구가 브랜드에 맞는 컴포넌트 생성
-- ✅ "이 파란색이 저 파란색이랑 맞나?" 더 이상 안 함
-
-## 2시간 설정 가이드
-
-### 1시간차: 디자인 토큰 생성
-
-Figma를 건드리지 않고 전문적인 색상 팔레트, 간격 스케일, 타이포그래피 시스템을 만들겠습니다.
-
-#### 1단계: framingui 설치 (5분)
-
-```bash
-# 새 Next.js 프로젝트 생성 (또는 기존 프로젝트 사용)
-npx create-next-app@latest my-app
-cd my-app
-
-# framingui 설치
-npm install @framingui/core
-
-# yarn을 사용한다면
-yarn add @framingui/core
-
-# pnpm을 사용한다면
-pnpm add @framingui/core
-```
-
-#### 2단계: 7가지 간단한 질문에 답하기 (10분)
-
-```bash
-npx @framingui/cli init
-```
-
-CLI가 질문을 합니다. 디자인 경험 없이 답하는 방법입니다:
-
-**질문 1: 주요 브랜드 색상은?**
-
-모르겠다면 검증된 색상 심리학 가이드라인에서 고르세요:
-
-- **테크/SaaS**: 파란색 (신뢰, 전문성)
-  - 추천: `{ l: 0.5, c: 0.15, h: 240 }`
-
-- **건강/웰니스**: 초록색 (건강, 성장)
-  - 추천: `{ l: 0.55, c: 0.12, h: 140 }`
-
-- **금융**: 진한 파란색 또는 보라색 (신뢰, 안정)
-  - 추천: `{ l: 0.45, c: 0.13, h: 260 }`
-
-- **이커머스**: 주황색 또는 빨간색 (에너지, 긴급성)
-  - 추천: `{ l: 0.6, c: 0.15, h: 30 }`
-
-**질문 2: 대비 수준은?**
-
-- **AA** 선택 (표준 접근성)
-- 의료/정부 서비스용이라면 AAA 선택 (더 엄격한 규정)
-
-**질문 3: 보더 레디어스 스타일은?**
-
-- **Minimal** (0-4px): 전문적이고 진지한 제품 (핀테크, B2B)
-- **Moderate** (6-8px): 표준 SaaS, 균형 잡힌 느낌
-- **Rounded** (12-16px): 소비자 앱, 친근한 느낌
-
-**질문 4: 간격 밀도는?**
-
-- **Compact**: 데이터 많은 대시보드, 파워 유저
-- **Comfortable** (권장): 표준 앱, 일반 사용
-- **Spacious**: 마케팅 사이트, 콘텐츠 중심
-
-**질문 5: 타이포그래피 스케일은?**
-
-- **Medium** 선택 (나중에 커스터마이징 가능)
-
-**질문 6: 다크 모드?**
-
-- **Yes** 선택 (무료이고, 대부분의 사용자가 기대함)
-
-**질문 7: 프레임워크?**
-
-- 프레임워크 선택 (Next.js, Vite, Remix 등)
-- framingui가 가능하면 자동 감지함
-
-#### 3단계: 생성된 토큰 확인 (5분)
-
-framingui가 방금 생성한 것:
-
-```
-my-app/
-├── tokens.css           # CSS 변수로 된 디자인 토큰
-├── tokens.json          # 토큰 메타데이터 (도구용)
-├── tailwind.config.js   # Tailwind 통합 (감지된 경우)
-└── components/
-    └── tokens.ts        # TypeScript 토큰 정의
-```
-
-`tokens.css`를 열어보세요:
+**시맨틱 레이어부터 시작하세요.** 진짜 가치가 거기서 나오거든요.
 
 ```css
+/* globals.css */
 :root {
-  /* 프라이머리 색상 스케일 (10단계, WCAG 준수) */
-  --color-primary-50: oklch(0.95 0.03 240);
-  --color-primary-100: oklch(0.90 0.06 240);
-  --color-primary-500: oklch(0.50 0.15 240);  /* 메인 브랜드 색상 */
-  --color-primary-900: oklch(0.25 0.08 240);
+  /* 브랜드 */
+  --color-brand-primary:       oklch(0.50 0.15 240);
+  --color-brand-primary-hover: oklch(0.44 0.14 240);
 
-  /* 간격 스케일 (4px 그리드 기반) */
-  --spacing-1: 0.25rem;  /* 4px */
-  --spacing-2: 0.5rem;   /* 8px */
-  --spacing-4: 1rem;     /* 16px */
-  --spacing-6: 1.5rem;   /* 24px */
+  /* 서피스 */
+  --color-surface-page:     #FAFAFA;
+  --color-surface-card:     #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
 
-  /* 컴포넌트 토큰 (시맨틱) */
-  --button-bg-primary: var(--color-primary-500);
-  --button-fg-primary: oklch(0.98 0.01 240);  /* 대비 보장됨 */
+  /* 텍스트 */
+  --color-text-primary:   #111827;
+  --color-text-secondary: #6B7280;
+
+  /* 보더 */
+  --color-border-default: #E5E7EB;
+
+  /* 간격 스케일 */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+
+  /* 레디어스 */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+[data-theme="dark"] {
+  --color-surface-page:     #111827;
+  --color-surface-card:     #1F2937;
+  --color-surface-elevated: #374151;
+  --color-text-primary:     #F9FAFB;
+  --color-text-secondary:   #9CA3AF;
+  --color-border-default:   #374151;
 }
 ```
 
-**방금 일어난 일:**
+이 CSS는 파일 하나에 담겨요. 다크 모드는 루트 엘리먼트의 속성 하나를 바꾸는 것으로 처리돼요. 이 변수를 쓰는 모든 컴포넌트가 자동으로 적응하죠.
 
-1. framingui가 주요 색상에서 10단계 색상 스케일 생성
-2. 모든 색상이 자동으로 WCAG AA 대비 요구사항 충족
-3. 간격 스케일이 수학적 진행을 따름 (임의적이지 않음)
-4. 컴포넌트 토큰이 시맨틱 사용 사례에 매핑
+## 컴포넌트에서 토큰 사용하기
 
-**디자인 지식이 필요 없습니다.** 이게 프로급입니다.
-
-#### 4단계: 시맨틱 토큰 추가 (20분)
-
-생성된 토큰은 기본입니다. 이제 시맨틱 의미를 추가합니다:
-
-```css
-/* tokens.css (이것들을 추가하세요) */
-
-:root {
-  /* 시맨틱 배경 토큰 */
-  --bg-page: var(--color-neutral-50);
-  --bg-surface: white;
-  --bg-surface-elevated: white;
-
-  /* 시맨틱 전경 토큰 */
-  --fg-primary: var(--color-neutral-900);
-  --fg-secondary: var(--color-neutral-600);
-  --fg-tertiary: var(--color-neutral-500);
-
-  /* 시맨틱 테두리 토큰 */
-  --border-default: var(--color-neutral-200);
-  --border-strong: var(--color-neutral-400);
-
-  /* 시맨틱 상태 토큰 */
-  --state-success: var(--color-success-500);
-  --state-warning: var(--color-warning-500);
-  --state-error: var(--color-error-500);
-  --state-info: var(--color-primary-500);
-}
-
-/* 다크 모드 오버라이드 */
-[data-theme='dark'] {
-  --bg-page: var(--color-neutral-900);
-  --bg-surface: var(--color-neutral-800);
-  --bg-surface-elevated: var(--color-neutral-750);
-
-  --fg-primary: var(--color-neutral-50);
-  --fg-secondary: var(--color-neutral-400);
-  --fg-tertiary: var(--color-neutral-500);
-
-  --border-default: var(--color-neutral-700);
-  --border-strong: var(--color-neutral-600);
-}
-```
-
-**팁:** 색상 이름(`gray-100`, `blue-500`) 대신 시맨틱 이름(`bg-surface`, `fg-primary`)을 사용하세요. 색상 팔레트를 바꿀 때 토큰만 업데이트하면 됩니다. 코드 변경 없이요.
-
-#### 5단계: 토큰 헬퍼 만들기 (20분)
-
-React에서 토큰을 쉽게 사용하도록 만듭니다:
-
-```typescript
-// lib/tokens.ts
-
-export const tokens = {
-  // 색상
-  bg: {
-    page: 'var(--bg-page)',
-    surface: {
-      base: 'var(--bg-surface)',
-      elevated: 'var(--bg-surface-elevated)',
-    },
-  },
-  fg: {
-    primary: 'var(--fg-primary)',
-    secondary: 'var(--fg-secondary)',
-    tertiary: 'var(--fg-tertiary)',
-  },
-  border: {
-    default: 'var(--border-default)',
-    strong: 'var(--border-strong)',
-  },
-
-  // 간격
-  spacing: {
-    1: 'var(--spacing-1)',
-    2: 'var(--spacing-2)',
-    3: 'var(--spacing-3)',
-    4: 'var(--spacing-4)',
-    6: 'var(--spacing-6)',
-    8: 'var(--spacing-8)',
-  },
-
-  // 타이포그래피
-  fontSize: {
-    xs: 'var(--font-size-xs)',
-    sm: 'var(--font-size-sm)',
-    base: 'var(--font-size-base)',
-    lg: 'var(--font-size-lg)',
-    xl: 'var(--font-size-xl)',
-    '2xl': 'var(--font-size-2xl)',
-  },
-
-  // 보더 레디어스
-  radius: {
-    sm: 'var(--radius-sm)',
-    md: 'var(--radius-md)',
-    lg: 'var(--radius-lg)',
-    full: 'var(--radius-full)',
-  },
-
-  // 그림자
-  shadow: {
-    sm: 'var(--shadow-sm)',
-    md: 'var(--shadow-md)',
-    lg: 'var(--shadow-lg)',
-  },
-
-  // 컴포넌트 토큰
-  button: {
-    bg: {
-      primary: 'var(--button-bg-primary)',
-      secondary: 'var(--button-bg-secondary)',
-      ghost: 'transparent',
-    },
-    fg: {
-      primary: 'var(--button-fg-primary)',
-      secondary: 'var(--button-fg-secondary)',
-      ghost: 'var(--fg-primary)',
-    },
-  },
-} as const;
-
-// TypeScript: 안전을 위해 토큰을 readonly로 만듦
-export type Tokens = typeof tokens;
-```
-
-이제 컴포넌트에서 토큰 사용:
+토큰을 정의했으면 일관성 있게 사용하세요. 목표는 컴포넌트 파일에 하드코딩된 색상 값을 없애는 거예요.
 
 ```tsx
-import { tokens } from '@/lib/tokens';
-
-export function Card({ children }) {
-  return (
-    <div style={{
-      background: tokens.bg.surface.elevated,
-      padding: tokens.spacing[6],
-      borderRadius: tokens.radius.lg,
-      boxShadow: tokens.shadow.md,
-    }}>
-      {children}
-    </div>
-  );
-}
-```
-
-**축하합니다!** 전문적인 디자인 시스템이 생겼습니다. 1시간차 완료.
-
-### 2시간차: AI를 디자인 시스템에 연결
-
-이제 AI 도구가 디자인 토큰을 사용해 컴포넌트를 자동 생성하게 만듭니다.
-
-#### 6단계: MCP 서버 설치 (5분)
-
-```bash
-# framingui MCP 서버 설치
-npm install @framingui/mcp-server
-```
-
-#### 7단계: AI 도구에서 MCP 설정 (10분)
-
-**Claude Code:**
-
-`.claude/mcp.json` 생성:
-
-```json
-{
-  "servers": {
-    "design-system": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "TEKTON_PROJECT_PATH": ".",
-        "TEKTON_TOKEN_PATH": "./tokens.json"
-      }
-    }
-  }
-}
-```
-
-**Cursor:**
-
-`.cursor/mcp.json` 생성:
-
-```json
-{
-  "mcpServers": {
-    "design-system": {
-      "command": "npx",
-      "args": ["@framingui/mcp-server"],
-      "env": {
-        "TEKTON_PROJECT_PATH": ".",
-        "TEKTON_TOKEN_PATH": "./tokens.json"
-      }
-    }
-  }
-}
-```
-
-AI 도구를 재시작하세요.
-
-#### 8단계: AI 통합 테스트 (10분)
-
-Claude Code 또는 Cursor에서:
-
-```
-You: 사용 가능한 디자인 토큰 목록을 보여줘
-
-Claude: [MCP 서버 쿼리]
-
-사용 가능한 디자인 토큰:
-- 색상: primary (10단계), success, warning, error
-- 간격: 1, 2, 3, 4, 6, 8, 12, 16
-- 타이포그래피: xs, sm, base, lg, xl, 2xl
-- 컴포넌트 토큰: button, card, input
-```
-
-이제 컴포넌트를 생성합니다:
-
-```
-You: 가격 카드 컴포넌트 만들어줘
-
-Claude: [MCP로 디자인 토큰 쿼리]
-```
-
-```tsx
-import { tokens } from '@/lib/tokens';
-
-export function PricingCard({ tier, price, features }) {
+// components/Card.tsx
+export function Card({ children }: { children: React.ReactNode }) {
   return (
     <div
       style={{
-        background: tokens.bg.surface.elevated,
-        padding: tokens.spacing[6],
-        borderRadius: tokens.radius.lg,
-        boxShadow: tokens.shadow.md,
-        border: `1px solid ${tokens.border.default}`,
+        background: 'var(--color-surface-card)',
+        border: '1px solid var(--color-border-default)',
+        borderRadius: 'var(--radius-md)',
+        padding: 'var(--spacing-6)',
       }}
     >
-      <h3
-        style={{
-          fontSize: tokens.fontSize.xl,
-          fontWeight: 'bold',
-          color: tokens.fg.primary,
-        }}
-      >
-        {tier}
-      </h3>
-
-      <p
-        style={{
-          fontSize: tokens.fontSize['2xl'],
-          fontWeight: 'bold',
-          color: tokens.fg.primary,
-          marginTop: tokens.spacing[4],
-        }}
-      >
-        ${price}<span style={{ fontSize: tokens.fontSize.sm }}>/mo</span>
-      </p>
-
-      <ul style={{ marginTop: tokens.spacing[6] }}>
-        {features.map((feature) => (
-          <li
-            key={feature}
-            style={{
-              color: tokens.fg.secondary,
-              marginTop: tokens.spacing[2],
-            }}
-          >
-            {feature}
-          </li>
-        ))}
-      </ul>
-
-      <button
-        style={{
-          marginTop: tokens.spacing[6],
-          width: '100%',
-          background: tokens.button.bg.primary,
-          color: tokens.button.fg.primary,
-          padding: `${tokens.spacing[3]} ${tokens.spacing[4]}`,
-          borderRadius: tokens.radius.md,
-          border: 'none',
-          cursor: 'pointer',
-        }}
-      >
-        Get Started
-      </button>
+      {children}
     </div>
   );
 }
 ```
 
-**주목:** 하드코딩된 값이 없습니다. 모든 토큰이 디자인 시스템에서 옵니다. AI가 자동 생성했습니다.
-
-#### 9단계: 토큰 준수 강제 (25분)
-
-본인이나 AI가 앞으로 하드코딩된 값을 추가하는 걸 막습니다.
-
-esbuild 플러그인 설치:
-
-```bash
-npm install @framingui/esbuild-plugin
-```
-
-빌드 타임 검증 설정:
-
-```typescript
-// next.config.js (Next.js용)
-const { tektonPlugin } = require('@framingui/esbuild-plugin');
-
-module.exports = {
-  experimental: {
-    esmExternals: true,
-  },
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.plugins.push(
-        tektonPlugin({
-          strict: process.env.NODE_ENV === 'production',
-          threshold: 90, // 10% 비토큰 스타일 허용 (서드파티 라이브러리용)
-        })
-      );
-    }
-    return config;
-  },
-};
-```
-
-이제 본인이나 AI가 이렇게 작성하면:
-
-```tsx
-<button style={{ background: '#3B82F6' }}>Click</button>
-```
-
-빌드가 실패합니다:
-
-```
-❌ 토큰 준수 위반
-
-파일: components/button.tsx:12
-문제: 하드코딩된 색상 값 '#3B82F6'
-예상: tokens.button.bg.primary 사용
-
-수정:
-<button style={{ background: tokens.button.bg.primary }}>Click</button>
-```
-
-**결과:** 디자인 시스템이 영원히 일관성을 유지합니다. 수동 강제가 필요 없습니다.
-
-#### 10단계: 시스템 문서화 (10분)
-
-미래의 자신을 위한 간단한 README 작성:
-
-```markdown
-# 디자인 시스템
-
-## 색상
-
-- Primary: 파란색 (#[FramingUI가 생성])
-- Success: 초록색
-- Warning: 주황색
-- Error: 빨간색
-
-## 간격 스케일
-
-4px 그리드 기반:
-- 1 = 4px
-- 2 = 8px
-- 4 = 16px
-- 6 = 24px
-
-## 사용법
-
-```tsx
-import { tokens } from '@/lib/tokens';
-
-<div style={{
-  background: tokens.bg.surface.base,
-  padding: tokens.spacing[4],
-  borderRadius: tokens.radius.md,
-}}>
-  Content
-</div>
-```
-
-## 토큰 참조
-
-- `tokens.bg.*` - 배경 색상
-- `tokens.fg.*` - 전경 (텍스트) 색상
-- `tokens.spacing.*` - 간격 값
-- `tokens.fontSize.*` - 타이포그래피 스케일
-- `tokens.radius.*` - 보더 레디어스
-- `tokens.shadow.*` - 박스 섀도우
-- `tokens.button.*` - 버튼 전용 토큰
-```
-
-**끝입니다.** 2시간. 전문적인 디자인 시스템이 생겼습니다.
-
-## 1인 개발자를 위한 일반적인 패턴
-
-### 패턴 1: 컴포넌트 라이브러리 지름길
-
-모든 컴포넌트를 처음부터 만들지 마세요. shadcn/ui를 토큰과 함께 사용하세요:
-
-```bash
-# shadcn/ui 설치
-npx shadcn-ui@latest init
-
-# 컴포넌트 생성
-npx shadcn-ui@latest add button card input
-```
-
-그다음 토큰으로 오버라이드:
-
-```tsx
-// components/ui/button.tsx
-import { tokens } from '@/lib/tokens';
-
-export function Button({ children, variant = 'primary' }) {
-  const styles = {
-    primary: {
-      background: tokens.button.bg.primary,
-      color: tokens.button.fg.primary,
-    },
-    secondary: {
-      background: tokens.button.bg.secondary,
-      color: tokens.button.fg.secondary,
-    },
-  };
-
-  return (
-    <button
-      style={{
-        ...styles[variant],
-        padding: `${tokens.spacing[2]} ${tokens.spacing[4]}`,
-        borderRadius: tokens.radius.md,
-        border: 'none',
-        cursor: 'pointer',
-      }}
-    >
-      {children}
-    </button>
-  );
-}
-```
-
-**결과:** 토큰을 사용한 전문적인 컴포넌트를 몇 분 만에.
-
-### 패턴 2: 색상 팔레트 검증기
-
-색상이 잘 어울리는지 확신이 없나요? framingui가 자동 검증합니다:
-
-```bash
-npx @framingui/cli validate
-
-✅ 모든 색상 조합이 WCAG AA 통과
-✅ Primary + 배경: 8.2:1 대비 (4.5:1 요구사항 초과)
-✅ Secondary + 배경: 5.1:1 대비
-⚠️  Tertiary + 배경: 3.8:1 대비 (일반 텍스트용 4.5:1 미달)
-
-제안:
-- Tertiary 색상은 큰 텍스트에만 사용 (3:1 요구사항 통과)
-- 또는 일반 텍스트 준수를 위해 tertiary를 5% 더 어둡게
-```
-
-**디자인 학위가 필요 없습니다.** 수학이 접근성을 처리합니다.
-
-### 패턴 3: 테마 스위처
-
-라이트 + 다크 모드가 필요하신가요? 이미 처리됐습니다:
-
-```tsx
-// components/theme-switcher.tsx
-export function ThemeSwitcher() {
-  const [theme, setTheme] = useState('light');
-
-  const toggle = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    document.documentElement.dataset.theme = newTheme;
-  };
-
-  return (
-    <button onClick={toggle}>
-      {theme === 'light' ? '🌙' : '☀️'}
-    </button>
-  );
-}
-```
-
-토큰이 자동으로 전환됩니다:
-
-```css
-/* 라이트 모드 (기본) */
-:root {
-  --bg-page: #fafafa;
-  --fg-primary: #1a1a1a;
-}
-
-/* 다크 모드 (자동) */
-[data-theme='dark'] {
-  --bg-page: #1a1a1a;
-  --fg-primary: #fafafa;
-}
-```
-
-모든 컴포넌트가 자동 업데이트됩니다 (하드코딩된 색상이 아닌 토큰을 사용하니까요).
-
-### 패턴 4: AI 디자인 어시스턴트
-
-MCP가 설정되면 AI를 디자인 어시스턴트로 사용하세요:
-
-```
-You: "취소" 액션에 primary 버튼을 쓸지 secondary 버튼을 쓸지?
-
-Claude: [MCP로 컴포넌트 지식 쿼리]
-
-Cancel 액션에는 secondary 또는 ghost variant를 사용하세요:
-- Primary 버튼은 메인 CTA용입니다 (화면당 최대 하나)
-- Cancel 액션은 낮은 우선순위이며 primary 액션과 경쟁하면 안 됩니다
-- 권장: ghost variant (가장 낮은 시각적 비중)
-
-코드:
-<Button variant="ghost">Cancel</Button>
-```
-
-AI가 디자인 모범 사례를 이해합니다. 여러분이 알 필요 없습니다.
-
-## 실제 1인 개발자 사례 연구
-
-### 사례 1: SaaS 대시보드 (1인 개발자, 3개월)
-
-**디자인 시스템 도입 전:**
-- 코드베이스에 83개의 고유 색상 값
-- 45개의 다른 간격 값
-- 일관성 없는 버튼 스타일 (사용자들이 "미완성 같다"고 보고)
-- 매주 4시간 스타일 조정
-
-**framingui 도입 후:**
-- 12개 색상 토큰 (100% 준수)
-- 9개 간격 값 (수학적 스케일)
-- 일관된 컴포넌트 (사용자들이 "매우 전문적으로 보인다"고 평가)
-- 스타일에 매주 0시간 (토큰이 알아서 강제)
-
-**후기:**
-> "저는 디자이너가 아닌데, 제 SaaS가 디자이너를 고용한 것처럼 보여요. framingui가 제가 믿을 수 있는 디자인 시스템을 줬습니다."
-> — Alex, 인디 SaaS 개발자
-
-### 사례 2: 이커머스 스토어 (1인 개발자, 2개월)
-
-**디자인 시스템 도입 전:**
-- 랜덤 CodePen 데모에서 스타일 복사
-- 페이지마다 다르게 보임
-- WCAG 대비 검사 실패 (소송 위험)
-
-**framingui 도입 후:**
-- WCAG AAA 색상 팔레트 자동 생성
-- 일관된 상품 카드, 버튼, 입력 필드
-- 접근성 감사 통과 (법적 비용 절약)
-
-**후기:**
-> "framingui가 제가 혼자서는 절대 알아내지 못했을 접근성 색상을 생성해줬어요. 말 그대로 ADA 소송에서 제 사업을 구했습니다."
-> — Jordan, 이커머스 창업자
-
-### 사례 3: 프리랜서 개발자 (클라이언트 5명)
-
-**디자인 시스템 도입 전:**
-- 클라이언트 프로젝트마다 스타일 다시 구축
-- 프로젝트 간 일관성 유지 어려움
-- 클라이언트가 "우리 브랜드에 맞춰달라" 요청 (악몽)
-
-**framingui 도입 후:**
-- 하나의 디자인 시스템 템플릿 생성
-- 클라이언트별 커스터마이징: `npx @framingui/cli init --brand clientA`
-- 10분 만에 브랜드별 토큰 생성
-- AI가 각 클라이언트에 맞는 컴포넌트 생성
-
-**후기:**
-> "모든 클라이언트에게 작동하는 하나의 코드베이스가 있어요. 토큰 파일만 바꾸면 됩니다. 게임 체인저예요."
-> — Sam, 프리랜서 개발자
-
-## 1인 개발자를 위한 FAQ
-
-### 저는 디자이너가 아닌데 정말 할 수 있나요?
-
-네. framingui는 비디자이너를 위해 설계됐습니다. 간단한 질문에 답하면 (브랜드를 대표하는 색상이 뭐예요?) framingui가 디자인 수학을 처리합니다:
-
-- 색상 이론 (보색, 음영, 틴트)
-- 접근성 (WCAG 대비 요구사항)
-- 타이포그래피 스케일 (수학적 진행)
-- 간격 리듬 (일관된 시각적 계층)
-
-**Figma 필요 없음. 디자인 학위 필요 없음.**
-
-### 비용이 얼마나 드나요?
-
-framingui는 **유연한 가격 정책**으로 Individual 및 Creator 플랜을 제공합니다. 모든 기능을 탐색할 수 있는 무료 체험이 제공됩니다.
-
-또한 필요한 것:
-- AI 도구 구독 (Claude, Cursor 등) — 선택이지만 권장
-- 호스팅 (다른 프로젝트와 동일)
-
-### 설정이 실제로 얼마나 걸리나요?
-
-실제 소요 시간:
-- **처음**: 2-3시간 (학습 포함)
-- **두 번째 프로젝트**: 30-45분 (과정을 알고 있음)
-- **그 이후**: 15-20분 (대부분 이전 프로젝트에서 복붙)
-
-### 나중에 색상을 바꾸고 싶으면요?
-
-토큰 하나 바꾸면 전부 업데이트됩니다:
-
-```css
-/* 전 */
---color-primary-500: oklch(0.5 0.15 240); /* 파란색 */
-
-/* 후 */
---color-primary-500: oklch(0.5 0.15 140); /* 초록색 */
-```
-
-모든 버튼, 링크, 뱃지, 하이라이트가 자동 업데이트됩니다.
-
-**찾아 바꾸기 없음. 수동 업데이트 없음. 토큰 시스템이 처리합니다.**
-
-### 나중에 디자이너를 고용해서 개선할 수 있나요?
-
-물론입니다! 디자이너는 디자인 시스템 작업을 좋아합니다. `tokens.css` 파일을 건네주면 이렇게 할 수 있습니다:
-
-- 색상 팔레트 다듬기
-- 간격 스케일 조정
-- 컴포넌트 변형 추가
-
-그들의 모든 변경이 토큰을 통해 흐릅니다. 코드 변경이 필요 없습니다.
-
-### OKLCH 색상 공간을 배워야 하나요?
-
-아니요. framingui가 OKLCH를 내부적으로 처리합니다. 다음과 같이 색상을 제공할 수 있습니다:
-- Hex: `#3B82F6`
-- RGB: `rgb(59, 130, 246)`
-- HSL: `hsl(217, 91%, 60%)`
-
-framingui가 자동으로 OKLCH로 변환하고 WCAG 준수 스케일을 생성합니다.
-
-### Tailwind CSS를 사용하고 있다면요?
-
-framingui가 Tailwind와 통합됩니다:
+Tailwind를 쓴다면 config에 토큰을 매핑하세요.
 
 ```javascript
-// tailwind.config.js (framingui가 생성)
-module.exports = {
+// tailwind.config.js
+export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50: 'var(--color-primary-50)',
-          500: 'var(--color-primary-500)',
-          900: 'var(--color-primary-900)',
+        brand: {
+          primary:      'var(--color-brand-primary)',
+          primaryHover: 'var(--color-brand-primary-hover)',
+        },
+        surface: {
+          page:     'var(--color-surface-page)',
+          card:     'var(--color-surface-card)',
+          elevated: 'var(--color-surface-elevated)',
+        },
+        text: {
+          primary:   'var(--color-text-primary)',
+          secondary: 'var(--color-text-secondary)',
         },
       },
       spacing: {
         1: 'var(--spacing-1)',
+        2: 'var(--spacing-2)',
         4: 'var(--spacing-4)',
+        6: 'var(--spacing-6)',
+        8: 'var(--spacing-8)',
+      },
+      borderRadius: {
+        sm: 'var(--radius-sm)',
+        md: 'var(--radius-md)',
+        lg: 'var(--radius-lg)',
       },
     },
   },
-};
-```
-
-이제 Tailwind 유틸리티 사용:
-
-```tsx
-<div className="bg-primary-500 p-4 rounded-lg">
-  디자인 토큰 사용
-</div>
-```
-
-### Vue/Svelte/Angular에서 사용할 수 있나요?
-
-디자인 토큰 (CSS 변수)은 모든 프레임워크에서 작동합니다:
-
-```css
-/* tokens.css */
-:root {
-  --color-primary: oklch(0.5 0.15 240);
 }
 ```
 
-```html
-<!-- Vue -->
-<div :style="{ background: 'var(--color-primary)' }">Content</div>
+이제 `bg-surface-card`와 `text-text-primary`가 토큰을 기반으로 하는 유효한 Tailwind 클래스가 돼요.
 
-<!-- Svelte -->
-<div style:background="var(--color-primary)">Content</div>
+## AI 도구를 디자인 시스템에 연결하기
 
-<!-- Angular -->
-<div [style.background]="'var(--color-primary)'">Content</div>
-```
+토큰이 준비되면 AI 도구를 연결할 수 있어요. 이 부분에서 투자 대비 효과가 극적으로 나타나거든요. AI가 생성하는 모든 컴포넌트가 기본적으로 브랜드에 맞게 나올 수 있어요.
 
-MCP 서버는 현재 React 컴포넌트를 생성하지만, 토큰은 어디서든 작동합니다.
-
-## 디자인 시스템 체크리스트
-
-설정을 확인하는 데 사용하세요:
-
-**토큰 생성:**
-- [ ] framingui 설치됨
-- [ ] 색상 팔레트 생성됨 (WCAG 검증됨)
-- [ ] 간격 스케일 생성됨
-- [ ] 타이포그래피 스케일 정의됨
-- [ ] 다크 모드 변형 생성됨
-- [ ] tokens.css와 tokens.json 내보냄
-
-**토큰 사용:**
-- [ ] 토큰 헬퍼 생성됨 (`lib/tokens.ts`)
-- [ ] 컴포넌트에서 토큰 임포트됨
-- [ ] 코드베이스에 하드코딩된 색상 없음
-- [ ] 하드코딩된 간격 값 없음
-
-**AI 통합:**
-- [ ] MCP 서버 설치됨
-- [ ] AI 도구에서 MCP 설정됨
-- [ ] AI가 토큰을 쿼리할 수 있음 확인됨
-- [ ] AI로 테스트 컴포넌트 생성됨
-
-**강제:**
-- [ ] esbuild 플러그인 설치됨
-- [ ] 빌드 타임 검증 설정됨
-- [ ] 테스트: 하드코딩된 값에서 빌드 실패
-- [ ] pre-commit 훅 추가됨 (선택이지만 권장)
-
-**문서:**
-- [ ] 디자인 시스템 README 생성됨
-- [ ] 토큰 사용 패턴 문서화됨
-- [ ] 일반적인 컴포넌트 예제 추가됨
-
-## 지금 시작하기
-
-### 15분 퀵 스타트
+FramingUI는 디자인 시스템 컨텍스트를 Claude Code 같은 AI 도구에 직접 제공하는 MCP 서버를 제공해요. 권장하는 설정 방법은 이거예요.
 
 ```bash
-# 1. framingui 설치
-npm install @framingui/core
-
-# 2. 디자인 토큰 생성
-npx @framingui/cli init
-
-# 3. 앱에서 토큰 사용
-import { tokens } from './components/tokens';
-
-<div style={{
-  background: tokens.bg.surface.base,
-  padding: tokens.spacing[4],
-}}>
-  Hello, Design System!
-</div>
+npx -y @framingui/mcp-server@latest init
 ```
 
-### 전체 설정 (2시간)
+이 명령어가 프로젝트를 감지하고, 필요한 패키지를 설치하고, MCP config를 작성해요. Claude Code를 재시작하면 토큰 정의와 컴포넌트 카탈로그에 접근할 수 있게 돼요.
 
-위 가이드를 따라 전체 설정 완료:
-- 시맨틱 토큰 생성
-- MCP 통합
-- 토큰 강제
-- 컴포넌트 패턴
+생성되는 `.mcp.json`은 이렇게 생겼어요.
 
-### 커뮤니티 참여
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server@latest"]
+    }
+  }
+}
+```
 
-**베타 액세스:**
-👉 [베타 신청](https://tally.so/r/7R2kz6)
+이게 있으면 Claude Code가 컴포넌트를 생성하기 전에 사용 가능한 토큰을 조회할 수 있어요. 학습 데이터에서 `bg-blue-600`을 고르는 대신, 내 시스템의 `var(--color-brand-primary)`를 선택하죠.
 
-조기 접근 혜택:
-- 비주얼 토큰 에디터 (코드 불필요)
-- 컴포넌트 라이브러리 템플릿
-- 다중 프로젝트 토큰 동기화
-- 우선 지원
+## 디자이너 없이 색상 고르기
 
-**리소스:**
-- [문서](https://framingui.com/docs) — 완전한 가이드
-- [컴포넌트 템플릿](https://framingui.com/templates) — 복붙 컴포넌트
-- [GitHub](https://github.com/framingui) — 공개 저장소
-- [Discord](https://framingui.com/discord) — 커뮤니티 도움
+디자인 시스템을 처음 접하는 개발자에게 가장 어려운 부분이 임의적으로 보이지 않는 색상 팔레트를 고르는 거예요. OKLCH 색상 공간이 이걸 훨씬 다루기 쉽게 만들어줘요.
 
----
+OKLCH는 색상을 밝기(lightness), 채도(chroma), 색조(hue)로 지각적으로 균일하게 표현해요. HSL이나 hex 값에서는 그렇지 않지만, OKLCH에서 밝기의 동일한 간격은 사람 눈에도 동일한 간격으로 보여요.
 
-## 마무리
+실용적인 primary 스케일 예시:
 
-전문적인 UI를 만드는 데 디자인 팀이 필요하지 않습니다. **시스템**이 필요합니다.
+```css
+:root {
+  --color-primary-50:  oklch(0.95 0.03 240);
+  --color-primary-100: oklch(0.90 0.06 240);
+  --color-primary-500: oklch(0.50 0.15 240);  /* 메인 브랜드 */
+  --color-primary-700: oklch(0.38 0.12 240);
+  --color-primary-900: oklch(0.25 0.08 240);
+}
+```
 
-디자인 시스템은 전담 디자이너가 있는 엔터프라이즈 팀만을 위한 게 아닙니다. **품질을 희생하지 않고 빠르게 배포하고 싶은 1인 개발자**를 위한 것입니다.
+hue 값(여기서는 240)이 색상 계열을 결정해요. 초록색은 140, 주황색은 30, 보라색은 290으로 바꾸면 돼요. 밝기와 채도의 관계는 비율이 유지돼요.
 
-framingui와 함께:
-- 디자인 시스템 만드는 데 2시간
-- 유지보수 0시간 (토큰이 알아서 강제)
-- 일관되고, 접근성 있고, 브랜드에 맞는 UI의 ∞ 가치
+WCAG 대비 요건도 OKLCH로 훨씬 맞추기 쉬운 게, 밝기 값이 지각된 대비에 예측 가능하게 매핑되거든요. 밝기 0.95의 텍스트가 밝기 0.20의 배경 위에 있으면 읽히는 거예요.
 
-스타일 조정 그만하세요. 만들기 시작하세요.
+## 나중에 색상을 바꾸고 싶다면
 
----
+이게 이 전체 접근법의 정당성을 증명하는 부분이에요. 브랜드 색상을 바꾸고 싶으면 CSS 변수 한 곳만 업데이트해요.
 
-*[framingui](https://framingui.com)로 만들었습니다 — 혼자 코딩하는 개발자를 위한 디자인 시스템.*
+```css
+/* 전 */
+--color-brand-primary: oklch(0.50 0.15 240);  /* 파란색 */
+
+/* 후 */
+--color-brand-primary: oklch(0.50 0.15 140);  /* 초록색 */
+```
+
+앱의 모든 버튼, 링크, 뱃지, 포커스 링이 업데이트돼요. 나중에 디자이너가 팀에 합류해서 팔레트를 다듬고 싶다면, grep으로 코드베이스를 뒤질 게 아니라 구조화된 파일을 받아서 작업할 수 있죠.
+
+디자인 시스템은 대형 팀만의 전유물이 아니에요. 6개월 뒤에도 자기 코드가 여전히 이해되기를 원하는 사람이라면 누구에게나 필요해요. 기반을 한 번 잡아두면, 규칙이 알아서 스스로를 강제해요.

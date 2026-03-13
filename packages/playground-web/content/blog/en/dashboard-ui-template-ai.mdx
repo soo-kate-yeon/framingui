@@ -1,6 +1,6 @@
 ---
-title: "Dashboard Layout Recipe with AI"
-description: "Create professional admin dashboard layouts using FramingUI templates with AI assistance for rapid development."
+title: "Building a Dashboard Layout with FramingUI and AI"
+description: "A practical walkthrough of composing an admin dashboard from FramingUI components, showing how AI tools generate consistent code when tokens are in place."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
@@ -13,106 +13,89 @@ coverImage: ""
 published: true
 ---
 
-## Why Dashboards Are Hard
+# Building a Dashboard Layout with FramingUI and AI
 
-Building a dashboard from scratch involves:
+Dashboard layouts are where design token discipline pays off most visibly. A sidebar, a header, a grid of stat cards, and a data table—each built separately—either cohere or they do not. When AI tools generate these components without a design system, the inconsistencies compound fast.
 
-1. **Layout structure** — Sidebar, header, main content area
-2. **Responsive design** — Mobile, tablet, desktop breakpoints
-3. **Component composition** — Stats cards, tables, charts
-4. **Navigation state** — Active links, collapsible menus
-5. **Consistent styling** — Colors, spacing, typography
+This walkthrough shows how to build each layer of a dashboard using FramingUI components, and how to structure the project so AI-assisted code stays consistent with the rest of the interface.
 
-With FramingUI + AI, you can generate a complete dashboard in minutes, not hours.
+## Setting Up
 
-## Dashboard Anatomy
+Install the packages:
 
-A typical admin dashboard has:
-
-```
-┌─────────────────────────────────────────┐
-│ Header (navigation, user menu)          │
-├──────────┬──────────────────────────────┤
-│          │                              │
-│ Sidebar  │ Main Content Area            │
-│          │  - Stats Cards               │
-│ (nav)    │  - Charts                    │
-│          │  - Data Tables               │
-│          │                              │
-└──────────┴──────────────────────────────┘
+```bash
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-Let's build this step-by-step with FramingUI.
+For AI tool integration, set up the MCP server:
 
-## Step 1: Basic Layout Structure
+```bash
+npx -y @framingui/mcp-server@latest init
+```
+
+This command bootstraps the full runtime contract: provider setup, CSS imports, and Claude Code MCP configuration. After restarting Claude Code, AI-generated components will reference the same design tokens as the components you write manually.
+
+## Layout Shell
+
+The outer structure gives the layout its shape. A fixed sidebar on the left, a flex column on the right holding the header and scrollable content:
 
 ```tsx
-import { Card, Separator } from '@framingui/ui';
+import { Separator } from '@framingui/ui'
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen">
-      {/* Sidebar */}
       <aside className="w-64 border-r border-[var(--border-default)] bg-[var(--bg-card)]">
         <div className="p-[var(--spacing-6)]">
           <h2 className="text-lg font-bold">MyApp</h2>
         </div>
         <Separator />
-        {/* Navigation will go here */}
       </aside>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
         <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center px-[var(--spacing-6)]">
           <h1 className="text-xl font-semibold">Dashboard</h1>
         </header>
-
-        {/* Content */}
         <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
           {children}
         </main>
       </div>
     </div>
-  );
+  )
 }
 ```
 
-### Key Features
+All spacing and border values come from CSS custom properties. When the theme changes, every dimension updates automatically.
 
-✅ **Fixed sidebar**: `w-64` (256px width)
-✅ **Scrollable content**: `overflow-auto` on main
-✅ **Design tokens**: All borders and spacing use tokens
+## Sidebar Navigation
 
-## Step 2: Sidebar Navigation
+The sidebar needs active state tracking. Using the FramingUI `Button` component with variant switching keeps the active item visually distinct without custom CSS:
 
 ```tsx
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Home, Users, BarChart3, Settings, ChevronDown } from 'lucide-react';
-import { Button, Separator } from '@framingui/ui';
-import { cn } from '@framingui/ui/lib/utils';
+import { useState } from 'react'
+import { Home, Users, BarChart3, Settings, ChevronDown } from 'lucide-react'
+import { Button, Separator } from '@framingui/ui'
+import { cn } from '@framingui/ui/lib/utils'
 
 const navItems = [
-  { icon: Home, label: 'Dashboard', href: '/dashboard' },
-  { icon: Users, label: 'Users', href: '/users' },
+  { icon: Home,     label: 'Dashboard', href: '/dashboard' },
+  { icon: Users,    label: 'Users',     href: '/users' },
   { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-  { icon: Settings, label: 'Settings', href: '/settings' },
-];
+  { icon: Settings, label: 'Settings',  href: '/settings' },
+]
 
 export function DashboardSidebar() {
-  const [activeItem, setActiveItem] = useState('/dashboard');
+  const [activeItem, setActiveItem] = useState('/dashboard')
 
   return (
     <aside className="w-64 border-r border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col h-screen">
-      {/* Logo */}
       <div className="p-[var(--spacing-6)]">
         <h2 className="text-lg font-bold">MyApp Admin</h2>
       </div>
       <Separator />
 
-      {/* Navigation */}
       <nav className="flex-1 p-[var(--spacing-4)] space-y-[var(--spacing-2)]">
         {navItems.map((item) => (
           <Button
@@ -131,8 +114,6 @@ export function DashboardSidebar() {
       </nav>
 
       <Separator />
-
-      {/* User section */}
       <div className="p-[var(--spacing-4)]">
         <Button variant="ghost" className="w-full justify-between">
           <div className="flex items-center">
@@ -148,52 +129,25 @@ export function DashboardSidebar() {
         </Button>
       </div>
     </aside>
-  );
+  )
 }
 ```
 
-### Navigation Features
+## Stats Card Grid
 
-✅ **Active state highlighting**: Uses `variant="default"` for active item
-✅ **Icon support**: Lucide React icons
-✅ **User profile section**: At bottom with avatar
-
-## Step 3: Stats Cards Grid
+The stat grid demonstrates why token-based spacing matters. Every gap, padding, and icon background uses the same design token scale, so the cards feel like a cohesive system rather than individually styled elements:
 
 ```tsx
-import { Card, CardContent } from '@framingui/ui';
-import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Card, CardContent } from '@framingui/ui'
+import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react'
+import { cn } from '@framingui/ui/lib/utils'
 
 const stats = [
-  {
-    title: 'Total Revenue',
-    value: '$45,231',
-    change: '+20.1%',
-    icon: DollarSign,
-    trend: 'up' as const,
-  },
-  {
-    title: 'Total Users',
-    value: '2,350',
-    change: '+12.5%',
-    icon: Users,
-    trend: 'up' as const,
-  },
-  {
-    title: 'Total Orders',
-    value: '1,234',
-    change: '-4.3%',
-    icon: ShoppingCart,
-    trend: 'down' as const,
-  },
-  {
-    title: 'Conversion Rate',
-    value: '3.24%',
-    change: '+0.5%',
-    icon: TrendingUp,
-    trend: 'up' as const,
-  },
-];
+  { title: 'Total Revenue',     value: '$45,231', change: '+20.1%', icon: DollarSign,  trend: 'up'   },
+  { title: 'Total Users',       value: '2,350',   change: '+12.5%', icon: Users,       trend: 'up'   },
+  { title: 'Total Orders',      value: '1,234',   change: '-4.3%',  icon: ShoppingCart, trend: 'down' },
+  { title: 'Conversion Rate',   value: '3.24%',   change: '+0.5%',  icon: TrendingUp,  trend: 'up'   },
+] as const
 
 export function StatsGrid() {
   return (
@@ -208,14 +162,10 @@ export function StatsGrid() {
                 </p>
                 <div className="flex items-baseline space-x-[var(--spacing-2)]">
                   <p className="text-2xl font-bold">{stat.value}</p>
-                  <span
-                    className={cn(
-                      'text-xs font-medium',
-                      stat.trend === 'up'
-                        ? 'text-[var(--bg-primary)]'
-                        : 'text-[var(--bg-destructive)]'
-                    )}
-                  >
+                  <span className={cn(
+                    'text-xs font-medium',
+                    stat.trend === 'up' ? 'text-[var(--bg-primary)]' : 'text-[var(--bg-destructive)]'
+                  )}>
                     {stat.change}
                   </span>
                 </div>
@@ -228,41 +178,29 @@ export function StatsGrid() {
         </Card>
       ))}
     </div>
-  );
+  )
 }
 ```
 
-### Stats Card Features
+The responsive grid handles column count automatically: one column on mobile, two on tablet, four on desktop.
 
-✅ **Responsive grid**: 1 column mobile → 2 tablet → 4 desktop
-✅ **Trend indicators**: Green for up, red for down
-✅ **Icon badges**: Colored background with opacity
+## Data Table
 
-## Step 4: Data Table
+Wrapping the table in a `Card` keeps it visually consistent with the stat cards above. Status badges use semantic variants that the design system maps to appropriate colors:
 
 ```tsx
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  Badge,
-  Button,
-} from '@framingui/ui';
-import { MoreHorizontal } from 'lucide-react';
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Card, CardHeader, CardTitle, CardContent, Badge, Button,
+} from '@framingui/ui'
+import { MoreHorizontal } from 'lucide-react'
 
-const recentOrders = [
+const orders = [
   { id: '#3210', customer: 'Alice Johnson', amount: '$250.00', status: 'completed', date: '2026-02-27' },
-  { id: '#3211', customer: 'Bob Smith', amount: '$120.50', status: 'pending', date: '2026-02-27' },
-  { id: '#3212', customer: 'Carol White', amount: '$89.99', status: 'completed', date: '2026-02-26' },
-  { id: '#3213', customer: 'David Brown', amount: '$340.00', status: 'processing', date: '2026-02-26' },
-];
+  { id: '#3211', customer: 'Bob Smith',     amount: '$120.50', status: 'pending',   date: '2026-02-27' },
+  { id: '#3212', customer: 'Carol White',   amount: '$89.99',  status: 'completed', date: '2026-02-26' },
+  { id: '#3213', customer: 'David Brown',   amount: '$340.00', status: 'processing', date: '2026-02-26' },
+]
 
 export function RecentOrdersTable() {
   return (
@@ -279,31 +217,24 @@ export function RecentOrdersTable() {
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentOrders.map((order) => (
+            {orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">{order.id}</TableCell>
                 <TableCell>{order.customer}</TableCell>
                 <TableCell>{order.amount}</TableCell>
                 <TableCell>
-                  <Badge
-                    variant={
-                      order.status === 'completed'
-                        ? 'default'
-                        : order.status === 'pending'
-                        ? 'secondary'
-                        : 'outline'
-                    }
-                  >
+                  <Badge variant={
+                    order.status === 'completed' ? 'default' :
+                    order.status === 'pending'   ? 'secondary' : 'outline'
+                  }>
                     {order.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-[var(--bg-muted-foreground)]">
-                  {order.date}
-                </TableCell>
+                <TableCell className="text-[var(--bg-muted-foreground)]">{order.date}</TableCell>
                 <TableCell>
                   <Button variant="ghost" size="icon">
                     <MoreHorizontal className="h-4 w-4" />
@@ -315,65 +246,26 @@ export function RecentOrdersTable() {
         </Table>
       </CardContent>
     </Card>
-  );
+  )
 }
 ```
 
-### Table Features
+## Mobile Sidebar
 
-✅ **Status badges**: Color-coded order statuses
-✅ **Action buttons**: Icon button for row actions
-✅ **Card wrapper**: Table inside Card for consistent styling
-
-## Step 5: Complete Dashboard Page
+The sidebar needs a drawer variant for small screens. FramingUI's `Sheet` component handles the overlay:
 
 ```tsx
-import { DashboardLayout } from './dashboard-layout';
-import { DashboardSidebar } from './dashboard-sidebar';
-import { StatsGrid } from './stats-grid';
-import { RecentOrdersTable } from './recent-orders-table';
+'use client'
 
-export default function DashboardPage() {
-  return (
-    <div className="flex h-screen">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center justify-between px-[var(--spacing-6)]">
-          <h1 className="text-xl font-semibold">Dashboard Overview</h1>
-          <Button variant="default">Download Report</Button>
-        </header>
-
-        {/* Main content */}
-        <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
-          <div className="space-y-[var(--spacing-6)]">
-            <StatsGrid />
-            <RecentOrdersTable />
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-```
-
-## Responsive Enhancements
-
-### Mobile-First Sidebar
-
-```tsx
-'use client';
-
-import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Button, Sheet, SheetContent, SheetTrigger } from '@framingui/ui';
+import { useState } from 'react'
+import { Menu } from 'lucide-react'
+import { Button, Sheet, SheetContent, SheetTrigger } from '@framingui/ui'
 
 export function MobileSidebar({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <>
-      {/* Mobile trigger */}
       <div className="lg:hidden">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
@@ -386,109 +278,55 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
           </SheetContent>
         </Sheet>
       </div>
-
-      {/* Desktop sidebar */}
       <div className="hidden lg:block">{children}</div>
     </>
-  );
+  )
 }
 ```
 
-## AI Prompting Tips
+## Using AI to Extend the Dashboard
 
-### Generate Stats Cards
-
-**Prompt for Claude/Cursor:**
+With MCP configured, you can ask Claude Code to generate additional dashboard sections and the output will reference the same tokens as the components above. A prompt like this works well:
 
 ```
-Create a stats grid component using FramingUI Card showing:
-- Total Users (12,345)
-- Active Sessions (1,234)
-- Revenue ($54,321)
-- Conversion Rate (3.2%)
-
-Use var(--*) tokens for all styling.
+Add a revenue chart section to the dashboard.
+Use FramingUI Card for the wrapper.
+Use var(--bg-primary) for the chart line color.
+Use var(--spacing-6) for all internal padding.
+Use Recharts for the chart library.
 ```
 
-### Generate Data Table
+The specific token references in the prompt constrain the AI's output. Without them, the AI might pick `stroke="#3b82f6"` or `padding: "24px"`—values that look right but break when the theme changes.
 
-**Prompt:**
-
-```
-Create a users table using FramingUI Table component with columns:
-- Name, Email, Role, Status (badge), Actions (button)
-
-Use design tokens for spacing and colors.
-```
-
-### Generate Complete Dashboard
-
-**Prompt:**
-
-```
-Create a complete admin dashboard using FramingUI with:
-- Sidebar navigation (Dashboard, Users, Analytics, Settings)
-- Header with title and action button
-- 4 stats cards in responsive grid
-- Recent orders table
-- All styling using var(--*) tokens
-```
-
-## Advanced: Chart Integration
+## Composing the Final Page
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { DashboardSidebar } from './dashboard-sidebar'
+import { StatsGrid }        from './stats-grid'
+import { RecentOrdersTable } from './recent-orders-table'
+import { Button }            from '@framingui/ui'
 
-const chartData = [
-  { month: 'Jan', revenue: 4000 },
-  { month: 'Feb', revenue: 3000 },
-  { month: 'Mar', revenue: 5000 },
-  { month: 'Apr', revenue: 4500 },
-  { month: 'May', revenue: 6000 },
-  { month: 'Jun', revenue: 5500 },
-];
-
-export function RevenueChart() {
+export default function DashboardPage() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Revenue Overview</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="revenue"
-              stroke="var(--bg-primary)"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
-  );
+    <div className="flex h-screen">
+      <DashboardSidebar />
+      <div className="flex-1 flex flex-col">
+        <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center justify-between px-[var(--spacing-6)]">
+          <h1 className="text-xl font-semibold">Dashboard Overview</h1>
+          <Button variant="default">Download Report</Button>
+        </header>
+        <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
+          <div className="space-y-[var(--spacing-6)]">
+            <StatsGrid />
+            <RecentOrdersTable />
+          </div>
+        </main>
+      </div>
+    </div>
+  )
 }
 ```
 
-✅ **Uses design token**: `stroke="var(--bg-primary)"`
+Each section was built independently and composed here. Because every component references the same token set, the visual result is coherent without explicit coordination between the components.
 
-## Next Steps
-
-1. **Add dark mode toggle**: Use FramingUI theme switching
-2. **Implement data fetching**: React Query or SWR
-3. **Add filtering/search**: Table with search input
-4. **Build detail pages**: User profile, order details
-
-## Resources
-
-- [FramingUI Documentation](https://framingui.com)
-- [GitHub Repository](https://github.com/soo-kate-yeon/tekton)
-- [Recharts Documentation](https://recharts.org)
-
-With FramingUI + AI, you can build production-ready dashboards in minutes while maintaining perfect design consistency across every component.
+The practical benefit shows up when you add features. A new section follows the same pattern—import from `@framingui/ui`, use CSS custom properties for all style values—and it matches the rest of the dashboard automatically.

@@ -14,389 +14,80 @@ coverImage: ""
 published: true
 ---
 
-## The AI Coding Tool Dilemma
+Building a design system surfaces a specific weakness in every AI coding tool: the gap between generic code generation and code that actually fits your architecture. Cursor and Claude Code close that gap differently, and the difference matters for design system work.
 
-You are building a design system. Components, tokens, documentation. You want AI assistance, but which tool?
+## The Core Distinction
 
-**Cursor** is fast. Inline suggestions, multi-file editing, familiar VS Code interface. It feels like Copilot on steroids.
+**Cursor** is optimized for speed. It suggests code inline, accepts changes with a keystroke, and never interrupts your editor flow. Its weakness for design systems: it doesn't read your full codebase before suggesting. It relies on recently opened files and general patterns from its training data.
 
-**Claude Code** is deliberate. It reads your entire project context, thinks through architecture, and generates code that fits your system—not generic patterns.
+**Claude Code** is optimized for coherence. Before suggesting anything, it reads your entire project — token structures, naming conventions, existing component APIs. Its weakness: it's slower. You write a request, wait for a response, review a diff, apply it. No inline suggestions.
 
-Both are excellent. But they excel at different things. Here is how to choose.
+For design systems specifically, coherence often matters more than speed. A component that matches your existing patterns is worth more than one generated in 30 fewer seconds.
 
-## TL;DR: When to Use Each
+## Where Claude Code Has a Structural Advantage
 
-| Use Case | Best Tool |
-|----------|-----------|
-| **Setting up a new design system** | Claude Code |
-| **Implementing components from a spec** | Cursor |
-| **Refactoring token architecture** | Claude Code |
-| **Fast iteration on UI variants** | Cursor |
-| **Understanding complex codebases** | Claude Code |
-| **Multi-file coordinated edits** | Cursor |
-| **MCP integration for external context** | Claude Code |
-| **Real-time coding with autocomplete** | Cursor |
+Design systems require consistency across files you haven't touched yet. When you add a `size` variant to a Button, Claude Code reads your existing components and matches their naming conventions — `sm`/`md`/`lg` not `small`/`medium`/`large`. When you refactor your color token structure from HSL to OKLCH, Claude Code coordinates that change across every file that references those tokens.
 
-**Short answer:** Claude Code for architecture and system design. Cursor for fast component implementation.
+This also extends to MCP (Model Context Protocol). Claude Code natively connects to MCP servers — filesystem, database, Git, and custom servers. You can connect it to your design token source and let it query the current token state rather than working from a static file. Cursor has some community MCP support, but it's not first-class.
 
-**Best answer:** Use both. Claude Code for planning and structure. Cursor for execution.
+For a team using FramingUI's MCP server, Claude Code can query available themes, components, and token values during generation — producing output that exactly matches the design system's current state.
 
-## Claude Code: The Architect
+## Where Cursor Has a Practical Advantage
 
-Claude Code is built on Claude 3.5 Sonnet (soon Opus). It is a chat-based coding assistant that can read entire codebases, follow multi-step plans, and generate cohesive changes across files.
+For implementing a well-defined component from a clear spec, Cursor's tab autocomplete is genuinely faster. You type a function signature, Cursor fills in the body, you hit Tab. For building ten similar form inputs that share an API, this loop compounds into significant time savings.
 
-### Strengths for Design Systems
+Multi-file editing in Cursor's Composer mode is also strong for certain tasks — adding a `data-testid` prop to every component in a folder, for instance. You describe the change, select the files, it applies.
 
-#### 1. Deep Contextual Understanding
+## Concrete Task Comparison
 
-Claude Code reads your entire project before suggesting changes. It understands:
+**Scenario: Setting up a new design system**
 
-- How your token system is structured
-- Component naming conventions
-- Existing patterns (e.g., "all our components use `asChild` prop for composition")
-- Documentation style
+Claude Code: You describe the requirements. It proposes a semantic token structure, explains trade-offs, generates token files, builds base components with TypeScript types, and writes documentation. Everything consistent by default.
 
-**Example:** You ask, "Add a `size` variant to Button."
+Cursor: Faster to start. You create files and Cursor autocompletes aggressively. But token names can drift between files without active management, and you handle the architectural decisions yourself.
 
-Cursor might generate:
+**Scenario: Adding a variant to an existing component**
 
-```tsx
-<Button size="small">Click me</Button>
-```
+Claude Code: You ask, it reads your existing variants and matches the pattern. Time: two minutes including diff review.
 
-Claude Code reads your existing components, sees you use `sm`, `md`, `lg` naming, and generates:
+Cursor: You open the file, start typing, and Cursor suggests the variant logic inline. Time: thirty seconds.
 
-```tsx
-<Button size="sm">Click me</Button>
-```
+Cursor wins on isolated changes. Claude Code wins when the change needs to be consistent with a larger existing system.
 
-Small, but this consistency multiplies across dozens of components.
+**Scenario: Refactoring 20 form components to share a consistent API**
 
-#### 2. Architectural Decisions
+Claude Code: One request, all 20 components generated or updated consistently.
 
-Claude Code can design token structures, not just apply them.
+Cursor: Component one is fast. Component two diverges slightly. By component ten, you're manually normalizing prop names.
 
-**Prompt:** "Design a color token system that supports light/dark themes and is optimized for AI code generation."
+Claude Code wins clearly whenever consistency across many files is the goal.
 
-Claude Code will:
-1. Propose a semantic token structure
-2. Explain why `color.primary.solid` is better than `blue-500`
-3. Generate the token file
-4. Update existing components to use it
-5. Add TypeScript types for autocomplete
+## The Practical Workflow
 
-Cursor can implement the tokens, but it will not critique or refine the architecture.
+Most teams using both tools develop a natural split:
 
-#### 3. MCP Integration (Model Context Protocol)
+Claude Code handles architecture and system-level decisions — designing the token structure, planning the component API surface, reviewing for consistency after a sprint of component work, executing large refactors.
 
-Claude Code natively supports MCP—meaning it can connect to:
+Cursor handles component implementation — the fast, repetitive work of building individual components once the architecture is established.
 
-- **Filesystem servers** – Read your project files dynamically
-- **Database servers** – Query your schema, understand data models
-- **API servers** – Test endpoints, validate responses
-- **Git servers** – Check commit history, branch status
+This isn't an arbitrary division. It follows from what each tool is actually good at. Using Claude Code for every single button addition, or Cursor for a token architecture redesign, fights the tools' strengths.
 
-**Real-world scenario:** You are refactoring a component library. Claude Code can:
+## Setting Up Claude Code for Design System Work
 
-1. Read all component files via MCP filesystem server
-2. Identify inconsistent patterns
-3. Generate a migration script
-4. Test against your local database (via MCP database server)
-5. Commit changes with descriptive messages (via MCP Git server)
-
-Cursor has some MCP support via community plugins, but it is not first-class.
-
-#### 4. Explaining Complex Code
-
-Ask Claude Code, "Why does this component re-render on every keystroke?" It reads the component, traces dependencies, and explains the issue in detail.
-
-Cursor can suggest a fix, but it will not walk you through the underlying problem.
-
-### Weaknesses
-
-#### 1. Slower Iteration
-
-Claude Code is chat-based. You type a request → wait for a response → review → apply changes. This loop is slower than Cursor's inline suggestions.
-
-#### 2. No Real-Time Autocomplete
-
-Claude Code does not autocomplete as you type. You write code, then ask Claude to improve it. Cursor suggests code as you type, which feels faster for straightforward tasks.
-
-#### 3. Less Integrated with Editor
-
-Claude Code runs in a terminal or web interface, not inside your editor. You apply diffs manually. Cursor edits files directly in VS Code.
-
-## Cursor: The Implementer
-
-Cursor is a fork of VS Code with deep AI integration. It feels like writing code with a co-pilot who sees your screen and suggests the next line in real time.
-
-### Strengths for Design Systems
-
-#### 1. Inline Suggestions (Tab Autocomplete)
-
-Cursor's killer feature: as you type, it suggests entire blocks of code. You hit `Tab` to accept.
-
-**Example:** You type:
-
-```tsx
-export const TextField = ({ label, value, onValueChange
-```
-
-Cursor suggests:
-
-```tsx
-, error }: TextFieldProps) => {
-  return (
-    <div className="flex flex-col gap-2">
-      <label>{label}</label>
-      <input value={value} onChange={(e) => onValueChange(e.target.value)} />
-      {error && <span className="text-red-500">{error}</span>}
-    </div>
-  );
-};
-```
-
-You hit `Tab`, and it is done. This is fastest for repetitive tasks like building similar components.
-
-#### 2. Multi-File Editing
-
-Cursor can edit multiple files simultaneously. You select files, describe a change, and Cursor updates all of them in one pass.
-
-**Example:** "Add a `data-testid` prop to all components."
-
-Cursor scans your component folder and updates 20 files at once. Fast.
-
-#### 3. Composer Mode (Chat + Code)
-
-Cursor has a chat interface (Composer) where you can:
-
-- Discuss design decisions
-- Generate code snippets
-- Ask for explanations
-
-It is not as deep as Claude Code's reasoning, but it is faster and integrated directly into your editor.
-
-#### 4. Familiar VS Code Experience
-
-If you already use VS Code, Cursor feels native. Same keybindings, same extensions, same workflow. Zero learning curve.
-
-### Weaknesses
-
-#### 1. Less Contextual Awareness
-
-Cursor optimizes for speed. It does not read your entire codebase before suggesting code. It relies on recently opened files and heuristics.
-
-**Result:** Suggestions can be generic or inconsistent with your conventions.
-
-**Example:** You have a design system that uses `variant="primary"`. Cursor might suggest `type="primary"` because that is common in public repos.
-
-#### 2. No MCP Support (Yet)
-
-Cursor does not natively support MCP. You cannot connect it to database servers, API servers, or custom context providers. Community plugins exist, but they are not as robust as Claude Code's integration.
-
-#### 3. Limited Architectural Guidance
-
-Cursor excels at "do this task." It is less good at "design this system."
-
-If you ask Cursor, "How should I structure my color tokens?" it will generate a reasonable structure. But it will not explain trade-offs or critique your existing approach.
-
-Claude Code will.
-
-## Head-to-Head: Real Scenarios
-
-### Scenario 1: Setting Up a New Design System
-
-**Task:** Create a token structure, base components (Button, TextField, Card), and documentation.
-
-**Claude Code Approach:**
-
-1. You explain the project: "I am building a design system for a SaaS product. It needs light/dark themes, accessible colors, and should work well with AI code generation."
-2. Claude Code proposes a token structure with semantic names (`color.primary.solid`, not `blue-500`).
-3. It generates component files with JSDoc, TypeScript types, and examples.
-4. It writes a README explaining how to use the system.
-
-**Time:** ~30 minutes, but high quality. Everything is consistent.
-
-**Cursor Approach:**
-
-1. You create a `tokens.ts` file and start typing.
-2. Cursor autocompletes token definitions as you type.
-3. You create a `Button.tsx` file. Cursor suggests a full Button component.
-4. You repeat for TextField, Card, etc.
-
-**Time:** ~15 minutes, but you need to manually ensure consistency. Token names might drift if you do not pay attention.
-
-**Winner:** Claude Code. It designs the system architecture. Cursor implements faster, but you risk inconsistencies.
-
-**Best:** Use Claude Code to design, then implement components in Cursor for speed.
-
-### Scenario 2: Implementing 20 Form Components
-
-**Task:** Build TextInput, NumberInput, EmailInput, PasswordInput, etc. All follow the same API (label, value, error).
-
-**Claude Code Approach:**
-
-You: "Generate 20 form input components. They all share this structure: [paste example]. Make them consistent."
-
-Claude Code: Generates all 20 files at once, consistent naming, types, and documentation.
-
-**Time:** ~10 minutes.
-
-**Cursor Approach:**
-
-You: Create `TextInput.tsx`, start typing.
-
-Cursor: Autocompletes the entire component.
-
-You: Create `NumberInput.tsx`, start typing.
-
-Cursor: Autocompletes, but suggests slightly different prop names.
-
-You: Fix inconsistencies manually. Repeat for 18 more components.
-
-**Time:** ~30 minutes (with manual fixes).
-
-**Winner:** Claude Code. Cursor is faster per component, but Claude Code ensures consistency across all 20.
-
-### Scenario 3: Fast Iteration on Button Variants
-
-**Task:** You have a Button component. You want to add `size="xs"` and test it visually.
-
-**Claude Code Approach:**
-
-You: "Add `size='xs'` to Button."
-
-Claude Code: Updates `Button.tsx`, adds the variant logic, updates types.
-
-You: Copy-paste the diff into your editor, save, refresh browser.
-
-**Time:** ~2 minutes.
-
-**Cursor Approach:**
-
-You: Open `Button.tsx`, start typing `size="xs"`.
-
-Cursor: Suggests the entire variant logic inline. You hit `Tab`.
-
-You: Save, refresh browser.
-
-**Time:** ~30 seconds.
-
-**Winner:** Cursor. Inline autocomplete is unbeatable for fast, isolated changes.
-
-### Scenario 4: Refactoring Color Tokens from HSL to OKLCH
-
-**Task:** Convert all HSL color values to OKLCH for perceptual uniformity.
-
-**Claude Code Approach:**
-
-You: "Convert all color tokens from HSL to OKLCH. Maintain the same perceived brightness."
-
-Claude Code:
-1. Reads your `tokens.ts` file.
-2. Converts each color using perceptual color algorithms.
-3. Updates all components that reference colors.
-4. Adds a migration guide to the README.
-
-**Time:** ~15 minutes. Everything updated consistently.
-
-**Cursor Approach:**
-
-You: Open `tokens.ts`, start editing.
-
-Cursor: Autocompletes OKLCH values as you type, but you need to convert manually (or use an external tool).
-
-You: Update components one by one. Hope you did not miss any.
-
-**Time:** ~1 hour (error-prone).
-
-**Winner:** Claude Code. This is a systemic change requiring cross-file coordination. Cursor is too manual.
-
-## Which Should You Use?
-
-### Use Claude Code If:
-
-- You are setting up a new design system (architecture matters)
-- You need MCP integration (database, API, filesystem context)
-- You are refactoring large parts of the codebase
-- You want explanations, not just code
-- Consistency across dozens of files is critical
-
-### Use Cursor If:
-
-- You are implementing well-defined components (specs are clear)
-- You want real-time autocomplete as you type
-- You need fast iteration on isolated changes
-- You prefer working entirely in your editor
-- You already use VS Code and want a familiar experience
-
-### Use Both If:
-
-- Claude Code designs the system architecture and token structure
-- Cursor implements individual components quickly
-- Claude Code reviews and refactors for consistency
-
-**Workflow:**
-
-1. **Architecture phase:** Claude Code designs tokens, component API, folder structure
-2. **Implementation phase:** Cursor builds components with inline autocomplete
-3. **Refactoring phase:** Claude Code ensures consistency, updates docs
-
-## Pricing Comparison
-
-| Tool | Cost |
-|------|------|
-| **Claude Code** | Free (rate-limited) or $20/month (Pro: higher limits, priority access) |
-| **Cursor** | Free (limited AI calls) or $20/month (Pro: unlimited Sonnet, 500 Opus calls/month) |
-
-Both are $20/month for serious use. Pricing is not a deciding factor.
-
-## MCP: The Game-Changer
-
-If you use Claude Code, set up MCP servers:
-
-```bash
-npm install -g @modelcontextprotocol/server-filesystem
-```
-
-Configure Claude Code:
+If you're using FramingUI's MCP server with Claude Code, the `.mcp.json` configuration looks like this:
 
 ```json
 {
-  "servers": {
-    "filesystem": {
-      "command": "mcp-server-filesystem",
-      "args": ["/path/to/your/design-system"]
+  "mcpServers": {
+    "framingui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server@latest"]
     }
   }
 }
 ```
 
-Now Claude Code can:
-- Read your entire design system dynamically
-- Suggest changes based on actual file contents
-- Generate components that match your existing structure
+Run `npx -y @framingui/mcp-server@latest init` to set this up automatically. After restarting Claude Code, it can query available themes, components, and token values directly — making generated code consistent with your actual design system rather than Claude's training data approximation.
 
-Cursor does not have this level of context yet. This is Claude Code's biggest advantage.
-
-## Conclusion
-
-**Claude Code** is the architect. It designs systems, thinks through trade-offs, and ensures consistency across files. Best for setting up design systems and large refactors.
-
-**Cursor** is the implementer. It writes code fast, autocompletes as you type, and integrates seamlessly into your editor. Best for building components and iterating quickly.
-
-**Best practice:** Use both.
-
-- Claude Code for architecture and planning
-- Cursor for day-to-day component work
-- Claude Code for refactoring and consistency checks
-
-Your design system will be better designed (Claude Code) and faster to build (Cursor). You do not need to choose. Use the right tool for the task.
-
----
-
-**Building a design system?**
-
-FramingUI works great with both Claude Code and Cursor—MCP-ready tokens, AI-optimized component structure, and clear documentation.
-
-[Explore FramingUI](https://tekton.sh) →
+The tools aren't competitors. They're complements. Design systems built with both are better designed and faster to build than those relying on either one alone.

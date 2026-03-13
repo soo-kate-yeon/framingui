@@ -37,15 +37,11 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
   const paymentNotReadyMessage =
     locale === 'ko'
       ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
-      : locale === 'ja'
-        ? '決済システムを利用できません。しばらくしてから再試行してください。'
-        : 'Payment system is not ready. Please try again later.';
+      : 'Payment system is not ready. Please try again later.';
   const priceConfigMissingMessage =
     locale === 'ko'
       ? '결제 가격 설정이 누락되었습니다. 관리자에게 문의해 주세요.'
-      : locale === 'ja'
-        ? '価格設定が見つかりません。管理者にお問い合わせください。'
-        : 'Price configuration is missing. Please contact support.';
+      : 'Price configuration is missing. Please contact support.';
 
   const prevImage = () => {
     setCurrentImageIdx((prev) => (prev === 0 ? template.screenshots.length - 1 : prev - 1));
@@ -152,17 +148,11 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
 
   // Translation helpers
   const displayTitle = template.name;
-  const displayTagline = getLocalizedTemplateText(
-    locale,
-    template.tagline,
-    template.taglineKo,
-    template.taglineJa
-  );
+  const displayTagline = getLocalizedTemplateText(locale, template.tagline, template.taglineKo);
   const displayDesc = getLocalizedTemplateText(
     locale,
     template.description,
-    template.descriptionKo,
-    template.descriptionJa
+    template.descriptionKo
   );
 
   return (
@@ -326,17 +316,11 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-8 sm:gap-y-10">
                 {template.features.map((feature, idx) => {
-                  const fTitle = getLocalizedTemplateText(
-                    locale,
-                    feature.title,
-                    feature.titleKo,
-                    feature.titleJa
-                  );
+                  const fTitle = getLocalizedTemplateText(locale, feature.title, feature.titleKo);
                   const fDesc = getLocalizedTemplateText(
                     locale,
                     feature.description,
-                    feature.descriptionKo,
-                    feature.descriptionJa
+                    feature.descriptionKo
                   );
                   return (
                     <div key={idx} className="flex gap-3 sm:gap-4">
@@ -365,12 +349,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               <div className="flex flex-col gap-4 sm:gap-6">
                 <div className="flex flex-wrap gap-2">
                   {template.recommendedFor.map((rec, idx) => {
-                    const rTitle = getLocalizedTemplateText(
-                      locale,
-                      rec.title,
-                      rec.titleKo,
-                      rec.titleJa
-                    );
+                    const rTitle = getLocalizedTemplateText(locale, rec.title, rec.titleKo);
                     const isActive = idx === activeChipIdx;
                     return (
                       <button
@@ -394,8 +373,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     {getLocalizedTemplateText(
                       locale,
                       template.recommendedFor[activeChipIdx]?.description ?? '',
-                      template.recommendedFor[activeChipIdx]?.descriptionKo,
-                      template.recommendedFor[activeChipIdx]?.descriptionJa
+                      template.recommendedFor[activeChipIdx]?.descriptionKo
                     )}
                   </p>
                 </div>
@@ -416,17 +394,11 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
             </div>
             <div className="flex flex-col gap-8 sm:gap-10">
               {template.howToUse.map((step, idx) => {
-                const sTitle = getLocalizedTemplateText(
-                  locale,
-                  step.title,
-                  step.titleKo,
-                  step.titleJa
-                );
+                const sTitle = getLocalizedTemplateText(locale, step.title, step.titleKo);
                 const sDesc = getLocalizedTemplateText(
                   locale,
                   step.description,
-                  step.descriptionKo,
-                  step.descriptionJa
+                  step.descriptionKo
                 );
                 return (
                   <div key={idx} className="flex gap-4 sm:gap-6 group">

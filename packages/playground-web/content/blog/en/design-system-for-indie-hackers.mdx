@@ -1,6 +1,6 @@
 ---
-title: "Design System for Indie Hackers: How to Choose the Right Approach"
-description: "A practical decision framework for indie hackers choosing a design system, with tradeoffs across speed, flexibility, maintenance, and AI workflows."
+title: "Design System for Indie Hackers: Choosing the Right Approach"
+description: "A practical decision framework for indie hackers choosing a design system approach, with honest tradeoffs across speed, maintenance, and AI compatibility."
 date: "2026-02-28"
 author:
   name: "FramingUI Team"
@@ -14,202 +14,106 @@ coverImage: ""
 published: true
 ---
 
-## Why Indie Hackers Need a Decision Framework
+# Design System for Indie Hackers: Choosing the Right Approach
 
-Indie hackers rarely fail because they do not ship features. They fail because they cannot keep quality stable while moving fast. UI quality is one of the first places this shows up.
+Indie hackers rarely fail because they lack features. They often fail because they cannot keep quality stable while moving fast. UI drift is one of the first places this shows up—and it gets worse when you add contributors or rely on AI-generated code.
 
-At first, a few copied components from a UI library seem enough. But as you add billing, onboarding, settings, analytics, and marketing pages, your interface drifts. New contributors or AI-generated code increase that drift.
+The answer is not "use the most popular component library." The answer is choosing an approach that matches your current stage, available time, and growth expectations. This post lays out three realistic paths and the questions that should determine which one you pick.
 
-The answer is not "pick the prettiest component set." The answer is choosing a design system approach that matches your stage, team size, and maintenance budget.
+## Four Questions Before You Choose
 
-## The 4 Questions to Ask Before Choosing
+### How much time can you actually spend on UI infrastructure?
 
-### 1. How Much Time Can You Spend on UI Infrastructure?
+Not how much time you think you should spend—how much you realistically can. If the honest answer is two to four hours per month, a highly customized system will become technical debt before it delivers value.
 
-Be honest. If you can only spend a few hours per month on design infrastructure, a highly custom system may become technical debt quickly.
+### How much does brand differentiation matter right now?
 
-### 2. How Much Brand Differentiation Do You Need?
+At validation stage, baseline consistency is often enough. Once you are competing on user trust and product polish, generic UI hurts. Knowing which stage you are in changes the calculus significantly.
 
-If your product competes in a crowded market, generic UI may hurt trust. If speed to validation matters most, baseline consistency may be enough.
+### How often does your product surface change?
 
-### 3. How Often Do You Change Product Surfaces?
+Products that are still finding product-market fit change frequently. A configuration-heavy design system adds friction to every iteration. Token-based systems tolerate change better because updates happen in one place and propagate automatically.
 
-Fast-moving products need systems that tolerate iteration. Static configuration with clear tokens usually scales better than one-off styling.
+### Will you use AI to generate UI code?
 
-### 4. Will You Use AI to Generate UI Code?
+If yes, this is now a first-class requirement for your design system, not an afterthought. AI tools generate plausible but off-brand UI when they have no structured token data to reference. If you plan to use AI coding tools regularly, token clarity is non-negotiable.
 
-If yes, token clarity and machine-readable system rules are now first-class requirements. Otherwise AI will generate plausible but off-brand UI.
+## Three Paths
 
-## Three Common Design System Paths
+### Path A: Utility Classes Directly
 
-### Path A: Raw Utility Classes Only
+You style every component with utility classes and no token abstraction.
 
-You style every screen directly using utility classes.
+This works for very early experiments. Iteration is fast, setup is zero, and there is nothing to maintain. The cost arrives when the product starts growing: inconsistency compounds quickly, repeated style logic spreads everywhere, and AI-generated code drifts further from your visual language with every generation.
 
-Pros:
+Pick this path if you are validating an idea this month and expect to rebuild UI later.
 
-- Fast start
-- No setup overhead
-- Flexible for prototypes
+### Path B: Component Library With Local Conventions
 
-Cons:
+You adopt a component library and layer lightweight local rules on top—custom colors in the config, a few documented naming decisions.
 
-- Consistency degrades quickly
-- Repeated style logic everywhere
-- Harder to enforce across team or AI tooling
+This gives you better baseline accessibility, faster initial shipping, and easier onboarding for new contributors. The downside is that conventions often stay undocumented and unenforceable. When a second developer or an AI tool joins, the conventions degrade unless they are written down and structurally reinforced.
 
-Best for: very early experiments with short lifespan.
-
-### Path B: Component Library + Local Conventions
-
-You adopt a popular component library and add lightweight local rules.
-
-Pros:
-
-- Faster than building from zero
-- Better baseline accessibility
-- Easier onboarding for contributors
-
-Cons:
-
-- Visual sameness across products
-- Conventions often stay undocumented
-- Token governance varies by setup
-
-Best for: teams that want balanced speed and moderate consistency.
+Pick this path if you need reliable output now and can accept moderate visual similarity with other products using the same library.
 
 ### Path C: Token-First Design System
 
-You define tokens, build primitives around them, and treat components as implementation of token semantics.
+You define tokens first—color, spacing, type, radius—and build components as implementations of those token semantics.
 
-Pros:
+This approach costs more upfront but scales substantially better. Global changes take one edit. Theming and rebranding become routine. AI-generated code can reference tokens directly, which keeps it consistent with human-written components. The tradeoff is that you need a clear migration plan for existing UI, and the initial setup requires discipline.
 
-- Strong consistency and scalability
-- Easier theming and rebranding
-- Better compatibility with AI-assisted coding
+Pick this path if your product is growing in surfaces and complexity, or if you are generating meaningful amounts of UI with AI tools.
 
-Cons:
+Most serious indie products eventually move to Path C regardless of where they start. The question is whether you arrive there by design or by necessity after a painful refactor.
 
-- Requires initial setup discipline
-- Needs clear migration plan for existing UI
+## What to Evaluate in Any Option
 
-Best for: indie products with growth ambitions and repeated UI shipping.
+**Token model quality.** Look for semantic tokens with clear naming—`button.primary.bg`, not `blue-500`. Check for theme support, dark mode handling, and a stable extension strategy. Without this, you will fight drift indefinitely.
 
-## Selection Matrix for Indie Hackers
+**Primitive API constraints.** If a component accepts raw style overrides by default, your consistency is fragile. Good primitive APIs limit unsafe customization without requiring workarounds for legitimate use cases.
 
-Use this quick matrix when making a choice.
+**Documentation and operational clarity.** A design system is an operational tool, not just a visual one. Can you explain when to use each variant? Is there a clear process for adding a new component? If the answer is no, the system will degrade under normal usage.
 
-### Choose Path A if:
+**AI workflow compatibility.** Can AI tools consume your system through structured token data and explicit component contracts? This is relevant now, not in a future roadmap item.
 
-- You are validating idea-market fit this month
-- You expect to rebuild core UI later
-- You are not using AI-generated production UI
+## Migrating an Existing Product
 
-### Choose Path B if:
+Most indie products are not greenfield. A practical migration sequence that does not require stopping feature work:
 
-- You need reliable shipping now
-- You want prebuilt components with minimal setup
-- You can accept moderate visual similarity with other products
+**Phase 1: Define core tokens.** Start with color, spacing, type, and radius. Keep the first version intentionally small—ten color tokens and five spacing values is a better starting point than fifty tokens you are not sure you will use.
 
-### Choose Path C if:
+**Phase 2: Refactor high-usage primitives.** Prioritize `Button`, `Input`, `Card`, `Badge`. Replace raw styling patterns with token-based variants. These four components appear on nearly every screen.
 
-- You expect product to scale in surfaces and team size
-- You care about long-term consistency and brand identity
-- You want AI tools to generate token-aligned code
+**Phase 3: Migrate revenue-critical flows.** Apply new primitives to onboarding, checkout, billing, and settings before working through long-tail pages. High-traffic screens benefit most from consistency improvements.
 
-Most serious indie hackers eventually move toward Path C, even if they start in A or B.
+**Phase 4: Add governance.** Set lint rules: no hardcoded brand colors in components, token usage required for new UI, variant additions require a rationale. This step prevents silent regression.
 
-## What to Evaluate in Any Design System Option
+To set up FramingUI as your token foundation:
 
-### Token Model Quality
+```bash
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
+```
 
-Check whether the system supports semantic tokens clearly:
+For MCP integration with AI tools:
 
-- Component-level semantics (`button.primary.bg`)
-- Theme support (light/dark)
-- Stable naming and extension strategy
+```bash
+npx -y @framingui/mcp-server@latest init
+```
 
-Without this, you will fight drift forever.
+The init command sets up the full runtime contract—provider bootstrap, CSS imports, MCP config for Claude Code—in one step.
 
-### Primitive API Design
+## Common Selection Mistakes
 
-Good primitive APIs limit unsafe customization. If every component accepts raw style overrides by default, your consistency is fragile.
+**Choosing by aesthetics.** A polished component screenshot tells you almost nothing about how maintainable the system is six months from now.
 
-### Documentation and Operational Clarity
+**Underestimating maintenance cost.** The real cost of a design system is not setup—it is the ongoing work to keep it consistent with a changing product. If the system requires constant manual cleanup, it is too expensive for a small team.
 
-Do you get clear usage patterns, migration strategy, and enforcement options? A design system is operational, not only visual.
+**Deferring token decisions.** "We will standardize later" almost always means compounding inconsistency. Later has a higher cost than now.
 
-### AI Workflow Compatibility
+**Ignoring AI compatibility.** If you use AI coding tools regularly, a design system without machine-readable tokens multiplies inconsistency with every generation.
 
-Can your system be consumed by AI tools through structured token data and clear component contracts? This matters now, not later.
+## The Decision in Practice
 
-## Where FramingUI Fits
+Before committing, verify you can answer these clearly: Can you explain your token model in one page? Are primitive APIs constrained enough to enforce consistency? Can migration happen incrementally? Does the system support your AI coding workflow? Is ongoing maintenance feasible with your real team capacity?
 
-FramingUI is strongest for indie hackers who want token-first consistency without enterprise-level overhead.
-
-Key advantages in practical terms:
-
-- Fast setup of token structure and reusable primitives
-- Clear alignment between token semantics and generated UI code
-- Designed for iterative product work, not static showcase screens
-- Useful bridge between human decisions and AI code generation
-
-It does not remove the need for product judgment, but it reduces repetitive UI decisions and helps enforce consistency at scale.
-
-## Migration Strategy for Existing Indie Products
-
-Most indie projects are not greenfield. Here is a low-risk migration sequence.
-
-### Phase 1: Define Core Tokens
-
-Start with color, spacing, typography, radius. Keep the first version intentionally small.
-
-### Phase 2: Refactor High-Usage Primitives
-
-Prioritize `Button`, `Input`, `Card`, `Badge`. Replace raw styling patterns with token variants.
-
-### Phase 3: Migrate Revenue-Critical Flows
-
-Apply new primitives to onboarding, checkout, billing, and settings before long-tail pages.
-
-### Phase 4: Add Governance
-
-Set lint and review rules:
-
-- No hardcoded brand colors in components
-- Token usage required in new UI
-- Variant additions require rationale
-
-This prevents silent regression.
-
-## Mistakes Indie Hackers Make When Choosing
-
-### Mistake 1: Choosing by Aesthetics Alone
-
-A polished component screenshot tells you little about maintainability.
-
-### Mistake 2: Ignoring Maintenance Cost
-
-If the system needs constant manual cleanup, it is too expensive for a small team.
-
-### Mistake 3: Deferring Token Decisions
-
-"We will standardize later" usually means compounding inconsistency.
-
-### Mistake 4: Not Planning for AI-Assisted Development
-
-AI code generation is now normal. If your design system is not machine-friendly, inconsistency multiplies faster.
-
-## Decision Checklist
-
-Before committing to a design system path, verify:
-
-- You can explain your token model in one page
-- Primitive APIs are constrained enough to enforce consistency
-- Migration can happen incrementally without blocking feature work
-- The system supports your likely AI coding workflow
-- Ongoing maintenance fits your real team capacity
-
-Indie hackers do not need the heaviest platform. They need a design system that preserves speed while preventing visual entropy.
-
-If your product is moving beyond prototype stage, a token-first approach gives the best long-term leverage, and FramingUI is a strong fit for that transition.
+Indie hackers do not need the most feature-complete platform. They need a design system that preserves shipping speed while preventing visual entropy. A token-first approach provides the best long-term leverage once a product is past the pure validation stage—and the sooner it is in place, the smaller the migration cost.

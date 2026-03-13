@@ -6,7 +6,7 @@
  * - Supabase Storage 이미지 URL 헬퍼
  */
 
-type TemplateLocale = 'en' | 'ko' | 'ja';
+type TemplateLocale = 'en' | 'ko';
 
 // ============================================================================
 // Types
@@ -470,7 +470,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         subtitleKo: '다크 톤에 생기를 불어넣는 강렬한 엑센트',
         subtitleJa: 'ダークトーンに活気を与える強烈なアクセント',
         description:
-          'High-contrast neon-style accent colors defined as CSS variables bring life to the dark canvas. Customize the primary color once to complete your brand\'s dark theme.',
+          "High-contrast neon-style accent colors defined as CSS variables bring life to the dark canvas. Customize the primary color once to complete your brand's dark theme.",
         descriptionKo:
           '짙은 어둠 속에서 확 눈에 띄는 네온 컬러 등 높은 대비의 컬러가 CSS 변수로 잡혀 있어요. 대표 컬러를 수정해 브랜드만의 세련된 다크 테마를 완성하세요.',
         descriptionJa:
@@ -720,7 +720,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         titleKo: '마음이 편안해지는 서비스',
         titleJa: '心が安らぐサービス',
         description:
-          'Recommended when you want to create visually soothing screens — children\'s apps, sleep aids, or meditation tools — with no sharp or jarring elements.',
+          "Recommended when you want to create visually soothing screens — children's apps, sleep aids, or meditation tools — with no sharp or jarring elements.",
         descriptionKo:
           '아이를 위한 서비스나 수면/명상 유도 앱처럼, 뾰족하고 거슬리는 부분 없이 시각적으로 마음을 다독여주는 화면을 만들고 싶을 때 추천해요.',
         descriptionJa:
@@ -1166,7 +1166,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         subtitleKo: '화려함 대신 노이즈리스 리얼 캔버스',
         subtitleJa: '華やかさの代わりにノイズレスリアルキャンバス',
         description:
-          'Animation and flashy shadows are luxuries here. The entire interface holds its breath so only the user\'s words and code take center stage.',
+          "Animation and flashy shadows are luxuries here. The entire interface holds its breath so only the user's words and code take center stage.",
         descriptionKo:
           '애니메이션이나 화려한 그림자는 사치입니다. 인터페이스 전체가 벽지처럼 뒤로 물러나고 오직 사용자의 글과 코드만 주인공이 되도록 숨을 죽입니다.',
         descriptionJa:
@@ -1327,7 +1327,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         description:
           'After using nothing but black and white, a single neon green fires only in truly critical moments — "Active", "Success", "Payment" — completely stealing the gaze.',
         descriptionKo:
-          '지독할 정도로 흑백만 쓰다가, \'작동 중\', \'성공\', 혹은 \'결제\' 같은 진짜 중요한 순간에만 네온 빛 그린 컬러를 딱 한 번 쏴서 시선을 완전히 훔칩니다.',
+          "지독할 정도로 흑백만 쓰다가, '작동 중', '성공', 혹은 '결제' 같은 진짜 중요한 순간에만 네온 빛 그린 컬러를 딱 한 번 쏴서 시선을 완전히 훔칩니다.",
         descriptionJa:
           'ひたすら白黒だけを使いながら、「稼働中」「成功」「決済」のような本当に重要な瞬間にのみネオングリーンをパッと一発放って視線を完全に奪います。',
       },
@@ -1370,7 +1370,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
         subtitleKo: '촘촘한 표와 차트가 버무려진 바로 쓸 수 있는 대시보드 세트',
         subtitleJa: '緻密な表とチャートが組み合わさったすぐ使えるダッシュボードセット',
         description:
-          'The ultimate control room overflowing with numbers and charts. Stats, area charts, multi-level tables are pre-assembled — just plug in your data and you\'re done.',
+          "The ultimate control room overflowing with numbers and charts. Stats, area charts, multi-level tables are pre-assembled — just plug in your data and you're done.",
         descriptionKo:
           '숫자와 차트가 넘쳐나는 극강의 관제탑. 스탯, 면적 차트, 다단 테이블 등이 이미 조립된 채로 제공되어 데이터만 꽂으면 끝납니다.',
         descriptionJa:
@@ -1464,17 +1464,9 @@ export function getAllTemplates(): TemplateData[] {
  * locale에 맞는 텍스트를 선택합니다.
  * - ko/ja가 없으면 en으로 fallback
  */
-export function getLocalizedTemplateText(
-  locale: TemplateLocale,
-  en: string,
-  ko?: string,
-  ja?: string
-): string {
+export function getLocalizedTemplateText(locale: TemplateLocale, en: string, ko?: string): string {
   if (locale === 'ko' && ko) {
     return ko;
-  }
-  if (locale === 'ja' && ja) {
-    return ja;
   }
   return en;
 }

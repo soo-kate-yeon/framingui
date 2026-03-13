@@ -13,55 +13,29 @@ coverImage: ""
 published: true
 ---
 
-## Why Cursor Needs Design Tokens
+Cursor generates a notification card in five seconds. You spend five minutes correcting the colors, padding, and border radius to match your design system. That ratio — five seconds to generate, five minutes to fix — is the problem this guide solves.
 
-Cursor's AI is powerful at generating code, but without design tokens, it will:
+The fix is a `.cursorrules` file. It takes fifteen minutes to set up and eliminates most of the manual correction work.
 
-- Guess color values (`bg-blue-500`, `#3B82F6`, `rgb(59, 130, 246)`)
-- Use inconsistent spacing (`p-4`, `px-5`, `py-3`)
-- Create arbitrary border radius values (`rounded-md`, `rounded-lg`)
+## Why Cursor Guesses Wrong
 
-FramingUI solves this by giving Cursor a **single source of truth** for all design decisions.
+Without explicit rules, Cursor pulls from its training data: popular open-source repos, public component libraries, generic Tailwind patterns. It has no idea that your project uses `indigo-600` not `blue-600`, `p-6` not `p-4`, or `bg-neutral-50` not `bg-white`.
+
+FramingUI's design tokens are CSS variables — `var(--bg-primary-default)`, `var(--foreground-primary)`, `var(--foreground-accent)` — not JavaScript objects or hardcoded hex values. Cursor won't use them unless you tell it to.
 
 ## Installation
 
-### Step 1: Install FramingUI
+Install the packages with pnpm:
 
 ```bash
-# Using pnpm (recommended)
-pnpm add @framingui/ui @framingui/core
-
-# Using npm
-npm install @framingui/ui @framingui/core
-
-# Using yarn
-yarn add @framingui/ui @framingui/core
+pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-### Step 2: Generate Design Tokens
-
-```bash
-# Interactive mode
-npx framingui generate
-
-# Or specify your brand color directly
-npx framingui generate --color "#FF6B35"
-```
-
-This creates a `.framingui/` directory with your design tokens:
-
-```
-.framingui/
-├── tokens.css          # CSS custom properties
-├── tokens.json         # JSON format for tooling
-└── tailwind.config.js  # Tailwind integration
-```
-
-### Step 3: Import Tokens in Your App
+Import the styles in your app's global layout:
 
 ```tsx
 // app/layout.tsx (Next.js App Router)
-import '@framingui/ui/styles/tokens.css';
+import '@framingui/ui/styles';
 import './globals.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -75,12 +49,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 ## Cursor Configuration
 
-### Create `.cursorrules` File
+### Create `.cursorrules`
 
-Create a `.cursorrules` file in your project root:
+Create `.cursorrules` in your project root. This file is Cursor's instruction manual for your codebase.
 
 ```
-# FramingUI Design System Rules
+# Design System: FramingUI
 
 ## Component Library
 Always import UI components from @framingui/ui:
@@ -89,38 +63,24 @@ Always import UI components from @framingui/ui:
 - Table, Avatar, Badge, Tooltip, Popover
 
 ## Design Tokens
-Use CSS custom properties for all styling:
+Use CSS custom properties for all styling. Never hardcode colors or spacing.
 
 ### Colors
-- Primary: var(--bg-primary)
-- Secondary: var(--bg-secondary)
-- Destructive: var(--bg-destructive)
-- Muted: var(--bg-muted)
-- Accent: var(--bg-accent)
-- Card: var(--bg-card)
-- Popover: var(--bg-popover)
+- Primary background: var(--background-page)
+- Primary text: var(--foreground-primary)
+- Action primary: var(--foreground-accent)
+- Muted text: var(--foreground-muted)
 
 ### Spacing
-- var(--spacing-1) through var(--spacing-8)
-- Use these instead of Tailwind's p-1, p-2, etc.
-
-### Border Radius
-- var(--radius-sm)
-- var(--radius-md)
-- var(--radius-lg)
-- var(--radius-xl)
-
-### Borders
-- var(--border-default)
-- var(--border-input)
-- var(--border-ring)
+Use Tailwind classes that reference tokens:
+- bg-[var(--background-page)]
+- text-[var(--foreground-primary)]
 
 ## Code Generation Rules
-1. Never hardcode colors - always use var(--*)
+1. Never hardcode colors — always use var(--*)
 2. Import components from @framingui/ui, not local files
-3. Use semantic token names (primary, secondary) not color names (blue, red)
+3. Use semantic token names, not color names (blue, red)
 4. Prefer FramingUI components over raw HTML elements
-5. Use Tailwind classes that reference tokens: bg-[var(--bg-primary)]
 
 ## Example Component
 ```tsx
@@ -132,10 +92,7 @@ export function ExampleCard() {
       <CardHeader>
         <CardTitle>Example</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-[var(--spacing-4)]">
-        <p className="text-[var(--bg-muted-foreground)]">
-          Card content here
-        </p>
+      <CardContent>
         <Button variant="default">Click me</Button>
       </CardContent>
     </Card>
@@ -144,7 +101,7 @@ export function ExampleCard() {
 ```
 ```
 
-### VSCode Settings (for Cursor)
+### VSCode Settings for Token Autocomplete
 
 Add to `.vscode/settings.json`:
 
@@ -157,43 +114,35 @@ Add to `.vscode/settings.json`:
 }
 ```
 
-Create `.vscode/css-custom-data.json` for token autocomplete:
+Create `.vscode/css-custom-data.json`:
 
 ```json
 {
   "version": 1.1,
   "properties": [
     {
-      "name": "--bg-primary",
-      "description": "Primary background color"
+      "name": "--background-page",
+      "description": "Primary canvas background"
     },
     {
-      "name": "--bg-secondary",
-      "description": "Secondary background color"
+      "name": "--foreground-primary",
+      "description": "Primary text color"
     },
     {
-      "name": "--spacing-4",
-      "description": "1rem spacing (16px)"
-    },
-    {
-      "name": "--radius-md",
-      "description": "Medium border radius"
+      "name": "--foreground-accent",
+      "description": "Primary action / brand color"
     }
   ]
 }
 ```
 
-## Testing Cursor Integration
+Restart Cursor after creating this file.
 
-### Test 1: Generate a Login Form
+## Testing the Integration
 
-Ask Cursor:
+Ask Cursor: "Create a login form using FramingUI components with email and password fields."
 
-```
-Create a login form using FramingUI components with email and password fields
-```
-
-Expected output:
+A correctly configured Cursor should produce something like this:
 
 ```tsx
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
@@ -204,12 +153,12 @@ export function LoginForm() {
       <CardHeader>
         <CardTitle>Sign In</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-[var(--spacing-4)]">
-        <div className="space-y-[var(--spacing-2)]">
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" type="email" placeholder="you@example.com" />
         </div>
-        <div className="space-y-[var(--spacing-2)]">
+        <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input id="password" type="password" />
         </div>
@@ -222,88 +171,30 @@ export function LoginForm() {
 }
 ```
 
-✅ **Verify**: No hardcoded colors, uses `var(--*)` tokens
-
-### Test 2: Generate a Dashboard Card
-
-Ask Cursor:
-
-```
-Create a stats card showing total users with an icon and value
-```
-
-Expected output:
-
-```tsx
-import { Card, CardContent } from '@framingui/ui';
-import { Users } from 'lucide-react';
-
-export function StatsCard() {
-  return (
-    <Card>
-      <CardContent className="p-[var(--spacing-6)]">
-        <div className="flex items-center space-x-[var(--spacing-4)]">
-          <div className="p-[var(--spacing-3)] bg-[var(--bg-primary)]/10 rounded-[var(--radius-lg)]">
-            <Users className="w-6 h-6 text-[var(--bg-primary)]" />
-          </div>
-          <div>
-            <p className="text-sm text-[var(--bg-muted-foreground)]">Total Users</p>
-            <p className="text-2xl font-bold">12,345</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-```
-
-✅ **Verify**: Uses FramingUI Card, references design tokens
+Verify: no hardcoded hex values, components imported from `@framingui/ui`, no arbitrary Tailwind color classes.
 
 ## Troubleshooting
 
-### Issue: Cursor generates Tailwind classes without tokens
+**Cursor generates raw Tailwind without tokens:** Update your `.cursorrules` and add explicit examples. Be specific: "Use `bg-[var(--background-page)]` not `bg-white`."
 
-**Solution**: Update `.cursorrules` and explicitly ask:
+**Token autocomplete not working:** Restart Cursor after adding `.vscode/css-custom-data.json`. The file must exist before Cursor starts.
 
-```
-Generate a button using FramingUI and var(--*) tokens
-```
+**Components not found:** Verify installation with `pnpm list @framingui/ui`. If missing, rerun the install command.
 
-### Issue: Token autocomplete not working
+## Extending the Token System
 
-**Solution**: Restart Cursor after adding `.vscode/css-custom-data.json`
-
-### Issue: Components not found
-
-**Solution**: Verify package installation:
-
-```bash
-pnpm list @framingui/ui
-```
-
-## Advanced: Custom Token Extensions
-
-You can extend FramingUI tokens for project-specific needs:
+You can layer project-specific tokens on top of the FramingUI base:
 
 ```css
 /* globals.css */
-@import '@framingui/ui/styles/tokens.css';
+@import '@framingui/ui/styles';
 
 :root {
-  /* Extend with custom tokens */
   --my-app-header-height: 64px;
   --my-app-sidebar-width: 280px;
-
-  /* Override FramingUI tokens (optional) */
-  --radius-xl: 16px;
 }
 ```
 
-## Next Steps
+Add these to your `.cursorrules` and `.vscode/css-custom-data.json` so Cursor knows about them.
 
-1. **Configure Cursor**: Add `.cursorrules` to your project
-2. **Test generation**: Ask Cursor to create components
-3. **Verify consistency**: Check that all generated code uses tokens
-4. **Iterate**: Refine your rules based on Cursor's output
-
-With FramingUI + Cursor, you get AI-powered UI generation with **0% hallucination** on design decisions.
+The fifteen-minute setup pays back on the first complex component Cursor generates correctly. Every component after that is compounding return.

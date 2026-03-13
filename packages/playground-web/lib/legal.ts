@@ -3,7 +3,7 @@ import path from 'path';
 import { createHeadingIdFactory } from './heading';
 
 export type LegalSlug = 'terms-of-service' | 'privacy-policy' | 'refund-policy';
-export type LegalLocale = 'en' | 'ko' | 'ja';
+export type LegalLocale = 'en' | 'ko';
 
 export interface TocItem {
   id: string;
@@ -22,9 +22,9 @@ export interface LegalDocument {
 const LEGAL_DOCS_DIR = path.join(process.cwd(), '..', '..', 'docs', 'legal');
 
 const LEGAL_META: Record<LegalSlug, Record<LegalLocale, string>> = {
-  'terms-of-service': { en: 'Terms of Service', ko: '이용약관', ja: '利用規約' },
-  'privacy-policy': { en: 'Privacy Policy', ko: '개인정보처리방침', ja: 'プライバシーポリシー' },
-  'refund-policy': { en: 'Refund Policy', ko: '환불정책', ja: '返金ポリシー' },
+  'terms-of-service': { en: 'Terms of Service', ko: '이용약관' },
+  'privacy-policy': { en: 'Privacy Policy', ko: '개인정보처리방침' },
+  'refund-policy': { en: 'Refund Policy', ko: '환불정책' },
 };
 
 export const LEGAL_SLUGS: LegalSlug[] = ['terms-of-service', 'privacy-policy', 'refund-policy'];
@@ -65,13 +65,12 @@ export function getLegalDocument(slug: LegalSlug): LegalDocument {
 
   const enContent = readContent('en');
   const koContent = readContent('ko');
-  const jaContent = readContent('ja');
 
   return {
     slug,
     title: LEGAL_META[slug],
-    content: { en: enContent, ko: koContent, ja: jaContent },
-    toc: { en: extractToc(enContent), ko: extractToc(koContent), ja: extractToc(jaContent) },
+    content: { en: enContent, ko: koContent },
+    toc: { en: extractToc(enContent), ko: extractToc(koContent) },
   };
 }
 
