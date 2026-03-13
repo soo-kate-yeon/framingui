@@ -5,6 +5,18 @@ All notable changes to @framingui/ui will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.12] - 2026-03-13
+
+### Fixed
+
+- Registered FramingUI package utility scanning in `@framingui/ui/styles` for Tailwind CSS v4 consumers so packaged classes like button sizing and input spacing compile without manual app-side `@source` overrides.
+- Registered the `tailwindcss-animate` plugin hook in the shared stylesheet so Dialog, DropdownMenu, Popover, Tooltip, and other overlay primitives keep their motion utilities in Tailwind v4 apps.
+
+### Testing
+
+- Added stylesheet contract regression coverage for the shared FramingUI styles entrypoint.
+- Verified the package against a real Next.js Tailwind v4 consumer app to confirm runtime spacing and overlay motion both compile correctly.
+
 ## [0.6.11] - 2026-03-12
 
 ### Added
