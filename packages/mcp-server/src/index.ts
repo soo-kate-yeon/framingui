@@ -30,6 +30,7 @@ import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
 import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
 import { validateEnvironmentTool } from './tools/validate-environment.js';
+import { detectProjectContextTool } from './tools/detect-project-context.js';
 import { whoamiTool } from './tools/whoami.js';
 import { readPackageJson } from './utils/package-json-reader.js';
 import { getPromptDefinition, listPromptDefinitions } from './prompts/prompt-catalog.js';
@@ -51,6 +52,7 @@ import {
   ValidateScreenDefinitionInputSchema,
   GenerateScreenInputSchema,
   ValidateEnvironmentInputSchema,
+  DetectProjectContextInputSchema,
 } from './schemas/mcp-schemas.js';
 
 const packageJsonResult = readPackageJson(
@@ -589,6 +591,34 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: 'detect-project-context',
+        description:
+          'Detect the active project context from a filesystem path and optionally set it as the session default.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- As the first step when the user has provided a project path\n' +
+          '- Before using React Native direct-write workflow without repeating platform flags\n' +
+          '- To determine whether the target project is web, Expo, or bare React Native\n\n' +
+          'RETURNS:\n' +
+          '- platform: web or react-native\n' +
+          '- environment: runtime and package manager\n' +
+          '- recommendations: default workflow recommendation for the detected project\n' +
+          '- sessionDefaultApplied: whether the detected context was stored for later tool calls',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            projectPath: {
+              type: 'string',
+              description: 'Path to package.json or project root directory',
+            },
+            setAsDefault: {
+              type: 'boolean',
+              description: 'Store the detected project context as the active session default',
+            },
+          },
+          required: ['projectPath'],
+        },
+      },
+      {
         name: 'validate-environment',
         description:
           '[WORKFLOW STEP 3/3 - Optional] Validate user environment for web or React Native direct-write delivery.\n\n' +
@@ -666,23 +696,42 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 
   info(`CallTool request: ${name}`);
 
-  // 모든 도구 호출 전에 인증 가드 실행
-  try {
-    requireAuth();
-  } catch (e) {
-    if (e instanceof AuthRequiredError) {
+  if (name !== 'detect-project-context') {
+    // 모든 원격/카탈로그 도구 호출 전에 인증 가드 실행
+    try {
+      requireAuth();
+    } catch (e) {
+      if (e instanceof AuthRequiredError) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: false,
+                code: 'AUTH_REQUIRED',
+                error: 'Authentication required to use FramingUI MCP tools.',
+                nextAction:
+                  'Run `framingui-mcp login` or set FRAMINGUI_API_KEY, then retry the same tool call.',
+                signupUrl:
+                  'https://framingui.com/auth/signup?utm_source=mcp&utm_medium=cli&utm_campaign=auth_prompt',
+                retryable: true,
+              }),
+            },
+          ],
+          isError: true,
+        };
+      }
+      // 예상치 못한 예외는 로깅 후 에러 반환 (silent swallow 방지)
+      logError(`Unexpected error in requireAuth: ${e}`);
       return {
         content: [
           {
             type: 'text',
             text: JSON.stringify({
               success: false,
-              code: 'AUTH_REQUIRED',
-              error: 'Authentication required to use FramingUI MCP tools.',
-              nextAction:
-                'Run `framingui-mcp login` or set FRAMINGUI_API_KEY, then retry the same tool call.',
-              signupUrl:
-                'https://framingui.com/auth/signup?utm_source=mcp&utm_medium=cli&utm_campaign=auth_prompt',
+              code: 'AUTH_CHECK_FAILED',
+              error: 'Authentication check failed unexpectedly.',
+              detail: e instanceof Error ? e.message : String(e),
               retryable: true,
             }),
           },
@@ -690,23 +739,6 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         isError: true,
       };
     }
-    // 예상치 못한 예외는 로깅 후 에러 반환 (silent swallow 방지)
-    logError(`Unexpected error in requireAuth: ${e}`);
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify({
-            success: false,
-            code: 'AUTH_CHECK_FAILED',
-            error: 'Authentication check failed unexpectedly.',
-            detail: e instanceof Error ? e.message : String(e),
-            retryable: true,
-          }),
-        },
-      ],
-      isError: true,
-    };
   }
 
   try {
@@ -965,6 +997,20 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         };
       }
 
+      case 'detect-project-context': {
+        const validatedInput = DetectProjectContextInputSchema.parse(args);
+        const result = await detectProjectContextTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -1066,5 +1112,5 @@ try {
 }
 
 info(
-  '17 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, generate_screen, validate-environment'
+  '18 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, generate_screen, validate-environment, detect-project-context'
 );

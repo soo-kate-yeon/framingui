@@ -172,7 +172,7 @@ function fallbackComponentInfo(componentName: string): ContextComponentInfo {
 
 async function getComponentInfo(
   componentIds: string[],
-  platform: GetScreenGenerationContextInput['platform']
+  platform: NonNullable<GetScreenGenerationContextInput['platform']>
 ): Promise<ContextComponentInfo[]> {
   const components: ContextComponentInfo[] = [];
 

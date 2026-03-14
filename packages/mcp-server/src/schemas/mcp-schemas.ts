@@ -618,6 +618,53 @@ export const PlatformTargetSchema = z.enum(['web', 'react-native']);
 
 export type PlatformTarget = z.infer<typeof PlatformTargetSchema>;
 
+export const ProjectRuntimeSchema = z.enum(['web', 'expo', 'react-native']);
+
+export type ProjectRuntime = z.infer<typeof ProjectRuntimeSchema>;
+
+export const PackageManagerSchema = z.enum(['npm', 'pnpm', 'yarn', 'bun', 'unknown']);
+
+export type PackageManager = z.infer<typeof PackageManagerSchema>;
+
+export const ProjectEnvironmentSchema = z.object({
+  runtime: ProjectRuntimeSchema,
+  projectType: ProjectRuntimeSchema,
+  packageManager: PackageManagerSchema.optional(),
+});
+
+export type ProjectEnvironment = z.infer<typeof ProjectEnvironmentSchema>;
+
+export const ProjectContextRecommendationSchema = z.object({
+  workflow: z.enum(['web-screen-definition', 'react-native-direct-write']),
+  reason: z.string(),
+});
+
+export type ProjectContextRecommendation = z.infer<typeof ProjectContextRecommendationSchema>;
+
+export const DetectProjectContextInputSchema = z.object({
+  projectPath: z.string().describe('Path to package.json or project root'),
+  setAsDefault: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe('Store the detected project context as the active session default'),
+});
+
+export type DetectProjectContextInput = z.infer<typeof DetectProjectContextInputSchema>;
+
+export const DetectProjectContextOutputSchema = z.object({
+  success: z.boolean(),
+  projectPath: z.string().optional(),
+  packageJsonPath: z.string().optional(),
+  platform: PlatformTargetSchema.optional(),
+  environment: ProjectEnvironmentSchema.optional(),
+  recommendations: z.array(ProjectContextRecommendationSchema).optional(),
+  sessionDefaultApplied: z.boolean().optional(),
+  error: z.string().optional(),
+});
+
+export type DetectProjectContextOutput = z.infer<typeof DetectProjectContextOutputSchema>;
+
 /**
  * List Components Input Schema
  * SPEC-MCP-003: [TAG-MCP003-006]
@@ -625,7 +672,7 @@ export type PlatformTarget = z.infer<typeof PlatformTargetSchema>;
 export const ListComponentsInputSchema = z.object({
   category: z.enum(['core', 'complex', 'advanced', 'all']).optional().default('all'),
   search: z.string().optional(),
-  platform: PlatformTargetSchema.optional().default('web'),
+  platform: PlatformTargetSchema.optional(),
 });
 
 export type ListComponentsInput = z.infer<typeof ListComponentsInputSchema>;
@@ -684,7 +731,7 @@ export const PreviewComponentInputSchema = z.object({
   componentId: z.string().regex(/^[a-z-]+$/, 'Component ID must be lowercase with hyphens'),
   includeExamples: z.boolean().optional(),
   includeDependencies: z.boolean().optional(),
-  platform: PlatformTargetSchema.optional().default('web'),
+  platform: PlatformTargetSchema.optional(),
 });
 
 export type PreviewComponentInput = z.infer<typeof PreviewComponentInputSchema>;
@@ -957,7 +1004,7 @@ export const GetScreenGenerationContextInputSchema = z.object({
   themeId: ThemeIdSchema.optional(),
   includeExamples: z.boolean().optional().default(true),
   compact: z.boolean().optional().default(false),
-  platform: PlatformTargetSchema.optional().default('web'),
+  platform: PlatformTargetSchema.optional(),
 });
 
 export type GetScreenGenerationContextInput = z.infer<typeof GetScreenGenerationContextInputSchema>;
@@ -1296,7 +1343,7 @@ export type ValidateScreenDefinitionOutput = z.infer<typeof ValidateScreenDefini
 export const ValidateEnvironmentInputSchema = z.object({
   projectPath: z.string().describe('Path to package.json or project root'),
   requiredPackages: z.array(z.string()).describe('Packages required by the screen components'),
-  platform: PlatformTargetSchema.optional().default('web'),
+  platform: PlatformTargetSchema.optional(),
   checkTailwind: z
     .boolean()
     .optional()
@@ -1318,13 +1365,7 @@ export const ValidateEnvironmentOutputSchema = z.object({
   installed: z.record(z.string()).optional().describe('Packages already installed with versions'),
   missing: z.array(z.string()).optional().describe('Packages that need to be installed'),
   platform: PlatformTargetSchema.optional(),
-  environment: z
-    .object({
-      runtime: z.enum(['web', 'expo', 'react-native']),
-      projectType: z.enum(['web', 'expo', 'react-native']),
-      packageManager: z.enum(['npm', 'pnpm', 'yarn', 'bun', 'unknown']).optional(),
-    })
-    .optional(),
+  environment: ProjectEnvironmentSchema.optional(),
   installCommands: z
     .object({
       npm: z.string(),
