@@ -1,15 +1,7 @@
 # E2E Quick Start
 
-Use `pnpm test:e2e` for CI-safe smoke coverage.
-Use `pnpm test:e2e:full` for the full local suite when Supabase test credentials are available.
-
-The smoke lane is intended to catch user-facing breakage early:
-
-- route returns 200 instead of 404/500
-- primary content is visible
-- global CSS is loaded
-- Next.js runtime error overlays are absent
-- critical entry points still render without relying on brittle copy/count assertions
+Use `pnpm test:e2e:smoke` for CI-safe smoke coverage.
+Use `pnpm test:e2e` for the full local suite when Supabase test credentials are available.
 
 ---
 
@@ -45,13 +37,13 @@ pnpm dev
 
 ```bash
 # CI-safe smoke tests
-pnpm test:e2e
+pnpm test:e2e:smoke
 
 # Full local E2E suite
-pnpm test:e2e:full
+pnpm test:e2e
 
 # 또는 특정 테스트만 실행
-pnpm test:e2e:full api-keys/mcp-verify.spec.ts
+pnpm test:e2e api-keys/mcp-verify.spec.ts
 ```
 
 ---
@@ -71,8 +63,8 @@ pnpm playwright show-report
 ### 1. API Key 생성 및 검증
 
 ```bash
-pnpm test:e2e:full api-keys/create-api-key.spec.ts
-pnpm test:e2e:full api-keys/mcp-verify.spec.ts
+pnpm test:e2e api-keys/create-api-key.spec.ts
+pnpm test:e2e api-keys/mcp-verify.spec.ts
 ```
 
 **예상 결과**:
@@ -84,8 +76,8 @@ pnpm test:e2e:full api-keys/mcp-verify.spec.ts
 ### 2. API Key 목록 및 삭제
 
 ```bash
-pnpm test:e2e:full api-keys/list-api-keys.spec.ts
-pnpm test:e2e:full api-keys/revoke-api-key.spec.ts
+pnpm test:e2e api-keys/list-api-keys.spec.ts
+pnpm test:e2e api-keys/revoke-api-key.spec.ts
 ```
 
 **예상 결과**:
@@ -97,7 +89,7 @@ pnpm test:e2e:full api-keys/revoke-api-key.spec.ts
 ### 3. 보안 테스트
 
 ```bash
-pnpm test:e2e:full api-keys/security.spec.ts
+pnpm test:e2e api-keys/security.spec.ts
 ```
 
 **예상 결과**:
@@ -129,7 +121,7 @@ Rate Limit이 리셋될 때까지 60초 대기 후 재실행
 
 ```bash
 # 60초 대기 후 재실행
-sleep 60 && pnpm test:e2e:full api-keys/security.spec.ts
+sleep 60 && pnpm test:e2e api-keys/security.spec.ts
 ```
 
 ### 문제: 포트 충돌 (3001)
@@ -156,7 +148,7 @@ PLAYWRIGHT_TEST_BASE_URL=http://localhost:3002
 테스트가 실행되는 모습을 직접 보고 싶다면:
 
 ```bash
-PLAYWRIGHT_HEADLESS=false pnpm test:e2e:full
+PLAYWRIGHT_HEADLESS=false pnpm test:e2e
 ```
 
 또는 디버그 모드:
@@ -169,16 +161,13 @@ pnpm playwright test --debug api-keys/create-api-key.spec.ts
 
 ## 📈 CI/CD 통합
 
-GitHub Actions lane split:
+GitHub Actions에서 자동 실행:
 
 ```yaml
 # .github/workflows/e2e-tests.yml
 name: E2E Tests
 
-on:
-  schedule:
-    - cron: '0 18 * * *'
-  workflow_dispatch:
+on: [pull_request]
 
 jobs:
   e2e:
@@ -191,12 +180,13 @@ jobs:
       - run: pnpm install
       - run: pnpm --filter @framingui/playground-web build
 
-      - name: Run browser smoke E2E
-        run: pnpm ci:mcp:nightly
+      - name: Run E2E Tests
+        run: pnpm --filter @framingui/playground-web test:e2e:smoke
         env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           PLAYWRIGHT_HEADLESS: true
-
-Pull requests use `pnpm ci:mcp:pr` in `quality-gate.yml` instead of full browser E2E.
 
       - uses: actions/upload-artifact@v4
         if: failure()
