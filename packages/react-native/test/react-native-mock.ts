@@ -27,7 +27,10 @@ export const Text = createHostComponent('Text');
 export const ScrollView = createHostComponent('ScrollView');
 export const TextInput = createHostComponent('TextInput');
 export const ActivityIndicator = createHostComponent('ActivityIndicator');
+export const Modal = createHostComponent('Modal');
 export const Switch = createHostComponent('Switch');
+export const TouchableWithoutFeedback = ({ children, ...props }: Record<string, unknown>) =>
+  React.createElement('TouchableWithoutFeedback', props, children);
 
 export const Pressable = ({ children, style, ...props }: Record<string, unknown>) =>
   React.createElement(

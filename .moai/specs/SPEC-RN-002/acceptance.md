@@ -69,6 +69,8 @@ author: Codex
 - TASK-004 validation: passed
   - `pnpm --filter @framingui/react-native test -- core-surface`
   - `pnpm --filter @framingui/react-native build`
-- TASK-005 validation: pending
+- TASK-005 validation: passed
+  - `pnpm --filter @framingui/react-native test -- data-surface`
+  - `pnpm --filter @framingui/react-native build`
 - TASK-006 validation: pending
 - Final acceptance validation: pending
