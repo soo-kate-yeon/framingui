@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { getTextStyle } from '../helpers.js';
-import { colors, radius, spacing } from '../tokens.js';
+import { createThemedStyles, useTheme } from '../theme.js';
 
 export type InlineMessageTone = 'error' | 'info' | 'success';
 
@@ -10,6 +9,9 @@ export interface InlineMessageProps {
 }
 
 export function InlineMessage({ message, tone = 'info' }: InlineMessageProps) {
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   return (
     <View style={[styles.base, tone === 'error' && styles.error]}>
       <Text style={[styles.text, tone === 'error' && styles.errorText]}>{message}</Text>
@@ -17,23 +19,25 @@ export function InlineMessage({ message, tone = 'info' }: InlineMessageProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    backgroundColor: colors.background.subtle,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing[3],
-    paddingVertical: spacing[3],
-  },
-  error: {
-    backgroundColor: colors.surface.danger,
-    borderColor: colors.border.danger,
-    borderWidth: 1,
-  },
-  text: {
-    ...getTextStyle('caption'),
-    color: colors.text.primary,
-  },
-  errorText: {
-    color: colors.text.danger,
-  },
-});
+const getStyles = createThemedStyles(theme =>
+  StyleSheet.create({
+    base: {
+      backgroundColor: theme.colors.background.subtle,
+      borderRadius: theme.radius.md,
+      paddingHorizontal: theme.spacing[3],
+      paddingVertical: theme.spacing[3],
+    },
+    error: {
+      backgroundColor: theme.colors.surface.danger,
+      borderColor: theme.colors.border.danger,
+      borderWidth: 1,
+    },
+    text: {
+      ...theme.typography.caption,
+      color: theme.colors.text.primary,
+    },
+    errorText: {
+      color: theme.colors.text.danger,
+    },
+  })
+);

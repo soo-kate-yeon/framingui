@@ -627,6 +627,7 @@ export const PackageManagerSchema = z.enum(['npm', 'pnpm', 'yarn', 'bun', 'unkno
 export type PackageManager = z.infer<typeof PackageManagerSchema>;
 
 export const ProjectEnvironmentSchema = z.object({
+  platform: PlatformTargetSchema.optional(),
   runtime: ProjectRuntimeSchema,
   projectType: ProjectRuntimeSchema,
   packageManager: PackageManagerSchema.optional(),
@@ -1389,6 +1390,8 @@ export const ValidateEnvironmentOutputSchema = z.object({
   sourceAudit: z
     .object({
       filesScanned: z.number(),
+      issues: z.array(z.string()).optional(),
+      fixes: z.array(z.string()).optional(),
       findings: z.array(
         z.object({
           filePath: z.string(),

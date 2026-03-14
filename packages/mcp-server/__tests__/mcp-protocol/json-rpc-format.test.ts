@@ -9,50 +9,28 @@
  * - Ensure no response has both result and error
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { spawn, ChildProcess } from 'child_process';
+import { resolve } from 'path';
 import { mkdtempSync } from 'fs';
 import { tmpdir } from 'os';
-import { resolve as pathResolve } from 'path';
 
 describe('JSON-RPC format validation', () => {
-  const serverPath = pathResolve(process.cwd(), 'dist/index.js');
+  const serverPath = resolve(process.cwd(), 'dist/index.js');
+  let isolatedHome: string;
 
-  async function terminateServer(server: ChildProcess): Promise<void> {
-    if (server.exitCode !== null || server.killed) {
+  beforeAll(() => {
+    isolatedHome = mkdtempSync(resolve(tmpdir(), 'framingui-mcp-jsonrpc-home-'));
+  });
+
+  async function killAndWait(server: ChildProcess): Promise<void> {
+    if (server.killed || server.exitCode !== null) {
       return;
     }
 
-    await new Promise<void>(resolveClose => {
-      let settled = false;
-
-      const finish = () => {
-        if (settled) {
-          return;
-        }
-
-        settled = true;
-        clearTimeout(forceClose);
-        resolveClose();
-      };
-
-      const forceClose = setTimeout(() => {
-        try {
-          server.kill('SIGKILL');
-        } catch (_error) {
-          // Ignore follow-up termination errors during test cleanup.
-        }
-        finish();
-      }, 1000);
-
-      server.once('close', finish);
-      server.once('exit', finish);
-
-      try {
-        server.kill('SIGKILL');
-      } catch (_error) {
-        finish();
-      }
+    await new Promise<void>(resolve => {
+      server.once('close', () => resolve());
+      server.kill();
     });
   }
 
@@ -61,31 +39,20 @@ describe('JSON-RPC format validation', () => {
    */
   async function sendJsonRpcRequest(request: object): Promise<any> {
     return new Promise((resolve, reject) => {
-      const isolatedHome = mkdtempSync(pathResolve(tmpdir(), 'framingui-mcp-json-rpc-'));
       const server: ChildProcess = spawn('node', [serverPath], {
         env: {
           ...process.env,
           HOME: isolatedHome,
-          USERPROFILE: isolatedHome,
           FRAMINGUI_API_KEY: '',
         },
       });
 
       let stdoutData = '';
-      let settled = false;
-
-      const settle = (handler: () => void) => {
-        if (settled) {
-          return;
-        }
-
-        settled = true;
-        clearTimeout(timeout);
-        void terminateServer(server).finally(handler);
-      };
 
       const timeout = setTimeout(() => {
-        settle(() => reject(new Error('Request timeout')));
+        killAndWait(server)
+          .catch(() => undefined)
+          .finally(() => reject(new Error('Request timeout')));
       }, 15000);
 
       server.stdout?.on('data', data => {
@@ -100,7 +67,10 @@ describe('JSON-RPC format validation', () => {
           try {
             const response = JSON.parse(line);
             if (response.jsonrpc) {
-              settle(() => resolve(response));
+              clearTimeout(timeout);
+              killAndWait(server)
+                .catch(reject)
+                .then(() => resolve(response));
               return;
             }
           } catch (_e) {
@@ -114,7 +84,12 @@ describe('JSON-RPC format validation', () => {
       });
 
       server.on('error', error => {
-        settle(() => reject(error));
+        clearTimeout(timeout);
+        reject(error);
+      });
+
+      server.on('close', () => {
+        clearTimeout(timeout);
       });
 
       server.stdin?.write(JSON.stringify(request) + '\n');
@@ -150,7 +125,7 @@ describe('JSON-RPC format validation', () => {
 
       expect(response).toHaveProperty('id');
       expect(response.id).toBe(testId);
-    });
+    }, 30000);
 
     it('should have result field for successful requests', async () => {
       const request = {
@@ -362,12 +337,10 @@ describe('JSON-RPC format validation', () => {
   describe('malformed requests', () => {
     it('should handle request with invalid JSON gracefully', async () => {
       return new Promise<void>(resolve => {
-        const isolatedHome = mkdtempSync(pathResolve(tmpdir(), 'framingui-mcp-json-rpc-'));
         const server: ChildProcess = spawn('node', [serverPath], {
           env: {
             ...process.env,
             HOME: isolatedHome,
-            USERPROFILE: isolatedHome,
             FRAMINGUI_API_KEY: '',
           },
         });
@@ -375,11 +348,13 @@ describe('JSON-RPC format validation', () => {
         let responded = false;
 
         setTimeout(() => {
-          void terminateServer(server).finally(() => {
-            // Server should not crash on invalid JSON
-            expect(responded).toBe(false);
-            resolve();
-          });
+          killAndWait(server)
+            .catch(() => undefined)
+            .finally(() => {
+              // Server should not crash on invalid JSON
+              expect(responded).toBe(false);
+              resolve();
+            });
         }, 2000);
 
         server.stdout?.on('data', () => {

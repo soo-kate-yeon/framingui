@@ -13,7 +13,11 @@
 
 import { fetchComponent, fetchComponentList } from '../api/data-client.js';
 import { formatToolError } from '../api/api-result.js';
-import { getImportStatementForPlatform, getPlatformSupportInfo } from '../platform-support.js';
+import {
+  buildFallbackWebPreview,
+  getFallbackWebComponent,
+} from '../data/component-fallback-catalog.js';
+import { buildReactNativePreview } from '../data/react-native-runtime-catalog.js';
 import { resolvePlatformTarget } from '../project-context-resolution.js';
 import type { PreviewComponentInput, PreviewComponentOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
@@ -28,6 +32,25 @@ export async function previewComponentTool(
   try {
     const { platform: targetPlatform } = resolvePlatformTarget(input.platform);
 
+    if (targetPlatform === 'react-native') {
+      const preview = buildReactNativePreview(input.componentId);
+      if (preview) {
+        if (input.includeDependencies === false && preview.component) {
+          preview.component.dependencies = undefined;
+        }
+        if (input.includeExamples === false && preview.component) {
+          preview.component.examples = undefined;
+          preview.component.variants = undefined;
+        }
+        return preview;
+      }
+
+      return {
+        success: false,
+        error: `Component not found: ${input.componentId}. Use list-components with platform="react-native" to inspect available runtime exports.`,
+      };
+    }
+
     // Set default values for optional parameters
     const includeExamples = input.includeExamples ?? true;
     const includeDependencies = input.includeDependencies ?? true;
@@ -35,6 +58,18 @@ export async function previewComponentTool(
     const componentResult = await fetchComponent(input.componentId);
 
     if (!componentResult.ok) {
+      const fallbackPreview = buildFallbackWebPreview(input.componentId);
+      if (fallbackPreview) {
+        if (includeDependencies === false && fallbackPreview.component) {
+          fallbackPreview.component.dependencies = undefined;
+        }
+        if (includeExamples === false && fallbackPreview.component) {
+          fallbackPreview.component.examples = undefined;
+          fallbackPreview.component.variants = undefined;
+        }
+        return fallbackPreview;
+      }
+
       // NOT_FOUND인 경우 사용 가능한 컴포넌트 목록 제공
       if (componentResult.error.code === 'NOT_FOUND') {
         const listResult = await fetchComponentList();
@@ -50,21 +85,7 @@ export async function previewComponentTool(
     }
 
     const component = componentResult.data;
-    const platformSupport = getPlatformSupportInfo(component.name, targetPlatform);
-    const importStatement =
-      targetPlatform === 'react-native'
-        ? getImportStatementForPlatform(component.name, 'react-native')
-        : component.importStatement;
-    const dependencies =
-      includeDependencies === true
-        ? targetPlatform === 'react-native'
-          ? {
-              internal: [],
-              external: platformSupport.recommendedPackages,
-            }
-          : component.dependencies
-        : undefined;
-
+    const fallback = getFallbackWebComponent(input.componentId);
     // Build component preview (API 응답에서 직접 필드 사용)
     const result = {
       id: component.id,
@@ -72,21 +93,30 @@ export async function previewComponentTool(
       category: component.category,
       description: component.description,
       tier: component.tier,
-      props: component.props ?? [],
-      variants: includeExamples ? component.variants : undefined,
-      subComponents: component.subComponents,
-      importStatement,
-      dependencies,
-      examples: includeExamples ? component.examples : undefined,
-      accessibility: component.accessibility,
+      props: component.props ?? fallback?.props ?? [],
+      variants: includeExamples ? (component.variants ?? fallback?.variants) : undefined,
+      subComponents: component.subComponents ?? fallback?.subComponents,
+      importStatement:
+        component.importStatement ??
+        fallback?.importStatement ??
+        `import { ${component.name} } from '@framingui/ui';`,
+      dependencies: includeDependencies
+        ? (component.dependencies ?? fallback?.dependencies)
+        : undefined,
+      examples: includeExamples ? (component.examples ?? fallback?.examples) : undefined,
+      accessibility: component.accessibility ?? fallback?.accessibility,
       platformSupport: {
-        target: targetPlatform,
-        supported: platformSupport.supported,
-        recommended: platformSupport.recommended,
-        status: platformSupport.status,
-        notes: platformSupport.notes,
-        recommendedImports: platformSupport.recommendedImports,
-        recommendedPackages: platformSupport.recommendedPackages,
+        target: 'web' as const,
+        supported: true,
+        recommended: true,
+        status: 'full' as const,
+        notes: ['Use @framingui/ui for the canonical web component surface.'],
+        recommendedImports: [
+          component.importStatement ??
+            fallback?.importStatement ??
+            `import { ${component.name} } from '@framingui/ui';`,
+        ],
+        recommendedPackages: ['@framingui/ui', 'react'],
       },
     };
 

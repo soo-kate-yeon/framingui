@@ -24,7 +24,10 @@ import type {
 import { matchTemplates } from '../data/template-matcher.js';
 import { getAllRecipes } from '../data/recipe-resolver.js';
 import { generateHints } from '../data/hint-generator.js';
-import { getImportStatementForPlatform, getPlatformSupportInfo } from '../platform-support.js';
+import {
+  recommendReactNativeRuntimeComponents,
+  toReactNativeContextComponent,
+} from '../data/react-native-runtime-catalog.js';
 import { resolvePlatformTarget } from '../project-context-resolution.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
 
@@ -171,20 +174,11 @@ function fallbackComponentInfo(componentName: string): ContextComponentInfo {
   };
 }
 
-async function getComponentInfo(
-  componentIds: string[],
-  platform: NonNullable<GetScreenGenerationContextInput['platform']>
-): Promise<ContextComponentInfo[]> {
+async function getComponentInfo(componentIds: string[]): Promise<ContextComponentInfo[]> {
   const components: ContextComponentInfo[] = [];
 
   for (const name of componentIds) {
     const result = await fetchComponent(componentNameToId(name));
-    const platformSupport = getPlatformSupportInfo(name, platform);
-
-    if (platform === 'react-native' && !platformSupport.supported) {
-      continue;
-    }
-
     if (result.ok) {
       const component = result.data;
       components.push({
@@ -193,41 +187,14 @@ async function getComponentInfo(
         category: component.category as 'core' | 'complex' | 'advanced',
         description: component.description,
         importStatement:
-          platform === 'react-native'
-            ? getImportStatementForPlatform(component.name, 'react-native')
-            : (component.importStatement ?? `import { ${component.name} } from '@framingui/ui';`),
+          component.importStatement ?? `import { ${component.name} } from '@framingui/ui';`,
         props: component.props ?? [],
         variants: component.variants,
-        platformSupport: {
-          target: platform,
-          supported: platformSupport.supported,
-          recommended: platformSupport.recommended,
-          status: platformSupport.status,
-          notes: platformSupport.notes,
-          recommendedImports: platformSupport.recommendedImports,
-          recommendedPackages: platformSupport.recommendedPackages,
-        },
       });
       continue;
     }
 
-    const fallback = fallbackComponentInfo(name);
-    components.push({
-      ...fallback,
-      importStatement:
-        platform === 'react-native'
-          ? getImportStatementForPlatform(name, 'react-native')
-          : fallback.importStatement,
-      platformSupport: {
-        target: platform,
-        supported: platformSupport.supported,
-        recommended: platformSupport.recommended,
-        status: platformSupport.status,
-        notes: platformSupport.notes,
-        recommendedImports: platformSupport.recommendedImports,
-        recommendedPackages: platformSupport.recommendedPackages,
-      },
-    });
+    components.push(fallbackComponentInfo(name));
   }
 
   return components;
@@ -371,6 +338,52 @@ function inferPage(category?: string): string {
   }
 }
 
+function buildReactNativeWorkflow(): WorkflowGuide {
+  return {
+    title: 'React Native Direct-Write Workflow',
+    description:
+      'Follow these steps to write Expo or React Native screens directly with @framingui/react-native.',
+    steps: [
+      {
+        step: 1,
+        action: 'Review Runtime Components',
+        description:
+          'Review the native runtime components in this response and choose the smallest reusable surface that matches the screen.',
+      },
+      {
+        step: 2,
+        action: 'Validate Native Environment',
+        tool: 'validate-environment',
+        description:
+          'Check that the target app has react, react-native, and @framingui/react-native installed.',
+        example:
+          '{ "projectPath": "/path/to/app", "platform": "react-native", "requiredPackages": ["react", "react-native", "@framingui/react-native"] }',
+      },
+      {
+        step: 3,
+        action: 'Write React Native Code',
+        description:
+          'Write Expo or React Native code directly, compose from @framingui/react-native exports, and keep custom styles inside StyleSheet.create.',
+      },
+      {
+        step: 4,
+        action: 'Audit for Drift',
+        tool: 'validate-environment',
+        description:
+          'Run validate-environment again with sourceFiles to catch web-only imports, className usage, raw colors, and raw spacing drift.',
+        example:
+          '{ "projectPath": "/path/to/app", "platform": "react-native", "sourceFiles": ["/path/to/screen.tsx"], "requiredPackages": ["react", "react-native", "@framingui/react-native"] }',
+      },
+    ],
+    notes: [
+      'Prefer @framingui/react-native exports over app-local wrappers for common screens.',
+      'Use StyleSheet.create for screen-specific layout, not className or Tailwind.',
+      'Reach for Screen, Section, Card, FormSection, ListItem, and SegmentedControl before inventing local shells.',
+      'Use validate-environment source audits before handoff to catch web-only drift.',
+    ],
+  };
+}
+
 function buildDefinitionStarter(options: {
   description: string;
   themeId?: string;
@@ -413,6 +426,7 @@ export async function getScreenGenerationContextTool(
 ): Promise<GetScreenGenerationContextOutput> {
   try {
     const { platform: targetPlatform } = resolvePlatformTarget(input.platform);
+
     // 1. Match templates based on description
     const templateMatches = matchTemplates(input.description, 3);
     let bestMatch: ContextTemplateMatch | undefined;
@@ -421,30 +435,46 @@ export async function getScreenGenerationContextTool(
     if (templateMatches.length > 0) {
       const match = templateMatches[0];
       if (match && shouldIncludeTemplateMatch(match)) {
-        // API를 통해 템플릿 상세 정보 조회 [SPEC-MCP-007:E-002]
-        const templateResult = await fetchTemplate(match.templateId);
-        const templateData = templateResult.ok ? templateResult.data : null;
+        if (targetPlatform === 'react-native') {
+          bestMatch = {
+            templateId: match.templateId,
+            templateName: match.templateName,
+            category: match.category,
+            confidence: match.confidence,
+            matchedKeywords: match.matchedKeywords,
+            skeleton: undefined,
+            requiredComponents: undefined,
+          };
+        } else {
+          // API를 통해 템플릿 상세 정보 조회 [SPEC-MCP-007:E-002]
+          const templateResult = await fetchTemplate(match.templateId);
+          const templateData = templateResult.ok ? templateResult.data : null;
 
-        bestMatch = {
-          templateId: match.templateId,
-          templateName: match.templateName,
-          category: match.category,
-          confidence: match.confidence,
-          matchedKeywords: match.matchedKeywords,
-          skeleton: templateData?.skeleton,
-          requiredComponents: templateData?.requiredComponents,
-        };
+          bestMatch = {
+            templateId: match.templateId,
+            templateName: match.templateName,
+            category: match.category,
+            confidence: match.confidence,
+            matchedKeywords: match.matchedKeywords,
+            skeleton: templateData?.skeleton,
+            requiredComponents: templateData?.requiredComponents,
+          };
 
-        // Extract component types from template
-        if (templateData) {
-          componentTypes = extractComponentTypes(templateData);
+          // Extract component types from template
+          if (templateData) {
+            componentTypes = extractComponentTypes(templateData);
+          }
         }
       }
     }
 
     // 2. Get examples if requested
     let examples: ScreenExample[] | undefined;
-    if (input.includeExamples !== false && input.compact !== true) {
+    if (
+      targetPlatform !== 'react-native' &&
+      input.includeExamples !== false &&
+      input.compact !== true
+    ) {
       // API를 통해 스크린 예제 조회 [SPEC-MCP-007:E-007]
       const examplesResult = await fetchScreenExamples();
       const allExamples = examplesResult.ok ? examplesResult.data : [];
@@ -480,28 +510,9 @@ export async function getScreenGenerationContextTool(
       }
     }
 
-    // 4. Get component information from shared contract + template + recipes
-    const recommendedComponentTypes = getRecommendedComponentTypes({
-      bestMatch,
-      themeRecipes,
-    });
-    componentTypes =
-      componentTypes.length > 0
-        ? Array.from(new Set([...recommendedComponentTypes, ...componentTypes]))
-        : recommendedComponentTypes;
-    const components = await getComponentInfo(componentTypes, targetPlatform);
-    const definitionStarter =
-      targetPlatform === 'react-native'
-        ? undefined
-        : buildDefinitionStarter({
-            description: input.description,
-            themeId: input.themeId,
-            bestMatch,
-            componentTypes,
-          });
-
-    // 5. Generate contextual hints
+    // 4. Native direct-write path does not depend on web component API data
     const hints = generateHints(input.description, input.themeId);
+
     const platformHints =
       targetPlatform === 'react-native'
         ? [
@@ -527,117 +538,117 @@ export async function getScreenGenerationContextTool(
         : [];
     const combinedHints = [...platformHints, ...hints];
 
+    if (targetPlatform === 'react-native') {
+      const nativeComponents = recommendReactNativeRuntimeComponents(
+        input.description,
+        bestMatch?.category
+      )
+        .map(componentId => toReactNativeContextComponent(componentId))
+        .filter((component): component is ContextComponentInfo => component !== null);
+
+      return {
+        success: true,
+        targetPlatform,
+        templateMatch: bestMatch,
+        components: nativeComponents,
+        schema: undefined,
+        examples: undefined,
+        themeRecipes: undefined,
+        hints: combinedHints.length > 0 ? combinedHints : undefined,
+        workflow: input.compact === true ? undefined : buildReactNativeWorkflow(),
+        directWrite: {
+          runtime: 'react-native',
+          entryStrategy:
+            'Write the screen directly in Expo Router routes or host app screen modules, using @framingui/react-native where the runtime surface exists.',
+          stylingStrategy:
+            'Use StyleSheet plus @framingui/react-native helpers or host app token-backed helpers.',
+          validationStrategy:
+            'Run validate-environment with platform=react-native and sourceFiles before handoff.',
+        },
+      };
+    }
+
+    // 4. Get component information from shared contract + template + recipes
+    const recommendedComponentTypes = getRecommendedComponentTypes({
+      bestMatch,
+      themeRecipes,
+    });
+    componentTypes =
+      componentTypes.length > 0
+        ? Array.from(new Set([...recommendedComponentTypes, ...componentTypes]))
+        : recommendedComponentTypes;
+    const components = await getComponentInfo(componentTypes);
+    const definitionStarter = buildDefinitionStarter({
+      description: input.description,
+      themeId: input.themeId,
+      bestMatch,
+      componentTypes,
+    });
+
+    // 5. Generate contextual hints
+
     // 6. Generate workflow guide
-    const workflow: WorkflowGuide =
-      targetPlatform === 'react-native'
-        ? {
-            title: 'React Native Direct-Write Workflow',
-            description:
-              'Follow these steps to compose a native screen directly from FramingUI contracts and QC rules.',
-            steps: [
-              {
-                step: 1,
-                action: 'Review Context',
-                description:
-                  'Review the templateMatch, components, hints, and directWrite guidance in this response.',
-              },
-              {
-                step: 2,
-                action: 'Compose Native Screen',
-                description:
-                  'Write Expo or React Native code directly using @framingui/react-native where available, then host primitives or your app abstractions. Do not import @framingui/ui.',
-              },
-              {
-                step: 3,
-                action: 'Apply Token Constraints',
-                description:
-                  'Map colors, spacing, radius, and typography through @framingui/react-native helpers, host app token helpers, or theme constants instead of raw literals.',
-              },
-              {
-                step: 4,
-                action: 'Run Environment Validation',
-                tool: 'validate-environment',
-                description:
-                  'Call validate-environment with platform=react-native, the project path, and sourceFiles to check packages and direct-write QC findings.',
-                example:
-                  '{ "platform": "react-native", "projectPath": "/path/to/app", "requiredPackages": ["react-native", "react-native-safe-area-context"], "sourceFiles": ["app/profile.tsx"] }',
-              },
-              {
-                step: 5,
-                action: 'Fix QC Findings',
-                description:
-                  'Resolve any missing packages, hardcoded style values, or web-only patterns before delivering the screen.',
-              },
-            ],
-            notes: [
-              'Use @framingui/react-native as the minimal runtime surface where available, and keep FramingUI MCP as the contract and validation layer.',
-              'Prefer StyleSheet and existing app design primitives over introducing a new styling framework.',
-              '@framingui/react-native is intentionally minimal and does not provide full @framingui/ui parity or native code generation.',
-              'Plan for SafeArea, keyboard overlap, and touch targets during direct writing.',
-            ],
-          }
-        : {
-            title: 'Screen Generation Workflow',
-            description:
-              'Follow these steps to generate a screen from natural language description',
-            steps: [
-              {
-                step: 1,
-                action: 'Review Context',
-                description:
-                  'Review the templateMatch, components (with inline props/variants), schema, examples, and hints provided in this response',
-              },
-              {
-                step: 2,
-                action: 'Generate Screen Definition',
-                description:
-                  'Create a JSON Screen Definition following the schema structure. Use templateMatch.skeleton as a starting point if available.',
-                example: JSON.stringify(
-                  {
-                    id: 'my-screen',
-                    shell: 'shell.web.app',
-                    page: 'page.dashboard',
-                    themeId: input.themeId || 'your-theme-id',
-                    sections: [{ id: 'main', pattern: 'section.container', components: [] }],
-                  },
-                  null,
-                  2
-                ),
-              },
-              {
-                step: 3,
-                action: 'Validate Definition',
-                tool: 'validate-screen-definition',
-                description:
-                  'Call validate-screen-definition with your generated definition to check for errors. Apply autoFixPatches if provided.',
-                example: '{ "definition": <your-screen-definition>, "strict": true }',
-              },
-              {
-                step: 4,
-                action: 'Fix Validation Errors',
-                description:
-                  'If validation fails, apply autoFixPatches or manually fix errors and re-validate',
-              },
-              {
-                step: 5,
-                action: 'Write React Code',
-                description:
-                  'Write production-ready React code DIRECTLY using the components and props from this context. Use the import statements provided in the components field.',
-              },
-              {
-                step: 6,
-                action: 'Save File',
-                description: 'Write the code to the target file path (e.g., app/page.tsx)',
-              },
-            ],
-            notes: [
-              'Use components from the "components" field - they include inline props and variants',
-              'Apply theme recipes by setting variant props on components',
-              'Write React code directly using the components and context provided',
-              'Check hints for layout and component recommendations',
-              'Use validate-environment to verify project dependencies before delivering code',
-            ],
-          };
+    const workflow: WorkflowGuide = {
+      title: 'Screen Generation Workflow',
+      description: 'Follow these steps to generate a screen from natural language description',
+      steps: [
+        {
+          step: 1,
+          action: 'Review Context',
+          description:
+            'Review the templateMatch, components (with inline props/variants), schema, examples, and hints provided in this response',
+        },
+        {
+          step: 2,
+          action: 'Generate Screen Definition',
+          description:
+            'Create a JSON Screen Definition following the schema structure. Use templateMatch.skeleton as a starting point if available.',
+          example: JSON.stringify(
+            {
+              id: 'my-screen',
+              shell: 'shell.web.app',
+              page: 'page.dashboard',
+              themeId: input.themeId || 'your-theme-id',
+              sections: [{ id: 'main', pattern: 'section.container', components: [] }],
+            },
+            null,
+            2
+          ),
+        },
+        {
+          step: 3,
+          action: 'Validate Definition',
+          tool: 'validate-screen-definition',
+          description:
+            'Call validate-screen-definition with your generated definition to check for errors. Apply autoFixPatches if provided.',
+          example: '{ "definition": <your-screen-definition>, "strict": true }',
+        },
+        {
+          step: 4,
+          action: 'Fix Validation Errors',
+          description:
+            'If validation fails, apply autoFixPatches or manually fix errors and re-validate',
+        },
+        {
+          step: 5,
+          action: 'Write React Code',
+          description:
+            'Write production-ready React code DIRECTLY using the components and props from this context. Use the import statements provided in the components field.',
+        },
+        {
+          step: 6,
+          action: 'Save File',
+          description: 'Write the code to the target file path (e.g., app/page.tsx)',
+        },
+      ],
+      notes: [
+        'Use components from the "components" field - they include inline props and variants',
+        'Apply theme recipes by setting variant props on components',
+        'Write React code directly using the components and context provided',
+        'Check hints for layout and component recommendations',
+        'Use validate-environment to verify project dependencies before delivering code',
+      ],
+    };
 
     return {
       success: true,
@@ -646,7 +657,7 @@ export async function getScreenGenerationContextTool(
       components: components.length > 0 ? components : undefined,
       definitionStarter,
       schema:
-        input.compact === true || targetPlatform === 'react-native'
+        input.compact === true
           ? undefined
           : {
               screenDefinition: SCREEN_DEFINITION_SCHEMA,
@@ -657,18 +668,6 @@ export async function getScreenGenerationContextTool(
       themeRecipes: themeRecipes && themeRecipes.length > 0 ? themeRecipes : undefined,
       hints: combinedHints.length > 0 ? combinedHints : undefined,
       workflow: input.compact === true ? undefined : workflow,
-      directWrite:
-        targetPlatform === 'react-native'
-          ? {
-              runtime: 'react-native',
-              entryStrategy:
-                'Write the screen directly in Expo Router routes or host app screen modules, using @framingui/react-native where the runtime surface exists.',
-              stylingStrategy:
-                'Use StyleSheet plus @framingui/react-native helpers or host app token-backed helpers.',
-              validationStrategy:
-                'Run validate-environment with platform=react-native and sourceFiles before handoff.',
-            }
-          : undefined,
     };
   } catch (error) {
     return {

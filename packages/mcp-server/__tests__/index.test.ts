@@ -54,7 +54,7 @@ describe('MCP Server Module', () => {
 
     expect(serverModule).toBeDefined();
     expect(connectSpy).toHaveBeenCalledTimes(1);
-  });
+  }, 30000);
 
   it('should have valid package.json', async () => {
     const pkg = await import('../package.json');

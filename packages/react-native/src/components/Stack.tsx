@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { FlexAlignType, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { spacing, type SpacingToken } from '../tokens.js';
+import { useTheme } from '../theme.js';
+import { type SpacingToken } from '../tokens.js';
 
 export interface StackProps {
   children: ReactNode;
@@ -19,6 +20,8 @@ export function Stack({
   justify,
   style,
 }: StackProps) {
+  const theme = useTheme();
+
   return (
     <View
       style={[
@@ -26,7 +29,7 @@ export function Stack({
         {
           alignItems: align,
           flexDirection: direction,
-          gap: spacing[gap],
+          gap: theme.spacing[gap],
           justifyContent: justify,
         },
         style,

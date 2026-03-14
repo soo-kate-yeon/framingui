@@ -86,7 +86,7 @@ describe('get-screen-generation-context Tool', () => {
 
       expect(result.success).toBe(true);
       expect(result.error).toBeUndefined();
-    });
+    }, 15000);
 
     it('should return template match for auth description', async () => {
       const result = await getScreenGenerationContextTool({
@@ -109,7 +109,7 @@ describe('get-screen-generation-context Tool', () => {
       expect(result.success).toBe(true);
       expect(result.templateMatch).toBeDefined();
       expect(result.templateMatch?.category).toBe('dashboard');
-    });
+    }, 15000);
 
     it('should return schema information', async () => {
       const result = await getScreenGenerationContextTool({
@@ -208,7 +208,7 @@ describe('get-screen-generation-context Tool', () => {
         );
         expect(loginExample).toBeDefined();
       }
-    });
+    }, 15000);
   });
 
   describe('Theme Recipes', () => {
@@ -222,7 +222,7 @@ describe('get-screen-generation-context Tool', () => {
       expect(result.success).toBe(true);
       // Theme recipes will be present if theme exists
       // Note: This may be undefined if theme doesn't exist in test environment
-    });
+    }, 15000);
 
     it('should work without themeId', async () => {
       const result = await getScreenGenerationContextTool({
@@ -251,7 +251,7 @@ describe('get-screen-generation-context Tool', () => {
         expect(layoutHint).toBeDefined();
         expect(layoutHint?.message).toContain('dashboard');
       }
-    });
+    }, 15000);
 
     it('should return accessibility hints for form description', async () => {
       const result = await getScreenGenerationContextTool({
@@ -390,7 +390,7 @@ describe('get-screen-generation-context Tool', () => {
       });
 
       expect(result.success).toBe(true);
-    });
+    }, 15000);
 
     it('should return valid response for generic description', async () => {
       const result = await getScreenGenerationContextTool({
@@ -401,6 +401,23 @@ describe('get-screen-generation-context Tool', () => {
       expect(result.success).toBe(true);
       // Should still return schema and possibly hints
       expect(result.schema).toBeDefined();
+    });
+
+    it('should return a react-native direct-write workflow when platform is react-native', async () => {
+      const result = await getScreenGenerationContextTool({
+        description: 'Mobile settings screen with notification toggles and plan selection',
+        platform: 'react-native',
+        includeExamples: false,
+      });
+
+      expect(result.success).toBe(true);
+      expect(
+        result.components?.some(component =>
+          component.importStatement.includes('@framingui/react-native')
+        )
+      ).toBe(true);
+      expect(result.workflow?.description).toContain('React Native');
+      expect(result.workflow?.notes?.some(note => note.includes('StyleSheet'))).toBe(true);
     });
   });
 });

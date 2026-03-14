@@ -1,6 +1,5 @@
 import { ActivityIndicator, Pressable, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
-import { getTextStyle } from '../helpers.js';
-import { colors, radius, spacing } from '../tokens.js';
+import { createThemedStyles, useTheme } from '../theme.js';
 
 export type ButtonVariant = 'primary' | 'secondary';
 
@@ -21,6 +20,8 @@ export function Button({
   variant = 'primary',
   style,
 }: ButtonProps) {
+  const theme = useTheme();
+  const styles = getStyles(theme);
   const isDisabled = disabled || loading;
   const isSecondary = variant === 'secondary';
 
@@ -39,7 +40,9 @@ export function Button({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={isSecondary ? colors.text.primary : colors.text.inverse} />
+        <ActivityIndicator
+          color={isSecondary ? theme.colors.text.primary : theme.colors.text.inverse}
+        />
       ) : (
         <Text style={[styles.text, isSecondary && styles.secondaryText]}>{label}</Text>
       )}
@@ -47,38 +50,40 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    alignItems: 'center',
-    borderRadius: radius.md,
-    justifyContent: 'center',
-    minHeight: 52,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[3],
-  },
-  primary: {
-    backgroundColor: colors.action.primary,
-  },
-  secondary: {
-    backgroundColor: colors.surface.muted,
-    borderColor: colors.border.default,
-    borderWidth: 1,
-  },
-  primaryPressed: {
-    backgroundColor: colors.action.primaryPressed,
-  },
-  secondaryPressed: {
-    backgroundColor: colors.background.subtle,
-  },
-  disabled: {
-    backgroundColor: colors.action.primaryDisabled,
-    borderColor: colors.action.primaryDisabled,
-  },
-  text: {
-    ...getTextStyle('button'),
-    color: colors.text.inverse,
-  },
-  secondaryText: {
-    color: colors.text.primary,
-  },
-});
+const getStyles = createThemedStyles(theme =>
+  StyleSheet.create({
+    base: {
+      alignItems: 'center',
+      borderRadius: theme.radius.md,
+      justifyContent: 'center',
+      minHeight: 52,
+      paddingHorizontal: theme.spacing[4],
+      paddingVertical: theme.spacing[3],
+    },
+    primary: {
+      backgroundColor: theme.colors.action.primary,
+    },
+    secondary: {
+      backgroundColor: theme.colors.surface.muted,
+      borderColor: theme.colors.border.default,
+      borderWidth: 1,
+    },
+    primaryPressed: {
+      backgroundColor: theme.colors.action.primaryPressed,
+    },
+    secondaryPressed: {
+      backgroundColor: theme.colors.background.subtle,
+    },
+    disabled: {
+      backgroundColor: theme.colors.action.primaryDisabled,
+      borderColor: theme.colors.action.primaryDisabled,
+    },
+    text: {
+      ...theme.typography.button,
+      color: theme.colors.text.inverse,
+    },
+    secondaryText: {
+      color: theme.colors.text.primary,
+    },
+  })
+);

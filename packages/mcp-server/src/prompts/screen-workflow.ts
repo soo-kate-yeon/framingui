@@ -41,6 +41,14 @@ If the project path is known:
 
 If the project path is not known, start at \`get-screen-generation-context\` and use explicit platform overrides only when needed.
 
+## React Native Note
+
+For Expo or React Native projects:
+- pass \`"platform": "react-native"\` to \`get-screen-generation-context\`
+- prefer \`@framingui/react-native\` exports over app-local wrappers for common UI
+- write code directly with \`StyleSheet.create\`
+- run \`validate-environment\` with \`sourceFiles\` to catch web-only imports, \`className\`, and raw token drift
+
 ## Step 1/4: Gather Context
 
 **Primary tool:** \`get-screen-generation-context\`

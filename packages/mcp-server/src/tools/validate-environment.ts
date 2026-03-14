@@ -268,6 +268,7 @@ function detectEnvironment(
     typeof packageJson.packageManager === 'string' ? packageJson.packageManager : undefined;
 
   return {
+    platform,
     runtime:
       platform === 'react-native' ? (installedPackages.expo ? 'expo' : 'react-native') : 'web',
     projectType:
@@ -323,6 +324,16 @@ function auditReactNativeSourceFiles(
     }
 
     const content = fs.readFileSync(filePath, 'utf-8');
+    if (content.includes('@framingui/ui')) {
+      findings.push({
+        filePath,
+        ruleId: 'rn-web-import',
+        severity: 'error',
+        message: 'Web-only @framingui/ui import found in a React Native target file',
+        guidance: 'Replace @framingui/ui imports with @framingui/react-native exports.',
+      });
+    }
+
     for (const rule of rules) {
       rule.pattern.lastIndex = 0;
       if (!rule.pattern.test(content)) {
@@ -341,6 +352,8 @@ function auditReactNativeSourceFiles(
 
   return {
     filesScanned: sourceFiles.length,
+    issues: findings.map(finding => `${finding.filePath}: ${finding.message}. ${finding.guidance}`),
+    fixes: findings.map(finding => `${finding.filePath}: ${finding.guidance}`),
     findings,
   };
 }

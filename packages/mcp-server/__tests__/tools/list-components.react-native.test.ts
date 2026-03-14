@@ -29,11 +29,17 @@ vi.mock('../../src/api/data-client.js', () => ({
 import { listComponentsTool } from '../../src/tools/list-components.js';
 
 describe('listComponentsTool react-native platform', () => {
-  it('filters out unsupported web-centric components for react-native', async () => {
+  it('returns the react-native runtime catalog instead of web-only components', async () => {
     const result = await listComponentsTool({ category: 'all', platform: 'react-native' });
 
     expect(result.success).toBe(true);
-    expect(result.components?.map(component => component.id)).toEqual(['button']);
-    expect(result.components?.[0]?.platformSupport?.reactNative?.status).toBe('full');
+    expect(result.components?.some(component => component.id === 'button')).toBe(true);
+    expect(result.components?.some(component => component.id === 'screen')).toBe(true);
+    expect(result.components?.some(component => component.id === 'table')).toBe(false);
+    expect(
+      result.components?.every(
+        component => component.platformSupport?.reactNative?.status === 'full'
+      )
+    ).toBe(true);
   });
 });

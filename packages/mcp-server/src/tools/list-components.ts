@@ -8,8 +8,8 @@
  */
 
 import { fetchComponentList } from '../api/data-client.js';
-import { formatToolError } from '../api/api-result.js';
-import { getPlatformSupportInfo } from '../platform-support.js';
+import { listFallbackWebComponents } from '../data/component-fallback-catalog.js';
+import { listReactNativeRuntimeComponents } from '../data/react-native-runtime-catalog.js';
 import { resolvePlatformTarget } from '../project-context-resolution.js';
 import type { ListComponentsInput, ListComponentsOutput } from '../schemas/mcp-schemas.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
@@ -25,12 +25,55 @@ export async function listComponentsTool(
   try {
     const { platform: targetPlatform } = resolvePlatformTarget(input.platform);
 
+    if (targetPlatform === 'react-native') {
+      const components = listReactNativeRuntimeComponents({
+        category: input.category,
+        search: input.search,
+      });
+      const allComponents = listReactNativeRuntimeComponents({ category: 'all' });
+
+      return {
+        success: true,
+        components,
+        count: components.length,
+        categories: {
+          core: allComponents.filter(component => component.category === 'core').length,
+          complex: allComponents.filter(component => component.category === 'complex').length,
+          advanced: allComponents.filter(component => component.category === 'advanced').length,
+        },
+      };
+    }
+
     // API에서 전체 컴포넌트 목록 조회
     const result = await fetchComponentList();
     if (!result.ok) {
-      return { success: false, error: formatToolError(result.error) };
+      const fallbackComponents = listFallbackWebComponents({
+        category: input.category,
+        search: input.search,
+      });
+      const allFallback = listFallbackWebComponents({ category: 'all' });
+
+      return {
+        success: true,
+        components: fallbackComponents,
+        count: fallbackComponents.length,
+        categories: {
+          core: allFallback.filter(component => component.category === 'core').length,
+          complex: allFallback.filter(component => component.category === 'complex').length,
+          advanced: allFallback.filter(component => component.category === 'advanced').length,
+        },
+      };
     }
-    const allComponents = result.data;
+    const apiComponents = result.data;
+    const fallbackById = new Map(
+      listFallbackWebComponents({ category: 'all' }).map(component => [component.id, component])
+    );
+    const allComponents = [
+      ...apiComponents,
+      ...Array.from(fallbackById.values()).filter(
+        fallback => !apiComponents.some(component => component.id === fallback.id)
+      ),
+    ];
 
     // 카테고리 필터 적용
     let components = allComponents;
@@ -49,34 +92,6 @@ export async function listComponentsTool(
       );
     }
 
-    const platformAwareComponents = components
-      .map((component: any) => {
-        const reactNativeSupport = getPlatformSupportInfo(component.name, 'react-native');
-        const platforms = ['web'];
-        if (reactNativeSupport.supported) {
-          platforms.push('react-native');
-        }
-
-        return {
-          ...component,
-          platforms,
-          platformSupport: {
-            reactNative: {
-              supported: reactNativeSupport.supported,
-              recommended: reactNativeSupport.recommended,
-              status: reactNativeSupport.status,
-            },
-          },
-        };
-      })
-      .filter(component => {
-        if (targetPlatform !== 'react-native') {
-          return true;
-        }
-
-        return component.platformSupport.reactNative.supported;
-      });
-
     // 카테고리 카운트 계산
     const categories = {
       core: allComponents.filter((c: any) => c.category === 'core').length,
@@ -86,8 +101,8 @@ export async function listComponentsTool(
 
     return {
       success: true,
-      components: platformAwareComponents as any,
-      count: platformAwareComponents.length,
+      components: components as any,
+      count: components.length,
       categories,
     };
   } catch (error) {

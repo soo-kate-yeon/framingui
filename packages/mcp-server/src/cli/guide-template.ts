@@ -39,6 +39,13 @@ framingui-mcp status
 
 If the detected project is Expo or React Native, keep using the direct-write path and do not repeat \`platform: "react-native"\` on every tool call unless you need an explicit override. Prefer \`@framingui/react-native\` where the runtime surface exists, then fall back to host primitives.
 
+### React Native / Expo
+
+- Call \`get-screen-generation-context\` with \`platform: "react-native"\`
+- Prefer \`@framingui/react-native\` exports for common screen structure and controls
+- Keep custom screen styles inside \`StyleSheet.create\`
+- Run \`validate-environment\` with \`platform: "react-native"\` and \`sourceFiles\` before handoff
+
 ## Style Contract Rules
 
 ### host-utility

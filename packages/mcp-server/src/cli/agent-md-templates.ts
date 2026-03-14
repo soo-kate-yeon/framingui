@@ -130,6 +130,13 @@ If the target project is Expo or React Native:
 - run \`validate-environment\` with \`platform: "react-native"\` and \`sourceFiles\`
 - fix hardcoded colors, spacing, radius values, and web-only patterns such as \`className\`
 
+### React Native / Expo
+
+- Use \`get-screen-generation-context\` with \`platform: "react-native"\` for native direct-write work.
+- Prefer \`@framingui/react-native\` exports before inventing app-local shells.
+- Keep custom native layout inside \`StyleSheet.create\`.
+- Run \`validate-environment\` with \`platform: "react-native"\` and \`sourceFiles\` to catch web-only drift.
+
 ### Style Contract
 
 - \`host-utility\`: keep explicit utility styling
