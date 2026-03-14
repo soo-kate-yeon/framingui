@@ -4,7 +4,45 @@
  * [TAG-MCP003-006] List all available UI components
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('../../src/api/data-client.js', () => ({
+  fetchComponentList: vi.fn(async () => ({
+    ok: true,
+    data: [
+      ...Array.from({ length: 18 }, (_, index) => ({
+        id: index === 0 ? 'button' : `core-component-${index}`,
+        name: index === 0 ? 'Button' : `Core Component ${index}`,
+        category: 'core',
+        tier: 1,
+        description:
+          index === 0 ? 'Action button component' : `Core component ${index} description`,
+        variantsCount: 2,
+        hasSubComponents: false,
+      })),
+      ...Array.from({ length: 10 }, (_, index) => ({
+        id: index === 0 ? 'dialog' : `complex-component-${index}`,
+        name: index === 0 ? 'Dialog' : `Complex Component ${index}`,
+        category: 'complex',
+        tier: 2,
+        description:
+          index === 0 ? 'Dialog modal component' : `Complex component ${index} description`,
+        variantsCount: 3,
+        hasSubComponents: true,
+      })),
+      ...Array.from({ length: 5 }, (_, index) => ({
+        id: `advanced-component-${index}`,
+        name: `Advanced Component ${index}`,
+        category: 'advanced',
+        tier: 3,
+        description: `Advanced component ${index} description`,
+        variantsCount: 4,
+        hasSubComponents: index % 2 === 0,
+      })),
+    ],
+  })),
+}));
+
 import { listComponentsTool } from '../../src/tools/list-components.js';
 
 describe('listComponentsTool', () => {

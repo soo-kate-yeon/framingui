@@ -25,10 +25,21 @@ The production workflow is **guarded direct write**:
 - ✅ Write React code directly using FramingUI components and props from context
 - ✅ Verify dependencies, Tailwind setup, and raw HTML/style escapes before delivery
 
+React Native is also supported through a **direct-write contract path**:
+- ✅ Prefer \`detect-project-context\` once when the project path is known
+- ✅ Gather platform-aware component guidance without repeating platform flags
+- ✅ Write Expo / React Native code directly using \`@framingui/react-native\` where available, then host primitives or app abstractions for the rest
+- ✅ Use \`validate-environment\` with \`sourceFiles\` for package checks and QC
+- 🚫 Do not import \`@framingui/ui\` into React Native projects
+
 This is **not** the old \`generate_screen\`-first workflow.
 \`generate_screen\` may still be used as an optional helper, but the default production path is:
 
-\`preview-theme\` → \`get-screen-generation-context\` → \`preview-component\` / \`list-icon-libraries\` when needed → \`validate-screen-definition\` → write code directly → \`validate-environment\`
+If the project path is known:
+
+\`detect-project-context\` → \`preview-theme\` → \`get-screen-generation-context\` → \`preview-component\` / \`list-icon-libraries\` when needed → \`validate-screen-definition\` → write code directly → \`validate-environment\`
+
+If the project path is not known, start at \`get-screen-generation-context\` and use explicit platform overrides only when needed.
 
 ## Step 1/4: Gather Context
 
@@ -46,6 +57,15 @@ Use this at the start of every screen task.
 \`\`\`
 
 Set \`includeExamples: false\` when you want a smaller response and do not need example screen definitions.
+
+For React Native direct-write work without a detected session default, pass:
+\`\`\`json
+{
+  "description": "Profile screen with subscription card and settings actions",
+  "platform": "react-native",
+  "includeExamples": false
+}
+\`\`\`
 
 **What to review from the response:**
 - \`templateMatch\` as a layout hint only
@@ -137,15 +157,38 @@ Use it to verify:
 
 If the tool reports missing setup or raw primitive drift, fix the code before delivery.
 
+## React Native Direct-Write Path
+
+Use this instead of the web screen-definition path when the target app is Expo or React Native.
+
+1. Call \`detect-project-context\` with \`projectPath\` when the app path is available
+2. Call \`get-screen-generation-context\` and let the stored session default pick React Native automatically
+3. If the project path is not available, call \`get-screen-generation-context\` with \`platform: "react-native"\`
+4. Review React Native compatible components and hints
+5. Write the screen directly using \`@framingui/react-native\` exports where available, then \`react-native\` primitives or local app abstractions
+6. Run \`validate-environment\` with:
+   - \`platform: "react-native"\`
+   - \`projectPath\`
+   - \`requiredPackages\`
+   - \`sourceFiles\`
+7. Fix missing packages, hardcoded color/spacing/radius values, and web-only patterns such as \`className\`
+
+React Native rules:
+- Do **not** import \`@framingui/ui\`
+- Do **not** require Tailwind or CSS imports
+- Prefer \`StyleSheet\` plus \`@framingui/react-native\` helpers or host app token helpers over raw style literals
+- Treat \`@framingui/react-native\` as a minimal runtime, not as full \`@framingui/ui\` parity or code generation
+
 ## Best Practices
 
-1. Start with \`get-screen-generation-context\`
+1. Start with \`detect-project-context\` when project path is known
 2. Use \`includeExamples: false\` unless examples are actually needed
 3. Treat \`templateMatch\` as a hint, not a hard constraint
 4. Treat \`components\` as the source of truth
 5. Validate the definition before writing JSX
 6. Never parse MCP transcript text with shell or Python JSON tooling
 7. Run \`validate-environment\` before handoff
+8. Use the React Native direct-write path when the target project is Expo or React Native
 
 ## Optional Helper Path
 

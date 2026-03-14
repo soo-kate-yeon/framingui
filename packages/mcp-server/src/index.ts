@@ -30,6 +30,7 @@ import { previewScreenTemplateTool } from './tools/preview-screen-template.js';
 import { getScreenGenerationContextTool } from './tools/get-screen-generation-context.js';
 import { validateScreenDefinitionTool } from './tools/validate-screen-definition.js';
 import { validateEnvironmentTool } from './tools/validate-environment.js';
+import { detectProjectContextTool } from './tools/detect-project-context.js';
 import { whoamiTool } from './tools/whoami.js';
 import { readPackageJson } from './utils/package-json-reader.js';
 import { getPromptDefinition, listPromptDefinitions } from './prompts/prompt-catalog.js';
@@ -51,6 +52,7 @@ import {
   ValidateScreenDefinitionInputSchema,
   GenerateScreenInputSchema,
   ValidateEnvironmentInputSchema,
+  DetectProjectContextInputSchema,
 } from './schemas/mcp-schemas.js';
 
 const packageJsonResult = readPackageJson(
@@ -455,21 +457,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
       {
         name: 'get-screen-generation-context',
         description:
-          '[WORKFLOW STEP 1/3] Get complete context for AI agents to generate screen definitions from natural language.\n\n' +
+          '[WORKFLOW STEP 1/3] Get complete context for AI agents to generate screens from natural language for web or React Native direct-write workflows.\n\n' +
           'THIS IS THE FIRST STEP in the screen generation workflow:\n' +
-          "1. Call THIS TOOL with user's description (Step 1/3)\n" +
-          '2. Write Screen Definition JSON, then validate with validate-screen-definition (Step 2/3)\n' +
-          '3. Call validate-environment if path known (Step 3/3)\n\n' +
-          'IMPORTANT: After validation passes, the AI agent writes React code DIRECTLY\n' +
-          'using the components and props provided in the context response.\n\n' +
+          '1. If project path is known, call detect-project-context once to set defaults\n' +
+          "2. Call THIS TOOL with user's description and optional platform override (Step 1/3)\n" +
+          '3. For web: write Screen Definition JSON, then validate with validate-screen-definition (Step 2/3)\n' +
+          '4. For React Native: write code directly from the returned direct-write contract\n' +
+          '5. Call validate-environment if path known (final step)\n\n' +
+          'IMPORTANT: Web uses the validated Screen Definition path. React Native uses the direct-write contract path.\n\n' +
           'WHEN TO CALL:\n' +
           '- When user requests a new screen/page/component\n' +
           '- Before attempting to generate a Screen Definition JSON\n' +
+          '- Before writing Expo / React Native screens directly\n' +
           '- When you need to know available components, templates, or layout tokens\n\n' +
           'RETURNS:\n' +
           '- Template matches based on description\n' +
-          '- Available components with usage examples\n' +
-          '- JSON schema for Screen Definition\n' +
+          '- Available components with platform-aware guidance\n' +
+          '- JSON schema for Screen Definition (web path)\n' +
+          '- Direct-write runtime guidance (React Native path)\n' +
           '- Example definitions for reference\n' +
           '- Theme recipes and contextual hints',
         inputSchema: {
@@ -490,6 +495,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             includeExamples: {
               type: 'boolean',
               description: 'Include example screen definitions (default: true)',
+            },
+            platform: {
+              type: 'string',
+              enum: ['web', 'react-native'],
+              description:
+                'Optional explicit platform override. If omitted, the session default or legacy web fallback is used.',
             },
           },
           required: ['description'],
@@ -582,30 +593,65 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: 'detect-project-context',
+        description:
+          'Detect the active project context from a filesystem path and optionally set it as the session default.\n\n' +
+          'WHEN TO CALL:\n' +
+          '- As the first step when the user has provided a project path\n' +
+          '- Before using React Native direct-write workflow without repeating platform flags\n' +
+          '- To determine whether the target project is web, Expo, or bare React Native\n\n' +
+          'RETURNS:\n' +
+          '- platform: web or react-native\n' +
+          '- environment: runtime and package manager\n' +
+          '- recommendations: default workflow recommendation for the detected project\n' +
+          '- sessionDefaultApplied: whether the detected context was stored for later tool calls',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            projectPath: {
+              type: 'string',
+              description: 'Path to package.json or project root directory',
+            },
+            setAsDefault: {
+              type: 'boolean',
+              description: 'Store the detected project context as the active session default',
+            },
+          },
+          required: ['projectPath'],
+        },
+      },
+      {
         name: 'validate-environment',
         description:
-          '[WORKFLOW STEP 3/3 - Optional] Validate user environment: NPM packages + Tailwind CSS configuration for @framingui/ui.\n\n' +
+          '[WORKFLOW STEP 3/3 - Optional] Validate user environment for web or React Native direct-write delivery.\n\n' +
           'WHEN TO CALL:\n' +
-          '- After writing React code, to verify required packages are installed\n' +
+          '- After writing React or React Native code, to verify required packages are installed\n' +
           '- When user wants to check if their project has required packages\n' +
           '- Before running generated code to ensure all dependencies are available\n' +
-          '- To verify Tailwind CSS is configured correctly for @framingui/ui components\n\n' +
+          '- To verify Tailwind CSS is configured correctly for @framingui/ui components on web\n' +
+          '- To audit React Native source files for hardcoded values or web-only patterns\n\n' +
           'RETURNS:\n' +
           '- installed: Packages already in package.json with versions\n' +
           '- missing: Packages that need to be installed\n' +
           '- installCommands: Ready-to-use install commands for npm/yarn/pnpm/bun\n' +
-          '- tailwind: Tailwind CSS config validation (content paths, animate plugin)\n\n' +
+          '- environment: detected runtime and package manager\n' +
+          '- tailwind: Tailwind CSS config validation (web path)\n' +
+          '- sourceAudit: source-file QC findings for React Native direct-write paths\n\n' +
           'TAILWIND VALIDATION (checkTailwind=true by default):\n' +
           '- Checks if tailwind.config.{ts,js,mjs,cjs} exists\n' +
           '- Verifies @framingui/ui content paths are included (prevents missing styles)\n' +
           '- Verifies tailwindcss-animate plugin is configured (required for Dialog, Popover animations)\n' +
           '- Returns actionable issues[] and fixes[] for each problem found\n\n' +
+          'REACT NATIVE VALIDATION:\n' +
+          '- Detects Expo vs bare React Native projects\n' +
+          '- Skips Tailwind by default when platform=react-native\n' +
+          '- Audits sourceFiles for raw color/spacing/radius literals and web-only patterns such as className\n\n' +
           'EXAMPLE WORKFLOW:\n' +
           '1. get-screen-generation-context → get component info and context\n' +
-          '2. validate-screen-definition → validate Screen Definition JSON\n' +
-          '3. Write React code using components from context\n' +
+          '2. For web: validate-screen-definition → validate Screen Definition JSON\n' +
+          '3. Write code using the returned contract path\n' +
           '4. Call THIS TOOL with projectPath + requiredPackages\n' +
-          '5. Show user missing packages, install commands, AND any Tailwind config issues',
+          '5. Show user missing packages, install commands, and any Tailwind or source-audit issues',
         inputSchema: {
           type: 'object',
           properties: {
@@ -619,10 +665,21 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
                 'Array of package names to validate (e.g., ["framer-motion", "@radix-ui/react-slot"])',
               items: { type: 'string' },
             },
+            platform: {
+              type: 'string',
+              enum: ['web', 'react-native'],
+              description: 'Target platform for environment validation (default: web)',
+            },
             checkTailwind: {
               type: 'boolean',
               description:
                 'Also validate Tailwind CSS configuration for @framingui/ui compatibility (default: true)',
+            },
+            sourceFiles: {
+              type: 'array',
+              description:
+                'Optional source files to audit for direct-write QC (recommended for React Native)',
+              items: { type: 'string' },
             },
           },
           required: ['projectPath', 'requiredPackages'],
@@ -641,23 +698,42 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
 
   info(`CallTool request: ${name}`);
 
-  // 모든 도구 호출 전에 인증 가드 실행
-  try {
-    requireAuth();
-  } catch (e) {
-    if (e instanceof AuthRequiredError) {
+  if (name !== 'detect-project-context') {
+    // 모든 원격/카탈로그 도구 호출 전에 인증 가드 실행
+    try {
+      requireAuth();
+    } catch (e) {
+      if (e instanceof AuthRequiredError) {
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify({
+                success: false,
+                code: 'AUTH_REQUIRED',
+                error: 'Authentication required to use FramingUI MCP tools.',
+                nextAction:
+                  'Run `framingui-mcp login` or set FRAMINGUI_API_KEY, then retry the same tool call.',
+                signupUrl:
+                  'https://framingui.com/auth/signup?utm_source=mcp&utm_medium=cli&utm_campaign=auth_prompt',
+                retryable: true,
+              }),
+            },
+          ],
+          isError: true,
+        };
+      }
+      // 예상치 못한 예외는 로깅 후 에러 반환 (silent swallow 방지)
+      logError(`Unexpected error in requireAuth: ${e}`);
       return {
         content: [
           {
             type: 'text',
             text: JSON.stringify({
               success: false,
-              code: 'AUTH_REQUIRED',
-              error: 'Authentication required to use FramingUI MCP tools.',
-              nextAction:
-                'Run `framingui-mcp login` or set FRAMINGUI_API_KEY, then retry the same tool call.',
-              signupUrl:
-                'https://framingui.com/auth/signup?utm_source=mcp&utm_medium=cli&utm_campaign=auth_prompt',
+              code: 'AUTH_CHECK_FAILED',
+              error: 'Authentication check failed unexpectedly.',
+              detail: e instanceof Error ? e.message : String(e),
               retryable: true,
             }),
           },
@@ -665,23 +741,6 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         isError: true,
       };
     }
-    // 예상치 못한 예외는 로깅 후 에러 반환 (silent swallow 방지)
-    logError(`Unexpected error in requireAuth: ${e}`);
-    return {
-      content: [
-        {
-          type: 'text',
-          text: JSON.stringify({
-            success: false,
-            code: 'AUTH_CHECK_FAILED',
-            error: 'Authentication check failed unexpectedly.',
-            detail: e instanceof Error ? e.message : String(e),
-            retryable: true,
-          }),
-        },
-      ],
-      isError: true,
-    };
   }
 
   try {
@@ -940,6 +999,20 @@ server.setRequestHandler(CallToolRequestSchema, async request => {
         };
       }
 
+      case 'detect-project-context': {
+        const validatedInput = DetectProjectContextInputSchema.parse(args);
+        const result = await detectProjectContextTool(validatedInput);
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -1041,5 +1114,5 @@ try {
 }
 
 info(
-  '17 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, generate_screen, validate-environment'
+  '18 MCP tools registered: whoami, generate-blueprint, list-themes, preview-theme, list-icon-libraries, preview-icon-library, export-screen, validate_screen, list_tokens, list-components, preview-component, list-screen-templates, preview-screen-template, get-screen-generation-context, validate-screen-definition, generate_screen, validate-environment, detect-project-context'
 );

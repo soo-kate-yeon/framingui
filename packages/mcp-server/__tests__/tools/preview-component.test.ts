@@ -5,22 +5,92 @@
  * [TAG-MCP003-012] Component not found error handling
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+const componentFixtures = {
+  button: {
+    id: 'button',
+    name: 'Button',
+    category: 'core',
+    description: 'Action button',
+    tier: 1,
+    props: [
+      { name: 'children', type: 'ReactNode', required: true },
+      { name: 'variant', type: 'string', required: false },
+    ],
+    variants: [
+      { name: 'variant', value: 'default' },
+      { name: 'variant', value: 'primary' },
+    ],
+    subComponents: [],
+    importStatement: "import { Button } from '@framingui/ui';",
+    dependencies: { internal: [], external: ['@framingui/ui'] },
+    examples: [{ title: 'Primary', code: '<Button variant="primary">Save</Button>' }],
+    accessibility: 'Supports focus, keyboard, and screen-reader usage.',
+  },
+  card: {
+    id: 'card',
+    name: 'Card',
+    category: 'layout',
+    description: 'Card container',
+    tier: 1,
+    props: [{ name: 'children', type: 'ReactNode', required: true }],
+    variants: [{ name: 'variant', value: 'default' }],
+    subComponents: ['CardHeader', 'CardContent', 'CardFooter'],
+    importStatement: "import { Card, CardHeader, CardContent, CardFooter } from '@framingui/ui';",
+    dependencies: { internal: [], external: ['@framingui/ui'] },
+    examples: [{ title: 'Default', code: '<Card><CardContent /></Card>' }],
+    accessibility: 'Semantic container with optional headings.',
+  },
+  dialog: {
+    id: 'dialog',
+    name: 'Dialog',
+    category: 'overlay',
+    description: 'Dialog surface',
+    tier: 1,
+    props: [{ name: 'open', type: 'boolean', required: false }],
+    variants: [],
+    subComponents: ['DialogTrigger', 'DialogContent', 'DialogHeader', 'DialogFooter'],
+    importStatement:
+      "import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter } from '@framingui/ui';",
+    dependencies: { internal: [], external: ['@framingui/ui'] },
+    examples: [{ title: 'Basic', code: '<Dialog><DialogContent /></Dialog>' }],
+    accessibility: 'Focus management and escape key dismissal.',
+  },
+} as const;
+
+vi.mock('../../src/api/data-client.js', () => ({
+  fetchComponent: vi.fn(async (componentId: string) => {
+    const fixture = componentFixtures[componentId as keyof typeof componentFixtures];
+
+    if (!fixture) {
+      return {
+        ok: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: `Component not found: ${componentId}`,
+        },
+      };
+    }
+
+    return { ok: true, data: fixture };
+  }),
+  fetchComponentList: vi.fn(async () => ({
+    ok: true,
+    data: Object.values(componentFixtures).map(component => ({
+      id: component.id,
+      name: component.name,
+    })),
+  })),
+}));
+
 import { previewComponentTool } from '../../src/tools/preview-component.js';
 
 describe('previewComponentTool', () => {
-  // ========================================
-  // Positive Cases: Normal Operation
-  // ========================================
   describe('Positive Cases', () => {
     it('should return valid component details for "button"', async () => {
-      // Arrange
-      const input = { componentId: 'button' };
+      const result = await previewComponentTool({ componentId: 'button' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
       expect(result.component).toBeDefined();
       expect(result.component?.id).toBe('button');
@@ -30,18 +100,12 @@ describe('previewComponentTool', () => {
     });
 
     it('should return component with props interface', async () => {
-      // Arrange
-      const input = { componentId: 'button', includeExamples: true };
+      const result = await previewComponentTool({ componentId: 'button', includeExamples: true });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
       expect(result.component?.props).toBeDefined();
       expect(result.component?.props.length).toBeGreaterThan(0);
 
-      // Verify prop structure
       result.component?.props.forEach(prop => {
         expect(prop.name).toBeDefined();
         expect(prop.type).toBeDefined();
@@ -50,18 +114,12 @@ describe('previewComponentTool', () => {
     });
 
     it('should return variants array for components with variants', async () => {
-      // Arrange
-      const input = { componentId: 'button', includeExamples: true };
+      const result = await previewComponentTool({ componentId: 'button', includeExamples: true });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
       expect(result.component?.variants).toBeDefined();
       expect(result.component?.variants?.length).toBeGreaterThan(0);
 
-      // Verify variant structure
       result.component?.variants?.forEach(variant => {
         expect(variant.name).toBeDefined();
         expect(variant.value).toBeDefined();
@@ -69,166 +127,98 @@ describe('previewComponentTool', () => {
     });
 
     it('should return sub-components for composite components', async () => {
-      // Arrange
-      const input = { componentId: 'card' };
+      const result = await previewComponentTool({ componentId: 'card' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
-      expect(result.component?.subComponents).toBeDefined();
-      expect(result.component?.subComponents?.length).toBeGreaterThan(0);
       expect(result.component?.subComponents).toContain('CardHeader');
       expect(result.component?.subComponents).toContain('CardContent');
       expect(result.component?.subComponents).toContain('CardFooter');
     });
 
     it('should return import statement', async () => {
-      // Arrange
-      const input = { componentId: 'button' };
+      const result = await previewComponentTool({ componentId: 'button' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
-      expect(result.component?.importStatement).toBeDefined();
       expect(result.component?.importStatement).toContain('@framingui/ui');
       expect(result.component?.importStatement).toContain('Button');
     });
 
     it('should include examples when includeExamples=true', async () => {
-      // Arrange
-      const input = { componentId: 'button', includeExamples: true };
+      const result = await previewComponentTool({ componentId: 'button', includeExamples: true });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
-      expect(result.component?.examples).toBeDefined();
       expect(result.component?.examples?.length).toBeGreaterThan(0);
-
-      // Verify example structure
-      result.component?.examples?.forEach(example => {
-        expect(example.title).toBeDefined();
-        expect(example.code).toBeDefined();
-      });
+      expect(result.component?.examples?.[0]?.title).toBeDefined();
+      expect(result.component?.examples?.[0]?.code).toBeDefined();
     });
 
     it('should include dependencies when includeDependencies=true', async () => {
-      // Arrange
-      const input = { componentId: 'button', includeDependencies: true };
+      const result = await previewComponentTool({
+        componentId: 'button',
+        includeDependencies: true,
+      });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
-      expect(result.component?.dependencies).toBeDefined();
       expect(result.component?.dependencies?.internal).toBeDefined();
-      expect(result.component?.dependencies?.external).toBeDefined();
+      expect(result.component?.dependencies?.external).toContain('@framingui/ui');
     });
 
     it('should return accessibility information', async () => {
-      // Arrange
-      const input = { componentId: 'button' };
+      const result = await previewComponentTool({ componentId: 'button' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
-      expect(result.component?.accessibility).toBeDefined();
       expect(typeof result.component?.accessibility).toBe('string');
     });
   });
 
-  // ========================================
-  // Negative Cases: Error Handling
-  // ========================================
   describe('Negative Cases', () => {
     it('should return error for non-existent component', async () => {
-      // Arrange
-      const input = { componentId: 'xyz-nonexistent-component' };
+      const result = await previewComponentTool({ componentId: 'xyz-nonexistent-component' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(false);
-      expect(result.error).toBeDefined();
       expect(result.error).toContain('not found');
       expect(result.error).toContain('xyz-nonexistent-component');
     });
 
     it('should return error with available components list', async () => {
-      // Arrange
-      const input = { componentId: 'invalid-component' };
+      const result = await previewComponentTool({ componentId: 'invalid-component' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(false);
-      expect(result.error).toBeDefined();
       expect(result.error).toContain('Available components:');
       expect(result.error).toContain('button');
     });
   });
 
-  // ========================================
-  // Edge Cases: Boundary Conditions
-  // ========================================
   describe('Edge Cases', () => {
     it('should not include examples when includeExamples=false', async () => {
-      // Arrange
-      const input = { componentId: 'button', includeExamples: false };
+      const result = await previewComponentTool({ componentId: 'button', includeExamples: false });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
       expect(result.component?.examples).toBeUndefined();
     });
 
     it('should not include dependencies when includeDependencies=false', async () => {
-      // Arrange
-      const input = { componentId: 'button', includeDependencies: false };
+      const result = await previewComponentTool({
+        componentId: 'button',
+        includeDependencies: false,
+      });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
       expect(result.component?.dependencies).toBeUndefined();
     });
 
     it('should handle component with multiple sub-components', async () => {
-      // Arrange
-      const input = { componentId: 'dialog' };
+      const result = await previewComponentTool({ componentId: 'dialog' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
-      expect(result.component?.subComponents).toBeDefined();
       expect(result.component?.subComponents?.length).toBeGreaterThan(3);
       expect(result.component?.importStatement).toContain('DialogTrigger');
       expect(result.component?.importStatement).toContain('DialogContent');
     });
 
     it('should verify import statement includes all sub-components', async () => {
-      // Arrange
-      const input = { componentId: 'card' };
+      const result = await previewComponentTool({ componentId: 'card' });
 
-      // Act
-      const result = await previewComponentTool(input);
-
-      // Assert
       expect(result.success).toBe(true);
       expect(result.component?.importStatement).toContain('Card');
       result.component?.subComponents?.forEach(subComponent => {

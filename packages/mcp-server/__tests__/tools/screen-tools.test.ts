@@ -3,7 +3,95 @@
  * Tests: validate_screen, list_tokens
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('../../src/api/data-client.js', () => ({
+  fetchTokenList: vi.fn(async (tokenType: 'shell' | 'page' | 'section' | 'all') => {
+    const data = {
+      shells: [
+        { id: 'shell.web.app', platform: 'web', name: 'Web App', description: 'App shell' },
+        {
+          id: 'shell.web.dashboard',
+          platform: 'web',
+          name: 'Dashboard Shell',
+          description: 'Dashboard layout',
+        },
+        {
+          id: 'shell.mobile.app',
+          platform: 'mobile',
+          name: 'Mobile App',
+          description: 'Mobile shell',
+        },
+        {
+          id: 'shell.mobile.fullscreen',
+          platform: 'mobile',
+          name: 'Mobile Fullscreen',
+          description: 'Mobile fullscreen shell',
+        },
+        {
+          id: 'shell.mobile.modal',
+          platform: 'mobile',
+          name: 'Mobile Modal',
+          description: 'Mobile modal shell',
+        },
+        {
+          id: 'shell.mobile.tab',
+          platform: 'mobile',
+          name: 'Mobile Tab',
+          description: 'Mobile tab shell',
+        },
+        {
+          id: 'shell.mobile.drawer',
+          platform: 'mobile',
+          name: 'Mobile Drawer',
+          description: 'Mobile drawer shell',
+        },
+        {
+          id: 'shell.mobile.detail',
+          platform: 'mobile',
+          name: 'Mobile Detail',
+          description: 'Mobile detail shell',
+        },
+      ],
+      pages: [
+        { id: 'page.dashboard', name: 'Dashboard', description: 'Dashboard page' },
+        { id: 'page.detail', name: 'Detail', description: 'Detail page' },
+      ],
+      sections: [
+        { id: 'section.container', name: 'Container', description: 'Container section' },
+        { id: 'section.dashboard-grid', name: 'Dashboard Grid', description: 'Dashboard section' },
+      ],
+    };
+
+    if (tokenType === 'shell') {
+      return { ok: true, data: { shells: data.shells, metadata: { total: data.shells.length } } };
+    }
+
+    if (tokenType === 'page') {
+      return { ok: true, data: { pages: data.pages, metadata: { total: data.pages.length } } };
+    }
+
+    if (tokenType === 'section') {
+      return {
+        ok: true,
+        data: { sections: data.sections, metadata: { total: data.sections.length } },
+      };
+    }
+
+    return {
+      ok: true,
+      data: {
+        shells: data.shells,
+        pages: data.pages,
+        sections: data.sections,
+        metadata: {
+          total: data.shells.length + data.pages.length + data.sections.length,
+        },
+      },
+    };
+  }),
+}));
+
 import { validateScreenTool } from '../../src/tools/validate-screen.js';
 import { listTokensTool } from '../../src/tools/list-tokens.js';
 

@@ -10,6 +10,9 @@ describe('screen-workflow prompt', () => {
     expect(text).toContain('Do **not** parse rendered transcript blocks');
     expect(text).toContain('includeExamples: false');
     expect(text).toContain('generate_screen');
+    expect(text).toContain('React Native Direct-Write Path');
+    expect(text).toContain('platform: "react-native"');
+    expect(text).toContain('Do **not** import `@framingui/ui`');
     expect(text).not.toContain('This tool is the **theme application engine**');
     expect(text).not.toContain('do NOT write code manually');
   });

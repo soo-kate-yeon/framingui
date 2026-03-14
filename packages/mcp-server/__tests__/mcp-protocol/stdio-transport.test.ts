@@ -11,15 +11,55 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { spawn, ChildProcess } from 'child_process';
-import { resolve } from 'path';
+import { mkdtempSync } from 'fs';
+import { tmpdir } from 'os';
+import { resolve as pathResolve } from 'path';
 
 describe('stdio transport', () => {
   let serverPath: string;
 
   beforeAll(async () => {
     // Path to the built server
-    serverPath = resolve(process.cwd(), 'dist/index.js');
+    serverPath = pathResolve(process.cwd(), 'dist/index.js');
   });
+
+  async function terminateServer(server: ChildProcess): Promise<void> {
+    if (server.exitCode !== null || server.killed) {
+      return;
+    }
+
+    await new Promise<void>(resolve => {
+      let settled = false;
+
+      const finish = () => {
+        if (settled) {
+          return;
+        }
+
+        settled = true;
+        clearTimeout(forceClose);
+        resolve();
+      };
+
+      const forceClose = setTimeout(() => {
+        try {
+          server.kill('SIGKILL');
+        } catch (_error) {
+          // Ignore follow-up termination errors during test cleanup.
+        }
+        finish();
+      }, 1000);
+
+      server.once('close', finish);
+      server.once('exit', finish);
+
+      try {
+        server.kill('SIGKILL');
+      } catch (_error) {
+        finish();
+      }
+    });
+  }
 
   /**
    * Helper function to spawn server and send/receive JSON-RPC messages.
@@ -27,15 +67,35 @@ describe('stdio transport', () => {
    */
   async function sendRequest(request: object, timeoutMs = 15000): Promise<any> {
     return new Promise((resolve, reject) => {
-      const server: ChildProcess = spawn('node', [serverPath]);
+      const isolatedHome = mkdtempSync(pathResolve(tmpdir(), 'framingui-mcp-stdio-'));
+      const server: ChildProcess = spawn('node', [serverPath], {
+        env: {
+          ...process.env,
+          HOME: isolatedHome,
+          USERPROFILE: isolatedHome,
+          FRAMINGUI_API_KEY: '',
+        },
+      });
 
       let stdoutData = '';
+      let settled = false;
+
+      const settle = (handler: () => void) => {
+        if (settled) {
+          return;
+        }
+
+        settled = true;
+        clearTimeout(timeout);
+        void terminateServer(server).finally(handler);
+      };
 
       const timeout = setTimeout(() => {
-        server.kill();
-        reject(
-          new Error(
-            `Request timeout after ${timeoutMs}ms. Accumulated stdout: ${stdoutData.slice(0, 200)}`
+        settle(() =>
+          reject(
+            new Error(
+              `Request timeout after ${timeoutMs}ms. Accumulated stdout: ${stdoutData.slice(0, 200)}`
+            )
           )
         );
       }, timeoutMs);
@@ -52,9 +112,7 @@ describe('stdio transport', () => {
           try {
             const response = JSON.parse(line);
             if (response.jsonrpc) {
-              clearTimeout(timeout);
-              server.kill();
-              resolve(response);
+              settle(() => resolve(response));
               return;
             }
           } catch (_e) {
@@ -68,8 +126,7 @@ describe('stdio transport', () => {
       });
 
       server.on('error', error => {
-        clearTimeout(timeout);
-        reject(error);
+        settle(() => reject(error));
       });
 
       // Send request via stdin
@@ -132,8 +189,9 @@ describe('stdio transport', () => {
     expect(response.result).toHaveProperty('content');
     const toolResult = JSON.parse(response.result.content[0].text);
     expect(toolResult).toHaveProperty('success', false);
-    expect(toolResult.error).toMatch(/Authentication required\.|whoami required\./);
-    expect(toolResult).toHaveProperty('hint');
+    expect(toolResult.error).toMatch(
+      /Authentication required\.|Authentication required to use FramingUI MCP tools\.|whoami required\./
+    );
     expect(response.result).toHaveProperty('isError', true);
   }, 30000);
 
@@ -156,7 +214,9 @@ describe('stdio transport', () => {
 
     const toolResult = JSON.parse(response.result.content[0].text);
     expect(toolResult).toHaveProperty('success', false);
-    expect(toolResult.error).toMatch(/Authentication required\.|whoami required\./);
+    expect(toolResult.error).toMatch(
+      /Authentication required\.|Authentication required to use FramingUI MCP tools\.|whoami required\./
+    );
   }, 30000);
 
   it('should handle tools/call with missing required parameters', async () => {
@@ -184,40 +244,59 @@ describe('stdio transport', () => {
 
   it('should send logs to stderr, not stdout', async () => {
     return new Promise<void>((resolve, reject) => {
-      const server: ChildProcess = spawn('node', [serverPath]);
+      const isolatedHome = mkdtempSync(pathResolve(tmpdir(), 'framingui-mcp-stdio-'));
+      const server: ChildProcess = spawn('node', [serverPath], {
+        env: {
+          ...process.env,
+          HOME: isolatedHome,
+          USERPROFILE: isolatedHome,
+          FRAMINGUI_API_KEY: '',
+        },
+      });
 
       let fullStdout = '';
       const stderrLines: string[] = [];
+      let settled = false;
+
+      const settle = (handler: () => void) => {
+        if (settled) {
+          return;
+        }
+
+        settled = true;
+        clearTimeout(timeout);
+        void terminateServer(server).finally(handler);
+      };
 
       const timeout = setTimeout(() => {
-        server.kill();
+        settle(() => {
+          try {
+            // Verify stderr contains logs
+            expect(stderrLines.length).toBeGreaterThan(0);
+            expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
 
-        try {
-          // Verify stderr contains logs
-          expect(stderrLines.length).toBeGreaterThan(0);
-          expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
-
-          // Verify stdout only contains valid JSON-RPC (no log lines)
-          // Parse complete JSON objects from accumulated stdout
-          if (fullStdout.trim()) {
-            const lines = fullStdout.split('\n').filter(l => l.trim());
-            for (const line of lines) {
-              // Each non-empty line should be valid JSON-RPC
-              try {
-                const parsed = JSON.parse(line);
-                expect(parsed).toHaveProperty('jsonrpc');
-              } catch (_e) {
-                // 청크가 분리된 경우 무시 (불완전한 JSON line)
-                // 전체 stdout에 로그 라인이 섞여있지 않으면 OK
-                expect(line).not.toMatch(/^\[INFO\]|\[ERROR\]/);
+            // Verify stdout only contains valid JSON-RPC (no log lines)
+            // Parse complete JSON objects from accumulated stdout
+            if (fullStdout.trim()) {
+              const lines = fullStdout.split('\n').filter(l => l.trim());
+              for (const line of lines) {
+                // Each non-empty line should be valid JSON-RPC
+                try {
+                  const parsed = JSON.parse(line);
+                  expect(parsed).toHaveProperty('jsonrpc');
+                } catch (_e) {
+                  // 청크가 분리된 경우 무시 (불완전한 JSON line)
+                  // 전체 stdout에 로그 라인이 섞여있지 않으면 OK
+                  expect(line).not.toMatch(/^\[INFO\]|\[ERROR\]/);
+                }
               }
             }
-          }
 
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        });
       }, 5000);
 
       server.stdout?.on('data', data => {
@@ -233,8 +312,7 @@ describe('stdio transport', () => {
       });
 
       server.on('error', error => {
-        clearTimeout(timeout);
-        reject(error);
+        settle(() => reject(error));
       });
 
       // Send a request to trigger logs

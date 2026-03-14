@@ -10,6 +10,7 @@ import type {
 } from '../schemas/mcp-schemas.js';
 import * as fs from 'fs';
 import * as path from 'path';
+import { getReactNativeAuditRules, type PlatformTarget } from '../platform-support.js';
 import { readPackageJson } from '../utils/package-json-reader.js';
 import { readTailwindConfig } from '../utils/tailwind-config-reader.js';
 import { extractErrorMessage } from '../utils/error-handler.js';
@@ -80,7 +81,7 @@ export async function validateEnvironmentTool(
   input: ValidateEnvironmentInput
 ): Promise<ValidateEnvironmentOutput> {
   try {
-    const { projectPath, requiredPackages, checkTailwind } = input;
+    const { projectPath, requiredPackages } = input;
 
     // Step 1: Read package.json from the project
     const readResult = readPackageJson(projectPath);
@@ -93,6 +94,10 @@ export async function validateEnvironmentTool(
     }
 
     const installedPackages = readResult.installedPackages;
+    const packageJson = readResult.packageJson ?? {};
+    const platform = inferPlatform(input.platform, installedPackages);
+    const environment = detectEnvironment(projectPath, packageJson, installedPackages, platform);
+    const shouldCheckTailwind = input.checkTailwind ?? platform === 'web';
 
     // Step 2: Compare required packages with installed packages
     const installed: Record<string, string> = {};
@@ -118,12 +123,12 @@ export async function validateEnvironmentTool(
     // Step 5: Tailwind CSS 설정 검증
     let tailwind: ValidateEnvironmentOutput['tailwind'];
 
-    if (checkTailwind !== false) {
+    if (shouldCheckTailwind) {
       const tailwindResult = readTailwindConfig(projectPath);
       const installedTailwindVersion = installedPackages.tailwindcss;
+
       const issues: string[] = [];
       const fixes: string[] = [];
-
       const tailwindV4 = usesTailwindV4(installedTailwindVersion);
 
       if (!tailwindResult.found && !tailwindV4) {
@@ -214,13 +219,21 @@ export async function validateEnvironmentTool(
       };
     }
 
+    const sourceAudit =
+      platform === 'react-native' && input.sourceFiles && input.sourceFiles.length > 0
+        ? auditReactNativeSourceFiles(input.sourceFiles)
+        : undefined;
+
     return {
       success: true,
       installed,
       missing,
+      platform,
+      environment,
       installCommands,
       warnings: warnings.length > 0 ? warnings : undefined,
       tailwind,
+      sourceAudit,
     };
   } catch (error) {
     return {
@@ -228,6 +241,108 @@ export async function validateEnvironmentTool(
       error: extractErrorMessage(error),
     };
   }
+}
+
+function inferPlatform(
+  inputPlatform: ValidateEnvironmentInput['platform'],
+  installedPackages: Record<string, string>
+): PlatformTarget {
+  if (inputPlatform) {
+    return inputPlatform;
+  }
+
+  if (installedPackages.expo || installedPackages['react-native']) {
+    return 'react-native';
+  }
+
+  return 'web';
+}
+
+function detectEnvironment(
+  projectPath: string,
+  packageJson: Record<string, unknown>,
+  installedPackages: Record<string, string>,
+  platform: PlatformTarget
+): NonNullable<ValidateEnvironmentOutput['environment']> {
+  const packageManagerField =
+    typeof packageJson.packageManager === 'string' ? packageJson.packageManager : undefined;
+
+  return {
+    runtime:
+      platform === 'react-native' ? (installedPackages.expo ? 'expo' : 'react-native') : 'web',
+    projectType:
+      platform === 'react-native' ? (installedPackages.expo ? 'expo' : 'react-native') : 'web',
+    packageManager: detectPackageManager(projectPath, packageManagerField),
+  };
+}
+
+function detectPackageManager(
+  projectPath: string,
+  packageManagerField?: string
+): NonNullable<ValidateEnvironmentOutput['environment']>['packageManager'] {
+  if (packageManagerField) {
+    if (packageManagerField.startsWith('pnpm')) {
+      return 'pnpm';
+    }
+    if (packageManagerField.startsWith('yarn')) {
+      return 'yarn';
+    }
+    if (packageManagerField.startsWith('bun')) {
+      return 'bun';
+    }
+    if (packageManagerField.startsWith('npm')) {
+      return 'npm';
+    }
+  }
+
+  const rootPath = projectPath.endsWith('package.json') ? path.dirname(projectPath) : projectPath;
+  if (fs.existsSync(path.join(rootPath, 'pnpm-lock.yaml'))) {
+    return 'pnpm';
+  }
+  if (fs.existsSync(path.join(rootPath, 'yarn.lock'))) {
+    return 'yarn';
+  }
+  if (fs.existsSync(path.join(rootPath, 'bun.lockb'))) {
+    return 'bun';
+  }
+  if (fs.existsSync(path.join(rootPath, 'package-lock.json'))) {
+    return 'npm';
+  }
+  return 'unknown';
+}
+
+function auditReactNativeSourceFiles(
+  sourceFiles: string[]
+): NonNullable<ValidateEnvironmentOutput['sourceAudit']> {
+  const findings: NonNullable<ValidateEnvironmentOutput['sourceAudit']>['findings'] = [];
+  const rules = getReactNativeAuditRules();
+
+  for (const filePath of sourceFiles) {
+    if (!fs.existsSync(filePath)) {
+      continue;
+    }
+
+    const content = fs.readFileSync(filePath, 'utf-8');
+    for (const rule of rules) {
+      rule.pattern.lastIndex = 0;
+      if (!rule.pattern.test(content)) {
+        continue;
+      }
+
+      findings.push({
+        filePath,
+        ruleId: rule.id,
+        severity: rule.severity,
+        message: rule.description,
+        guidance: rule.guidance,
+      });
+    }
+  }
+
+  return {
+    filesScanned: sourceFiles.length,
+    findings,
+  };
 }
 
 /**

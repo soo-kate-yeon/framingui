@@ -3,7 +3,77 @@
  * SPEC-MCP-004 Phase 3.5
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+const templateFixtures = {
+  'auth.login': {
+    skeleton: {},
+    requiredComponents: ['Card', 'Heading', 'Text', 'Button', 'Form', 'Input', 'Link'],
+  },
+  'dashboard.overview': {
+    skeleton: {},
+    requiredComponents: ['Card', 'Heading', 'Text', 'Button', 'Badge', 'Table'],
+  },
+  'feedback.contact': {
+    skeleton: {},
+    requiredComponents: ['Card', 'Heading', 'Text', 'Button', 'Input'],
+  },
+};
+
+vi.mock('../../src/api/data-client.js', () => ({
+  fetchTheme: vi.fn(async (themeId: string) => ({
+    ok: themeId === 'square-minimalism',
+    data: { id: themeId },
+  })),
+  fetchComponent: vi.fn(async (componentId: string) => ({
+    ok: true,
+    data: {
+      id: componentId,
+      name: componentId
+        .split('-')
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(''),
+      category: ['table', 'form'].includes(componentId) ? 'complex' : 'core',
+      description: `${componentId} component`,
+      importStatement: `import { ${componentId} } from '@framingui/ui';`,
+      props: [],
+      variants: [],
+    },
+  })),
+  fetchScreenExamples: vi.fn(async () => ({
+    ok: true,
+    data: [
+      {
+        name: 'Login Form',
+        description: 'Login screen for user authentication',
+        definition: { id: 'login-form' },
+      },
+      {
+        name: 'Dashboard Overview',
+        description: 'Analytics dashboard with KPI cards',
+        definition: { id: 'dashboard-overview' },
+      },
+      {
+        name: 'Team Grid',
+        description: 'Team members grid with avatars',
+        definition: { id: 'team-grid' },
+      },
+      {
+        name: 'Profile Page',
+        description: 'Simple profile page layout',
+        definition: { id: 'profile-page' },
+      },
+    ],
+  })),
+  fetchTemplate: vi.fn(async (templateId: string) => ({
+    ok: true,
+    data: templateFixtures[templateId as keyof typeof templateFixtures] ?? {
+      skeleton: {},
+      requiredComponents: ['Card', 'Heading', 'Text', 'Button'],
+    },
+  })),
+}));
+
 import { getScreenGenerationContextTool } from '../../src/tools/get-screen-generation-context.ts';
 
 describe('get-screen-generation-context Tool', () => {

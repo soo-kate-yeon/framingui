@@ -6,10 +6,13 @@ FramingUI is a design system for AI-assisted product teams. Instead of asking an
 
 The goal is simple: use MCP to build production UI with stronger contracts, fewer hallucinated components, and clearer integration steps.
 
+FramingUI currently ships two runtime lanes: `@framingui/ui` for web React, and `@framingui/react-native` for Expo / React Native direct-write workflows. MCP still provides the contract, discovery, and validation layer on top.
+
 ## What FramingUI Includes
 
 - `@framingui/mcp-server`: MCP server for discovery, screen workflows, validation, and project setup
 - `@framingui/ui`: React UI components and styles
+- `@framingui/react-native`: React Native runtime primitives and token consumption helpers
 - `@framingui/core`: theme, token, and screen-generation utilities
 - `@framingui/tokens`: token types and references
 - `@framingui/styled`: token-aware styled-components helpers
@@ -42,13 +45,16 @@ This setup flow can:
 
 The production screen workflow is component-first and validation-first:
 
-1. `preview-theme` when theme recipes or defaults matter
-2. `get-screen-generation-context`
-3. `preview-component` for any ambiguous component contract
-4. `list-icon-libraries` before introducing icons
-5. `validate-screen-definition`
-6. write React code directly from the validated definition
-7. `validate-environment` for dependency, style-contract, and code-audit checks
+1. If the project path is known, call `detect-project-context` once to store the default platform/runtime for the session
+2. `preview-theme` when theme recipes or defaults matter
+3. `get-screen-generation-context`
+4. `preview-component` for any ambiguous component contract
+5. `list-icon-libraries` before introducing icons
+6. `validate-screen-definition` for web screen-definition work
+7. write code directly from the returned contract
+8. `validate-environment` for dependency, style-contract, and code-audit checks
+
+For Expo / React Native projects, start with `detect-project-context` so downstream discovery tools default to the native path automatically. If project path is unavailable, fall back to `platform: "react-native"` explicitly. In that path, use `@framingui/react-native` where the runtime surface exists, then fall back to host primitives or app-local abstractions for the rest.
 
 FramingUI also provides slash-command guidance for common actions such as:
 
@@ -79,7 +85,9 @@ FramingUI also provides slash-command guidance for common actions such as:
 
 ## Package Usage
 
-Install packages directly when you need them without the guided MCP setup:
+Install packages directly when you need them without the guided MCP setup.
+
+Web:
 
 ```bash
 pnpm add @framingui/ui @framingui/core
@@ -102,6 +110,25 @@ export function ExampleCard() {
         </CardContent>
       </Card>
     </FramingUIProvider>
+  );
+}
+```
+
+Expo / React Native:
+
+```bash
+pnpm add @framingui/react-native
+```
+
+```tsx
+import { Button, Screen, TextField } from '@framingui/react-native';
+
+export function SignupScreen() {
+  return (
+    <Screen width="narrow">
+      <TextField label="Email" placeholder="name@example.com" />
+      <Button label="Continue" />
+    </Screen>
   );
 }
 ```
