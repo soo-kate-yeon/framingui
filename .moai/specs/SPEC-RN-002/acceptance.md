@@ -63,7 +63,9 @@ author: Codex
 - TASK-002 validation: passed
   - `pnpm --filter @framingui/react-native test -- layout`
   - `pnpm --filter @framingui/react-native build`
-- TASK-003 validation: pending
+- TASK-003 validation: passed
+  - `pnpm --filter @framingui/react-native test -- primitives-layout`
+  - `pnpm --filter @framingui/react-native build`
 - TASK-004 validation: pending
 - TASK-005 validation: pending
 - TASK-006 validation: pending
