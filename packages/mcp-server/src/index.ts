@@ -459,10 +459,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         description:
           '[WORKFLOW STEP 1/3] Get complete context for AI agents to generate screens from natural language for web or React Native direct-write workflows.\n\n' +
           'THIS IS THE FIRST STEP in the screen generation workflow:\n' +
-          "1. Call THIS TOOL with user's description and optional platform (Step 1/3)\n" +
-          '2. For web: write Screen Definition JSON, then validate with validate-screen-definition (Step 2/3)\n' +
-          '3. For React Native: write code directly from the returned direct-write contract\n' +
-          '4. Call validate-environment if path known (final step)\n\n' +
+          '1. If project path is known, call detect-project-context once to set defaults\n' +
+          "2. Call THIS TOOL with user's description and optional platform override (Step 1/3)\n" +
+          '3. For web: write Screen Definition JSON, then validate with validate-screen-definition (Step 2/3)\n' +
+          '4. For React Native: write code directly from the returned direct-write contract\n' +
+          '5. Call validate-environment if path known (final step)\n\n' +
           'IMPORTANT: Web uses the validated Screen Definition path. React Native uses the direct-write contract path.\n\n' +
           'WHEN TO CALL:\n' +
           '- When user requests a new screen/page/component\n' +
@@ -498,7 +499,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             platform: {
               type: 'string',
               enum: ['web', 'react-native'],
-              description: 'Target platform for direct-write guidance (default: web)',
+              description:
+                'Optional explicit platform override. If omitted, the session default or legacy web fallback is used.',
             },
           },
           required: ['description'],

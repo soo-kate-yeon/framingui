@@ -428,12 +428,8 @@ export function verifyInitSetup(cwd: string): InitVerification {
   };
 }
 
-function printResult(pm: PackageManager, verification: InitVerification): void {
-  if (verification.warnings.length === 0) {
-    console.log(`
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  FramingUI setup completed.
+export function getInitSuccessMessage(projectPath: string): string {
+  return `  FramingUI setup completed.
 
   Verified:
   - screen-generation runtime packages installed
@@ -444,7 +440,17 @@ function printResult(pm: PackageManager, verification: InitVerification): void {
   Next steps:
   1. Run: framingui-mcp login
   2. Restart your MCP client
-  3. Start with: get-screen-generation-context
+  3. In your MCP client, call: detect-project-context
+     - projectPath: ${projectPath}
+  4. Then start with: get-screen-generation-context`;
+}
+
+function printResult(pm: PackageManager, verification: InitVerification): void {
+  if (verification.warnings.length === 0) {
+    console.log(`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${getInitSuccessMessage(process.cwd())}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
     return;

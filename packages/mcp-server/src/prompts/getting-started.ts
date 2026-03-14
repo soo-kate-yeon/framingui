@@ -68,7 +68,19 @@ You can call \`list-themes\` and \`preview-theme\` directly after authentication
 - pebble - Round minimal
 - square-minimalism - Square minimalism
 
-## Step 4: Check Component Availability
+## Step 4: Bootstrap Project Context
+
+If the project path is known, call \`detect-project-context\` before the main workflow.
+
+\`\`\`
+1. Call detect-project-context with the project root or package.json path
+2. Let FramingUI store the detected default platform/runtime for the session
+3. Continue with discovery tools without repeating platform flags unless overriding on purpose
+\`\`\`
+
+For Expo / React Native targets, this is the preferred path. If no project path is available, you can still pass \`platform: "react-native"\` explicitly as a fallback.
+
+## Step 5: Check Component Availability
 
 Before creating screen definitions:
 
@@ -78,18 +90,24 @@ Before creating screen definitions:
 3. Identify components needed for your screen
 \`\`\`
 
-## Step 5: Generate Your First Screen
+## Step 6: Generate Your First Screen
 
 Follow the 3-step workflow:
 
 **Step 1/3:** Call \`get-screen-generation-context\` with your screen description
 - Returns: Template hints, component suggestions with inline props, schema
 - Use \`includeExamples: false\` when you want a smaller response and do not need sample screen definitions
+- If \`detect-project-context\` already ran, omit \`platform\` and let the stored default apply
 
 **Step 2/3:** Create Screen Definition JSON, then call \`validate-screen-definition\`
 - Returns: Validation results, errors with auto-fix patches, suggestions
 
 **After validation passes:** Write React code directly using the components and props from Step 1
+
+For Expo / React Native targets:
+- use the direct-write guidance from \`get-screen-generation-context\`
+- do **not** import \`@framingui/ui\`
+- run \`validate-environment\` with \`sourceFiles\` before handoff
 
 **Step 3/3 (Optional):** Call \`validate-environment\` with project path
 - Returns: Missing packages, install commands, Tailwind config status
@@ -99,11 +117,12 @@ Follow the 3-step workflow:
 1. ❌ Skipping authentication - All themes require licenses
 2. ❌ Assuming whoami is a hard prerequisite - it is optional session inspection, not a hidden unlock step
 3. ❌ Using non-existent theme IDs - Only 6 themes exist
-4. ❌ Skipping validate-screen-definition - Always validate before writing code
-5. ❌ Ignoring dependencies warnings - Check required packages before running code
-6. ❌ Using unlicensed themes - Only use themes from whoami licensedThemes list
-7. ❌ Parsing MCP transcript text with shell/python/json tools - Use tool output directly instead
-8. ❌ Treating templateMatch as the source of truth - components and preview tools are the contract
+4. ❌ Skipping detect-project-context when the project path is known - you lose automatic platform defaults
+5. ❌ Skipping validate-screen-definition for web work - Always validate before writing code
+6. ❌ Ignoring dependencies warnings - Check required packages before running code
+7. ❌ Using unlicensed themes - Only use themes from whoami licensedThemes list
+8. ❌ Parsing MCP transcript text with shell/python/json tools - Use tool output directly instead
+9. ❌ Treating templateMatch as the source of truth - components and preview tools are the contract
 
 ## Need Help?
 

@@ -16,36 +16,38 @@ framingui-mcp login
 
 ### Production Screen Flow
 
-1. Decide the style contract:
+1. If the project path is known, call \`detect-project-context\` to establish the session default platform/runtime.
+2. Decide the style contract:
    - \`host-utility\`
    - \`framingui-native\`
    - \`migrate\`
-2. Inspect the theme when defaults matter:
+3. Inspect the theme when defaults matter:
    - \`preview-theme\`
-3. Gather generation context:
+4. Gather generation context:
    - \`get-screen-generation-context\`
-4. Resolve ambiguity before drafting:
+5. Resolve ambiguity before drafting:
    - \`preview-component\`
    - \`list-icon-libraries\` when icons are needed
-5. Validate structure:
+6. Validate structure for web screen-definition work:
    - \`validate-screen-definition\`
-6. Write React code from the validated definition
-7. Verify project integration:
+7. Write React or React Native code from the returned contract
+8. Verify project integration:
    - \`validate-environment\` with \`sourceFiles\`
 
 ### React Native Direct-Write Flow
 
 For Expo or React Native targets:
 
-1. Call \`get-screen-generation-context\` with \`platform: "react-native"\`
-2. Review only React Native compatible components and guidance
-3. Write the screen directly with \`react-native\` primitives or local app abstractions
-4. Run \`validate-environment\` with:
+1. Call \`detect-project-context\` with the project path when available
+2. Call \`get-screen-generation-context\` without repeating \`platform\` unless you need an explicit override
+3. Review only React Native compatible components and guidance
+4. Write the screen directly with \`react-native\` primitives or local app abstractions
+5. Run \`validate-environment\` with:
    - \`platform: "react-native"\`
    - \`projectPath\`
    - \`requiredPackages\`
    - \`sourceFiles\`
-5. Fix any hardcoded style drift or web-only patterns before handoff
+6. Fix any hardcoded style drift or web-only patterns before handoff
 
 ### Style Contract Rules
 
@@ -104,20 +106,22 @@ FramingUI is available in this project through MCP.
 ### Required Sequence
 
 1. Confirm authentication if licensed themes are needed.
-2. Decide the style contract before generation.
-3. Use \`preview-theme\` when theme defaults or recipes matter.
-4. Use \`get-screen-generation-context\` as the main entry point.
-5. Use \`preview-component\` for any ambiguous component contract.
-6. Use \`list-icon-libraries\` before adding icons.
-7. Validate structure with \`validate-screen-definition\`.
-8. Write React code directly from the validated definition.
-9. Run \`validate-environment\` with \`sourceFiles\` before final handoff.
+2. If the project path is known, call \`detect-project-context\` first.
+3. Decide the style contract before generation.
+4. Use \`preview-theme\` when theme defaults or recipes matter.
+5. Use \`get-screen-generation-context\` as the main entry point.
+6. Use \`preview-component\` for any ambiguous component contract.
+7. Use \`list-icon-libraries\` before adding icons.
+8. Validate structure with \`validate-screen-definition\` for web screen-definition work.
+9. Write code directly from the returned contract.
+10. Run \`validate-environment\` with \`sourceFiles\` before final handoff.
 
 ### React Native Projects
 
 If the target project is Expo or React Native:
 
-- call \`get-screen-generation-context\` with \`platform: "react-native"\`
+- call \`detect-project-context\` when the project path is available
+- rely on the stored session default instead of repeating \`platform: "react-native"\` on every discovery call
 - write the screen directly using host app primitives or local abstractions
 - do **not** import \`@framingui/ui\`
 - run \`validate-environment\` with \`platform: "react-native"\` and \`sourceFiles\`

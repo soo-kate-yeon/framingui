@@ -43,15 +43,16 @@ This setup flow can:
 
 The production screen workflow is component-first and validation-first:
 
-1. `preview-theme` when theme recipes or defaults matter
-2. `get-screen-generation-context`
-3. `preview-component` for any ambiguous component contract
-4. `list-icon-libraries` before introducing icons
-5. `validate-screen-definition`
-6. write React code directly from the validated definition
-7. `validate-environment` for dependency, style-contract, and code-audit checks
+1. If the project path is known, call `detect-project-context` once to store the default platform/runtime for the session
+2. `preview-theme` when theme recipes or defaults matter
+3. `get-screen-generation-context`
+4. `preview-component` for any ambiguous component contract
+5. `list-icon-libraries` before introducing icons
+6. `validate-screen-definition` for web screen-definition work
+7. write code directly from the returned contract
+8. `validate-environment` for dependency, style-contract, and code-audit checks
 
-For Expo / React Native projects, use the same MCP entry points with `platform: "react-native"` and write native code directly. In that path, FramingUI acts as the contract, discovery, and QC layer rather than the runtime UI package.
+For Expo / React Native projects, start with `detect-project-context` so downstream discovery tools default to the native path automatically. If project path is unavailable, fall back to `platform: "react-native"` explicitly. In that path, FramingUI acts as the contract, discovery, and QC layer rather than the runtime UI package.
 
 FramingUI also provides slash-command guidance for common actions such as:
 

@@ -23,18 +23,21 @@ framingui-mcp status
 
 ## Recommended Workflow
 
-1. Decide the style contract for this project:
+1. If the project path is known, call \`detect-project-context\` first to store the default platform/runtime for this session.
+2. Decide the style contract for this project:
    - \`host-utility\`
    - \`framingui-native\`
    - \`migrate\`
-2. Inspect theme and component contracts before drafting:
+3. Inspect theme and component contracts before drafting:
    - \`preview-theme\`
    - \`preview-component\`
    - \`list-icon-libraries\` when icons are needed
-3. Call \`get-screen-generation-context\`
-4. Validate the generated definition with \`validate-screen-definition\`
-5. Write React code from the validated definition
-6. Run \`validate-environment\` with \`sourceFiles\` before handoff
+4. Call \`get-screen-generation-context\`
+5. For web projects, validate the generated definition with \`validate-screen-definition\`
+6. Write React or React Native code from the returned contract
+7. Run \`validate-environment\` with \`sourceFiles\` before handoff
+
+If the detected project is Expo or React Native, keep using the direct-write path and do not repeat \`platform: "react-native"\` on every tool call unless you need an explicit override.
 
 ## Style Contract Rules
 
@@ -94,5 +97,6 @@ export default function Page() {
 - Treat templates as hints, not the final structure.
 - Treat the validated screen definition as the production contract.
 - Keep semantic wrappers as HTML only when there is no FramingUI primitive to replace them.
+- For Expo / React Native targets, use \`detect-project-context\` once and avoid \`@framingui/ui\` imports.
 `;
 }
