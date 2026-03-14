@@ -1,4 +1,5 @@
 {
+  "files": [],
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
@@ -36,6 +37,8 @@
     { "path": "./packages/tokens" },
     { "path": "./packages/ui" },
     { "path": "./packages/styled" },
-    { "path": "./packages/esbuild-plugin" }
+    { "path": "./packages/esbuild-plugin" },
+    { "path": "./packages/mcp-server" },
+    { "path": "./packages/react-native" }
   ]
 }
