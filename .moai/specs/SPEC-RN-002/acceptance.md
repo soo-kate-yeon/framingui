@@ -66,7 +66,9 @@ author: Codex
 - TASK-003 validation: passed
   - `pnpm --filter @framingui/react-native test -- primitives-layout`
   - `pnpm --filter @framingui/react-native build`
-- TASK-004 validation: pending
+- TASK-004 validation: passed
+  - `pnpm --filter @framingui/react-native test -- core-surface`
+  - `pnpm --filter @framingui/react-native build`
 - TASK-005 validation: pending
 - TASK-006 validation: pending
 - Final acceptance validation: pending

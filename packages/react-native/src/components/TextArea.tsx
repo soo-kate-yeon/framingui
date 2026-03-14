@@ -2,16 +2,16 @@ import { useState } from 'react';
 import {
   StyleProp,
   StyleSheet,
-  Text,
   TextInput,
-  TextInputProps,
-  TextStyle,
+  type TextInputProps,
+  type TextStyle,
+  type ViewStyle,
   View,
-  ViewStyle,
 } from 'react-native';
 import { createThemedStyles, useTheme } from '../theme.js';
+import { Text } from './Text.js';
 
-export interface TextFieldProps extends TextInputProps {
+export interface TextAreaProps extends TextInputProps {
   label?: string;
   message?: string;
   invalid?: boolean;
@@ -20,7 +20,7 @@ export interface TextFieldProps extends TextInputProps {
   inputStyle?: StyleProp<TextStyle>;
 }
 
-export function TextField({
+export function TextArea({
   label,
   message,
   invalid = false,
@@ -30,7 +30,7 @@ export function TextField({
   onBlur,
   onFocus,
   ...props
-}: TextFieldProps) {
+}: TextAreaProps) {
   const [isFocused, setIsFocused] = useState(false);
   const theme = useTheme();
   const styles = getStyles(theme);
@@ -38,8 +38,13 @@ export function TextField({
 
   return (
     <View style={[styles.wrapper, containerStyle]}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? (
+        <Text style={styles.label} variant="label">
+          {label}
+        </Text>
+      ) : null}
       <TextInput
+        multiline={true}
         onBlur={event => {
           setIsFocused(false);
           onBlur?.(event);
@@ -55,10 +60,17 @@ export function TextField({
           invalid && styles.inputInvalid,
           inputStyle,
         ]}
+        textAlignVertical="top"
         {...props}
       />
       {message ? (
-        <Text style={[styles.message, invalid && styles.messageInvalid]}>{message}</Text>
+        <Text
+          style={[styles.message, invalid && styles.messageInvalid]}
+          tone="secondary"
+          variant="caption"
+        >
+          {message}
+        </Text>
       ) : null}
     </View>
   );
@@ -71,7 +83,6 @@ const getStyles = createThemedStyles(theme =>
       width: '100%',
     },
     label: {
-      ...theme.typography.label,
       color: theme.colors.text.primary,
     },
     input: {
@@ -81,7 +92,7 @@ const getStyles = createThemedStyles(theme =>
       borderRadius: theme.radius.md,
       borderWidth: 1,
       color: theme.colors.text.primary,
-      minHeight: 52,
+      minHeight: 128,
       paddingHorizontal: theme.spacing[4],
       paddingVertical: theme.spacing[3],
     },
@@ -93,7 +104,6 @@ const getStyles = createThemedStyles(theme =>
       borderColor: theme.colors.border.danger,
     },
     message: {
-      ...theme.typography.caption,
       color: theme.colors.text.secondary,
     },
     messageInvalid: {

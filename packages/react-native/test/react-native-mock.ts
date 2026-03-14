@@ -27,6 +27,7 @@ export const Text = createHostComponent('Text');
 export const ScrollView = createHostComponent('ScrollView');
 export const TextInput = createHostComponent('TextInput');
 export const ActivityIndicator = createHostComponent('ActivityIndicator');
+export const Switch = createHostComponent('Switch');
 
 export const Pressable = ({ children, style, ...props }: Record<string, unknown>) =>
   React.createElement(
