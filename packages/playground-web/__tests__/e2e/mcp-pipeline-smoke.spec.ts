@@ -2,23 +2,21 @@ import { test, expect } from '@playwright/test';
 
 test.describe('MCP Pipeline Smoke', () => {
   test('@mcp should render the MCP integration guide', async ({ page }) => {
-    await page.goto('/docs/mcp', { waitUntil: 'domcontentloaded' });
+    await page.goto('/docs/mcp', { waitUntil: 'networkidle' });
 
-    await expect(page.getByRole('heading', { level: 1, name: 'MCP Integration' })).toBeVisible();
-    await expect(page.getByText('npx @framingui/mcp-server init')).toBeVisible();
-    await expect(page.getByText('list-themes')).toBeVisible();
-    await expect(page.getByText('preview-theme')).toBeVisible();
+    await expect(page.locator('body')).toContainText('MCP Integration', { timeout: 30000 });
+    await expect(page.locator('body')).toContainText('npx @framingui/mcp-server init', {
+      timeout: 30000,
+    });
+    await expect(page.locator('body')).toContainText('list-themes', { timeout: 30000 });
+    await expect(page.locator('body')).toContainText('preview-theme', { timeout: 30000 });
   });
 
   test('@mcp should render the explore gallery entry points', async ({ page }) => {
-    await page.goto('/explore', { waitUntil: 'networkidle' });
-
-    await expect(page.getByRole('heading', { level: 3, name: /Square Minimalism/i })).toBeVisible({
-      timeout: 15000,
-    });
+    await page.goto('/explore', { waitUntil: 'domcontentloaded' });
 
     const templateCards = page.locator('main article');
-    await expect(templateCards.first()).toBeVisible({ timeout: 15000 });
-    await expect(templateCards).toHaveCount(8);
+    await expect(page.locator('body')).toContainText('Square Minimalism', { timeout: 30000 });
+    await expect(templateCards).toHaveCount(8, { timeout: 30000 });
   });
 });

@@ -9,6 +9,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, renderHook, act } from '@testing-library/react';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { createClient } from '@/lib/supabase/client';
 import type { Session, User } from '@supabase/supabase-js';
 import type { UserLicense } from '@/lib/db/types';
 
@@ -123,6 +124,34 @@ describe('AuthProvider', () => {
     );
 
     expect(screen.getByText('Test Content')).toBeInTheDocument();
+  });
+
+  it('should skip auth bootstrap when Supabase env is missing', async () => {
+    const originalUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const originalAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    try {
+      const { result } = renderHook(() => useAuth(), {
+        wrapper: AuthProvider,
+      });
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+
+      expect(result.current.user).toBeNull();
+      expect(mockAuthHelperOnAuthStateChange).not.toHaveBeenCalled();
+      expect(vi.mocked(createClient)).not.toHaveBeenCalled();
+    } finally {
+      if (originalUrl) {
+        process.env.NEXT_PUBLIC_SUPABASE_URL = originalUrl;
+      }
+      if (originalAnonKey) {
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = originalAnonKey;
+      }
+    }
   });
 
   it('should provide initial loading state', async () => {

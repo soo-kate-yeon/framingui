@@ -141,12 +141,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true); // 초기 로딩 true
   const [error, setError] = useState<string | null>(null);
+  const hasSupabaseConfig = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
 
   // ============================================================================
   // 인증 상태 변경 리스너
   // ============================================================================
 
   useEffect(() => {
+    if (!hasSupabaseConfig) {
+      setIsLoading(false);
+      setError(null);
+      return undefined;
+    }
+
     const unsubscribe = onAuthStateChange(async (event, session) => {
       setIsLoading(true);
       setError(null);
@@ -233,7 +242,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [hasSupabaseConfig]);
 
   // ============================================================================
   // 로그인
