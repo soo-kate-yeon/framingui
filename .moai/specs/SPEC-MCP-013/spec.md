@@ -1,7 +1,7 @@
 ---
 id: SPEC-MCP-013
 version: "1.0.0"
-status: "proposed"
+status: "complete"
 created: "2026-03-14"
 updated: "2026-03-14"
 author: "Codex + soo-kate-yeon"
@@ -176,6 +176,12 @@ Success conditions:
 - `pnpm --filter @framingui/mcp-server test`
 - `pnpm --filter @framingui/mcp-server typecheck`
 - `pnpm --filter @framingui/mcp-server build`
+
+## Completion Record
+
+- TASK-001 completed with dedicated detection schemas, tool wiring, and Expo / React Native / web tests
+- TASK-002 completed with shared platform resolution and downstream default propagation
+- TASK-003 completed with detection-first bootstrap guidance across prompts, generated docs, init output, and README
 
 ## Product Gaps This SPEC Addresses
 

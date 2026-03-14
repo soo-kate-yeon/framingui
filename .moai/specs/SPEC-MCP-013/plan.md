@@ -1,7 +1,7 @@
 ---
 id: SPEC-MCP-013
 version: "1.0.0"
-status: "proposed"
+status: "complete"
 created: "2026-03-14"
 updated: "2026-03-14"
 author: "Codex"
@@ -32,3 +32,10 @@ author: "Codex"
 1. Complete one task at a time.
 2. Run that task's tests before moving forward.
 3. Commit after each successful task.
+
+## Completion Summary
+
+1. Phase 1 completed and committed as `feat(mcp): add project context detection`
+2. Phase 2 completed and committed as `feat(mcp): apply project context defaults`
+3. Phase 3 completed and committed as `docs(mcp): add detection-first project guidance`
+4. Final validation executed after documentation sync

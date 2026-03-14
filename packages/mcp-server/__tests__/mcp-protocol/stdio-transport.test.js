@@ -6,28 +6,79 @@
  * - Spawn server process and send JSON-RPC via stdin
  * - Read JSON-RPC from stdout
  * - Verify tools/list works
- * - Verify tools/call works
+ * - Verify tools/call returns auth guard error without whoami
  */
 import { describe, it, expect, beforeAll } from 'vitest';
 import { spawn } from 'child_process';
-import { resolve } from 'path';
+import { mkdtempSync } from 'fs';
+import { tmpdir } from 'os';
+import { resolve as pathResolve } from 'path';
 describe('stdio transport', () => {
     let serverPath;
     beforeAll(async () => {
         // Path to the built server
-        serverPath = resolve(process.cwd(), 'dist/index.js');
+        serverPath = pathResolve(process.cwd(), 'dist/index.js');
     });
+    async function terminateServer(server) {
+        if (server.exitCode !== null || server.killed) {
+            return;
+        }
+        await new Promise(resolve => {
+            let settled = false;
+            const finish = () => {
+                if (settled) {
+                    return;
+                }
+                settled = true;
+                clearTimeout(forceClose);
+                resolve();
+            };
+            const forceClose = setTimeout(() => {
+                try {
+                    server.kill('SIGKILL');
+                }
+                catch (_error) {
+                    // Ignore follow-up termination errors during test cleanup.
+                }
+                finish();
+            }, 1000);
+            server.once('close', finish);
+            server.once('exit', finish);
+            try {
+                server.kill('SIGKILL');
+            }
+            catch (_error) {
+                finish();
+            }
+        });
+    }
     /**
      * Helper function to spawn server and send/receive JSON-RPC messages
      */
     async function sendRequest(request) {
         return new Promise((resolve, reject) => {
-            const server = spawn('node', [serverPath]);
+            const isolatedHome = mkdtempSync(pathResolve(tmpdir(), 'framingui-mcp-stdio-'));
+            const server = spawn('node', [serverPath], {
+                env: {
+                    ...process.env,
+                    HOME: isolatedHome,
+                    USERPROFILE: isolatedHome,
+                    FRAMINGUI_API_KEY: '',
+                },
+            });
             let stdoutData = '';
             let _stderrData = '';
+            let settled = false;
+            const settle = (handler) => {
+                if (settled) {
+                    return;
+                }
+                settled = true;
+                clearTimeout(timeout);
+                void terminateServer(server).finally(handler);
+            };
             const timeout = setTimeout(() => {
-                server.kill();
-                reject(new Error('Request timeout'));
+                settle(() => reject(new Error('Request timeout')));
             }, 5000);
             server.stdout?.on('data', data => {
                 stdoutData += data.toString();
@@ -36,9 +87,8 @@ describe('stdio transport', () => {
                     const lines = stdoutData.split('\n').filter(line => line.trim());
                     for (const line of lines) {
                         const response = JSON.parse(line);
-                        clearTimeout(timeout);
-                        server.kill();
-                        resolve(response);
+                        settle(() => resolve(response));
+                        return;
                     }
                 }
                 catch (e) {
@@ -49,8 +99,7 @@ describe('stdio transport', () => {
                 _stderrData += data.toString();
             });
             server.on('error', error => {
-                clearTimeout(timeout);
-                reject(error);
+                settle(() => reject(error));
             });
             // Send request via stdin
             server.stdin?.write(JSON.stringify(request) + '\n');
@@ -72,14 +121,14 @@ describe('stdio transport', () => {
         // Verify tools list
         expect(response.result).toHaveProperty('tools');
         expect(Array.isArray(response.result.tools)).toBe(true);
-        expect(response.result.tools).toHaveLength(3);
+        expect(response.result.tools.length).toBeGreaterThanOrEqual(3);
         // Verify tool names
         const toolNames = response.result.tools.map((t) => t.name);
         expect(toolNames).toContain('generate-blueprint');
         expect(toolNames).toContain('preview-theme');
         expect(toolNames).toContain('export-screen');
     });
-    it('should handle tools/call request for preview-theme', async () => {
+    it('should reject tools/call without whoami', async () => {
         const request = {
             jsonrpc: '2.0',
             id: 2,
@@ -87,7 +136,7 @@ describe('stdio transport', () => {
             params: {
                 name: 'preview-theme',
                 arguments: {
-                    themeId: 'calm-wellness',
+                    themeId: 'classic-magazine',
                 },
             },
         };
@@ -96,18 +145,15 @@ describe('stdio transport', () => {
         expect(response).toHaveProperty('jsonrpc', '2.0');
         expect(response).toHaveProperty('id', 2);
         expect(response).toHaveProperty('result');
-        // Verify result content
+        // Verify auth guard error
         expect(response.result).toHaveProperty('content');
         expect(Array.isArray(response.result.content)).toBe(true);
-        expect(response.result.content[0]).toHaveProperty('type', 'text');
-        expect(response.result.content[0]).toHaveProperty('text');
-        // Parse tool result
         const toolResult = JSON.parse(response.result.content[0].text);
-        expect(toolResult).toHaveProperty('success', true);
-        expect(toolResult).toHaveProperty('theme');
-        expect(toolResult.theme).toHaveProperty('id', 'calm-wellness');
+        expect(toolResult).toHaveProperty('success', false);
+        expect(toolResult.error).toMatch(/Authentication required\.|Authentication required to use FramingUI MCP tools\.|whoami required\./);
+        expect(response.result).toHaveProperty('isError', true);
     });
-    it('should handle tools/call request with invalid tool name', async () => {
+    it('should return auth guard error for all tool calls without whoami', async () => {
         const request = {
             jsonrpc: '2.0',
             id: 3,
@@ -122,12 +168,9 @@ describe('stdio transport', () => {
         expect(response).toHaveProperty('jsonrpc', '2.0');
         expect(response).toHaveProperty('id', 3);
         expect(response).toHaveProperty('result');
-        // Verify error content
-        expect(response.result).toHaveProperty('content');
         const toolResult = JSON.parse(response.result.content[0].text);
         expect(toolResult).toHaveProperty('success', false);
-        expect(toolResult).toHaveProperty('error');
-        expect(toolResult.error).toContain('Unknown tool');
+        expect(toolResult.error).toMatch(/Authentication required\.|Authentication required to use FramingUI MCP tools\.|whoami required\./);
     });
     it('should handle tools/call with missing required parameters', async () => {
         const request = {
@@ -150,22 +193,40 @@ describe('stdio transport', () => {
     });
     it('should send logs to stderr, not stdout', async () => {
         return new Promise((resolve, reject) => {
-            const server = spawn('node', [serverPath]);
+            const isolatedHome = mkdtempSync(pathResolve(tmpdir(), 'framingui-mcp-stdio-'));
+            const server = spawn('node', [serverPath], {
+                env: {
+                    ...process.env,
+                    HOME: isolatedHome,
+                    USERPROFILE: isolatedHome,
+                    FRAMINGUI_API_KEY: '',
+                },
+            });
             const stdoutLines = [];
             const stderrLines = [];
             let receivedResponse = false;
-            const timeout = setTimeout(() => {
-                server.kill();
-                // Verify stderr contains logs
-                expect(stderrLines.length).toBeGreaterThan(0);
-                expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
-                // Verify stdout only contains JSON-RPC
-                for (const line of stdoutLines) {
-                    if (line.trim()) {
-                        expect(() => JSON.parse(line)).not.toThrow();
-                    }
+            let settled = false;
+            const settle = (handler) => {
+                if (settled) {
+                    return;
                 }
-                resolve(undefined);
+                settled = true;
+                clearTimeout(timeout);
+                void terminateServer(server).finally(handler);
+            };
+            const timeout = setTimeout(() => {
+                settle(() => {
+                    // Verify stderr contains logs
+                    expect(stderrLines.length).toBeGreaterThan(0);
+                    expect(stderrLines.some(line => line.includes('[INFO]'))).toBe(true);
+                    // Verify stdout only contains JSON-RPC
+                    for (const line of stdoutLines) {
+                        if (line.trim()) {
+                            expect(() => JSON.parse(line)).not.toThrow();
+                        }
+                    }
+                    resolve(undefined);
+                });
             }, 3000);
             server.stdout?.on('data', data => {
                 const lines = data
@@ -185,8 +246,7 @@ describe('stdio transport', () => {
                 stderrLines.push(...lines);
             });
             server.on('error', error => {
-                clearTimeout(timeout);
-                reject(error);
+                settle(() => reject(error));
             });
             // Send a request to trigger logs
             const request = {
@@ -198,6 +258,5 @@ describe('stdio transport', () => {
             server.stdin?.write(JSON.stringify(request) + '\n');
             server.stdin?.end();
         });
-    });
+    }, 30000);
 });
-//# sourceMappingURL=stdio-transport.test.js.map

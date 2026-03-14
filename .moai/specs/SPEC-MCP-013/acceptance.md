@@ -26,3 +26,19 @@
 - `pnpm --filter @framingui/mcp-server test` passes.
 - `pnpm --filter @framingui/mcp-server typecheck` passes.
 - `pnpm --filter @framingui/mcp-server build` passes.
+
+## Validation Record
+
+- TASK-001 validation passed:
+  - `pnpm --filter @framingui/mcp-server exec vitest run __tests__/tools/detect-project-context.test.ts`
+  - `pnpm --filter @framingui/mcp-server typecheck`
+- TASK-002 validation passed:
+  - `pnpm --filter @framingui/mcp-server exec vitest run __tests__/tools/project-context-defaults.test.ts`
+  - `pnpm --filter @framingui/mcp-server typecheck`
+- TASK-003 validation passed:
+  - `pnpm --filter @framingui/mcp-server exec vitest run __tests__/tools/project-context-guidance.test.ts __tests__/tools/screen-workflow-prompt.test.ts __tests__/tools/init-bootstrap.test.ts __tests__/tools/auth-bootstrap.test.ts`
+  - `pnpm --filter @framingui/mcp-server typecheck`
+- Final validation passed:
+  - `pnpm --filter @framingui/mcp-server test`
+  - `pnpm --filter @framingui/mcp-server typecheck`
+  - `pnpm --filter @framingui/mcp-server build`
