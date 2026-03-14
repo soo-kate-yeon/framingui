@@ -8,8 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { getTextStyle } from '../helpers.js';
-import { colors, radius, spacing } from '../tokens.js';
+import { createThemedStyles, useTheme } from '../theme.js';
 
 export interface TextFieldProps extends TextInputProps {
   label?: string;
@@ -27,11 +26,14 @@ export function TextField({
   inputStyle,
   ...props
 }: TextFieldProps) {
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   return (
     <View style={[styles.wrapper, containerStyle]}>
       {label ? <Text style={styles.label}>{label}</Text> : null}
       <TextInput
-        placeholderTextColor={colors.text.tertiary}
+        placeholderTextColor={theme.colors.text.tertiary}
         style={[styles.input, invalid && styles.inputInvalid, inputStyle]}
         {...props}
       />
@@ -42,34 +44,36 @@ export function TextField({
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    gap: spacing[2],
-    width: '100%',
-  },
-  label: {
-    ...getTextStyle('label'),
-    color: colors.text.primary,
-  },
-  input: {
-    ...getTextStyle('body'),
-    backgroundColor: colors.surface.muted,
-    borderColor: colors.border.default,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    color: colors.text.primary,
-    minHeight: 52,
-    paddingHorizontal: spacing[4],
-    paddingVertical: spacing[3],
-  },
-  inputInvalid: {
-    borderColor: colors.border.danger,
-  },
-  message: {
-    ...getTextStyle('caption'),
-    color: colors.text.secondary,
-  },
-  messageInvalid: {
-    color: colors.text.danger,
-  },
-});
+const getStyles = createThemedStyles(theme =>
+  StyleSheet.create({
+    wrapper: {
+      gap: theme.spacing[2],
+      width: '100%',
+    },
+    label: {
+      ...theme.typography.label,
+      color: theme.colors.text.primary,
+    },
+    input: {
+      ...theme.typography.body,
+      backgroundColor: theme.colors.surface.muted,
+      borderColor: theme.colors.border.default,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      color: theme.colors.text.primary,
+      minHeight: 52,
+      paddingHorizontal: theme.spacing[4],
+      paddingVertical: theme.spacing[3],
+    },
+    inputInvalid: {
+      borderColor: theme.colors.border.danger,
+    },
+    message: {
+      ...theme.typography.caption,
+      color: theme.colors.text.secondary,
+    },
+    messageInvalid: {
+      color: theme.colors.text.danger,
+    },
+  })
+);

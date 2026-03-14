@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { colors, spacing } from '../tokens.js';
+import { createThemedStyles, useTheme } from '../theme.js';
 
 export interface ScreenProps {
   children: ReactNode;
@@ -21,6 +21,9 @@ export function Screen({
   style,
   contentStyle,
 }: ScreenProps) {
+  const theme = useTheme();
+  const styles = getStyles(theme);
+
   const content = (
     <View
       style={[
@@ -46,26 +49,28 @@ export function Screen({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    backgroundColor: colors.background.canvas,
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  content: {
-    width: '100%',
-  },
-  centered: {
-    justifyContent: 'center',
-  },
-  padded: {
-    paddingHorizontal: spacing[6],
-    paddingVertical: spacing[8],
-  },
-  narrow: {
-    alignSelf: 'center',
-    maxWidth: 480,
-  },
-});
+const getStyles = createThemedStyles(theme =>
+  StyleSheet.create({
+    base: {
+      backgroundColor: theme.colors.background.canvas,
+      flex: 1,
+    },
+    scrollContent: {
+      flexGrow: 1,
+    },
+    content: {
+      width: '100%',
+    },
+    centered: {
+      justifyContent: 'center',
+    },
+    padded: {
+      paddingHorizontal: theme.spacing[6],
+      paddingVertical: theme.spacing[8],
+    },
+    narrow: {
+      alignSelf: 'center',
+      maxWidth: 480,
+    },
+  })
+);

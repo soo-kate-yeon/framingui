@@ -1,6 +1,20 @@
 export { tokenContract } from './contracts.js';
 export {
+  createTheme,
+  createThemedStyles,
+  defaultTheme,
+  ThemeProvider,
+  useTheme,
+  type ReactNativeTheme,
+  type ReactNativeThemeInput,
+} from './theme.js';
+export {
   colors,
+  baseColors,
+  baseRadius,
+  baseShadows,
+  baseSpacing,
+  baseTypography,
   radius,
   shadows,
   spacing,

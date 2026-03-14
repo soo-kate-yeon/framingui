@@ -1,6 +1,6 @@
 import type { TextStyle, ViewStyle } from 'react-native';
 
-export const colors = {
+export const baseColors = {
   background: {
     canvas: '#FFFFFF',
     muted: '#FAFAFA',
@@ -32,7 +32,7 @@ export const colors = {
   },
 } as const;
 
-export const spacing = {
+export const baseSpacing = {
   0: 0,
   1: 4,
   2: 8,
@@ -45,14 +45,14 @@ export const spacing = {
   12: 48,
 } as const;
 
-export const radius = {
+export const baseRadius = {
   sm: 8,
   md: 12,
   lg: 16,
   full: 999,
 } as const;
 
-export const typography = {
+export const baseTypography = {
   display: {
     fontSize: 32,
     lineHeight: 38,
@@ -95,7 +95,7 @@ export const typography = {
   },
 } as const satisfies Record<string, Pick<TextStyle, 'fontSize' | 'lineHeight' | 'fontWeight'>>;
 
-export const shadows = {
+export const baseShadows = {
   card: {
     shadowColor: '#000000',
     shadowOpacity: 0.08,
@@ -120,6 +120,12 @@ export const shadows = {
   string,
   Pick<ViewStyle, 'shadowColor' | 'shadowOpacity' | 'shadowRadius' | 'shadowOffset' | 'elevation'>
 >;
+
+export const colors = baseColors;
+export const spacing = baseSpacing;
+export const radius = baseRadius;
+export const typography = baseTypography;
+export const shadows = baseShadows;
 
 export const tokens = {
   colors,

@@ -57,7 +57,9 @@ author: Codex
 
 ## Validation Record
 
-- TASK-001 validation: pending
+- TASK-001 validation: passed
+  - `pnpm --filter @framingui/react-native test -- theme-runtime`
+  - `pnpm --filter @framingui/react-native build`
 - TASK-002 validation: pending
 - TASK-003 validation: pending
 - TASK-004 validation: pending
