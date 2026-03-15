@@ -48,7 +48,11 @@ function AvatarDropdown() {
   if (!user) {
     return (
       <Button
-        onClick={() => router.push('/auth/login')}
+        onClick={() => {
+          const returnUrl =
+            typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/';
+          router.push(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+        }}
         className="h-9 px-4 rounded-full text-sm font-medium bg-neutral-900 text-white hover:bg-neutral-800 shadow-sm"
       >
         Sign Up

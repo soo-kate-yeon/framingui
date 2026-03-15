@@ -97,7 +97,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'Minimalist theme with sharp corners, neutral palette, and tight spacing. Best for dashboards and admin tools.',
     descriptionKo:
       '각진 모서리와 강한 대비의 미니멀 테마. 데이터 대시보드와 관리자 화면에 잘 맞아요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('square-minimalism', 'dashboard.webp'),
       getScreenshotUrl('square-minimalism', 'components.webp'),
@@ -227,7 +227,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'Typography-first theme with generous white space and bold headings. Built for blogs, docs, and long-form content.',
     descriptionKo:
       '여백과 타이포그래피로 읽기 경험을 극대화한 테마. 기술 블로그와 문서 사이트에 딱 맞아요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('editorial-tech', 'dashboard.webp'),
       getScreenshotUrl('editorial-tech', 'components.webp'),
@@ -318,7 +318,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'Always-dark theme with sharp components and high-contrast accents. Made for data dashboards and monitoring tools.',
     descriptionKo: '항상 다크 모드. 직각 컴포넌트와 강한 대비로 데이터를 한눈에 파악할 수 있어요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('dark-boldness', 'dashboard.webp'),
       getScreenshotUrl('dark-boldness', 'components.webp'),
@@ -447,7 +447,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
     description:
       'Soft-corner components with warm pastel colors. Good for consumer apps, social platforms, and lifestyle services.',
     descriptionKo: '둥근 모서리와 따뜻한 색상의 테마. 소셜, 커뮤니티, 생활 서비스 앱에 잘 맞아요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('pebble', 'dashboard.webp'),
       getScreenshotUrl('pebble', 'components.webp'),
@@ -573,7 +573,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'Print-editorial layout with serif typography and a multi-column grid. For article sites, newsletters, and media publications.',
     descriptionKo:
       '세리프 폰트와 다단 그리드로 구성된 인쇄 잡지 스타일 테마. 아티클, 뉴스레터, 미디어 사이트에 맞아요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('classic-magazine', 'dashboard.webp'),
       getScreenshotUrl('classic-magazine', 'components.webp'),
@@ -705,7 +705,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'Accessibility-first design system built to WCAG AAA standards. Anyone can use it clearly, regardless of age or ability.',
     descriptionKo:
       'WCAG AAA 기준의 접근성 우선 테마. 연령이나 장애 여부에 상관없이 누구나 쓸 수 있어요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('neutral-workspace', 'dashboard.webp'),
       getScreenshotUrl('neutral-workspace', 'components.webp'),
@@ -836,7 +836,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'No decoration, pure utility. Built for editors, project managers, and developer dashboards where focus is everything.',
     descriptionKo:
       '장식 없이 기능만 남긴 테마. 에디터, 프로젝트 관리, 개발자 대시보드처럼 집중이 전부인 툴에 맞아요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('minimal-workspace', 'dashboard.webp'),
       getScreenshotUrl('minimal-workspace', 'components.webp'),
@@ -966,7 +966,7 @@ export const TEMPLATES: Record<string, TemplateData> = {
       'Black-and-white theme using 2px borders instead of filled surfaces. Blueprint-style grid for data-heavy professional dashboards.',
     descriptionKo:
       '색 배경 대신 2px 검은 선으로 구역을 나누는 흑백 테마. 방대한 데이터를 다루는 전문가용 관제 화면에 맞아요.',
-    price: 59,
+    price: 49,
     screenshots: [
       getScreenshotUrl('bold-line', 'dashboard.webp'),
       getScreenshotUrl('bold-line', 'components.webp'),

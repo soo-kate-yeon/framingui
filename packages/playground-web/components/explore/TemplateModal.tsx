@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { TemplateData } from '../../data/templates';
@@ -19,13 +19,21 @@ interface TemplateModalProps {
   onClose: () => void;
   /** Double 패키지 선택 모드 진입 콜백 */
   onSelectDouble?: () => void;
+  /** 로그인 후 자동으로 열릴 결제 플로우 */
+  autoCheckout?: 'single' | 'creator';
 }
 
 // ============================================================================
 // Component
 // ============================================================================
 
-export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: TemplateModalProps) {
+export function TemplateModal({
+  template,
+  isOpen,
+  onClose,
+  onSelectDouble,
+  autoCheckout,
+}: TemplateModalProps) {
   const router = useRouter();
   const { user } = useAuth();
   const { openCheckout, isReady: isPaddleReady, notReadyReason } = usePaddle();
@@ -34,6 +42,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
   const [activeChipIdx, setActiveChipIdx] = useState(0);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
+  const autoCheckoutFiredRef = useRef(false);
   const paymentNotReadyMessage =
     locale === 'ko'
       ? '결제 시스템을 아직 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.'
@@ -59,14 +68,39 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
     }, 200); // 200ms matches the duration-200 class
   };
 
-  const redirectToLogin = () => {
-    const returnUrl = `/explore/template/${template.id}`;
-    router.push(`/auth/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+  const redirectToLogin = (returnPath: string) => {
+    router.push(`/auth/login?returnUrl=${encodeURIComponent(returnPath)}`);
   };
+
+  // 로그인 후 자동 결제창 트리거
+  useEffect(() => {
+    if (!autoCheckout || !isOpen || !user || !isPaddleReady || autoCheckoutFiredRef.current) {
+      return;
+    }
+    autoCheckoutFiredRef.current = true;
+
+    const tier = autoCheckout;
+    const priceId = tier === 'single' ? PADDLE_CONFIG.prices.single : PADDLE_CONFIG.prices.creator;
+    if (!priceId) {
+      return;
+    }
+
+    openCheckout({
+      priceId,
+      userId: user.id,
+      userEmail: user.email ?? '',
+      ...(tier === 'single' ? { themeId: template.id } : {}),
+      tier,
+      successPath:
+        tier === 'single'
+          ? `/explore/template/${template.id}?checkout=success`
+          : `/explore/template/${template.id}?checkout=success&plan=creator`,
+    });
+  }, [autoCheckout, isOpen, user, isPaddleReady]);
 
   const handleSingleCheckout = () => {
     if (!user) {
-      redirectToLogin();
+      redirectToLogin(`/?template=${template.id}&auto_checkout=single`);
       return;
     }
 
@@ -95,7 +129,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
 
   const handleCreatorCheckout = () => {
     if (!user) {
-      redirectToLogin();
+      redirectToLogin(`/?template=${template.id}&auto_checkout=creator`);
       return;
     }
 
@@ -182,61 +216,65 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
           {/* ============================================================== */}
           {/* Section 1: Hero (Left / Right) */}
           {/* ============================================================== */}
-          <section className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-8 lg:gap-20">
-            {/* Left: Info & Pricing */}
+          <section className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-6 lg:gap-20">
+            {/* Block A: Title + Tagline — 1st on both mobile & desktop (left col) */}
             <div className="flex flex-col justify-center py-2 sm:py-4">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-neutral-950 mb-3 sm:mb-4">
                 {displayTitle}
               </h1>
-              <p className="text-lg sm:text-xl md:text-2xl text-neutral-500 font-medium tracking-tight mb-4 sm:mb-6">
+              <p className="text-lg sm:text-xl md:text-2xl text-neutral-500 font-medium tracking-tight mb-0 lg:mb-6">
                 {displayTagline}
               </p>
-              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed mb-8 sm:mb-10 max-w-md">
+
+              {/* Desktop only: desc + CTAs */}
+              <p className="hidden lg:block text-sm sm:text-base text-neutral-600 leading-relaxed mt-6 mb-8 max-w-md">
                 {displayDesc}
               </p>
-
-              {/* Pricing Options & CTAs */}
-              <div className="space-y-4">
+              <div className="hidden lg:block space-y-4">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     type="button"
                     onClick={handleSingleCheckout}
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-neutral-950 px-8 py-4 text-base font-medium text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
+                    className="w-full sm:w-auto inline-flex flex-col items-center justify-center rounded-full bg-neutral-950 px-8 py-3 text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
                   >
-                    {getTemplatePriceLabel(locale, template.price)}
+                    <span className="text-base font-semibold leading-snug">
+                      {getTemplatePriceLabel(locale, template.price).split(' / ')[0]}
+                    </span>
+                    <span className="text-[11px] font-normal opacity-60 leading-tight">
+                      {i18n.templateModal.oneTimePrice}
+                    </span>
                   </button>
                   <a
                     href={`/explore/${template.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-4 text-base font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
+                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-neutral-800 px-6 py-4 text-base font-medium text-white shadow-sm hover:bg-neutral-700 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
                   >
                     {i18n.templateModal.liveDemo} <span className="text-neutral-500">→</span>
                   </a>
                 </div>
-
-                <div className="flex flex-col gap-4 sm:gap-3 justify-center pt-4 sm:pt-2">
+                <div className="flex flex-col gap-3 pt-2">
                   <button
                     type="button"
                     onClick={handleSelectDouble}
-                    className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit"
+                    className="group flex items-center gap-3 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-fit"
                   >
-                    <span className="underline underline-offset-4">
+                    <span className="underline underline-offset-4 whitespace-nowrap">
                       {i18n.templateModal.getTwoTemplates}
                     </span>
-                    <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-emerald-700 uppercase group-hover:bg-emerald-100 transition-colors shrink-0">
+                    <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-emerald-700 uppercase whitespace-nowrap group-hover:bg-emerald-100 transition-colors shrink-0">
                       {i18n.templateModal.savePercent}
                     </span>
                   </button>
                   <button
                     type="button"
                     onClick={handleCreatorCheckout}
-                    className="group flex items-center justify-between sm:justify-start gap-4 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-full sm:w-fit"
+                    className="group flex items-center gap-3 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-fit"
                   >
-                    <span className="underline underline-offset-4">
+                    <span className="underline underline-offset-4 whitespace-nowrap">
                       {i18n.templateModal.getUnlimitedAccess}
                     </span>
-                    <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-brand-700 uppercase group-hover:bg-brand-100 transition-colors shrink-0">
+                    <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-brand-700 uppercase whitespace-nowrap group-hover:bg-brand-100 transition-colors shrink-0">
                       {i18n.templateModal.bestOffer}
                     </span>
                   </button>
@@ -244,7 +282,7 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
               </div>
             </div>
 
-            {/* Right: Media */}
+            {/* Block B: Media — 2nd on mobile (right col on desktop) */}
             <div className="flex flex-col gap-4">
               {/* Simple Carousel */}
               <div className="relative w-full aspect-[1440/900] bg-neutral-100 rounded-2xl border border-neutral-200 overflow-hidden group">
@@ -265,8 +303,6 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     e.currentTarget.parentElement?.appendChild(placeholder);
                   }}
                 />
-
-                {/* Controls */}
                 {template.screenshots.length > 1 && (
                   <>
                     <button
@@ -286,7 +322,6 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                   </>
                 )}
               </div>
-
               {/* Dot Indicators */}
               <div className="flex justify-center gap-2 mt-2 pt-2">
                 {template.screenshots.map((_, idx) => (
@@ -297,6 +332,61 @@ export function TemplateModal({ template, isOpen, onClose, onSelectDouble }: Tem
                     aria-label={`${i18n.templateModal.slideAriaPrefix} ${idx + 1}`}
                   />
                 ))}
+              </div>
+            </div>
+
+            {/* Block C: Desc + CTAs — 3rd on mobile only, hidden on desktop */}
+            <div className="lg:hidden flex flex-col gap-6">
+              <p className="text-sm text-neutral-600 leading-relaxed">{displayDesc}</p>
+              <div className="space-y-4">
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={handleSingleCheckout}
+                    className="inline-flex flex-col items-center justify-center rounded-full bg-neutral-950 px-8 py-3 text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
+                  >
+                    <span className="text-base font-semibold leading-snug">
+                      {getTemplatePriceLabel(locale, template.price).split(' / ')[0]}
+                    </span>
+                    <span className="text-[11px] font-normal opacity-60 leading-tight">
+                      {i18n.templateModal.oneTimePrice}
+                    </span>
+                  </button>
+                  <a
+                    href={`/explore/${template.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-full bg-neutral-800 px-6 py-4 text-base font-medium text-white shadow-sm hover:bg-neutral-700 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
+                  >
+                    {i18n.templateModal.liveDemo} <span className="text-neutral-500">→</span>
+                  </a>
+                </div>
+                <div className="flex flex-col gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleSelectDouble}
+                    className="group flex items-center gap-3 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-fit"
+                  >
+                    <span className="underline underline-offset-4 whitespace-nowrap">
+                      {i18n.templateModal.getTwoTemplates}
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-emerald-700 uppercase whitespace-nowrap group-hover:bg-emerald-100 transition-colors shrink-0">
+                      {i18n.templateModal.savePercent}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreatorCheckout}
+                    className="group flex items-center gap-3 text-sm font-medium text-neutral-600 hover:text-neutral-950 transition-colors w-fit"
+                  >
+                    <span className="underline underline-offset-4 whitespace-nowrap">
+                      {i18n.templateModal.getUnlimitedAccess}
+                    </span>
+                    <span className="inline-flex items-center rounded-full border border-brand-200 bg-brand-50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-brand-700 uppercase whitespace-nowrap group-hover:bg-brand-100 transition-colors shrink-0">
+                      {i18n.templateModal.bestOffer}
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </section>

@@ -52,7 +52,7 @@ export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
         {/* 데스크탑 (md+): 16:9 */}
         <div className="hidden md:block aspect-video w-full bg-neutral-100 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/video/hero_desktop.webm" type="video/webm" />
+            <source src="/video/hero_desktop.mp4" type="video/mp4" />
           </video>
         </div>
 

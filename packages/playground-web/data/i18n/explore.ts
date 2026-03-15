@@ -82,9 +82,9 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
       closeModalAria: 'Close modal',
       oneTimePrice: 'one-time',
       liveDemo: 'Live Demo',
-      getTwoTemplates: 'Get 2 templates at $99',
-      savePercent: 'Save 16%',
-      getUnlimitedAccess: 'Get unlimited access: $149/yearly',
+      getTwoTemplates: 'Get 2 templates at $79',
+      savePercent: 'Save 19%',
+      getUnlimitedAccess: 'Get unlimited access: $119/year',
       bestOffer: 'Best Offer',
       features: 'Features',
       recommendedToUseFor: 'Recommended to use for',
@@ -133,9 +133,9 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
       closeModalAria: '모달 닫기',
       oneTimePrice: '1회 결제',
       liveDemo: '라이브 데모',
-      getTwoTemplates: '$99에 템플릿 2개 구매',
-      savePercent: '16% 할인',
-      getUnlimitedAccess: '$149 연구독으로 모든 템플릿 무제한 이용',
+      getTwoTemplates: '₩110,000에 템플릿 2개 구매',
+      savePercent: '19% 할인',
+      getUnlimitedAccess: '₩160,000 연구독으로 모든 템플릿 무제한 이용',
       bestOffer: '최고 혜택',
       features: '주요 기능',
       recommendedToUseFor: '추천 대상',
@@ -160,16 +160,24 @@ export function getExploreContent(locale: GlobalLocale): ExploreI18nContent {
   return content[locale];
 }
 
+// USD → KRW 고정 환율 (업데이트 시 여기만 수정)
+const USD_TO_KRW = 1400;
+
+export function toKRW(usdPrice: number): string {
+  const krw = Math.round((usdPrice * USD_TO_KRW) / 1000) * 1000;
+  return `₩${krw.toLocaleString('ko-KR')}`;
+}
+
 export function getTemplatePriceLabel(locale: GlobalLocale, price: number): string {
   if (locale === 'ko') {
-    return `$${price} / 1회 결제`;
+    return `${toKRW(price)} / 1회 결제`;
   }
   return `$${price} / one-time`;
 }
 
 export function getTemplateBuyLabel(locale: GlobalLocale, price: number): string {
   if (locale === 'ko') {
-    return `$${price}에 구매`;
+    return `${toKRW(price)}에 구매`;
   }
   return `Buy for $${price}`;
 }

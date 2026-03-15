@@ -71,6 +71,9 @@ export function TemplateGallery({
     }
   }, [searchParams, templates]);
 
+  // 로그인 후 자동 결제용 파라미터
+  const autoCheckout = searchParams.get('auto_checkout') as 'single' | 'creator' | null;
+
   const maxSelection = internalSelectionMode === 'double' ? 2 : 0;
   const isSelectionMode = !!internalSelectionMode;
 
@@ -169,9 +172,7 @@ export function TemplateGallery({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-12 md:pb-16">
         {/* Template Grid */}
         <div className="mt-6 flex flex-col">
-          <div
-            className={`template-gallery grid grid-cols-1 sm:grid-cols-2 gap-6 p-0 ${className}`}
-          >
+          <div className={`template-gallery flex flex-col gap-6 ${className}`}>
             {templates.map((template) => {
               const isSelected = selectedIds.includes(template.id);
               const selectionDisabled = !isSelected && selectedIds.length >= maxSelection;
@@ -204,6 +205,7 @@ export function TemplateGallery({
           isOpen={!!activeModalId}
           onClose={closeModal}
           onSelectDouble={handleEnterSelectionMode}
+          autoCheckout={autoCheckout ?? undefined}
         />
       )}
     </>

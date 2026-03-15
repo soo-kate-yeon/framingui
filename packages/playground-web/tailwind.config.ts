@@ -8,6 +8,7 @@ const config: Config = {
     './content/**/*.mdx',
     '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
   ],
+  safelist: ['order-1', 'order-2', 'order-3', 'lg:order-none'],
   theme: {
     extend: {
       colors: {

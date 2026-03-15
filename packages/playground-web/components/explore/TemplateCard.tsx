@@ -10,12 +10,11 @@
 
 'use client';
 
-import { useState } from 'react';
-import { Heart, ArrowRight, ExternalLink, Check, ChevronDown, ChevronUp } from 'lucide-react';
+import { Heart, ExternalLink, Check } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useExploreLanguage } from '../../contexts/ExploreLanguageContext';
 import { TemplateThumbnail } from './TemplateThumbnail';
-import { getExploreContent } from '../../data/i18n/explore';
+import { getExploreContent, getTemplatePriceLabel } from '../../data/i18n/explore';
 import { getLocalizedTemplateText } from '../../data/templates';
 
 // ============================================================================
@@ -74,6 +73,7 @@ export function TemplateCard({
   description,
   descriptionKo,
   thumbnail,
+  price,
   onClick,
   className = '',
   selectionMode = false,
@@ -83,14 +83,11 @@ export function TemplateCard({
   const { user, toggleLike, userData } = useAuth();
   const { locale } = useExploreLanguage();
   const i18n = getExploreContent(locale);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const isLiked = userData?.likedTemplates.includes(id) ?? false;
 
-  // 현재 언어에 맞는 설명 텍스트
   const displayDescription = getLocalizedTemplateText(locale, description, descriptionKo);
 
-  // 데모 앱 라우트 확인
   const demoRoute = DEMO_ROUTES[id];
   const hasDemoApp = !!demoRoute;
 
@@ -108,49 +105,73 @@ export function TemplateCard({
     }
   };
 
-  // 선택 모드 스타일 계산
-  const selectionStyles = selectionMode
+  const thumbnailBorderStyles = selectionMode
     ? isSelected
-      ? 'border-neutral-950 ring-2 ring-neutral-950 shadow-md'
+      ? 'border-neutral-950 ring-2 ring-neutral-950'
       : selectionDisabled
-        ? 'opacity-50 cursor-not-allowed border-neutral-200 shadow-sm'
-        : 'border-transparent hover:border-neutral-300 cursor-pointer'
-    : 'border-transparent hover:border-neutral-300 cursor-pointer';
+        ? 'opacity-50 border-neutral-200'
+        : 'border-neutral-200'
+    : 'border-neutral-200';
 
   return (
     <article
       data-testid="template-card"
-      className={`group relative flex flex-col gap-6 w-full bg-transparent transition-all ${className}`}
+      className={`group relative flex flex-col md:flex-row items-start gap-6 md:gap-10 p-6 md:p-8 w-full bg-neutral-50 hover:bg-neutral-100/70 rounded-2xl transition-all cursor-pointer ${selectionDisabled ? 'cursor-not-allowed' : ''} ${className}`}
       onClick={onClick}
     >
-      {/* 선택 모드: 체크마크 아이콘 */}
-      {selectionMode && (
-        <div
-          className={`absolute top-4 right-4 z-20 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors shadow-sm ${
-            isSelected ? 'bg-neutral-950 border-neutral-950' : 'bg-white border-neutral-300'
-          }`}
-        >
-          {isSelected && <Check size={16} className="text-white" />}
-        </div>
-      )}
+      {/* Left: Text Content */}
+      <div className="flex flex-col flex-1 min-w-0 gap-4">
+        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-neutral-950 transition-colors group-hover:text-neutral-600">
+          {name}
+        </h3>
 
+        <p className="text-base text-neutral-600 leading-relaxed">{displayDescription}</p>
+
+        {/* Price + Live Demo Row */}
+        <div className="flex items-center gap-4 pt-2">
+          {price !== undefined && (
+            <span className="text-sm font-medium text-neutral-500">
+              {getTemplatePriceLabel(locale, price)}
+            </span>
+          )}
+          {hasDemoApp && (
+            <button
+              onClick={handleLiveDemoClick}
+              className="flex items-center gap-1.5 px-4 py-1.5 border border-neutral-300 rounded-full text-sm font-medium text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-colors"
+            >
+              {i18n.templateCard.liveDemo}
+              <ExternalLink size={13} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Right: Thumbnail */}
       <div
-        className={`relative aspect-[1440/900] w-full bg-neutral-100 overflow-hidden rounded-2xl transition-all duration-500 group-hover:shadow-lg border ${selectionStyles}`}
+        className={`relative md:w-[45%] w-full flex-shrink-0 aspect-[1440/900] bg-neutral-100 overflow-hidden rounded-xl border transition-all duration-300 group-hover:shadow-md ${thumbnailBorderStyles}`}
       >
+        {/* 선택 모드: 체크마크 */}
+        {selectionMode && (
+          <div
+            className={`absolute top-3 right-3 z-20 w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors shadow-sm ${
+              isSelected ? 'bg-neutral-950 border-neutral-950' : 'bg-white border-neutral-300'
+            }`}
+          >
+            {isSelected && <Check size={16} className="text-white" />}
+          </div>
+        )}
+
         {thumbnail ? (
           <img
             src={thumbnail}
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
           />
         ) : (
           <div className="w-full h-full">
             <TemplateThumbnail templateId={id} />
           </div>
         )}
-
-        {/* Action Overlay */}
-        <div className="absolute inset-0 bg-neutral-900/0 group-hover:bg-neutral-900/5 transition-colors" />
 
         {/* Like Button */}
         {user && (
@@ -164,66 +185,6 @@ export function TemplateCard({
             />
           </button>
         )}
-
-        {/* Live Demo Button */}
-        {hasDemoApp && (
-          <button
-            onClick={handleLiveDemoClick}
-            className="absolute bottom-4 right-4 px-5 py-2.5 flex items-center gap-2 bg-neutral-950 text-white text-sm font-medium rounded-full opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 z-10 hover:bg-neutral-800 shadow-sm"
-          >
-            {i18n.templateCard.liveDemo}
-            <ExternalLink size={14} />
-          </button>
-        )}
-      </div>
-
-      {/* Content Area - Editorial Style (Detached) */}
-      <div className="flex flex-col gap-2 relative">
-        <h3 className="text-2xl font-bold tracking-tight text-neutral-950 transition-colors group-hover:text-brand-600 pr-8">
-          {name}
-        </h3>
-
-        <div
-          className="relative cursor-pointer group/desc"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsExpanded(!isExpanded);
-          }}
-        >
-          <p
-            className="text-base text-neutral-600 leading-relaxed pr-6"
-            style={
-              isExpanded
-                ? undefined
-                : {
-                    display: '-webkit-box',
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                  }
-            }
-          >
-            {displayDescription}
-          </p>
-
-          {/* 하단 화살표 토글 버튼 */}
-          <button
-            className="absolute bottom-1 right-0 text-neutral-400 hover:text-neutral-900 transition-colors"
-            aria-label={
-              isExpanded ? i18n.templateCard.collapseTextAria : i18n.templateCard.expandTextAria
-            }
-          >
-            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </button>
-        </div>
-
-        {/* Arrow Icon with Hover Effect */}
-        <div className="absolute top-1 right-0 flex justify-end">
-          <ArrowRight
-            size={24}
-            className="text-neutral-300 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-brand-600 transition-all duration-300"
-          />
-        </div>
       </div>
     </article>
   );

@@ -120,7 +120,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       single: {
         name: 'Single Template',
         description: 'Start with the perfect template for your project.',
-        priceLabel: '$59',
+        priceLabel: '$49',
         priceSub: 'one-time payment',
         cta: 'Browse Templates',
         features: [
@@ -133,7 +133,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       double: {
         name: 'Double Package',
         description: 'Best value for developers who need more.',
-        priceLabel: '$99',
+        priceLabel: '$79',
         priceSub: 'one-time payment',
         cta: 'Choose Templates',
         badge: 'Most Popular',
@@ -148,7 +148,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       creator: {
         name: 'Creator Pass',
         description: 'Unlimited access for prolific builders.',
-        priceLabel: '$149',
+        priceLabel: '$119',
         priceSub: '/year',
         cta: 'Subscribe',
         badge: 'Best Value',
@@ -159,7 +159,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
           'Priority email support (48h)',
           'Priority support queue',
         ],
-        renewalNotice: 'Auto-renews at $149/year. Cancel anytime.',
+        renewalNotice: 'Auto-renews at $119/year. Cancel anytime.',
       },
     },
     comparison: {
@@ -220,7 +220,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
         {
           title: 'How does Creator Pass auto-renewal work?',
           content:
-            'Creator Pass renews automatically every year at $149/year. You can cancel anytime from your account settings — cancellation takes effect at the end of your current billing period, and you keep access until then.',
+            'Creator Pass renews automatically every year at $119/year. You can cancel anytime from your account settings — cancellation takes effect at the end of your current billing period, and you keep access until then.',
         },
         {
           title: 'What is your refund policy?',
@@ -260,7 +260,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
       single: {
         name: '템플릿 개별 구매',
         description: '프로젝트에 적용할 템플릿 1개를 선택해 무제한으로 이용하세요.',
-        priceLabel: '$59',
+        priceLabel: '₩69,000',
         priceSub: '1회 결제',
         cta: '템플릿 둘러보기',
         features: [
@@ -274,7 +274,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
         name: '1+1 혜택가',
         description:
           '2개 이상 프로젝트를 진행하시는 분들을 위해 개별 구매보다 합리적인 가격으로 준비했어요.',
-        priceLabel: '$99',
+        priceLabel: '₩110,000',
         priceSub: '1회 결제',
         cta: '템플릿 선택하기',
         badge: '인기 플랜',
@@ -290,7 +290,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
         name: '크리에이터 패스',
         description:
           '여러개 프로젝트를 동시에 진행하거나, 다양한 템플릿을 동시에 이용해보고 싶으시다면 추천드려요.',
-        priceLabel: '$149',
+        priceLabel: '₩160,000',
         priceSub: '/년',
         cta: '구독하기',
         badge: '최고의 가치',
@@ -301,7 +301,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
           '빠른 이메일 지원 (48시간)',
           '우선 지원',
         ],
-        renewalNotice: '연 $149로 자동 갱신됩니다. 언제든지 해지할 수 있습니다.',
+        renewalNotice: '연 ₩160,000으로 자동 갱신됩니다. 언제든지 해지할 수 있습니다.',
       },
     },
     comparison: {
@@ -362,7 +362,7 @@ const pricingContent: Record<GlobalLocale, PricingContent> = {
         {
           title: '크리에이터 패스 자동 갱신은 어떻게 되나요?',
           content:
-            '크리에이터 패스는 매년 $149에 자동으로 갱신됩니다. 계정 설정에서 언제든 취소할 수 있으며, 취소는 현재 결제 기간 종료 시점에 적용됩니다. 종료 시점까지는 계속 이용할 수 있습니다.',
+            '크리에이터 패스는 매년 ₩160,000으로 자동 갱신됩니다. 계정 설정에서 언제든 취소할 수 있으며, 취소는 현재 결제 기간 종료 시점에 적용됩니다. 종료 시점까지는 계속 이용할 수 있습니다.',
         },
         {
           title: '환불은 어떻게 받을 수 있나요?',
