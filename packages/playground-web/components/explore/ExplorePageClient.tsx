@@ -57,7 +57,7 @@ export function ExplorePageClient({ children }: ExplorePageClientProps) {
     // 2. 로그인했지만 활성화된 라이선스(또는 체험)가 하나도 없는 경우
     const hasAnyActiveLicense =
       userData?.licenses && userData.licenses.some((l) => l.status === 'active');
-    const shouldShowModal = !user || !hasAnyActiveLicense;
+    const shouldShowModal = false; // temporarily disabled
 
     if (shouldShowModal) {
       console.log(
