@@ -27,6 +27,7 @@ interface ExploreI18nContent {
   };
   templateModal: {
     closeModalAria: string;
+    trialCtaPrefix: string;
     oneTimePrice: string;
     liveDemo: string;
     getTwoTemplates: string;
@@ -80,6 +81,7 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
     },
     templateModal: {
       closeModalAria: 'Close modal',
+      trialCtaPrefix: '3-day unlimited trial, then',
       oneTimePrice: 'one-time',
       liveDemo: 'Live Demo',
       getTwoTemplates: 'Get 2 templates at $79',
@@ -131,7 +133,8 @@ const content: Record<GlobalLocale, ExploreI18nContent> = {
     },
     templateModal: {
       closeModalAria: '모달 닫기',
-      oneTimePrice: '1회 결제',
+      trialCtaPrefix: '3일 무제한 체험후',
+      oneTimePrice: '1회결제',
       liveDemo: '라이브 데모',
       getTwoTemplates: '₩110,000에 템플릿 2개 구매',
       savePercent: '19% 할인',

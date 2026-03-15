@@ -233,16 +233,17 @@ export function TemplateModal({
                 {displayDesc}
               </p>
               <div className="hidden lg:block space-y-4">
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-3">
                   <button
                     type="button"
                     onClick={handleSingleCheckout}
-                    className="w-full sm:w-auto inline-flex flex-col items-center justify-center rounded-full bg-neutral-950 px-8 py-3 text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
+                    className="w-full inline-flex items-center justify-center gap-1.5 rounded-full bg-neutral-950 px-8 py-4 text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
                   >
-                    <span className="text-base font-semibold leading-snug">
-                      {getTemplatePriceLabel(locale, template.price).split(' / ')[0]}
+                    <span className="text-sm font-medium opacity-70">
+                      {i18n.templateModal.trialCtaPrefix}
                     </span>
-                    <span className="text-[11px] font-normal opacity-60 leading-tight">
+                    <span className="text-base font-semibold">
+                      {getTemplatePriceLabel(locale, template.price).split(' / ')[0]}/
                       {i18n.templateModal.oneTimePrice}
                     </span>
                   </button>
@@ -250,9 +251,9 @@ export function TemplateModal({
                     href={`/explore/${template.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-neutral-800 px-6 py-4 text-base font-medium text-white shadow-sm hover:bg-neutral-700 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
+                    className="w-full inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3.5 text-sm font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
                   >
-                    {i18n.templateModal.liveDemo} <span className="text-neutral-500">→</span>
+                    {i18n.templateModal.liveDemo} <span className="text-neutral-400">→</span>
                   </a>
                 </div>
                 <div className="flex flex-col gap-3 pt-2">
@@ -345,12 +346,13 @@ export function TemplateModal({
                   <button
                     type="button"
                     onClick={handleSingleCheckout}
-                    className="inline-flex flex-col items-center justify-center rounded-full bg-neutral-950 px-8 py-3 text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-full bg-neutral-950 px-8 py-4 text-white shadow-lg hover:bg-neutral-800 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2"
                   >
-                    <span className="text-base font-semibold leading-snug">
-                      {getTemplatePriceLabel(locale, template.price).split(' / ')[0]}
+                    <span className="text-sm font-medium opacity-70">
+                      {i18n.templateModal.trialCtaPrefix}
                     </span>
-                    <span className="text-[11px] font-normal opacity-60 leading-tight">
+                    <span className="text-base font-semibold">
+                      {getTemplatePriceLabel(locale, template.price).split(' / ')[0]}/
                       {i18n.templateModal.oneTimePrice}
                     </span>
                   </button>
@@ -358,9 +360,9 @@ export function TemplateModal({
                     href={`/explore/${template.id}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center rounded-full bg-neutral-800 px-6 py-4 text-base font-medium text-white shadow-sm hover:bg-neutral-700 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
+                    className="inline-flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3.5 text-sm font-medium text-neutral-950 shadow-sm hover:bg-neutral-50 hover:-translate-y-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 gap-2"
                   >
-                    {i18n.templateModal.liveDemo} <span className="text-neutral-500">→</span>
+                    {i18n.templateModal.liveDemo} <span className="text-neutral-400">→</span>
                   </a>
                 </div>
                 <div className="flex flex-col gap-3 pt-2">
