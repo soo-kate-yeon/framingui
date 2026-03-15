@@ -235,11 +235,9 @@ export function PricingPage() {
                       <div className="w-full">
                         <div className="flex items-baseline gap-1.5">
                           <span className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900">
-                            {planId === 'single' ? content.ui.freeLabel : planContent.priceLabel}
+                            {planContent.priceLabel}
                           </span>
-                          <span className="text-sm text-neutral-500">
-                            {planId === 'single' ? content.ui.duringBeta : planContent.priceSub}
-                          </span>
+                          <span className="text-sm text-neutral-500">{planContent.priceSub}</span>
                         </div>
                       </div>
                     </div>
@@ -280,7 +278,7 @@ export function PricingPage() {
                           : 'bg-neutral-100 text-neutral-950 hover:bg-neutral-200'
                       }`}
                     >
-                      {planId === 'single' ? content.ui.getBetaAccess : planContent.cta}
+                      {planContent.cta}
                       <ArrowRight className="w-4 h-4" />
                     </button>
 

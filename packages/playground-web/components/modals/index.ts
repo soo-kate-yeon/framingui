@@ -9,3 +9,4 @@ export {
 } from './FreeTrialModal';
 export { TemplateSelectModal } from './TemplateSelectModal';
 export { TrialCompleteModal } from './TrialCompleteModal';
+export { TrialLaunchModal } from './TrialLaunchModal';

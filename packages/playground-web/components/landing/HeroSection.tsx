@@ -6,9 +6,10 @@ import type { LandingContent } from '../../data/i18n/landing';
 interface HeroSectionProps {
   content: LandingContent;
   onCtaClick?: () => void;
+  onTrialCtaClick?: () => void;
 }
 
-export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
+export function HeroSection({ content, onCtaClick, onTrialCtaClick }: HeroSectionProps) {
   const { hero } = content;
 
   return (
@@ -26,21 +27,29 @@ export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
         <p className="text-base md:text-lg text-neutral-500 leading-relaxed tracking-tight mb-7 max-w-xl mx-auto">
           {hero.description}
         </p>
-        <button
-          onClick={onCtaClick}
-          className="inline-flex items-center gap-2 h-11 px-6 rounded-full text-sm font-semibold bg-neutral-950 text-white hover:bg-neutral-800 transition-colors shadow-sm"
-        >
-          {hero.buttons.browseThemes}
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path
-              d="M8 3L8 13M8 13L4 9M8 13L12 9"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <button
+            onClick={onCtaClick}
+            className="inline-flex items-center gap-2 h-11 px-6 rounded-full text-sm font-semibold border border-neutral-200 bg-white text-neutral-950 hover:bg-neutral-50 transition-colors shadow-sm"
+          >
+            {hero.buttons.browseThemes}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M8 3L8 13M8 13L4 9M8 13L12 9"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <button
+            onClick={onTrialCtaClick}
+            className="inline-flex items-center gap-2 h-11 px-6 rounded-full text-sm font-semibold bg-neutral-950 text-white hover:bg-neutral-800 transition-colors shadow-sm"
+          >
+            {hero.buttons.freeTrial}
+          </button>
+        </div>
       </motion.div>
 
       {/* Demo Video — desktop: 16:9, mobile: 2:3 */}

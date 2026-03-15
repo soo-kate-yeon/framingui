@@ -14,6 +14,9 @@ import { TemplateGallery } from '../explore/TemplateGallery';
 import { ExplorePageClient } from '../explore/ExplorePageClient';
 import { ExploreLanguageProvider } from '../../contexts/ExploreLanguageContext';
 import { trackFunnelPrimaryCtaClick, trackFunnelHomeEntered } from '../../lib/analytics';
+import { TrialLaunchModal } from '../modals/TrialLaunchModal';
+import { TrialCompleteModal } from '../modals';
+import type { TemplateData } from '../../data/templates';
 
 interface Template {
   id: string;
@@ -118,6 +121,12 @@ export function LandingPage({ templates }: LandingPageProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const { locale } = useGlobalLanguage();
   const content = getLandingContent(locale);
+  const { user } = useAuth();
+  const [showTrialModal, setShowTrialModal] = useState(false);
+  const [trialActivatedTemplate, setTrialActivatedTemplate] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setIsScrolled(latest > 50);
@@ -127,6 +136,25 @@ export function LandingPage({ templates }: LandingPageProps) {
   useEffect(() => {
     trackFunnelHomeEntered();
   }, []);
+
+  // Auto-open trial modal when returning from login with ?trial=start
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('trial') === 'start' && user) {
+      setShowTrialModal(true);
+    }
+  }, [user]);
+
+  const handleTrialCtaClick = () => {
+    if (!user) {
+      router.push(`/auth/login?returnUrl=${encodeURIComponent('/?trial=start')}`);
+    } else {
+      setShowTrialModal(true);
+    }
+  };
 
   const handleNavigateWithTracking = (
     destination: string,
@@ -202,6 +230,7 @@ export function LandingPage({ templates }: LandingPageProps) {
         onCtaClick={() => {
           document.getElementById('theme-gallery')?.scrollIntoView({ behavior: 'smooth' });
         }}
+        onTrialCtaClick={handleTrialCtaClick}
       />
 
       {/* Theme Gallery - explore TemplateGallery */}
@@ -224,6 +253,22 @@ export function LandingPage({ templates }: LandingPageProps) {
 
       {/* Footer */}
       <Footer />
+
+      {/* Trial Flow Modals */}
+      <TrialLaunchModal
+        isOpen={showTrialModal}
+        onClose={() => setShowTrialModal(false)}
+        templates={templates.map((t) => ({ id: t.id, name: t.name }))}
+        onActivated={(templateId, templateName) => {
+          setShowTrialModal(false);
+          setTrialActivatedTemplate({ id: templateId, name: templateName });
+        }}
+      />
+      <TrialCompleteModal
+        isOpen={!!trialActivatedTemplate}
+        onClose={() => setTrialActivatedTemplate(null)}
+        selectedTemplate={trialActivatedTemplate as unknown as TemplateData}
+      />
     </div>
   );
 }

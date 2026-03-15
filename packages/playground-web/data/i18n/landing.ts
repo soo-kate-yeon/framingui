@@ -25,6 +25,7 @@ export interface LandingContent {
       tryStudio: string;
       getStarted: string;
       browseThemes: string;
+      freeTrial: string;
     };
     noCreditCard: string;
   };
@@ -75,6 +76,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
         tryStudio: 'Try Explore Free',
         getStarted: 'Start Free Trial',
         browseThemes: 'Browse Templates',
+        freeTrial: 'Start 3-Day Free Trial',
       },
       noCreditCard: 'No credit card required',
     },
@@ -163,6 +165,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
         tryStudio: '무료로 Explore 시작',
         getStarted: '가입하기',
         browseThemes: '템플릿 둘러보기',
+        freeTrial: '3일 무료체험 시작',
       },
       noCreditCard: '카드 등록 없이 시작',
     },
