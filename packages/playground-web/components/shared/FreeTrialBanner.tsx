@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useGlobalLanguage } from '@/contexts/GlobalLanguageContext';
 import { getFreeTrialBannerContent } from '@/data/i18n/freeTrialBanner';
 import { trackFunnelPrimaryCtaClick } from '@/lib/analytics';
@@ -10,6 +11,7 @@ interface FreeTrialBannerProps {
 }
 
 export function FreeTrialBanner({ onStartFreeTrial }: FreeTrialBannerProps) {
+  const router = useRouter();
   const { locale } = useGlobalLanguage();
   const content = getFreeTrialBannerContent(locale);
   const [isMounted, setIsMounted] = useState(false);
@@ -42,10 +44,14 @@ export function FreeTrialBanner({ onStartFreeTrial }: FreeTrialBannerProps) {
                 cta_id: 'free_trial_banner',
                 cta_label: content.cta,
                 location: 'top_banner',
-                destination: '/explore',
+                destination: '/#theme-gallery',
                 cta_variant: 'free-start',
               });
-              onStartFreeTrial?.();
+              if (onStartFreeTrial) {
+                onStartFreeTrial();
+              } else {
+                router.push('/#theme-gallery');
+              }
             }}
             className="inline-flex items-center px-4 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-bold rounded-full bg-white text-neutral-900 hover:bg-neutral-100 hover:scale-105 active:scale-95 transition-all shadow-sm whitespace-nowrap shrink-0"
           >

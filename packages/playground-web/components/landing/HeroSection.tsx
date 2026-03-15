@@ -52,7 +52,7 @@ export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
         {/* 데스크탑 (md+): 16:9 */}
         <div className="hidden md:block aspect-video w-full bg-neutral-100 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/video/landing_hero_demo.webm" type="video/webm" />
+            <source src="/video/hero_desktop.webm" type="video/webm" />
           </video>
         </div>
 
@@ -62,7 +62,7 @@ export function HeroSection({ content, onCtaClick }: HeroSectionProps) {
           style={{ aspectRatio: '2/3' }}
         >
           <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/video/landing_hero_demo_mobile.webm" type="video/webm" />
+            <source src="/video/hero_mobile.webm" type="video/webm" />
           </video>
         </div>
       </motion.div>
