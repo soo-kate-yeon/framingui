@@ -79,6 +79,8 @@ If a task starts in `Agent Fast Path` but turns out to need architecture work, s
   - `tekton worktree status <SPEC-ID>`
   - `tekton worktree sync <SPEC-ID>`
   - `tekton worktree clean --merged-only`
+- After creating a new worktree, sync local-only env files when needed:
+  - `pnpm worktree:sync-env /absolute/path/to/worktree`
 - Keep all build, test, and git operations scoped to the active workspace.
 
 ## Stage 1: Plan

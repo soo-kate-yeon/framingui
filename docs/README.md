@@ -13,6 +13,7 @@ Welcome to the Tekton documentation! This guide will help you find the informati
 ## Quick Links
 
 - **[Getting Started](./guides/getting-started.md)** - Installation and basic usage
+- **[Worktree Env Sync](./guides/worktree-env-sync.md)** - Copy local env files into a new worktree
 - **[API Reference](./api/README.md)** - Complete API documentation
 - **[Release Learning Checklist](./deployment/release-learning-checklist.md)** - Deployment and package release guardrails learned from recent failures
 - **[Contributing](../CONTRIBUTING.md)** - Development guidelines and workflow
