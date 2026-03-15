@@ -99,6 +99,10 @@ export {
   type TextFieldProps,
   type TextProps,
   type TextTone,
+  PaywallScreen,
+  type FreeTierFeature,
+  type PaywallScreenProps,
+  type SubscriptionPlan,
 } from './components/index.js';
 
 export const packageId = '@framingui/react-native';

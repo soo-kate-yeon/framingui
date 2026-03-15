@@ -27,3 +27,9 @@ export { Switch, type SwitchProps } from './Switch.js';
 export { Text, type TextProps, type TextTone } from './Text.js';
 export { TextArea, type TextAreaProps } from './TextArea.js';
 export { TextField, type TextFieldProps } from './TextField.js';
+export {
+  PaywallScreen,
+  type FreeTierFeature,
+  type PaywallScreenProps,
+  type SubscriptionPlan,
+} from './PaywallScreen.js';

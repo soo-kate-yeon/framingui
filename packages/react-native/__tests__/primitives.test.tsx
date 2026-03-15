@@ -2,7 +2,7 @@ import React from 'react';
 import TestRenderer from 'react-test-renderer';
 import { ScrollView, Text, TextInput, View } from 'react-native';
 import { describe, expect, it } from 'vitest';
-import { Button, InlineMessage, Screen, Stack, TextField } from '../src/index.js';
+import { Button, InlineMessage, PaywallScreen, Screen, Stack, TextField } from '../src/index.js';
 
 describe('@framingui/react-native primitives', () => {
   it('renders a token-backed button label', () => {
@@ -60,5 +60,29 @@ describe('@framingui/react-native primitives', () => {
     expect(scrollTree.root.findByType(ScrollView)).toBeTruthy();
     expect(staticTree.root.findAllByType(ScrollView)).toHaveLength(0);
     expect(staticTree.root.findByType(View)).toBeTruthy();
+  });
+
+  it('renders paywall content and selected plan CTA', () => {
+    const tree = TestRenderer.create(
+      <PaywallScreen
+        freeFeatures={[{ text: 'Basic access' }]}
+        premiumFeatures={[{ text: 'Unlimited exports' }]}
+        plans={[
+          { id: 'monthly', label: 'Monthly', period: 'mo', price: '$9' },
+          { id: 'yearly', label: 'Yearly', period: 'yr', price: '$90', badge: 'Save 20%' },
+        ]}
+      />
+    );
+
+    const textNodes = tree.root.findAllByType(Text);
+    const bodyText = textNodes
+      .map(node => node.props.children)
+      .flat()
+      .join(' ');
+
+    expect(bodyText).toContain('Unlock Premium');
+    expect(bodyText).toContain('Basic access');
+    expect(bodyText).toContain('Unlimited exports');
+    expect(bodyText).toContain('Subscribe Now');
   });
 });
