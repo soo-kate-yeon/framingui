@@ -135,6 +135,33 @@ async function getDailyDigest() {
     console.log(`  • ${source}: ${sessions}`);
   });
 
+  // 7일 신규/재방문 추이
+  console.log('\n【7일 신규/재방문 추이】');
+  const [weekResp] = await client.runReport({
+    property: `properties/${PROPERTY_ID}`,
+    dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+    dimensions: [{ name: 'date' }],
+    metrics: [{ name: 'newUsers' }, { name: 'activeUsers' }],
+    orderBys: [{ dimension: { dimensionName: 'date' } }],
+  });
+
+  let totalNew = 0;
+  let totalUsers = 0;
+  weekResp.rows?.forEach(row => {
+    const date = row.dimensionValues[0].value;
+    const newUsers = parseInt(row.metricValues[0].value);
+    const total = parseInt(row.metricValues[1].value);
+    const returning = total - newUsers;
+    totalNew += newUsers;
+    totalUsers += total;
+    const formatted = `${date.slice(4,6)}/${date.slice(6,8)}`;
+    console.log(`  ${formatted}: 🆕 ${newUsers} / 🔄 ${returning} / 전체 ${total}`);
+  });
+  
+  const newRate = totalUsers > 0 ? ((totalNew / totalUsers) * 100).toFixed(0) : 0;
+  console.log(`  ────────────────`);
+  console.log(`  7일 합계: 🆕 ${totalNew} (${newRate}%) / 🔄 ${totalUsers - totalNew}`);
+
   console.log('\n━'.repeat(40));
   console.log(`Generated: ${new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`);
 }
