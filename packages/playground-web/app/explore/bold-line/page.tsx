@@ -16,8 +16,8 @@ import {
   Search,
   BookOpen,
 } from 'lucide-react';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
@@ -92,10 +92,12 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function BoldLineDemo() {
+function BoldLineDemoInner() {
   const [activeTab, setActiveTab] = useState<'page' | 'component' | 'docs'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get('embed') === 'true';
   const { loaded: themeLoaded } = useTektonTheme('bold-line', {
     fallback: BOLD_LINE_FALLBACK,
   });
@@ -103,9 +105,9 @@ export default function BoldLineDemo() {
 
   return (
     <div
-      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-white transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-white transition-opacity duration-500 ${isEmbed ? 'pt-0' : 'pt-12'} ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      <PreviewBanner templateId="bold-line" templateName="Bold Line" />
+      {!isEmbed && <PreviewBanner templateId="bold-line" templateName="Bold Line" />}
 
       {/* 데스크탑 사이드바 — MCP 레시피: 레이아웃 경계도 border 없이 너비/배경으로만 구분 */}
       <aside className="hidden md:flex flex-col w-64 lg:w-72 bg-white h-full overflow-y-auto shrink-0 relative z-20">
@@ -246,6 +248,14 @@ export default function BoldLineDemo() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function BoldLineDemo() {
+  return (
+    <Suspense>
+      <BoldLineDemoInner />
+    </Suspense>
   );
 }
 

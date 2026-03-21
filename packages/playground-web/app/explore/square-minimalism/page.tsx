@@ -1,8 +1,9 @@
 'use client';
 
 import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
@@ -66,7 +67,9 @@ const SQUARE_MINIMALISM_FALLBACK: Record<string, string> = {
   '--spacing-16': '64px',
 };
 
-export default function SquareMinimalismDemo() {
+function SquareMinimalismDemoInner() {
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get('embed') === 'true';
   const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('square-minimalism', {
@@ -76,9 +79,11 @@ export default function SquareMinimalismDemo() {
 
   return (
     <div
-      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 ${isEmbed ? 'pt-0' : 'pt-12'} ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      <PreviewBanner templateId="square-minimalism" templateName="Square Minimalism" />
+      {!isEmbed && (
+        <PreviewBanner templateId="square-minimalism" templateName="Square Minimalism" />
+      )}
 
       <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--border-default)] bg-[var(--bg-surface)] h-full overflow-y-auto shrink-0">
         <div className="p-6">
@@ -182,6 +187,14 @@ export default function SquareMinimalismDemo() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function SquareMinimalismDemo() {
+  return (
+    <Suspense>
+      <SquareMinimalismDemoInner />
+    </Suspense>
   );
 }
 

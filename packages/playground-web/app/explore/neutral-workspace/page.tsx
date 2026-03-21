@@ -1,8 +1,9 @@
 'use client';
 
 import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
@@ -74,7 +75,9 @@ const NEUTRAL_HUMANISM_FALLBACK: Record<string, string> = {
  * Neutral Workspace Workspace Demo
  * Replicating the Minimal Workspace IA with the Neutral Workspace theme.
  */
-export default function NeutralHumanismDemo() {
+function NeutralHumanismDemoInner() {
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get('embed') === 'true';
   const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('neutral-workspace', {
@@ -84,10 +87,12 @@ export default function NeutralHumanismDemo() {
 
   return (
     <div
-      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 ${isEmbed ? 'pt-0' : 'pt-12'} ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
       {/* Preview Banner */}
-      <PreviewBanner templateId="neutral-workspace" templateName="Neutral Workspace" />
+      {!isEmbed && (
+        <PreviewBanner templateId="neutral-workspace" templateName="Neutral Workspace" />
+      )}
 
       {/* Local Sidebar (Desktop) */}
       <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--border-default)] bg-[var(--bg-surface)] h-full overflow-y-auto shrink-0">
@@ -203,6 +208,14 @@ export default function NeutralHumanismDemo() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function NeutralHumanismDemo() {
+  return (
+    <Suspense>
+      <NeutralHumanismDemoInner />
+    </Suspense>
   );
 }
 

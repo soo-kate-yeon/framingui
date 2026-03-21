@@ -1,9 +1,9 @@
 'use client';
 
 import { DollarSign, Users, Activity, Menu, ChevronRight, CreditCard, X } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
@@ -75,8 +75,10 @@ const EDITORIAL_TECH_FALLBACK: Record<string, string> = {
  * Theme: Mono grayscale, pill-shaped buttons/tabs, generous whitespace, typography-first
  * Design DNA: Blank canvas, zero chroma, pill accents, airy spacing
  */
-export default function EditorialTechDemo() {
+function EditorialTechDemoInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get('embed') === 'true';
   const [activeTab, setActiveTab] = useState<'page' | 'component' | 'solutions'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('editorial-tech', {
@@ -86,9 +88,9 @@ export default function EditorialTechDemo() {
 
   return (
     <div
-      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 ${isEmbed ? 'pt-0' : 'pt-12'} ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      <PreviewBanner templateId="editorial-tech" templateName="Editorial Tech" />
+      {!isEmbed && <PreviewBanner templateId="editorial-tech" templateName="Editorial Tech" />}
 
       {/* Sidebar (Desktop) — 넓은 패딩, 에디토리얼 느낌 */}
       <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--border-default)] bg-[var(--bg-surface)] h-full overflow-y-auto shrink-0">
@@ -205,6 +207,14 @@ export default function EditorialTechDemo() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function EditorialTechDemo() {
+  return (
+    <Suspense>
+      <EditorialTechDemoInner />
+    </Suspense>
   );
 }
 

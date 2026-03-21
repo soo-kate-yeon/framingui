@@ -67,6 +67,21 @@ export interface ThumbnailVars {
   [key: string]: string; // for radius tokens
 }
 
+/**
+ * Resolve an OKLCh object from an atomic ref path.
+ * Returns the raw OKLCh if found, null otherwise.
+ */
+function resolveOKLCh(ref: string, tokens: any): OKLCh | null {
+  if (!ref || !ref.startsWith('atomic.')) {
+    return null;
+  }
+  const value = getNestedValue(tokens, ref);
+  if (value && typeof value === 'object' && 'l' in value) {
+    return value as OKLCh;
+  }
+  return null;
+}
+
 function resolveTheme(themeJson: any): ThumbnailVars {
   const tokens = themeJson.tokens ?? themeJson;
   const atomic = tokens.atomic ?? tokens;
@@ -78,7 +93,6 @@ function resolveTheme(themeJson: any): ThumbnailVars {
     if (!ref) {
       return null;
     }
-    // If it starts with "atomic.", resolve from the atomic object inside tokens
     if (ref.startsWith('atomic.')) {
       return resolveRef(ref, tokens);
     }
@@ -87,6 +101,7 @@ function resolveTheme(themeJson: any): ThumbnailVars {
 
   // ---- Background ----
   let bgCanvas = '#ffffff';
+  let bgCanvasL = 1; // track lightness for dark-theme detection
   let bgSurface = '#ffffff';
   let bgSecondary = '#f5f5f5';
 
@@ -94,7 +109,11 @@ function resolveTheme(themeJson: any): ThumbnailVars {
     const bg = semantic.background;
     // canvas
     if (typeof bg.canvas === 'string' && bg.canvas.startsWith('atomic.')) {
-      bgCanvas = resolve(bg.canvas) ?? bgCanvas;
+      const oklch = resolveOKLCh(bg.canvas, tokens);
+      if (oklch) {
+        bgCanvas = oklchToCSS(oklch);
+        bgCanvasL = oklch.l;
+      }
     }
     // surface
     const surfDefault = bg.surface?.default ?? bg.surface;
@@ -108,15 +127,22 @@ function resolveTheme(themeJson: any): ThumbnailVars {
     }
   }
 
+  const isDarkCanvas = bgCanvasL < 0.3;
+
   // ---- Text ----
   let textPrimary = '#171717';
+  let textPrimaryL = 0.1;
   let textSecondary = '#737373';
   let textTertiary = '#a3a3a3';
 
   if (semantic?.text) {
     const t = semantic.text;
     if (typeof t.primary === 'string' && t.primary.startsWith('atomic.')) {
-      textPrimary = resolve(t.primary) ?? textPrimary;
+      const oklch = resolveOKLCh(t.primary, tokens);
+      if (oklch) {
+        textPrimary = oklchToCSS(oklch);
+        textPrimaryL = oklch.l;
+      }
     }
     if (typeof t.secondary === 'string' && t.secondary.startsWith('atomic.')) {
       textSecondary = resolve(t.secondary) ?? textSecondary;
@@ -133,8 +159,11 @@ function resolveTheme(themeJson: any): ThumbnailVars {
 
   if (semantic?.border) {
     const b = semantic.border;
-    // Could be  border.default.default  or  border.default  or  border.subtle
-    const bDefault = b.default?.default ?? b.default?.subtle ?? b.default ?? b.subtle;
+    // For dark themes, prefer subtle border (less prominent on dark bg).
+    // For light themes, use the standard default.
+    const bDefault = isDarkCanvas
+      ? (b.default?.subtle ?? b.default?.default ?? b.default ?? b.subtle)
+      : (b.default?.default ?? b.default?.subtle ?? b.default ?? b.subtle);
     if (typeof bDefault === 'string' && bDefault.startsWith('atomic.')) {
       borderDefault = resolve(bDefault) ?? borderDefault;
     }
@@ -145,13 +174,37 @@ function resolveTheme(themeJson: any): ThumbnailVars {
   }
 
   // ---- Action primary ----
-  const actionPrimary = textPrimary;
-  let actionPrimaryText = '#ffffff';
+  // Strategy: use brand.500 if it's a distinctly chromatic color with
+  // suitable lightness for a button background. Otherwise fall back to textPrimary.
+  let actionPrimary = textPrimary;
+  let actionPrimaryL = textPrimaryL;
 
-  // If we can find neutral.white, use it for action text
-  const neutralWhite = atomic.color?.neutral?.white;
-  if (neutralWhite && typeof neutralWhite === 'object' && 'l' in neutralWhite) {
-    actionPrimaryText = oklchToCSS(neutralWhite as OKLCh);
+  const brand500 = atomic.color?.brand?.['500'];
+  if (brand500 && typeof brand500 === 'object' && 'l' in brand500) {
+    const { l, c } = brand500 as OKLCh;
+    // Distinct brand: high chroma (c > 0.2) and suitable button-bg lightness
+    if (c > 0.2 && l > 0.2 && l < 0.8) {
+      actionPrimary = oklchToCSS(brand500 as OKLCh);
+      actionPrimaryL = l;
+    }
+  }
+
+  // Determine contrasting text for the action-primary background
+  let actionPrimaryText: string;
+  if (actionPrimaryL > 0.6) {
+    // Light action bg → dark text
+    const neutralBlack = atomic.color?.neutral?.black;
+    actionPrimaryText =
+      neutralBlack && typeof neutralBlack === 'object' && 'l' in neutralBlack
+        ? oklchToCSS(neutralBlack as OKLCh)
+        : '#000000';
+  } else {
+    // Dark action bg → light text
+    const neutralWhite = atomic.color?.neutral?.white;
+    actionPrimaryText =
+      neutralWhite && typeof neutralWhite === 'object' && 'l' in neutralWhite
+        ? oklchToCSS(neutralWhite as OKLCh)
+        : '#ffffff';
   }
 
   // ---- Radius ----

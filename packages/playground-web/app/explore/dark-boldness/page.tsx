@@ -11,8 +11,9 @@ import {
   ArrowUpRight,
   Zap,
 } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useTektonTheme } from '@/hooks/useTektonTheme';
 import { PreviewBanner } from '@/components/explore/PreviewBanner';
 import { useExploreLanguage } from '@/contexts/ExploreLanguageContext';
@@ -76,7 +77,9 @@ const DARK_BOLDNESS_FALLBACK: Record<string, string> = {
   '--spacing-16': '64px',
 };
 
-export default function DarkBoldnessDemo() {
+function DarkBoldnessDemoInner() {
+  const searchParams = useSearchParams();
+  const isEmbed = searchParams.get('embed') === 'true';
   const [activeTab, setActiveTab] = useState<'page' | 'component'>('page');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { loaded: themeLoaded } = useTektonTheme('dark-boldness', {
@@ -86,9 +89,9 @@ export default function DarkBoldnessDemo() {
 
   return (
     <div
-      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 pt-12 ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`h-screen overflow-hidden flex flex-col md:flex-row bg-[var(--bg-canvas)] text-[var(--text-primary)] font-sans transition-opacity duration-500 ${isEmbed ? 'pt-0' : 'pt-12'} ${themeLoaded ? 'opacity-100' : 'opacity-0'}`}
     >
-      <PreviewBanner templateId="dark-boldness" templateName="Dark Boldness" />
+      {!isEmbed && <PreviewBanner templateId="dark-boldness" templateName="Dark Boldness" />}
 
       <aside className="hidden md:flex flex-col w-64 lg:w-72 border-r border-[var(--border-default)] bg-[var(--bg-surface)] h-full overflow-y-auto shrink-0">
         <div className="p-6">
@@ -199,6 +202,14 @@ export default function DarkBoldnessDemo() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function DarkBoldnessDemo() {
+  return (
+    <Suspense>
+      <DarkBoldnessDemoInner />
+    </Suspense>
   );
 }
 

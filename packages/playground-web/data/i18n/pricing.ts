@@ -140,7 +140,7 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
     quota: {
       title: 'Plans',
       description:
-        'Start with the product and workflow first. Move to monthly usage when FramingUI becomes part of your regular shipping loop.',
+        'Start with 100 weighted tool units each month, then move to recurring usage when FramingUI becomes part of your regular shipping loop.',
     },
     hero: {
       title: 'FramingUI Pricing Plan',
@@ -150,9 +150,10 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
         name: 'Free Quota',
         description: 'A starter plan for learning the product and understanding the workflow.',
         priceLabel: '$0',
-        priceSub: 'shadow visibility',
+        priceSub: '100 units / month',
         cta: 'Start Free',
         features: [
+          '100 weighted tool units / month',
           'Explore MCP tools and package surfaces',
           'Preview components, templates, and themes',
           'Inspect quota visibility in `whoami`',
@@ -213,7 +214,7 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
       },
       values: {
         free: {
-          includedUnits: 'Visibility only',
+          includedUnits: '100 / month',
           discoveryTools: 'Browse and preview',
           workflowGuidance: 'Starter guidance',
           environmentChecks: 'Not included',
@@ -244,7 +245,7 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
         {
           title: 'How far can I get on the free plan?',
           content:
-            'Free is for exploring the toolchain, previewing product surfaces, and understanding usage visibility. It is the right place to learn the workflow before you need recurring monthly capacity.',
+            'Free includes 100 weighted tool units each month for exploring the toolchain, previewing product surfaces, and learning the workflow before you need recurring monthly capacity.',
         },
         {
           title: 'Who is the Developer plan for?',
@@ -302,19 +303,20 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
     quota: {
       title: '플랜 선택',
       description:
-        '무료로 기능을 살펴보고, 실제 작업량이 늘면 월간 사용량 플랜으로 이어갈 수 있습니다.',
+        '매달 100 weighted tool units로 시작하고, 실제 작업량이 늘면 월간 사용량 플랜으로 이어갈 수 있습니다.',
     },
     hero: {
-      title: 'UI 작업에 필요한 기능을 한곳에서',
+      title: 'FramingUI 가격 정책',
     },
     plans: {
       free: {
         name: '무료',
         description: '제품과 작업 흐름을 먼저 익히는 시작 플랜입니다.',
         priceLabel: '₩0',
-        priceSub: '가시성',
+        priceSub: '월 100 units',
         cta: '무료로 시작',
         features: [
+          '월 100 weighted tool units',
           'MCP 도구 둘러보기',
           '컴포넌트와 테마 미리보기',
           '사용량 가시성 확인',
@@ -374,7 +376,7 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
       },
       values: {
         free: {
-          includedUnits: '가시성만',
+          includedUnits: '월 100',
           discoveryTools: '둘러보기와 미리보기',
           workflowGuidance: '기본 안내',
           environmentChecks: '포함되지 않음',
@@ -405,7 +407,7 @@ const pricingContent: Record<'en' | 'ko', PricingContent> = {
         {
           title: '무료 플랜으로 어디까지 해볼 수 있나요?',
           content:
-            '무료 플랜에서는 제품 표면과 도구 흐름을 먼저 살펴보고, 컴포넌트·템플릿·테마를 미리 확인하면서 사용량 가시성을 볼 수 있습니다.',
+            '무료 플랜에는 매달 100 weighted tool units가 포함됩니다. 제품 표면과 도구 흐름을 먼저 살펴보고, 컴포넌트·템플릿·테마를 미리 확인하면서 작업을 익히기에 적합합니다.',
         },
         {
           title: 'Developer 플랜은 어떤 작업에 맞나요?',

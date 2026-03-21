@@ -26,7 +26,12 @@ export type AnalyticsEvent =
   | 'funnel_home_entered'
   | 'funnel_docs_or_explore_entered'
   | 'funnel_primary_cta_clicked'
-  | 'funnel_free_trial_started';
+  | 'funnel_free_trial_started'
+  // Landing page redesign events
+  | 'hero_init_prompt_copied'
+  | 'hero_demo_prompt_submitted'
+  | 'template_prompt_copied'
+  | 'usecase_scroll_viewed';
 
 /**
  * GA4가 초기화되었는지 확인
@@ -222,6 +227,35 @@ export const trackPricingPurchaseClick = (props: PricingPurchaseProps): void => 
 export const trackPricingManageClick = (props: { tier: string }): void => {
   trackGA('pricing_manage_clicked', {
     tier: props.tier,
+  });
+};
+
+export const trackHeroInitPromptCopied = (): void => {
+  trackGA('hero_init_prompt_copied', {
+    location: 'hero',
+  });
+};
+
+export const trackHeroDemoPromptSubmitted = (props: { prompt: string; theme: string }): void => {
+  trackGA('hero_demo_prompt_submitted', {
+    prompt: props.prompt,
+    theme: props.theme,
+  });
+};
+
+export const trackTemplatePromptCopied = (props: {
+  template_id: string;
+  template_name: string;
+}): void => {
+  trackGA('template_prompt_copied', {
+    template_id: props.template_id,
+    template_name: props.template_name,
+  });
+};
+
+export const trackUseCaseScrollViewed = (props: { theme_id: string }): void => {
+  trackGA('usecase_scroll_viewed', {
+    theme_id: props.theme_id,
   });
 };
 

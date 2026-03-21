@@ -8,7 +8,9 @@ describe('pricing content', () => {
 
     expect(content.capabilities.title).toContain('FramingUI');
     expect(content.hero.title).toBe('FramingUI 가격 정책');
-    expect(content.plans.free.features[0]).toContain('MCP 도구');
+    expect(content.plans.free.priceSub).toContain('100');
+    expect(content.plans.free.features[0]).toContain('100');
+    expect(content.comparison.values.free.includedUnits).toContain('100');
     expect(content.plans.developer.features).toContain('screen generation context');
     expect(firstFaqItem?.title ?? '').toContain('FramingUI');
   });

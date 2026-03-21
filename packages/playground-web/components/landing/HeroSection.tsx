@@ -1,78 +1,74 @@
 'use client';
 
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Copy, Check } from 'lucide-react';
 import type { LandingContent } from '../../data/i18n/landing';
+import { trackHeroInitPromptCopied, trackFunnelPrimaryCtaClick } from '../../lib/analytics';
 
 interface HeroSectionProps {
   content: LandingContent;
-  onCtaClick?: () => void;
-  onTrialCtaClick?: () => void;
 }
 
-export function HeroSection({ content, onCtaClick, onTrialCtaClick }: HeroSectionProps) {
-  const { hero } = content;
+export function HeroSection({ content }: HeroSectionProps) {
+  const router = useRouter();
+  const { hero, nav } = content;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyInit = useCallback(async () => {
+    await navigator.clipboard.writeText(hero.initPrompt);
+    setCopied(true);
+    trackHeroInitPromptCopied();
+    setTimeout(() => setCopied(false), 2000);
+  }, [hero.initPrompt]);
 
   return (
-    <section className="container mx-auto px-6 md:px-8 pt-28 pb-12 md:pt-36 md:pb-16 max-w-7xl">
-      {/* Title + CTA */}
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 pt-20 pb-6 sm:pt-24 md:pt-28 md:pb-8">
       <motion.div
-        className="text-center mb-10 md:mb-12"
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-[1.1] tracking-tighter text-neutral-950">
-          {hero.title.part1} <span className="text-neutral-500">{hero.title.part2}</span>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold leading-snug tracking-tight text-neutral-950 max-w-3xl">
+          {hero.title.part1}
+          <br className="hidden sm:block" />{' '}
+          <span className="text-neutral-400">{hero.title.part2}</span>
         </h1>
-        <p className="text-base md:text-lg text-neutral-500 leading-relaxed tracking-tight mb-7 max-w-xl mx-auto">
-          {hero.description}
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <button
-            onClick={onCtaClick}
-            className="inline-flex items-center gap-2 h-11 px-6 rounded-full text-sm font-semibold border border-neutral-200 bg-white text-neutral-950 hover:bg-neutral-50 transition-colors shadow-sm"
-          >
-            {hero.buttons.browseThemes}
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M8 3L8 13M8 13L4 9M8 13L12 9"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            onClick={onTrialCtaClick}
-            className="inline-flex items-center gap-2 h-11 px-6 rounded-full text-sm font-semibold bg-neutral-950 text-white hover:bg-neutral-800 transition-colors shadow-sm"
-          >
-            {hero.buttons.freeTrial}
-          </button>
-        </div>
-      </motion.div>
 
-      {/* Demo Video — desktop: 16:9, mobile: 2:3 */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {/* 데스크탑 (md+): 16:9 */}
-        <div className="hidden md:block aspect-video w-full bg-neutral-100 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden">
-          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/video/hero_desktop.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* 모바일 (< md): 2:3 세로형 (비디오가 16:9일 경우 object-cover로 중앙 포커스) */}
-        <div
-          className="block md:hidden w-full bg-neutral-100 rounded-2xl shadow-xl border border-neutral-200 overflow-hidden"
-          style={{ aspectRatio: '2/3' }}
-        >
-          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
-            <source src="/video/hero_mobile.webm" type="video/webm" />
-          </video>
+        {/* npx box + Docs — pill style, inline */}
+        <div className="mt-5 flex items-center gap-2.5 overflow-x-auto">
+          <div className="bg-neutral-900 rounded-full px-4 py-2 flex items-center gap-2.5 shrink-0">
+            <code className="font-mono text-xs sm:text-sm text-neutral-100 whitespace-nowrap">
+              {hero.initPrompt}
+            </code>
+            <button
+              onClick={handleCopyInit}
+              className="shrink-0 p-1 rounded-full text-neutral-400 hover:text-white transition-colors"
+              aria-label="Copy init command"
+            >
+              {copied ? (
+                <Check className="w-3.5 h-3.5 text-green-400" />
+              ) : (
+                <Copy className="w-3.5 h-3.5" />
+              )}
+            </button>
+          </div>
+          <button
+            onClick={() => {
+              trackFunnelPrimaryCtaClick({
+                cta_id: 'hero_docs',
+                cta_label: nav.docs,
+                location: 'hero',
+                destination: '/docs',
+                cta_variant: 'secondary',
+              });
+              router.push('/docs');
+            }}
+            className="h-9 px-5 rounded-full text-sm font-medium border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors shrink-0"
+          >
+            {nav.docs}
+          </button>
         </div>
       </motion.div>
     </section>

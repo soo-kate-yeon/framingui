@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useScroll, useMotionValueEvent } from 'framer-motion';
 import { Button } from '@framingui/ui';
@@ -10,13 +10,11 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useGlobalLanguage } from '../../contexts/GlobalLanguageContext';
 import { getLandingContent } from '../../data/i18n/landing';
 import { HeroSection } from './HeroSection';
-import { TemplateGallery } from '../explore/TemplateGallery';
-import { ExplorePageClient } from '../explore/ExplorePageClient';
-import { ExploreLanguageProvider } from '../../contexts/ExploreLanguageContext';
+import { UseCasesSection } from './UseCasesSection';
+import { TemplateCarousel } from './TemplateCarousel';
+import { HowItWorksSection } from './HowItWorksSection';
+import { FAQSection } from './FAQSection';
 import { trackFunnelPrimaryCtaClick, trackFunnelHomeEntered } from '../../lib/analytics';
-import { TrialLaunchModal } from '../modals/TrialLaunchModal';
-import { TrialCompleteModal } from '../modals';
-import type { TemplateData } from '../../data/templates';
 
 interface Template {
   id: string;
@@ -121,40 +119,14 @@ export function LandingPage({ templates }: LandingPageProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const { locale } = useGlobalLanguage();
   const content = getLandingContent(locale);
-  const { user } = useAuth();
-  const [showTrialModal, setShowTrialModal] = useState(false);
-  const [trialActivatedTemplate, setTrialActivatedTemplate] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     setIsScrolled(latest > 50);
   });
 
-  // Track home page entry
   useEffect(() => {
     trackFunnelHomeEntered();
   }, []);
-
-  // Auto-open trial modal when returning from login with ?trial=start
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('trial') === 'start' && user) {
-      setShowTrialModal(true);
-    }
-  }, [user]);
-
-  const handleTrialCtaClick = () => {
-    if (!user) {
-      router.push(`/auth/login?returnUrl=${encodeURIComponent('/?trial=start')}`);
-    } else {
-      setShowTrialModal(true);
-    }
-  };
 
   const handleNavigateWithTracking = (
     destination: string,
@@ -183,14 +155,14 @@ export function LandingPage({ templates }: LandingPageProps) {
             : 'bg-transparent border-b border-transparent'
         }`}
       >
-        <div className="container mx-auto px-6 md:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 h-14 flex items-center justify-between gap-4">
           <div
-            className="text-xl font-bold tracking-tighter cursor-pointer"
+            className="text-base sm:text-lg font-bold tracking-tighter cursor-pointer shrink-0"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             {content.nav.brandName || content.hero.brandName}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               onClick={() =>
                 handleNavigateWithTracking(
@@ -201,7 +173,7 @@ export function LandingPage({ templates }: LandingPageProps) {
                   'secondary'
                 )
               }
-              className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200 shadow-sm"
+              className="hidden md:flex h-8 px-3.5 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
             >
               {content.nav.pricing}
             </Button>
@@ -215,7 +187,7 @@ export function LandingPage({ templates }: LandingPageProps) {
                   'secondary'
                 )
               }
-              className="hidden md:flex h-9 px-4 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200 shadow-sm"
+              className="hidden md:flex h-8 px-3.5 rounded-full text-sm font-medium bg-white text-neutral-900 hover:bg-neutral-100 border border-neutral-200"
             >
               {content.nav.docs}
             </Button>
@@ -224,51 +196,23 @@ export function LandingPage({ templates }: LandingPageProps) {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <HeroSection
-        content={content}
-        onCtaClick={() => {
-          document.getElementById('theme-gallery')?.scrollIntoView({ behavior: 'smooth' });
-        }}
-        onTrialCtaClick={handleTrialCtaClick}
-      />
+      {/* Hero: Title + Textbox (2-col) */}
+      <HeroSection content={content} />
 
-      {/* Theme Gallery - explore TemplateGallery */}
-      <div id="theme-gallery" />
-      <ExploreLanguageProvider>
-        <ExplorePageClient>
-          {templates.length > 0 ? (
-            <Suspense fallback={<div className="min-h-[400px]" />}>
-              <TemplateGallery templates={templates} />
-            </Suspense>
-          ) : (
-            <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16">
-              <div className="text-center py-24">
-                <p className="text-lg font-medium text-neutral-600 mb-4">No themes found</p>
-              </div>
-            </div>
-          )}
-        </ExplorePageClient>
-      </ExploreLanguageProvider>
+      {/* Use Cases — Live Demo Scroll */}
+      <UseCasesSection content={content.useCases} />
+
+      {/* Template Carousel */}
+      <TemplateCarousel content={content.templateCarousel} templates={templates} />
+
+      {/* How It Works */}
+      <HowItWorksSection content={content.howItWorks} initPrompt={content.hero.initPrompt} />
+
+      {/* FAQ */}
+      <FAQSection content={content.faq} />
 
       {/* Footer */}
       <Footer />
-
-      {/* Trial Flow Modals */}
-      <TrialLaunchModal
-        isOpen={showTrialModal}
-        onClose={() => setShowTrialModal(false)}
-        templates={templates.map((t) => ({ id: t.id, name: t.name }))}
-        onActivated={(templateId, templateName) => {
-          setShowTrialModal(false);
-          setTrialActivatedTemplate({ id: templateId, name: templateName });
-        }}
-      />
-      <TrialCompleteModal
-        isOpen={!!trialActivatedTemplate}
-        onClose={() => setTrialActivatedTemplate(null)}
-        selectedTemplate={trialActivatedTemplate as unknown as TemplateData}
-      />
     </div>
   );
 }

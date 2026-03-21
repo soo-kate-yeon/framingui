@@ -28,6 +28,8 @@ export interface LandingContent {
       freeTrial: string;
     };
     noCreditCard: string;
+    initPrompt: string;
+    demoPlaceholder: string;
   };
   mainImage: {
     alt: string;
@@ -44,6 +46,23 @@ export interface LandingContent {
     title: string;
     description: string;
     cta: string;
+  };
+  useCases: {
+    title: string;
+    subtitle: string;
+  };
+  templateCarousel: {
+    title: string;
+    subtitle: string;
+    copyPromptLabel: string;
+  };
+  howItWorks: {
+    title: string;
+    subtitle: string;
+    steps: {
+      title: string;
+      description: string;
+    }[];
   };
   faq: {
     title: string;
@@ -67,18 +86,19 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
     hero: {
       brandName: 'framingui',
       title: {
-        part1: 'MCP Design System',
-        part2: 'for AI Agents',
+        part1: 'Built for AI agents to ship real UI,',
+        part2: 'framingui is the MCP UI system your agent actually uses.',
       },
-      description:
-        "Stop relying on prompt luck for UI. Install framingui's MCP design system, give your agent real components and themes, and ship production screens with visible quota instead of vague template unlocks.",
+      description: '',
       buttons: {
         tryStudio: 'Try Explore Free',
         getStarted: 'Start with Free Quota',
         browseThemes: 'Explore Themes',
         freeTrial: 'Start with Free Quota',
       },
-      noCreditCard: 'Free quota visible during transition',
+      noCreditCard: '100 weighted tool units included every month',
+      initPrompt: 'npx @framingui/mcp-server init',
+      demoPlaceholder: 'Create a dashboard with...',
     },
     mainImage: {
       alt: 'Main Dashboard Preview',
@@ -86,7 +106,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     sections: {
       s1: {
-        title: 'Core of the Design System: Tokens',
+        title: 'Core of the UI System: Tokens',
         description:
           'Complete architecture leveraging atomic colors, typography, spacing, and elevation. Every pixel mathematically aligned.',
       },
@@ -98,7 +118,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
       s3: {
         title: '30+ Built-in shadcn/ui Components',
         description:
-          'Automatically applies the design system guide, rendering custom components perfectly tailored to your service identity.',
+          'Automatically applies the UI system guide, rendering custom components perfectly tailored to your service identity.',
       },
       s4: {
         title: 'Adopt Immediately with MCP',
@@ -110,8 +130,35 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
       badge: 'Quota Transition Access',
       title: 'Start Free, Upgrade by Usage',
       description:
-        'Inspect shadow quota first, then move to included monthly tool units when your workflow is stable.',
+        'Start with 100 weighted tool units per month, then move to a larger monthly allowance when your workflow is stable.',
       cta: 'View pricing',
+    },
+    useCases: {
+      title: 'See It in Action',
+      subtitle: 'Real UI screens generated with framingui — fully interactive, scroll to explore.',
+    },
+    templateCarousel: {
+      title: 'Choose Your UI System',
+      subtitle: 'Pick a theme, copy the prompt, and let your AI agent build the UI.',
+      copyPromptLabel: 'Copy Prompt',
+    },
+    howItWorks: {
+      title: 'Ship UI in 3 Steps',
+      subtitle: 'From install to production-ready screens in minutes.',
+      steps: [
+        {
+          title: 'Install',
+          description: 'Run one command to add the MCP server to your agent.',
+        },
+        {
+          title: 'Choose a UI System',
+          description: 'Browse themes and pick the one that fits your product.',
+        },
+        {
+          title: 'Generate',
+          description: 'Tell your AI agent what to build — it handles the rest.',
+        },
+      ],
     },
     faq: {
       title: 'Frequently Asked Questions',
@@ -120,12 +167,12 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'How does framingui work?',
           content:
-            'Install the MCP server, authenticate once, inspect `whoami` for theme entitlements and shadow quota, then use the screen workflow to generate and validate production UI.',
+            'Install the MCP server, authenticate once, inspect `whoami` for theme entitlements and your 100-unit free quota snapshot, then use the screen workflow to generate and validate production UI.',
         },
         {
           title: 'Is framingui free?',
           content:
-            'framingui is moving to a quota-based MCP pricing model. During the transition, some workflows can start with free quota visibility before hard billing is enforced.',
+            'Yes. The free plan includes 100 weighted tool units per month, so you can explore the MCP workflow before moving to a larger recurring quota.',
         },
         {
           title: 'Can I use it for app development?',
@@ -156,18 +203,19 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
     hero: {
       brandName: 'framingui',
       title: {
-        part1: 'AI 에이전트를 위한',
-        part2: 'MCP 디자인 시스템',
+        part1: 'AI 에이전트가 진짜 UI를 만들도록,',
+        part2: 'framingui는 에이전트가 실제로 쓰는 MCP UI 시스템입니다.',
       },
-      description:
-        'UI를 프롬프트 운에 맡기지 마세요. framingui MCP 디자인 시스템을 설치하면 에이전트가 실제 컴포넌트와 테마를 바탕으로 작업하고, quota도 눈에 보이는 상태에서 프로덕션 화면을 만들 수 있습니다.',
+      description: '',
       buttons: {
         tryStudio: '무료로 Explore 시작',
         getStarted: '무료 quota로 시작',
         browseThemes: '테마 둘러보기',
         freeTrial: '무료 quota로 시작',
       },
-      noCreditCard: '전환 기간 동안 shadow quota 표시',
+      noCreditCard: '매달 100 weighted tool units 포함',
+      initPrompt: 'npx @framingui/mcp-server init',
+      demoPlaceholder: '대시보드를 만들어줘...',
     },
     mainImage: {
       alt: '메인 대시보드 미리보기',
@@ -175,7 +223,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
     },
     sections: {
       s1: {
-        title: '디자인 시스템의 핵심, 토큰',
+        title: 'UI 시스템의 핵심, 토큰',
         description:
           '컬러, 타이포그래피, 간격을 토큰으로 체계화했습니다. OKLCH 기반 구조를 통해 에이전트가 기준을 정확히 적용합니다.',
       },
@@ -187,7 +235,7 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
       s3: {
         title: '30+ shadcn/ui 컴포넌트 기본 탑재',
         description:
-          '디자인 시스템 가이드를 자동으로 반영해 서비스 톤에 맞는 UI를 구성합니다. 기본 컴포넌트로 시작해도 제품 수준의 결과를 만들 수 있습니다.',
+          'UI 시스템 가이드를 자동으로 반영해 서비스 톤에 맞는 UI를 구성합니다. 기본 컴포넌트로 시작해도 제품 수준의 결과를 만들 수 있습니다.',
       },
       s4: {
         title: 'MCP로 바로 투입',
@@ -199,8 +247,35 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
       badge: 'Quota 전환 안내',
       title: '무료로 시작하고 사용량에 맞춰 확장하세요.',
       description:
-        '먼저 shadow quota로 실제 사용량을 확인한 뒤, 워크플로우가 안정되면 월간 tool unit 플랜으로 전환할 수 있습니다.',
+        '매달 100 weighted tool units로 시작하고, 워크플로우가 안정되면 더 큰 월간 플랜으로 확장할 수 있습니다.',
       cta: '요금 보기',
+    },
+    useCases: {
+      title: '직접 확인해 보세요',
+      subtitle: 'framingui로 생성한 실제 UI 화면 — 인터랙션 가능, 스크롤해서 탐색하세요.',
+    },
+    templateCarousel: {
+      title: 'UI 시스템을 선택하세요',
+      subtitle: '테마를 고르고, 프롬프트를 복사해서 AI 에이전트에게 전달하세요.',
+      copyPromptLabel: '프롬프트 복사',
+    },
+    howItWorks: {
+      title: '3단계로 UI 완성',
+      subtitle: '설치부터 프로덕션 화면까지, 몇 분이면 충분합니다.',
+      steps: [
+        {
+          title: '설치',
+          description: '명령어 한 줄로 에이전트에 MCP 서버를 추가합니다.',
+        },
+        {
+          title: 'UI 시스템 선택',
+          description: '테마를 둘러보고 제품에 맞는 것을 선택하세요.',
+        },
+        {
+          title: '생성',
+          description: 'AI 에이전트에게 만들 화면을 알려주세요 — 나머지는 알아서 합니다.',
+        },
+      ],
     },
     faq: {
       title: '자주 묻는 질문',
@@ -209,12 +284,12 @@ const landingContent: Record<GlobalLocale, LandingContent> = {
         {
           title: 'framingui는 어떻게 사용하나요?',
           content:
-            'MCP 서버를 설치하고 로그인한 뒤 `whoami`로 테마 entitlement와 shadow quota를 확인합니다. 이후 screen workflow로 프로덕션 UI를 생성하고 검증합니다.',
+            'MCP 서버를 설치하고 로그인한 뒤 `whoami`로 테마 entitlement와 무료 100-unit quota 상태를 확인합니다. 이후 screen workflow로 프로덕션 UI를 생성하고 검증합니다.',
         },
         {
           title: 'framingui는 무료인가요?',
           content:
-            'framingui는 quota 기반 MCP 과금 모델로 전환 중입니다. 전환 기간에는 일부 워크플로우를 무료 quota 가시성과 함께 시작할 수 있습니다.',
+            '네. 무료 플랜에는 매달 100 weighted tool units가 포함되어 있어, MCP 워크플로우를 먼저 써보고 더 큰 월간 플랜으로 넘어갈 수 있습니다.',
         },
         {
           title: '앱 개발에 사용할 수 있나요?',
