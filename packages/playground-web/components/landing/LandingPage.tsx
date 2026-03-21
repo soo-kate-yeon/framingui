@@ -146,7 +146,7 @@ export function LandingPage({ templates }: LandingPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white">
+    <div className="min-h-screen bg-white text-neutral-900 font-sans selection:bg-neutral-900 selection:text-white overflow-x-hidden">
       {/* Top Nav Bar */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color] duration-300 ${

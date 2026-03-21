@@ -37,41 +37,24 @@ interface ThemeRecipeCardProps {
 }
 
 // ============================================================================
-// CSS Variable Bridge
-// Maps ThumbnailVars → @framingui/ui component CSS variables
+// CSS Variable Injection
+// themeToCSS() already provides all component + page tokens correctly.
+// We inject them as inline styles so @framingui/ui components render themed.
 // ============================================================================
 
-function buildComponentVars(vars: ThumbnailVars): React.CSSProperties {
-  return {
-    '--bg-background': vars['--bg-canvas'],
-    '--bg-card': vars['--bg-surface'],
-    '--bg-card-foreground': vars['--text-primary'],
-    '--bg-secondary': vars['--bg-secondary'],
-    '--bg-secondary-foreground': vars['--text-primary'],
-    '--bg-muted': vars['--bg-secondary'],
-    '--bg-muted-foreground': vars['--text-tertiary'],
-    '--bg-accent': vars['--bg-secondary'],
-    '--bg-accent-foreground': vars['--text-primary'],
-    '--bg-foreground': vars['--text-primary'],
-    '--bg-popover': vars['--bg-surface'],
-    '--bg-popover-foreground': vars['--text-primary'],
-    '--bg-primary': vars['--action-primary'],
-    '--bg-primary-foreground': vars['--action-primary-text'],
-    '--border-default': vars['--border-default'],
-    '--border-input': vars['--border-default'],
-    '--border-ring': vars['--action-primary'],
-    '--radius-sm': vars['--radius-sm'] ?? '4px',
-    '--radius-md': vars['--radius-md'] ?? '8px',
-    '--radius-lg': vars['--radius-lg'] ?? '12px',
-    '--radius-xl': vars['--radius-xl'] ?? '16px',
-    '--radius-full': vars['--radius-full'] ?? '9999px',
-    '--spacing-1': '0.25rem',
-    '--spacing-2': '0.5rem',
-    '--spacing-3': '0.75rem',
-    '--spacing-4': '1rem',
-    '--spacing-6': '1.25rem',
-    '--spacing-8': '2rem',
-  } as React.CSSProperties;
+function buildThemeStyle(vars: ThumbnailVars): React.CSSProperties {
+  const style: Record<string, string> = {};
+  for (const [key, value] of Object.entries(vars)) {
+    style[key] = value;
+  }
+  // Ensure spacing defaults for components that need them
+  if (!style['--spacing-1']) {
+    style['--spacing-1'] = '0.25rem';
+  }
+  if (!style['--spacing-3']) {
+    style['--spacing-3'] = '0.75rem';
+  }
+  return style as unknown as React.CSSProperties;
 }
 
 // ============================================================================
@@ -80,11 +63,11 @@ function buildComponentVars(vars: ThumbnailVars): React.CSSProperties {
 
 function ColorPaletteCell({ vars }: { vars: ThumbnailVars }) {
   const swatches = [
-    { label: 'Canvas', color: vars['--bg-canvas'] },
-    { label: 'Surface', color: vars['--bg-surface'] },
-    { label: 'Primary', color: vars['--text-primary'] },
-    { label: 'Secondary', color: vars['--text-secondary'] },
-    { label: 'Action', color: vars['--action-primary'] },
+    { label: 'Background', color: vars['--bg-background'] },
+    { label: 'Card', color: vars['--bg-card'] },
+    { label: 'Primary', color: vars['--bg-primary'] },
+    { label: 'Secondary', color: vars['--bg-secondary'] },
+    { label: 'Foreground', color: vars['--bg-foreground'] },
     { label: 'Border', color: vars['--border-default'] },
   ];
 
@@ -92,7 +75,7 @@ function ColorPaletteCell({ vars }: { vars: ThumbnailVars }) {
     <div className="flex flex-col gap-3">
       <span
         className="text-[10px] font-semibold uppercase tracking-wider"
-        style={{ color: vars['--text-tertiary'] }}
+        style={{ color: vars['--text-tertiary'] ?? vars['--bg-muted-foreground'] }}
       >
         Color Palette
       </span>
@@ -103,12 +86,17 @@ function ColorPaletteCell({ vars }: { vars: ThumbnailVars }) {
             className="relative h-14 rounded-md border overflow-hidden"
             style={{
               background: s.color,
-              borderColor: vars['--border-default'],
+              borderColor: vars['--border-default'] ?? vars['--border-input'],
             }}
           >
             <span
               className="absolute bottom-1 left-1.5 text-[9px] font-medium drop-shadow-[0_1px_1px_rgba(0,0,0,0.3)]"
-              style={{ color: vars['--bg-canvas'] === s.color ? vars['--text-secondary'] : '#fff' }}
+              style={{
+                color:
+                  vars['--bg-background'] === s.color
+                    ? (vars['--bg-muted-foreground'] ?? vars['--text-secondary'])
+                    : '#fff',
+              }}
             >
               {s.label}
             </span>
@@ -120,28 +108,29 @@ function ColorPaletteCell({ vars }: { vars: ThumbnailVars }) {
 }
 
 function TypographyCell({ vars }: { vars: ThumbnailVars }) {
+  const fg = vars['--bg-foreground'] ?? vars['--text-primary'];
+  const muted = vars['--bg-muted-foreground'] ?? vars['--text-secondary'];
+  const tertiary = vars['--text-tertiary'] ?? muted;
+
   return (
     <div className="flex flex-col gap-3">
       <span
         className="text-[10px] font-semibold uppercase tracking-wider"
-        style={{ color: vars['--text-tertiary'] }}
+        style={{ color: tertiary }}
       >
         Typography
       </span>
       <div className="flex flex-col gap-1.5">
-        <span className="text-4xl font-bold leading-none" style={{ color: vars['--text-primary'] }}>
+        <span className="text-4xl font-bold leading-none" style={{ color: fg }}>
           Aa
         </span>
-        <span className="text-base font-semibold" style={{ color: vars['--text-primary'] }}>
+        <span className="text-base font-semibold" style={{ color: fg }}>
           Headline
         </span>
-        <span className="text-sm" style={{ color: vars['--text-secondary'] }}>
+        <span className="text-sm" style={{ color: muted }}>
           Body text sample
         </span>
-        <span
-          className="text-[10px] uppercase tracking-wider"
-          style={{ color: vars['--text-tertiary'] }}
-        >
+        <span className="text-[10px] uppercase tracking-wider" style={{ color: tertiary }}>
           LABEL TEXT
         </span>
       </div>
@@ -247,7 +236,7 @@ export function ThemeRecipeCard({ template, copyPromptLabel }: ThemeRecipeCardPr
     return null;
   }
 
-  const componentVars = buildComponentVars(vars);
+  const themeStyle = buildThemeStyle(vars);
 
   const handleCopy = async () => {
     const prompt = `Create a screen using the ${template.name} theme with framingui MCP server`;
@@ -263,22 +252,28 @@ export function ThemeRecipeCard({ template, copyPromptLabel }: ThemeRecipeCardPr
   };
 
   return (
-    <div className="w-[92vw] md:w-[82vw] lg:w-[880px] flex-shrink-0 snap-center rounded-2xl border border-neutral-200 shadow-sm transition-shadow hover:shadow-md overflow-hidden">
-      {/* Themed zone — CSS vars bridge so real @framingui/ui components render with this theme */}
+    <div className="w-[85vw] sm:w-[80vw] md:w-[75vw] lg:w-[820px] flex-shrink-0 snap-center rounded-2xl border border-neutral-200 shadow-sm transition-shadow hover:shadow-md overflow-hidden">
+      {/* Themed zone — all CSS vars from themeToCSS() injected directly */}
       <div
         className="p-5 sm:p-6"
         style={{
-          ...componentVars,
-          background: vars['--bg-canvas'],
-          color: vars['--text-primary'],
+          ...themeStyle,
+          background: vars['--bg-background'] ?? vars['--bg-canvas'],
+          color: vars['--text-primary'] ?? vars['--bg-foreground'],
         }}
       >
         {/* Row 1: Color Palette + Typography */}
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="p-4 rounded-xl" style={{ background: vars['--bg-surface'] }}>
+          <div
+            className="p-4 rounded-xl"
+            style={{ background: vars['--bg-card'] ?? vars['--bg-surface'] }}
+          >
             <ColorPaletteCell vars={vars} />
           </div>
-          <div className="p-4 rounded-xl" style={{ background: vars['--bg-surface'] }}>
+          <div
+            className="p-4 rounded-xl"
+            style={{ background: vars['--bg-card'] ?? vars['--bg-surface'] }}
+          >
             <TypographyCell vars={vars} />
           </div>
         </div>

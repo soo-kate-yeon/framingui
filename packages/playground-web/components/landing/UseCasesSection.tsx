@@ -57,7 +57,7 @@ export function UseCasesSection({ content }: UseCasesSectionProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="relative w-full overflow-hidden rounded-2xl border border-neutral-200 shadow-lg bg-neutral-50 aspect-[16/9]"
+        className="relative w-full overflow-hidden rounded-2xl border border-neutral-200 shadow-lg bg-neutral-50 aspect-[2/3] sm:aspect-[3/4] md:aspect-[16/10]"
       >
         {!iframeLoaded && (
           <div className="absolute inset-0 flex items-center justify-center z-10">
