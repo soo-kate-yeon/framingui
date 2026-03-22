@@ -104,8 +104,8 @@ const ISSUES: Issue[] = [
 export function KanbanBoardView(_props: KanbanBoardViewProps) {
   return (
     <div className="flex h-full bg-[var(--bg-canvas)] rounded-[var(--radius-xl)] border border-[var(--border-default)] overflow-hidden shadow-sm">
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-[var(--border-default)] bg-[var(--bg-surface)] flex flex-col shrink-0">
+      {/* Sidebar — hidden on mobile, visible on lg+ */}
+      <aside className="hidden lg:flex w-64 border-r border-[var(--border-default)] bg-[var(--bg-surface)] flex-col shrink-0">
         <div className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded bg-[var(--action-primary)] flex items-center justify-center text-[10px] text-white font-bold">
@@ -172,17 +172,17 @@ export function KanbanBoardView(_props: KanbanBoardViewProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
-        <header className="flex items-center justify-between px-6 py-3 border-b border-[var(--border-default)] bg-[var(--bg-canvas)]">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm font-semibold">
+        <header className="flex items-center justify-between px-3 md:px-6 py-3 border-b border-[var(--border-default)] bg-[var(--bg-canvas)] min-w-0">
+          <div className="flex items-center gap-2 md:gap-4 min-w-0 overflow-x-auto">
+            <div className="flex items-center gap-2 text-sm font-semibold shrink-0">
               <div className="w-5 h-5 rounded bg-green-500 flex items-center justify-center text-[10px] text-white">
                 S
               </div>
-              <span>Sooyeon</span>
+              <span className="hidden sm:inline">Sooyeon</span>
               <ChevronDown size={14} className="text-neutral-400" />
             </div>
-            <Separator orientation="vertical" className="h-4" />
-            <div className="flex items-center gap-1">
+            <Separator orientation="vertical" className="h-4 hidden sm:block" />
+            <div className="flex items-center gap-1 shrink-0">
               <Badge
                 variant="secondary"
                 className="bg-[var(--bg-surface)] border-none font-semibold h-7 px-3 rounded-[var(--radius-sm)] text-xs"
@@ -204,20 +204,20 @@ export function KanbanBoardView(_props: KanbanBoardViewProps) {
               <Plus size={16} className="text-neutral-400 cursor-pointer ml-1" />
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0 ml-2">
             <div className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer text-xs font-semibold">
               <Filter size={14} />
-              <span>Filter</span>
+              <span className="hidden sm:inline">Filter</span>
             </div>
             <div className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer text-xs font-semibold">
               <Layout size={14} />
-              <span>Display</span>
+              <span className="hidden sm:inline">Display</span>
             </div>
           </div>
         </header>
 
         {/* Board Layout */}
-        <div className="flex-1 overflow-x-auto p-6 flex gap-6 min-h-0 bg-neutral-50/20">
+        <div className="flex-1 overflow-x-auto p-3 md:p-6 flex gap-4 md:gap-6 min-h-0 bg-neutral-50/20">
           {COLUMNS.map((column) => (
             <div key={column.id} className="flex flex-col w-[300px] shrink-0 gap-4">
               {/* Column Header */}
@@ -340,9 +340,7 @@ function SidebarItem({
         {Icon && (
           <Icon
             size={14}
-            className={
-              active ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'
-            }
+            className={active ? 'text-[var(--text-primary)]' : 'text-[var(--text-tertiary)]'}
           />
         )}
         <span>{label}</span>

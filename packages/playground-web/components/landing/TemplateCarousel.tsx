@@ -41,7 +41,11 @@ export function TemplateCarousel({ content, templates }: TemplateCarouselProps) 
       <ScrollReveal delay={0.1}>
         <div
           className="scrollbar-hide flex gap-4 sm:gap-5 overflow-x-auto px-4 sm:px-6 md:px-8 pb-2"
-          style={{ scrollSnapType: 'x mandatory' }}
+          style={{
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch',
+            overscrollBehaviorX: 'contain',
+          }}
         >
           {templates.map((template) => (
             <ThemeRecipeCard

@@ -143,11 +143,28 @@ export default function DarkBoldnessTradingPage() {
             border-top: 1px solid #1f2937;
           }
         }
+
+        @media (max-width: 768px) {
+          .trading-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr auto auto;
+          }
+          .right-panel {
+            grid-column: 1;
+            grid-row: 3;
+            border-left: none;
+            border-top: 1px solid #1f2937;
+          }
+          .bottom-panel {
+            grid-column: 1;
+            grid-row: 4;
+          }
+        }
       `}</style>
 
       <div className="trading-grid overflow-hidden">
         {/* Top Header - Trade Pair Info */}
-        <header className="col-span-3 border-b border-neutral-800 bg-black flex items-center px-6 gap-8 z-20">
+        <header className="col-span-3 border-b border-neutral-800 bg-black flex flex-wrap items-center px-4 md:px-6 gap-4 md:gap-8 z-20">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-white rounded-none flex items-center justify-center">
               <Zap className="w-5 h-5 text-black" fill="currentColor" />
@@ -175,13 +192,13 @@ export default function DarkBoldnessTradingPage() {
               </span>
               <span className="text-sm font-bold text-neutral-300">1,243.52 BTC</span>
             </div>
-            <div className="flex flex-col">
+            <div className="hidden md:flex flex-col">
               <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
                 {t('24H HIGH')}
               </span>
               <span className="text-sm font-bold text-neutral-300">$71,850.00</span>
             </div>
-            <div className="flex flex-col">
+            <div className="hidden md:flex flex-col">
               <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
                 {t('24H LOW')}
               </span>
@@ -189,7 +206,7 @@ export default function DarkBoldnessTradingPage() {
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-4">
+          <div className="ml-auto hidden lg:flex items-center gap-4">
             <button className="h-10 px-6 bg-neutral-900 border border-neutral-700 hover:bg-neutral-800 transition-colors text-[10px] font-black uppercase tracking-widest">
               {t('Deposit')}
             </button>
@@ -203,7 +220,7 @@ export default function DarkBoldnessTradingPage() {
         </header>
 
         {/* Left Global Nav */}
-        <aside className="row-span-2 border-r border-neutral-800 bg-black flex flex-col items-center py-6 gap-8 z-10">
+        <aside className="row-span-2 border-r border-neutral-800 bg-black hidden md:flex flex-col items-center py-6 gap-8 z-10">
           <div className="w-10 h-10 flex items-center justify-center rounded-none bg-white">
             <Layers className="w-6 h-6 text-black" />
           </div>
@@ -464,7 +481,7 @@ export default function DarkBoldnessTradingPage() {
         </aside>
 
         {/* Bottom Panel - List Views */}
-        <section className="col-start-2 col-span-1 border-t border-neutral-800 bg-black flex flex-col overflow-hidden">
+        <section className="bottom-panel col-start-2 col-span-1 border-t border-neutral-800 bg-black flex flex-col overflow-hidden">
           <div className="h-12 border-b border-neutral-800 flex items-center px-6 gap-8">
             <button
               onClick={() => setActiveTab('orders')}
@@ -558,28 +575,28 @@ export default function DarkBoldnessTradingPage() {
       </div>
 
       {/* Floating Status Bar - Elite Aesthetic */}
-      <footer className="fixed bottom-0 left-0 right-0 h-6 bg-neutral-900 border-t border-neutral-800 px-4 flex items-center justify-between z-30 pointer-events-none">
-        <div className="flex items-center gap-6">
+      <footer className="fixed bottom-0 left-0 right-0 h-6 bg-neutral-900 border-t border-neutral-800 px-4 flex items-center justify-between z-30 pointer-events-none text-[8px] sm:text-[9px]">
+        <div className="flex items-center gap-3 sm:gap-6">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 bg-electric-blue rounded-none animate-pulse" />
-            <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">
+            <span className="font-black text-neutral-400 uppercase tracking-widest">
               {t('NETWORK: STABLE')}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Activity className="w-3 h-3 text-neutral-600" />
-            <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">
+            <span className="font-black text-neutral-400 uppercase tracking-widest">
               {t('LATENCY: 12ms')}
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-6">
-          <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">
+        <div className="hidden sm:flex items-center gap-6">
+          <span className="font-black text-neutral-400 uppercase tracking-widest">
             © 2026 FRAMINGUI ELITE TRADER V4.0
           </span>
           <div className="flex items-center gap-2">
             <Zap className="w-3 h-3 text-white" />
-            <span className="text-[9px] font-black text-white uppercase tracking-widest">
+            <span className="font-black text-white uppercase tracking-widest">
               SECURE SESSION AC-592
             </span>
           </div>

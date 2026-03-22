@@ -149,11 +149,23 @@ export default function PebbleSocialFeedPage() {
             display: none;
           }
         }
+
+        @media (max-width: 768px) {
+          .pebble-grid {
+            grid-template-columns: 1fr;
+            height: auto;
+            min-height: 100vh;
+            padding-bottom: 72px;
+          }
+          .icon-sidebar {
+            display: none;
+          }
+        }
       `}</style>
 
       <div className="pebble-grid overflow-hidden">
         {/* Leftmost Global Icon Nav */}
-        <aside className="bg-white border-r border-[#EAF0F5] flex flex-col items-center py-8 gap-10 z-30">
+        <aside className="icon-sidebar bg-white border-r border-[#EAF0F5] flex flex-col items-center py-8 gap-10 z-30">
           <div className="w-12 h-12 bg-[#22C55E] rounded-[16px] flex items-center justify-center shadow-lg shadow-green-500/20">
             <Layers className="w-6 h-6 text-white" />
           </div>
@@ -222,8 +234,8 @@ export default function PebbleSocialFeedPage() {
         </aside>
 
         {/* Main Feed Section */}
-        <main className="flex-1 overflow-y-auto bg-white p-8 no-scrollbar">
-          <header className="flex items-center justify-between mb-10">
+        <main className="flex-1 overflow-y-auto bg-white p-4 md:p-8 no-scrollbar">
+          <header className="flex items-center justify-between mb-6 md:mb-10">
             <div className="flex items-center gap-4">
               <h2 className="text-2xl font-bold font-pebble tracking-tight">
                 {t('Twitter Feeds')}
@@ -247,23 +259,25 @@ export default function PebbleSocialFeedPage() {
             {FEED_POSTS.map((post) => (
               <article
                 key={post.id}
-                className="bg-white border border-[#EAF0F5] rounded-[32px] p-8 transition-all hover:pebble-shadow group"
+                className="bg-white border border-[#EAF0F5] rounded-[24px] md:rounded-[32px] p-5 md:p-8 transition-all hover:pebble-shadow group"
               >
-                <div className="flex gap-5">
+                <div className="flex gap-3 md:gap-5">
                   <div
-                    className={`w-14 h-14 rounded-[20px] ${post.author.color} flex items-center justify-center text-white text-xl font-bold shadow-inner`}
+                    className={`w-10 h-10 md:w-14 md:h-14 rounded-[14px] md:rounded-[20px] ${post.author.color} flex items-center justify-center text-white text-base md:text-xl font-bold shadow-inner shrink-0`}
                   >
                     {post.author.avatar}
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#1D2129]">{post.author.name}</span>
-                        <span className="text-sm font-semibold text-[#64748B]">
+                    <div className="flex items-start md:items-center justify-between mb-1 gap-2">
+                      <div className="flex items-center gap-2 flex-wrap min-w-0">
+                        <span className="font-bold text-[#1D2129] text-sm md:text-base">
+                          {post.author.name}
+                        </span>
+                        <span className="text-xs md:text-sm font-semibold text-[#64748B] truncate">
                           {post.author.handle}
                         </span>
                       </div>
-                      <span className="text-xs font-bold text-[#94A3B8]">{post.time}</span>
+                      <span className="text-xs font-bold text-[#94A3B8] shrink-0">{post.time}</span>
                     </div>
                     <div className="text-[15px] font-semibold text-[#334155] leading-relaxed mb-6">
                       {post.content}
@@ -312,7 +326,7 @@ export default function PebbleSocialFeedPage() {
                       </div>
                     )}
 
-                    <footer className="flex items-center gap-10">
+                    <footer className="flex items-center gap-4 md:gap-10">
                       <button className="flex items-center gap-2 text-[#64748B] hover:text-[#5599CC] transition-colors group/btn">
                         <div className="w-9 h-9 rounded-full flex items-center justify-center group-hover/btn:bg-[#5599CC]/10 transition-colors">
                           <MessageCircle className="w-5 h-5" />
@@ -416,7 +430,7 @@ export default function PebbleSocialFeedPage() {
         </aside>
 
         {/* Floating Utility Bar */}
-        <div className="fixed right-6 bottom-32 flex flex-col gap-3 z-40">
+        <div className="hidden md:flex fixed right-6 bottom-32 flex-col gap-3 z-40">
           <button className="w-14 h-14 bg-white pebble-shadow-lg rounded-full flex items-center justify-center text-[#5599CC] hover:scale-110 active:scale-90 transition-all">
             <Send className="w-6 h-6 rotate-[-45deg]" />
           </button>
@@ -424,6 +438,24 @@ export default function PebbleSocialFeedPage() {
             <MoreVertical className="w-6 h-6" />
           </button>
         </div>
+
+        {/* Mobile Bottom Tab Navigation */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#EAF0F5] flex items-center justify-around h-[72px] z-50 pebble-shadow">
+          {[
+            { icon: Home, label: t('Home'), active: true },
+            { icon: Hash, label: t('Explore'), active: false },
+            { icon: Bell, label: t('Alerts'), active: false },
+            { icon: Mail, label: t('Messages'), active: false },
+          ].map((item, idx) => (
+            <button
+              key={idx}
+              className={`flex flex-col items-center gap-1 py-2 px-3 ${item.active ? 'text-[#5599CC]' : 'text-[#94A3B8]'}`}
+            >
+              <item.icon className="w-6 h-6" />
+              <span className="text-[10px] font-bold">{item.label}</span>
+            </button>
+          ))}
+        </nav>
       </div>
     </div>
   );

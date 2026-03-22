@@ -56,12 +56,20 @@ export function ClassicMagazineArticlePage() {
         .drop-cap::first-letter {
           float: left;
           font-family: 'Playfair Display', serif;
-          font-size: 5rem;
+          font-size: 3.5rem;
           line-height: 0.8;
-          padding-top: 0.5rem;
-          padding-right: 0.8rem;
+          padding-top: 0.4rem;
+          padding-right: 0.6rem;
           color: #e11d48;
           font-weight: 900;
+        }
+
+        @media (min-width: 768px) {
+          .drop-cap::first-letter {
+            font-size: 5rem;
+            padding-top: 0.5rem;
+            padding-right: 0.8rem;
+          }
         }
       `}</style>
 
@@ -69,22 +77,23 @@ export function ClassicMagazineArticlePage() {
       <nav
         className={`fixed top-0 left-0 right-0 z-40 transition-[background-color,padding] duration-500 border-b-2 border-black ${scrolled ? 'bg-white/95 backdrop-blur-md py-3' : 'bg-white py-6'}`}
       >
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <button
             onClick={() => router.push('/explore/classic-magazine')}
-            className="group flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] border-b border-transparent hover:border-black transition-all"
+            className="group flex items-center gap-1.5 md:gap-2 text-[10px] font-black uppercase tracking-[0.15em] md:tracking-[0.2em] border-b border-transparent hover:border-black transition-all shrink-0"
           >
             <ArrowLeft size={14} />
-            The Journal
+            <span className="hidden sm:inline">The Journal</span>
           </button>
 
-          <div className="absolute left-1/2 -translate-x-1/2">
-            <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter">
-              THE ARCHIVE
-            </h1>
+          <div className="absolute left-1/2 -translate-x-1/2 hidden md:block">
+            <h1 className="text-3xl font-display font-black tracking-tighter">THE ARCHIVE</h1>
           </div>
+          <h1 className="md:hidden text-lg font-display font-black tracking-tighter">
+            THE ARCHIVE
+          </h1>
 
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6 shrink-0">
             <button className="hidden sm:block text-[10px] font-black uppercase tracking-[0.2em] border-2 border-black px-4 py-1.5 hover:bg-black hover:text-white transition-all">
               Subscribe
             </button>
@@ -99,7 +108,7 @@ export function ClassicMagazineArticlePage() {
       </nav>
 
       {/* Hero Header */}
-      <header className="pt-32 pb-16 md:pt-48 md:pb-24 px-6 border-b border-black/5">
+      <header className="pt-24 pb-12 md:pt-48 md:pb-24 px-4 md:px-6 border-b border-black/5">
         <div className="max-w-5xl mx-auto text-center space-y-8">
           <div className="inline-block border-y border-black py-2 px-6">
             <span className="text-[11px] font-sans font-black uppercase tracking-[0.4em] text-neutral-500">
@@ -107,7 +116,7 @@ export function ClassicMagazineArticlePage() {
             </span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-display font-black leading-[0.85] tracking-tighter italic">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-black leading-[0.85] tracking-tighter italic">
             The Geometry <br className="hidden md:block" /> of Silence.
           </h2>
 
@@ -123,34 +132,39 @@ export function ClassicMagazineArticlePage() {
       </header>
 
       {/* Article Content - 3 Column Grid */}
-      <article className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-12 gap-12">
+      <article className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
         {/* Left: Metadata */}
-        <div className="md:col-span-2 space-y-12">
-          <div className="space-y-2">
-            <p className="text-[10px] font-sans font-black uppercase tracking-widest text-[#E11D48]">
-              Written By
-            </p>
-            <p className="font-display text-xl font-bold leading-none">Julian V. Sterling</p>
-            <p className="text-xs text-neutral-400 font-serif italic">Chief Architectural Critic</p>
-          </div>
-
-          <div className="space-y-4 pt-8 border-t border-black/10">
-            <p className="text-[10px] font-sans font-black uppercase tracking-widest text-neutral-400">
-              Details
-            </p>
-            <div className="space-y-1">
-              <p className="text-xs font-serif italic">March 2026 Issue</p>
-              <p className="text-xs font-serif italic">12 Min Read</p>
+        <div className="md:col-span-2 border-b md:border-b-0 border-black/10 pb-8 md:pb-0">
+          <div className="flex flex-row md:flex-col flex-wrap items-start gap-6 md:gap-0 md:space-y-12">
+            <div className="space-y-2">
+              <p className="text-[10px] font-sans font-black uppercase tracking-widest text-[#E11D48]">
+                Written By
+              </p>
+              <p className="font-display text-xl font-bold leading-none">Julian V. Sterling</p>
+              <p className="text-xs text-neutral-400 font-serif italic">
+                Chief Architectural Critic
+              </p>
             </div>
-          </div>
 
-          <div className="flex gap-4 pt-8">
-            <button className="p-2 border border-black/10 hover:border-black transition-colors rounded-none">
-              <Share2 size={16} />
-            </button>
-            <button className="p-2 border border-black/10 hover:border-black transition-colors rounded-none">
-              <Bookmark size={16} />
-            </button>
+            <div className="space-y-2 md:space-y-4 md:pt-8 md:border-t border-black/10">
+              <p className="text-[10px] font-sans font-black uppercase tracking-widest text-neutral-400">
+                Details
+              </p>
+              <div className="flex md:flex-col gap-3 md:gap-1">
+                <p className="text-xs font-serif italic">March 2026 Issue</p>
+                <span className="text-xs text-neutral-300 md:hidden">·</span>
+                <p className="text-xs font-serif italic">12 Min Read</p>
+              </div>
+            </div>
+
+            <div className="flex gap-4 md:pt-8">
+              <button className="p-2 border border-black/10 hover:border-black transition-colors rounded-none">
+                <Share2 size={16} />
+              </button>
+              <button className="p-2 border border-black/10 hover:border-black transition-colors rounded-none">
+                <Bookmark size={16} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -199,7 +213,7 @@ export function ClassicMagazineArticlePage() {
 
           <div className="py-12 border-y border-black/10">
             <Quote className="text-[#E11D48] mb-6" size={32} />
-            <blockquote className="font-display text-3xl md:text-4xl font-black tracking-tight italic leading-tight">
+            <blockquote className="font-display text-2xl sm:text-3xl md:text-4xl font-black tracking-tight italic leading-tight">
               &ldquo;The grid is the silent language of the page, defining the boundaries within
               which our thoughts may wander.&rdquo;
             </blockquote>
@@ -287,10 +301,10 @@ export function ClassicMagazineArticlePage() {
       </article>
 
       {/* Footer */}
-      <footer className="bg-black text-white pt-24 pb-12 px-6">
+      <footer className="bg-black text-white pt-16 md:pt-24 pb-12 px-4 md:px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-white/10 pb-16 mb-12">
           <div className="md:col-span-2 space-y-8">
-            <h2 className="text-4xl font-display font-black tracking-tighter italic">
+            <h2 className="text-3xl md:text-4xl font-display font-black tracking-tighter italic">
               The Archive.
             </h2>
             <p className="font-serif italic text-neutral-400 max-w-sm">
@@ -345,7 +359,7 @@ export function ClassicMagazineArticlePage() {
             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             onClick={() => setSidebarOpen(false)}
           />
-          <div className="relative w-full max-w-md bg-white h-full p-12 space-y-16 animate-in slide-in-from-right duration-500">
+          <div className="relative w-full max-w-md bg-white h-full p-6 md:p-12 space-y-10 md:space-y-16 animate-in slide-in-from-right duration-500 overflow-y-auto">
             <button
               onClick={() => setSidebarOpen(false)}
               className="absolute top-8 right-8 p-1 hover:text-[#E11D48] transition-colors"
@@ -362,7 +376,7 @@ export function ClassicMagazineArticlePage() {
                     key={item}
                     className="group flex items-center justify-between cursor-pointer"
                   >
-                    <span className="text-3xl font-display font-black hover:text-[#E11D48] transition-colors">
+                    <span className="text-2xl md:text-3xl font-display font-black hover:text-[#E11D48] transition-colors">
                       {item}
                     </span>
                     <ChevronRight
