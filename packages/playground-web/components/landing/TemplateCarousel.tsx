@@ -45,6 +45,7 @@ export function TemplateCarousel({ content, templates }: TemplateCarouselProps) 
             scrollSnapType: 'x mandatory',
             WebkitOverflowScrolling: 'touch',
             overscrollBehaviorX: 'contain',
+            touchAction: 'pan-x pan-y',
           }}
         >
           {templates.map((template) => (

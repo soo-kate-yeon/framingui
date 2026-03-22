@@ -19,15 +19,17 @@
   }
 }
 
-html,
+html {
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   overflow-x: hidden;
   overscroll-behavior-x: none;
-}
-
-html {
-  width: 100%;
-  max-width: 100vw;
+  touch-action: pan-y;
 }
 
 body {
