@@ -54,6 +54,14 @@ export const SCREEN_PRESETS: ScreenPreset[] = [
     copyPrompt:
       'Using framingui MCP server with the pebble theme, create a responsive social feed interface. Include: bottom tab navigation (Home, Search, Notifications, Profile), card-based feed with soft rounded corners, trending hashtags sidebar, and suggested users. Use the screen generation workflow with mobile-first adaptive layout.',
   },
+  {
+    keyword: 'fintech',
+    theme: 'bold-line',
+    route: '/explore/bold-line/fintech',
+    prompt: 'Build a fintech remittance dashboard',
+    copyPrompt:
+      'Using framingui MCP server with the bold-line theme, create a responsive fintech remittance page. Include: large balance display, action buttons (send, receive, add money), quick send contacts row, and recent transactions list with amount badges. Use the screen generation workflow with mobile-first layout and bold-line 0px radius + 2px borders.',
+  },
 ];
 
 interface PromptTextboxProps {
