@@ -31,6 +31,7 @@ function ExploreLayoutContent({ children }: ExploreLayoutProps) {
     'pebble',
     'square-minimalism',
     'editorial-tech',
+    'bold-line',
   ];
   const isDemoPage = templateSlugs.some((slug) => pathname?.startsWith(`/explore/${slug}`));
 
