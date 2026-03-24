@@ -1,0 +1,282 @@
+---
+title: "AI 에이전트 UI 패턴: AI가 생성하는 인터페이스를 위한 디자인 토큰"
+description: "AI 에이전트가 명시적인 스타일 지시 없이도 일관되고 접근 가능한 UI 컴포넌트를 생성할 수 있도록 하는 디자인 토큰 패턴입니다."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-agents
+  - design-tokens
+  - ui-patterns
+  - accessibility
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+AI 에이전트는 몇 초 만에 전체 사용자 인터페이스를 생성할 수 있습니다. 하지만 구조화된 디자인 제약 없이는 일관성 없는 레이아웃, 접근하기 어려운 색상 대비, 화면 크기에 따라 깨지는 예측 불가능한 간격을 만들어냅니다.
+
+해결책은 더 많은 프롬프트를 추가하는 것이 아닙니다. AI 에이전트가 단순한 값이 아닌 아키텍처 규칙으로 해석할 수 있는 디자인 토큰 패턴을 만드는 것입니다.
+
+## AI 에이전트 UI 챌린지
+
+AI 에이전트에게 "사용자 프로필 카드를 만들어줘"라고 요청하면, 수백 가지 미세한 결정을 내립니다:
+
+- 보조 텍스트에 어떤 회색 음영을 사용할까?
+- 아바타 주변에 얼마나 많은 패딩을 둘까?
+- 사용자 이름과 소개글의 글꼴 크기는 어떻게 할까?
+- 입체감을 위한 그림자 깊이는?
+
+제약 없이는 각 결정이 임의적이 됩니다. 기능은 작동하지만 시각적 일관성이 없는 UI를 얻게 됩니다.
+
+## 에이전트를 위한 토큰 패턴
+
+AI 에이전트를 위한 디자인 토큰은 단순한 값이 아닌 의도를 인코딩하는 의미론적 레이어가 필요합니다.
+
+### 1. 의미론적 색상 토큰
+
+이렇게 하는 대신:
+```json
+{
+  "blue-500": "#3b82f6",
+  "gray-600": "#4b5563"
+}
+```
+
+의미론적 매핑을 제공하세요:
+```json
+{
+  "color-text-primary": "var(--gray-900)",
+  "color-text-secondary": "var(--gray-600)",
+  "color-interactive-primary": "var(--blue-600)",
+  "color-interactive-hover": "var(--blue-700)",
+  "color-surface-elevated": "var(--white)",
+  "color-border-subtle": "var(--gray-200)"
+}
+```
+
+Claude Code가 `color-text-secondary`를 보면 역할을 이해합니다. `blue-500`을 보면 추측합니다.
+
+### 2. 맥락이 있는 간격 스케일
+
+AI 에이전트는 언제 타이트한 간격을 사용하고 언제 넉넉한 여백을 사용할지 이해해야 합니다:
+
+```json
+{
+  "spacing-component-xs": "0.5rem",  // 타이트: 아이콘 + 레이블
+  "spacing-component-sm": "0.75rem", // 컴팩트: 폼 입력
+  "spacing-component-md": "1rem",    // 기본: 카드 패딩
+  "spacing-component-lg": "1.5rem",  // 넉넉함: 섹션 간격
+  "spacing-component-xl": "2rem"     // 넓음: 페이지 여백
+}
+```
+
+`component` 네임스페이스는 이것이 임의의 간격이 아닌 구조적 간격임을 신호합니다.
+
+### 3. 타이포그래피 계층
+
+글꼴 크기 대신 역할을 제공하세요:
+
+```json
+{
+  "typography-heading-1": {
+    "fontSize": "2.25rem",
+    "lineHeight": "2.5rem",
+    "fontWeight": "700",
+    "letterSpacing": "-0.02em"
+  },
+  "typography-body-default": {
+    "fontSize": "1rem",
+    "lineHeight": "1.5rem",
+    "fontWeight": "400"
+  },
+  "typography-caption": {
+    "fontSize": "0.875rem",
+    "lineHeight": "1.25rem",
+    "fontWeight": "400",
+    "color": "var(--color-text-secondary)"
+  }
+}
+```
+
+이제 Claude가 사용자 프로필을 생성할 때, 이름에는 `typography-heading-1`을 사용하고 메타데이터에는 `typography-caption`을 사용합니다.
+
+### 4. 컴포넌트별 토큰
+
+AI 에이전트가 반복적으로 생성하는 일반적인 패턴의 경우:
+
+```json
+{
+  "avatar-size-sm": "2rem",
+  "avatar-size-md": "3rem",
+  "avatar-size-lg": "4rem",
+  "button-height-md": "2.5rem",
+  "button-padding-x": "1rem",
+  "card-border-radius": "0.5rem",
+  "card-shadow-default": "0 1px 3px 0 rgb(0 0 0 / 0.1)"
+}
+```
+
+이러한 토큰은 검증된 디자인 결정을 인코딩하여 에이전트가 매번 카드 스타일을 재발명하지 않도록 합니다.
+
+## 예시: 전과 후
+
+**전 (토큰 없음):**
+```tsx
+<div className="p-6 bg-white rounded-lg shadow-md">
+  <img src={avatar} className="w-12 h-12 rounded-full" />
+  <h3 className="text-xl font-bold text-gray-900 mt-3">{name}</h3>
+  <p className="text-sm text-gray-600 mt-1">{bio}</p>
+</div>
+```
+
+**후 (에이전트 친화적 토큰 사용):**
+```tsx
+<div className="p-[var(--spacing-component-md)]
+               bg-[var(--color-surface-elevated)]
+               rounded-[var(--card-border-radius)]
+               shadow-[var(--card-shadow-default)]">
+  <img src={avatar}
+       className="w-[var(--avatar-size-md)]
+                  h-[var(--avatar-size-md)]
+                  rounded-full" />
+  <h3 className="text-[var(--typography-heading-2-size)]
+                 font-[var(--typography-heading-2-weight)]
+                 text-[var(--color-text-primary)]
+                 mt-[var(--spacing-component-sm)]">
+    {name}
+  </h3>
+  <p className="text-[var(--typography-caption-size)]
+                text-[var(--color-text-secondary)]
+                mt-[var(--spacing-component-xs)]">
+    {bio}
+  </p>
+</div>
+```
+
+두 번째 버전은 의미론적으로 구조화되어 있습니다. 다크 모드로 전환하거나 리브랜딩을 해도 토큰이 중앙에서 업데이트되고 모든 AI 생성 컴포넌트가 적응합니다.
+
+## AI 소비를 위한 토큰 구조화
+
+AI 에이전트는 토큰이 예측 가능한 네이밍 패턴을 따를 때 디자인 시스템을 더 효과적으로 파싱합니다:
+
+### 네이밍 컨벤션
+
+```
+{카테고리}-{역할}-{변형}
+```
+
+예시:
+- `color-text-primary`
+- `spacing-component-md`
+- `typography-heading-1`
+
+이 구조는 AI 에이전트가 관계를 추론할 수 있게 합니다:
+- "텍스트 색상이 필요해 → `color-text-*` 사용"
+- "컴포넌트 간격이 필요해 → `spacing-component-*` 사용"
+
+### 토큰 문서화
+
+토큰 정의에 사용 힌트를 포함하세요:
+
+```json
+{
+  "spacing-component-md": {
+    "value": "1rem",
+    "type": "spacing",
+    "description": "카드, 모달, 컨테이너의 기본 패딩",
+    "usage": "일반적인 컴포넌트 내부 간격에 사용"
+  }
+}
+```
+
+Claude Code와 같은 AI 에이전트는 레이아웃 결정을 내릴 때 이 메타데이터를 참조할 수 있습니다.
+
+## 구현 전략
+
+### 1. 기본 요소부터 시작
+먼저 기본 스케일을 정의하세요:
+- 색상 팔레트 (기본 요소)
+- 간격 스케일
+- 타이포그래피 스케일
+
+### 2. 의미론적 별칭 생성
+기본 요소를 역할에 매핑하세요:
+- `color-text-primary` → `gray-900`
+- `spacing-component-md` → `4` (1rem)
+
+### 3. 컴포넌트 토큰 추가
+자주 생성하는 패턴의 경우:
+- 아바타 크기
+- 버튼 치수
+- 카드 스타일
+
+### 4. 맥락 제공
+AI 에이전트가 참조할 수 있는 `design-tokens.json` 파일을 만드세요:
+
+```json
+{
+  "tokens": {
+    "color": { ... },
+    "spacing": { ... },
+    "typography": { ... }
+  },
+  "patterns": {
+    "card": {
+      "padding": "var(--spacing-component-md)",
+      "borderRadius": "var(--card-border-radius)",
+      "shadow": "var(--card-shadow-default)"
+    }
+  }
+}
+```
+
+## MCP와의 통합
+
+MCP(Model Context Protocol)와 함께 Claude Code를 사용하는 경우, 디자인 토큰을 컨텍스트 리소스로 제공할 수 있습니다:
+
+```typescript
+// mcp-server-design-tokens/index.ts
+server.resource({
+  uri: "design://tokens/semantic",
+  name: "Semantic Design Tokens",
+  mimeType: "application/json",
+  async get() {
+    return JSON.stringify(tokens);
+  }
+});
+```
+
+이제 모든 Claude Code 세션이 프롬프트를 오염시키지 않고 디자인 시스템에 즉시 액세스할 수 있습니다.
+
+## 실제 예시: 대시보드 카드
+
+**프롬프트:**
+> "아이콘, 제목, 큰 숫자를 보여주는 사용자 수 통계 카드를 만들어줘"
+
+**토큰 없이:**
+Claude가 본 일반적인 패턴을 기반으로 임의의 값을 생성합니다.
+
+**토큰과 함께:**
+Claude가 참조하는 것:
+- 패딩을 위한 `spacing-component-md`
+- 배경을 위한 `color-surface-elevated`
+- 숫자를 위한 `typography-heading-1`
+- 레이블을 위한 `color-text-secondary`
+
+결과: 단일 색상이나 간격 값을 지정하지 않아도 디자인 시스템과 일치하는 카드입니다.
+
+## 핵심 요점
+
+1. **의미론적 네이밍**은 AI 에이전트가 단순한 값이 아닌 의도를 이해하도록 돕습니다
+2. **컴포넌트별 토큰**은 검증된 디자인 결정을 인코딩합니다
+3. **구조화된 패턴**은 임의적인 선택을 줄입니다
+4. **MCP 통합**은 디자인 토큰을 지속적인 컨텍스트로 제공합니다
+
+AI 에이전트는 명확한 제약이 있을 때 가장 효과적입니다. 디자인 토큰은 인간 디자이너만을 위한 것이 아닙니다—AI가 대규모로 일관되고 접근 가능한 UI를 생성할 수 있도록 하는 아키텍처 규칙입니다.
+
+---
+
+**다음 단계:**
+- 지속적인 토큰 액세스를 위한 [MCP 디자인 시스템 서버](/blog/ko/mcp-design-system-server) 탐색
+- [Claude Code와 FramingUI 통합](/blog/ko/claude-code-framingui-setup-guide) 방법 배우기

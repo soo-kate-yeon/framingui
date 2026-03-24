@@ -1,0 +1,443 @@
+---
+title: "Claude Code + FramingUI Setup Guide: AI-Native Design System Integration"
+description: "Step-by-step guide to integrate FramingUI design tokens with Claude Code for consistent AI-generated components."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - claude-code
+  - framingui
+  - setup
+  - integration
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Claude Code can build features autonomously, but without design constraints, it generates generic UI. FramingUI provides semantic design tokens that Claude can reference during code generation, ensuring every component matches your design system.
+
+This guide walks through setting up FramingUI with Claude Code so AI-generated components are production-ready from the first iteration.
+
+## Prerequisites
+
+- Node.js 18+ installed
+- Claude Code extension installed
+- Basic understanding of design tokens
+
+## Installation
+
+### 1. Install FramingUI
+
+```bash
+npm install framingui
+# or
+pnpm add framingui
+```
+
+### 2. Initialize Design Tokens
+
+Create a `design-tokens.json` file in your project root:
+
+```json
+{
+  "$schema": "https://framingui.com/schema/tokens.json",
+  "tokens": {
+    "color": {
+      "text": {
+        "primary": { "value": "#1a1a1a" },
+        "secondary": { "value": "#6b7280" }
+      },
+      "surface": {
+        "elevated": { "value": "#ffffff" },
+        "base": { "value": "#f9fafb" }
+      },
+      "interactive": {
+        "primary": { "value": "#2563eb" },
+        "hover": { "value": "#1d4ed8" }
+      }
+    },
+    "spacing": {
+      "component": {
+        "xs": { "value": "0.5rem" },
+        "sm": { "value": "0.75rem" },
+        "md": { "value": "1rem" },
+        "lg": { "value": "1.5rem" }
+      }
+    },
+    "typography": {
+      "heading": {
+        "1": {
+          "fontSize": { "value": "2.25rem" },
+          "lineHeight": { "value": "2.5rem" },
+          "fontWeight": { "value": "700" }
+        }
+      },
+      "body": {
+        "default": {
+          "fontSize": { "value": "1rem" },
+          "lineHeight": { "value": "1.5rem" }
+        }
+      }
+    }
+  }
+}
+```
+
+### 3. Generate CSS Variables
+
+Create a build script to convert tokens to CSS:
+
+```typescript
+// scripts/build-tokens.ts
+import { buildTokens } from 'framingui/build';
+import tokens from '../design-tokens.json';
+
+buildTokens({
+  tokens,
+  output: './src/styles/tokens.css',
+  format: 'css'
+});
+```
+
+Run the script:
+
+```bash
+npx tsx scripts/build-tokens.ts
+```
+
+This generates `tokens.css`:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-surface-elevated: #ffffff;
+  --color-interactive-primary: #2563eb;
+  --spacing-component-md: 1rem;
+  /* ... more tokens */
+}
+```
+
+### 4. Import Tokens in Your App
+
+```tsx
+// src/main.tsx or src/App.tsx
+import './styles/tokens.css';
+```
+
+## Configure Claude Code
+
+### 1. Create Claude Code Instructions
+
+Create `.claude/instructions.md` in your project root:
+
+````markdown
+# Design System Instructions
+
+This project uses FramingUI design tokens for consistent styling.
+
+## Design Tokens Reference
+
+All components must use semantic design tokens instead of hardcoded values.
+
+### Color Tokens
+- Text: `var(--color-text-primary)`, `var(--color-text-secondary)`
+- Surfaces: `var(--color-surface-elevated)`, `var(--color-surface-base)`
+- Interactive: `var(--color-interactive-primary)`, `var(--color-interactive-hover)`
+
+### Spacing Tokens
+- Component spacing: `var(--spacing-component-xs)` through `var(--spacing-component-lg)`
+
+### Typography Tokens
+- Headings: `var(--typography-heading-1-size)`, `var(--typography-heading-1-weight)`
+- Body: `var(--typography-body-default-size)`
+
+## Component Generation Rules
+
+When generating components:
+
+1. **Always use design tokens** for colors, spacing, and typography
+2. **Never use hardcoded values** like `text-gray-600` or `p-4`
+3. **Reference tokens via CSS variables**: `className="text-[var(--color-text-primary)]"`
+
+### Example: Correct Component
+
+```tsx
+export function UserCard({ name, bio }: UserCardProps) {
+  return (
+    <div className="p-[var(--spacing-component-md)]
+                   bg-[var(--color-surface-elevated)]
+                   rounded-lg shadow-sm">
+      <h3 className="text-[var(--typography-heading-2-size)]
+                     font-[var(--typography-heading-2-weight)]
+                     text-[var(--color-text-primary)]">
+        {name}
+      </h3>
+      <p className="text-[var(--typography-body-default-size)]
+                    text-[var(--color-text-secondary)]
+                    mt-[var(--spacing-component-sm)]">
+        {bio}
+      </p>
+    </div>
+  );
+}
+```
+
+### Example: Incorrect Component (Do Not Generate)
+
+```tsx
+// ❌ Hardcoded Tailwind utilities
+<div className="p-4 bg-white rounded-lg">
+  <h3 className="text-xl font-bold text-gray-900">{name}</h3>
+  <p className="text-sm text-gray-600">{bio}</p>
+</div>
+```
+````
+
+### 2. Add Token Reference to MCP (Optional)
+
+If you're using MCP, create a design token server:
+
+```typescript
+// mcp-server-framingui/index.ts
+import { McpServer } from '@modelcontextprotocol/server-sdk';
+import tokens from '../design-tokens.json';
+
+const server = new McpServer({
+  name: 'framingui-tokens',
+  version: '1.0.0'
+});
+
+server.resource({
+  uri: 'design://tokens',
+  name: 'FramingUI Design Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+server.start();
+```
+
+Update `.claude/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "framingui-tokens": {
+      "command": "node",
+      "args": ["./mcp-server-framingui/index.js"]
+    }
+  }
+}
+```
+
+## Verify Setup
+
+### 1. Test Token Generation
+
+Ask Claude Code:
+
+> "Create a dashboard card showing total users with an icon and a large number"
+
+Claude should generate:
+
+```tsx
+export function StatsCard({ icon: Icon, label, value }: StatsCardProps) {
+  return (
+    <div className="p-[var(--spacing-component-md)]
+                   bg-[var(--color-surface-elevated)]
+                   rounded-lg border border-[var(--color-border-subtle)]">
+      <div className="flex items-center gap-[var(--spacing-component-sm)]">
+        <Icon className="w-5 h-5 text-[var(--color-interactive-primary)]" />
+        <p className="text-[var(--typography-caption-size)]
+                      text-[var(--color-text-secondary)]">
+          {label}
+        </p>
+      </div>
+      <p className="text-[var(--typography-heading-1-size)]
+                    font-[var(--typography-heading-1-weight)]
+                    text-[var(--color-text-primary)]
+                    mt-[var(--spacing-component-sm)]">
+        {value}
+      </p>
+    </div>
+  );
+}
+```
+
+If Claude generates hardcoded Tailwind utilities instead of tokens, revisit `.claude/instructions.md` and ensure it's clear about token usage.
+
+### 2. Test Dark Mode
+
+Add dark mode tokens:
+
+```json
+{
+  "tokens": {
+    "color": {
+      "text": {
+        "primary": {
+          "value": "#1a1a1a",
+          "darkValue": "#f9fafb"
+        },
+        "secondary": {
+          "value": "#6b7280",
+          "darkValue": "#9ca3af"
+        }
+      }
+    }
+  }
+}
+```
+
+Rebuild tokens:
+
+```bash
+npx tsx scripts/build-tokens.ts
+```
+
+Generated CSS:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f9fafb;
+  }
+}
+```
+
+All AI-generated components now adapt to dark mode automatically.
+
+## Advanced Configuration
+
+### Custom Token Categories
+
+Add component-specific tokens:
+
+```json
+{
+  "tokens": {
+    "component": {
+      "avatar": {
+        "size-sm": { "value": "2rem" },
+        "size-md": { "value": "3rem" }
+      },
+      "button": {
+        "height-md": { "value": "2.5rem" },
+        "padding-x": { "value": "1rem" }
+      }
+    }
+  }
+}
+```
+
+Update instructions:
+
+```markdown
+## Avatar Component
+- Sizes: `var(--component-avatar-size-sm)`, `var(--component-avatar-size-md)`
+
+## Button Component
+- Height: `var(--component-button-height-md)`
+- Horizontal padding: `var(--component-button-padding-x)`
+```
+
+### Type Safety
+
+Generate TypeScript types from tokens:
+
+```typescript
+// scripts/build-tokens.ts
+buildTokens({
+  tokens,
+  output: './src/styles/tokens.css',
+  format: 'css',
+  typescript: './src/types/tokens.ts'
+});
+```
+
+Generates:
+
+```typescript
+export type ColorToken =
+  | 'color-text-primary'
+  | 'color-text-secondary'
+  | 'color-surface-elevated';
+
+export type SpacingToken =
+  | 'spacing-component-xs'
+  | 'spacing-component-sm';
+```
+
+Use in components:
+
+```tsx
+import type { ColorToken, SpacingToken } from '@/types/tokens';
+
+interface CardProps {
+  bgColor?: ColorToken;
+  padding?: SpacingToken;
+}
+```
+
+## Troubleshooting
+
+### Claude Still Generates Hardcoded Values
+
+**Solution:** Make instructions more explicit:
+
+```markdown
+IMPORTANT: NEVER use hardcoded Tailwind utilities like:
+- ❌ `text-gray-600`
+- ❌ `p-4`
+- ❌ `bg-white`
+
+ALWAYS use design tokens:
+- ✅ `text-[var(--color-text-secondary)]`
+- ✅ `p-[var(--spacing-component-md)]`
+- ✅ `bg-[var(--color-surface-elevated)]`
+```
+
+### Tokens Not Applied in Development
+
+**Solution:** Ensure `tokens.css` is imported in your entry file:
+
+```tsx
+// main.tsx
+import './styles/tokens.css';
+```
+
+Verify in DevTools that CSS variables are defined on `:root`.
+
+### MCP Server Not Loading
+
+**Solution:** Check MCP server logs:
+
+```bash
+claude-code mcp logs framingui-tokens
+```
+
+Ensure `mcp-server-framingui/index.js` is executable and the path in `.claude/mcp.json` is correct.
+
+## Next Steps
+
+- Explore [AI Agent UI Patterns](/blog/en/ai-agent-ui-patterns) for advanced token structures
+- Learn about [MCP Design System Server](/blog/en/mcp-design-system-server) for persistent context
+- Read [Why Vibe Coding Needs Design Systems](/blog/en/why-vibe-coding-needs-design-systems)
+
+## Summary
+
+By integrating FramingUI with Claude Code:
+
+1. **Consistent AI output** — every component uses your design system
+2. **Faster iterations** — no manual styling cleanup needed
+3. **Dark mode support** — automatic adaptation without code changes
+4. **Type safety** — catch token errors at compile time
+
+FramingUI bridges the gap between AI code generation and production design systems, ensuring Claude Code generates components that ship without revision.

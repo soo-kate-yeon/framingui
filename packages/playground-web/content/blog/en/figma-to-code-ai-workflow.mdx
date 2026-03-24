@@ -1,0 +1,417 @@
+---
+title: "From Figma to Code with AI: Design-to-Code Workflow with Design Tokens"
+description: "How to use Figma, design tokens, and Claude Code together for a seamless design-to-code workflow that produces production-ready components."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - figma
+  - ai-coding
+  - design-tokens
+  - workflow
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Designers create pixel-perfect mockups in Figma. Developers translate them into code. The handoff is manual, error-prone, and slow.
+
+AI tools like Claude Code can generate UI from descriptions, but without Figma context, they guess at spacing, colors, and layout. The result: code that works but doesn't match the design.
+
+This guide shows how to connect Figma, design tokens, and Claude Code into a unified workflow where AI generates production-ready components that match your mockups—automatically.
+
+## The Traditional Figma-to-Code Problem
+
+### Designer → Developer Handoff
+
+1. Designer creates component in Figma
+2. Designer exports specs, screenshots, or uses Figma Inspect
+3. Developer manually translates values into code
+4. Designer reviews, finds inconsistencies
+5. Repeat
+
+**Problems:**
+- Manual translation introduces errors (wrong hex codes, incorrect spacing)
+- Developers interpret designs differently (is that 12px or 16px padding?)
+- Design updates require re-implementation
+
+### AI Without Design Context
+
+Asking Claude Code to "build a login form" produces functional code, but:
+
+- Colors don't match Figma (`blue-600` vs. `#2563eb`)
+- Spacing is arbitrary (`p-4` vs. the precise 18px in Figma)
+- Typography differs (`text-xl` vs. Figma's 22px/1.3 line-height)
+
+## The Solution: Design Tokens as the Bridge
+
+**Design tokens** are the shared language between Figma and code. Instead of designers specifying `#2563eb` and developers using `blue-600`, both reference `color-interactive-primary`.
+
+### Workflow Overview
+
+```
+┌─────────────────────────────────────────────┐
+│ 1. Design in Figma                          │
+│    Use styles: "Primary Blue", "Heading 1" │
+└─────────────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────┐
+│ 2. Export Design Tokens                     │
+│    Figma → design-tokens.json               │
+│    (via plugin or manual)                   │
+└─────────────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────┐
+│ 3. Generate CSS Variables                   │
+│    design-tokens.json → tokens.css          │
+│    --color-interactive-primary: #2563eb     │
+└─────────────────────────────────────────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────┐
+│ 4. Claude Code Generates Components         │
+│    Uses tokens automatically                │
+│    bg-[var(--color-interactive-primary)]    │
+└─────────────────────────────────────────────┘
+```
+
+## Step-by-Step Implementation
+
+### Step 1: Structure Your Figma File
+
+Use **Figma Styles** for all design decisions:
+
+**Color Styles:**
+- `color/text/primary` → `#1a1a1a`
+- `color/text/secondary` → `#6b7280`
+- `color/interactive/primary` → `#2563eb`
+
+**Text Styles:**
+- `typography/heading/1` → 36px, Bold, -0.02em
+- `typography/body/default` → 16px, Regular, 1.5
+
+**Effect Styles:**
+- `shadow/card/default` → 0 1px 3px rgba(0,0,0,0.1)
+
+**Important:** Use semantic names (`text/primary`) not implementation details (`gray-900`).
+
+### Step 2: Export Design Tokens from Figma
+
+Use a Figma plugin like **Figma Tokens** or **Design Tokens**:
+
+1. Install plugin in Figma
+2. Select all styles
+3. Export as JSON
+
+Example output (`design-tokens.json`):
+
+```json
+{
+  "color": {
+    "text": {
+      "primary": { "value": "#1a1a1a", "type": "color" },
+      "secondary": { "value": "#6b7280", "type": "color" }
+    },
+    "interactive": {
+      "primary": { "value": "#2563eb", "type": "color" },
+      "hover": { "value": "#1d4ed8", "type": "color" }
+    }
+  },
+  "typography": {
+    "heading": {
+      "1": {
+        "fontSize": { "value": "2.25rem", "type": "dimension" },
+        "lineHeight": { "value": "2.5rem", "type": "dimension" },
+        "fontWeight": { "value": "700", "type": "number" }
+      }
+    }
+  }
+}
+```
+
+### Step 3: Convert Tokens to CSS Variables
+
+Use a build tool like **Style Dictionary** or a custom script:
+
+```typescript
+// scripts/build-tokens.ts
+import { readFileSync, writeFileSync } from 'fs';
+
+const tokens = JSON.parse(readFileSync('./design-tokens.json', 'utf-8'));
+
+function buildCSS(obj: any, prefix = ''): string {
+  let css = '';
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'object' && value.value) {
+      const name = `${prefix}${key}`.replace(/\./g, '-');
+      css += `  --${name}: ${value.value};\n`;
+    } else if (typeof value === 'object') {
+      css += buildCSS(value, `${prefix}${key}-`);
+    }
+  }
+  return css;
+}
+
+const css = `:root {\n${buildCSS(tokens)}}`;
+writeFileSync('./src/styles/tokens.css', css);
+```
+
+Run:
+```bash
+npx tsx scripts/build-tokens.ts
+```
+
+Generated `tokens.css`:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-interactive-primary: #2563eb;
+  --typography-heading-1-fontSize: 2.25rem;
+  --typography-heading-1-lineHeight: 2.5rem;
+  --typography-heading-1-fontWeight: 700;
+}
+```
+
+### Step 4: Configure Claude Code
+
+Update `.claude/instructions.md`:
+
+```markdown
+# Design System Instructions
+
+This project uses design tokens exported from Figma.
+
+## Token Usage Rules
+
+1. **Colors:** Use `var(--color-*)` tokens only
+2. **Typography:** Use `var(--typography-*)` tokens for font size, weight, line height
+3. **Spacing:** Use `var(--spacing-*)` tokens for padding, margins, gaps
+
+## Token Reference
+
+Tokens are defined in `design-tokens.json` and compiled to `src/styles/tokens.css`.
+
+### Color Tokens
+- Text: `--color-text-primary`, `--color-text-secondary`
+- Interactive: `--color-interactive-primary`, `--color-interactive-hover`
+
+### Typography Tokens
+- Headings: `--typography-heading-1-fontSize`, `--typography-heading-1-fontWeight`
+- Body: `--typography-body-default-fontSize`
+
+## Component Generation
+
+When generating components from Figma designs:
+1. Reference Figma mockup for structure and layout
+2. Apply design tokens for all styling
+3. Never use hardcoded values
+```
+
+### Step 5: Generate Components from Figma
+
+**Workflow:**
+
+1. Open Figma design
+2. Take screenshot or use Figma Dev Mode for specs
+3. Ask Claude Code:
+
+> "Create a LoginForm component matching this Figma design. Use design tokens from `tokens.css`."
+
+**Example Prompt:**
+
+> "I have a Figma design for a login card. It has:
+> - Centered card with elevation shadow
+> - Heading at top: "Welcome Back"
+> - Email and password inputs
+> - Primary button: "Sign In"
+>
+> Generate the component using our design tokens."
+
+**Claude Code generates:**
+
+```tsx
+export function LoginForm() {
+  return (
+    <div className="flex items-center justify-center min-h-screen
+                    bg-[var(--color-surface-base)]">
+      <div className="p-[var(--spacing-component-lg)]
+                     bg-[var(--color-surface-elevated)]
+                     rounded-[var(--border-radius-lg)]
+                     shadow-[var(--shadow-card-default)]
+                     w-full max-w-md">
+        <h1 className="text-[var(--typography-heading-1-fontSize)]
+                       font-[var(--typography-heading-1-fontWeight)]
+                       text-[var(--color-text-primary)]
+                       mb-[var(--spacing-component-md)]">
+          Welcome Back
+        </h1>
+
+        <form className="space-y-[var(--spacing-component-sm)]">
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full
+                       px-[var(--spacing-component-sm)]
+                       py-[var(--spacing-component-xs)]
+                       border border-[var(--color-border-default)]
+                       rounded-[var(--border-radius-md)]
+                       text-[var(--typography-body-default-fontSize)]"
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full
+                       px-[var(--spacing-component-sm)]
+                       py-[var(--spacing-component-xs)]
+                       border border-[var(--color-border-default)]
+                       rounded-[var(--border-radius-md)]
+                       text-[var(--typography-body-default-fontSize)]"
+          />
+
+          <button
+            type="submit"
+            className="w-full
+                       py-[var(--spacing-component-sm)]
+                       bg-[var(--color-interactive-primary)]
+                       hover:bg-[var(--color-interactive-hover)]
+                       text-white
+                       rounded-[var(--border-radius-md)]
+                       font-[var(--typography-button-fontWeight)]">
+            Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+```
+
+**Result:** The generated component visually matches the Figma design without manual translation.
+
+## Advanced: Figma Plugin for Live Sync
+
+For real-time updates, build a Figma plugin that:
+
+1. Watches for style changes
+2. Exports tokens automatically
+3. Triggers a rebuild of `tokens.css`
+
+```typescript
+// figma-plugin/code.ts
+figma.on('documentchange', async (event) => {
+  if (event.documentChanges.some(change => change.type === 'STYLE_CREATE' || change.type === 'STYLE_UPDATE')) {
+    const styles = await figma.getLocalPaintStyles();
+    const tokens = exportTokens(styles);
+
+    // Send tokens to your build server or write to file
+    await fetch('http://localhost:3000/api/tokens', {
+      method: 'POST',
+      body: JSON.stringify(tokens)
+    });
+  }
+});
+```
+
+## Real-World Example: Dashboard Redesign
+
+### Before (Manual Translation)
+
+Designer creates dashboard in Figma. Developer eyeballs spacing and colors, generates:
+
+```tsx
+<div className="p-6 bg-white rounded-lg shadow-md">
+  <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+  {/* Approximations, not exact matches */}
+</div>
+```
+
+**Problems:**
+- `p-6` is 24px, Figma shows 28px
+- `text-2xl` is 24px, Figma shows 26px
+- `shadow-md` doesn't match Figma's shadow exactly
+
+### After (Token-Driven Workflow)
+
+Designer creates dashboard, exports tokens. Developer (or Claude Code) generates:
+
+```tsx
+<div className="p-[var(--spacing-component-lg)]
+               bg-[var(--color-surface-elevated)]
+               rounded-[var(--border-radius-md)]
+               shadow-[var(--shadow-card-default)]">
+  <h2 className="text-[var(--typography-heading-2-fontSize)]
+                 font-[var(--typography-heading-2-fontWeight)]
+                 text-[var(--color-text-primary)]">
+    Dashboard
+  </h2>
+</div>
+```
+
+**Benefits:**
+- Exact match to Figma values
+- Designer updates Figma → tokens update → components update
+- No manual translation errors
+
+## Benefits of This Workflow
+
+### 1. Single Source of Truth
+
+Figma is the design source. Code reflects it automatically via tokens.
+
+### 2. Faster Iteration
+
+Designer tweaks color in Figma → export tokens → rebuild CSS → all components update.
+
+### 3. Consistent Implementation
+
+AI generates components using the same tokens every time, eliminating inconsistency.
+
+### 4. Designer-Developer Collaboration
+
+Designers control the visual language. Developers focus on logic and functionality.
+
+## Limitations and Considerations
+
+### Not Fully Automated
+
+You still need to:
+- Describe component structure to AI
+- Review generated code for logic correctness
+- Handle interactions and state management
+
+### Token Coverage
+
+Tokens work best for:
+- Colors, typography, spacing, shadows
+
+They don't cover:
+- Layout grid systems (use Tailwind or custom utilities)
+- Complex animations (define separately)
+
+### Figma to Token Mapping
+
+Not all Figma features map cleanly to tokens (e.g., gradients, complex effects). For these, manual export or custom scripting is needed.
+
+## Key Takeaways
+
+1. **Design tokens bridge Figma and code**, ensuring visual consistency
+2. **AI can generate components** that match Figma designs when given token constraints
+3. **Automate token export** for fast iteration and reduced manual translation
+4. **Use semantic naming** in Figma styles to create maintainable tokens
+
+## Next Steps
+
+- Set up [FramingUI with Claude Code](/blog/en/claude-code-framingui-setup-guide)
+- Learn about [MCP Design System Server](/blog/en/mcp-design-system-server) for persistent token access
+- Explore [AI Agent UI Patterns](/blog/en/ai-agent-ui-patterns)
+
+## Conclusion
+
+The future of design-to-code isn't pixel-perfect auto-generation from Figma screenshots. It's a structured workflow where design decisions (encoded as tokens) guide AI code generation.
+
+By connecting Figma, design tokens, and Claude Code, you create a feedback loop where designers control the visual language and AI handles implementation—accurately, consistently, and at scale.

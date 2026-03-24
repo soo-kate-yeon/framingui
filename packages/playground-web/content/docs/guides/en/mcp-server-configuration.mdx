@@ -1,0 +1,309 @@
+---
+title: "MCP Server Configuration Guide"
+description: "Complete guide to configuring the Model Context Protocol (MCP) server for persistent design token access in AI coding tools"
+order: 9
+---
+
+# MCP Server Configuration Guide
+
+This guide walks through setting up an MCP (Model Context Protocol) server to provide FramingUI design tokens as persistent context for Claude Code, Cursor, and other AI coding tools.
+
+## Prerequisites
+
+- Node.js 18 or higher
+- FramingUI installed in your project
+- Design tokens file (`design-tokens.json`)
+
+## What You'll Build
+
+An MCP server that exposes:
+- Design tokens as queryable resources
+- Component patterns for consistent generation
+- Live updates when tokens change
+
+## Step 1: Install MCP SDK
+
+```bash
+npm install @modelcontextprotocol/server-sdk
+# or
+pnpm add @modelcontextprotocol/server-sdk
+```
+
+## Step 2: Create Server File
+
+Create `mcp-server/index.ts` in your project root:
+
+```typescript
+import { McpServer } from '@modelcontextprotocol/server-sdk';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+const server = new McpServer({
+  name: 'framingui-tokens',
+  version: '1.0.0',
+  description: 'FramingUI design tokens and patterns'
+});
+
+// Load design tokens
+const tokensPath = resolve(__dirname, '../design-tokens.json');
+const tokens = JSON.parse(readFileSync(tokensPath, 'utf-8'));
+
+// Register design tokens resource
+server.resource({
+  uri: 'design://tokens',
+  name: 'Design Tokens',
+  description: 'Semantic design tokens (colors, spacing, typography)',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+server.start();
+console.log('MCP server started');
+```
+
+## Step 3: Compile TypeScript
+
+```bash
+npx tsc mcp-server/index.ts --outDir mcp-server --module commonjs
+```
+
+## Step 4: Configure Claude Code
+
+Create `.claude/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "framingui-tokens": {
+      "command": "node",
+      "args": ["./mcp-server/index.js"],
+      "env": {}
+    }
+  }
+}
+```
+
+## Step 5: Update Instructions
+
+Edit `.claude/instructions.md`:
+
+```markdown
+# FramingUI Design System
+
+This project uses FramingUI with design tokens served via MCP.
+
+## Token Access
+
+Design tokens are available at `design://tokens`. Always use tokens for:
+- Colors: `var(--color-*)`
+- Spacing: `var(--spacing-*)`
+- Typography: `var(--typography-*)`
+
+## Rules
+
+1. Never use hardcoded values (`bg-blue-600`, `p-4`)
+2. Always reference tokens via CSS variables
+3. Fetch `design://tokens` when generating new components
+```
+
+## Step 6: Test the Server
+
+Restart Claude Code and ask:
+
+> "Create a primary button component"
+
+Claude should fetch `design://tokens` and generate:
+
+```tsx
+export function Button({ children }: ButtonProps) {
+  return (
+    <button className="px-[var(--spacing-component-md)]
+                       py-[var(--spacing-component-sm)]
+                       bg-[var(--color-interactive-primary)]
+                       hover:bg-[var(--color-interactive-hover)]
+                       rounded-[var(--border-radius-md)]">
+      {children}
+    </button>
+  );
+}
+```
+
+## Advanced Configuration
+
+### Adding Component Patterns
+
+Extend the server to provide reusable patterns:
+
+```typescript
+server.resource({
+  uri: 'design://patterns/button',
+  name: 'Button Pattern',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify({
+      base: 'inline-flex items-center justify-center',
+      padding: 'var(--spacing-component-sm) var(--spacing-component-md)',
+      background: 'var(--color-interactive-primary)',
+      hoverBackground: 'var(--color-interactive-hover)',
+      borderRadius: 'var(--border-radius-md)'
+    }, null, 2);
+  }
+});
+```
+
+### Live Token Updates
+
+Add file watching for automatic reloads:
+
+```typescript
+import { watch } from 'fs';
+
+let tokens = loadTokens();
+
+watch(tokensPath, (event) => {
+  if (event === 'change') {
+    tokens = loadTokens();
+    console.log('Tokens reloaded');
+  }
+});
+
+function loadTokens() {
+  return JSON.parse(readFileSync(tokensPath, 'utf-8'));
+}
+```
+
+### Multi-Brand Support
+
+Serve different token sets for different brands:
+
+```typescript
+server.resource({
+  uri: 'design://tokens/brand-a',
+  name: 'Brand A Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(loadBrandTokens('brand-a'));
+  }
+});
+
+server.resource({
+  uri: 'design://tokens/brand-b',
+  name: 'Brand B Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(loadBrandTokens('brand-b'));
+  }
+});
+```
+
+## Troubleshooting
+
+### Server Won't Start
+
+**Error:** `Cannot find module '@modelcontextprotocol/server-sdk'`
+
+**Solution:**
+```bash
+npm install @modelcontextprotocol/server-sdk
+```
+
+### Claude Not Using Tokens
+
+**Checklist:**
+1. Verify `.claude/mcp.json` has correct path to `index.js`
+2. Check `.claude/instructions.md` references `design://tokens`
+3. Restart Claude Code to reload MCP config
+4. Run server manually to check for errors: `node mcp-server/index.js`
+
+### Tokens Not Updating
+
+**Solution:** Restart MCP server after changing `design-tokens.json`, or implement file watching (see Advanced Configuration).
+
+## Security Considerations
+
+### Environment Variables
+
+If your tokens reference secrets (API endpoints, keys), use environment variables:
+
+```typescript
+server.resource({
+  uri: 'design://config',
+  name: 'Config',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify({
+      apiUrl: process.env.API_URL,
+      // Don't expose secrets
+    });
+  }
+});
+```
+
+### Access Control
+
+MCP servers run locally and don't expose network ports by default. For team setups, consider:
+- Running MCP server on a shared development machine
+- Using SSH tunneling for remote access
+- Implementing authentication if exposing via network
+
+## Integration with Other Tools
+
+### Cursor
+
+Cursor supports MCP via the same configuration format:
+
+```json
+{
+  "mcpServers": {
+    "framingui-tokens": {
+      "command": "node",
+      "args": ["./mcp-server/index.js"]
+    }
+  }
+}
+```
+
+### Windsurf
+
+Windsurf requires placing MCP config in `.windsurf/mcp.json`:
+
+```bash
+mkdir -p .windsurf
+cp .claude/mcp.json .windsurf/mcp.json
+```
+
+## Best Practices
+
+1. **Keep tokens in version control** — Ensure `design-tokens.json` is committed
+2. **Document token usage** — Add descriptions to token values
+3. **Test after changes** — Verify AI generates correct code after token updates
+4. **Use semantic names** — Avoid implementation details in token names
+
+## Example Project Structure
+
+```
+my-project/
+├── design-tokens.json
+├── mcp-server/
+│   ├── index.ts
+│   └── index.js (compiled)
+├── .claude/
+│   ├── mcp.json
+│   └── instructions.md
+├── src/
+│   └── styles/
+│       └── tokens.css (generated from design-tokens.json)
+└── package.json
+```
+
+## Next Steps
+
+- Learn about [Design Token Reference](/docs/guides/en/design-token-reference)
+- Explore [Component API Reference](/docs/guides/en/component-api-reference)
+- Read [AI Integration Guide](/docs/guides/en/ai-integration-guide)
+
+## Summary
+
+MCP servers provide persistent design context for AI coding tools. By exposing FramingUI tokens as MCP resources, you ensure every component AI generates matches your design system—without repeating constraints in every prompt.

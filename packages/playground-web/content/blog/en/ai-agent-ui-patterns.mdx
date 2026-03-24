@@ -1,0 +1,282 @@
+---
+title: "AI Agent UI Patterns: Design Tokens for AI-Generated Interfaces"
+description: "Design token patterns specifically for AI agents to generate consistent, accessible UI components without explicit styling instructions."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-agents
+  - design-tokens
+  - ui-patterns
+  - accessibility
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+AI agents can generate entire user interfaces in seconds. But without structured design constraints, they produce inconsistent layouts, inaccessible color contrasts, and unpredictable spacing that breaks across screen sizes.
+
+The solution isn't adding more prompts. It's creating design token patterns that AI agents can interpret as architectural rules, not just values.
+
+## The AI Agent UI Challenge
+
+When you ask an AI agent to "build a user profile card," it makes hundreds of micro-decisions:
+
+- Which shade of gray for secondary text?
+- How much padding around the avatar?
+- What font size for the username vs. the bio?
+- Which shadow depth for elevation?
+
+Without constraints, each decision becomes arbitrary. You get functional UI that lacks visual coherence.
+
+## Token Patterns for Agents
+
+Design tokens for AI agents need semantic layers that encode intent, not just values.
+
+### 1. Semantic Color Tokens
+
+Instead of:
+```json
+{
+  "blue-500": "#3b82f6",
+  "gray-600": "#4b5563"
+}
+```
+
+Provide semantic mappings:
+```json
+{
+  "color-text-primary": "var(--gray-900)",
+  "color-text-secondary": "var(--gray-600)",
+  "color-interactive-primary": "var(--blue-600)",
+  "color-interactive-hover": "var(--blue-700)",
+  "color-surface-elevated": "var(--white)",
+  "color-border-subtle": "var(--gray-200)"
+}
+```
+
+When Claude Code sees `color-text-secondary`, it understands the role. When it sees `blue-500`, it guesses.
+
+### 2. Spacing Scale with Context
+
+AI agents need to understand when to use tight spacing vs. generous whitespace:
+
+```json
+{
+  "spacing-component-xs": "0.5rem",  // Tight: icon + label
+  "spacing-component-sm": "0.75rem", // Compact: form inputs
+  "spacing-component-md": "1rem",    // Default: card padding
+  "spacing-component-lg": "1.5rem",  // Generous: section spacing
+  "spacing-component-xl": "2rem"     // Wide: page margins
+}
+```
+
+The `component` namespace signals that these are for structural spacing, not arbitrary gaps.
+
+### 3. Typography Hierarchy
+
+Instead of font sizes, provide roles:
+
+```json
+{
+  "typography-heading-1": {
+    "fontSize": "2.25rem",
+    "lineHeight": "2.5rem",
+    "fontWeight": "700",
+    "letterSpacing": "-0.02em"
+  },
+  "typography-body-default": {
+    "fontSize": "1rem",
+    "lineHeight": "1.5rem",
+    "fontWeight": "400"
+  },
+  "typography-caption": {
+    "fontSize": "0.875rem",
+    "lineHeight": "1.25rem",
+    "fontWeight": "400",
+    "color": "var(--color-text-secondary)"
+  }
+}
+```
+
+Now when Claude generates a user profile, it uses `typography-heading-1` for the name and `typography-caption` for metadata.
+
+### 4. Component-Specific Tokens
+
+For common patterns AI agents generate repeatedly:
+
+```json
+{
+  "avatar-size-sm": "2rem",
+  "avatar-size-md": "3rem",
+  "avatar-size-lg": "4rem",
+  "button-height-md": "2.5rem",
+  "button-padding-x": "1rem",
+  "card-border-radius": "0.5rem",
+  "card-shadow-default": "0 1px 3px 0 rgb(0 0 0 / 0.1)"
+}
+```
+
+These tokens encode proven design decisions so the agent doesn't reinvent card styles every time.
+
+## Example: Before vs. After
+
+**Before (no tokens):**
+```tsx
+<div className="p-6 bg-white rounded-lg shadow-md">
+  <img src={avatar} className="w-12 h-12 rounded-full" />
+  <h3 className="text-xl font-bold text-gray-900 mt-3">{name}</h3>
+  <p className="text-sm text-gray-600 mt-1">{bio}</p>
+</div>
+```
+
+**After (with agent-friendly tokens):**
+```tsx
+<div className="p-[var(--spacing-component-md)]
+               bg-[var(--color-surface-elevated)]
+               rounded-[var(--card-border-radius)]
+               shadow-[var(--card-shadow-default)]">
+  <img src={avatar}
+       className="w-[var(--avatar-size-md)]
+                  h-[var(--avatar-size-md)]
+                  rounded-full" />
+  <h3 className="text-[var(--typography-heading-2-size)]
+                 font-[var(--typography-heading-2-weight)]
+                 text-[var(--color-text-primary)]
+                 mt-[var(--spacing-component-sm)]">
+    {name}
+  </h3>
+  <p className="text-[var(--typography-caption-size)]
+                text-[var(--color-text-secondary)]
+                mt-[var(--spacing-component-xs)]">
+    {bio}
+  </p>
+</div>
+```
+
+The second version is semantically structured. If you switch to dark mode or rebrand, the tokens update centrally and all AI-generated components adapt.
+
+## Structuring Tokens for AI Consumption
+
+AI agents parse design systems more effectively when tokens follow predictable naming patterns:
+
+### Naming Convention
+
+```
+{category}-{role}-{variant}
+```
+
+Examples:
+- `color-text-primary`
+- `spacing-component-md`
+- `typography-heading-1`
+
+This structure lets AI agents infer relationships:
+- "I need text color → use `color-text-*`"
+- "I need component spacing → use `spacing-component-*`"
+
+### Token Documentation
+
+Include usage hints in token definitions:
+
+```json
+{
+  "spacing-component-md": {
+    "value": "1rem",
+    "type": "spacing",
+    "description": "Default padding for cards, modals, and containers",
+    "usage": "Use for general component internal spacing"
+  }
+}
+```
+
+AI agents like Claude Code can reference this metadata when making layout decisions.
+
+## Implementation Strategy
+
+### 1. Start with Primitives
+Define base scales first:
+- Color palette (primitives)
+- Spacing scale
+- Typography scale
+
+### 2. Create Semantic Aliases
+Map primitives to roles:
+- `color-text-primary` → `gray-900`
+- `spacing-component-md` → `4` (1rem)
+
+### 3. Add Component Tokens
+For patterns you generate frequently:
+- Avatar sizes
+- Button dimensions
+- Card styles
+
+### 4. Provide Context
+Create a `design-tokens.json` file that AI agents can reference:
+
+```json
+{
+  "tokens": {
+    "color": { ... },
+    "spacing": { ... },
+    "typography": { ... }
+  },
+  "patterns": {
+    "card": {
+      "padding": "var(--spacing-component-md)",
+      "borderRadius": "var(--card-border-radius)",
+      "shadow": "var(--card-shadow-default)"
+    }
+  }
+}
+```
+
+## Integration with MCP
+
+If you're using Claude Code with MCP (Model Context Protocol), you can serve design tokens as a context resource:
+
+```typescript
+// mcp-server-design-tokens/index.ts
+server.resource({
+  uri: "design://tokens/semantic",
+  name: "Semantic Design Tokens",
+  mimeType: "application/json",
+  async get() {
+    return JSON.stringify(tokens);
+  }
+});
+```
+
+Now every Claude Code session has instant access to your design system without polluting the prompt.
+
+## Real-World Example: Dashboard Cards
+
+**Prompt:**
+> "Create a stats card showing user count, with an icon, title, and large number"
+
+**Without tokens:**
+Claude generates arbitrary values based on common patterns it's seen.
+
+**With tokens:**
+Claude references:
+- `spacing-component-md` for padding
+- `color-surface-elevated` for background
+- `typography-heading-1` for the number
+- `color-text-secondary` for the label
+
+Result: a card that matches your design system without you specifying a single color or spacing value.
+
+## Key Takeaways
+
+1. **Semantic naming** helps AI agents understand intent, not just values
+2. **Component-specific tokens** encode proven design decisions
+3. **Structured patterns** reduce arbitrary choices
+4. **MCP integration** provides design tokens as persistent context
+
+AI agents are most effective when they have clear constraints. Design tokens aren't just for human designers—they're the architectural rules that let AI generate consistent, accessible UI at scale.
+
+---
+
+**Next Steps:**
+- Explore [MCP Design System Server](/blog/en/mcp-design-system-server) for persistent token access
+- Learn how to [integrate FramingUI with Claude Code](/blog/en/claude-code-framingui-setup-guide)

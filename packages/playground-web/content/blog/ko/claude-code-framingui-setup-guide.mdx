@@ -1,0 +1,443 @@
+---
+title: "Claude Code + FramingUI 설정 가이드: AI 네이티브 디자인 시스템 통합"
+description: "일관된 AI 생성 컴포넌트를 위한 FramingUI 디자인 토큰과 Claude Code 통합 단계별 가이드입니다."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - claude-code
+  - framingui
+  - setup
+  - integration
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Claude Code는 기능을 자율적으로 구축할 수 있지만, 디자인 제약 없이는 일반적인 UI를 생성합니다. FramingUI는 Claude가 코드 생성 중에 참조할 수 있는 의미론적 디자인 토큰을 제공하여 모든 컴포넌트가 디자인 시스템과 일치하도록 보장합니다.
+
+이 가이드는 AI 생성 컴포넌트가 첫 반복부터 프로덕션 준비가 되도록 FramingUI를 Claude Code와 설정하는 과정을 안내합니다.
+
+## 사전 요구사항
+
+- Node.js 18+ 설치
+- Claude Code 확장 설치
+- 디자인 토큰에 대한 기본 이해
+
+## 설치
+
+### 1. FramingUI 설치
+
+```bash
+npm install framingui
+# 또는
+pnpm add framingui
+```
+
+### 2. 디자인 토큰 초기화
+
+프로젝트 루트에 `design-tokens.json` 파일을 생성하세요:
+
+```json
+{
+  "$schema": "https://framingui.com/schema/tokens.json",
+  "tokens": {
+    "color": {
+      "text": {
+        "primary": { "value": "#1a1a1a" },
+        "secondary": { "value": "#6b7280" }
+      },
+      "surface": {
+        "elevated": { "value": "#ffffff" },
+        "base": { "value": "#f9fafb" }
+      },
+      "interactive": {
+        "primary": { "value": "#2563eb" },
+        "hover": { "value": "#1d4ed8" }
+      }
+    },
+    "spacing": {
+      "component": {
+        "xs": { "value": "0.5rem" },
+        "sm": { "value": "0.75rem" },
+        "md": { "value": "1rem" },
+        "lg": { "value": "1.5rem" }
+      }
+    },
+    "typography": {
+      "heading": {
+        "1": {
+          "fontSize": { "value": "2.25rem" },
+          "lineHeight": { "value": "2.5rem" },
+          "fontWeight": { "value": "700" }
+        }
+      },
+      "body": {
+        "default": {
+          "fontSize": { "value": "1rem" },
+          "lineHeight": { "value": "1.5rem" }
+        }
+      }
+    }
+  }
+}
+```
+
+### 3. CSS 변수 생성
+
+토큰을 CSS로 변환하는 빌드 스크립트를 만드세요:
+
+```typescript
+// scripts/build-tokens.ts
+import { buildTokens } from 'framingui/build';
+import tokens from '../design-tokens.json';
+
+buildTokens({
+  tokens,
+  output: './src/styles/tokens.css',
+  format: 'css'
+});
+```
+
+스크립트 실행:
+
+```bash
+npx tsx scripts/build-tokens.ts
+```
+
+이것은 `tokens.css`를 생성합니다:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+  --color-surface-elevated: #ffffff;
+  --color-interactive-primary: #2563eb;
+  --spacing-component-md: 1rem;
+  /* ... 더 많은 토큰 */
+}
+```
+
+### 4. 앱에 토큰 임포트
+
+```tsx
+// src/main.tsx 또는 src/App.tsx
+import './styles/tokens.css';
+```
+
+## Claude Code 구성
+
+### 1. Claude Code 지침 생성
+
+프로젝트 루트에 `.claude/instructions.md`를 생성하세요:
+
+````markdown
+# 디자인 시스템 지침
+
+이 프로젝트는 일관된 스타일링을 위해 FramingUI 디자인 토큰을 사용합니다.
+
+## 디자인 토큰 참조
+
+모든 컴포넌트는 하드코딩된 값 대신 의미론적 디자인 토큰을 사용해야 합니다.
+
+### 색상 토큰
+- 텍스트: `var(--color-text-primary)`, `var(--color-text-secondary)`
+- 표면: `var(--color-surface-elevated)`, `var(--color-surface-base)`
+- 인터랙티브: `var(--color-interactive-primary)`, `var(--color-interactive-hover)`
+
+### 간격 토큰
+- 컴포넌트 간격: `var(--spacing-component-xs)`부터 `var(--spacing-component-lg)`까지
+
+### 타이포그래피 토큰
+- 제목: `var(--typography-heading-1-size)`, `var(--typography-heading-1-weight)`
+- 본문: `var(--typography-body-default-size)`
+
+## 컴포넌트 생성 규칙
+
+컴포넌트 생성 시:
+
+1. **항상 디자인 토큰 사용** (색상, 간격, 타이포그래피)
+2. **절대 하드코딩된 값 사용 금지** (`text-gray-600` 또는 `p-4` 같은)
+3. **CSS 변수를 통한 토큰 참조**: `className="text-[var(--color-text-primary)]"`
+
+### 예시: 올바른 컴포넌트
+
+```tsx
+export function UserCard({ name, bio }: UserCardProps) {
+  return (
+    <div className="p-[var(--spacing-component-md)]
+                   bg-[var(--color-surface-elevated)]
+                   rounded-lg shadow-sm">
+      <h3 className="text-[var(--typography-heading-2-size)]
+                     font-[var(--typography-heading-2-weight)]
+                     text-[var(--color-text-primary)]">
+        {name}
+      </h3>
+      <p className="text-[var(--typography-body-default-size)]
+                    text-[var(--color-text-secondary)]
+                    mt-[var(--spacing-component-sm)]">
+        {bio}
+      </p>
+    </div>
+  );
+}
+```
+
+### 예시: 잘못된 컴포넌트 (생성하지 마세요)
+
+```tsx
+// ❌ 하드코딩된 Tailwind 유틸리티
+<div className="p-4 bg-white rounded-lg">
+  <h3 className="text-xl font-bold text-gray-900">{name}</h3>
+  <p className="text-sm text-gray-600">{bio}</p>
+</div>
+```
+````
+
+### 2. MCP에 토큰 참조 추가 (선택사항)
+
+MCP를 사용하는 경우, 디자인 토큰 서버를 생성하세요:
+
+```typescript
+// mcp-server-framingui/index.ts
+import { McpServer } from '@modelcontextprotocol/server-sdk';
+import tokens from '../design-tokens.json';
+
+const server = new McpServer({
+  name: 'framingui-tokens',
+  version: '1.0.0'
+});
+
+server.resource({
+  uri: 'design://tokens',
+  name: 'FramingUI Design Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+server.start();
+```
+
+`.claude/mcp.json` 업데이트:
+
+```json
+{
+  "mcpServers": {
+    "framingui-tokens": {
+      "command": "node",
+      "args": ["./mcp-server-framingui/index.js"]
+    }
+  }
+}
+```
+
+## 설정 검증
+
+### 1. 토큰 생성 테스트
+
+Claude Code에게 물어보세요:
+
+> "아이콘과 큰 숫자를 보여주는 전체 사용자 수 대시보드 카드를 만들어줘"
+
+Claude가 생성해야 하는 것:
+
+```tsx
+export function StatsCard({ icon: Icon, label, value }: StatsCardProps) {
+  return (
+    <div className="p-[var(--spacing-component-md)]
+                   bg-[var(--color-surface-elevated)]
+                   rounded-lg border border-[var(--color-border-subtle)]">
+      <div className="flex items-center gap-[var(--spacing-component-sm)]">
+        <Icon className="w-5 h-5 text-[var(--color-interactive-primary)]" />
+        <p className="text-[var(--typography-caption-size)]
+                      text-[var(--color-text-secondary)]">
+          {label}
+        </p>
+      </div>
+      <p className="text-[var(--typography-heading-1-size)]
+                    font-[var(--typography-heading-1-weight)]
+                    text-[var(--color-text-primary)]
+                    mt-[var(--spacing-component-sm)]">
+        {value}
+      </p>
+    </div>
+  );
+}
+```
+
+Claude가 토큰 대신 하드코딩된 Tailwind 유틸리티를 생성한다면, `.claude/instructions.md`를 다시 확인하고 토큰 사용에 대해 명확한지 확인하세요.
+
+### 2. 다크 모드 테스트
+
+다크 모드 토큰 추가:
+
+```json
+{
+  "tokens": {
+    "color": {
+      "text": {
+        "primary": {
+          "value": "#1a1a1a",
+          "darkValue": "#f9fafb"
+        },
+        "secondary": {
+          "value": "#6b7280",
+          "darkValue": "#9ca3af"
+        }
+      }
+    }
+  }
+}
+```
+
+토큰 재빌드:
+
+```bash
+npx tsx scripts/build-tokens.ts
+```
+
+생성된 CSS:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f9fafb;
+  }
+}
+```
+
+이제 모든 AI 생성 컴포넌트가 자동으로 다크 모드에 적응합니다.
+
+## 고급 구성
+
+### 커스텀 토큰 카테고리
+
+컴포넌트별 토큰 추가:
+
+```json
+{
+  "tokens": {
+    "component": {
+      "avatar": {
+        "size-sm": { "value": "2rem" },
+        "size-md": { "value": "3rem" }
+      },
+      "button": {
+        "height-md": { "value": "2.5rem" },
+        "padding-x": { "value": "1rem" }
+      }
+    }
+  }
+}
+```
+
+지침 업데이트:
+
+```markdown
+## 아바타 컴포넌트
+- 크기: `var(--component-avatar-size-sm)`, `var(--component-avatar-size-md)`
+
+## 버튼 컴포넌트
+- 높이: `var(--component-button-height-md)`
+- 수평 패딩: `var(--component-button-padding-x)`
+```
+
+### 타입 안전성
+
+토큰에서 TypeScript 타입 생성:
+
+```typescript
+// scripts/build-tokens.ts
+buildTokens({
+  tokens,
+  output: './src/styles/tokens.css',
+  format: 'css',
+  typescript: './src/types/tokens.ts'
+});
+```
+
+생성된 결과:
+
+```typescript
+export type ColorToken =
+  | 'color-text-primary'
+  | 'color-text-secondary'
+  | 'color-surface-elevated';
+
+export type SpacingToken =
+  | 'spacing-component-xs'
+  | 'spacing-component-sm';
+```
+
+컴포넌트에서 사용:
+
+```tsx
+import type { ColorToken, SpacingToken } from '@/types/tokens';
+
+interface CardProps {
+  bgColor?: ColorToken;
+  padding?: SpacingToken;
+}
+```
+
+## 문제 해결
+
+### Claude가 여전히 하드코딩된 값을 생성함
+
+**해결책:** 지침을 더 명시적으로 만드세요:
+
+```markdown
+중요: 절대로 다음과 같은 하드코딩된 Tailwind 유틸리티를 사용하지 마세요:
+- ❌ `text-gray-600`
+- ❌ `p-4`
+- ❌ `bg-white`
+
+항상 디자인 토큰을 사용하세요:
+- ✅ `text-[var(--color-text-secondary)]`
+- ✅ `p-[var(--spacing-component-md)]`
+- ✅ `bg-[var(--color-surface-elevated)]`
+```
+
+### 개발 중 토큰이 적용되지 않음
+
+**해결책:** 진입 파일에 `tokens.css`가 임포트되었는지 확인하세요:
+
+```tsx
+// main.tsx
+import './styles/tokens.css';
+```
+
+DevTools에서 CSS 변수가 `:root`에 정의되어 있는지 확인하세요.
+
+### MCP 서버가 로드되지 않음
+
+**해결책:** MCP 서버 로그 확인:
+
+```bash
+claude-code mcp logs framingui-tokens
+```
+
+`mcp-server-framingui/index.js`가 실행 가능한지, `.claude/mcp.json`의 경로가 올바른지 확인하세요.
+
+## 다음 단계
+
+- 고급 토큰 구조를 위한 [AI 에이전트 UI 패턴](/blog/ko/ai-agent-ui-patterns) 탐색
+- 지속적인 컨텍스트를 위한 [MCP 디자인 시스템 서버](/blog/ko/mcp-design-system-server)에 대해 알아보기
+- [바이브 코딩에 디자인 시스템이 필요한 이유](/blog/ko/why-vibe-coding-needs-design-systems) 읽기
+
+## 요약
+
+FramingUI를 Claude Code와 통합하면:
+
+1. **일관된 AI 출력** — 모든 컴포넌트가 디자인 시스템을 사용합니다
+2. **더 빠른 반복** — 수동 스타일링 정리가 필요 없습니다
+3. **다크 모드 지원** — 코드 변경 없이 자동 적응
+4. **타입 안전성** — 컴파일 타임에 토큰 오류를 포착합니다
+
+FramingUI는 AI 코드 생성과 프로덕션 디자인 시스템 사이의 격차를 메워, Claude Code가 수정 없이 배포 가능한 컴포넌트를 생성하도록 보장합니다.

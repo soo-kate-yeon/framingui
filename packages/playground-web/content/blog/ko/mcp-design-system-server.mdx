@@ -1,0 +1,410 @@
+---
+title: "MCP 디자인 시스템 서버: AI 코딩을 위한 지속적인 디자인 컨텍스트"
+description: "Model Context Protocol(MCP)이 무엇인지, 그리고 Claude Code에 디자인 시스템에 대한 지속적인 액세스를 제공하는 MCP 서버를 구축하는 방법을 배웁니다."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - mcp
+  - design-system
+  - claude-code
+  - ai-coding
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+새로운 Claude Code 세션을 시작할 때마다 AI는 디자인 시스템을 잊어버립니다. 토큰 네이밍 컨벤션, 간격 스케일, 컴포넌트 패턴을 다시 설명해야 합니다. 이러한 반복은 시간을 낭비하고 일관성을 떨어뜨립니다.
+
+**Model Context Protocol (MCP)**은 AI에게 프롬프트를 오염시키지 않고 디자인 토큰과 같은 외부 리소스에 대한 지속적인 액세스를 제공하여 이 문제를 해결합니다.
+
+이 가이드는 MCP가 무엇인지, UI 개발에 왜 중요한지, 그리고 Claude Code에 디자인 시스템을 제공하는 MCP 서버를 구축하는 방법을 설명합니다.
+
+## MCP란?
+
+**Model Context Protocol (MCP)**은 AI 에이전트를 외부 데이터 소스에 연결하기 위한 개방형 표준입니다. Claude Code를 위한 플러그인 시스템이라고 생각하면 됩니다.
+
+### 전통적인 접근 방식 (MCP 없이)
+
+Claude에게 컴포넌트를 생성하도록 요청할 때마다 프롬프트에 디자인 토큰을 포함합니다:
+
+> "배경에 `var(--color-interactive-primary)`, 패딩에 `var(--spacing-component-sm)`를 사용하는 버튼을 만들어줘..."
+
+이것은 프롬프트를 팽창시키고 수동 반복을 요구합니다.
+
+### MCP 접근 방식
+
+디자인 토큰을 **리소스**로 노출하는 MCP 서버를 만듭니다. Claude Code는 필요할 때 자동으로 이 리소스를 가져오며, 모든 프롬프트에 지정할 필요가 없습니다.
+
+**프롬프트 (MCP 사용):**
+> "버튼 만들어줘"
+
+Claude Code:
+1. MCP 서버에서 `design://tokens`를 가져옵니다
+2. 토큰 제약을 자동으로 적용합니다
+3. 디자인 시스템을 사용하여 버튼을 생성합니다
+
+## 디자인 시스템에 MCP가 필요한 이유
+
+### 1. 지속적인 컨텍스트
+
+디자인 토큰은 다시 프롬프트하지 않고 모든 세션에서 사용할 수 있습니다.
+
+### 2. 단일 진실의 원천
+
+`design-tokens.json`을 업데이트하면, 향후 모든 AI 생성 컴포넌트가 변경 사항을 반영합니다.
+
+### 3. 프롬프트 크기 감소
+
+모든 프롬프트에 200줄의 토큰 정의를 임베드하는 대신, Claude가 필요에 따라 가져옵니다.
+
+### 4. 관심사의 분리
+
+디자인 시스템은 `.claude/instructions.md`에 흩어져 있지 않고 코드베이스에 유지됩니다.
+
+## 아키텍처 개요
+
+```
+┌──────────────────────────────────────────────┐
+│ Claude Code                                  │
+│ ┌────────────────────────────────────────┐   │
+│ │ "대시보드 카드 만들어줘"               │   │
+│ └────────────────────────────────────────┘   │
+│                   │                          │
+│                   ▼                          │
+│ ┌────────────────────────────────────────┐   │
+│ │ MCP 클라이언트                         │   │
+│ │ GET design://tokens                    │   │
+│ └────────────────────────────────────────┘   │
+└──────────────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────────────┐
+│ MCP 서버 (Node.js)                           │
+│ ┌────────────────────────────────────────┐   │
+│ │ 리소스: design://tokens                │   │
+│ │ 반환: design-tokens.json               │   │
+│ └────────────────────────────────────────┘   │
+└──────────────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────────────┐
+│ design-tokens.json                           │
+│ { "color": { "text": { ... } } }             │
+└──────────────────────────────────────────────┘
+```
+
+## MCP 디자인 시스템 서버 구축
+
+### 사전 요구사항
+
+- Node.js 18+
+- 디자인 토큰 파일 (`design-tokens.json`)
+- Claude Code 설치
+
+### 1단계: MCP SDK 설치
+
+```bash
+npm install @modelcontextprotocol/server-sdk
+```
+
+### 2단계: MCP 서버 생성
+
+`mcp-server-design-tokens/index.ts` 생성:
+
+```typescript
+import { McpServer } from '@modelcontextprotocol/server-sdk';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+// 파일에서 디자인 토큰 로드
+const tokensPath = resolve(__dirname, '../design-tokens.json');
+const tokens = JSON.parse(readFileSync(tokensPath, 'utf-8'));
+
+// MCP 서버 초기화
+const server = new McpServer({
+  name: 'design-tokens',
+  version: '1.0.0',
+  description: 'Provides access to design system tokens'
+});
+
+// 디자인 토큰을 리소스로 등록
+server.resource({
+  uri: 'design://tokens',
+  name: 'Design System Tokens',
+  description: 'Semantic design tokens for colors, spacing, typography',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+// 선택사항: 컴포넌트 패턴 등록
+server.resource({
+  uri: 'design://patterns/button',
+  name: 'Button Component Pattern',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify({
+      baseClasses: 'inline-flex items-center justify-center',
+      padding: 'var(--spacing-component-sm) var(--spacing-component-md)',
+      background: 'var(--color-interactive-primary)',
+      hoverBackground: 'var(--color-interactive-hover)',
+      borderRadius: 'var(--border-radius-md)',
+      typography: 'var(--typography-button-size) var(--typography-button-weight)'
+    }, null, 2);
+  }
+});
+
+// 서버 시작
+server.start();
+```
+
+### 3단계: 빌드 및 실행
+
+TypeScript 컴파일:
+
+```bash
+npx tsc mcp-server-design-tokens/index.ts --outDir mcp-server-design-tokens
+```
+
+서버 테스트:
+
+```bash
+node mcp-server-design-tokens/index.js
+```
+
+다음을 확인해야 합니다:
+```
+MCP server 'design-tokens' started
+```
+
+### 4단계: Claude Code 구성
+
+`.claude/mcp.json` 생성 또는 업데이트:
+
+```json
+{
+  "mcpServers": {
+    "design-tokens": {
+      "command": "node",
+      "args": [
+        "./mcp-server-design-tokens/index.js"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+### 5단계: 지침 업데이트
+
+`.claude/instructions.md`에서 MCP 리소스를 참조하세요:
+
+```markdown
+# 디자인 시스템 지침
+
+이 프로젝트는 MCP를 통해 제공되는 디자인 토큰을 사용합니다.
+
+컴포넌트 생성 시:
+1. `design://tokens`에서 디자인 토큰을 가져옵니다
+2. 모든 스타일링에 의미론적 토큰을 사용합니다
+3. CSS 변수를 통해 토큰을 참조합니다: `var(--token-name)`
+
+## 사용 가능한 MCP 리소스
+- `design://tokens` — 전체 디자인 토큰 카탈로그
+- `design://patterns/button` — 버튼 컴포넌트 패턴
+```
+
+### 6단계: 검증
+
+Claude Code를 재시작하고 물어보세요:
+
+> "주요 버튼 컴포넌트 만들어줘"
+
+Claude가 해야 할 일:
+1. `design://tokens` 가져오기
+2. 토큰 카탈로그의 제약 적용
+3. 디자인 시스템을 사용하여 버튼 생성
+
+예시 출력:
+
+```tsx
+export function Button({ children, onClick }: ButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="inline-flex items-center justify-center
+                 px-[var(--spacing-component-md)]
+                 py-[var(--spacing-component-sm)]
+                 bg-[var(--color-interactive-primary)]
+                 hover:bg-[var(--color-interactive-hover)]
+                 text-white
+                 rounded-[var(--border-radius-md)]
+                 text-[var(--typography-button-size)]
+                 font-[var(--typography-button-weight)]">
+      {children}
+    </button>
+  );
+}
+```
+
+## 고급: 동적 토큰 업데이트
+
+MCP 서버는 실시간 데이터를 제공할 수 있습니다. `design-tokens.json`을 업데이트하면, 다음 MCP 요청이 새 값을 가져옵니다.
+
+### 감시 모드
+
+자동 토큰 재로드를 위한 파일 감시 추가:
+
+```typescript
+import { watch } from 'fs';
+
+let tokens = loadTokens();
+
+watch(tokensPath, (event) => {
+  if (event === 'change') {
+    tokens = loadTokens();
+    console.log('Tokens reloaded');
+  }
+});
+
+server.resource({
+  uri: 'design://tokens',
+  name: 'Design Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+function loadTokens() {
+  return JSON.parse(readFileSync(tokensPath, 'utf-8'));
+}
+```
+
+이제 `design-tokens.json`을 편집하면, MCP 서버가 재시작 없이 업데이트된 토큰을 제공합니다.
+
+## 고급: 리소스로서의 컴포넌트 패턴
+
+토큰 외에도 컴포넌트 구성 패턴을 노출하세요:
+
+```typescript
+server.resource({
+  uri: 'design://patterns/card',
+  name: 'Card Component Pattern',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify({
+      structure: {
+        container: {
+          padding: 'var(--spacing-component-md)',
+          background: 'var(--color-surface-elevated)',
+          borderRadius: 'var(--border-radius-md)',
+          border: '1px solid var(--color-border-subtle)'
+        },
+        header: {
+          marginBottom: 'var(--spacing-component-sm)',
+          fontSize: 'var(--typography-heading-3-size)',
+          fontWeight: 'var(--typography-heading-3-weight)'
+        },
+        body: {
+          fontSize: 'var(--typography-body-default-size)',
+          lineHeight: 'var(--typography-body-default-line-height)',
+          color: 'var(--color-text-secondary)'
+        }
+      }
+    }, null, 2);
+  }
+});
+```
+
+Claude가 카드를 생성할 때, `design://patterns/card`를 참조하고 패턴을 일관되게 적용합니다.
+
+## MCP vs. 지침 파일
+
+| 접근 방식 | 장점 | 단점 |
+|----------|------|------|
+| **지침 파일** (`.claude/instructions.md`) | 간단한 설정, 서버 불필요 | 정적, 파일 팽창, 동적 업데이트 없음 |
+| **MCP 서버** | 동적, 지속적, 단일 진실의 원천 | 서버 설정 필요 |
+
+**권장사항:**
+- 경량 프로젝트나 프로토타입에는 **지침** 사용
+- 진화하는 디자인 시스템을 가진 프로덕션 앱에는 **MCP** 사용
+
+## 실제 예시: 멀티 브랜드 지원
+
+앱이 여러 브랜드를 지원하는 경우(예: 화이트라벨 SaaS), MCP는 브랜드별 토큰을 동적으로 제공할 수 있습니다.
+
+```typescript
+server.resource({
+  uri: 'design://tokens/brand-a',
+  name: 'Brand A Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(loadBrandTokens('brand-a'));
+  }
+});
+
+server.resource({
+  uri: 'design://tokens/brand-b',
+  name: 'Brand B Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(loadBrandTokens('brand-b'));
+  }
+});
+```
+
+`.claude/instructions.md`에:
+
+```markdown
+Brand A용 컴포넌트를 생성할 때는 `design://tokens/brand-a`를 사용합니다.
+Brand B용 컴포넌트를 생성할 때는 `design://tokens/brand-b`를 사용합니다.
+```
+
+## 문제 해결
+
+### MCP 서버가 시작되지 않음
+
+**오류:**
+```
+MCP server failed to start
+```
+
+**해결책:**
+1. `mcp-server-design-tokens/index.js`가 컴파일되었는지 확인
+2. `.claude/mcp.json`의 경로가 올바른지 확인
+3. 수동으로 실행하여 오류 확인: `node mcp-server-design-tokens/index.js`
+
+### Claude가 토큰을 사용하지 않음
+
+**해결책:**
+1. 리소스 URI가 일치하는지 확인: `design://tokens`
+2. `.claude/instructions.md`가 MCP 리소스를 참조하는지 확인
+3. Claude Code를 재시작하여 MCP 구성 재로드
+
+### 토큰이 업데이트되지 않음
+
+**해결책:**
+- 파일 감시를 사용하는 경우, `fs.watch`가 활성화되어 있는지 확인
+- 그렇지 않으면, `design-tokens.json` 변경 후 MCP 서버 재시작
+
+## 핵심 요점
+
+1. **MCP는 AI에게 지속적인 액세스를 제공**합니다 (수동 반복 없이 디자인 토큰에)
+2. **단일 진실의 원천** — 토큰을 한 번 업데이트하면 모든 세션이 변경 사항을 반영합니다
+3. **프롬프트 크기 감소** — 모든 요청에 토큰을 임베드할 필요가 없습니다
+4. **동적 리소스** — 실시간 데이터, 패턴, 브랜드별 토큰 제공
+
+## 다음 단계
+
+- [Claude Code와 FramingUI](/blog/ko/claude-code-framingui-setup-guide) 통합
+- [AI 에이전트 UI 패턴](/blog/ko/ai-agent-ui-patterns)에 대해 배우기
+- [바이브 코딩에 디자인 시스템이 필요한 이유](/blog/ko/why-vibe-coding-needs-design-systems) 탐색
+
+## 요약
+
+MCP는 디자인 시스템을 정적 문서에서 AI 에이전트가 코드 생성 중에 참조하는 실시간 쿼리 가능한 리소스로 변환합니다. 이것은 Claude Code가 생성하는 모든 컴포넌트가 모든 프롬프트에 제약을 지정하지 않고도 디자인 언어와 일치하도록 보장합니다.
+
+AI로 프로덕션 앱을 구축하는 경우, MCP는 일관되고 확장 가능한 UI 개발을 위한 필수 인프라입니다.

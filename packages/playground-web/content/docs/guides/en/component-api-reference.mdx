@@ -1,0 +1,489 @@
+---
+title: "Component API Reference"
+description: "Complete API reference for FramingUI components including props, variants, and usage examples optimized for AI code generation"
+order: 11
+---
+
+# Component API Reference
+
+This reference documents all FramingUI components with their props, variants, and usage patterns. Designed for both human developers and AI coding tools.
+
+## Button Component
+
+Primary interactive element for user actions.
+
+### Import
+
+```tsx
+import { Button } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | Visual style variant |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size |
+| `disabled` | `boolean` | `false` | Disables button interaction |
+| `loading` | `boolean` | `false` | Shows loading spinner |
+| `fullWidth` | `boolean` | `false` | Expands button to full width |
+| `onClick` | `() => void` | - | Click handler |
+| `children` | `ReactNode` | - | Button content |
+
+### Variants
+
+**Primary** (default):
+```tsx
+<Button variant="primary">Submit</Button>
+```
+
+**Secondary**:
+```tsx
+<Button variant="secondary">Cancel</Button>
+```
+
+**Ghost** (minimal styling):
+```tsx
+<Button variant="ghost">Learn More</Button>
+```
+
+**Danger** (destructive actions):
+```tsx
+<Button variant="danger">Delete</Button>
+```
+
+### Sizes
+
+```tsx
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+```
+
+### States
+
+**Loading**:
+```tsx
+<Button loading>Submitting...</Button>
+```
+
+**Disabled**:
+```tsx
+<Button disabled>Submit</Button>
+```
+
+**Full Width**:
+```tsx
+<Button fullWidth>Continue</Button>
+```
+
+### Design Tokens Used
+
+- Background: `--color-interactive-primary`
+- Hover: `--color-interactive-hover`
+- Padding: `--spacing-component-sm`, `--spacing-component-md`
+- Border Radius: `--border-radius-md`
+
+---
+
+## Card Component
+
+Container for grouping related content.
+
+### Import
+
+```tsx
+import { Card } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'outlined' \| 'elevated'` | `'default'` | Card style variant |
+| `padding` | `'sm' \| 'md' \| 'lg'` | `'md'` | Internal padding |
+| `hoverable` | `boolean` | `false` | Adds hover effect |
+| `children` | `ReactNode` | - | Card content |
+
+### Variants
+
+**Default** (filled background):
+```tsx
+<Card>
+  <h3>Card Title</h3>
+  <p>Card content goes here</p>
+</Card>
+```
+
+**Outlined** (border only):
+```tsx
+<Card variant="outlined">
+  <h3>Outlined Card</h3>
+</Card>
+```
+
+**Elevated** (with shadow):
+```tsx
+<Card variant="elevated">
+  <h3>Elevated Card</h3>
+</Card>
+```
+
+### Interactive Cards
+
+```tsx
+<Card hoverable onClick={() => navigate('/details')}>
+  <h3>Clickable Card</h3>
+  <p>Click to view details</p>
+</Card>
+```
+
+### Design Tokens Used
+
+- Background: `--color-surface-elevated`
+- Border: `--color-border-subtle`
+- Shadow: `--shadow-card-default`, `--shadow-card-hover`
+- Padding: `--spacing-component-md`
+- Border Radius: `--border-radius-md`
+
+---
+
+## Input Component
+
+Text input field for form data collection.
+
+### Import
+
+```tsx
+import { Input } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'text' \| 'email' \| 'password' \| 'number'` | `'text'` | Input type |
+| `label` | `string` | - | Input label |
+| `placeholder` | `string` | - | Placeholder text |
+| `error` | `string` | - | Error message |
+| `disabled` | `boolean` | `false` | Disables input |
+| `required` | `boolean` | `false` | Marks as required |
+| `value` | `string` | - | Controlled value |
+| `onChange` | `(value: string) => void` | - | Change handler |
+
+### Basic Usage
+
+```tsx
+<Input
+  label="Email"
+  type="email"
+  placeholder="you@example.com"
+  required
+/>
+```
+
+### Error State
+
+```tsx
+<Input
+  label="Password"
+  type="password"
+  error="Password must be at least 8 characters"
+/>
+```
+
+### Controlled Input
+
+```tsx
+const [email, setEmail] = useState('');
+
+<Input
+  label="Email"
+  value={email}
+  onChange={setEmail}
+/>
+```
+
+### Design Tokens Used
+
+- Border: `--color-border-default`
+- Focus Border: `--color-border-focus`
+- Text: `--color-text-primary`
+- Placeholder: `--color-text-tertiary`
+- Error: `--color-status-error`
+- Padding: `--spacing-component-sm`
+- Border Radius: `--border-radius-md`
+
+---
+
+## Badge Component
+
+Small label for status, count, or category indication.
+
+### Import
+
+```tsx
+import { Badge } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `'default' \| 'success' \| 'warning' \| 'error' \| 'info'` | `'default'` | Status variant |
+| `size` | `'sm' \| 'md'` | `'md'` | Badge size |
+| `children` | `ReactNode` | - | Badge content |
+
+### Variants
+
+```tsx
+<Badge variant="default">Draft</Badge>
+<Badge variant="success">Published</Badge>
+<Badge variant="warning">Pending</Badge>
+<Badge variant="error">Failed</Badge>
+<Badge variant="info">New</Badge>
+```
+
+### With Count
+
+```tsx
+<Badge variant="info">3 new messages</Badge>
+```
+
+### Design Tokens Used
+
+- Background: `--color-status-*` (varies by variant)
+- Text: `--color-text-inverse`
+- Padding: `--spacing-component-xs`
+- Border Radius: `--border-radius-sm`
+
+---
+
+## Avatar Component
+
+User profile image or initials display.
+
+### Import
+
+```tsx
+import { Avatar } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | - | Image URL |
+| `alt` | `string` | - | Alt text |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Avatar size |
+| `initials` | `string` | - | Fallback initials |
+
+### With Image
+
+```tsx
+<Avatar src="/user.jpg" alt="John Doe" size="md" />
+```
+
+### With Initials
+
+```tsx
+<Avatar initials="JD" size="md" />
+```
+
+### Sizes
+
+```tsx
+<Avatar src="/user.jpg" size="sm" />
+<Avatar src="/user.jpg" size="md" />
+<Avatar src="/user.jpg" size="lg" />
+```
+
+### Design Tokens Used
+
+- Size: `--component-avatar-size-sm/md/lg`
+- Border Radius: `--border-radius-full`
+- Background: `--color-interactive-primary`
+- Text: `--color-text-inverse`
+
+---
+
+## Modal Component
+
+Overlay dialog for focused interactions.
+
+### Import
+
+```tsx
+import { Modal } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | `false` | Controls visibility |
+| `onClose` | `() => void` | - | Close handler |
+| `title` | `string` | - | Modal title |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Modal size |
+| `children` | `ReactNode` | - | Modal content |
+
+### Basic Usage
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Modal
+  open={open}
+  onClose={() => setOpen(false)}
+  title="Confirm Action"
+>
+  <p>Are you sure you want to continue?</p>
+  <div className="flex gap-2 mt-4">
+    <Button onClick={() => setOpen(false)} variant="secondary">
+      Cancel
+    </Button>
+    <Button onClick={handleConfirm}>
+      Confirm
+    </Button>
+  </div>
+</Modal>
+```
+
+### Design Tokens Used
+
+- Overlay: `--color-surface-overlay`
+- Background: `--color-surface-elevated`
+- Shadow: `--shadow-modal`
+- Padding: `--spacing-component-lg`
+- Border Radius: `--border-radius-lg`
+
+---
+
+## Select Component
+
+Dropdown menu for selecting options.
+
+### Import
+
+```tsx
+import { Select } from 'framingui';
+```
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `{ value: string; label: string }[]` | - | Available options |
+| `value` | `string` | - | Selected value |
+| `onChange` | `(value: string) => void` | - | Change handler |
+| `placeholder` | `string` | - | Placeholder text |
+| `label` | `string` | - | Select label |
+| `error` | `string` | - | Error message |
+
+### Basic Usage
+
+```tsx
+const [country, setCountry] = useState('');
+
+<Select
+  label="Country"
+  placeholder="Select a country"
+  options={[
+    { value: 'us', label: 'United States' },
+    { value: 'uk', label: 'United Kingdom' },
+    { value: 'ca', label: 'Canada' }
+  ]}
+  value={country}
+  onChange={setCountry}
+/>
+```
+
+### Design Tokens Used
+
+- Border: `--color-border-default`
+- Focus Border: `--color-border-focus`
+- Background: `--color-surface-elevated`
+- Text: `--color-text-primary`
+- Padding: `--spacing-component-sm`
+- Border Radius: `--border-radius-md`
+
+---
+
+## AI Code Generation Patterns
+
+### Creating Forms
+
+**Prompt:**
+> "Create a login form with email and password inputs, and a submit button"
+
+**Expected Output:**
+```tsx
+export function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  return (
+    <form className="space-y-[var(--spacing-layout-sm)]">
+      <Input
+        type="email"
+        label="Email"
+        placeholder="you@example.com"
+        value={email}
+        onChange={setEmail}
+        required
+      />
+      <Input
+        type="password"
+        label="Password"
+        value={password}
+        onChange={setPassword}
+        required
+      />
+      <Button type="submit" fullWidth>
+        Sign In
+      </Button>
+    </form>
+  );
+}
+```
+
+### Creating Dashboard Cards
+
+**Prompt:**
+> "Create a stats card showing user count with an icon and large number"
+
+**Expected Output:**
+```tsx
+export function StatsCard({ icon: Icon, label, value }: StatsCardProps) {
+  return (
+    <Card variant="elevated">
+      <div className="flex items-center gap-[var(--spacing-component-sm)]">
+        <Icon className="w-5 h-5 text-[var(--color-interactive-primary)]" />
+        <p className="text-[var(--typography-caption-fontSize)]
+                      text-[var(--color-text-secondary)]">
+          {label}
+        </p>
+      </div>
+      <p className="text-[var(--typography-heading-1-fontSize)]
+                    font-[var(--typography-heading-1-fontWeight)]
+                    text-[var(--color-text-primary)]
+                    mt-[var(--spacing-component-sm)]">
+        {value}
+      </p>
+    </Card>
+  );
+}
+```
+
+## Best Practices for AI Generation
+
+1. **Always use components over raw HTML** — Prefer `<Button>` over `<button>`
+2. **Reference design tokens** — Use `var(--token-name)` for all styling
+3. **Follow accessibility patterns** — Include labels, ARIA attributes
+4. **Use semantic variants** — Choose appropriate `variant` props
+
+## Next Steps
+
+- Configure [MCP Server](/docs/guides/en/mcp-server-configuration) for persistent token access
+- Review [Design Token Reference](/docs/guides/en/design-token-reference)
+- Read [AI Integration Guide](/docs/guides/en/ai-integration-guide)

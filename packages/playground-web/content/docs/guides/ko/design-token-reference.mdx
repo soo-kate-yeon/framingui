@@ -1,0 +1,312 @@
+---
+title: "디자인 토큰 참조"
+description: "색상, 간격, 타이포그래피 및 컴포넌트별 토큰을 포함한 FramingUI 디자인 토큰에 대한 완전한 참조"
+order: 10
+---
+
+# 디자인 토큰 참조
+
+FramingUI 디자인 토큰은 원시 디자인 값과 구현 사이에 의미론적 레이어를 제공합니다. 이 참조는 모든 토큰 카테고리, 네이밍 컨벤션 및 사용 패턴을 다룹니다.
+
+## 토큰 구조
+
+모든 FramingUI 토큰은 다음 구조를 따릅니다:
+
+```json
+{
+  "tokenName": {
+    "value": "<실제 값>",
+    "type": "<토큰 유형>",
+    "description": "<사용 설명>"
+  }
+}
+```
+
+## 색상 토큰
+
+### 텍스트 색상
+
+모든 텍스트 콘텐츠에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `color.text.primary` | `--color-text-primary` | `#1a1a1a` | 주요 텍스트, 제목 |
+| `color.text.secondary` | `--color-text-secondary` | `#6b7280` | 보조 텍스트, 캡션 |
+| `color.text.tertiary` | `--color-text-tertiary` | `#9ca3af` | 비활성화된 텍스트, 플레이스홀더 |
+| `color.text.inverse` | `--color-text-inverse` | `#ffffff` | 어두운 배경의 텍스트 |
+
+**예시:**
+```tsx
+<p className="text-[var(--color-text-primary)]">주요 텍스트</p>
+<span className="text-[var(--color-text-secondary)]">보조</span>
+```
+
+### 표면 색상
+
+배경 및 컨테이너에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `color.surface.base` | `--color-surface-base` | `#f9fafb` | 페이지 배경 |
+| `color.surface.elevated` | `--color-surface-elevated` | `#ffffff` | 카드, 모달, 입체 콘텐츠 |
+| `color.surface.overlay` | `--color-surface-overlay` | `rgba(0,0,0,0.5)` | 모달 오버레이, 백드롭 |
+
+**예시:**
+```tsx
+<div className="bg-[var(--color-surface-base)]">
+  <div className="bg-[var(--color-surface-elevated)] p-4">
+    카드 콘텐츠
+  </div>
+</div>
+```
+
+### 인터랙티브 색상
+
+버튼, 링크 및 인터랙티브 요소에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `color.interactive.primary` | `--color-interactive-primary` | `#2563eb` | 주요 버튼, 링크 |
+| `color.interactive.hover` | `--color-interactive-hover` | `#1d4ed8` | 호버 상태 |
+| `color.interactive.active` | `--color-interactive-active` | `#1e40af` | 활성/눌림 상태 |
+| `color.interactive.disabled` | `--color-interactive-disabled` | `#d1d5db` | 비활성화 상태 |
+
+**예시:**
+```tsx
+<button className="bg-[var(--color-interactive-primary)]
+                   hover:bg-[var(--color-interactive-hover)]
+                   active:bg-[var(--color-interactive-active)]
+                   disabled:bg-[var(--color-interactive-disabled)]">
+  제출
+</button>
+```
+
+### 테두리 색상
+
+테두리, 구분선 및 아웃라인에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `color.border.default` | `--color-border-default` | `#e5e7eb` | 기본 테두리 |
+| `color.border.subtle` | `--color-border-subtle` | `#f3f4f6` | 미묘한 구분선 |
+| `color.border.strong` | `--color-border-strong` | `#9ca3af` | 강조된 테두리 |
+| `color.border.focus` | `--color-border-focus` | `#2563eb` | 포커스 링 |
+
+**예시:**
+```tsx
+<input className="border border-[var(--color-border-default)]
+                  focus:border-[var(--color-border-focus)]" />
+```
+
+### 의미론적 색상
+
+상태, 피드백 및 알림에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `color.status.success` | `--color-status-success` | `#10b981` | 성공 메시지 |
+| `color.status.warning` | `--color-status-warning` | `#f59e0b` | 경고 |
+| `color.status.error` | `--color-status-error` | `#ef4444` | 오류 |
+| `color.status.info` | `--color-status-info` | `#3b82f6` | 정보 메시지 |
+
+**예시:**
+```tsx
+<div className="bg-[var(--color-status-success)] text-white p-4">
+  성공: 변경사항이 저장되었습니다
+</div>
+```
+
+## 간격 토큰
+
+### 컴포넌트 간격
+
+내부 컴포넌트 간격(패딩)에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `spacing.component.xs` | `--spacing-component-xs` | `0.5rem` (8px) | 타이트 패딩 |
+| `spacing.component.sm` | `--spacing-component-sm` | `0.75rem` (12px) | 작은 패딩 |
+| `spacing.component.md` | `--spacing-component-md` | `1rem` (16px) | 기본 패딩 |
+| `spacing.component.lg` | `--spacing-component-lg` | `1.5rem` (24px) | 큰 패딩 |
+| `spacing.component.xl` | `--spacing-component-xl` | `2rem` (32px) | 매우 큰 패딩 |
+
+**예시:**
+```tsx
+<div className="p-[var(--spacing-component-md)]">
+  기본 카드 패딩
+</div>
+```
+
+### 레이아웃 간격
+
+컴포넌트 간 간격(마진, 간격)에 사용됩니다.
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `spacing.layout.xs` | `--spacing-layout-xs` | `0.5rem` (8px) | 타이트 간격 |
+| `spacing.layout.sm` | `--spacing-layout-sm` | `1rem` (16px) | 작은 간격 |
+| `spacing.layout.md` | `--spacing-layout-md` | `1.5rem` (24px) | 기본 간격 |
+| `spacing.layout.lg` | `--spacing-layout-lg` | `2rem` (32px) | 큰 간격 |
+| `spacing.layout.xl` | `--spacing-layout-xl` | `3rem` (48px) | 섹션 간격 |
+
+**예시:**
+```tsx
+<div className="space-y-[var(--spacing-layout-md)]">
+  <div>섹션 1</div>
+  <div>섹션 2</div>
+</div>
+```
+
+## 타이포그래피 토큰
+
+### 제목
+
+| 토큰 | CSS 변수 | 글꼴 크기 | 줄 높이 | 굵기 | 사용 |
+|------|----------|-----------|---------|------|------|
+| `typography.heading.1` | `--typography-heading-1-*` | 2.25rem (36px) | 2.5rem | 700 | 페이지 제목 |
+| `typography.heading.2` | `--typography-heading-2-*` | 1.875rem (30px) | 2.25rem | 700 | 섹션 제목 |
+| `typography.heading.3` | `--typography-heading-3-*` | 1.5rem (24px) | 2rem | 600 | 하위 섹션 제목 |
+| `typography.heading.4` | `--typography-heading-4-*` | 1.25rem (20px) | 1.75rem | 600 | 카드 제목 |
+
+**예시:**
+```tsx
+<h1 className="text-[var(--typography-heading-1-fontSize)]
+               font-[var(--typography-heading-1-fontWeight)]
+               leading-[var(--typography-heading-1-lineHeight)]">
+  페이지 제목
+</h1>
+```
+
+### 본문 텍스트
+
+| 토큰 | CSS 변수 | 글꼴 크기 | 줄 높이 | 사용 |
+|------|----------|-----------|---------|------|
+| `typography.body.default` | `--typography-body-default-*` | 1rem (16px) | 1.5rem | 기본 텍스트 |
+| `typography.body.small` | `--typography-body-small-*` | 0.875rem (14px) | 1.25rem | 작은 텍스트 |
+| `typography.caption` | `--typography-caption-*` | 0.75rem (12px) | 1rem | 캡션, 메타데이터 |
+
+**예시:**
+```tsx
+<p className="text-[var(--typography-body-default-fontSize)]
+              leading-[var(--typography-body-default-lineHeight)]">
+  기본 본문 텍스트
+</p>
+```
+
+## 모서리 반경 토큰
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `borderRadius.sm` | `--border-radius-sm` | `0.25rem` (4px) | 작은 요소 |
+| `borderRadius.md` | `--border-radius-md` | `0.5rem` (8px) | 기본 |
+| `borderRadius.lg` | `--border-radius-lg` | `0.75rem` (12px) | 큰 카드 |
+| `borderRadius.full` | `--border-radius-full` | `9999px` | 알약, 아바타 |
+
+**예시:**
+```tsx
+<button className="rounded-[var(--border-radius-md)]">제출</button>
+<img className="rounded-[var(--border-radius-full)]" src={avatar} />
+```
+
+## 그림자 토큰
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `shadow.card.default` | `--shadow-card-default` | `0 1px 3px rgba(0,0,0,0.1)` | 기본 입체감 |
+| `shadow.card.hover` | `--shadow-card-hover` | `0 4px 6px rgba(0,0,0,0.1)` | 호버 상태 |
+| `shadow.modal` | `--shadow-modal` | `0 10px 25px rgba(0,0,0,0.15)` | 모달, 팝오버 |
+
+**예시:**
+```tsx
+<div className="shadow-[var(--shadow-card-default)]
+               hover:shadow-[var(--shadow-card-hover)]">
+  입체감이 있는 카드
+</div>
+```
+
+## 컴포넌트별 토큰
+
+### 버튼 토큰
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `component.button.height.sm` | `--component-button-height-sm` | `2rem` | 작은 버튼 |
+| `component.button.height.md` | `--component-button-height-md` | `2.5rem` | 기본 버튼 |
+| `component.button.height.lg` | `--component-button-height-lg` | `3rem` | 큰 버튼 |
+| `component.button.padding-x` | `--component-button-padding-x` | `1rem` | 수평 패딩 |
+
+### 아바타 토큰
+
+| 토큰 | CSS 변수 | 값 | 사용 |
+|------|----------|-----|------|
+| `component.avatar.size.sm` | `--component-avatar-size-sm` | `2rem` | 작은 아바타 |
+| `component.avatar.size.md` | `--component-avatar-size-md` | `3rem` | 기본 아바타 |
+| `component.avatar.size.lg` | `--component-avatar-size-lg` | `4rem` | 큰 아바타 |
+
+## 다크 모드 지원
+
+모든 색상 토큰은 CSS 변수를 통해 다크 모드를 지원합니다:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-surface-base: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f9fafb;
+    --color-surface-base: #1a1a1a;
+  }
+}
+```
+
+## 네이밍 컨벤션
+
+FramingUI는 다음 네이밍 구조를 따릅니다:
+
+```
+{카테고리}.{역할}.{변형}
+```
+
+**예시:**
+- `color.text.primary` — 주요 텍스트의 색상
+- `spacing.component.md` — 중간 컴포넌트 간격
+- `typography.heading.1` — 제목 레벨 1
+
+## AI 프롬프트에서 토큰 사용
+
+AI에게 컴포넌트를 생성하도록 요청할 때 토큰 카테고리를 참조하세요:
+
+> "배경에 `color.interactive.primary`를, 패딩에 `spacing.component.sm`을 사용하는 버튼을 만들어줘"
+
+MCP 액세스가 있는 AI 도구는 명시적인 프롬프트 없이 자동으로 토큰을 적용할 수 있습니다.
+
+## 커스텀 토큰 확장
+
+프로젝트별 토큰을 추가하려면:
+
+```json
+{
+  "custom": {
+    "brand": {
+      "accent": {
+        "value": "#ff6b6b",
+        "type": "color",
+        "description": "브랜드 액센트 색상"
+      }
+    }
+  }
+}
+```
+
+다음과 같이 참조:
+```tsx
+<div className="text-[var(--custom-brand-accent)]">액센트 텍스트</div>
+```
+
+## 다음 단계
+
+- [MCP 서버 구성](/docs/guides/ko/mcp-server-configuration) 설정
+- [컴포넌트 API 참조](/docs/guides/ko/component-api-reference) 탐색
+- [AI 통합 가이드](/docs/guides/ko/ai-integration-guide) 읽기

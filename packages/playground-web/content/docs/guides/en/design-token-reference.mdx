@@ -1,0 +1,312 @@
+---
+title: "Design Token Reference"
+description: "Complete reference for FramingUI design tokens including color, spacing, typography, and component-specific tokens"
+order: 10
+---
+
+# Design Token Reference
+
+FramingUI design tokens provide a semantic layer between raw design values and implementation. This reference covers all token categories, naming conventions, and usage patterns.
+
+## Token Structure
+
+All FramingUI tokens follow this structure:
+
+```json
+{
+  "tokenName": {
+    "value": "<actual value>",
+    "type": "<token type>",
+    "description": "<usage description>"
+  }
+}
+```
+
+## Color Tokens
+
+### Text Colors
+
+Used for all text content.
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `color.text.primary` | `--color-text-primary` | `#1a1a1a` | Primary text, headings |
+| `color.text.secondary` | `--color-text-secondary` | `#6b7280` | Secondary text, captions |
+| `color.text.tertiary` | `--color-text-tertiary` | `#9ca3af` | Disabled text, placeholders |
+| `color.text.inverse` | `--color-text-inverse` | `#ffffff` | Text on dark backgrounds |
+
+**Example:**
+```tsx
+<p className="text-[var(--color-text-primary)]">Primary text</p>
+<span className="text-[var(--color-text-secondary)]">Secondary</span>
+```
+
+### Surface Colors
+
+Used for backgrounds and containers.
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `color.surface.base` | `--color-surface-base` | `#f9fafb` | Page background |
+| `color.surface.elevated` | `--color-surface-elevated` | `#ffffff` | Cards, modals, elevated content |
+| `color.surface.overlay` | `--color-surface-overlay` | `rgba(0,0,0,0.5)` | Modal overlays, backdrops |
+
+**Example:**
+```tsx
+<div className="bg-[var(--color-surface-base)]">
+  <div className="bg-[var(--color-surface-elevated)] p-4">
+    Card content
+  </div>
+</div>
+```
+
+### Interactive Colors
+
+Used for buttons, links, and interactive elements.
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `color.interactive.primary` | `--color-interactive-primary` | `#2563eb` | Primary buttons, links |
+| `color.interactive.hover` | `--color-interactive-hover` | `#1d4ed8` | Hover state |
+| `color.interactive.active` | `--color-interactive-active` | `#1e40af` | Active/pressed state |
+| `color.interactive.disabled` | `--color-interactive-disabled` | `#d1d5db` | Disabled state |
+
+**Example:**
+```tsx
+<button className="bg-[var(--color-interactive-primary)]
+                   hover:bg-[var(--color-interactive-hover)]
+                   active:bg-[var(--color-interactive-active)]
+                   disabled:bg-[var(--color-interactive-disabled)]">
+  Submit
+</button>
+```
+
+### Border Colors
+
+Used for borders, dividers, and outlines.
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `color.border.default` | `--color-border-default` | `#e5e7eb` | Default borders |
+| `color.border.subtle` | `--color-border-subtle` | `#f3f4f6` | Subtle dividers |
+| `color.border.strong` | `--color-border-strong` | `#9ca3af` | Emphasized borders |
+| `color.border.focus` | `--color-border-focus` | `#2563eb` | Focus rings |
+
+**Example:**
+```tsx
+<input className="border border-[var(--color-border-default)]
+                  focus:border-[var(--color-border-focus)]" />
+```
+
+### Semantic Colors
+
+Used for status, feedback, and alerts.
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `color.status.success` | `--color-status-success` | `#10b981` | Success messages |
+| `color.status.warning` | `--color-status-warning` | `#f59e0b` | Warnings |
+| `color.status.error` | `--color-status-error` | `#ef4444` | Errors |
+| `color.status.info` | `--color-status-info` | `#3b82f6` | Informational messages |
+
+**Example:**
+```tsx
+<div className="bg-[var(--color-status-success)] text-white p-4">
+  Success: Your changes have been saved
+</div>
+```
+
+## Spacing Tokens
+
+### Component Spacing
+
+Used for internal component spacing (padding).
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `spacing.component.xs` | `--spacing-component-xs` | `0.5rem` (8px) | Tight padding |
+| `spacing.component.sm` | `--spacing-component-sm` | `0.75rem` (12px) | Small padding |
+| `spacing.component.md` | `--spacing-component-md` | `1rem` (16px) | Default padding |
+| `spacing.component.lg` | `--spacing-component-lg` | `1.5rem` (24px) | Large padding |
+| `spacing.component.xl` | `--spacing-component-xl` | `2rem` (32px) | Extra large padding |
+
+**Example:**
+```tsx
+<div className="p-[var(--spacing-component-md)]">
+  Default card padding
+</div>
+```
+
+### Layout Spacing
+
+Used for spacing between components (margins, gaps).
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `spacing.layout.xs` | `--spacing-layout-xs` | `0.5rem` (8px) | Tight gaps |
+| `spacing.layout.sm` | `--spacing-layout-sm` | `1rem` (16px) | Small gaps |
+| `spacing.layout.md` | `--spacing-layout-md` | `1.5rem` (24px) | Default gaps |
+| `spacing.layout.lg` | `--spacing-layout-lg` | `2rem` (32px) | Large gaps |
+| `spacing.layout.xl` | `--spacing-layout-xl` | `3rem` (48px) | Section spacing |
+
+**Example:**
+```tsx
+<div className="space-y-[var(--spacing-layout-md)]">
+  <div>Section 1</div>
+  <div>Section 2</div>
+</div>
+```
+
+## Typography Tokens
+
+### Headings
+
+| Token | CSS Variable | Font Size | Line Height | Weight | Usage |
+|-------|--------------|-----------|-------------|--------|-------|
+| `typography.heading.1` | `--typography-heading-1-*` | 2.25rem (36px) | 2.5rem | 700 | Page titles |
+| `typography.heading.2` | `--typography-heading-2-*` | 1.875rem (30px) | 2.25rem | 700 | Section titles |
+| `typography.heading.3` | `--typography-heading-3-*` | 1.5rem (24px) | 2rem | 600 | Subsection titles |
+| `typography.heading.4` | `--typography-heading-4-*` | 1.25rem (20px) | 1.75rem | 600 | Card titles |
+
+**Example:**
+```tsx
+<h1 className="text-[var(--typography-heading-1-fontSize)]
+               font-[var(--typography-heading-1-fontWeight)]
+               leading-[var(--typography-heading-1-lineHeight)]">
+  Page Title
+</h1>
+```
+
+### Body Text
+
+| Token | CSS Variable | Font Size | Line Height | Usage |
+|-------|--------------|-----------|-------------|-------|
+| `typography.body.default` | `--typography-body-default-*` | 1rem (16px) | 1.5rem | Default text |
+| `typography.body.small` | `--typography-body-small-*` | 0.875rem (14px) | 1.25rem | Small text |
+| `typography.caption` | `--typography-caption-*` | 0.75rem (12px) | 1rem | Captions, metadata |
+
+**Example:**
+```tsx
+<p className="text-[var(--typography-body-default-fontSize)]
+              leading-[var(--typography-body-default-lineHeight)]">
+  Default body text
+</p>
+```
+
+## Border Radius Tokens
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `borderRadius.sm` | `--border-radius-sm` | `0.25rem` (4px) | Small elements |
+| `borderRadius.md` | `--border-radius-md` | `0.5rem` (8px) | Default |
+| `borderRadius.lg` | `--border-radius-lg` | `0.75rem` (12px) | Large cards |
+| `borderRadius.full` | `--border-radius-full` | `9999px` | Pills, avatars |
+
+**Example:**
+```tsx
+<button className="rounded-[var(--border-radius-md)]">Submit</button>
+<img className="rounded-[var(--border-radius-full)]" src={avatar} />
+```
+
+## Shadow Tokens
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `shadow.card.default` | `--shadow-card-default` | `0 1px 3px rgba(0,0,0,0.1)` | Default elevation |
+| `shadow.card.hover` | `--shadow-card-hover` | `0 4px 6px rgba(0,0,0,0.1)` | Hover state |
+| `shadow.modal` | `--shadow-modal` | `0 10px 25px rgba(0,0,0,0.15)` | Modals, popovers |
+
+**Example:**
+```tsx
+<div className="shadow-[var(--shadow-card-default)]
+               hover:shadow-[var(--shadow-card-hover)]">
+  Card with elevation
+</div>
+```
+
+## Component-Specific Tokens
+
+### Button Tokens
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `component.button.height.sm` | `--component-button-height-sm` | `2rem` | Small button |
+| `component.button.height.md` | `--component-button-height-md` | `2.5rem` | Default button |
+| `component.button.height.lg` | `--component-button-height-lg` | `3rem` | Large button |
+| `component.button.padding-x` | `--component-button-padding-x` | `1rem` | Horizontal padding |
+
+### Avatar Tokens
+
+| Token | CSS Variable | Value | Usage |
+|-------|--------------|-------|-------|
+| `component.avatar.size.sm` | `--component-avatar-size-sm` | `2rem` | Small avatar |
+| `component.avatar.size.md` | `--component-avatar-size-md` | `3rem` | Default avatar |
+| `component.avatar.size.lg` | `--component-avatar-size-lg` | `4rem` | Large avatar |
+
+## Dark Mode Support
+
+All color tokens support dark mode via CSS variables:
+
+```css
+:root {
+  --color-text-primary: #1a1a1a;
+  --color-surface-base: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f9fafb;
+    --color-surface-base: #1a1a1a;
+  }
+}
+```
+
+## Naming Conventions
+
+FramingUI follows this naming structure:
+
+```
+{category}.{role}.{variant}
+```
+
+**Examples:**
+- `color.text.primary` — Color for primary text
+- `spacing.component.md` — Medium component spacing
+- `typography.heading.1` — Heading level 1
+
+## Using Tokens in AI Prompts
+
+When asking AI to generate components, reference token categories:
+
+> "Create a button using `color.interactive.primary` for background and `spacing.component.sm` for padding"
+
+AI tools with MCP access can automatically apply tokens without explicit prompts.
+
+## Custom Token Extensions
+
+To add project-specific tokens:
+
+```json
+{
+  "custom": {
+    "brand": {
+      "accent": {
+        "value": "#ff6b6b",
+        "type": "color",
+        "description": "Brand accent color"
+      }
+    }
+  }
+}
+```
+
+Reference as:
+```tsx
+<div className="text-[var(--custom-brand-accent)]">Accent text</div>
+```
+
+## Next Steps
+
+- Set up [MCP Server Configuration](/docs/guides/en/mcp-server-configuration)
+- Explore [Component API Reference](/docs/guides/en/component-api-reference)
+- Read [AI Integration Guide](/docs/guides/en/ai-integration-guide)

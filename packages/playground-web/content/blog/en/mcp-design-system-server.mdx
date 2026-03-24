@@ -1,0 +1,410 @@
+---
+title: "MCP Design System Server: Persistent Design Context for AI Coding"
+description: "Learn what Model Context Protocol (MCP) is and how to build an MCP server that gives Claude Code persistent access to your design system."
+date: "2026-03-24"
+author:
+  name: "FramingUI Team"
+tags:
+  - mcp
+  - design-system
+  - claude-code
+  - ai-coding
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Every time you start a new Claude Code session, the AI forgets your design system. You have to re-explain token naming conventions, spacing scales, and component patterns. This repetition wastes time and introduces inconsistency.
+
+**Model Context Protocol (MCP)** solves this by giving AI persistent access to external resources—like your design tokens—without polluting every prompt.
+
+This guide explains what MCP is, why it matters for UI development, and how to build an MCP server that serves your design system to Claude Code.
+
+## What is MCP?
+
+**Model Context Protocol (MCP)** is an open standard for connecting AI agents to external data sources. Think of it as a plugin system for Claude Code.
+
+### Traditional Approach (Without MCP)
+
+Every time you ask Claude to generate a component, you include design tokens in the prompt:
+
+> "Create a button using `var(--color-interactive-primary)` for background, `var(--spacing-component-sm)` for padding..."
+
+This bloats prompts and requires manual repetition.
+
+### MCP Approach
+
+You create an MCP server that exposes design tokens as a **resource**. Claude Code automatically fetches this resource when needed, without you specifying it in every prompt.
+
+**Prompt (with MCP):**
+> "Create a button"
+
+Claude Code:
+1. Fetches `design://tokens` from your MCP server
+2. Applies token constraints automatically
+3. Generates a button using your design system
+
+## Why MCP for Design Systems?
+
+### 1. Persistent Context
+
+Design tokens are available across all sessions without re-prompting.
+
+### 2. Single Source of Truth
+
+When you update `design-tokens.json`, all future AI-generated components reflect the change.
+
+### 3. Reduced Prompt Size
+
+Instead of embedding 200 lines of token definitions in every prompt, Claude fetches them on-demand.
+
+### 4. Separation of Concerns
+
+Design system stays in your codebase, not scattered across `.claude/instructions.md`.
+
+## Architecture Overview
+
+```
+┌──────────────────────────────────────────────┐
+│ Claude Code                                  │
+│ ┌────────────────────────────────────────┐   │
+│ │ "Create a dashboard card"             │   │
+│ └────────────────────────────────────────┘   │
+│                   │                          │
+│                   ▼                          │
+│ ┌────────────────────────────────────────┐   │
+│ │ MCP Client                             │   │
+│ │ GET design://tokens                    │   │
+│ └────────────────────────────────────────┘   │
+└──────────────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────────────┐
+│ MCP Server (Node.js)                         │
+│ ┌────────────────────────────────────────┐   │
+│ │ Resource: design://tokens              │   │
+│ │ Returns: design-tokens.json            │   │
+│ └────────────────────────────────────────┘   │
+└──────────────────────────────────────────────┘
+                    │
+                    ▼
+┌──────────────────────────────────────────────┐
+│ design-tokens.json                           │
+│ { "color": { "text": { ... } } }             │
+└──────────────────────────────────────────────┘
+```
+
+## Building an MCP Design System Server
+
+### Prerequisites
+
+- Node.js 18+
+- A design tokens file (`design-tokens.json`)
+- Claude Code installed
+
+### Step 1: Install MCP SDK
+
+```bash
+npm install @modelcontextprotocol/server-sdk
+```
+
+### Step 2: Create the MCP Server
+
+Create `mcp-server-design-tokens/index.ts`:
+
+```typescript
+import { McpServer } from '@modelcontextprotocol/server-sdk';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+
+// Load design tokens from file
+const tokensPath = resolve(__dirname, '../design-tokens.json');
+const tokens = JSON.parse(readFileSync(tokensPath, 'utf-8'));
+
+// Initialize MCP server
+const server = new McpServer({
+  name: 'design-tokens',
+  version: '1.0.0',
+  description: 'Provides access to design system tokens'
+});
+
+// Register design tokens as a resource
+server.resource({
+  uri: 'design://tokens',
+  name: 'Design System Tokens',
+  description: 'Semantic design tokens for colors, spacing, typography',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+// Optionally: Register component patterns
+server.resource({
+  uri: 'design://patterns/button',
+  name: 'Button Component Pattern',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify({
+      baseClasses: 'inline-flex items-center justify-center',
+      padding: 'var(--spacing-component-sm) var(--spacing-component-md)',
+      background: 'var(--color-interactive-primary)',
+      hoverBackground: 'var(--color-interactive-hover)',
+      borderRadius: 'var(--border-radius-md)',
+      typography: 'var(--typography-button-size) var(--typography-button-weight)'
+    }, null, 2);
+  }
+});
+
+// Start the server
+server.start();
+```
+
+### Step 3: Build and Run
+
+Compile TypeScript:
+
+```bash
+npx tsc mcp-server-design-tokens/index.ts --outDir mcp-server-design-tokens
+```
+
+Test the server:
+
+```bash
+node mcp-server-design-tokens/index.js
+```
+
+You should see:
+```
+MCP server 'design-tokens' started
+```
+
+### Step 4: Configure Claude Code
+
+Create or update `.claude/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "design-tokens": {
+      "command": "node",
+      "args": [
+        "./mcp-server-design-tokens/index.js"
+      ],
+      "env": {}
+    }
+  }
+}
+```
+
+### Step 5: Update Instructions
+
+In `.claude/instructions.md`, reference the MCP resource:
+
+```markdown
+# Design System Instructions
+
+This project uses design tokens served via MCP.
+
+When generating components:
+1. Fetch design tokens from `design://tokens`
+2. Use semantic tokens for all styling
+3. Reference tokens via CSS variables: `var(--token-name)`
+
+## Available MCP Resources
+- `design://tokens` — Full design token catalog
+- `design://patterns/button` — Button component pattern
+```
+
+### Step 6: Verify
+
+Restart Claude Code and ask:
+
+> "Create a primary button component"
+
+Claude should:
+1. Fetch `design://tokens`
+2. Apply constraints from the token catalog
+3. Generate a button using your design system
+
+Example output:
+
+```tsx
+export function Button({ children, onClick }: ButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      className="inline-flex items-center justify-center
+                 px-[var(--spacing-component-md)]
+                 py-[var(--spacing-component-sm)]
+                 bg-[var(--color-interactive-primary)]
+                 hover:bg-[var(--color-interactive-hover)]
+                 text-white
+                 rounded-[var(--border-radius-md)]
+                 text-[var(--typography-button-size)]
+                 font-[var(--typography-button-weight)]">
+      {children}
+    </button>
+  );
+}
+```
+
+## Advanced: Dynamic Token Updates
+
+MCP servers can serve live data. If you update `design-tokens.json`, the next MCP request fetches the new values.
+
+### Watch Mode
+
+Add file watching to auto-reload tokens:
+
+```typescript
+import { watch } from 'fs';
+
+let tokens = loadTokens();
+
+watch(tokensPath, (event) => {
+  if (event === 'change') {
+    tokens = loadTokens();
+    console.log('Tokens reloaded');
+  }
+});
+
+server.resource({
+  uri: 'design://tokens',
+  name: 'Design Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(tokens, null, 2);
+  }
+});
+
+function loadTokens() {
+  return JSON.parse(readFileSync(tokensPath, 'utf-8'));
+}
+```
+
+Now when you edit `design-tokens.json`, the MCP server serves the updated tokens without restarting.
+
+## Advanced: Component Patterns as Resources
+
+Beyond tokens, expose component construction patterns:
+
+```typescript
+server.resource({
+  uri: 'design://patterns/card',
+  name: 'Card Component Pattern',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify({
+      structure: {
+        container: {
+          padding: 'var(--spacing-component-md)',
+          background: 'var(--color-surface-elevated)',
+          borderRadius: 'var(--border-radius-md)',
+          border: '1px solid var(--color-border-subtle)'
+        },
+        header: {
+          marginBottom: 'var(--spacing-component-sm)',
+          fontSize: 'var(--typography-heading-3-size)',
+          fontWeight: 'var(--typography-heading-3-weight)'
+        },
+        body: {
+          fontSize: 'var(--typography-body-default-size)',
+          lineHeight: 'var(--typography-body-default-line-height)',
+          color: 'var(--color-text-secondary)'
+        }
+      }
+    }, null, 2);
+  }
+});
+```
+
+When Claude generates a card, it references `design://patterns/card` and applies the pattern consistently.
+
+## MCP vs. Instructions File
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| **Instructions file** (`.claude/instructions.md`) | Simple setup, no server needed | Static, bloats file, no dynamic updates |
+| **MCP server** | Dynamic, persistent, single source of truth | Requires server setup |
+
+**Recommendation:**
+- Use **instructions** for lightweight projects or prototypes
+- Use **MCP** for production apps with evolving design systems
+
+## Real-World Example: Multi-Brand Support
+
+If your app supports multiple brands (e.g., whitelabel SaaS), MCP can serve brand-specific tokens dynamically.
+
+```typescript
+server.resource({
+  uri: 'design://tokens/brand-a',
+  name: 'Brand A Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(loadBrandTokens('brand-a'));
+  }
+});
+
+server.resource({
+  uri: 'design://tokens/brand-b',
+  name: 'Brand B Tokens',
+  mimeType: 'application/json',
+  async get() {
+    return JSON.stringify(loadBrandTokens('brand-b'));
+  }
+});
+```
+
+In `.claude/instructions.md`:
+
+```markdown
+When generating components for Brand A, use `design://tokens/brand-a`.
+When generating components for Brand B, use `design://tokens/brand-b`.
+```
+
+## Troubleshooting
+
+### MCP Server Not Starting
+
+**Error:**
+```
+MCP server failed to start
+```
+
+**Solution:**
+1. Check that `mcp-server-design-tokens/index.js` is compiled
+2. Verify the path in `.claude/mcp.json` is correct
+3. Run manually to see errors: `node mcp-server-design-tokens/index.js`
+
+### Claude Not Using Tokens
+
+**Solution:**
+1. Verify resource URI matches: `design://tokens`
+2. Check `.claude/instructions.md` references the MCP resource
+3. Restart Claude Code to reload MCP configuration
+
+### Tokens Not Updating
+
+**Solution:**
+- If using file watching, ensure `fs.watch` is active
+- Otherwise, restart the MCP server after changing `design-tokens.json`
+
+## Key Takeaways
+
+1. **MCP gives AI persistent access** to design tokens without manual repetition
+2. **Single source of truth** — update tokens once, all sessions reflect changes
+3. **Reduced prompt size** — no need to embed tokens in every request
+4. **Dynamic resources** — serve live data, patterns, and brand-specific tokens
+
+## Next Steps
+
+- Integrate [FramingUI with Claude Code](/blog/en/claude-code-framingui-setup-guide)
+- Learn about [AI Agent UI Patterns](/blog/en/ai-agent-ui-patterns)
+- Explore [Why Vibe Coding Needs Design Systems](/blog/en/why-vibe-coding-needs-design-systems)
+
+## Summary
+
+MCP transforms design systems from static documentation into live, queryable resources that AI agents reference during code generation. This ensures every component Claude Code generates matches your design language—without you specifying constraints in every prompt.
+
+If you're building production apps with AI, MCP is essential infrastructure for consistent, scalable UI development.
