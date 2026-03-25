@@ -1,0 +1,435 @@
+---
+title: "Setting Up Design Tokens for Windsurf AI: A Complete Guide"
+description: "Configure design tokens in Windsurf AI for consistent UI. Step-by-step setup for faster AI-powered frontend development."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - windsurf-ai
+  - design-tokens
+  - design-system
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+Windsurf AI accelerates frontend development with powerful code generation, but without proper design constraints, it defaults to generic styling. The difference between AI that generates `bg-gray-100` versus `bg-surface-secondary` comes down to one thing: design token configuration.
+
+This guide walks through setting up a design system that Windsurf AI can reference, ensuring every component it generates matches your brand without manual cleanup.
+
+## Why Windsurf AI Needs Design Tokens
+
+Windsurf AI, like other AI code editors, generates code by combining learned patterns with contextual instructions. When you prompt "create a settings panel," it produces functional code—but the styling comes from statistical averages across its training data.
+
+Without explicit constraints, you get:
+- Generic Tailwind utilities (`text-gray-900`, `bg-white`)
+- Inconsistent spacing (sometimes `p-4`, sometimes `p-6`)
+- Arbitrary color choices that don't match your palette
+- Components that work but look like every other AI-generated UI
+
+Design tokens solve this by giving AI explicit, named constraints. Instead of guessing which gray to use, Windsurf references `color.text.primary`. Instead of choosing between `p-4` or `p-6`, it uses `spacing.content.padding`.
+
+The AI doesn't develop taste—it follows the structure you provide. Good structure means good output.
+
+## Understanding Token-First Development
+
+Traditional workflow: design in Figma → inspect colors/spacing → manually code → repeat for every component.
+
+Token-first workflow with Windsurf AI: define tokens once → reference in prompts → AI generates on-brand components automatically.
+
+The shift happens in what you define upfront. Instead of specifying "make the button blue with 16px padding," you establish a token system where buttons use `color.action.primary` and `spacing.component.button`. Windsurf then applies these consistently across all generated code.
+
+This matters more as projects scale. Five components? Manual cleanup works. Fifty components? Token structure becomes essential. AI generation speed only helps if the output is correct the first time.
+
+## Setting Up Your Token Structure
+
+A Windsurf-friendly token system needs three layers: primitives, semantic tokens, and component tokens.
+
+**Primitive tokens** define raw values without context:
+```javascript
+const primitive = {
+  color: {
+    blue: {
+      50: '#eff6ff',
+      500: '#3b82f6',
+      900: '#1e3a8a'
+    },
+    gray: {
+      50: '#f9fafb',
+      500: '#6b7280',
+      900: '#111827'
+    }
+  },
+  spacing: {
+    1: '0.25rem',
+    4: '1rem',
+    6: '1.5rem'
+  }
+}
+```
+
+These are the foundation but shouldn't be referenced directly in components. They're building blocks for semantic tokens.
+
+**Semantic tokens** map primitives to usage contexts:
+```javascript
+const semantic = {
+  color: {
+    text: {
+      primary: primitive.color.gray[900],
+      secondary: primitive.color.gray[500],
+      inverse: '#ffffff'
+    },
+    surface: {
+      primary: '#ffffff',
+      secondary: primitive.color.gray[50],
+      elevated: '#ffffff'
+    },
+    action: {
+      primary: {
+        default: primitive.color.blue[500],
+        hover: primitive.color.blue[600],
+        active: primitive.color.blue[700]
+      }
+    }
+  },
+  spacing: {
+    content: {
+      padding: primitive.spacing[6],
+      gap: primitive.spacing[4]
+    }
+  }
+}
+```
+
+Semantic tokens carry intent. `color.action.primary.hover` tells AI this is an interactive element's hover state. `spacing.content.padding` indicates standard content padding.
+
+**Component tokens** define component-specific overrides:
+```javascript
+const component = {
+  button: {
+    padding: {
+      sm: `${primitive.spacing[2]} ${primitive.spacing[3]}`,
+      md: `${primitive.spacing[3]} ${primitive.spacing[4]}`,
+      lg: `${primitive.spacing[4]} ${primitive.spacing[6]}`
+    },
+    fontSize: {
+      sm: '0.875rem',
+      md: '1rem',
+      lg: '1.125rem'
+    }
+  },
+  card: {
+    padding: semantic.spacing.content.padding,
+    borderRadius: '0.75rem',
+    shadow: '0 1px 3px rgba(0,0,0,0.1)'
+  }
+}
+```
+
+This hierarchy lets you maintain flexibility (change primitive blue, all action colors update) while keeping component-level control.
+
+## Configuring Windsurf AI Context
+
+Windsurf AI reads workspace context to understand your project structure. The key is making tokens visible and instructing AI how to use them.
+
+**Option 1: Tailwind CSS Configuration**
+
+If you're using Tailwind, extend the config with your tokens:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        'text-primary': '#111827',
+        'text-secondary': '#6b7280',
+        'surface-primary': '#ffffff',
+        'surface-secondary': '#f9fafb',
+        'action-primary': '#3b82f6',
+        'action-primary-hover': '#2563eb'
+      },
+      spacing: {
+        'content-padding': '1.5rem',
+        'content-gap': '1rem'
+      }
+    }
+  }
+}
+```
+
+When prompting Windsurf, reference these custom utilities: "Create a card using `bg-surface-primary` with `p-content-padding`."
+
+**Option 2: CSS Variables**
+
+For framework-agnostic setups, define tokens as CSS custom properties:
+
+```css
+/* tokens.css */
+:root {
+  /* Colors */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: #f9fafb;
+  --color-action-primary: #3b82f6;
+  --color-action-primary-hover: #2563eb;
+  
+  /* Spacing */
+  --spacing-content-padding: 1.5rem;
+  --spacing-content-gap: 1rem;
+  
+  /* Typography */
+  --font-size-body: 1rem;
+  --font-size-heading: 1.5rem;
+  --line-height-body: 1.5;
+  --line-height-heading: 1.2;
+}
+```
+
+Prompt Windsurf to use these: "Style the text with `color: var(--color-text-primary)`."
+
+**Option 3: JavaScript/TypeScript Tokens**
+
+For React projects, export tokens as constants:
+
+```typescript
+// tokens.ts
+export const tokens = {
+  color: {
+    text: {
+      primary: '#111827',
+      secondary: '#6b7280'
+    },
+    surface: {
+      primary: '#ffffff',
+      secondary: '#f9fafb'
+    },
+    action: {
+      primary: '#3b82f6',
+      primaryHover: '#2563eb'
+    }
+  },
+  spacing: {
+    contentPadding: '1.5rem',
+    contentGap: '1rem'
+  },
+  typography: {
+    fontSize: {
+      body: '1rem',
+      heading: '1.5rem'
+    },
+    lineHeight: {
+      body: 1.5,
+      heading: 1.2
+    }
+  }
+} as const
+
+export type Tokens = typeof tokens
+```
+
+Import in components and reference in Windsurf prompts: "Use `tokens.color.action.primary` for the button background."
+
+## Creating Windsurf-Friendly Documentation
+
+AI reads comments, README files, and inline documentation. Structure these to guide token usage.
+
+Create a `DESIGN_TOKENS.md` in your project root:
+
+```markdown
+# Design Token Usage Guide
+
+## Color Tokens
+
+### Text Colors
+- `color.text.primary` - Main body text, headings
+- `color.text.secondary` - Supporting text, captions
+- `color.text.inverse` - Text on dark backgrounds
+
+### Surface Colors
+- `color.surface.primary` - Default backgrounds
+- `color.surface.secondary` - Subtle backgrounds, disabled states
+- `color.surface.elevated` - Cards, modals, elevated elements
+
+### Action Colors
+- `color.action.primary.default` - Primary buttons, links (default state)
+- `color.action.primary.hover` - Primary interactive elements (hover state)
+- `color.action.primary.active` - Primary interactive elements (pressed state)
+
+## Spacing Tokens
+
+### Content Spacing
+- `spacing.content.padding` - Standard content area padding
+- `spacing.content.gap` - Gap between content blocks
+
+### Component Spacing
+- `spacing.component.button` - Internal button padding
+- `spacing.component.card` - Card content padding
+
+## Usage Examples
+
+### Button Component
+```tsx
+<button 
+  style={{
+    backgroundColor: tokens.color.action.primary.default,
+    color: tokens.color.text.inverse,
+    padding: tokens.spacing.component.button
+  }}
+>
+  Click me
+</button>
+```
+
+### Card Component
+```tsx
+<div
+  style={{
+    backgroundColor: tokens.color.surface.elevated,
+    padding: tokens.spacing.component.card,
+    borderRadius: '0.75rem'
+  }}
+>
+  Card content
+</div>
+```
+
+## Rules for AI Generation
+
+1. Always use semantic tokens, never primitive values
+2. Reference tokens by full path (e.g., `tokens.color.text.primary`)
+3. Use hover/active states for interactive elements
+4. Apply `spacing.content.*` for layout, `spacing.component.*` for component internals
+```
+
+When prompting Windsurf, reference this doc: "Follow the token conventions in DESIGN_TOKENS.md to create a settings page."
+
+## Effective Windsurf Prompting with Tokens
+
+Generic prompt:
+"Create a dashboard header with a title and navigation."
+
+Result: Generic styling, arbitrary colors, inconsistent spacing.
+
+Token-aware prompt:
+"Create a dashboard header with a title and navigation. Use `bg-surface-primary` for the background, `text-primary` for the title, `spacing.content.padding` for internal spacing. Navigation links should use `color.action.primary` with `color.action.primary.hover` on hover."
+
+Result: On-brand styling, consistent spacing, proper interactive states.
+
+The difference is specificity. AI generation quality correlates directly with constraint clarity. Vague prompts get vague results; specific token references get precise output.
+
+## Integrating with Existing Component Libraries
+
+If you're using shadcn/ui, Material UI, or another component library, wrap components to apply your tokens:
+
+```tsx
+// Button.tsx
+import { Button as ShadcnButton } from '@/components/ui/button'
+import { tokens } from '@/design/tokens'
+
+export function Button({ variant = 'default', ...props }) {
+  const styles = {
+    default: {
+      backgroundColor: tokens.color.action.primary.default,
+      color: tokens.color.text.inverse,
+    },
+    outline: {
+      borderColor: tokens.color.action.primary.default,
+      color: tokens.color.action.primary.default,
+    }
+  }
+  
+  return <ShadcnButton style={styles[variant]} {...props} />
+}
+```
+
+Prompt Windsurf to use your wrapped components: "Create a form using the custom Button component from '@/components/Button'."
+
+This approach lets you leverage pre-built component logic while maintaining token-driven styling.
+
+## Testing Token Consistency
+
+After setting up tokens, verify Windsurf applies them consistently:
+
+1. **Generate multiple components** with similar prompts. Check if colors, spacing, and typography remain uniform.
+
+2. **Test interactive states.** Prompt for buttons and links, verify hover/active states use defined tokens.
+
+3. **Review generated CSS/styles.** Search for hardcoded values like `#3b82f6` or `16px`. These indicate AI bypassed your token system.
+
+4. **Iterate on documentation.** If Windsurf ignores tokens, clarify usage examples in your docs or prompts.
+
+Consistency issues usually stem from unclear documentation or missing token definitions. If AI generates `bg-gray-100`, it's because you haven't defined an equivalent semantic token or haven't communicated it clearly.
+
+## Common Pitfalls
+
+**Skipping semantic layer.** Directly mapping primitives to components creates fragile systems. When you want to change "all primary actions," you'll have to update dozens of component files instead of one semantic token.
+
+**Over-specifying in prompts.** Don't list every token for every element. Establish patterns in documentation, then reference those patterns. "Create a settings page following standard token usage" works better than repeating every token in every prompt.
+
+**Inconsistent naming.** If your CSS uses `--color-primary` but your JS uses `tokens.colors.actionPrimary`, AI gets confused. Pick one convention and apply it everywhere.
+
+**Missing hover states.** AI won't infer interactive states. Explicitly define and document hover, active, focus, and disabled tokens for every interactive element.
+
+## Practical Workflow Integration
+
+Here's how a typical Windsurf session works with proper token setup:
+
+1. **Design phase:** Define tokens in Figma or design tool, export to code format.
+2. **Setup phase:** Configure tokens in Tailwind/CSS/JS, document usage patterns.
+3. **Development phase:** Prompt Windsurf with token-aware instructions.
+4. **Review phase:** Verify generated code uses tokens correctly, refine prompts if needed.
+5. **Iteration phase:** Update tokens once, changes propagate across all components.
+
+The upfront investment in token structure pays off in speed and consistency. First component takes longer to set up correctly; every subsequent component generates faster and cleaner.
+
+## Real-World Example: Dashboard Setup
+
+Let's build a dashboard to see the full workflow:
+
+**Prompt to Windsurf:**
+"Create a dashboard layout with:
+- Header using `bg-surface-primary`, `p-content-padding`, title in `text-primary`
+- Sidebar using `bg-surface-secondary`, `w-64`, nav links in `text-secondary`, hover state `text-action-primary`
+- Main content area with `bg-surface-primary`, `p-content-padding`
+- Grid of metric cards, each using `bg-surface-elevated`, `p-component-card`, shadow from component tokens"
+
+**Expected output:**
+Windsurf generates a complete dashboard with your exact color scheme, consistent spacing, and proper hover states—without any manual CSS writing.
+
+**Without tokens:**
+Windsurf generates a dashboard with Tailwind defaults, requiring manual find-replace to apply your brand colors and spacing.
+
+The token setup enables one-shot generation instead of generate-then-fix cycles.
+
+## Tools That Enhance Windsurf Workflow
+
+**FramingUI** provides pre-structured token systems designed for AI code generation. Instead of building token schemas from scratch, you get production-ready hierarchies that Windsurf can reference immediately.
+
+The difference is in token organization. FramingUI tokens follow AI-friendly naming conventions with clear semantic layers, making them easier for models like Windsurf to parse and apply correctly.
+
+**Figma Token Studio** bridges design and code by letting designers define tokens in Figma, then export to formats Windsurf can consume. This keeps design and development in sync without manual translation.
+
+**Style Dictionary** transforms tokens between formats (CSS variables, Tailwind config, JS objects). If your design team works in JSON but Windsurf prefers CSS variables, Style Dictionary handles conversion automatically.
+
+## Measuring Success
+
+Track these metrics to gauge whether your token setup is working:
+
+- **Time to first correct output:** How many prompt iterations before Windsurf generates usable code?
+- **Manual cleanup rate:** What percentage of generated code needs manual style fixes?
+- **Consistency score:** Do 10 generated components use colors/spacing uniformly?
+- **Developer satisfaction:** Are teammates spending less time fighting with AI output?
+
+Good token systems reduce all four metrics. If you're still fixing colors in every component, revisit your documentation or token definitions.
+
+## Conclusion
+
+Windsurf AI generates code fast, but speed without structure creates technical debt. Design tokens turn raw generation power into a productivity multiplier—AI that not only codes quickly but codes *correctly*.
+
+The setup investment pays off immediately for multi-component projects. One hour defining tokens saves ten hours fixing inconsistent AI output. And as your project scales, the gap widens.
+
+Start with semantic color and spacing tokens. Document usage patterns. Reference tokens explicitly in prompts. Iterate based on what Windsurf generates. Over time, you'll build a token system that feels like teaching AI your design language.
+
+And once AI speaks your language fluently, development speed stops being the bottleneck—ideas become the bottleneck. Which is exactly where you want to be.

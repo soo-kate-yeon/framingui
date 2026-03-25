@@ -1,0 +1,717 @@
+---
+title: "Managing Design Tokens with MCP Servers: A Practical Guide"
+description: "Use MCP servers to manage design tokens for AI coding assistants. Centralize, validate, and deliver tokens for consistent UI."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - mcp
+  - design-tokens
+  - ai-coding
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+Model Context Protocol (MCP) servers give AI assistants access to external resources—databases, APIs, file systems. For design systems, this means AI can fetch current design tokens dynamically instead of relying on stale documentation or manual copy-paste.
+
+The result: AI that always references the latest color palette, spacing scale, and component styles without requiring developers to update prompts every time a design token changes.
+
+This guide covers building and integrating an MCP server for design token management, from basic file serving to advanced validation and versioning.
+
+## Why MCP for Design Tokens
+
+Traditional approaches to feeding design tokens to AI involve:
+
+1. **Copy-pasting** tokens into every prompt
+2. **Documenting** tokens in markdown files the AI might read
+3. **Hoping** the AI finds token definitions in project files
+
+All three break down as projects scale. Copy-paste errors introduce inconsistencies. Documentation gets out of sync. AI context windows can't hold entire token systems for large projects.
+
+MCP solves this with dynamic resource access. An MCP server acts as a single source of truth that AI queries when needed. Change a token in Figma? The MCP server surfaces the update immediately. No manual sync, no stale references.
+
+## Understanding MCP Architecture
+
+MCP follows a client-server model. The server exposes resources (design tokens, component schemas, usage rules). The client (Claude, other AI assistants) requests these resources when generating code.
+
+For design tokens, the flow looks like:
+
+1. Developer asks AI to create a component
+2. AI recognizes it needs design token context
+3. AI queries MCP server: "What are the current color tokens?"
+4. MCP server returns latest token definitions
+5. AI generates code using those exact tokens
+
+The critical part: tokens live in *one place*. The MCP server reads from your token source (JSON file, Figma API, database) and delivers to AI on demand.
+
+## Basic MCP Server Setup
+
+An MCP server for design tokens needs three capabilities:
+
+1. **List available resources** (what tokens are available?)
+2. **Read resource contents** (what are the actual token values?)
+3. **Handle errors gracefully** (what if tokens are malformed or missing?)
+
+Here's a minimal implementation in TypeScript:
+
+```typescript
+// mcp-server.ts
+import { Server } from '@modelcontextprotocol/sdk/server/index.js'
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { readFile } from 'fs/promises'
+import { resolve } from 'path'
+
+interface DesignTokens {
+  color: Record<string, any>
+  spacing: Record<string, any>
+  typography: Record<string, any>
+}
+
+class DesignTokenServer {
+  private server: Server
+  private tokensPath: string
+
+  constructor(tokensPath: string) {
+    this.tokensPath = tokensPath
+    this.server = new Server(
+      {
+        name: 'design-token-server',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {
+          resources: {},
+        },
+      }
+    )
+
+    this.setupHandlers()
+  }
+
+  private setupHandlers() {
+    // List available token resources
+    this.server.setRequestHandler('resources/list', async () => {
+      return {
+        resources: [
+          {
+            uri: 'token://colors',
+            name: 'Color Tokens',
+            description: 'All color design tokens',
+            mimeType: 'application/json',
+          },
+          {
+            uri: 'token://spacing',
+            name: 'Spacing Tokens',
+            description: 'Spacing scale tokens',
+            mimeType: 'application/json',
+          },
+          {
+            uri: 'token://typography',
+            name: 'Typography Tokens',
+            description: 'Typography scale tokens',
+            mimeType: 'application/json',
+          },
+          {
+            uri: 'token://all',
+            name: 'All Design Tokens',
+            description: 'Complete token system',
+            mimeType: 'application/json',
+          },
+        ],
+      }
+    })
+
+    // Read specific token resource
+    this.server.setRequestHandler('resources/read', async (request) => {
+      const uri = request.params.uri as string
+      const tokens = await this.loadTokens()
+
+      let content: any
+      switch (uri) {
+        case 'token://colors':
+          content = tokens.color
+          break
+        case 'token://spacing':
+          content = tokens.spacing
+          break
+        case 'token://typography':
+          content = tokens.typography
+          break
+        case 'token://all':
+          content = tokens
+          break
+        default:
+          throw new Error(`Unknown resource: ${uri}`)
+      }
+
+      return {
+        contents: [
+          {
+            uri,
+            mimeType: 'application/json',
+            text: JSON.stringify(content, null, 2),
+          },
+        ],
+      }
+    })
+  }
+
+  private async loadTokens(): Promise<DesignTokens> {
+    try {
+      const filePath = resolve(this.tokensPath)
+      const content = await readFile(filePath, 'utf-8')
+      return JSON.parse(content)
+    } catch (error) {
+      throw new Error(`Failed to load tokens: ${error}`)
+    }
+  }
+
+  async start() {
+    const transport = new StdioServerTransport()
+    await this.server.connect(transport)
+    console.error('Design Token MCP Server running')
+  }
+}
+
+// Initialize and start server
+const tokensPath = process.env.TOKENS_PATH || './tokens.json'
+const server = new DesignTokenServer(tokensPath)
+server.start().catch(console.error)
+```
+
+This server reads tokens from a JSON file and exposes them through MCP resource endpoints. AI can query `token://colors` to get just color tokens or `token://all` for the complete system.
+
+## Token File Format
+
+The server expects a structured JSON file:
+
+```json
+{
+  "color": {
+    "text": {
+      "primary": {
+        "value": "#111827",
+        "description": "Main body text, headings"
+      },
+      "secondary": {
+        "value": "#6b7280",
+        "description": "Supporting text, captions"
+      }
+    },
+    "surface": {
+      "primary": {
+        "value": "#ffffff",
+        "description": "Default backgrounds"
+      },
+      "secondary": {
+        "value": "#f9fafb",
+        "description": "Subtle backgrounds"
+      }
+    },
+    "action": {
+      "primary": {
+        "default": {
+          "value": "#3b82f6",
+          "description": "Primary button default state"
+        },
+        "hover": {
+          "value": "#2563eb",
+          "description": "Primary button hover state"
+        }
+      }
+    }
+  },
+  "spacing": {
+    "content": {
+      "padding": {
+        "value": "1.5rem",
+        "description": "Standard content area padding"
+      },
+      "gap": {
+        "value": "1rem",
+        "description": "Gap between content blocks"
+      }
+    }
+  },
+  "typography": {
+    "fontSize": {
+      "body": {
+        "value": "1rem",
+        "description": "Default body text size"
+      },
+      "heading": {
+        "value": "1.5rem",
+        "description": "Section heading size"
+      }
+    },
+    "lineHeight": {
+      "body": {
+        "value": 1.5,
+        "description": "Body text line height"
+      }
+    }
+  }
+}
+```
+
+Each token includes:
+- **value**: The actual CSS/design value
+- **description**: Human-readable context for AI to understand usage
+
+Descriptions are critical. They help AI choose the right token for a given context. "Primary button default state" clarifies usage better than just seeing `#3b82f6`.
+
+## Configuring Claude to Use the MCP Server
+
+Add the server to Claude's MCP configuration:
+
+```json
+// claude_desktop_config.json
+{
+  "mcpServers": {
+    "design-tokens": {
+      "command": "node",
+      "args": ["/path/to/mcp-server.js"],
+      "env": {
+        "TOKENS_PATH": "/path/to/your/tokens.json"
+      }
+    }
+  }
+}
+```
+
+After restart, Claude can access design tokens through the MCP server. When you prompt "Create a card component," Claude queries `token://all` to fetch current tokens and generates code using those exact values.
+
+## Advanced: Token Validation
+
+Production MCP servers should validate tokens before serving them. Invalid tokens cause AI to generate broken code.
+
+Add validation to the server:
+
+```typescript
+import Ajv from 'ajv'
+
+class DesignTokenServer {
+  private ajv: Ajv
+  private tokenSchema = {
+    type: 'object',
+    required: ['color', 'spacing', 'typography'],
+    properties: {
+      color: {
+        type: 'object',
+        patternProperties: {
+          '^.*$': {
+            type: 'object',
+            properties: {
+              value: { type: 'string' },
+              description: { type: 'string' }
+            },
+            required: ['value']
+          }
+        }
+      },
+      spacing: {
+        type: 'object',
+        patternProperties: {
+          '^.*$': {
+            type: 'object',
+            properties: {
+              value: { type: 'string' },
+              description: { type: 'string' }
+            },
+            required: ['value']
+          }
+        }
+      },
+      typography: {
+        type: 'object',
+        patternProperties: {
+          '^.*$': {
+            type: 'object',
+            properties: {
+              value: { oneOf: [{ type: 'string' }, { type: 'number' }] },
+              description: { type: 'string' }
+            },
+            required: ['value']
+          }
+        }
+      }
+    }
+  }
+
+  constructor(tokensPath: string) {
+    this.tokensPath = tokensPath
+    this.ajv = new Ajv()
+    // ... rest of constructor
+  }
+
+  private async loadTokens(): Promise<DesignTokens> {
+    const filePath = resolve(this.tokensPath)
+    const content = await readFile(filePath, 'utf-8')
+    const tokens = JSON.parse(content)
+
+    const validate = this.ajv.compile(this.tokenSchema)
+    const valid = validate(tokens)
+
+    if (!valid) {
+      throw new Error(
+        `Invalid token format: ${JSON.stringify(validate.errors)}`
+      )
+    }
+
+    return tokens
+  }
+}
+```
+
+Now the server rejects malformed token files instead of serving them to AI. This prevents cascading errors where AI generates code using invalid token references.
+
+## Integrating with Figma
+
+Instead of manually maintaining a JSON file, pull tokens directly from Figma using their API:
+
+```typescript
+import fetch from 'node-fetch'
+
+class FigmaTokenServer extends DesignTokenServer {
+  private figmaToken: string
+  private figmaFileKey: string
+
+  constructor(figmaToken: string, figmaFileKey: string) {
+    super('') // No file path needed
+    this.figmaToken = figmaToken
+    this.figmaFileKey = figmaFileKey
+  }
+
+  private async loadTokens(): Promise<DesignTokens> {
+    const response = await fetch(
+      `https://api.figma.com/v1/files/${this.figmaFileKey}/variables/local`,
+      {
+        headers: {
+          'X-Figma-Token': this.figmaToken,
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error(`Figma API error: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    return this.transformFigmaVariables(data)
+  }
+
+  private transformFigmaVariables(figmaData: any): DesignTokens {
+    const tokens: DesignTokens = {
+      color: {},
+      spacing: {},
+      typography: {},
+    }
+
+    // Transform Figma variable structure to token format
+    for (const [id, variable] of Object.entries(figmaData.meta.variables)) {
+      const v = variable as any
+      const category = this.categorizeVariable(v.name)
+      const value = this.resolveVariableValue(v, figmaData)
+
+      this.setNestedToken(tokens[category], v.name.split('/'), {
+        value,
+        description: v.description || '',
+      })
+    }
+
+    return tokens
+  }
+
+  private categorizeVariable(name: string): keyof DesignTokens {
+    if (name.startsWith('color/')) return 'color'
+    if (name.startsWith('spacing/')) return 'spacing'
+    if (name.startsWith('typography/')) return 'typography'
+    return 'color' // default
+  }
+
+  private resolveVariableValue(variable: any, figmaData: any): string {
+    // Resolve Figma variable value (handles aliases, etc.)
+    const value = variable.valuesByMode[Object.keys(variable.valuesByMode)[0]]
+    
+    if (typeof value === 'object' && value.type === 'VARIABLE_ALIAS') {
+      const aliasedVar = figmaData.meta.variables[value.id]
+      return this.resolveVariableValue(aliasedVar, figmaData)
+    }
+
+    return this.formatFigmaValue(value, variable.resolvedType)
+  }
+
+  private formatFigmaValue(value: any, type: string): string {
+    if (type === 'COLOR') {
+      return this.rgbaToHex(value)
+    }
+    if (type === 'FLOAT') {
+      return `${value}px`
+    }
+    return String(value)
+  }
+
+  private rgbaToHex(rgba: any): string {
+    const r = Math.round(rgba.r * 255)
+    const g = Math.round(rgba.g * 255)
+    const b = Math.round(rgba.b * 255)
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+  }
+
+  private setNestedToken(obj: any, path: string[], value: any) {
+    const key = path[0]
+    if (path.length === 1) {
+      obj[key] = value
+    } else {
+      obj[key] = obj[key] || {}
+      this.setNestedToken(obj[key], path.slice(1), value)
+    }
+  }
+}
+
+// Usage
+const figmaToken = process.env.FIGMA_TOKEN!
+const figmaFileKey = process.env.FIGMA_FILE_KEY!
+const server = new FigmaTokenServer(figmaToken, figmaFileKey)
+server.start()
+```
+
+This server fetches tokens from Figma every time AI requests them, ensuring design and code stay in sync automatically. Designers update variables in Figma; developers and AI get updates immediately.
+
+## Caching for Performance
+
+Fetching from Figma on every request adds latency. Add caching:
+
+```typescript
+class CachedFigmaTokenServer extends FigmaTokenServer {
+  private cache: DesignTokens | null = null
+  private cacheExpiry: number = 0
+  private cacheDuration: number = 5 * 60 * 1000 // 5 minutes
+
+  protected async loadTokens(): Promise<DesignTokens> {
+    const now = Date.now()
+    
+    if (this.cache && now < this.cacheExpiry) {
+      return this.cache
+    }
+
+    this.cache = await super.loadTokens()
+    this.cacheExpiry = now + this.cacheDuration
+    
+    return this.cache
+  }
+
+  // Expose cache refresh endpoint
+  setupHandlers() {
+    super.setupHandlers()
+
+    this.server.setRequestHandler('tools/call', async (request) => {
+      if (request.params.name === 'refresh_tokens') {
+        this.cache = null
+        this.cacheExpiry = 0
+        const tokens = await this.loadTokens()
+        return {
+          content: [{
+            type: 'text',
+            text: 'Token cache refreshed successfully'
+          }]
+        }
+      }
+    })
+  }
+}
+```
+
+Tokens cache for 5 minutes, reducing API calls. AI can explicitly request a refresh when needed using the `refresh_tokens` tool.
+
+## Versioning Design Tokens
+
+As design systems evolve, you need version control. Add versioning to the MCP server:
+
+```typescript
+interface VersionedTokens {
+  version: string
+  tokens: DesignTokens
+}
+
+class VersionedTokenServer extends DesignTokenServer {
+  private versions: Map<string, DesignTokens> = new Map()
+
+  async loadTokens(): Promise<DesignTokens> {
+    // Load all token versions from directory
+    const versionFiles = await readdir(this.tokensPath)
+    
+    for (const file of versionFiles) {
+      if (file.endsWith('.json')) {
+        const version = file.replace('.json', '')
+        const content = await readFile(
+          resolve(this.tokensPath, file),
+          'utf-8'
+        )
+        this.versions.set(version, JSON.parse(content))
+      }
+    }
+
+    // Return latest version by default
+    const latest = Array.from(this.versions.keys()).sort().pop()
+    return this.versions.get(latest!)!
+  }
+
+  setupHandlers() {
+    super.setupHandlers()
+
+    // List available versions
+    this.server.setRequestHandler('resources/list', async () => {
+      const resources = []
+      
+      for (const [version, _] of this.versions) {
+        resources.push({
+          uri: `token://v/${version}/all`,
+          name: `Design Tokens v${version}`,
+          description: `Token system version ${version}`,
+          mimeType: 'application/json',
+        })
+      }
+
+      return { resources }
+    })
+
+    // Read specific version
+    this.server.setRequestHandler('resources/read', async (request) => {
+      const uri = request.params.uri as string
+      const match = uri.match(/^token:\/\/v\/(.+?)\/all$/)
+      
+      if (!match) {
+        throw new Error(`Invalid version URI: ${uri}`)
+      }
+
+      const version = match[1]
+      const tokens = this.versions.get(version)
+
+      if (!tokens) {
+        throw new Error(`Version not found: ${version}`)
+      }
+
+      return {
+        contents: [{
+          uri,
+          mimeType: 'application/json',
+          text: JSON.stringify(tokens, null, 2),
+        }],
+      }
+    })
+  }
+}
+```
+
+Store token files as `v1.0.0.json`, `v1.1.0.json`, etc. AI can request specific versions: "Use design tokens from v1.0.0" or default to latest.
+
+This is critical when maintaining multiple product versions or supporting gradual migration to new design systems.
+
+## Real-World Workflow
+
+Here's how MCP token management works in practice:
+
+**Designer's workflow:**
+1. Update color palette in Figma variables
+2. (Optional) Trigger webhook to refresh MCP cache
+3. Done—no manual export or sync needed
+
+**Developer's workflow:**
+1. Prompt AI: "Create a user profile card"
+2. AI queries MCP server for latest tokens
+3. AI generates component using current design system
+4. Developer reviews and commits
+
+**Result:** Design and code stay in sync automatically. No manual token updates, no version drift, no developer hunting for "which blue is the primary action color."
+
+## Monitoring and Debugging
+
+Add logging to track token usage:
+
+```typescript
+class LoggedTokenServer extends DesignTokenServer {
+  private requestLog: Array<{ timestamp: number; uri: string }> = []
+
+  setupHandlers() {
+    super.setupHandlers()
+
+    const originalRead = this.server.setRequestHandler.bind(this.server)
+    
+    this.server.setRequestHandler('resources/read', async (request) => {
+      const uri = request.params.uri as string
+      this.requestLog.push({ timestamp: Date.now(), uri })
+      
+      // Log to file or analytics service
+      console.error(`Token request: ${uri}`)
+      
+      return originalRead('resources/read', request)
+    })
+  }
+
+  // Expose analytics endpoint
+  getAnalytics() {
+    const usage: Record<string, number> = {}
+    
+    for (const log of this.requestLog) {
+      usage[log.uri] = (usage[log.uri] || 0) + 1
+    }
+    
+    return usage
+  }
+}
+```
+
+Track which tokens AI requests most frequently. This reveals which parts of your design system get used and which might need better documentation or restructuring.
+
+## Integration with FramingUI
+
+FramingUI provides MCP server configurations out of the box. Instead of building a custom server, you get pre-configured token serving with built-in validation and caching.
+
+The advantage: FramingUI tokens follow AI-optimized naming conventions and structure, reducing the need for custom transformation logic. The MCP server understands FramingUI's token schema natively.
+
+For teams without design system expertise, this removes setup friction while maintaining the benefits of centralized token management.
+
+## Troubleshooting Common Issues
+
+**AI ignores MCP tokens and generates generic code:**
+- Check that the MCP server is running and configured correctly
+- Verify token structure matches expected format
+- Ensure AI prompts explicitly reference token usage
+
+**Token values appear outdated:**
+- Clear MCP server cache
+- Check cache duration settings
+- Verify Figma API credentials if using Figma integration
+
+**Performance issues with large token systems:**
+- Implement caching (5-minute default is usually sufficient)
+- Split token resources by category (colors, spacing, typography)
+- Use streaming for very large token sets
+
+**Validation errors on well-formed tokens:**
+- Review JSON schema definition
+- Check for trailing commas or other JSON syntax issues
+- Ensure all required fields are present
+
+## Measuring Success
+
+Good MCP token management shows up in metrics:
+
+- **Reduced design-code drift:** Fewer "this doesn't match Figma" issues
+- **Faster component generation:** AI produces correct output on first try
+- **Lower maintenance overhead:** One token update propagates everywhere
+- **Improved developer experience:** No manual token hunting or copy-paste
+
+Track time spent on token-related tasks before and after MCP implementation. The difference quantifies ROI.
+
+## Conclusion
+
+MCP servers transform design tokens from static files into dynamic, version-controlled resources that AI can query on demand. The result is tighter design-code integration without manual synchronization overhead.
+
+For small projects, a basic file-serving MCP server provides immediate value. For larger teams, Figma integration and versioning become essential. And for organizations managing multiple products, centralized token serving through MCP prevents the fragmentation that typically comes with scale.
+
+The upfront investment in MCP infrastructure pays dividends as soon as you generate your second component. And by the hundredth component, the time savings compound into hours saved per week—time that goes back into building features instead of fixing inconsistent styling.
+
+Start with a minimal MCP server. Add validation. Integrate with your design tools. Let AI handle the token application. Focus on building products instead of maintaining sync scripts.

@@ -1,0 +1,655 @@
+---
+title: "Maintaining UI Consistency in AI Coding: Techniques That Actually Work"
+description: "Keep AI-generated UI consistent. Design token enforcement, prompt patterns, and systematic validation."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - ui-consistency
+  - design-system
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+AI generates UI components fast, but consistency isn't automatic. Left unchecked, AI produces 50 components with 50 slightly different shades of blue, 47 variations of button padding, and typography scales that drift across every page.
+
+The problem isn't AI capability—it's constraint clarity. Without explicit structure, AI defaults to statistically average styling from training data. The solution is systematic: design tokens, validation rules, prompt patterns, and review workflows that enforce consistency by default.
+
+This guide covers the practical techniques that keep AI-generated UI consistent without slowing down development speed.
+
+## Why AI Generates Inconsistent UI
+
+AI code generation models work through pattern matching. When you prompt "create a button," the model generates code based on billions of examples in training data. The most statistically likely output is a button with:
+
+- Gray background (`bg-gray-200` or `#e5e7eb`)
+- Medium padding (`p-4` or `padding: 1rem`)
+- Rounded corners (`rounded-md` or `border-radius: 0.5rem`)
+- Default font size (`text-base` or `font-size: 1rem`)
+
+This produces functional buttons, but not *your* buttons. Your brand uses `#3b82f6` blue, `0.75rem` padding, `0.375rem` corners, and `font-weight: 600`. Without explicit constraints, AI never learns these specifics.
+
+Multiply this across 50 components and you get:
+- 12 different shades of "blue" 
+- Spacing ranging from `0.5rem` to `2rem` with no pattern
+- Some components using `px`, others using `rem`, others using `em`
+- Typography sizes that don't align to any scale
+
+The inconsistency compounds. Each new component references slightly different values, creating drift that's expensive to fix retroactively.
+
+## The Token Enforcement Foundation
+
+Consistency starts with design tokens—named constants that replace arbitrary values:
+
+**Without tokens:**
+```tsx
+<button style={{ 
+  backgroundColor: '#3b82f6',
+  padding: '12px 16px',
+  borderRadius: '6px',
+  fontSize: '16px'
+}}>
+  Submit
+</button>
+```
+
+AI generates this once, then for the next button generates:
+```tsx
+<button style={{ 
+  backgroundColor: '#3b81f5', // slight color drift
+  padding: '0.75rem 1rem',    // different units
+  borderRadius: '0.375rem',   // inconsistent with previous
+  fontSize: '1rem'
+}}>
+  Cancel
+</button>
+```
+
+**With tokens:**
+```tsx
+<button style={{
+  backgroundColor: tokens.color.action.primary,
+  padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
+  borderRadius: tokens.effects.borderRadius.md,
+  fontSize: tokens.typography.fontSize.base
+}}>
+  Submit
+</button>
+```
+
+AI generates this, and for every subsequent button generates identical token references. Consistency is automatic because there's only one value for "primary action color."
+
+**Minimum token set for consistency:**
+
+```typescript
+const tokens = {
+  color: {
+    text: {
+      primary: '#111827',
+      secondary: '#6b7280',
+    },
+    action: {
+      primary: '#3b82f6',
+      primaryHover: '#2563eb',
+    },
+    surface: {
+      primary: '#ffffff',
+      elevated: '#ffffff',
+    },
+  },
+  spacing: {
+    xs: '0.5rem',
+    sm: '0.75rem',
+    md: '1rem',
+    lg: '1.5rem',
+  },
+  typography: {
+    fontSize: {
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+    },
+    fontWeight: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+    },
+  },
+  effects: {
+    borderRadius: {
+      sm: '0.375rem',
+      md: '0.5rem',
+      lg: '0.75rem',
+    },
+  },
+}
+```
+
+This covers 80% of UI needs. Expand as needed, but start minimal to avoid overwhelming AI with options.
+
+## Prompt Patterns for Consistency
+
+Generic prompts get generic output. Consistency requires structured prompts that reference specific tokens:
+
+**Generic prompt:**
+"Create a user profile card."
+
+**Result:** AI generates a card with arbitrary colors, spacing, and typography. Requires manual cleanup to match your design system.
+
+**Token-specific prompt:**
+"Create a user profile card component with these token-based styles:
+- Container: `background: tokens.color.surface.elevated`, `borderRadius: tokens.effects.borderRadius.lg`, `padding: tokens.spacing.lg`
+- Avatar: 80px circle on left
+- Name: `fontSize: tokens.typography.fontSize.lg`, `fontWeight: tokens.typography.fontWeight.semibold`, `color: tokens.color.text.primary`
+- Bio: `fontSize: tokens.typography.fontSize.base`, `color: tokens.color.text.secondary`
+- Follow button: `background: tokens.color.action.primary`, hover state using `tokens.color.action.primaryHover`"
+
+**Result:** AI generates a card matching your exact design system. No cleanup needed.
+
+**Reusable prompt template:**
+
+```markdown
+## Component Generation Template
+
+Create a [COMPONENT_TYPE] component with token-based styling.
+
+**Layout:**
+[Describe structure]
+
+**Styling Requirements:**
+- Background: [TOKEN_PATH]
+- Text colors: [TOKEN_PATH] for primary, [TOKEN_PATH] for secondary
+- Spacing: [TOKEN_PATH] for padding, [TOKEN_PATH] for gaps
+- Typography: [TOKEN_PATH] for size, [TOKEN_PATH] for weight
+- Effects: [TOKEN_PATH] for border radius, [TOKEN_PATH] for shadows
+- Interactive states: [TOKEN_PATH] for hover, [TOKEN_PATH] for active
+
+**Token Reference:**
+All tokens available in `tokens` object imported from '@/design/tokens'.
+```
+
+Save this as `.prompt-templates/component.md`. Reference it: "Follow component generation template to create a notification card."
+
+## Validation Rules That Catch Drift
+
+Automated validation catches inconsistency before it reaches production:
+
+**ESLint rule to enforce token usage:**
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'Literal[value=/#[0-9a-f]{3,6}/i]',
+        message: 'Use tokens.color.* instead of hardcoded hex colors',
+      },
+      {
+        selector: 'TemplateLiteral[expressions.length=0]',
+        message: 'Use design tokens for spacing values',
+      },
+    ],
+  },
+}
+```
+
+This catches:
+- Hardcoded hex colors (`#3b82f6`)
+- Inline pixel values in template literals
+
+**Custom ESLint rule for token validation:**
+
+```javascript
+// eslint-rules/enforce-design-tokens.js
+module.exports = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description: 'Enforce design token usage',
+    },
+  },
+  create(context) {
+    return {
+      Property(node) {
+        if (node.key.name === 'color' || 
+            node.key.name === 'backgroundColor' ||
+            node.key.name === 'borderColor') {
+          if (node.value.type === 'Literal' && 
+              typeof node.value.value === 'string' &&
+              node.value.value.startsWith('#')) {
+            context.report({
+              node,
+              message: 'Use tokens.color.* instead of hardcoded colors',
+            })
+          }
+        }
+        
+        if (node.key.name === 'padding' || 
+            node.key.name === 'margin') {
+          if (node.value.type === 'Literal' &&
+              typeof node.value.value === 'string' &&
+              /^\d+px$/.test(node.value.value)) {
+            context.report({
+              node,
+              message: 'Use tokens.spacing.* instead of hardcoded pixel values',
+            })
+          }
+        }
+      },
+    }
+  },
+}
+```
+
+Run on every commit. Catches token violations immediately.
+
+**Pre-commit hook:**
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+
+# Run ESLint on staged files
+FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.tsx\?$')
+
+if [ -n "$FILES" ]; then
+  echo "Checking design token usage..."
+  npx eslint $FILES
+  
+  if [ $? -ne 0 ]; then
+    echo "❌ Token violations found. Fix before committing."
+    exit 1
+  fi
+fi
+
+echo "✅ Design token check passed"
+exit 0
+```
+
+This prevents inconsistent code from entering the repository.
+
+## Component Library Patterns
+
+Define reusable components that encapsulate token usage:
+
+```typescript
+// components/Button.tsx
+import { tokens } from '@/design/tokens'
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  children: React.ReactNode
+  onClick?: () => void
+}
+
+export function Button({ 
+  variant = 'primary', 
+  size = 'md', 
+  children, 
+  onClick 
+}: ButtonProps) {
+  const variantStyles = {
+    primary: {
+      backgroundColor: tokens.color.action.primary,
+      color: '#ffffff',
+      hoverBg: tokens.color.action.primaryHover,
+    },
+    secondary: {
+      backgroundColor: tokens.color.surface.elevated,
+      color: tokens.color.text.primary,
+      hoverBg: tokens.color.surface.secondary,
+    },
+    danger: {
+      backgroundColor: tokens.color.feedback.error,
+      color: '#ffffff',
+      hoverBg: tokens.color.feedback.errorDark,
+    },
+  }
+  
+  const sizeStyles = {
+    sm: {
+      padding: `${tokens.spacing.xs} ${tokens.spacing.sm}`,
+      fontSize: tokens.typography.fontSize.sm,
+    },
+    md: {
+      padding: `${tokens.spacing.sm} ${tokens.spacing.md}`,
+      fontSize: tokens.typography.fontSize.base,
+    },
+    lg: {
+      padding: `${tokens.spacing.md} ${tokens.spacing.lg}`,
+      fontSize: tokens.typography.fontSize.lg,
+    },
+  }
+  
+  const baseStyles = {
+    borderRadius: tokens.effects.borderRadius.md,
+    fontWeight: tokens.typography.fontWeight.medium,
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+  }
+  
+  return (
+    <button
+      style={{
+        ...baseStyles,
+        ...variantStyles[variant],
+        ...sizeStyles[size],
+      }}
+      onClick={onClick}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = variantStyles[variant].hoverBg
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = variantStyles[variant].backgroundColor
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+Now prompt AI: "Create a form with primary, secondary, and danger buttons using the Button component."
+
+AI generates:
+```tsx
+<form>
+  <Button variant="primary">Submit</Button>
+  <Button variant="secondary">Cancel</Button>
+  <Button variant="danger">Delete</Button>
+</form>
+```
+
+All three buttons inherit consistent token-based styling automatically. No need to specify colors, spacing, or typography in prompts.
+
+## Visual Regression Testing
+
+Automated screenshots catch visual drift:
+
+```typescript
+// tests/visual.test.tsx
+import { test, expect } from '@playwright/test'
+
+test('button variants maintain consistent styling', async ({ page }) => {
+  await page.goto('/component-showcase/buttons')
+  
+  // Screenshot all button variants
+  await expect(page.locator('[data-testid="button-primary"]')).toHaveScreenshot('button-primary.png')
+  await expect(page.locator('[data-testid="button-secondary"]')).toHaveScreenshot('button-secondary.png')
+  await expect(page.locator('[data-testid="button-danger"]')).toHaveScreenshot('button-danger.png')
+})
+
+test('card components use consistent shadows and spacing', async ({ page }) => {
+  await page.goto('/component-showcase/cards')
+  
+  const cards = page.locator('[data-component="card"]')
+  const count = await cards.count()
+  
+  for (let i = 0; i < count; i++) {
+    await expect(cards.nth(i)).toHaveScreenshot(`card-${i}.png`)
+  }
+})
+```
+
+Run on every pull request. Fails if AI generates components with different visual styling than existing components.
+
+**GitHub Action:**
+
+```yaml
+# .github/workflows/visual-regression.yml
+name: Visual Regression Tests
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - run: npm ci
+      - run: npx playwright install
+      - run: npm run test:visual
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: visual-diffs
+          path: test-results/
+```
+
+Failed tests include diff images showing exactly where styling diverges.
+
+## Documentation-Driven Consistency
+
+AI reads project documentation to understand conventions. Structure documentation to guide consistent generation:
+
+**DESIGN_SYSTEM.md:**
+
+```markdown
+# Design System Rules
+
+## Token Usage
+
+### Colors
+ALWAYS use semantic tokens, NEVER hardcode hex values.
+
+✅ Correct:
+```tsx
+backgroundColor: tokens.color.action.primary
+```
+
+❌ Wrong:
+```tsx
+backgroundColor: '#3b82f6'
+```
+
+### Spacing
+Use token scale, maintain visual rhythm.
+
+✅ Correct:
+```tsx
+padding: tokens.spacing.lg
+gap: tokens.spacing.md
+```
+
+❌ Wrong:
+```tsx
+padding: '24px'
+gap: '1.2rem'
+```
+
+### Interactive States
+Define hover, focus, active states for all interactive elements.
+
+✅ Correct:
+```tsx
+<button
+  style={{ backgroundColor: tokens.color.action.primary }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.backgroundColor = tokens.color.action.primaryHover
+  }}
+>
+  Click
+</button>
+```
+
+❌ Wrong:
+```tsx
+<button style={{ backgroundColor: tokens.color.action.primary }}>
+  Click
+</button>
+// Missing hover state
+```
+
+## Component Patterns
+
+### Card Components
+All cards use:
+- Background: `tokens.color.surface.elevated`
+- Border radius: `tokens.effects.borderRadius.lg`
+- Shadow: `tokens.effects.boxShadow.md`
+- Padding: `tokens.spacing.lg`
+
+### Form Elements
+All inputs use:
+- Border: `1px solid tokens.color.border.default`
+- Focus border: `tokens.color.border.focus`
+- Padding: `tokens.spacing.sm`
+- Border radius: `tokens.effects.borderRadius.md`
+
+### Buttons
+Use the Button component from `@/components/Button`.
+Available variants: primary, secondary, danger
+Available sizes: sm, md, lg
+
+Example:
+```tsx
+import { Button } from '@/components/Button'
+
+<Button variant="primary" size="md">Submit</Button>
+```
+```
+
+Reference in prompts: "Follow DESIGN_SYSTEM.md conventions to create a user settings form."
+
+AI reads documentation and applies rules automatically.
+
+## Prompt Chaining for Complex Components
+
+Complex components benefit from multi-step generation:
+
+**Step 1: Generate structure**
+Prompt: "Create the HTML structure for a product card with image, title, price, and add-to-cart button. No styling yet."
+
+**Step 2: Apply tokens**
+Prompt: "Apply design tokens from tokens.ts to the product card. Use surface.elevated for background, text.primary for title, text.secondary for price, and action.primary for button."
+
+**Step 3: Add interactivity**
+Prompt: "Add hover states and click handlers to the product card. Button should use action.primaryHover on hover."
+
+**Step 4: Responsive behavior**
+Prompt: "Make the product card responsive. Stack elements vertically on mobile."
+
+This incremental approach prevents prompt overload and gives checkpoints to verify consistency before adding complexity.
+
+## Team Collaboration Patterns
+
+**Pair generation:** Junior developer prompts AI, senior developer reviews output for token consistency. Catches violations before they spread.
+
+**Component showcase:** Maintain Storybook or similar with all components. New AI-generated components must match existing examples visually.
+
+**Token audit meetings:** Weekly review of new components. Flag token violations, refine prompt templates, update documentation.
+
+**Shared prompt library:** Team-wide `.prompt-templates/` directory. When someone writes a great prompt, save it for others to reuse.
+
+## Measuring Consistency
+
+Track metrics to quantify consistency:
+
+**Token usage rate:**
+```bash
+# Count token references vs hardcoded values
+TOKEN_REFS=$(git grep -c "tokens\." src/ | awk -F: '{sum+=$2} END {print sum}')
+HARDCODED=$(git grep -c "#[0-9a-f]\{6\}" src/ | awk -F: '{sum+=$2} END {print sum}')
+RATE=$(echo "scale=2; $TOKEN_REFS / ($TOKEN_REFS + $HARDCODED) * 100" | bc)
+echo "Token usage: ${RATE}%"
+```
+
+Target: >95% token usage.
+
+**Visual consistency score:**
+Run visual regression tests, count passing vs failing.
+```bash
+npm run test:visual
+PASSED=$(grep "passed" test-results/summary.txt | wc -l)
+TOTAL=$(grep "test" test-results/summary.txt | wc -l)
+SCORE=$(echo "scale=2; $PASSED / $TOTAL * 100" | bc)
+echo "Visual consistency: ${SCORE}%"
+```
+
+Target: 100% passing (no visual drift).
+
+**Manual review time:**
+Track time spent fixing AI-generated inconsistencies.
+- Before token system: 30% of dev time
+- After token system: <5% of dev time
+
+Goal: Minimize cleanup time by maximizing first-pass consistency.
+
+## Common Pitfalls
+
+**Incomplete token coverage:** AI falls back to arbitrary values when tokens don't cover edge cases. Expand token system to handle common variants.
+
+**Vague prompts:** "Make it look good" gives AI no guidance. Be explicit about token references.
+
+**Skipping validation:** Trusting AI output without linting/testing lets inconsistencies accumulate. Automate checks.
+
+**Mixing manual and AI styling:** Some components use tokens, others use hardcoded values. Creates two parallel systems. Commit fully to tokens or don't use AI for styling.
+
+**Not updating documentation:** Token system evolves but docs don't. AI follows outdated patterns. Keep documentation synchronized.
+
+## Integration with Design Tools
+
+**Figma variables → tokens:**
+Export Figma variables as JSON, convert to token format. AI references same values designers use.
+
+```bash
+# Export from Figma, transform to tokens
+node scripts/figma-to-tokens.js
+# Outputs tokens.ts with latest design values
+```
+
+**MCP servers for real-time sync:**
+MCP server reads Figma API, serves tokens to AI dynamically. Designer updates Figma, AI generates with latest values immediately.
+
+**Design handoff:**
+Instead of pixel-perfect mockups, designers hand off token specifications: "Card uses surface.elevated, spacing.lg padding, borderRadius.lg." AI generates from description.
+
+## Advanced: AI-Generated Design Systems
+
+For projects starting from scratch, AI can help define the token system:
+
+**Prompt:**
+"Create a design token system for a fintech dashboard with these requirements:
+- Professional, trustworthy aesthetic
+- High contrast for accessibility
+- Support for light and dark themes
+- 5-step color scale for text (primary to disabled)
+- 8-step spacing scale (xs to 4xl)
+- Typography scale from 12px to 48px
+- Modern sans-serif font stack
+
+Output as TypeScript."
+
+AI generates a complete token system. Review, refine, then use as the foundation for all component generation.
+
+This works for greenfield projects. For existing products, manually define tokens matching current design language.
+
+## Tools That Help
+
+**FramingUI:** Pre-built token systems optimized for AI generation. Reduces setup time from hours to minutes.
+
+**ESLint + custom rules:** Automated token enforcement. Catches violations in development.
+
+**Playwright + visual regression:** Screenshot-based consistency checking. Detects drift automatically.
+
+**MCP servers:** Dynamic token serving. AI always references latest design values.
+
+**Storybook:** Component showcase with token usage examples. Serves as reference for AI generation.
+
+## Conclusion
+
+UI consistency in AI coding isn't automatic, but it's achievable with the right structure. Design tokens provide the foundation. Validation rules catch violations. Prompt patterns guide generation. Component libraries encapsulate consistency.
+
+The goal isn't eliminating all manual review—it's shifting from "fixing inconsistencies" to "verifying functionality." AI handles systematic token application; you handle creative problem-solving.
+
+Start with minimal tokens covering colors, spacing, and typography. Write structured prompts that reference tokens explicitly. Add validation rules to catch drift automatically. Build component libraries that encapsulate token usage. Review AI output for functionality, not styling.
+
+Over time, you'll develop prompt templates that consistently produce on-brand components. AI becomes faster at generating the right output, not just fast at generating any output.
+
+And that's when AI code generation becomes a genuine productivity multiplier instead of a faster way to create technical debt.
