@@ -1,0 +1,734 @@
+---
+title: "Complete Guide to TypeScript Design Tokens Setup"
+description: "Step-by-step guide to setting up type-safe design tokens in TypeScript projects, from schema definition to component integration and validation."
+date: "2026-03-26"
+author:
+  name: "FramingUI Team"
+tags:
+  - typescript
+  - design-tokens
+  - type-safety
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+Design tokens bring consistency. TypeScript brings safety. Together, they create a development environment where invalid design decisions are caught at compile time, not in production.
+
+This guide shows you how to build a fully type-safe design token system in TypeScript—from defining tokens as structured data to generating types, consuming them in components, and validating usage across your codebase.
+
+## Why Type Safety Matters for Design Tokens
+
+Without types, design tokens are just convention. Developers have to remember:
+- Which colors exist in the palette
+- What spacing values are allowed
+- How to spell token names correctly
+- Which tokens are deprecated
+
+With types, these constraints are enforced by the compiler. Invalid token references fail at build time, not runtime. Autocomplete surfaces available tokens. Refactoring is safe.
+
+### What You Get with Typed Tokens
+
+**Compile-time validation:**
+```ts
+const color = tokens.color.brand.primary; // ✓ Valid
+const color = tokens.color.brand.tertiary; // ✗ Error: Property 'tertiary' does not exist
+```
+
+**IDE autocomplete:**
+Type `tokens.color.` and see every available color token in IntelliSense.
+
+**Refactor safety:**
+Rename a token, and TypeScript shows you every reference that needs updating.
+
+**Documentation in code:**
+Hover over a token to see its value and description without leaving your editor.
+
+## Step 1: Define Token Schema
+
+Start with a strongly-typed schema that represents your design system.
+
+```ts
+// src/design-tokens/schema.ts
+
+export type ColorPalette = {
+  brand: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
+  text: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    inverse: string;
+  };
+  bg: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
+  border: {
+    primary: string;
+    secondary: string;
+  };
+  status: {
+    success: string;
+    warning: string;
+    error: string;
+    info: string;
+  };
+};
+
+export type SpacingScale = {
+  0: string;
+  1: string;
+  2: string;
+  3: string;
+  4: string;
+  6: string;
+  8: string;
+  12: string;
+  16: string;
+  24: string;
+  32: string;
+};
+
+export type FontSizeScale = {
+  xs: string;
+  sm: string;
+  base: string;
+  lg: string;
+  xl: string;
+  '2xl': string;
+  '3xl': string;
+};
+
+export type BorderRadiusScale = {
+  none: string;
+  sm: string;
+  base: string;
+  lg: string;
+  xl: string;
+  full: string;
+};
+
+export type DesignTokens = {
+  color: ColorPalette;
+  spacing: SpacingScale;
+  fontSize: FontSizeScale;
+  borderRadius: BorderRadiusScale;
+};
+```
+
+This schema acts as a contract. Any token file must conform to this shape.
+
+## Step 2: Implement Tokens
+
+Create the actual token values, typed against the schema:
+
+```ts
+// src/design-tokens/tokens.ts
+import { DesignTokens } from './schema';
+
+export const tokens: DesignTokens = {
+  color: {
+    brand: {
+      primary: '#0F172A',
+      secondary: '#64748B',
+      accent: '#3B82F6',
+    },
+    text: {
+      primary: '#0F172A',
+      secondary: '#64748B',
+      tertiary: '#94A3B8',
+      inverse: '#FFFFFF',
+    },
+    bg: {
+      primary: '#FFFFFF',
+      secondary: '#F8FAFC',
+      tertiary: '#F1F5F9',
+    },
+    border: {
+      primary: '#E2E8F0',
+      secondary: '#CBD5E1',
+    },
+    status: {
+      success: '#10B981',
+      warning: '#F59E0B',
+      error: '#EF4444',
+      info: '#3B82F6',
+    },
+  },
+  spacing: {
+    0: '0',
+    1: '0.25rem',
+    2: '0.5rem',
+    3: '0.75rem',
+    4: '1rem',
+    6: '1.5rem',
+    8: '2rem',
+    12: '3rem',
+    16: '4rem',
+    24: '6rem',
+    32: '8rem',
+  },
+  fontSize: {
+    xs: '0.75rem',
+    sm: '0.875rem',
+    base: '1rem',
+    lg: '1.125rem',
+    xl: '1.25rem',
+    '2xl': '1.5rem',
+    '3xl': '1.875rem',
+  },
+  borderRadius: {
+    none: '0',
+    sm: '0.25rem',
+    base: '0.5rem',
+    lg: '0.75rem',
+    xl: '1rem',
+    full: '9999px',
+  },
+};
+```
+
+**Type safety in action:** If you misspell a property or forget a required field, TypeScript errors immediately:
+
+```ts
+export const tokens: DesignTokens = {
+  color: {
+    brand: {
+      primary: '#0F172A',
+      // Missing 'secondary' and 'accent' — TypeScript error
+    },
+    // Missing 'text', 'bg', 'border', 'status' — TypeScript error
+  },
+};
+```
+
+## Step 3: Generate Utility Types
+
+Create type utilities that make token consumption easier in components:
+
+```ts
+// src/design-tokens/types.ts
+import { DesignTokens } from './schema';
+
+// Extract keys as literal types
+export type ColorToken = keyof DesignTokens['color'];
+export type ColorCategory = ColorToken;
+export type BrandColor = keyof DesignTokens['color']['brand'];
+export type TextColor = keyof DesignTokens['color']['text'];
+export type BgColor = keyof DesignTokens['color']['bg'];
+export type BorderColor = keyof DesignTokens['color']['border'];
+export type StatusColor = keyof DesignTokens['color']['status'];
+
+export type SpacingToken = keyof DesignTokens['spacing'];
+export type FontSizeToken = keyof DesignTokens['fontSize'];
+export type BorderRadiusToken = keyof DesignTokens['borderRadius'];
+
+// Utility type: get color from category
+export type ColorValue<Category extends ColorToken> = 
+  keyof DesignTokens['color'][Category];
+
+// Utility type: full color path
+export type FullColorPath = 
+  | `brand.${BrandColor}`
+  | `text.${TextColor}`
+  | `bg.${BgColor}`
+  | `border.${BorderColor}`
+  | `status.${StatusColor}`;
+```
+
+Now you can reference tokens with full type safety:
+
+```ts
+const primaryColor: BrandColor = 'primary'; // ✓
+const invalidColor: BrandColor = 'tertiary'; // ✗ Error
+
+const colorPath: FullColorPath = 'brand.primary'; // ✓
+const badPath: FullColorPath = 'brand.tertiary'; // ✗ Error
+```
+
+## Step 4: Build Type-Safe Accessor Functions
+
+Create helper functions that provide typed access to tokens:
+
+```ts
+// src/design-tokens/accessors.ts
+import { tokens } from './tokens';
+import { 
+  ColorToken, 
+  SpacingToken, 
+  FontSizeToken, 
+  BorderRadiusToken 
+} from './types';
+
+export function getColor<Category extends ColorToken>(
+  category: Category,
+  shade: keyof typeof tokens.color[Category]
+): string {
+  return tokens.color[category][shade];
+}
+
+export function getSpacing(value: SpacingToken): string {
+  return tokens.spacing[value];
+}
+
+export function getFontSize(value: FontSizeToken): string {
+  return tokens.fontSize[value];
+}
+
+export function getBorderRadius(value: BorderRadiusToken): string {
+  return tokens.borderRadius[value];
+}
+
+// Convenience accessors for common categories
+export const color = {
+  brand: (shade: keyof typeof tokens.color.brand) => 
+    tokens.color.brand[shade],
+  text: (shade: keyof typeof tokens.color.text) => 
+    tokens.color.text[shade],
+  bg: (shade: keyof typeof tokens.color.bg) => 
+    tokens.color.bg[shade],
+  border: (shade: keyof typeof tokens.color.border) => 
+    tokens.color.border[shade],
+  status: (shade: keyof typeof tokens.color.status) => 
+    tokens.color.status[shade],
+};
+```
+
+Usage:
+
+```ts
+const brandPrimary = color.brand('primary'); // ✓ Type-safe
+const invalidColor = color.brand('tertiary'); // ✗ Error: Argument not assignable
+
+const spacing = getSpacing(4); // ✓ '1rem'
+const badSpacing = getSpacing(5); // ✗ Error: Argument '5' not assignable
+```
+
+## Step 5: Type-Safe Component Props
+
+Use token types to constrain component props:
+
+```tsx
+// src/components/Button.tsx
+import { tokens } from '@/design-tokens/tokens';
+import { BrandColor, SpacingToken, BorderRadiusToken } from '@/design-tokens/types';
+
+type ButtonVariant = 'primary' | 'secondary' | 'outline';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+type ButtonProps = {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  children: React.ReactNode;
+  onClick?: () => void;
+};
+
+const variantStyles: Record<ButtonVariant, string> = {
+  primary: `bg-[${tokens.color.brand.primary}] text-[${tokens.color.text.inverse}]`,
+  secondary: `bg-[${tokens.color.brand.secondary}] text-[${tokens.color.text.inverse}]`,
+  outline: `bg-transparent border border-[${tokens.color.border.primary}] text-[${tokens.color.text.primary}]`,
+};
+
+const sizeStyles: Record<ButtonSize, { padding: SpacingToken; fontSize: string }> = {
+  sm: { padding: 2, fontSize: tokens.fontSize.sm },
+  md: { padding: 4, fontSize: tokens.fontSize.base },
+  lg: { padding: 6, fontSize: tokens.fontSize.lg },
+};
+
+export function Button({ variant = 'primary', size = 'md', children, onClick }: ButtonProps) {
+  return (
+    <button
+      className={variantStyles[variant]}
+      style={{
+        padding: tokens.spacing[sizeStyles[size].padding],
+        fontSize: sizeStyles[size].fontSize,
+        borderRadius: tokens.borderRadius.base,
+      }}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+Now this fails at **type-check time**:
+
+```tsx
+<Button variant="tertiary" size="md"> {/* Error: "tertiary" not valid */}
+```
+
+## Step 6: Typed CSS-in-JS
+
+For styled-components or Emotion users, create typed token utilities:
+
+```ts
+// src/design-tokens/css.ts
+import { tokens } from './tokens';
+import { css } from '@emotion/react';
+
+export const spacing = (value: SpacingToken) => tokens.spacing[value];
+export const color = {
+  brand: (shade: BrandColor) => tokens.color.brand[shade],
+  text: (shade: TextColor) => tokens.color.text[shade],
+  bg: (shade: BgColor) => tokens.color.bg[shade],
+};
+
+// Typed CSS helper
+export const tokenCSS = {
+  padding: (value: SpacingToken) => css`padding: ${tokens.spacing[value]};`,
+  margin: (value: SpacingToken) => css`margin: ${tokens.spacing[value]};`,
+  color: (category: ColorToken, shade: string) => css`color: ${getColor(category, shade)};`,
+  backgroundColor: (category: ColorToken, shade: string) => 
+    css`background-color: ${getColor(category, shade)};`,
+};
+```
+
+Usage:
+
+```tsx
+import styled from '@emotion/styled';
+import { tokens } from '@/design-tokens/tokens';
+
+const Card = styled.div`
+  background-color: ${tokens.color.bg.primary};
+  padding: ${tokens.spacing[4]};
+  border-radius: ${tokens.borderRadius.lg};
+  border: 1px solid ${tokens.color.border.primary};
+`;
+```
+
+TypeScript ensures you can't reference non-existent tokens.
+
+## Step 7: Generate Tailwind Config from Tokens
+
+Create a build script that transforms your TypeScript tokens into Tailwind config:
+
+```ts
+// scripts/generate-tailwind-config.ts
+import { tokens } from '../src/design-tokens/tokens';
+import fs from 'fs';
+
+const tailwindTokens = {
+  colors: {
+    brand: tokens.color.brand,
+    text: tokens.color.text,
+    bg: tokens.color.bg,
+    border: tokens.color.border,
+    status: tokens.color.status,
+  },
+  spacing: tokens.spacing,
+  fontSize: tokens.fontSize,
+  borderRadius: tokens.borderRadius,
+};
+
+const configContent = `
+// Auto-generated from design tokens. Do not edit manually.
+module.exports = ${JSON.stringify(tailwindTokens, null, 2)};
+`;
+
+fs.writeFileSync('./tailwind.tokens.js', configContent);
+console.log('✓ Generated tailwind.tokens.js');
+```
+
+Run on build:
+
+```json
+// package.json
+{
+  "scripts": {
+    "tokens:tailwind": "tsx scripts/generate-tailwind-config.ts",
+    "dev": "npm run tokens:tailwind && next dev",
+    "build": "npm run tokens:tailwind && next build"
+  }
+}
+```
+
+Import in `tailwind.config.js`:
+
+```js
+const tokens = require('./tailwind.tokens.js');
+
+module.exports = {
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: tokens,
+  },
+};
+```
+
+**Benefit:** TypeScript tokens are the source of truth. Tailwind config auto-updates when tokens change.
+
+## Step 8: Runtime Validation (Development Only)
+
+Add runtime checks to catch token misuse during development:
+
+```ts
+// src/design-tokens/validate.ts
+import { tokens } from './tokens';
+import { DesignTokens } from './schema';
+
+function getAllTokenPaths(obj: any, prefix = ''): string[] {
+  return Object.entries(obj).flatMap(([key, value]) => {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      return getAllTokenPaths(value, path);
+    }
+    return [path];
+  });
+}
+
+const validColorPaths = getAllTokenPaths(tokens.color);
+const validSpacingTokens = Object.keys(tokens.spacing);
+
+export function validateColorPath(path: string, componentName: string) {
+  if (process.env.NODE_ENV !== 'development') return;
+  
+  if (!validColorPaths.includes(path)) {
+    console.warn(
+      `[Token Warning] Invalid color path "${path}" in ${componentName}.\n` +
+      `Valid paths: ${validColorPaths.join(', ')}`
+    );
+  }
+}
+
+export function validateSpacing(value: string, componentName: string) {
+  if (process.env.NODE_ENV !== 'development') return;
+  
+  if (!validSpacingTokens.includes(value)) {
+    console.warn(
+      `[Token Warning] Invalid spacing token "${value}" in ${componentName}.\n` +
+      `Valid tokens: ${validSpacingTokens.join(', ')}`
+    );
+  }
+}
+```
+
+Use in components:
+
+```tsx
+export function Card({ padding, bgColor }: CardProps) {
+  validateSpacing(padding, 'Card');
+  validateColorPath(bgColor, 'Card');
+  
+  return <div style={{ padding: tokens.spacing[padding] }}>...</div>;
+}
+```
+
+## Step 9: Advanced Type Patterns
+
+### Union Types for Theme Variants
+
+```ts
+export type Theme = 'light' | 'dark';
+
+export type ThemedTokens = {
+  [K in Theme]: DesignTokens;
+};
+
+export const themedTokens: ThemedTokens = {
+  light: tokens,
+  dark: {
+    color: {
+      brand: tokens.color.brand, // Same brand colors
+      text: {
+        primary: '#F8FAFC',
+        secondary: '#CBD5E1',
+        tertiary: '#94A3B8',
+        inverse: '#0F172A',
+      },
+      bg: {
+        primary: '#0F172A',
+        secondary: '#1E293B',
+        tertiary: '#334155',
+      },
+      border: {
+        primary: '#334155',
+        secondary: '#475569',
+      },
+      status: tokens.color.status,
+    },
+    spacing: tokens.spacing,
+    fontSize: tokens.fontSize,
+    borderRadius: tokens.borderRadius,
+  },
+};
+
+export function getThemedColor(
+  theme: Theme,
+  category: ColorToken,
+  shade: string
+): string {
+  return themedTokens[theme].color[category][shade];
+}
+```
+
+### Responsive Spacing Types
+
+```ts
+export type ResponsiveSpacing = {
+  mobile: SpacingToken;
+  tablet: SpacingToken;
+  desktop: SpacingToken;
+};
+
+export function responsiveSpacing(config: ResponsiveSpacing) {
+  return {
+    padding: tokens.spacing[config.mobile],
+    '@media (min-width: 768px)': {
+      padding: tokens.spacing[config.tablet],
+    },
+    '@media (min-width: 1024px)': {
+      padding: tokens.spacing[config.desktop],
+    },
+  };
+}
+```
+
+## Step 10: Integration with Component Libraries
+
+### Typed Props for Radix UI
+
+```tsx
+import * as Dialog from '@radix-ui/react-dialog';
+import { tokens } from '@/design-tokens/tokens';
+import { BorderRadiusToken } from '@/design-tokens/types';
+
+type ModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  borderRadius?: BorderRadiusToken;
+};
+
+export function Modal({ isOpen, onClose, children, borderRadius = 'lg' }: ModalProps) {
+  return (
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content
+          style={{
+            backgroundColor: tokens.color.bg.primary,
+            borderRadius: tokens.borderRadius[borderRadius],
+            padding: tokens.spacing[6],
+          }}
+        >
+          {children}
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+```
+
+## Real-World Example: Type-Safe Form Component
+
+```tsx
+import { tokens } from '@/design-tokens/tokens';
+import { SpacingToken, BorderRadiusToken, ColorToken } from '@/design-tokens/types';
+
+type InputProps = {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  spacing?: SpacingToken;
+  borderRadius?: BorderRadiusToken;
+};
+
+export function Input({ 
+  label, 
+  value, 
+  onChange, 
+  error,
+  spacing = 3,
+  borderRadius = 'base'
+}: InputProps) {
+  return (
+    <div style={{ marginBottom: tokens.spacing[spacing] }}>
+      <label 
+        style={{ 
+          color: tokens.color.text.secondary,
+          fontSize: tokens.fontSize.sm,
+          marginBottom: tokens.spacing[1],
+          display: 'block'
+        }}
+      >
+        {label}
+      </label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{
+          width: '100%',
+          padding: tokens.spacing[spacing],
+          borderRadius: tokens.borderRadius[borderRadius],
+          border: `1px solid ${error ? tokens.color.status.error : tokens.color.border.primary}`,
+          fontSize: tokens.fontSize.base,
+          color: tokens.color.text.primary,
+        }}
+      />
+      {error && (
+        <span 
+          style={{ 
+            color: tokens.color.status.error,
+            fontSize: tokens.fontSize.xs,
+            marginTop: tokens.spacing[1],
+            display: 'block'
+          }}
+        >
+          {error}
+        </span>
+      )}
+    </div>
+  );
+}
+```
+
+Usage:
+
+```tsx
+<Input 
+  label="Email"
+  value={email}
+  onChange={setEmail}
+  spacing={4}        // ✓ Type-safe
+  borderRadius="lg"  // ✓ Type-safe
+/>
+
+<Input 
+  spacing={5}        // ✗ Error: Not in SpacingToken
+  borderRadius="xl2" // ✗ Error: Not in BorderRadiusToken
+/>
+```
+
+## Tools That Simplify TypeScript Token Setup
+
+Setting up this entire type system from scratch takes time. If you want the benefits without the boilerplate, **FramingUI** provides:
+
+- Pre-built TypeScript token schemas
+- Auto-generated types from token definitions
+- Type-safe component prop helpers
+- Runtime validation in dev mode
+- Tailwind config generation
+
+You define tokens once, and the framework handles type generation, validation, and Tailwind integration automatically.
+
+## Next Steps
+
+1. **Define your token schema** — Start with colors, spacing, typography
+2. **Implement typed tokens** — Create the actual values with strict types
+3. **Generate utility types** — Build accessor functions and prop types
+4. **Integrate with components** — Use tokens in props and styles
+5. **Add runtime validation** — Catch edge cases in development
+6. **Automate Tailwind sync** — Generate config from TypeScript tokens
+
+Once your tokens are fully typed, invalid design decisions become compile errors. Refactoring is safe. Autocomplete surfaces every available token. Your design system enforces itself through the type checker.
+
+Type safety isn't overhead—it's the infrastructure that makes design systems scale.

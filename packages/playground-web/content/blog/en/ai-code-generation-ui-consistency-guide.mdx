@@ -1,0 +1,597 @@
+---
+title: "Achieving UI Consistency with AI Code Generation"
+description: "Practical strategies to ensure AI-generated components match your design system, from context engineering to validation workflows."
+date: "2026-03-26"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - ui-consistency
+  - design-system
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+AI code generation is transforming frontend development, but it introduces a new consistency problem: every generated component needs to match your design system, not the generic patterns the model learned during training.
+
+When AI builds a button, it might use `bg-blue-500` instead of your brand color. When it creates spacing, it might pick `gap-5` when your system uses a 4px grid. The code compiles and looks reasonable in isolation, but breaks your visual language.
+
+This guide shows you how to align AI output with your design system through structured context, validation, and feedback loops—turning AI from a consistency risk into a consistency multiplier.
+
+## The Consistency Problem
+
+### What Inconsistency Looks Like
+
+You ask Claude Code or Cursor to build a dashboard card. It generates:
+
+```tsx
+export function DashboardCard({ title, value, change }) {
+  return (
+    <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+      <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+      <p className="mt-2 text-3xl font-semibold text-gray-900">{value}</p>
+      <span className="text-green-600 text-sm">{change}</span>
+    </div>
+  );
+}
+```
+
+**Problems:**
+- Uses `gray-200`, `gray-500`, `gray-900` instead of semantic tokens
+- Spacing (`p-6`, `mt-2`) doesn't match your 8px grid
+- `green-600` for positive change instead of `status-success`
+- `shadow-sm` when your system doesn't use shadows
+
+The component works. It even looks okay. But it doesn't match your product.
+
+### Why AI Struggles with Consistency
+
+1. **Training bias:** The model learned from millions of React components using default Tailwind, not your custom theme
+2. **Context limits:** Your design system exists across files, docs, and Figma—too large to fit in a single prompt
+3. **Ambiguous specs:** "Use our brand colors" is vague without explicit token mapping
+4. **No memory:** Each generation starts fresh; the model doesn't remember patterns from previous components
+
+## Strategy 1: Provide Design Tokens as Context
+
+The most effective consistency technique is giving AI access to your design tokens in structured, machine-readable format.
+
+### Format Tokens for AI Consumption
+
+```json
+// .ai/design-tokens.json
+{
+  "colors": {
+    "brand.primary": "#0F172A",
+    "brand.secondary": "#64748B",
+    "text.primary": "#0F172A",
+    "text.secondary": "#64748B",
+    "bg.primary": "#FFFFFF",
+    "bg.secondary": "#F8FAFC",
+    "border.primary": "#E2E8F0",
+    "status.success": "#10B981",
+    "status.error": "#EF4444"
+  },
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "4": "1rem",
+    "6": "1.5rem",
+    "8": "2rem"
+  },
+  "borderRadius": {
+    "sm": "0.25rem",
+    "base": "0.5rem",
+    "lg": "0.75rem"
+  },
+  "fontSize": {
+    "sm": "0.875rem",
+    "base": "1rem",
+    "lg": "1.125rem",
+    "xl": "1.25rem"
+  }
+}
+```
+
+### Create AI Context Files
+
+**For Cursor / Windsurf:**
+
+```markdown
+<!-- .cursorrules -->
+# Design System Rules
+
+When generating UI components, strictly adhere to these design tokens:
+
+## Colors
+Only use these Tailwind classes:
+- Brand: `bg-brand-primary`, `text-brand-primary`, `border-brand-primary`
+- Text: `text-text-primary`, `text-text-secondary`
+- Background: `bg-bg-primary`, `bg-bg-secondary`
+- Border: `border-border-primary`
+- Status: `text-status-success`, `text-status-error`
+
+Never use default Tailwind colors like `blue-500`, `gray-400`, `green-600`.
+
+## Spacing
+Use only these spacing values:
+- `1` (4px), `2` (8px), `4` (16px), `6` (24px), `8` (32px)
+
+Examples: `p-4`, `gap-2`, `mt-6`
+
+Never use arbitrary values like `p-5` or `gap-3`.
+
+## Border Radius
+- `rounded-sm`, `rounded`, `rounded-lg` only
+
+## Typography
+- Font sizes: `text-sm`, `text-base`, `text-lg`, `text-xl`
+- Always use semantic color tokens for text color
+
+## Component Patterns
+- Cards: `bg-bg-primary border border-border-primary rounded-lg p-6`
+- Buttons: `bg-brand-primary text-white rounded px-4 py-2`
+- Inputs: `border border-border-primary rounded p-2 text-base`
+```
+
+**For Claude Code (via MCP):**
+
+Create a `.clauderc` file:
+
+```json
+{
+  "projectContext": {
+    "designSystem": {
+      "tokens": ".ai/design-tokens.json",
+      "rules": ".ai/design-rules.md",
+      "examples": ".ai/component-examples/"
+    }
+  }
+}
+```
+
+**For API-based generation:**
+
+```js
+const systemPrompt = `
+You are a UI engineer. Always use these design tokens:
+
+Colors: ${JSON.stringify(tokens.colors)}
+Spacing: ${JSON.stringify(tokens.spacing)}
+Border Radius: ${JSON.stringify(tokens.borderRadius)}
+
+Rules:
+1. Never use default Tailwind colors (blue-500, gray-400, etc.)
+2. Only use spacing values from the token list
+3. Match the semantic meaning: brand.primary for primary actions, text.secondary for labels, etc.
+4. When in doubt, ask which token to use rather than guessing
+`;
+```
+
+## Strategy 2: Provide Component Examples
+
+Show AI what correct implementations look like:
+
+```tsx
+// .ai/component-examples/Button.tsx
+/**
+ * REFERENCE IMPLEMENTATION - Use this pattern for all buttons
+ */
+export function Button({ variant = 'primary', size = 'md', children }) {
+  const variants = {
+    primary: 'bg-brand-primary text-white hover:bg-brand-secondary',
+    secondary: 'bg-bg-secondary text-text-primary border border-border-primary',
+    outline: 'bg-transparent border border-brand-primary text-brand-primary',
+  };
+
+  const sizes = {
+    sm: 'px-2 py-1 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-4 text-lg',
+  };
+
+  return (
+    <button className={`${variants[variant]} ${sizes[size]} rounded transition`}>
+      {children}
+    </button>
+  );
+}
+```
+
+```tsx
+// .ai/component-examples/Card.tsx
+/**
+ * REFERENCE IMPLEMENTATION - Use this pattern for all card components
+ */
+export function Card({ title, children, footer }) {
+  return (
+    <div className="bg-bg-primary border border-border-primary rounded-lg p-6">
+      {title && (
+        <h3 className="text-lg font-semibold text-text-primary mb-4">
+          {title}
+        </h3>
+      )}
+      <div className="text-text-secondary">{children}</div>
+      {footer && (
+        <div className="mt-6 pt-4 border-t border-border-primary">
+          {footer}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+When prompting AI:
+
+```
+Create a metric card component similar to Card.tsx example,
+but optimized for displaying a number, label, and trend indicator.
+Use the same token patterns.
+```
+
+## Strategy 3: Iterative Refinement with Feedback
+
+AI rarely gets it perfect on first try. Build a feedback loop:
+
+### Step 1: Generate Initial Component
+
+```
+Create a user profile card showing avatar, name, role, and contact button.
+```
+
+**AI generates:**
+```tsx
+export function UserProfile({ user }) {
+  return (
+    <div className="p-4 bg-white rounded border">
+      <img src={user.avatar} className="w-16 h-16 rounded-full" />
+      <h3 className="text-lg font-bold">{user.name}</h3>
+      <p className="text-gray-500 text-sm">{user.role}</p>
+      <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+        Contact
+      </button>
+    </div>
+  );
+}
+```
+
+### Step 2: Validate Against Tokens
+
+Run a validation script:
+
+```bash
+npm run validate:tokens
+```
+
+**Output:**
+```
+❌ UserProfile.tsx:3 - Using hardcoded 'white', use bg-bg-primary
+❌ UserProfile.tsx:5 - Using hardcoded 'gray-500', use text-text-secondary
+❌ UserProfile.tsx:7 - Using hardcoded 'blue-600', use bg-brand-primary
+```
+
+### Step 3: Provide Corrective Prompt
+
+```
+The component uses incorrect tokens. Update it to use:
+- bg-bg-primary instead of white
+- text-text-secondary instead of gray-500
+- bg-brand-primary instead of blue-600
+- p-6 instead of p-4 (matches our spacing scale)
+```
+
+**AI regenerates:**
+```tsx
+export function UserProfile({ user }) {
+  return (
+    <div className="p-6 bg-bg-primary rounded-lg border border-border-primary">
+      <img src={user.avatar} className="w-16 h-16 rounded-full" />
+      <h3 className="text-lg font-semibold text-text-primary">{user.name}</h3>
+      <p className="text-text-secondary text-sm">{user.role}</p>
+      <button className="mt-6 bg-brand-primary text-white px-4 py-2 rounded transition">
+        Contact
+      </button>
+    </div>
+  );
+}
+```
+
+✅ Now consistent with design system.
+
+## Strategy 4: Automated Validation
+
+Build checks that run automatically during development:
+
+### ESLint Plugin for Token Enforcement
+
+```js
+// eslint-local/no-hardcoded-styles.js
+module.exports = {
+  create(context) {
+    return {
+      JSXAttribute(node) {
+        if (node.name.name === 'className') {
+          const value = node.value.value;
+          
+          // Check for default Tailwind colors
+          const invalidColors = [
+            'blue-', 'gray-', 'green-', 'red-', 'yellow-',
+            'indigo-', 'purple-', 'pink-'
+          ];
+          
+          invalidColors.forEach(color => {
+            if (value && value.includes(color)) {
+              context.report({
+                node,
+                message: `Use design tokens instead of ${color}* classes`,
+              });
+            }
+          });
+          
+          // Check for arbitrary spacing
+          if (value && /[mp][tblrxy]?-\[[\d.]+(?:px|rem)\]/.test(value)) {
+            context.report({
+              node,
+              message: 'Use spacing tokens instead of arbitrary values',
+            });
+          }
+        }
+      },
+    };
+  },
+};
+```
+
+Add to `.eslintrc`:
+
+```json
+{
+  "rules": {
+    "local/no-hardcoded-styles": "error"
+  }
+}
+```
+
+Now ESLint catches violations in real-time, including AI-generated code.
+
+### Pre-commit Hook
+
+```bash
+# .husky/pre-commit
+#!/bin/sh
+npm run lint
+npm run validate:tokens
+
+if [ $? -ne 0 ]; then
+  echo "❌ Token validation failed. Fix errors before committing."
+  exit 1
+fi
+```
+
+Forces validation before code reaches main branch.
+
+## Strategy 5: Component Composition Over Generation
+
+Instead of generating entire components from scratch, guide AI to compose from primitives:
+
+### Define Atomic Primitives
+
+```tsx
+// src/primitives/Box.tsx
+export function Box({ children, padding, bg, border, radius }) {
+  return (
+    <div 
+      className={`
+        ${padding ? `p-${padding}` : ''}
+        ${bg ? `bg-${bg}` : ''}
+        ${border ? `border border-${border}` : ''}
+        ${radius ? `rounded-${radius}` : ''}
+      `}
+    >
+      {children}
+    </div>
+  );
+}
+
+// src/primitives/Text.tsx
+export function Text({ children, size, color, weight }) {
+  return (
+    <span className={`text-${size} text-${color} font-${weight}`}>
+      {children}
+    </span>
+  );
+}
+
+// src/primitives/Button.tsx
+export function Button({ children, variant, size }) {
+  const variants = {
+    primary: 'bg-brand-primary text-white',
+    secondary: 'bg-brand-secondary text-white',
+  };
+  
+  return (
+    <button className={`${variants[variant]} px-4 py-2 rounded transition`}>
+      {children}
+    </button>
+  );
+}
+```
+
+### Prompt AI to Compose
+
+```
+Create a UserProfile component by composing Box, Text, and Button primitives.
+
+Use:
+- Box with padding=6, bg="bg-primary", border="border-primary", radius="lg"
+- Text with size="lg", color="text-primary" for name
+- Text with size="sm", color="text-secondary" for role
+- Button with variant="primary" for contact action
+```
+
+**AI generates:**
+
+```tsx
+import { Box, Text, Button } from '@/primitives';
+
+export function UserProfile({ user }) {
+  return (
+    <Box padding={6} bg="bg-primary" border="border-primary" radius="lg">
+      <img src={user.avatar} className="w-16 h-16 rounded-full mb-4" />
+      <Text size="lg" color="text-primary" weight="semibold">
+        {user.name}
+      </Text>
+      <Text size="sm" color="text-secondary">
+        {user.role}
+      </Text>
+      <Button variant="primary" className="mt-6">
+        Contact
+      </Button>
+    </Box>
+  );
+}
+```
+
+**Benefits:**
+- AI can't introduce arbitrary tokens (primitives enforce valid props)
+- Composition is faster and more reliable than full generation
+- Consistent structure across all components
+
+## Strategy 6: Real-Time Visual Validation
+
+Set up a workflow where AI-generated components are immediately rendered:
+
+```tsx
+// src/dev/ComponentPreview.tsx
+import { useState } from 'react';
+
+export function ComponentPreview({ code }) {
+  const [Component, setComponent] = useState(null);
+  
+  // Dynamically evaluate AI-generated code
+  useEffect(() => {
+    try {
+      const module = new Function('React', code);
+      setComponent(() => module(React));
+    } catch (error) {
+      console.error('Component compilation failed:', error);
+    }
+  }, [code]);
+  
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <h3>Generated Code</h3>
+        <pre>{code}</pre>
+      </div>
+      <div>
+        <h3>Preview</h3>
+        {Component && <Component />}
+      </div>
+    </div>
+  );
+}
+```
+
+When AI generates a component, immediately see if it visually matches your system.
+
+## Strategy 7: Use AI-Aware Design Systems
+
+Tools like **FramingUI** are built specifically for AI-driven workflows:
+
+- Tokens are automatically available to Cursor, Windsurf, Claude Code via MCP
+- Components are validated against tokens at runtime (dev mode)
+- ESLint rules come pre-configured
+- Generated code references your actual design system by default
+
+Instead of manually configuring context files and validation scripts, the system handles it automatically.
+
+## Real-World Workflow: Building a Dashboard
+
+**Goal:** Use AI to build a metrics dashboard that matches our design system.
+
+### Step 1: Define Components Needed
+
+```
+I need to build a metrics dashboard. Components required:
+- MetricCard (shows number, label, trend)
+- ChartCard (wraps recharts components)
+- Layout (responsive grid)
+
+Use design tokens from .ai/design-tokens.json and match patterns from .ai/component-examples/
+```
+
+### Step 2: Generate First Component
+
+```
+Create MetricCard component:
+- Shows title, value, change percentage
+- Use bg-bg-primary, border-border-primary
+- Spacing: p-6
+- Status colors: text-status-success for positive, text-status-error for negative
+```
+
+### Step 3: Validate Output
+
+```bash
+npm run validate:tokens
+```
+
+If errors appear, provide corrective prompt.
+
+### Step 4: Iterate on Refinements
+
+```
+Update MetricCard:
+- Add optional icon prop
+- Use text-text-secondary for title
+- Increase spacing to p-8 for better visual hierarchy
+```
+
+### Step 5: Generate Remaining Components
+
+```
+Create ChartCard similar to MetricCard but:
+- Taller (min-h-[400px])
+- Optional footer for chart controls
+- Flexible children (for chart library)
+```
+
+### Step 6: Compose Dashboard Layout
+
+```
+Create Dashboard component composing MetricCard and ChartCard:
+- Grid: 3 columns on desktop, 1 on mobile
+- Gap: gap-6
+- Container: max-w-7xl mx-auto p-8
+```
+
+### Result
+
+All components consistent with design system, validated automatically, and visually matching the product.
+
+## When to Use Each Strategy
+
+| Strategy | Best For | Setup Time |
+|----------|----------|------------|
+| Token context files | Small-medium projects, Cursor/Claude Code | 1 hour |
+| Component examples | Pattern-heavy systems (lots of variants) | 2-3 hours |
+| Iterative refinement | Complex components, first-time generation | Ongoing |
+| Automated validation | Teams, CI/CD enforcement | 4-6 hours |
+| Component composition | Large design systems, strict consistency | 1-2 days |
+| Visual validation | Pixel-perfect requirements, designer QA | 3-4 hours |
+| AI-aware tools | Fast setup, ongoing AI-heavy workflow | 15-30 min |
+
+## Next Steps
+
+1. **Export your design tokens** to a JSON file AI can consume
+2. **Create context files** (.cursorrules, .clauderc, etc.) with token rules
+3. **Add validation** (ESLint rules, pre-commit hooks)
+4. **Build reference examples** for common component patterns
+5. **Iterate and refine** based on what AI gets wrong
+6. **Automate enforcement** in CI to catch issues before production
+
+When AI has access to your design system through structured context and validation loops, it stops hallucinating generic UIs and starts generating components that actually match your product. Consistency becomes automatic instead of manual.
+
+The gap between "AI-generated" and "production-ready" shrinks to zero.

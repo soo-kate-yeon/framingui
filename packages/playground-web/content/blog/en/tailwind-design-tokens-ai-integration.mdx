@@ -1,0 +1,381 @@
+---
+title: "How to Integrate Tailwind Design Tokens with AI Code Generation"
+description: "A practical guide to setting up Tailwind design tokens for AI-driven workflows, ensuring consistent UI generation and reducing hallucinations."
+date: "2026-03-26"
+author:
+  name: "FramingUI Team"
+tags:
+  - tailwind
+  - design-tokens
+  - ai-coding
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+Tailwind CSS has transformed how developers build interfaces with its utility-first approach. But when you introduce AI code generation into your workflow, a gap appears: the model doesn't inherently understand *your* design system—only the default Tailwind configuration it learned during training.
+
+The result? Generated code that uses `bg-blue-500` when your brand color is `bg-brand-primary`, or spacing classes that don't align with your custom scale. This guide shows you how to bridge that gap by structuring Tailwind configuration as design tokens that AI can reliably consume.
+
+## Why Tailwind + AI Needs Token Structure
+
+Tailwind's configuration is already token-like—`colors.blue.500` maps to a hex value, `spacing.4` maps to `1rem`. But AI models don't automatically access your `tailwind.config.js` during code generation. They rely on context you provide.
+
+Without explicit token data, the model falls back to default Tailwind values from its training set. Your custom theme gets ignored. The generated code compiles but doesn't match your design.
+
+### The Three Problems This Solves
+
+**1. Semantic consistency:** When your config defines `colors.brand.primary`, the model can generate class names that reference actual values instead of guessing generic blues.
+
+**2. Custom scale adherence:** If your spacing uses 4px increments instead of Tailwind's default 8px, the model needs to know that `space-y-3` means something specific in your system.
+
+**3. Constraint validation:** Token structure makes it possible to validate generated code against your theme programmatically, catching mismatches before they ship.
+
+## Step 1: Structure Your Tailwind Config as Exportable Tokens
+
+Start with a config that separates tokens from utility generation. This makes it easier to extract token data for AI context.
+
+```js
+// tailwind.config.js
+const tokens = {
+  colors: {
+    brand: {
+      primary: '#0F172A',
+      secondary: '#64748B',
+      accent: '#3B82F6',
+    },
+    text: {
+      primary: '#0F172A',
+      secondary: '#64748B',
+      tertiary: '#94A3B8',
+    },
+    bg: {
+      primary: '#FFFFFF',
+      secondary: '#F8FAFC',
+      tertiary: '#F1F5F9',
+    },
+    border: {
+      primary: '#E2E8F0',
+      secondary: '#CBD5E1',
+    },
+  },
+  spacing: {
+    '0': '0',
+    '1': '0.25rem',  // 4px
+    '2': '0.5rem',   // 8px
+    '3': '0.75rem',  // 12px
+    '4': '1rem',     // 16px
+    '6': '1.5rem',   // 24px
+    '8': '2rem',     // 32px
+    '12': '3rem',    // 48px
+    '16': '4rem',    // 64px
+  },
+  borderRadius: {
+    none: '0',
+    sm: '0.25rem',
+    DEFAULT: '0.5rem',
+    lg: '0.75rem',
+    full: '9999px',
+  },
+  fontSize: {
+    xs: ['0.75rem', { lineHeight: '1rem' }],
+    sm: ['0.875rem', { lineHeight: '1.25rem' }],
+    base: ['1rem', { lineHeight: '1.5rem' }],
+    lg: ['1.125rem', { lineHeight: '1.75rem' }],
+    xl: ['1.25rem', { lineHeight: '1.75rem' }],
+    '2xl': ['1.5rem', { lineHeight: '2rem' }],
+  },
+};
+
+module.exports = {
+  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: tokens,
+  },
+  plugins: [],
+};
+```
+
+**Why this structure works:**
+
+- Semantic naming (`brand.primary` vs `blue.500`) gives AI meaningful labels
+- Grouped by category (colors, spacing, radius) mirrors how designers think
+- Values are explicit, not computed, making extraction straightforward
+
+## Step 2: Export Tokens for AI Context
+
+Create a build step that extracts tokens into a format optimized for AI consumption. JSON works well because it's compact and LLM-friendly.
+
+```js
+// scripts/export-tokens.js
+const fs = require('fs');
+const tailwindConfig = require('../tailwind.config.js');
+
+const tokens = tailwindConfig.theme.extend;
+
+// Flatten nested token structure for easier AI parsing
+function flattenTokens(obj, prefix = '') {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    const path = prefix ? `${prefix}.${key}` : key;
+    
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      return { ...acc, ...flattenTokens(value, path) };
+    }
+    
+    acc[path] = value;
+    return acc;
+  }, {});
+}
+
+const flattened = {
+  colors: flattenTokens(tokens.colors, 'colors'),
+  spacing: tokens.spacing,
+  borderRadius: tokens.borderRadius,
+  fontSize: tokens.fontSize,
+};
+
+fs.writeFileSync(
+  './src/design-tokens.json',
+  JSON.stringify(flattened, null, 2)
+);
+
+console.log('✓ Design tokens exported to src/design-tokens.json');
+```
+
+Run this as part of your build:
+
+```json
+// package.json
+{
+  "scripts": {
+    "build:tokens": "node scripts/export-tokens.js",
+    "dev": "npm run build:tokens && next dev",
+    "build": "npm run build:tokens && next build"
+  }
+}
+```
+
+This generates `design-tokens.json`:
+
+```json
+{
+  "colors": {
+    "colors.brand.primary": "#0F172A",
+    "colors.brand.secondary": "#64748B",
+    "colors.brand.accent": "#3B82F6",
+    "colors.text.primary": "#0F172A",
+    "colors.text.secondary": "#64748B"
+  },
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "4": "1rem",
+    "8": "2rem"
+  }
+}
+```
+
+## Step 3: Provide Tokens to AI as Context
+
+When prompting an AI to generate UI code, include token data in a structured format.
+
+### For Cursor / Claude Code / Copilot
+
+Create a `.cursorrules` or similar context file:
+
+```markdown
+# Tailwind Design System
+
+When generating Tailwind classes, use only these approved tokens:
+
+## Colors
+- Brand: `text-brand-primary`, `bg-brand-primary`, `border-brand-primary`
+- Text: `text-text-primary`, `text-text-secondary`, `text-text-tertiary`
+- Background: `bg-bg-primary`, `bg-bg-secondary`, `bg-bg-tertiary`
+- Border: `border-border-primary`, `border-border-secondary`
+
+## Spacing (use with padding/margin/gap utilities)
+- `p-1` (4px), `p-2` (8px), `p-4` (16px), `p-6` (24px), `p-8` (32px)
+
+## Border Radius
+- `rounded-sm` (0.25rem), `rounded` (0.5rem), `rounded-lg` (0.75rem)
+
+## Font Sizes
+- `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`
+
+Never use default Tailwind colors like `blue-500` or `gray-400`. Always reference semantic tokens.
+```
+
+### For API-based Generation (OpenAI, Claude API)
+
+Include tokens in system prompts:
+
+```js
+const systemPrompt = `
+You are a UI engineer building components with Tailwind CSS.
+
+Use only these approved design tokens:
+
+Colors: ${JSON.stringify(tokens.colors)}
+Spacing: ${JSON.stringify(tokens.spacing)}
+Border Radius: ${JSON.stringify(tokens.borderRadius)}
+
+When generating class names:
+- Use semantic color names: text-brand-primary, not text-blue-500
+- Use defined spacing values: p-4, not p-5
+- Never invent class names outside this token set
+`;
+```
+
+## Step 4: Validate Generated Code Against Tokens
+
+Even with tokens in context, AI can hallucinate. Add validation to catch mismatches.
+
+```js
+// scripts/validate-classes.js
+const fs = require('fs');
+const glob = require('glob');
+
+const tokens = JSON.parse(fs.readFileSync('./src/design-tokens.json'));
+
+// Extract all Tailwind classes from JSX/TSX files
+const files = glob.sync('./src/**/*.{jsx,tsx}');
+const classRegex = /className="([^"]*)"/g;
+
+const allowedClasses = new Set([
+  // Generate from tokens
+  ...Object.keys(tokens.colors).map(c => c.replace('colors.', 'text-')),
+  ...Object.keys(tokens.colors).map(c => c.replace('colors.', 'bg-')),
+  ...Object.keys(tokens.spacing).map(s => `p-${s}`),
+  ...Object.keys(tokens.spacing).map(s => `m-${s}`),
+  // Add more utility patterns as needed
+]);
+
+files.forEach(file => {
+  const content = fs.readFileSync(file, 'utf8');
+  let match;
+  
+  while ((match = classRegex.exec(content)) !== null) {
+    const classes = match[1].split(' ');
+    
+    classes.forEach(cls => {
+      if (!allowedClasses.has(cls)) {
+        console.warn(`⚠️  ${file}: Unknown class "${cls}"`);
+      }
+    });
+  }
+});
+```
+
+Run this in CI to catch token violations before merge.
+
+## Step 5: Iterate Based on AI Behavior
+
+As you use AI generation, track which tokens get misused or ignored. Common patterns:
+
+**Hover states:** If the model generates `:hover:bg-blue-600`, add explicit hover tokens:
+
+```js
+colors: {
+  brand: {
+    primary: '#0F172A',
+    primaryHover: '#1E293B',  // Explicit hover state
+  }
+}
+```
+
+**Interactive states:** Add focus, active, disabled variants:
+
+```js
+colors: {
+  interactive: {
+    default: '#3B82F6',
+    hover: '#2563EB',
+    active: '#1D4ED8',
+    disabled: '#94A3B8',
+  }
+}
+```
+
+**Dark mode:** If supporting dark mode, structure tokens to make it explicit:
+
+```js
+colors: {
+  text: {
+    primary: {
+      light: '#0F172A',
+      dark: '#F8FAFC',
+    }
+  }
+}
+```
+
+Then instruct AI to use `dark:text-text-primary-dark`.
+
+## Real-World Example: Dashboard Card Component
+
+Let's see this in practice. Prompt:
+
+```
+Create a dashboard card component using our Tailwind tokens.
+Show a metric title, value, and trend indicator.
+```
+
+**Without tokens (hallucinated):**
+
+```jsx
+export function MetricCard({ title, value, trend }) {
+  return (
+    <div className="p-6 bg-white rounded-lg border border-gray-200">
+      <h3 className="text-sm text-gray-600">{title}</h3>
+      <p className="text-3xl font-bold text-gray-900 mt-2">{value}</p>
+      <span className="text-green-500 text-sm">{trend}</span>
+    </div>
+  );
+}
+```
+
+Problems: Uses `gray-200`, `gray-600`, `green-500`—none of which are in our token set.
+
+**With tokens (correct):**
+
+```jsx
+export function MetricCard({ title, value, trend }) {
+  return (
+    <div className="p-6 bg-bg-primary rounded-lg border border-border-primary">
+      <h3 className="text-sm text-text-secondary">{title}</h3>
+      <p className="text-3xl font-bold text-text-primary mt-2">{value}</p>
+      <span className="text-brand-accent text-sm">{trend}</span>
+    </div>
+  );
+}
+```
+
+The AI correctly maps semantic intent to token names because they were present in context.
+
+## When to Use This Approach
+
+This token integration strategy works best when:
+
+- You have a custom Tailwind theme that diverges from defaults
+- AI generates more than 30% of your component code
+- Multiple people (or AI agents) contribute to the codebase
+- Visual consistency is critical (product UI, not marketing sites)
+
+It's overkill if you're using stock Tailwind with minimal customization, or if AI generates less than 10% of your UI.
+
+## Tools That Make This Easier
+
+If manually exporting tokens and writing validation scripts feels heavy, tools like **FramingUI** automate this workflow. You define tokens once, and they're automatically available to AI code editors (Cursor, Windsurf, Claude Code) through MCP integration. Generated components reference your actual design system, not generic Tailwind defaults.
+
+The same token structure also powers type-safe CSS-in-JS and validates that every component adheres to your theme—no manual scripting required.
+
+## Next Steps
+
+1. **Audit your current Tailwind config** — identify custom colors, spacing, and typography that differ from defaults
+2. **Export tokens to JSON** — make them consumable by AI context systems
+3. **Update AI prompts** — include token references in system prompts or project rules
+4. **Validate in CI** — catch hallucinated classes before they merge
+5. **Iterate based on misses** — expand token coverage as you discover edge cases
+
+When Tailwind and AI work together through shared token structure, you get the best of both worlds: utility-first speed with design system precision. The model stops guessing and starts generating code that actually matches your product.
