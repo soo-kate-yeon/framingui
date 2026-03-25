@@ -1,0 +1,536 @@
+---
+title: "Design Token Automation for AI Coding Agents"
+description: "How to automate design token management and synchronization for AI coding agents to ensure consistent UI generation."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - design-tokens
+  - automation
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+AI coding agents generate UI fast. Keeping that generated UI consistent with your design system is harder. The bottleneck isn't generation speed—it's ensuring AI has access to current design tokens every time it generates code.
+
+Manual token management doesn't scale. Pasting token JSON into prompts works for one-off experiments. It breaks when three developers generate components in parallel, or when tokens change mid-sprint, or when you need AI to respect token updates without remembering to include them in every prompt.
+
+The solution is automation: design tokens that sync from Figma, export as structured data, propagate to AI agents automatically, and enforce usage through type checking and lint rules. This guide covers the complete automation stack.
+
+## Why Manual Token Management Fails
+
+The traditional workflow: a designer updates colors in Figma, exports token JSON, commits the file, and tells developers to reference the new tokens. This depends on discipline at every step.
+
+**Failure point 1: Stale exports**
+
+Tokens exist in Figma but don't export automatically. Someone has to remember to export and commit. When they forget, AI generates code using outdated tokens. The generated UI looks wrong because the source of truth diverged.
+
+**Failure point 2: Prompt discipline**
+
+Even with current tokens committed, AI needs them in context. If a developer forgets to include token references in their prompt, AI falls back to training data defaults. The generated component compiles but bypasses the design system.
+
+**Failure point 3: No validation**
+
+When tokens change—a color name gets refactored, a spacing value adjusts—there's no automatic check for broken references. AI generates code using the old token name. The build fails or styles break silently.
+
+Automation removes all three failure points. Tokens sync automatically, AI reads them without manual prompting, and validation catches broken references at generation time.
+
+## Automating Token Export from Figma
+
+Start by eliminating manual token exports. Figma Variables should sync to your codebase automatically.
+
+**Option 1: Figma REST API with CI/CD**
+
+Set up a GitHub Action that fetches Figma Variables via REST API and commits updates:
+
+```yaml
+# .github/workflows/sync-tokens.yml
+name: Sync Design Tokens
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Daily at 8am
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Fetch Figma Variables
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+          FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
+        run: |
+          curl -H "X-Figma-Token: $FIGMA_TOKEN" \
+            "https://api.figma.com/v1/files/$FIGMA_FILE_KEY/variables/local" \
+            -o tokens-raw.json
+
+      - name: Transform to Design Token Format
+        run: node scripts/transform-tokens.js
+
+      - name: Commit if changed
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add theme/tokens.json
+          git diff --quiet || git commit -m "chore: sync design tokens from Figma"
+          git push
+```
+
+This runs daily and whenever manually triggered. Token updates in Figma propagate to the codebase automatically.
+
+**Option 2: Tokens Studio with GitHub Sync**
+
+If you use Tokens Studio plugin, enable GitHub Sync in settings. Every token save in Figma commits directly to your repo. No CI/CD needed.
+
+**Option 3: Webhook-triggered sync**
+
+For real-time updates, configure a webhook that listens for Figma file changes and triggers token export immediately:
+
+```ts
+// api/webhooks/figma.ts
+export async function POST(req: Request) {
+  const { file_key, timestamp } = await req.json();
+
+  // Fetch latest tokens
+  const tokens = await fetchFigmaTokens(file_key);
+
+  // Transform and commit
+  await commitTokens(tokens);
+
+  return new Response('OK', { status: 200 });
+}
+```
+
+Choose based on your latency requirements. Daily sync works for most teams. Real-time sync is useful during intensive design sprints.
+
+## Structuring Tokens for AI Consumption
+
+Raw Figma Variables export as nested JSON. Transform them into a format AI agents can query efficiently.
+
+**Raw Figma export:**
+
+```json
+{
+  "meta": { "variableCollections": { ... } },
+  "variables": {
+    "color-primary-500": {
+      "resolvedType": "COLOR",
+      "valuesByMode": { "default": { "r": 0.2, "g": 0.4, "b": 0.8 } }
+    }
+  }
+}
+```
+
+**Transformed for AI consumption:**
+
+```json
+{
+  "color": {
+    "action": {
+      "primary": {
+        "default": "oklch(0.5 0.15 220)",
+        "hover": "oklch(0.45 0.15 220)",
+        "active": "oklch(0.4 0.15 220)",
+        "disabled": "oklch(0.6 0.05 220)"
+      }
+    },
+    "text": {
+      "primary": "oklch(0.2 0 0)",
+      "secondary": "oklch(0.4 0 0)",
+      "tertiary": "oklch(0.6 0 0)"
+    }
+  },
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "6": "1.5rem",
+    "8": "2rem"
+  },
+  "typography": {
+    "size": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "base": "1rem",
+      "lg": "1.125rem",
+      "xl": "1.25rem"
+    },
+    "weight": {
+      "regular": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700"
+    }
+  }
+}
+```
+
+**Key transformations:**
+
+- Flatten variable collections into semantic hierarchy
+- Convert RGB to OKLCH for perceptual uniformity
+- Group related tokens (color.action.primary.* together)
+- Use consistent naming (default/hover/active/disabled states)
+- Include TypeScript types for each token category
+
+**Automation script:**
+
+```ts
+// scripts/transform-tokens.ts
+import figmaExport from '../tokens-raw.json';
+import { writeFile } from 'fs/promises';
+
+function rgbToOKLCH(r: number, g: number, b: number): string {
+  // Conversion logic
+  return `oklch(${l} ${c} ${h})`;
+}
+
+const transformedTokens = {
+  color: {},
+  spacing: {},
+  typography: {},
+};
+
+for (const [key, variable] of Object.entries(figmaExport.variables)) {
+  const [category, ...path] = key.split('-');
+  // Build nested structure
+}
+
+await writeFile('./theme/tokens.json', JSON.stringify(transformedTokens, null, 2));
+```
+
+Run this script in your CI pipeline after fetching Figma data.
+
+## Exposing Tokens to AI Agents via MCP
+
+AI agents need runtime access to tokens. Model Context Protocol (MCP) servers provide this for Claude Code.
+
+**Set up FramingUI's MCP server:**
+
+```bash
+npx -y @framingui/mcp-server@latest init
+```
+
+This creates `.mcp.json` at your project root:
+
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server@latest"],
+      "env": {
+        "FRAMINGUI_TOKENS_PATH": "./theme/tokens.json"
+      }
+    }
+  }
+}
+```
+
+**What the MCP server provides:**
+
+- `list_tokens`: Returns all available token categories
+- `get_token_value`: Queries a specific token by path (e.g., `color.action.primary.default`)
+- `search_tokens`: Finds tokens matching a semantic query (e.g., "primary button colors")
+
+**Example AI interaction:**
+
+```
+Claude: What color tokens are available for buttons?
+MCP: color.action.primary, color.action.secondary, color.action.destructive
+Claude: What's the value of color.action.primary.default?
+MCP: oklch(0.5 0.15 220)
+Claude: [generates button using correct token]
+```
+
+The AI queries tokens on demand without needing them pasted into prompts.
+
+## Automating Token Updates for Cursor
+
+Cursor uses `.cursorrules` for project context. Automate token inclusion:
+
+```ts
+// scripts/update-cursorrules.ts
+import tokens from '../theme/tokens.json';
+import { readFile, writeFile } from 'fs/promises';
+
+const tokenSummary = `
+# Design Tokens (auto-generated, do not edit manually)
+
+## Colors
+${Object.entries(tokens.color.action).map(([name, values]) =>
+  `- ${name}: ${Object.keys(values).join(', ')}`
+).join('\n')}
+
+## Spacing
+${Object.entries(tokens.spacing).map(([key, value]) =>
+  `- spacing-${key}: ${value}`
+).join('\n')}
+
+## Typography
+Font sizes: ${Object.keys(tokens.typography.size).join(', ')}
+Font weights: ${Object.keys(tokens.typography.weight).join(', ')}
+`;
+
+const existingRules = await readFile('.cursorrules', 'utf-8');
+const updatedRules = existingRules.replace(
+  /# Design Tokens[\s\S]*?(?=\n#|$)/,
+  tokenSummary
+);
+
+await writeFile('.cursorrules', updatedRules);
+```
+
+Run this script after token sync. Cursor automatically sees updated tokens.
+
+**Add to CI pipeline:**
+
+```yaml
+# .github/workflows/sync-tokens.yml
+- name: Update Cursor rules
+  run: node scripts/update-cursorrules.js
+
+- name: Commit updated rules
+  run: |
+    git add .cursorrules
+    git diff --quiet || git commit -m "chore: update Cursor token context"
+```
+
+## Validating Token References in Generated Code
+
+Automate validation to catch broken token references before code review.
+
+**TypeScript validation:**
+
+```ts
+// theme/tokens.ts
+export const tokens = {
+  color: { ... },
+  spacing: { ... },
+} as const;
+
+// Extract valid token paths as union type
+type TokenPath<T, Prefix extends string = ''> = T extends object
+  ? {
+      [K in keyof T]: K extends string
+        ? TokenPath<T[K], `${Prefix}${K}.`> | `${Prefix}${K}`
+        : never;
+    }[keyof T]
+  : never;
+
+export type ValidTokenPath = TokenPath<typeof tokens>;
+
+// Usage in components
+function useToken(path: ValidTokenPath) {
+  // TypeScript enforces valid paths
+}
+
+// This compiles:
+useToken('color.action.primary.default');
+
+// This fails at compile time:
+useToken('color.action.superprimary');
+```
+
+When AI generates code with invalid token references, TypeScript catches it.
+
+**ESLint validation:**
+
+```js
+// .eslintrc.js
+const validTokens = require('./theme/tokens.json');
+
+module.exports = {
+  rules: {
+    'custom/valid-token-reference': [
+      'error',
+      { tokens: validTokens }
+    ],
+  },
+};
+```
+
+Custom ESLint rule that checks `var(--token-name)` references against actual tokens.
+
+**Pre-commit hook:**
+
+```bash
+# .husky/pre-commit
+#!/bin/sh
+node scripts/validate-token-refs.js
+```
+
+Validation script that scans staged files for token references and fails if any are invalid.
+
+## Versioning Token Changes
+
+When tokens change, track which components need updates.
+
+**Token changelog automation:**
+
+```ts
+// scripts/token-diff.ts
+import oldTokens from '../theme/tokens.old.json';
+import newTokens from '../theme/tokens.json';
+
+const changes = [];
+
+function diffTokens(oldObj: any, newObj: any, path: string = '') {
+  for (const key in newObj) {
+    const newPath = path ? `${path}.${key}` : key;
+
+    if (!(key in oldObj)) {
+      changes.push({ type: 'added', path: newPath, value: newObj[key] });
+    } else if (oldObj[key] !== newObj[key]) {
+      changes.push({ type: 'changed', path: newPath, old: oldObj[key], new: newObj[key] });
+    }
+  }
+
+  for (const key in oldObj) {
+    if (!(key in newObj)) {
+      const oldPath = path ? `${path}.${key}` : key;
+      changes.push({ type: 'removed', path: oldPath, value: oldObj[key] });
+    }
+  }
+}
+
+diffTokens(oldTokens, newTokens);
+
+// Generate migration report
+console.log('Token changes:');
+changes.forEach(change => {
+  if (change.type === 'removed') {
+    console.log(`❌ Removed: ${change.path}`);
+    console.log(`   Components using this token need updates.`);
+  }
+});
+```
+
+Run this in CI when tokens change. Output lists breaking changes that need manual review.
+
+**Automated component scanning:**
+
+```ts
+// scripts/find-token-usage.ts
+import { glob } from 'glob';
+import { readFile } from 'fs/promises';
+
+const removedToken = 'color.brand.primary';
+const files = await glob('**/*.{ts,tsx}');
+
+for (const file of files) {
+  const content = await readFile(file, 'utf-8');
+  if (content.includes(removedToken)) {
+    console.log(`⚠️  ${file} references removed token: ${removedToken}`);
+  }
+}
+```
+
+Surfaces components that reference removed tokens.
+
+## Enforcing Token Usage in AI-Generated Code
+
+Prevent AI from bypassing tokens through automated enforcement.
+
+**Pre-generation prompt injection:**
+
+Configure your AI editor to automatically prepend token context to every UI-related prompt:
+
+```ts
+// ai-config.ts
+export const systemPrompt = `
+IMPORTANT: Always use design tokens from theme/tokens.json
+
+Valid token categories:
+- color.action.* for interactive elements
+- color.text.* for text colors
+- spacing.* for margins and padding
+- typography.size.* for font sizes
+
+NEVER use:
+- Hardcoded hex colors (#3B82F6)
+- Arbitrary Tailwind utilities (bg-blue-500)
+- Raw pixel values (padding: 16px)
+
+Query the MCP server to verify token existence before generating code.
+`;
+```
+
+**Post-generation validation:**
+
+Hook into your AI editor's generation pipeline to validate output:
+
+```ts
+// validate-generated-code.ts
+export function validateGeneratedCode(code: string): ValidationResult {
+  const errors = [];
+
+  // Check for hardcoded colors
+  const hexColors = code.match(/#[0-9A-Fa-f]{6}/g);
+  if (hexColors) {
+    errors.push(`Found hardcoded hex colors: ${hexColors.join(', ')}`);
+  }
+
+  // Check for arbitrary Tailwind values
+  const arbitraryValues = code.match(/\[\d+px\]/g);
+  if (arbitraryValues) {
+    errors.push(`Found arbitrary pixel values: ${arbitraryValues.join(', ')}`);
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+```
+
+If validation fails, AI regenerates with corrections.
+
+## The Complete Automation Pipeline
+
+Putting all pieces together:
+
+**1. Token Sync (Daily or real-time)**
+```
+Figma Variables → Figma API → Transform Script → tokens.json → Git Commit
+```
+
+**2. Distribution (Automatic)**
+```
+tokens.json → MCP Server (Claude Code)
+tokens.json → .cursorrules (Cursor)
+tokens.json → TypeScript types (compile-time validation)
+```
+
+**3. Validation (Pre-commit & CI)**
+```
+Staged files → Token reference validator → Pass/Fail
+Generated code → ESLint rules → Pass/Fail
+```
+
+**4. Change Management (On token updates)**
+```
+Old tokens vs New tokens → Diff report → Component scan → Migration tasks
+```
+
+This pipeline ensures AI agents always have current tokens, invalid usage is caught automatically, and token changes are tracked.
+
+## Where FramingUI Fits
+
+FramingUI provides the full automation stack out of the box:
+
+- MCP server for Claude Code (automatic token queries)
+- Pre-configured token structure optimized for AI consumption
+- TypeScript types for compile-time validation
+- Lint rules that enforce token usage
+- OKLCH color space for perceptually uniform tokens
+
+If you're building from scratch, these patterns show you how. If you want automation without setup, FramingUI implements all of it.
+
+---
+
+Design token automation is the difference between AI-generated UI that looks consistent and AI-generated UI that looks like it came from five different apps. Automate token sync from Figma, expose tokens to AI agents at generation time, validate usage automatically, and track changes with version control. The result: AI-generated components that match your design system without manual correction.

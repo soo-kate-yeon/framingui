@@ -1,0 +1,129 @@
+---
+title: "The New Design Workflow for AI Code Editors"
+description: "How AI code editors like Claude Code and Cursor are reshaping the design-to-code workflow and what design systems need to adapt."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - workflow
+  - design-system
+category: "Concept"
+coverImage: ""
+published: true
+---
+
+AI code editors don't just autocomplete faster. They change what design work means. A designer who once delivered static mockups now needs to deliver structured constraints that AI can interpret. A developer who once translated designs manually now orchestrates AI that generates components in seconds.
+
+The shift requires rethinking the entire design workflow—not just the tools, but what gets documented, when decisions get locked in, and how design intent travels from concept to deployed code.
+
+## What Traditional Design Workflows Assume
+
+The old model assumes a human developer as the translation layer. A designer creates a mockup in Figma. The developer opens the file, reads measurements from the inspect panel, interprets visual hierarchy, and writes code that approximates the intent.
+
+This process tolerates ambiguity. If a color isn't specified, the developer picks something close. If spacing looks off, they adjust by eye. The final result emerges through iteration—designer feedback, developer adjustment, repeat.
+
+AI doesn't work this way. It can't "eyeball" whether spacing feels right. It can't interpret what "make it pop" means. It needs explicit, machine-readable constraints or it will generate plausible but wrong output.
+
+## What AI Code Editors Actually Need
+
+AI generates code by pattern matching against training data and following explicit instructions. When you ask Claude Code to "build a settings panel," it combines statistical likelihoods with whatever constraints you provide.
+
+Without design system context, the result is generic. The AI generates `bg-white`, `text-gray-900`, `rounded-lg`—all reasonable defaults, none specific to your product. With context, it generates code using your actual token names and component APIs.
+
+The minimum viable inputs an AI needs are:
+
+**Structured token definitions** that map semantic names to values. Not just "primary blue" but `color.action.primary.default`, `color.action.primary.hover`, `color.action.primary.disabled`. The structure communicates hierarchy and relationship, which matters for variant generation.
+
+**Component API contracts** that specify which props are valid. If `<Button>` accepts `variant` values of `default`, `outline`, and `destructive`, the AI can generate correct usage. If the contract is missing, it invents plausible-sounding props that don't exist.
+
+**Layout patterns** expressed as composition rules rather than pixel specs. "Cards stack vertically with consistent spacing" is more useful than "16px between each card." The former scales; the latter breaks at different viewport widths.
+
+**Semantic naming conventions** that let AI infer relationships. If your system uses `text-primary`, `text-secondary`, `text-tertiary`, the AI can guess that a low-emphasis element should use `text-tertiary`. If your names are arbitrary, inference fails.
+
+The pattern across all four is the same: explicitness over interpretation. AI doesn't have design taste. It has pattern recognition and constraint following. Feed it the right constraints.
+
+## The Token-First Design Process
+
+Designing for AI code generation inverts the traditional workflow. Instead of finalizing pixel-perfect mockups first, you finalize token structure first.
+
+**Step 1: Define the token schema before visual design starts.** Establish naming conventions, decide which semantic categories you need (color, spacing, typography, effects), and create the structure. This becomes the design language.
+
+**Step 2: Build visual designs using only defined tokens.** In Figma, this means working with Variables rather than direct style overrides. Every color choice maps to a variable. Every spacing decision references a defined scale. No one-off values.
+
+**Step 3: Export tokens and commit them to version control.** The token file becomes the canonical source of truth. Designers don't need to manually communicate changes; the updated file is the communication.
+
+**Step 4: AI reads tokens at code generation time.** Whether through an MCP server, a file reference in the repo, or a CI-integrated tool, the AI always has access to current token definitions when generating code.
+
+This order matters. If you design visually first and extract tokens afterward, the token structure reflects the design rather than guiding it. That structure tends to be shallow and inconsistent—fine for theming, inadequate for AI generation.
+
+## Multi-File UI Consistency Without Manual Policing
+
+One of the hardest problems in scaled AI-assisted development is keeping generated code consistent across files. When three developers ask AI to generate three related components, you get three slightly different interpretations of "secondary button" or "card padding."
+
+Design tokens solve this, but only if they're enforced at generation time rather than review time.
+
+**Automatic enforcement:** Configure your AI to always query the token system before generating UI code. FramingUI's MCP server does this for Claude Code—the AI can't generate a button without first checking what button variants exist and what tokens they use.
+
+**Typed component APIs:** Use TypeScript to make invalid component usage fail at compile time. If `<Button variant="super-primary">` isn't a valid variant, the error surfaces immediately rather than in code review.
+
+**Lint rules that block raw values:** Forbid hardcoded hex codes, arbitrary pixel values, and unapproved Tailwind utilities. These catch what token enforcement misses.
+
+**Shared prompt templates:** Encode constraints as reusable instructions: "Always use design tokens. Do not invent new variants. If unsure, query the design system." Store these centrally so the team applies consistent guidance.
+
+The goal isn't zero human review—it's shifting review focus from style policing to architecture, behavior, and accessibility. Token enforcement handles the mechanical consistency work automatically.
+
+## When Visual QA Still Matters
+
+Design tokens prevent most accidental inconsistency, but they don't replace visual regression testing.
+
+Tokens ensure that `color.action.primary.default` always resolves to the same value. They don't ensure that a refactored layout still looks correct at every breakpoint. They don't catch z-index conflicts, clipped overflow, or focus ring visibility issues.
+
+Visual diffing tools (Percy, Chromatic, Playwright with screenshot comparison) catch these. The workflow becomes:
+
+1. AI generates component using tokens
+2. Component passes type checks and lint rules
+3. Visual snapshot captures baseline appearance
+4. Future changes trigger visual diff review
+
+This catches unintended drift during rapid iteration without requiring manual QA on every generation.
+
+## Component Documentation That AI Can Use
+
+Traditional component documentation is written for human developers. It includes screenshots, usage guidelines, accessibility notes, and design rationale. All useful for people; most of it useless for AI.
+
+AI-optimized documentation is:
+
+**Structured as machine-readable metadata.** Prop types, allowed values, required combinations. JSON schema or TypeScript definitions work well. Prose paragraphs don't.
+
+**Co-located with component source code.** If the component and its usage contract live in separate repos or docs sites, they drift. Keep the API definition next to the implementation.
+
+**Queryable at generation time.** This is where MCP servers or similar tooling matter. AI shouldn't have to guess whether `<Select>` supports multi-select mode—it should query the source of truth and know.
+
+**Versioned with the component.** If you update a component API, the documentation updates atomically. Stale docs lead to stale AI-generated code.
+
+Human-readable guides still matter for onboarding and teaching system philosophy. But the contract that AI reads needs to be machine-first.
+
+## The Shift in Designer Responsibilities
+
+Designers working with AI code editors spend less time on visual polish of individual mockups and more time on system coherence.
+
+**More time defining tokens and constraints.** This isn't just color and spacing—it's interaction states, responsive behavior rules, elevation hierarchies, and semantic naming.
+
+**More time documenting intent in structured formats.** Annotations in Figma, component descriptions in Storybook, decision logs in the design system repo. The goal is making implicit knowledge explicit enough for AI to act on.
+
+**More time validating generated output.** Designers become reviewers of AI-generated components. The question shifts from "did the developer implement this correctly" to "did the AI interpret the constraints correctly."
+
+**Less time on pixel-pushing individual components.** If tokens are defined well and AI generates code that uses them, the visual consistency problem largely solves itself.
+
+The workflow isn't less design work—it's different design work. The leverage comes from defining constraints once and having them apply automatically across dozens of AI-generated components.
+
+## Where FramingUI Fits
+
+FramingUI is designed specifically for this workflow. The component library uses CSS variables throughout, so token bindings are built into the components rather than applied afterward. The MCP server gives Claude Code real-time access to your design system, so generated code starts from your constraints rather than generic defaults.
+
+The combination addresses the core workflow problem: how to ensure AI-generated UI belongs to your product rather than looking like every other AI-generated app.
+
+---
+
+AI code editors change what design work means. They don't eliminate the need for design systems—they make design systems more important. The workflow that wins is the one where design constraints are explicit, queryable, and automatically enforced at code generation time. That's the workflow AI code editors make possible.

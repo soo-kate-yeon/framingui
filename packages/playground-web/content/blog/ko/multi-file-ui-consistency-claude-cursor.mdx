@@ -1,0 +1,261 @@
+---
+title: "Keeping UI Consistent Across Multiple Files with Claude and Cursor"
+description: "How to maintain design system consistency when AI generates components across multiple files without manual policing."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - design-system
+  - workflow
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+Generate a login form with Claude Code. Generate a settings page with Cursor an hour later. Generate a dashboard card the next day. Each one works. Each one looks reasonable. None of them match.
+
+This is the specific failure mode of multi-file AI-assisted development: every generation is locally correct but globally inconsistent. The login form uses `bg-blue-500`. The settings page uses `bg-blue-600`. The dashboard card uses `bg-indigo-500`. All plausible blues. None of them your actual brand color.
+
+Fixing this after generation scales badly. Manual code review catches some violations. Most slip through. Three months later, your app has seventeen interpretations of "primary button" scattered across forty files.
+
+The solution isn't better code review discipline. It's preventing inconsistency at generation time through structured constraints that AI reads automatically.
+
+## Why Manual Consistency Doesn't Scale
+
+The standard advice is "just review AI-generated code carefully." This works for one-off component generation. It breaks at team scale.
+
+Three developers generate components in parallel. Each prompts their AI slightly differently. Each AI interprets "use our design system" in its own way. The code that reaches review already contains subtle inconsistency—spacing that's close but off by 4px, colors that look similar but don't match tokens, border radius values that vary by 1-2px.
+
+Catching these in review requires comparing generated code against every other component. Most reviewers check for functionality, accessibility, and obvious style violations. They don't diff against thirty other files to verify that `gap-4` is the correct spacing for this layout versus `gap-3` or `gap-5`.
+
+Even when caught, the feedback loop is expensive. Developer generates code, opens PR, reviewer spots inconsistency, developer regenerates, repeats. The overhead compounds as AI usage scales.
+
+The root cause: AI generates code based on context available at generation time. If that context doesn't include your design system constraints, the AI fills the gap with plausible defaults from training data. Review after generation is too late.
+
+## The Constraint Layer AI Needs
+
+AI code editors need three things to maintain consistency across files automatically:
+
+**Token definitions that AI can query before generating code.** Not pasted into every prompt manually—actually queryable as a structured data source. When AI knows that `color.action.primary` exists and maps to a specific value, it uses that name instead of guessing `bg-blue-600`.
+
+**Component APIs that enforce valid prop combinations.** If `<Button variant="primary">` is valid but `<Button color="blue">` isn't, TypeScript should reject the latter at compile time. This makes invalid generation fail immediately rather than silently render with wrong styles.
+
+**Prompt templates with explicit constraints.** Store shared instructions that encode your consistency requirements: "Always use tokens from the design system. Never hardcode hex colors. If a component doesn't exist, ask before inventing one." Reference these templates in your workflow docs so the team applies them consistently.
+
+All three act at generation time rather than review time. The AI generates correct code because it can't generate incorrect code—the constraints are baked into the context it has access to.
+
+## Setting Up Token Access for Claude Code and Cursor
+
+Both Claude Code and Cursor can access external context, but the mechanism differs.
+
+**Claude Code with MCP:** Model Context Protocol (MCP) servers let Claude Code query structured data at generation time. FramingUI provides an MCP server that exposes your design system:
+
+```bash
+npx -y @framingui/mcp-server@latest init
+```
+
+This writes `.mcp.json` at your project root and configures Claude Code to query your tokens whenever it generates UI code. The AI can list available components, inspect token values, and understand your system structure before writing a single line.
+
+**Cursor with project context:** Cursor uses a `.cursorrules` file for project-level instructions. Store your token definitions and usage guidelines there:
+
+```
+# .cursorrules
+Always use design tokens for colors, spacing, and typography:
+- Colors: var(--color-action-primary-default), var(--color-text-primary)
+- Spacing: var(--spacing-2), var(--spacing-4), var(--spacing-6)
+- Never use hardcoded hex values or arbitrary Tailwind classes
+
+Available components:
+- Button (variants: default, outline, destructive)
+- Card (no variants, uses tokens for padding and borders)
+- Input (supports error state via aria-invalid)
+```
+
+When you open a prompt in Cursor, it reads `.cursorrules` automatically and applies those constraints. The AI generates code using your actual tokens instead of guessing.
+
+The difference: Claude Code's MCP approach queries live data, so updates to your token files propagate immediately. Cursor's approach requires manual updates to `.cursorrules` when tokens change. Choose based on your team's workflow.
+
+## Enforcing Consistency at Compile Time
+
+Token access prevents most inconsistency, but TypeScript adds a compile-time safety net.
+
+**Typed component props** reject invalid usage:
+
+```tsx
+// Button.tsx
+type ButtonProps = {
+  variant: 'default' | 'outline' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
+};
+
+// This compiles:
+<Button variant="default">Save</Button>
+
+// This fails at compile time:
+<Button variant="super-primary">Save</Button>
+```
+
+When AI generates code that invents a nonexistent variant, the error surfaces before code review. Developers see the TypeScript error and regenerate with a valid variant.
+
+**Typed token references** catch hardcoded values:
+
+```tsx
+// tokens.ts
+export const tokens = {
+  color: {
+    action: {
+      primary: {
+        default: 'var(--color-action-primary-default)',
+        hover: 'var(--color-action-primary-hover)',
+      },
+    },
+  },
+} as const;
+
+// This works:
+<button style={{ backgroundColor: tokens.color.action.primary.default }}>
+
+// This fails:
+<button style={{ backgroundColor: '#3B82F6' }}>
+```
+
+Linters can enforce this pattern. The rule: all color, spacing, and typography values must reference the token object. Hardcoded values fail CI.
+
+## Shared Prompt Templates for Common Patterns
+
+Even with token access and type safety, consistency improves when the team uses shared prompt templates for common UI patterns.
+
+**Example: Form prompt template**
+
+```
+Build a form with the following requirements:
+- Use Input component from @framingui/ui
+- Use Button variant="default" for primary action
+- Apply var(--spacing-4) between form fields
+- Include proper ARIA labels and error states
+- Follow the vertical stack layout pattern from our design system
+
+Specific requirements:
+[Developer fills in form-specific details here]
+```
+
+Store these templates in your repo (`docs/prompts/`) and reference them during onboarding. When a developer asks AI to generate a form, they start from the template rather than writing a prompt from scratch. The template encodes consistency requirements that apply to all forms.
+
+**Common templates worth maintaining:**
+
+- Form layouts
+- Card components with various content types
+- Modal dialogs
+- Data table patterns
+- Navigation components
+
+Each template references your actual components, tokens, and layout conventions. The more specific the template, the less variance between AI-generated outputs.
+
+## Catching Drift with Lint Rules
+
+Tokens and types prevent most errors. Lint rules catch what slips through.
+
+**ESLint rules for design system enforcement:**
+
+```js
+// .eslintrc.js
+module.exports = {
+  rules: {
+    // Forbid hardcoded hex colors
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'Literal[value=/#[0-9A-Fa-f]{6}/]',
+        message: 'Use design tokens instead of hex colors',
+      },
+    ],
+    // Forbid arbitrary Tailwind values
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'JSXAttribute[name.name="className"][value.value=/\\[.*\\]/]',
+        message: 'Use defined tokens instead of arbitrary Tailwind values',
+      },
+    ],
+  },
+};
+```
+
+These rules fail CI when AI generates code with hardcoded values. The developer sees the lint error and regenerates using proper tokens.
+
+**Stylelint for CSS files:**
+
+```js
+// .stylelintrc.js
+module.exports = {
+  rules: {
+    // Require CSS variables for colors
+    'color-no-hex': true,
+    'function-disallowed-list': ['rgb', 'rgba', 'hsl', 'hsla'],
+  },
+};
+```
+
+If AI generates CSS with raw color values, the build fails. Only var(--token-name) passes.
+
+## Visual Regression Testing for Layout Drift
+
+Tokens ensure semantic consistency. They don't catch layout bugs that emerge from refactoring or responsive behavior changes.
+
+**Playwright with screenshot comparison:**
+
+```ts
+// button.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('Button variants render consistently', async ({ page }) => {
+  await page.goto('/components/button');
+
+  // Capture baseline screenshot
+  await expect(page).toHaveScreenshot('button-variants.png');
+});
+```
+
+Run this in CI on every PR. If AI-generated changes alter button appearance, the visual diff appears in review. Developers can verify whether the change is intentional.
+
+**Chromatic for Storybook:** If you maintain a component library in Storybook, Chromatic provides visual diffing as a service. Push component changes, get automatic visual regression reports. Useful for catching unintended style drift during rapid AI-assisted iteration.
+
+## The Multi-File Consistency Workflow
+
+Putting all the pieces together:
+
+**Before generation:**
+1. Developer opens Claude Code or Cursor
+2. AI queries MCP server or reads `.cursorrules` to load design system context
+3. Developer references shared prompt template for the component type
+
+**During generation:**
+4. AI generates code using actual token names and component APIs
+5. TypeScript enforces valid prop usage at edit time
+6. ESLint flags any hardcoded values
+
+**After generation:**
+7. Visual regression tests catch layout drift
+8. Code review focuses on functionality and accessibility rather than style consistency
+
+The result: code that's consistent across files without requiring manual policing. The constraints are enforced automatically at each stage.
+
+## What This Doesn't Solve
+
+This workflow assumes you have a design system to begin with. If your token schema is inconsistent or your component APIs are poorly defined, AI will amplify those problems rather than solve them.
+
+It also doesn't eliminate the need for human judgment on architecture, accessibility, and complex layout logic. AI generates structurally correct code; humans ensure it fits the broader system correctly.
+
+And it requires initial setup cost: writing the MCP config or `.cursorrules`, defining typed component APIs, configuring lint rules. The payoff comes after the setup, when consistency becomes automatic rather than manual.
+
+## Where FramingUI Fits
+
+FramingUI provides the full stack for this workflow: token-first components, an MCP server for Claude Code, and TypeScript definitions that enforce valid usage. It's designed specifically to make AI-generated UI consistent by default.
+
+The combination of token-bound components and queryable design system metadata closes the gap that causes multi-file inconsistency. AI generates code that belongs to your system because it has access to what your system actually is.
+
+---
+
+Keeping UI consistent across multiple files isn't about reviewing harder—it's about constraining better. Give AI structured access to your design system at generation time, enforce valid usage with TypeScript, and catch drift with automated visual testing. The result is consistency without manual policing.

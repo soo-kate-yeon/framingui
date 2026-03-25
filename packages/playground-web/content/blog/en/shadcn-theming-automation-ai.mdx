@@ -1,0 +1,465 @@
+---
+title: "Automating shadcn/ui Theming with AI Code Editors"
+description: "How to automate shadcn/ui theme customization and component generation using AI code editors and design tokens."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - shadcn
+  - theming
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+shadcn/ui gives you full control over component styling. This is powerful but creates friction when working with AI code editors. AI generates a button with `bg-blue-500`. Your theme uses `bg-primary`. AI generates spacing with `gap-4`. Your design system uses `gap-6`. Every AI-generated component needs manual correction.
+
+The solution isn't abandoning shadcn—it's adding a theming layer that AI can read automatically. When AI knows your theme structure before generating code, it uses your actual design tokens instead of guessing from training data.
+
+This guide covers how to structure shadcn themes for AI consumption, automate theme generation from design tokens, and connect theme data to AI code editors so generated components match your design system.
+
+## Why Default shadcn Doesn't Work Well with AI
+
+shadcn is designed for developers who copy component source and customize directly. The default configuration assumes you'll manually adjust Tailwind classes in each component.
+
+This works when a human is editing components interactively. It breaks when AI generates components at scale.
+
+**Problem 1: AI doesn't know your color aliases**
+
+shadcn's default theme uses semantic names like `primary`, `secondary`, `accent`. These map to Tailwind utilities in `tailwind.config.js`:
+
+```js
+theme: {
+  extend: {
+    colors: {
+      primary: 'hsl(222.2 47.4% 11.2%)',
+      secondary: 'hsl(210 40% 96.1%)',
+    }
+  }
+}
+```
+
+When AI generates code, it doesn't automatically read your Tailwind config. It generates `bg-blue-500` because that's statistically common in training data—not because it checked what `bg-primary` maps to.
+
+**Problem 2: No queryable theme structure**
+
+Your theme exists as Tailwind configuration, which is optimized for build-time CSS generation. AI needs runtime-queryable metadata—something it can read before generating code to verify which tokens exist and what they map to.
+
+**Problem 3: Components use direct Tailwind classes**
+
+shadcn components reference Tailwind utilities directly:
+
+```tsx
+// button.tsx
+<button className="bg-primary text-primary-foreground hover:bg-primary/90">
+```
+
+This is fine if AI generates code that uses `bg-primary`. But if AI generates `bg-blue-600` because it doesn't know `primary` exists, the generated component bypasses your theme entirely.
+
+The pattern across all three: shadcn optimizes for developer control, which AI code editors can't leverage without additional structure.
+
+## Converting Tailwind Config to Queryable Tokens
+
+The first step is extracting your theme into a format AI can query at generation time.
+
+**Export theme as JSON:**
+
+```ts
+// theme/tokens.ts
+export const tokens = {
+  color: {
+    primary: {
+      DEFAULT: 'hsl(222.2 47.4% 11.2%)',
+      foreground: 'hsl(210 40% 98%)',
+    },
+    secondary: {
+      DEFAULT: 'hsl(210 40% 96.1%)',
+      foreground: 'hsl(222.2 47.4% 11.2%)',
+    },
+    destructive: {
+      DEFAULT: 'hsl(0 84.2% 60.2%)',
+      foreground: 'hsl(210 40% 98%)',
+    },
+    muted: {
+      DEFAULT: 'hsl(210 40% 96.1%)',
+      foreground: 'hsl(215.4 16.3% 46.9%)',
+    },
+    accent: {
+      DEFAULT: 'hsl(210 40% 96.1%)',
+      foreground: 'hsl(222.2 47.4% 11.2%)',
+    },
+  },
+  spacing: {
+    1: '0.25rem',
+    2: '0.5rem',
+    3: '0.75rem',
+    4: '1rem',
+    5: '1.25rem',
+    6: '1.5rem',
+    8: '2rem',
+    10: '2.5rem',
+    12: '3rem',
+  },
+  radius: {
+    sm: '0.125rem',
+    md: '0.375rem',
+    lg: '0.5rem',
+    xl: '0.75rem',
+  },
+} as const;
+```
+
+**Sync Tailwind config with JSON tokens:**
+
+```js
+// tailwind.config.js
+import { tokens } from './theme/tokens';
+
+export default {
+  theme: {
+    extend: {
+      colors: tokens.color,
+      spacing: tokens.spacing,
+      borderRadius: tokens.radius,
+    },
+  },
+};
+```
+
+This keeps your Tailwind config as the source of truth but makes the same data queryable by AI tooling.
+
+**Export TypeScript types:**
+
+```ts
+// theme/tokens.ts
+export type ColorToken = keyof typeof tokens.color;
+export type SpacingToken = keyof typeof tokens.spacing;
+export type RadiusToken = keyof typeof tokens.radius;
+```
+
+AI tools can query these types to understand which token names are valid.
+
+## Setting Up AI Access to Theme Tokens
+
+Once tokens are exported as structured data, configure AI to read them at generation time.
+
+**For Claude Code with MCP:**
+
+FramingUI's MCP server can serve your custom tokens. Configure it to read from your `tokens.ts` file:
+
+```json
+// .mcp.json
+{
+  "mcpServers": {
+    "framingui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@framingui/mcp-server@latest"],
+      "env": {
+        "FRAMINGUI_TOKENS_PATH": "./theme/tokens.ts"
+      }
+    }
+  }
+}
+```
+
+After restarting Claude Code, it can query your tokens:
+
+```
+Claude: What color tokens are available?
+MCP Server: primary, secondary, destructive, muted, accent
+Claude: Generate a button using the destructive variant
+```
+
+The AI sees your actual theme structure and generates code using it.
+
+**For Cursor with .cursorrules:**
+
+If you use Cursor, reference tokens directly in `.cursorrules`:
+
+```
+# .cursorrules
+Theme tokens (always use these instead of arbitrary Tailwind classes):
+
+Colors:
+- primary: bg-primary, text-primary-foreground
+- secondary: bg-secondary, text-secondary-foreground
+- destructive: bg-destructive, text-destructive-foreground
+- muted: bg-muted, text-muted-foreground
+- accent: bg-accent, text-accent-foreground
+
+Spacing: Use spacing-{1,2,3,4,5,6,8,10,12}
+Border radius: Use rounded-{sm,md,lg,xl}
+
+Never use arbitrary values like bg-blue-500 or gap-[16px]. Always use theme tokens.
+```
+
+When you prompt Cursor, it reads `.cursorrules` and applies these constraints automatically.
+
+## Generating shadcn Components with Theme Tokens
+
+With token access configured, AI can generate shadcn-style components that use your theme.
+
+**Prompt example:**
+
+```
+Generate a Card component using shadcn style with the following requirements:
+- Use bg-secondary for the card background
+- Use text-secondary-foreground for text
+- Use rounded-lg for border radius
+- Use spacing-4 for internal padding
+- Include a header, content area, and footer slot
+```
+
+**Generated output:**
+
+```tsx
+// card.tsx
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+
+export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn('rounded-lg bg-secondary text-secondary-foreground p-4', className)}
+      {...props}
+    />
+  );
+}
+
+export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('space-y-1.5', className)} {...props} />;
+}
+
+export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('pt-4', className)} {...props} />;
+}
+
+export function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn('flex items-center pt-4', className)} {...props} />;
+}
+```
+
+Every class references your theme tokens. No hardcoded `bg-white` or `text-gray-600`.
+
+## Automating Theme Switching
+
+One of shadcn's strengths is runtime theme switching via CSS variables. You can automate theme variant generation with AI.
+
+**Define multiple theme variants:**
+
+```ts
+// theme/tokens.ts
+export const themes = {
+  light: {
+    primary: 'hsl(222.2 47.4% 11.2%)',
+    primaryForeground: 'hsl(210 40% 98%)',
+    secondary: 'hsl(210 40% 96.1%)',
+    secondaryForeground: 'hsl(222.2 47.4% 11.2%)',
+  },
+  dark: {
+    primary: 'hsl(210 40% 98%)',
+    primaryForeground: 'hsl(222.2 47.4% 11.2%)',
+    secondary: 'hsl(217.2 32.6% 17.5%)',
+    secondaryForeground: 'hsl(210 40% 98%)',
+  },
+} as const;
+```
+
+**Generate CSS variables from theme object:**
+
+```tsx
+// app/layout.tsx
+import { themes } from '@/theme/tokens';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <style>{`
+          :root {
+            ${Object.entries(themes.light).map(([key, value]) =>
+              `--${key}: ${value};`
+            ).join('\n')}
+          }
+          .dark {
+            ${Object.entries(themes.dark).map(([key, value]) =>
+              `--${key}: ${value};`
+            ).join('\n')}
+          }
+        `}</style>
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+**AI-generated components automatically support theme switching:**
+
+Because components use `bg-primary` (which maps to `var(--primary)`), they respond to theme changes without code modifications.
+
+**Prompt for theme-aware components:**
+
+```
+Generate a Button component that supports light/dark themes using shadcn patterns. Use bg-primary and text-primary-foreground from our theme tokens. Include hover states using primary/90 opacity.
+```
+
+AI generates components with theme awareness built in.
+
+## Automating shadcn Component Installation
+
+shadcn components are normally installed via `npx shadcn-ui@latest add button`. You can automate this with AI by exposing installation metadata.
+
+**Create a component registry:**
+
+```json
+// shadcn/registry.json
+{
+  "button": {
+    "files": ["components/ui/button.tsx"],
+    "dependencies": ["@radix-ui/react-slot"],
+    "tokens": ["primary", "destructive", "muted"]
+  },
+  "card": {
+    "files": ["components/ui/card.tsx"],
+    "tokens": ["secondary"]
+  }
+}
+```
+
+**AI-assisted installation workflow:**
+
+```
+User: "Install shadcn button component with our theme tokens"
+
+AI:
+1. Reads registry.json to check dependencies
+2. Runs `npx shadcn-ui@latest add button`
+3. Reads components/ui/button.tsx
+4. Replaces hardcoded colors with theme token references
+5. Verifies tokens exist in theme/tokens.ts
+```
+
+The AI automates the installation and immediately adapts the component to your theme.
+
+## Enforcing Theme Token Usage with Lint Rules
+
+Even with AI access to tokens, enforce theme usage with lint rules to catch manual edits that bypass the theme.
+
+**ESLint rule to forbid non-theme colors:**
+
+```js
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'JSXAttribute[name.name="className"][value.value=/bg-(blue|red|green|yellow|gray)-/]',
+        message: 'Use theme tokens (bg-primary, bg-secondary) instead of arbitrary Tailwind colors',
+      },
+    ],
+  },
+};
+```
+
+If AI or a human writes `bg-blue-500`, CI fails.
+
+**Stylelint for CSS files:**
+
+```js
+// .stylelintrc.js
+module.exports = {
+  rules: {
+    'color-no-hex': true,
+    'function-disallowed-list': ['hsl', 'rgb'],
+  },
+};
+```
+
+Only `var(--primary)` and similar CSS variable references pass.
+
+## Generating Shadcn Themes from Figma Variables
+
+If your design team uses Figma Variables, automate theme generation from Figma exports.
+
+**Export Figma Variables as JSON:**
+
+Use Figma's REST API or Tokens Studio to export variables:
+
+```json
+// figma-tokens.json
+{
+  "color": {
+    "primary": { "value": "hsl(222.2, 47.4%, 11.2%)", "type": "color" },
+    "secondary": { "value": "hsl(210, 40%, 96.1%)", "type": "color" }
+  },
+  "spacing": {
+    "sm": { "value": "8px", "type": "dimension" },
+    "md": { "value": "16px", "type": "dimension" }
+  }
+}
+```
+
+**Transform Figma tokens to shadcn format:**
+
+```ts
+// scripts/generate-theme.ts
+import figmaTokens from './figma-tokens.json';
+import { writeFile } from 'fs/promises';
+
+const shadcnTokens = {
+  color: Object.entries(figmaTokens.color).reduce((acc, [key, { value }]) => {
+    acc[key] = { DEFAULT: value };
+    return acc;
+  }, {}),
+  spacing: Object.entries(figmaTokens.spacing).reduce((acc, [key, { value }]) => {
+    acc[key] = value;
+    return acc;
+  }, {}),
+};
+
+await writeFile('./theme/tokens.ts', `export const tokens = ${JSON.stringify(shadcnTokens, null, 2)} as const;`);
+```
+
+Run this script whenever design updates. The theme stays in sync with Figma without manual updates.
+
+**AI can now query Figma-sourced tokens:**
+
+```
+User: "Generate a pricing card using our Figma theme"
+AI: [queries MCP server, sees tokens from Figma, generates card with correct colors/spacing]
+```
+
+## When to Use shadcn vs FramingUI
+
+shadcn is excellent if you need full source control and want to customize components deeply. The patterns in this guide let you use shadcn with AI effectively.
+
+FramingUI is better if you want a design system optimized for AI workflows out of the box. It includes:
+
+- Pre-configured MCP server for Claude Code
+- Components that use CSS variables throughout
+- Token-first architecture designed for AI consumption
+- OKLCH color space for perceptually uniform theming
+
+Choose based on whether you want maximum customization (shadcn + this guide) or maximum AI-friendliness (FramingUI).
+
+## The Complete Automation Stack
+
+Putting all pieces together:
+
+1. **Export theme as structured JSON** (`tokens.ts`)
+2. **Sync Tailwind config with JSON tokens** (single source of truth)
+3. **Configure MCP server or .cursorrules** (AI reads tokens at generation time)
+4. **Generate components with token references** (no hardcoded values)
+5. **Automate theme switching via CSS variables** (light/dark support)
+6. **Enforce token usage with lint rules** (catch bypass attempts)
+7. **Sync tokens from Figma** (design changes propagate automatically)
+
+This stack makes shadcn work seamlessly with AI code editors. AI generates components that match your theme because it has access to your theme structure before generation.
+
+---
+
+shadcn/ui gives you control. AI code editors give you speed. The patterns in this guide let you keep both. Structure your theme as queryable tokens, give AI access at generation time, and enforce usage with type checking and lint rules. The result: AI-generated shadcn components that match your design system without manual correction.

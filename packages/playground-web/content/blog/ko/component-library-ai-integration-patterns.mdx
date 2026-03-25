@@ -1,0 +1,455 @@
+---
+title: "Component Library Integration Patterns for AI Code Generation"
+description: "Proven patterns for structuring component libraries so AI code editors can use them correctly without constant human correction."
+date: "2026-03-25"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - component-library
+  - design-system
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+A well-designed component library saves developers time. A component library designed for AI saves orders of magnitude more. The difference isn't in the components themselves—it's in how their APIs, documentation, and constraints are structured.
+
+AI code generation works by pattern matching and following explicit instructions. A component API that's "obvious" to an experienced developer can be completely opaque to an AI without machine-readable metadata. A prop that accepts flexible input types might be convenient for humans but leads to hallucinated values when AI generates code.
+
+This guide covers the integration patterns that make component libraries AI-friendly: designing APIs that AI can use correctly, documenting components in machine-readable formats, and enforcing constraints at generation time.
+
+## Why Traditional Component APIs Don't Work for AI
+
+Most component libraries optimize for developer ergonomics. Flexible prop types, sensible defaults, and forgiving APIs that accept multiple input formats. These work well when a human is reading docs and experimenting interactively.
+
+AI doesn't experiment. It generates code in one pass based on whatever context it has. Flexibility becomes ambiguity. Sensible defaults become opportunities for inconsistency.
+
+**Problem 1: Flexible prop types**
+
+```tsx
+// Human-friendly but AI-ambiguous
+<Button size="large" />        // String
+<Button size={16} />            // Number
+<Button size={{ width: 120 }} /> // Object
+```
+
+When AI encounters this API, it has to guess which format to use. Without explicit guidance, it picks the most common pattern from training data—which might not match your design system conventions.
+
+**Problem 2: Undocumented variant behavior**
+
+```tsx
+// What variants exist? AI has to guess
+<Card variant="???" />
+```
+
+If the available variants aren't documented in a queryable format, AI invents plausible-sounding names. `variant="bordered"`, `variant="shadowed"`, `variant="elevated"`. Some might work. Most won't.
+
+**Problem 3: Implicit token bindings**
+
+```tsx
+// Which color token does "primary" map to?
+<Alert severity="primary" />
+```
+
+If the relationship between prop values and design tokens isn't explicit, AI generates code that compiles but uses the wrong semantic meaning. A "primary" alert might render with success colors instead of neutral colors.
+
+The pattern across all three: human developers can infer correct usage from examples and experimentation. AI can't. It needs explicit, machine-readable contracts.
+
+## Pattern 1: Strictly Typed Props with Literal Unions
+
+The single most effective pattern for AI-friendly component APIs is using TypeScript literal union types for variant props.
+
+**Instead of this:**
+
+```tsx
+type ButtonProps = {
+  variant?: string;
+  size?: string;
+};
+```
+
+**Use this:**
+
+```tsx
+type ButtonProps = {
+  variant: 'default' | 'outline' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+};
+```
+
+The benefit: AI can query the type definition and see exactly which values are valid. When it generates `<Button variant="super-primary">`, TypeScript errors immediately. The AI can detect the error and regenerate with a valid variant.
+
+**For colors and semantic tokens:**
+
+```tsx
+type AlertProps = {
+  severity: 'info' | 'success' | 'warning' | 'error';
+  // NOT: color?: string;
+};
+```
+
+This prevents AI from generating `severity="danger"` when your system uses `severity="error"`. The constraint is enforced at compile time rather than code review time.
+
+**Export types for AI tooling:**
+
+```tsx
+// components/button.tsx
+export type ButtonVariant = 'default' | 'outline' | 'destructive';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
+export type ButtonProps = {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  children: React.ReactNode;
+};
+```
+
+When AI tools query your component library, they can inspect these exported types and understand valid prop combinations. TypeScript's type system becomes documentation that AI can read.
+
+## Pattern 2: Co-Located Component Contracts
+
+Keep component documentation next to component implementation. When they live in separate repos or docs sites, they drift. Stale docs lead to stale AI-generated code.
+
+**Directory structure:**
+
+```
+components/
+  button/
+    button.tsx          # Implementation
+    button.types.ts     # Exported types
+    button.schema.json  # JSON schema for AI tooling
+    button.stories.tsx  # Storybook examples
+```
+
+**JSON schema for MCP servers:**
+
+```json
+// button.schema.json
+{
+  "component": "Button",
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["default", "outline", "destructive"],
+      "default": "default",
+      "description": "Visual style variant"
+    },
+    "size": {
+      "type": "enum",
+      "values": ["sm", "md", "lg"],
+      "default": "md",
+      "description": "Size variant affecting padding and font size"
+    }
+  },
+  "tokens": {
+    "default": {
+      "background": "var(--bg-primary-default)",
+      "text": "var(--text-primary-inverse)",
+      "border": "var(--border-primary)"
+    }
+  }
+}
+```
+
+This schema is queryable by MCP servers. When AI generates code, it can fetch the schema, verify which props are valid, and include the correct token references in generated styles.
+
+**Version schema with components:**
+
+If you update a component API, update the schema in the same commit. Atomic versioning keeps the contract accurate.
+
+## Pattern 3: Token Bindings as Component Metadata
+
+Make the relationship between component variants and design tokens explicit in component metadata.
+
+**Instead of documenting in prose:**
+
+> "The primary button uses the brand color defined in our design system."
+
+**Expose as structured data:**
+
+```tsx
+// button.tsx
+export const buttonTokenMap = {
+  default: {
+    bg: 'var(--bg-primary-default)',
+    bgHover: 'var(--bg-primary-hover)',
+    text: 'var(--text-primary-inverse)',
+  },
+  outline: {
+    bg: 'transparent',
+    border: 'var(--border-primary)',
+    text: 'var(--text-primary)',
+  },
+  destructive: {
+    bg: 'var(--bg-destructive-default)',
+    bgHover: 'var(--bg-destructive-hover)',
+    text: 'var(--text-destructive-inverse)',
+  },
+} as const;
+```
+
+AI tools can query this map to understand which tokens apply to which variants. When AI generates a custom button style, it knows which tokens to reference.
+
+**Include in JSON schema:**
+
+```json
+{
+  "component": "Button",
+  "variants": {
+    "default": {
+      "tokens": {
+        "background": "var(--bg-primary-default)",
+        "backgroundHover": "var(--bg-primary-hover)",
+        "text": "var(--text-primary-inverse)"
+      }
+    }
+  }
+}
+```
+
+This makes the token binding queryable by external tools, not just readable in source code.
+
+## Pattern 4: Composition Over Configuration
+
+Favor composable primitives over complex prop-based configuration. AI handles composition more reliably than it handles deeply nested prop objects.
+
+**Instead of this:**
+
+```tsx
+<Card
+  header={{ title: "Settings", icon: "gear", actions: [...] }}
+  content={{ padding: "large", columns: 2 }}
+  footer={{ align: "right", buttons: [...] }}
+/>
+```
+
+**Use this:**
+
+```tsx
+<Card>
+  <Card.Header>
+    <Card.Title>Settings</Card.Title>
+    <Card.Icon name="gear" />
+    <Card.Actions>{...}</Card.Actions>
+  </Card.Header>
+  <Card.Content padding="large" columns={2}>
+    {...}
+  </Card.Content>
+  <Card.Footer align="right">
+    {...}
+  </Card.Footer>
+</Card>
+```
+
+The compositional API is more verbose but much clearer for AI. Each sub-component has a simple, focused API. AI doesn't have to synthesize a complex object structure—it just nests components.
+
+**Why this works better for AI:**
+
+- Pattern matches against JSX training data more reliably
+- Each component can be documented and typed independently
+- Invalid nesting can be caught with TypeScript (e.g., `Card.Footer` outside `Card`)
+- Easier to generate partial implementations and refine incrementally
+
+## Pattern 5: Default Variants That Match Common Use Cases
+
+Choose default prop values that match the most common use case in your app. This reduces the amount of explicit specification AI needs to include.
+
+**Example: If 80% of your buttons are primary actions:**
+
+```tsx
+type ButtonProps = {
+  variant?: 'default' | 'outline' | 'destructive'; // default: 'default'
+  size?: 'sm' | 'md' | 'lg';                       // default: 'md'
+};
+
+// AI can generate this without specifying variant:
+<Button>Save</Button>
+
+// Instead of requiring this:
+<Button variant="default" size="md">Save</Button>
+```
+
+Good defaults mean AI-generated code is more concise and less likely to specify props incorrectly.
+
+**Document defaults in JSON schema:**
+
+```json
+{
+  "props": {
+    "variant": {
+      "type": "enum",
+      "values": ["default", "outline", "destructive"],
+      "default": "default"
+    }
+  }
+}
+```
+
+This lets AI tools know which props can be omitted safely.
+
+## Pattern 6: MCP Server for Component Discovery
+
+Make your component library queryable at AI generation time through an MCP (Model Context Protocol) server.
+
+**What an MCP server provides:**
+
+- List all available components
+- Fetch prop types and valid values for a specific component
+- Query which design tokens a component uses
+- Retrieve usage examples and composition patterns
+
+**Example MCP tool implementation:**
+
+```ts
+// mcp-server/tools.ts
+server.addTool({
+  name: 'list_components',
+  description: 'List all available components in the design system',
+  handler: async () => {
+    return {
+      components: [
+        { name: 'Button', path: '@framingui/ui/button' },
+        { name: 'Card', path: '@framingui/ui/card' },
+        { name: 'Input', path: '@framingui/ui/input' },
+      ],
+    };
+  },
+});
+
+server.addTool({
+  name: 'get_component_schema',
+  description: 'Get the prop schema for a specific component',
+  parameters: {
+    component: { type: 'string', required: true },
+  },
+  handler: async ({ component }) => {
+    // Load component.schema.json
+    return loadSchema(component);
+  },
+});
+```
+
+When AI generates code, it can call these tools to verify component availability and check valid prop values before writing code.
+
+**Setup for users:**
+
+```bash
+npx -y @framingui/mcp-server@latest init
+```
+
+This configures the MCP server and makes it available to Claude Code. AI can then query your component library automatically without requiring manual documentation in prompts.
+
+## Pattern 7: Storybook Integration for Visual Context
+
+Storybook stories provide visual examples that complement type definitions. AI can reference stories to understand how components look in different states.
+
+**Structure stories by variant:**
+
+```tsx
+// button.stories.tsx
+export const Default: Story = {
+  args: { variant: 'default', children: 'Button' },
+};
+
+export const Outline: Story = {
+  args: { variant: 'outline', children: 'Button' },
+};
+
+export const Destructive: Story = {
+  args: { variant: 'destructive', children: 'Delete' },
+};
+```
+
+**Export story metadata for AI tools:**
+
+```ts
+export const buttonStories = {
+  variants: ['default', 'outline', 'destructive'],
+  examples: [
+    { code: '<Button variant="default">Save</Button>' },
+    { code: '<Button variant="outline">Cancel</Button>' },
+  ],
+};
+```
+
+AI can query this metadata to see real usage examples, which improves generation accuracy for complex composition patterns.
+
+## Pattern 8: Lint Rules That Enforce Library Usage
+
+Add ESLint rules that require using library components instead of raw HTML or ad-hoc implementations.
+
+**Example rule: Require Button component instead of <button>:**
+
+```js
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'JSXElement[openingElement.name.name="button"]',
+        message: 'Use <Button> from @framingui/ui instead of <button>',
+      },
+    ],
+  },
+};
+```
+
+When AI generates `<button>`, the lint error forces regeneration with `<Button>`. This ensures all UI goes through your design system rather than bypassing it.
+
+## Pattern 9: Forbid Prop Spreading in Component APIs
+
+Prop spreading makes component APIs unpredictable for AI. Avoid `{...props}` patterns in public component interfaces.
+
+**Instead of this:**
+
+```tsx
+function Button({ variant, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button className={cn(variants[variant])} {...rest} />;
+}
+```
+
+**Use explicit props:**
+
+```tsx
+function Button({ variant, size, onClick, disabled, children }: ButtonProps) {
+  return (
+    <button
+      className={cn(variants[variant], sizes[size])}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+The explicit API is more verbose but much clearer for AI. It can see exactly which props are supported without needing to infer from HTML attributes.
+
+## The Complete Integration Pattern
+
+Putting all patterns together:
+
+1. **Strictly typed props** with literal unions for variants
+2. **Co-located schemas** (JSON) next to component source
+3. **Explicit token bindings** in component metadata
+4. **Compositional APIs** instead of complex prop objects
+5. **Smart defaults** that match common usage
+6. **MCP server** for runtime component discovery
+7. **Storybook stories** with exported metadata
+8. **Lint rules** that enforce library usage
+9. **No prop spreading** in public APIs
+
+This stack makes your component library queryable, type-safe, and AI-friendly by default. AI generates code that uses your actual components correctly because it can verify correct usage before generation.
+
+## Where FramingUI Fits
+
+FramingUI implements all these patterns out of the box. Components are strictly typed, token bindings are explicit, and the MCP server provides runtime queryability for Claude Code. It's designed specifically to work well with AI code editors.
+
+The result: AI-generated UI that uses your component library correctly without requiring manual correction after every generation.
+
+---
+
+Making component libraries AI-friendly isn't about changing what components do—it's about making their contracts explicit, machine-readable, and queryable. Structure APIs for clarity over flexibility, document in formats AI can parse, and enforce constraints at generation time. The result is AI-generated code that works with your design system instead of fighting it.
