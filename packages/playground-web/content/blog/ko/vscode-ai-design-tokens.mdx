@@ -1,0 +1,585 @@
+---
+title: "Using AI and Design Tokens in VS Code: A Complete Workflow Guide"
+description: "Learn how to integrate design tokens with AI coding assistants in VS Code for consistent, scalable UI development without context switching."
+date: "2026-03-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - vscode
+  - ai-coding
+  - design-tokens
+  - workflow
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+VS Code has become the primary workspace for developers using AI coding assistants like GitHub Copilot, Claude Code, and Cursor. But when you're building UI, there's a persistent tension: AI can generate code fast, but keeping that code consistent with your design system requires constant vigilance.
+
+The missing piece isn't the AI. It's making your design tokens accessible to the AI in the same environment where code generation happens. When design constraints live in VS Code's context—not buried in Figma or a separate design tool—AI can reference them automatically.
+
+This guide walks through setting up a complete workflow where design tokens live alongside your code, AI assistants can reference them naturally, and updates propagate without manual synchronization.
+
+## Why Design Tokens Matter for AI Code Generation
+
+AI coding assistants generate plausible code. They don't generate correct code unless they have the right context.
+
+When you ask Copilot to "add a primary button," it generates something like:
+
+```tsx
+<button className="bg-blue-500 text-white px-4 py-2 rounded">
+  Submit
+</button>
+```
+
+This is plausible. It looks like a button. But it's not your button. It doesn't use your brand colors, your spacing scale, your border radius values. Every AI-generated component becomes a one-off that drifts from the design system.
+
+With design tokens in context, the same prompt generates:
+
+```tsx
+<button className="bg-action-primary text-on-action px-4 py-2 rounded-md">
+  Submit
+</button>
+```
+
+Now it references `action-primary` from your token set. When you update the token value, every button updates. The AI didn't need to know hex codes or pixel values—it just needed to know the semantic names.
+
+## The Token-Driven Workflow Architecture
+
+The workflow requires three components working together:
+
+**1. Token definitions in a format AI can parse.** JSON or TypeScript work best. The structure matters more than the format—semantic naming, clear hierarchy, and relationships between values.
+
+**2. Token context injected into AI assistants.** Each AI tool has different mechanisms for context injection. Some use workspace files, some use special config, some use Model Context Protocol (MCP) servers.
+
+**3. Code generation templates that reference tokens.** Instead of hardcoded values, templates use token variables. The AI fills in semantic names, not literal values.
+
+Let's build this step by step.
+
+## Step 1: Structuring Design Tokens for AI Consumption
+
+Start with a token structure that communicates semantic relationships. Here's a minimal but complete setup:
+
+```typescript
+// tokens/color.ts
+export const color = {
+  // Base palette - raw values
+  neutral: {
+    50: '#fafafa',
+    100: '#f5f5f5',
+    200: '#e5e5e5',
+    300: '#d4d4d4',
+    400: '#a3a3a3',
+    500: '#737373',
+    600: '#525252',
+    700: '#404040',
+    800: '#262626',
+    900: '#171717',
+  },
+  blue: {
+    50: '#eff6ff',
+    100: '#dbeafe',
+    200: '#bfdbfe',
+    300: '#93c5fd',
+    400: '#60a5fa',
+    500: '#3b82f6',
+    600: '#2563eb',
+    700: '#1d4ed8',
+    800: '#1e40af',
+    900: '#1e3a8a',
+  },
+  
+  // Semantic mappings - what AI should reference
+  action: {
+    primary: {
+      default: '#2563eb',  // blue.600
+      hover: '#1d4ed8',    // blue.700
+      active: '#1e40af',   // blue.800
+      disabled: '#d4d4d4', // neutral.300
+    },
+    secondary: {
+      default: '#525252',  // neutral.600
+      hover: '#404040',    // neutral.700
+      active: '#262626',   // neutral.800
+      disabled: '#e5e5e5', // neutral.200
+    },
+  },
+  
+  text: {
+    primary: '#171717',    // neutral.900
+    secondary: '#525252',  // neutral.600
+    tertiary: '#a3a3a3',   // neutral.400
+    disabled: '#d4d4d4',   // neutral.300
+    onAction: '#ffffff',
+  },
+  
+  surface: {
+    default: '#ffffff',
+    subtle: '#fafafa',     // neutral.50
+    elevated: '#ffffff',
+    overlay: 'rgba(0, 0, 0, 0.5)',
+  },
+  
+  border: {
+    default: '#e5e5e5',    // neutral.200
+    strong: '#d4d4d4',     // neutral.300
+    subtle: '#f5f5f5',     // neutral.100
+  },
+} as const;
+
+// tokens/spacing.ts
+export const spacing = {
+  0: '0',
+  1: '0.25rem',  // 4px
+  2: '0.5rem',   // 8px
+  3: '0.75rem',  // 12px
+  4: '1rem',     // 16px
+  5: '1.25rem',  // 20px
+  6: '1.5rem',   // 24px
+  8: '2rem',     // 32px
+  10: '2.5rem',  // 40px
+  12: '3rem',    // 48px
+  16: '4rem',    // 64px
+  20: '5rem',    // 80px
+  24: '6rem',    // 96px
+} as const;
+
+// tokens/typography.ts
+export const typography = {
+  fontSize: {
+    xs: '0.75rem',     // 12px
+    sm: '0.875rem',    // 14px
+    base: '1rem',      // 16px
+    lg: '1.125rem',    // 18px
+    xl: '1.25rem',     // 20px
+    '2xl': '1.5rem',   // 24px
+    '3xl': '1.875rem', // 30px
+    '4xl': '2.25rem',  // 36px
+  },
+  
+  fontWeight: {
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
+  },
+  
+  lineHeight: {
+    tight: '1.25',
+    normal: '1.5',
+    relaxed: '1.75',
+  },
+} as const;
+
+// tokens/radius.ts
+export const radius = {
+  none: '0',
+  sm: '0.25rem',   // 4px
+  base: '0.375rem', // 6px
+  md: '0.5rem',    // 8px
+  lg: '0.75rem',   // 12px
+  xl: '1rem',      // 16px
+  full: '9999px',
+} as const;
+```
+
+This structure has two critical features:
+
+**Semantic naming that communicates intent.** `color.action.primary.default` tells AI "this is the default state of a primary action element." Not just a color value.
+
+**Clear hierarchy that enables inference.** When AI sees `action.primary.default`, it can infer that `action.primary.hover` likely exists for the hover state.
+
+## Step 2: Making Tokens Available to AI Assistants
+
+Different AI tools consume context differently. Here's how to integrate tokens with the main VS Code AI assistants.
+
+### GitHub Copilot
+
+Copilot doesn't have explicit token injection, but it reads open files and workspace context. Keep your token files in the workspace and reference them in code:
+
+```typescript
+// lib/design-system.ts
+import { color, spacing, typography, radius } from '../tokens';
+
+export const tokens = {
+  color,
+  spacing,
+  typography,
+  radius,
+} as const;
+
+// Export type for type-safe token access
+export type Tokens = typeof tokens;
+```
+
+When you import this in a component file, Copilot sees the token structure in its context window and can suggest correct token paths.
+
+### Claude Code (via MCP)
+
+Claude Code supports Model Context Protocol servers. You can create an MCP server that exposes your design tokens:
+
+```typescript
+// mcp-server/design-tokens.ts
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { tokens } from '../tokens/index.js';
+
+const server = new Server(
+  {
+    name: 'design-tokens',
+    version: '1.0.0',
+  },
+  {
+    capabilities: {
+      resources: {},
+    },
+  }
+);
+
+// Expose tokens as a resource
+server.setRequestHandler('resources/list', async () => {
+  return {
+    resources: [
+      {
+        uri: 'design://tokens',
+        name: 'Design Tokens',
+        mimeType: 'application/json',
+        description: 'Complete design token set for the application',
+      },
+    ],
+  };
+});
+
+server.setRequestHandler('resources/read', async (request) => {
+  if (request.params.uri === 'design://tokens') {
+    return {
+      contents: [
+        {
+          uri: 'design://tokens',
+          mimeType: 'application/json',
+          text: JSON.stringify(tokens, null, 2),
+        },
+      ],
+    };
+  }
+  throw new Error('Resource not found');
+});
+
+const transport = new StdioServerTransport();
+server.connect(transport);
+```
+
+Add to your Claude Code config:
+
+```json
+{
+  "mcpServers": {
+    "design-tokens": {
+      "command": "node",
+      "args": ["./mcp-server/design-tokens.js"]
+    }
+  }
+}
+```
+
+Now Claude Code can query `design://tokens` to get your complete token set before generating code.
+
+### Cursor
+
+Cursor reads `.cursorrules` files for context. Create one with your token documentation:
+
+```markdown
+# Design System Tokens
+
+When generating UI code, use the following design tokens:
+
+## Colors
+- Primary actions: `color.action.primary.default`, `color.action.primary.hover`
+- Secondary actions: `color.action.secondary.default`, `color.action.secondary.hover`
+- Text: `color.text.primary`, `color.text.secondary`, `color.text.tertiary`
+- Surfaces: `color.surface.default`, `color.surface.subtle`, `color.surface.elevated`
+- Borders: `color.border.default`, `color.border.strong`
+
+## Spacing
+Use the spacing scale: 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24
+- Stack spacing (vertical): Use 4-6 for tight, 8-12 for comfortable
+- Inline spacing (horizontal): Use 2-4 for tight, 6-8 for comfortable
+- Section spacing: Use 12-24
+
+## Typography
+- Sizes: xs, sm, base, lg, xl, 2xl, 3xl, 4xl
+- Weights: normal (400), medium (500), semibold (600), bold (700)
+- Line heights: tight (1.25), normal (1.5), relaxed (1.75)
+
+## Border Radius
+- sm (4px), base (6px), md (8px), lg (12px), xl (16px), full (pill shape)
+
+Always reference tokens by semantic name, never use raw values.
+```
+
+## Step 3: Generating Components with Token References
+
+With tokens in context, you can prompt AI to generate components that reference the design system naturally.
+
+**Example prompt for a button component:**
+
+```
+Create a Button component with variants (primary, secondary, destructive).
+Use tokens from our design system:
+- Colors: color.action.primary/secondary
+- Spacing: spacing scale
+- Typography: fontSize, fontWeight
+- Radius: radius.md
+```
+
+**Generated output (GitHub Copilot):**
+
+```tsx
+import { tokens } from '@/lib/design-system';
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  children,
+  className,
+  ...props
+}: ButtonProps) {
+  const variantStyles = {
+    primary: `bg-[${tokens.color.action.primary.default}] hover:bg-[${tokens.color.action.primary.hover}] text-[${tokens.color.text.onAction}]`,
+    secondary: `bg-[${tokens.color.action.secondary.default}] hover:bg-[${tokens.color.action.secondary.hover}] text-[${tokens.color.text.onAction}]`,
+    destructive: `bg-red-600 hover:bg-red-700 text-white`,
+  };
+
+  const sizeStyles = {
+    sm: `px-[${tokens.spacing[3]}] py-[${tokens.spacing[1]}] text-[${tokens.typography.fontSize.sm}]`,
+    md: `px-[${tokens.spacing[4]}] py-[${tokens.spacing[2]}] text-[${tokens.typography.fontSize.base}]`,
+    lg: `px-[${tokens.spacing[6]}] py-[${tokens.spacing[3]}] text-[${tokens.typography.fontSize.lg}]`,
+  };
+
+  return (
+    <button
+      className={`rounded-[${tokens.radius.md}] font-[${tokens.typography.fontWeight.medium}] transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+Notice how every value references a token. No magic numbers. No hardcoded colors.
+
+## Step 4: Automating Token Updates
+
+The real power comes when tokens update. Instead of manually searching and replacing color values across dozens of files, you update the token definition once.
+
+If you're using a tool like FramingUI, you can connect token updates to your design workflow:
+
+```typescript
+// scripts/sync-tokens.ts
+import { writeFileSync } from 'fs';
+import { getFigmaTokens } from './figma-sync';
+
+async function syncTokens() {
+  // Fetch latest tokens from Figma (or your design tool)
+  const figmaTokens = await getFigmaTokens();
+  
+  // Transform to your token structure
+  const tokens = transformToTokenStructure(figmaTokens);
+  
+  // Write to tokens file
+  writeFileSync(
+    './tokens/index.ts',
+    `export const tokens = ${JSON.stringify(tokens, null, 2)} as const;`
+  );
+  
+  console.log('✓ Tokens synced');
+}
+
+syncTokens();
+```
+
+Run this script when design updates happen, and your entire codebase gets the new values. AI-generated code stays consistent because it references the semantic names, not the values.
+
+## Real-World Workflow Example
+
+Here's how this works in practice for a feature addition:
+
+**1. Designer updates the primary action color in Figma**
+- Changes `action.primary.default` from `#2563eb` to `#3b82f6`
+
+**2. Developer runs token sync**
+```bash
+npm run sync-tokens
+```
+
+**3. Developer asks Claude Code to add a new form**
+```
+Create a user registration form with:
+- Email input
+- Password input
+- Submit button (primary variant)
+- Cancel button (secondary variant)
+Use our design system tokens.
+```
+
+**4. Claude Code generates the form**
+```tsx
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+
+export function RegistrationForm() {
+  return (
+    <form className="space-y-6">
+      <Input
+        label="Email"
+        type="email"
+        placeholder="you@example.com"
+      />
+      <Input
+        label="Password"
+        type="password"
+        placeholder="••••••••"
+      />
+      <div className="flex gap-3">
+        <Button type="submit" variant="primary">
+          Create Account
+        </Button>
+        <Button type="button" variant="secondary">
+          Cancel
+        </Button>
+      </div>
+    </form>
+  );
+}
+```
+
+The submit button automatically uses the new `#3b82f6` color because `Button` component references `color.action.primary.default`. No manual updates needed.
+
+## Advanced: Type-Safe Token Access
+
+For better IDE autocomplete and type safety, generate TypeScript types from your tokens:
+
+```typescript
+// scripts/generate-token-types.ts
+import { writeFileSync } from 'fs';
+import { tokens } from '../tokens';
+
+function generateTypes(obj: any, prefix = ''): string {
+  let types = '';
+  
+  for (const [key, value] of Object.entries(obj)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    
+    if (typeof value === 'object' && value !== null) {
+      types += generateTypes(value, path);
+    } else {
+      types += `export type ${toPascalCase(path)} = '${path}';\n`;
+    }
+  }
+  
+  return types;
+}
+
+const types = generateTypes(tokens);
+writeFileSync('./tokens/types.ts', types);
+```
+
+Now you get full autocomplete when accessing tokens:
+
+```typescript
+import type { ColorActionPrimaryDefault } from '@/tokens/types';
+
+// TypeScript knows exactly which token paths exist
+const primaryColor: ColorActionPrimaryDefault = 'color.action.primary.default';
+```
+
+## Common Pitfalls and Solutions
+
+**Pitfall 1: AI generates raw values despite token context**
+
+This usually means the context isn't visible to the AI. Check:
+- Token files are in the workspace
+- Token imports are in open files
+- MCP server is running (for Claude Code)
+- `.cursorrules` is in the project root (for Cursor)
+
+**Pitfall 2: Token structure is too complex**
+
+AI struggles with deeply nested objects. Keep hierarchy to 3-4 levels max:
+```typescript
+// ✅ Good - clear hierarchy
+color.action.primary.default
+
+// ❌ Too deep - AI gets confused
+color.semantic.interactive.action.primary.states.default.base
+```
+
+**Pitfall 3: Semantic names are ambiguous**
+
+AI can't infer relationships from vague names:
+```typescript
+// ❌ Ambiguous
+color.blue1, color.blue2, color.blue3
+
+// ✅ Clear semantic meaning
+color.action.primary.default, color.action.primary.hover, color.action.primary.active
+```
+
+## Integrating with Design Tools
+
+If you use Figma, Sketch, or other design tools, you can automate the token sync:
+
+**Figma Tokens (using Tokens Studio plugin):**
+```bash
+npm install -D @tokens-studio/sd-transforms
+```
+
+```javascript
+// build-tokens.js
+const StyleDictionary = require('style-dictionary');
+const { registerTransforms } = require('@tokens-studio/sd-transforms');
+
+registerTransforms(StyleDictionary);
+
+StyleDictionary.extend({
+  source: ['tokens/figma-tokens.json'],
+  platforms: {
+    ts: {
+      transformGroup: 'tokens-studio',
+      buildPath: 'tokens/',
+      files: [{
+        destination: 'index.ts',
+        format: 'typescript/es6-declarations',
+      }],
+    },
+  },
+}).buildAllPlatforms();
+```
+
+Export tokens from Figma Tokens plugin → run build script → tokens are available in VS Code for AI to reference.
+
+## Measuring the Impact
+
+After implementing this workflow, track:
+
+**Consistency improvements:** Count how many components use token references vs hardcoded values. Target >95% token usage.
+
+**Time savings:** Measure time from design update to code update. Traditional workflow: hours to days. Token-driven workflow: minutes.
+
+**AI generation accuracy:** Review AI-generated components for token compliance. Initial AI output should use correct tokens >80% of the time.
+
+**Design drift reduction:** Track tickets for "fix inconsistent spacing/colors." Should approach zero with token enforcement.
+
+## Conclusion
+
+Integrating design tokens with AI coding assistants in VS Code transforms UI development from a manual translation process into an automated, consistent workflow. The setup requires initial investment—structuring tokens, configuring AI context, creating templates—but the payoff is immediate.
+
+Every component AI generates references your design system. Every token update propagates automatically. Consistency stops being something you enforce through review and becomes something the system guarantees by default.
+
+The tools exist. The pattern works. The question is whether your workflow makes design constraints visible to AI where code generation happens. Put tokens in VS Code's context, and AI does the rest.

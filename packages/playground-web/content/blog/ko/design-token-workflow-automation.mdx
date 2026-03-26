@@ -1,0 +1,813 @@
+---
+title: "Automating Design Token Workflows: From Design Tools to Production"
+description: "Build a complete automated pipeline for design tokens—from Figma to code to deployment—eliminating manual sync and drift."
+date: "2026-03-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - automation
+  - workflow
+  - tooling
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+Design tokens solve the consistency problem—but only if they stay synchronized between design tools and production code. The moment designers update a color palette in Figma while developers reference a stale token file, the system breaks down.
+
+Manual synchronization doesn't scale. Designers can't be expected to export tokens and notify developers every time a value changes. Developers can't be expected to manually update token files every time a design refinement happens.
+
+Automation is the only viable solution. This guide builds a complete automated workflow that syncs tokens from design tools to code repositories to production environments—no manual intervention required.
+
+## The Token Synchronization Problem
+
+Most teams have experienced this sequence:
+
+1. Designer updates primary button color from `#2563eb` to `#3b82f6` in Figma
+2. Developer builds new feature referencing old token values
+3. Design QA catches the inconsistency three days later
+4. Developer updates token file manually
+5. Components using old hardcoded values remain inconsistent
+6. Cycle repeats next sprint
+
+The failure points are predictable:
+
+**No change notification.** Developers don't know when design updates happen unless designers manually communicate them.
+
+**No automated sync.** Getting updated tokens from Figma to code requires manual export and file replacement.
+
+**No enforcement.** Nothing prevents developers from using hardcoded values instead of token references.
+
+**No validation.** Merged code might reference tokens that don't exist or use values that don't match design.
+
+An automated workflow eliminates all four failure points.
+
+## Architecture Overview
+
+The complete automation pipeline has five stages:
+
+```
+[Design Tool] → [Token Export] → [Transform] → [Code Repository] → [Production]
+     ↓              ↓              ↓              ↓                 ↓
+   Figma        API/Plugin     Style Dict.    Git + CI          Deployment
+   Sketch       Tokens Studio  Custom script  GitHub Actions     Vercel
+   Penpot       Manual export  Build process  GitLab CI          Netlify
+```
+
+Each stage handles a specific transformation:
+
+1. **Design tool** stores the source of truth
+2. **Export mechanism** pulls tokens from design tool
+3. **Transform layer** converts design formats to code formats
+4. **Repository** stores versioned token files
+5. **Production** consumes tokens in deployed applications
+
+Let's build each stage.
+
+## Stage 1: Setting Up Token Export from Figma
+
+Figma is the most common design tool, so we'll start there. The pattern applies to other tools with minor adjustments.
+
+### Option A: Figma Tokens (Tokens Studio)
+
+Install the [Tokens Studio](https://tokens.studio/) plugin in Figma.
+
+**1. Structure tokens in Figma using the plugin UI:**
+
+Create token sets for each category:
+- `core/color` - base palette
+- `core/spacing` - spacing scale
+- `core/typography` - font sizes, weights, line heights
+- `core/radius` - border radius values
+- `semantic/color` - semantic color mappings
+- `semantic/component` - component-specific tokens
+
+**2. Use token aliasing for semantic tokens:**
+
+```json
+{
+  "core": {
+    "color": {
+      "blue": {
+        "50": { "value": "#eff6ff", "type": "color" },
+        "500": { "value": "#3b82f6", "type": "color" },
+        "700": { "value": "#1d4ed8", "type": "color" }
+      }
+    }
+  },
+  "semantic": {
+    "color": {
+      "action": {
+        "primary": {
+          "value": "{core.color.blue.500}",
+          "type": "color"
+        }
+      }
+    }
+  }
+}
+```
+
+**3. Sync to GitHub directly from plugin:**
+
+Tokens Studio supports GitHub sync. Configure:
+- Repository: `your-org/your-repo`
+- Branch: `design-tokens`
+- Path: `design-tokens/tokens.json`
+- Personal access token (with `repo` scope)
+
+Enable "Sync on save" so every token update commits to GitHub automatically.
+
+### Option B: Figma API Direct Sync
+
+If you can't use plugins or need more control, sync via Figma API:
+
+```typescript
+// scripts/sync-figma-tokens.ts
+import fetch from 'node-fetch';
+import { writeFileSync } from 'fs';
+
+const FIGMA_FILE_KEY = process.env.FIGMA_FILE_KEY!;
+const FIGMA_TOKEN = process.env.FIGMA_TOKEN!;
+
+async function fetchFigmaFile() {
+  const response = await fetch(
+    `https://api.figma.com/v1/files/${FIGMA_FILE_KEY}`,
+    {
+      headers: {
+        'X-Figma-Token': FIGMA_TOKEN,
+      },
+    }
+  );
+  return response.json();
+}
+
+function extractColorTokens(figmaFile: any) {
+  const colorStyles = figmaFile.styles;
+  const tokens: Record<string, string> = {};
+
+  for (const [key, style] of Object.entries(colorStyles)) {
+    if (style.styleType === 'FILL') {
+      const fills = style.fills;
+      if (fills[0]?.type === 'SOLID') {
+        const { r, g, b, a } = fills[0].color;
+        const hex = rgbaToHex(r, g, b, a);
+        tokens[style.name.replace(/\//g, '.')] = hex;
+      }
+    }
+  }
+
+  return tokens;
+}
+
+function rgbaToHex(r: number, g: number, b: number, a: number = 1): string {
+  const toHex = (n: number) => {
+    const hex = Math.round(n * 255).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+  
+  const hex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  return a < 1 ? hex + toHex(a) : hex;
+}
+
+async function main() {
+  console.log('Fetching Figma file...');
+  const figmaFile = await fetchFigmaFile();
+  
+  console.log('Extracting tokens...');
+  const tokens = {
+    color: extractColorTokens(figmaFile),
+  };
+  
+  console.log('Writing tokens...');
+  writeFileSync(
+    './design-tokens/figma-raw.json',
+    JSON.stringify(tokens, null, 2)
+  );
+  
+  console.log('✓ Sync complete');
+}
+
+main();
+```
+
+Run this on a schedule (GitHub Actions cron) to poll Figma periodically.
+
+## Stage 2: Transforming Tokens to Code Formats
+
+Raw Figma tokens need transformation into formats code can consume. [Style Dictionary](https://amzn.github.io/style-dictionary/) is the industry standard tool.
+
+**Install dependencies:**
+
+```bash
+npm install -D style-dictionary @tokens-studio/sd-transforms
+```
+
+**Configure Style Dictionary:**
+
+```javascript
+// style-dictionary.config.js
+const StyleDictionary = require('style-dictionary');
+const { registerTransforms } = require('@tokens-studio/sd-transforms');
+
+registerTransforms(StyleDictionary);
+
+module.exports = {
+  source: ['design-tokens/tokens.json'],
+  
+  platforms: {
+    // CSS custom properties
+    css: {
+      transformGroup: 'tokens-studio',
+      buildPath: 'styles/',
+      files: [
+        {
+          destination: 'tokens.css',
+          format: 'css/variables',
+          options: {
+            outputReferences: true,
+          },
+        },
+      ],
+    },
+    
+    // TypeScript
+    ts: {
+      transformGroup: 'tokens-studio',
+      buildPath: 'src/tokens/',
+      files: [
+        {
+          destination: 'index.ts',
+          format: 'typescript/es6-declarations',
+        },
+      ],
+    },
+    
+    // JSON for runtime consumption
+    json: {
+      transformGroup: 'tokens-studio',
+      buildPath: 'public/',
+      files: [
+        {
+          destination: 'tokens.json',
+          format: 'json/flat',
+        },
+      ],
+    },
+    
+    // Tailwind config
+    tailwind: {
+      transformGroup: 'tokens-studio',
+      buildPath: 'config/',
+      files: [
+        {
+          destination: 'tailwind-tokens.js',
+          format: 'javascript/module-flat',
+        },
+      ],
+    },
+  },
+};
+```
+
+**Add custom formats if needed:**
+
+```javascript
+// custom-formats.js
+const StyleDictionary = require('style-dictionary');
+
+// Format for FramingUI MCP server
+StyleDictionary.registerFormat({
+  name: 'mcp/json',
+  formatter: function (dictionary) {
+    return JSON.stringify({
+      version: '1.0.0',
+      tokens: dictionary.allTokens.reduce((acc, token) => {
+        acc[token.path.join('.')] = {
+          value: token.value,
+          type: token.type,
+          description: token.description || '',
+        };
+        return acc;
+      }, {}),
+    }, null, 2);
+  },
+});
+
+module.exports = StyleDictionary;
+```
+
+**Run transformation:**
+
+```bash
+npx style-dictionary build
+```
+
+Output:
+
+```
+✓ Generated tokens.css
+✓ Generated index.ts
+✓ Generated tokens.json
+✓ Generated tailwind-tokens.js
+```
+
+## Stage 3: Automating with GitHub Actions
+
+Set up continuous sync so every design change automatically flows to code.
+
+**Create workflow file:**
+
+```yaml
+# .github/workflows/sync-tokens.yml
+name: Sync Design Tokens
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+  
+  # Automatic trigger when design-tokens branch updates
+  push:
+    branches:
+      - design-tokens
+    paths:
+      - 'design-tokens/**'
+  
+  # Scheduled polling (backup if plugin sync fails)
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Sync from Figma (if scheduled)
+        if: github.event_name == 'schedule'
+        env:
+          FIGMA_FILE_KEY: ${{ secrets.FIGMA_FILE_KEY }}
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+        run: npm run sync:figma
+      
+      - name: Transform tokens
+        run: npm run build:tokens
+      
+      - name: Validate tokens
+        run: npm run validate:tokens
+      
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --exit-code || echo "has_changes=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "Token Sync Bot"
+          git config user.email "tokens@yourdomain.com"
+          git add .
+          git commit -m "chore: sync design tokens [skip ci]"
+          git push
+      
+      - name: Create PR if on design-tokens branch
+        if: github.ref == 'refs/heads/design-tokens'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "Design tokens update" \
+            --body "Automated sync from Figma Tokens Studio" \
+            --base main \
+            --head design-tokens \
+            || echo "PR already exists"
+```
+
+**Add validation script:**
+
+```typescript
+// scripts/validate-tokens.ts
+import { readFileSync } from 'fs';
+import { tokens } from '../src/tokens';
+
+interface ValidationError {
+  path: string;
+  message: string;
+}
+
+function validate(): ValidationError[] {
+  const errors: ValidationError[] = [];
+  
+  // Check for required token categories
+  const requiredCategories = ['color', 'spacing', 'typography', 'radius'];
+  for (const category of requiredCategories) {
+    if (!tokens[category]) {
+      errors.push({
+        path: category,
+        message: `Missing required token category: ${category}`,
+      });
+    }
+  }
+  
+  // Check color token format
+  if (tokens.color) {
+    validateColorTokens(tokens.color, 'color', errors);
+  }
+  
+  // Check spacing scale consistency
+  if (tokens.spacing) {
+    validateSpacingScale(tokens.spacing, 'spacing', errors);
+  }
+  
+  return errors;
+}
+
+function validateColorTokens(obj: any, path: string, errors: ValidationError[]) {
+  for (const [key, value] of Object.entries(obj)) {
+    const currentPath = `${path}.${key}`;
+    
+    if (typeof value === 'string') {
+      // Check hex color format
+      if (!value.match(/^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/)) {
+        errors.push({
+          path: currentPath,
+          message: `Invalid color format: ${value}`,
+        });
+      }
+    } else if (typeof value === 'object') {
+      validateColorTokens(value, currentPath, errors);
+    }
+  }
+}
+
+function validateSpacingScale(spacing: any, path: string, errors: ValidationError[]) {
+  const values = Object.values(spacing);
+  const numericValues = values
+    .map(v => parseFloat(v as string))
+    .filter(n => !isNaN(n))
+    .sort((a, b) => a - b);
+  
+  // Check for consistent scale progression
+  for (let i = 1; i < numericValues.length; i++) {
+    const ratio = numericValues[i] / numericValues[i - 1];
+    if (ratio > 2) {
+      errors.push({
+        path,
+        message: `Spacing scale has inconsistent progression: ${numericValues[i - 1]} → ${numericValues[i]} (ratio: ${ratio.toFixed(2)})`,
+      });
+    }
+  }
+}
+
+const errors = validate();
+
+if (errors.length > 0) {
+  console.error('Token validation failed:');
+  errors.forEach(err => {
+    console.error(`  ${err.path}: ${err.message}`);
+  });
+  process.exit(1);
+} else {
+  console.log('✓ All tokens valid');
+}
+```
+
+**Add to package.json:**
+
+```json
+{
+  "scripts": {
+    "sync:figma": "tsx scripts/sync-figma-tokens.ts",
+    "build:tokens": "style-dictionary build",
+    "validate:tokens": "tsx scripts/validate-tokens.ts",
+    "tokens": "npm run sync:figma && npm run build:tokens && npm run validate:tokens"
+  }
+}
+```
+
+## Stage 4: Enforcing Token Usage in Code Review
+
+Automation prevents drift, but enforcement prevents regression. Use linters to block hardcoded values:
+
+**ESLint rule for no magic colors:**
+
+```javascript
+// eslint-rules/no-magic-colors.js
+module.exports = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description: 'Disallow hardcoded color values',
+      category: 'Design System',
+    },
+    messages: {
+      noMagicColor: 'Use design tokens instead of hardcoded color "{{value}}"',
+    },
+  },
+  
+  create(context) {
+    const colorRegex = /#[0-9A-Fa-f]{3,8}|rgba?\([^)]+\)|hsla?\([^)]+\)/;
+    
+    return {
+      Literal(node) {
+        if (typeof node.value === 'string' && colorRegex.test(node.value)) {
+          context.report({
+            node,
+            messageId: 'noMagicColor',
+            data: {
+              value: node.value,
+            },
+          });
+        }
+      },
+      
+      TemplateElement(node) {
+        if (colorRegex.test(node.value.raw)) {
+          context.report({
+            node,
+            messageId: 'noMagicColor',
+            data: {
+              value: node.value.raw,
+            },
+          });
+        }
+      },
+    };
+  },
+};
+```
+
+**StyleLint rule for CSS:**
+
+```javascript
+// stylelint.config.js
+module.exports = {
+  rules: {
+    'color-no-hex': true,
+    'declaration-property-value-disallowed-list': {
+      '/^color$/': ['/^#/', '/^rgb/', '/^hsl/'],
+      '/^background/': ['/^#/', '/^rgb/', '/^hsl/'],
+      '/^border/': ['/^#/', '/^rgb/', '/^hsl/'],
+    },
+  },
+};
+```
+
+**GitHub Actions check:**
+
+```yaml
+# .github/workflows/pr-checks.yml
+name: PR Checks
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'components/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - run: npm run lint
+      
+      - name: Check for hardcoded colors
+        run: |
+          if git diff origin/main...HEAD | grep -E '#[0-9A-Fa-f]{6}'; then
+            echo "Error: Hardcoded color values detected"
+            echo "Please use design tokens instead"
+            exit 1
+          fi
+```
+
+## Stage 5: Runtime Token Updates (Advanced)
+
+For dynamic theming or A/B testing, support runtime token updates:
+
+```typescript
+// lib/token-provider.tsx
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+interface TokenContextValue {
+  tokens: Record<string, any>;
+  updateTokens: (newTokens: Record<string, any>) => void;
+}
+
+const TokenContext = createContext<TokenContextValue | null>(null);
+
+export function TokenProvider({ children }: { children: ReactNode }) {
+  const [tokens, setTokens] = useState(() => {
+    // Load initial tokens
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('design-tokens');
+      if (stored) return JSON.parse(stored);
+    }
+    return require('../tokens').tokens;
+  });
+
+  useEffect(() => {
+    // Subscribe to token updates from admin panel
+    const ws = new WebSocket(process.env.NEXT_PUBLIC_TOKENS_WS_URL!);
+    
+    ws.onmessage = (event) => {
+      const update = JSON.parse(event.data);
+      if (update.type === 'tokens-update') {
+        setTokens(update.tokens);
+        localStorage.setItem('design-tokens', JSON.stringify(update.tokens));
+      }
+    };
+    
+    return () => ws.close();
+  }, []);
+
+  const updateTokens = (newTokens: Record<string, any>) => {
+    setTokens(newTokens);
+    localStorage.setItem('design-tokens', JSON.stringify(newTokens));
+  };
+
+  return (
+    <TokenContext.Provider value={{ tokens, updateTokens }}>
+      {children}
+    </TokenContext.Provider>
+  );
+}
+
+export function useTokens() {
+  const context = useContext(TokenContext);
+  if (!context) throw new Error('useTokens must be used within TokenProvider');
+  return context;
+}
+```
+
+**Usage in components:**
+
+```tsx
+import { useTokens } from '@/lib/token-provider';
+
+export function Button({ variant = 'primary', children }: ButtonProps) {
+  const { tokens } = useTokens();
+  
+  const styles = {
+    backgroundColor: tokens.color.action[variant].default,
+    color: tokens.color.text.onAction,
+    padding: `${tokens.spacing[2]} ${tokens.spacing[4]}`,
+    borderRadius: tokens.radius.md,
+  };
+  
+  return <button style={styles}>{children}</button>;
+}
+```
+
+## Monitoring and Observability
+
+Track token sync health:
+
+```typescript
+// lib/token-metrics.ts
+export function trackTokenSync(event: {
+  source: 'figma' | 'github' | 'manual';
+  tokensChanged: number;
+  duration: number;
+  success: boolean;
+  error?: string;
+}) {
+  // Send to analytics
+  if (typeof window !== 'undefined' && window.plausible) {
+    window.plausible('Token Sync', {
+      props: {
+        source: event.source,
+        tokensChanged: event.tokensChanged,
+        duration: event.duration,
+        success: event.success,
+        error: event.error,
+      },
+    });
+  }
+  
+  // Log for debugging
+  console.log('[Token Sync]', event);
+}
+```
+
+**Add to sync script:**
+
+```typescript
+async function main() {
+  const startTime = Date.now();
+  let tokensChanged = 0;
+  
+  try {
+    const before = readFileSync('./design-tokens/tokens.json', 'utf-8');
+    await syncFigmaTokens();
+    const after = readFileSync('./design-tokens/tokens.json', 'utf-8');
+    
+    tokensChanged = countChanges(before, after);
+    
+    trackTokenSync({
+      source: 'figma',
+      tokensChanged,
+      duration: Date.now() - startTime,
+      success: true,
+    });
+  } catch (error) {
+    trackTokenSync({
+      source: 'figma',
+      tokensChanged: 0,
+      duration: Date.now() - startTime,
+      success: false,
+      error: error.message,
+    });
+    throw error;
+  }
+}
+```
+
+## Real-World Example: Complete Automation Flow
+
+Here's how it works end-to-end:
+
+**1. Designer updates button color in Figma**
+- Changes `action/primary` from `#2563eb` to `#3b82f6`
+- Saves (Tokens Studio plugin auto-commits to `design-tokens` branch)
+
+**2. GitHub Actions triggers on branch push**
+- Runs `style-dictionary build`
+- Generates updated CSS, TypeScript, JSON files
+- Validates token structure
+- Creates PR to `main`
+
+**3. PR checks run**
+- Lint validation passes (no hardcoded colors in diff)
+- Token validation passes
+- Preview deployment shows updated colors
+
+**4. Developer reviews and merges PR**
+- No code changes needed
+- All components using token references automatically get new color
+
+**5. Production deployment**
+- New tokens deploy with next release
+- Runtime token provider picks up changes (if using dynamic updates)
+- Users see updated UI
+
+Total time from design update to production: **~15 minutes** (mostly CI/CD pipeline time). No manual intervention.
+
+## Integrating with FramingUI
+
+If you're using FramingUI for AI-assisted development, the token automation feeds directly into AI context:
+
+```typescript
+// mcp-server/design-tokens.ts (FramingUI MCP integration)
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { readFileSync } from 'fs';
+
+const server = new Server({
+  name: 'design-tokens',
+  version: '1.0.0',
+});
+
+server.setRequestHandler('resources/read', async (request) => {
+  if (request.params.uri === 'design://tokens') {
+    // Read latest transformed tokens
+    const tokens = JSON.parse(
+      readFileSync('./src/tokens/index.json', 'utf-8')
+    );
+    
+    return {
+      contents: [{
+        uri: 'design://tokens',
+        mimeType: 'application/json',
+        text: JSON.stringify(tokens, null, 2),
+      }],
+    };
+  }
+});
+```
+
+Now when Claude Code generates components via FramingUI, it always references the latest synced tokens—no stale context.
+
+## Conclusion
+
+Token automation transforms design systems from aspirational documentation into enforced infrastructure. The workflow requires setup—CI/CD configuration, validation scripts, linting rules—but eliminates an entire class of consistency problems.
+
+Designers update Figma. Tokens sync automatically. Code references semantic names. Production stays consistent. The system enforces what manual process couldn't.
+
+The tools exist. The patterns are proven. The remaining question is whether your team prioritizes automation or continues manual synchronization until the inevitable drift crisis forces change.

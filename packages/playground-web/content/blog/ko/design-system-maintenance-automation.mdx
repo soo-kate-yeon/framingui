@@ -1,0 +1,1044 @@
+---
+title: "Automating Design System Maintenance: Keep Your System Healthy at Scale"
+description: "Build automated workflows to maintain design system health—from token validation to component audits to deprecation management."
+date: "2026-03-27"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-system
+  - automation
+  - maintenance
+  - tooling
+category: "Tutorial"
+coverImage: ""
+published: true
+---
+
+Design systems decay without maintenance. Tokens drift from design files. Components accumulate inconsistencies. Documentation becomes stale. Teams add one-off variants that bypass the system entirely.
+
+Manual maintenance doesn't scale. A team can enforce consistency in a 10-component library through code review. At 100 components across 50 projects, manual enforcement fails. You need automation.
+
+This guide builds a complete automated maintenance system that monitors design system health, catches drift before it ships, and keeps components synchronized without manual intervention.
+
+## The Maintenance Problem
+
+Most design systems fail not from poor initial design but from maintenance neglect:
+
+**Token drift:** Design team updates colors in Figma. Development team references old token values. Components ship with inconsistent colors.
+
+**Component proliferation:** Developers create custom variants instead of using existing components. The system fragments.
+
+**Accessibility regression:** New component versions lose ARIA labels that previous versions had.
+
+**Documentation rot:** Components evolve. Documentation doesn't. Developers use outdated patterns.
+
+**Orphaned code:** Components get deprecated but remain in the codebase. Teams don't know what's safe to use.
+
+**Performance degradation:** Bundle size creeps up as duplicate components and unused tokens accumulate.
+
+These problems compound over time. The solution is automated monitoring and enforcement.
+
+## Architecture Overview
+
+The automated maintenance system has five monitoring categories:
+
+```
+[1. Token Validation]     - Ensure tokens match source of truth
+[2. Component Audits]     - Check component quality metrics
+[3. Usage Tracking]       - Monitor what's actually used
+[4. Documentation Sync]   - Keep docs current
+[5. Performance Monitoring] - Track bundle size and runtime cost
+```
+
+Each category runs automatically on different triggers:
+
+- **Pre-commit:** Fast checks before code commits
+- **CI/CD:** Comprehensive checks before deployment
+- **Scheduled:** Periodic health audits
+- **On-demand:** Manual deep-dive analysis
+
+Let's build each category.
+
+## Category 1: Token Validation
+
+Tokens are the foundation. If they drift, everything built on them drifts.
+
+### Validation 1: Source Synchronization
+
+Ensure code tokens match design tool tokens:
+
+```typescript
+// scripts/validate-token-sync.ts
+import { fetchFigmaTokens } from './figma-sync';
+import { tokens as codeTokens } from '../src/tokens';
+
+interface ValidationResult {
+  status: 'pass' | 'fail';
+  errors: Array<{
+    path: string;
+    expected: string;
+    actual: string;
+  }>;
+}
+
+async function validateTokenSync(): Promise<ValidationResult> {
+  // Fetch latest from Figma
+  const figmaTokens = await fetchFigmaTokens();
+  
+  const errors: ValidationResult['errors'] = [];
+  
+  // Compare color tokens
+  compareTokens(
+    figmaTokens.color,
+    codeTokens.color,
+    'color',
+    errors
+  );
+  
+  // Compare spacing tokens
+  compareTokens(
+    figmaTokens.spacing,
+    codeTokens.spacing,
+    'spacing',
+    errors
+  );
+  
+  // Compare typography tokens
+  compareTokens(
+    figmaTokens.typography,
+    codeTokens.typography,
+    'typography',
+    errors
+  );
+  
+  return {
+    status: errors.length === 0 ? 'pass' : 'fail',
+    errors,
+  };
+}
+
+function compareTokens(
+  source: any,
+  target: any,
+  path: string,
+  errors: any[]
+) {
+  for (const [key, value] of Object.entries(source)) {
+    const currentPath = `${path}.${key}`;
+    
+    if (typeof value === 'object' && value !== null) {
+      compareTokens(value, target[key] || {}, currentPath, errors);
+    } else {
+      if (target[key] !== value) {
+        errors.push({
+          path: currentPath,
+          expected: String(value),
+          actual: String(target[key] || 'undefined'),
+        });
+      }
+    }
+  }
+}
+
+// Run validation
+const result = await validateTokenSync();
+
+if (result.status === 'fail') {
+  console.error('❌ Token sync validation failed:\n');
+  result.errors.forEach(err => {
+    console.error(`  ${err.path}:`);
+    console.error(`    Expected: ${err.expected}`);
+    console.error(`    Actual:   ${err.actual}\n`);
+  });
+  process.exit(1);
+} else {
+  console.log('✓ Token sync validation passed');
+}
+```
+
+### Validation 2: Token Structure Integrity
+
+Ensure token structure follows conventions:
+
+```typescript
+// scripts/validate-token-structure.ts
+
+interface StructureRule {
+  path: string;
+  required: boolean;
+  type: 'string' | 'number' | 'object';
+  pattern?: RegExp;
+}
+
+const rules: StructureRule[] = [
+  // Color tokens must be hex or rgba
+  {
+    path: 'color.**',
+    required: true,
+    type: 'string',
+    pattern: /^(#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?|rgba?\([^)]+\))$/,
+  },
+  
+  // Spacing tokens must be rem or px
+  {
+    path: 'spacing.**',
+    required: true,
+    type: 'string',
+    pattern: /^\d+(\.\d+)?(rem|px|em)$/,
+  },
+  
+  // Font sizes must be rem
+  {
+    path: 'typography.fontSize.**',
+    required: true,
+    type: 'string',
+    pattern: /^\d+(\.\d+)?rem$/,
+  },
+  
+  // Font weights must be numeric strings
+  {
+    path: 'typography.fontWeight.**',
+    required: true,
+    type: 'string',
+    pattern: /^[1-9]00$/,
+  },
+];
+
+function validateStructure(tokens: any): ValidationResult {
+  const errors: any[] = [];
+  
+  for (const rule of rules) {
+    const matches = findTokenPaths(tokens, rule.path);
+    
+    for (const match of matches) {
+      const value = getTokenValue(tokens, match);
+      
+      // Type check
+      if (typeof value !== rule.type) {
+        errors.push({
+          path: match,
+          message: `Expected type ${rule.type}, got ${typeof value}`,
+        });
+        continue;
+      }
+      
+      // Pattern check
+      if (rule.pattern && typeof value === 'string') {
+        if (!rule.pattern.test(value)) {
+          errors.push({
+            path: match,
+            message: `Value "${value}" doesn't match pattern ${rule.pattern}`,
+          });
+        }
+      }
+    }
+  }
+  
+  return {
+    status: errors.length === 0 ? 'pass' : 'fail',
+    errors,
+  };
+}
+
+function findTokenPaths(obj: any, pattern: string): string[] {
+  // Convert glob pattern to regex and find matching paths
+  const regex = new RegExp(
+    '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^.]+') + '$'
+  );
+  
+  const paths: string[] = [];
+  
+  function traverse(current: any, currentPath: string) {
+    for (const [key, value] of Object.entries(current)) {
+      const path = currentPath ? `${currentPath}.${key}` : key;
+      
+      if (typeof value === 'object' && value !== null) {
+        traverse(value, path);
+      } else if (regex.test(path)) {
+        paths.push(path);
+      }
+    }
+  }
+  
+  traverse(obj, '');
+  return paths;
+}
+```
+
+### Validation 3: Semantic Consistency
+
+Ensure semantic tokens follow naming conventions:
+
+```typescript
+// scripts/validate-semantic-naming.ts
+
+const namingRules = {
+  color: {
+    categories: ['action', 'text', 'surface', 'border', 'feedback'],
+    states: ['default', 'hover', 'active', 'disabled', 'focus'],
+    variants: ['primary', 'secondary', 'tertiary', 'destructive'],
+  },
+  spacing: {
+    // Must be numeric keys
+    pattern: /^\d+$/,
+  },
+  typography: {
+    categories: ['fontSize', 'fontWeight', 'lineHeight', 'letterSpacing'],
+  },
+};
+
+function validateSemanticNaming(tokens: any): ValidationResult {
+  const errors: any[] = [];
+  
+  // Check color structure
+  if (tokens.color) {
+    for (const category of namingRules.color.categories) {
+      if (!tokens.color[category]) {
+        errors.push({
+          path: `color.${category}`,
+          message: `Missing required color category: ${category}`,
+        });
+      }
+    }
+    
+    // Check for unexpected categories
+    for (const key of Object.keys(tokens.color)) {
+      if (!namingRules.color.categories.includes(key)) {
+        errors.push({
+          path: `color.${key}`,
+          message: `Unexpected color category: ${key}. Should be one of: ${namingRules.color.categories.join(', ')}`,
+        });
+      }
+    }
+  }
+  
+  // Check spacing keys
+  if (tokens.spacing) {
+    for (const key of Object.keys(tokens.spacing)) {
+      if (!namingRules.spacing.pattern.test(key)) {
+        errors.push({
+          path: `spacing.${key}`,
+          message: `Spacing keys must be numeric, got: ${key}`,
+        });
+      }
+    }
+  }
+  
+  return {
+    status: errors.length === 0 ? 'pass' : 'fail',
+    errors,
+  };
+}
+```
+
+## Category 2: Component Audits
+
+Components need continuous quality monitoring.
+
+### Audit 1: Design System Token Usage
+
+Ensure components use design tokens, not hardcoded values:
+
+```typescript
+// scripts/audit-component-tokens.ts
+import { readFileSync, readdirSync } from 'fs';
+import { join } from 'path';
+
+interface TokenAudit {
+  file: string;
+  violations: Array<{
+    line: number;
+    code: string;
+    suggestion: string;
+  }>;
+}
+
+function auditComponentTokens(componentsDir: string): TokenAudit[] {
+  const results: TokenAudit[] = [];
+  
+  const files = readdirSync(componentsDir, { recursive: true })
+    .filter(f => f.endsWith('.tsx') || f.endsWith('.ts'));
+  
+  for (const file of files) {
+    const filePath = join(componentsDir, file);
+    const content = readFileSync(filePath, 'utf-8');
+    const lines = content.split('\n');
+    
+    const violations: TokenAudit['violations'] = [];
+    
+    lines.forEach((line, index) => {
+      // Check for hardcoded hex colors
+      const hexMatch = line.match(/#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?/);
+      if (hexMatch) {
+        violations.push({
+          line: index + 1,
+          code: line.trim(),
+          suggestion: 'Use color token from design system',
+        });
+      }
+      
+      // Check for hardcoded pixel values (outside of specific contexts)
+      const pxMatch = line.match(/:\s*['"]?\d+px['"]?/);
+      if (pxMatch && !line.includes('border-width') && !line.includes('outline')) {
+        violations.push({
+          line: index + 1,
+          code: line.trim(),
+          suggestion: 'Use spacing or fontSize token',
+        });
+      }
+      
+      // Check for inline rgba/rgb
+      const rgbMatch = line.match(/rgba?\([^)]+\)/);
+      if (rgbMatch) {
+        violations.push({
+          line: index + 1,
+          code: line.trim(),
+          suggestion: 'Use color token with opacity modifier',
+        });
+      }
+    });
+    
+    if (violations.length > 0) {
+      results.push({
+        file: filePath,
+        violations,
+      });
+    }
+  }
+  
+  return results;
+}
+
+// Run audit
+const audits = auditComponentTokens('./src/components');
+
+if (audits.length > 0) {
+  console.error('❌ Component token audit failed:\n');
+  audits.forEach(audit => {
+    console.error(`${audit.file}:`);
+    audit.violations.forEach(v => {
+      console.error(`  Line ${v.line}: ${v.code}`);
+      console.error(`  → ${v.suggestion}\n`);
+    });
+  });
+  process.exit(1);
+} else {
+  console.log('✓ All components use design tokens');
+}
+```
+
+### Audit 2: Accessibility Compliance
+
+Check components for common a11y issues:
+
+```typescript
+// scripts/audit-accessibility.ts
+
+interface A11yAudit {
+  component: string;
+  issues: Array<{
+    severity: 'error' | 'warning';
+    rule: string;
+    message: string;
+    line?: number;
+  }>;
+}
+
+const a11yRules = [
+  {
+    name: 'button-aria-label',
+    pattern: /<button[^>]*>/,
+    check: (match: string) => {
+      return match.includes('aria-label') || match.includes('aria-labelledby');
+    },
+    message: 'Buttons should have aria-label or aria-labelledby',
+    severity: 'warning' as const,
+  },
+  {
+    name: 'img-alt-text',
+    pattern: /<img[^>]*>/,
+    check: (match: string) => match.includes('alt='),
+    message: 'Images must have alt text',
+    severity: 'error' as const,
+  },
+  {
+    name: 'input-labels',
+    pattern: /<input[^>]*>/,
+    check: (match: string, context: string) => {
+      // Check if there's a label or aria-label
+      return context.includes('<label') || match.includes('aria-label');
+    },
+    message: 'Inputs should have associated labels',
+    severity: 'error' as const,
+  },
+  {
+    name: 'interactive-role',
+    pattern: /<div[^>]*onClick/,
+    check: (match: string) => {
+      return match.includes('role=') && match.includes('tabIndex');
+    },
+    message: 'Interactive divs need role and tabIndex for keyboard access',
+    severity: 'error' as const,
+  },
+];
+
+function auditAccessibility(componentsDir: string): A11yAudit[] {
+  const results: A11yAudit[] = [];
+  
+  const files = readdirSync(componentsDir, { recursive: true })
+    .filter(f => f.endsWith('.tsx'));
+  
+  for (const file of files) {
+    const filePath = join(componentsDir, file);
+    const content = readFileSync(filePath, 'utf-8');
+    const issues: A11yAudit['issues'] = [];
+    
+    for (const rule of a11yRules) {
+      const matches = content.matchAll(new RegExp(rule.pattern, 'g'));
+      
+      for (const match of matches) {
+        if (!rule.check(match[0], content)) {
+          issues.push({
+            severity: rule.severity,
+            rule: rule.name,
+            message: rule.message,
+          });
+        }
+      }
+    }
+    
+    if (issues.length > 0) {
+      results.push({
+        component: filePath,
+        issues,
+      });
+    }
+  }
+  
+  return results;
+}
+```
+
+### Audit 3: Component API Consistency
+
+Ensure components follow consistent prop naming:
+
+```typescript
+// scripts/audit-component-api.ts
+
+const apiConventions = {
+  // Boolean props should start with "is" or "has"
+  booleanPrefix: /^(is|has|show|enable|disable)/,
+  
+  // Event handlers should start with "on"
+  eventHandlerPrefix: /^on[A-Z]/,
+  
+  // Size variants should use consistent names
+  sizeValues: ['xs', 'sm', 'md', 'lg', 'xl'],
+  
+  // Variant props should be named "variant"
+  variantName: 'variant',
+};
+
+function auditComponentAPI(componentPath: string): any[] {
+  const content = readFileSync(componentPath, 'utf-8');
+  const issues: any[] = [];
+  
+  // Extract interface definitions
+  const interfaceMatches = content.matchAll(
+    /interface\s+(\w+Props)\s*\{([^}]+)\}/g
+  );
+  
+  for (const match of interfaceMatches) {
+    const props = match[2];
+    const propLines = props.split('\n').filter(l => l.trim());
+    
+    for (const propLine of propLines) {
+      const propMatch = propLine.match(/(\w+)(\?)?:\s*(\w+)/);
+      if (!propMatch) continue;
+      
+      const [_, propName, optional, propType] = propMatch;
+      
+      // Check boolean naming
+      if (propType === 'boolean') {
+        if (!apiConventions.booleanPrefix.test(propName)) {
+          issues.push({
+            prop: propName,
+            message: `Boolean prop should start with 'is', 'has', 'show', etc.`,
+            suggestion: `is${propName.charAt(0).toUpperCase()}${propName.slice(1)}`,
+          });
+        }
+      }
+      
+      // Check event handler naming
+      if (propType.includes('Function') || propType.startsWith('(')) {
+        if (!apiConventions.eventHandlerPrefix.test(propName)) {
+          issues.push({
+            prop: propName,
+            message: `Event handler should start with 'on'`,
+            suggestion: `on${propName.charAt(0).toUpperCase()}${propName.slice(1)}`,
+          });
+        }
+      }
+      
+      // Check size prop values
+      if (propName === 'size') {
+        // Would need more sophisticated parsing to check union types
+        // This is a simplified example
+      }
+    }
+  }
+  
+  return issues;
+}
+```
+
+## Category 3: Usage Tracking
+
+Track what's actually being used to inform maintenance priorities.
+
+```typescript
+// scripts/track-component-usage.ts
+import { readFileSync, readdirSync } from 'fs';
+import { join } from 'path';
+
+interface UsageStats {
+  component: string;
+  imports: number;
+  usages: number;
+  projects: string[];
+}
+
+function trackComponentUsage(
+  componentsDir: string,
+  projectDirs: string[]
+): UsageStats[] {
+  const components = readdirSync(componentsDir)
+    .filter(f => f.endsWith('.tsx'))
+    .map(f => f.replace('.tsx', ''));
+  
+  const stats: UsageStats[] = components.map(comp => ({
+    component: comp,
+    imports: 0,
+    usages: 0,
+    projects: [],
+  }));
+  
+  for (const projectDir of projectDirs) {
+    const files = readdirSync(projectDir, { recursive: true })
+      .filter(f => f.endsWith('.tsx') || f.endsWith('.ts'));
+    
+    for (const file of files) {
+      const content = readFileSync(join(projectDir, file), 'utf-8');
+      
+      for (const stat of stats) {
+        // Check for imports
+        const importRegex = new RegExp(
+          `import.*${stat.component}.*from`,
+          'g'
+        );
+        if (importRegex.test(content)) {
+          stat.imports++;
+          if (!stat.projects.includes(projectDir)) {
+            stat.projects.push(projectDir);
+          }
+        }
+        
+        // Count usages
+        const usageRegex = new RegExp(`<${stat.component}[\\s/>]`, 'g');
+        const matches = content.match(usageRegex);
+        if (matches) {
+          stat.usages += matches.length;
+        }
+      }
+    }
+  }
+  
+  return stats.sort((a, b) => b.usages - a.usages);
+}
+
+// Generate usage report
+const stats = trackComponentUsage(
+  './src/components',
+  ['./projects/app-a', './projects/app-b', './projects/app-c']
+);
+
+console.log('Component Usage Report:\n');
+stats.forEach(stat => {
+  console.log(`${stat.component}:`);
+  console.log(`  Imports: ${stat.imports}`);
+  console.log(`  Usages: ${stat.usages}`);
+  console.log(`  Projects: ${stat.projects.join(', ')}\n`);
+});
+
+// Identify unused components
+const unused = stats.filter(s => s.usages === 0);
+if (unused.length > 0) {
+  console.log('⚠️  Unused components (candidates for deprecation):');
+  unused.forEach(s => console.log(`  - ${s.component}`));
+}
+```
+
+## Category 4: Documentation Synchronization
+
+Keep documentation in sync with code.
+
+```typescript
+// scripts/sync-documentation.ts
+import Anthropic from '@anthropic-ai/sdk';
+import { readFileSync, writeFileSync } from 'fs';
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY!,
+});
+
+async function generateComponentDocs(componentPath: string): Promise<string> {
+  const code = readFileSync(componentPath, 'utf-8');
+  
+  const prompt = `
+Analyze this React component and generate markdown documentation:
+
+${code}
+
+Generate docs with:
+1. Component description
+2. Props table (name, type, default, description)
+3. Usage examples
+4. Accessibility notes
+5. Variants (if applicable)
+
+Format as clean markdown.
+`;
+
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4',
+    max_tokens: 2048,
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  return response.content[0].text;
+}
+
+async function syncAllDocs(componentsDir: string, docsDir: string) {
+  const components = readdirSync(componentsDir)
+    .filter(f => f.endsWith('.tsx'));
+  
+  for (const component of components) {
+    const componentPath = join(componentsDir, component);
+    const docPath = join(docsDir, component.replace('.tsx', '.md'));
+    
+    console.log(`Generating docs for ${component}...`);
+    const docs = await generateComponentDocs(componentPath);
+    
+    writeFileSync(docPath, docs);
+    console.log(`✓ ${component} docs updated`);
+  }
+}
+```
+
+## Category 5: Performance Monitoring
+
+Track bundle size and runtime performance.
+
+```typescript
+// scripts/monitor-bundle-size.ts
+import { execSync } from 'child_process';
+import { readFileSync } from 'fs';
+
+interface BundleMetrics {
+  component: string;
+  size: number;
+  gzipped: number;
+  dependencies: string[];
+}
+
+function analyzeBundleSize(componentPath: string): BundleMetrics {
+  // Build isolated bundle for component
+  execSync(`esbuild ${componentPath} --bundle --outfile=.temp/bundle.js`);
+  
+  const bundleSize = readFileSync('.temp/bundle.js').length;
+  
+  // Gzip size
+  execSync('gzip -c .temp/bundle.js > .temp/bundle.js.gz');
+  const gzippedSize = readFileSync('.temp/bundle.js.gz').length;
+  
+  // Extract dependencies
+  const code = readFileSync(componentPath, 'utf-8');
+  const imports = code.matchAll(/import.*from\s+['"]([^'"]+)['"]/g);
+  const dependencies = Array.from(imports).map(m => m[1]);
+  
+  return {
+    component: componentPath,
+    size: bundleSize,
+    gzipped: gzippedSize,
+    dependencies,
+  };
+}
+
+function checkBundleSizeRegression(
+  current: BundleMetrics[],
+  baseline: BundleMetrics[]
+): any[] {
+  const regressions: any[] = [];
+  
+  for (const currentMetric of current) {
+    const baselineMetric = baseline.find(
+      b => b.component === currentMetric.component
+    );
+    
+    if (!baselineMetric) continue;
+    
+    const increase = currentMetric.gzipped - baselineMetric.gzipped;
+    const percentIncrease = (increase / baselineMetric.gzipped) * 100;
+    
+    // Flag if bundle size increased >10%
+    if (percentIncrease > 10) {
+      regressions.push({
+        component: currentMetric.component,
+        baseline: baselineMetric.gzipped,
+        current: currentMetric.gzipped,
+        increase,
+        percentIncrease: percentIncrease.toFixed(1),
+      });
+    }
+  }
+  
+  return regressions;
+}
+```
+
+## Automated Enforcement via CI/CD
+
+Run all audits in GitHub Actions:
+
+```yaml
+# .github/workflows/design-system-health.yml
+name: Design System Health Check
+
+on:
+  pull_request:
+    paths:
+      - 'src/components/**'
+      - 'src/tokens/**'
+  schedule:
+    - cron: '0 0 * * *'  # Daily at midnight
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - run: npm ci
+      
+      - name: Validate token sync
+        run: npm run validate:tokens:sync
+      
+      - name: Validate token structure
+        run: npm run validate:tokens:structure
+      
+      - name: Audit component tokens
+        run: npm run audit:component-tokens
+      
+      - name: Audit accessibility
+        run: npm run audit:a11y
+      
+      - name: Audit component API
+        run: npm run audit:component-api
+      
+      - name: Check bundle size
+        run: npm run audit:bundle-size
+      
+      - name: Generate health report
+        if: always()
+        run: npm run report:health
+      
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const report = require('./health-report.json');
+            const body = generateReportComment(report);
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+```
+
+## Dashboard for Health Metrics
+
+Create a dashboard showing system health over time:
+
+```typescript
+// scripts/generate-health-dashboard.ts
+import { writeFileSync } from 'fs';
+
+interface HealthSnapshot {
+  timestamp: string;
+  tokenSyncStatus: 'pass' | 'fail';
+  componentTokenCompliance: number;  // percentage
+  a11yIssues: number;
+  unusedComponents: number;
+  avgBundleSize: number;
+}
+
+function generateDashboard(snapshots: HealthSnapshot[]): string {
+  return `
+# Design System Health Dashboard
+
+Last updated: ${new Date().toISOString()}
+
+## Token Sync
+${snapshots[0].tokenSyncStatus === 'pass' ? '✅ In sync' : '❌ Out of sync'}
+
+## Component Quality
+
+- **Token compliance:** ${snapshots[0].componentTokenCompliance}%
+- **A11y issues:** ${snapshots[0].a11yIssues}
+- **Unused components:** ${snapshots[0].unusedComponents}
+- **Avg bundle size:** ${(snapshots[0].avgBundleSize / 1024).toFixed(1)}kb
+
+## Trends (last 30 days)
+
+\`\`\`
+Token Compliance:  ${generateSparkline(snapshots.map(s => s.componentTokenCompliance))}
+A11y Issues:       ${generateSparkline(snapshots.map(s => 100 - s.a11yIssues))}
+Bundle Size:       ${generateSparkline(snapshots.map(s => 100000 - s.avgBundleSize))}
+\`\`\`
+
+## Recent Changes
+
+${generateChangeLog(snapshots)}
+`;
+}
+
+function generateSparkline(data: number[]): string {
+  const chars = ['▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'];
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min;
+  
+  return data
+    .map(value => {
+      const normalized = (value - min) / range;
+      const index = Math.floor(normalized * (chars.length - 1));
+      return chars[index];
+    })
+    .join('');
+}
+```
+
+## Automated Deprecation Management
+
+Track and manage component deprecation:
+
+```typescript
+// scripts/manage-deprecations.ts
+
+interface DeprecatedComponent {
+  name: string;
+  deprecatedSince: string;
+  replacement: string;
+  usageCount: number;
+  migrationGuide: string;
+}
+
+function checkDeprecations(
+  usage: UsageStats[],
+  deprecations: DeprecatedComponent[]
+): any[] {
+  const warnings: any[] = [];
+  
+  for (const dep of deprecations) {
+    const usage = usageStats.find(u => u.component === dep.name);
+    
+    if (usage && usage.usages > 0) {
+      // Calculate days since deprecation
+      const daysSince = Math.floor(
+        (Date.now() - new Date(dep.deprecatedSince).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      
+      warnings.push({
+        component: dep.name,
+        usages: usage.usages,
+        projects: usage.projects,
+        replacement: dep.replacement,
+        daysSince,
+        urgent: daysSince > 90,  // Urgent if >90 days old
+      });
+    }
+  }
+  
+  return warnings;
+}
+
+// Auto-create migration PRs
+async function createMigrationPR(deprecation: DeprecatedComponent) {
+  // Use AI to generate migration code
+  const migrationCode = await generateMigrationCode(
+    deprecation.name,
+    deprecation.replacement
+  );
+  
+  // Create branch and PR automatically
+  execSync('git checkout -b auto-migrate-${deprecation.name}');
+  // ... apply migrations
+  execSync('git commit -m "Migrate from ${deprecation.name} to ${deprecation.replacement}"');
+  execSync('git push');
+  // ... create PR via GitHub API
+}
+```
+
+## Integration with FramingUI
+
+If you're using FramingUI, these maintenance scripts can integrate with its MCP server to provide real-time health metrics to AI assistants:
+
+```typescript
+// mcp-server/design-system-health.ts
+server.setRequestHandler('tools/list', async () => {
+  return {
+    tools: [
+      {
+        name: 'get_system_health',
+        description: 'Get current design system health metrics',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+    ],
+  };
+});
+
+server.setRequestHandler('tools/call', async (request) => {
+  if (request.params.name === 'get_system_health') {
+    const health = await getSystemHealth();
+    
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(health, null, 2),
+      }],
+    };
+  }
+});
+```
+
+Now when you ask Claude Code "is our design system healthy?", it queries the MCP server and gets real-time metrics.
+
+## Conclusion
+
+Design system maintenance at scale requires automation. The workflow built in this guide monitors token synchronization, component quality, usage patterns, documentation freshness, and performance—catching problems before they compound.
+
+The investment is upfront: writing validators, setting up CI checks, building dashboards. The return is continuous: consistent quality, early problem detection, and a system that stays healthy as it grows.
+
+Manual maintenance fails at scale. Automated maintenance makes scale irrelevant. The tools exist—CI/CD, linters, static analysis, AI generation. The pattern works. The question is whether your team builds these systems proactively or waits for the decay crisis that forces reactive intervention.
