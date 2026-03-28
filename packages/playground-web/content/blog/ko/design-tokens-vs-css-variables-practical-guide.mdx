@@ -1,0 +1,567 @@
+---
+title: "Design Tokens vs CSS Variables: When to Use Which"
+description: "Design tokens and CSS variables solve different problems. Learn when to use each and how to combine them for maintainable design systems."
+date: "2026-03-28"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - css-variables
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Design tokens and CSS variables get conflated constantly. Both define reusable values. Both improve maintainability. Both enable theming. But they operate at different layers and solve different problems. Using them interchangeably leads to confusion, tooling mismatches, and design systems that are harder to maintain than necessary.
+
+The distinction matters most when building for multi-platform consistency, automated token propagation, or AI-assisted development. Understanding what each does—and doesn't—do changes how you structure design systems.
+
+## What CSS Variables Actually Are
+
+CSS variables are runtime values that browsers resolve during rendering. You define them using custom property syntax and reference them with `var()`:
+
+```css
+:root {
+  --color-primary: #3b82f6;
+  --spacing-base: 1rem;
+}
+
+.button {
+  background-color: var(--color-primary);
+  padding: var(--spacing-base);
+}
+```
+
+The browser evaluates these at render time. Change the value of `--color-primary`, and every element referencing it updates immediately. No build step required.
+
+CSS variables have several important characteristics:
+
+**They cascade.** You can override variables in nested scopes:
+
+```css
+:root {
+  --button-bg: blue;
+}
+
+.dark-theme {
+  --button-bg: darkblue;
+}
+
+/* The button uses whichever --button-bg is in scope */
+.button {
+  background: var(--button-bg);
+}
+```
+
+**They're runtime-dynamic.** JavaScript can update them on the fly:
+
+```javascript
+document.documentElement.style.setProperty('--color-primary', '#ef4444')
+```
+
+**They don't leave CSS.** CSS variables exist only in stylesheets and the browser's style engine. They don't export to JavaScript, TypeScript, native mobile platforms, or documentation tools without custom extraction.
+
+**They have no semantic meaning beyond their names.** `--color-primary` means "primary color" only because you named it that. The browser treats it as an arbitrary string. There's no enforced relationship between `--color-primary`, `--color-primary-hover`, and `--color-primary-disabled`.
+
+These properties make CSS variables excellent for runtime theming and cascade-based overrides. They're less useful for multi-platform design systems or AI-readable contracts.
+
+## What Design Tokens Actually Are
+
+Design tokens are platform-agnostic data that represent design decisions. They're typically stored as JSON or YAML and transformed into platform-specific formats at build time:
+
+```json
+{
+  "color": {
+    "action": {
+      "primary": {
+        "value": "#3b82f6",
+        "type": "color",
+        "description": "Primary action color for buttons and links"
+      }
+    }
+  }
+}
+```
+
+The key difference is that tokens are *data*, not code. You don't write tokens in CSS or JavaScript—you store them in a source-of-truth format and generate outputs for every platform you support.
+
+A token transforms into:
+
+**CSS variables for web:**
+```css
+:root {
+  --color-action-primary: #3b82f6;
+}
+```
+
+**Swift constants for iOS:**
+```swift
+struct ColorTokens {
+  static let actionPrimary = UIColor(hex: "3b82f6")
+}
+```
+
+**XML resources for Android:**
+```xml
+<color name="color_action_primary">#3b82f6</color>
+```
+
+**TypeScript types for component props:**
+```typescript
+export const colorTokens = {
+  action: {
+    primary: '#3b82f6'
+  }
+} as const
+
+export type ColorToken = keyof typeof colorTokens.action
+```
+
+Tokens carry metadata that CSS variables don't: type information, descriptions, relationships, and transformation rules. This metadata enables documentation generation, linting, and AI-assisted development.
+
+## When CSS Variables Are the Right Choice
+
+CSS variables work best when you need runtime flexibility within a single platform (web).
+
+**Runtime theming** is the canonical use case. If users toggle between light and dark mode, CSS variables let you swap entire color palettes without JavaScript:
+
+```css
+:root {
+  --color-bg: white;
+  --color-text: black;
+}
+
+:root.dark {
+  --color-bg: black;
+  --color-text: white;
+}
+```
+
+**Component-level overrides** benefit from cascade. A button component can define default variables that consuming contexts override:
+
+```css
+.button {
+  --button-padding: 0.5rem 1rem;
+  --button-bg: var(--color-primary);
+  
+  padding: var(--button-padding);
+  background: var(--button-bg);
+}
+
+.compact-button {
+  --button-padding: 0.25rem 0.5rem;
+}
+```
+
+**Progressive enhancement** scenarios where older browsers fall back to static values:
+
+```css
+.element {
+  color: #3b82f6; /* fallback */
+  color: var(--color-primary, #3b82f6); /* modern browsers */
+}
+```
+
+**Dynamic user customization** where values change frequently:
+
+```javascript
+function updateAccentColor(color) {
+  document.documentElement.style.setProperty('--color-accent', color)
+}
+```
+
+The pattern is clear: CSS variables shine when values need to change at runtime or cascade through nested scopes. They're a rendering mechanism, not a design system format.
+
+## When Design Tokens Are the Right Choice
+
+Design tokens work best when you need cross-platform consistency, semantic structure, or build-time transformations.
+
+**Multi-platform products** require tokens. If you're building web, iOS, and Android apps with a shared design language, CSS variables don't help—they don't exist outside the browser. Tokens define values once and generate platform-specific outputs:
+
+```json
+{
+  "spacing": {
+    "base": { "value": "8px" }
+  }
+}
+```
+
+Transforms into CSS `--spacing-base: 0.5rem`, Swift `static let spacingBase: CGFloat = 8`, and Android `<dimen name="spacing_base">8dp</dimen>`.
+
+**Semantic design systems** need tokens. When you model relationships like "disabled state uses 40% opacity of the base color," tokens can encode that relationship:
+
+```json
+{
+  "color": {
+    "action": {
+      "primary": { "value": "#3b82f6" },
+      "primary-disabled": {
+        "value": "{color.action.primary}",
+        "modify": [{ "type": "alpha", "amount": 0.4 }]
+      }
+    }
+  }
+}
+```
+
+This relationship transforms into platform-specific implementations. CSS gets `rgba(...)`. iOS gets `UIColor.actionPrimary.withAlphaComponent(0.4)`. The intent is preserved across platforms.
+
+**Design tool integration** requires tokens. Figma Variables, Sketch Libraries, and Adobe XD don't understand CSS variables. They import and export token formats. Tokens become the bridge between design tools and code.
+
+**Documentation generation** works with tokens. Because tokens carry metadata, you can automatically generate design system documentation:
+
+```json
+{
+  "color": {
+    "action": {
+      "primary": {
+        "value": "#3b82f6",
+        "type": "color",
+        "description": "Primary CTA color, used for high-emphasis actions",
+        "wcag": {
+          "aa": "Pass on white background",
+          "aaa": "Fail on light gray"
+        }
+      }
+    }
+  }
+}
+```
+
+Generate a visual swatch, accessibility notes, and usage guidelines automatically. CSS variables have no metadata to generate from.
+
+**AI-assisted development** benefits from tokens. When AI generates components, it needs to know what color names are valid. A token file is machine-readable. Scraped CSS variables are not:
+
+```typescript
+// AI can query this
+const tokens = await loadTokens()
+const validColors = Object.keys(tokens.color.action)
+
+// AI cannot reliably parse this
+const cssVariables = getCSSVariables() // How? Where? Which scope?
+```
+
+The pattern: tokens are for design decisions that need to propagate across platforms, integrate with tools, or be consumed by automation. They're a design system format, not a rendering mechanism.
+
+## The Hybrid Approach: Tokens that Compile to CSS Variables
+
+The most maintainable approach uses both: design tokens as source of truth, CSS variables as runtime implementation.
+
+**Step 1: Define tokens in a structured format.** Use JSON, YAML, or a token-specific format like Style Dictionary:
+
+```json
+{
+  "color": {
+    "action": {
+      "primary": { "value": "#3b82f6" },
+      "primary-hover": { "value": "#2563eb" },
+      "primary-active": { "value": "#1d4ed8" }
+    },
+    "surface": {
+      "background": { "value": "#ffffff" },
+      "card": { "value": "#f9fafb" }
+    }
+  }
+}
+```
+
+**Step 2: Transform tokens into CSS variables at build time.** Use Style Dictionary, Theo, or a custom script:
+
+```javascript
+// build-tokens.js
+import StyleDictionary from 'style-dictionary'
+
+StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    css: {
+      transformGroup: 'css',
+      buildPath: 'dist/css/',
+      files: [{
+        destination: 'variables.css',
+        format: 'css/variables'
+      }]
+    }
+  }
+}).buildAllPlatforms()
+```
+
+Output:
+
+```css
+:root {
+  --color-action-primary: #3b82f6;
+  --color-action-primary-hover: #2563eb;
+  --color-action-primary-active: #1d4ed8;
+  --color-surface-background: #ffffff;
+  --color-surface-card: #f9fafb;
+}
+```
+
+**Step 3: Components reference CSS variables, not raw values:**
+
+```css
+.button {
+  background: var(--color-action-primary);
+}
+
+.button:hover {
+  background: var(--color-action-primary-hover);
+}
+```
+
+**Step 4: Theme overrides update CSS variables at runtime:**
+
+```css
+:root.dark {
+  --color-action-primary: #60a5fa;
+  --color-surface-background: #1f2937;
+  --color-surface-card: #111827;
+}
+```
+
+This pattern gives you:
+- Design tokens as the canonical source (version-controlled, platform-agnostic)
+- CSS variables for runtime theming and cascade
+- Type-safe token references in TypeScript via generated types
+- Multi-platform support if you add iOS/Android build targets
+
+The tokens-to-variables pipeline is one-way. You never hand-edit the generated CSS variables. All changes go through the token source.
+
+## Implementing the Hybrid System
+
+A practical directory structure for token-based CSS variables:
+
+```
+/design-tokens
+  /tokens
+    color.json
+    spacing.json
+    typography.json
+  /build
+    build-tokens.js
+    formats/
+      css-variables.js
+      typescript.js
+  /dist
+    variables.css
+    tokens.ts
+```
+
+The build script generates both CSS and TypeScript from the same source:
+
+```javascript
+// build-tokens.js
+import StyleDictionary from 'style-dictionary'
+
+const sd = StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    css: {
+      transformGroup: 'css',
+      buildPath: 'dist/',
+      files: [{
+        destination: 'variables.css',
+        format: 'css/variables',
+        options: {
+          outputReferences: true // Preserve token relationships
+        }
+      }]
+    },
+    js: {
+      transformGroup: 'js',
+      buildPath: 'dist/',
+      files: [{
+        destination: 'tokens.ts',
+        format: 'javascript/es6'
+      }]
+    }
+  }
+})
+
+sd.buildAllPlatforms()
+```
+
+Components import types to ensure valid token usage:
+
+```typescript
+import { colorTokens } from './tokens'
+import type { ColorToken } from './tokens'
+
+interface ButtonProps {
+  color?: ColorToken
+}
+
+export function Button({ color = 'action.primary' }: ButtonProps) {
+  return (
+    <button style={{ backgroundColor: `var(--color-${color.replace('.', '-')})` }}>
+      Click me
+    </button>
+  )
+}
+```
+
+TypeScript catches invalid token references at compile time. CSS variables provide runtime theming. Tokens remain the source of truth.
+
+## Common Mistakes and How to Avoid Them
+
+**Mistake 1: Treating CSS variables as the design system.**
+
+If your design system's source of truth is CSS variables in a stylesheet, you can't generate iOS/Android outputs, import into Figma, or provide machine-readable APIs for AI tooling.
+
+**Fix:** Store decisions as tokens. Generate CSS variables from tokens.
+
+**Mistake 2: Manually writing CSS variables that duplicate tokens.**
+
+This creates divergence. Token file says `--spacing-base: 8px`. Hand-written CSS says `--spacing-base: 0.5rem`. Which is correct?
+
+**Fix:** Generated CSS variables should be build artifacts, not hand-edited source.
+
+**Mistake 3: Over-nesting token structures.**
+
+When your token path is `color.interaction.button.primary.state.hover.default`, you've over-engineered. CSS variable names become `--color-interaction-button-primary-state-hover-default`, which is unusable.
+
+**Fix:** Keep token hierarchy shallow. Three levels (category.role.variant) covers most needs.
+
+**Mistake 4: Not using token references.**
+
+If your "hover" color is defined as a separate hex value rather than a transformation of the base color, you lose the semantic relationship:
+
+```json
+// Bad: no relationship encoded
+{
+  "color": {
+    "primary": { "value": "#3b82f6" },
+    "primary-hover": { "value": "#2563eb" }
+  }
+}
+
+// Good: relationship is explicit
+{
+  "color": {
+    "primary": { "value": "#3b82f6" },
+    "primary-hover": {
+      "value": "{color.primary}",
+      "modify": [{ "type": "darken", "amount": 0.1 }]
+    }
+  }
+}
+```
+
+**Mistake 5: Theming by duplicating entire token sets.**
+
+Don't define separate `tokens-light.json` and `tokens-dark.json` with hundreds of duplicate tokens. Define base tokens and theme-specific overrides:
+
+```json
+// tokens.json (base)
+{
+  "color": {
+    "action": {
+      "primary": { "value": "#3b82f6" }
+    }
+  }
+}
+
+// themes/dark.json (overrides only)
+{
+  "color": {
+    "action": {
+      "primary": { "value": "#60a5fa" }
+    }
+  }
+}
+```
+
+Build process merges base + theme overrides into themed CSS variable sets.
+
+## Integrating with FramingUI
+
+FramingUI uses the hybrid approach by default. The component library consumes CSS variables, but those variables are generated from design tokens.
+
+When you install FramingUI, you get:
+
+1. A token source file (`framingui.tokens.json`) defining semantic color, spacing, and typography values
+2. A build script that generates `framingui-variables.css`
+3. Components that reference variables like `var(--color-action-primary)`
+
+To customize:
+
+```json
+// your-tokens.json
+{
+  "color": {
+    "action": {
+      "primary": { "value": "#your-brand-color" }
+    }
+  }
+}
+```
+
+Run the build script. The generated CSS variables update. Every FramingUI component automatically uses your brand color.
+
+For AI-assisted development, FramingUI's MCP server reads the token file directly. When Claude Code generates a button, it knows `color="action.primary"` is valid because it's in your tokens. It won't hallucinate `color="super-primary"` because that token doesn't exist.
+
+The flow is: tokens → CSS variables → components → AI-readable API. Each layer serves its purpose.
+
+## When to Skip This Complexity
+
+Not every project needs design tokens. The hybrid approach adds tooling overhead. Skip tokens if:
+
+**You're building a single-page app with no design system needs.** CSS variables directly in your stylesheet are fine. You're not propagating decisions across platforms or teams.
+
+**Your design system is purely web-based and never will be otherwise.** If you have no iOS/Android apps, no design tool integration, and no AI-assisted workflows, CSS variables alone might suffice.
+
+**You're prototyping and speed matters more than structure.** Spin up tokens after the design solidifies, not before.
+
+The threshold is around 5-10 components and 2+ engineers. Below that, hand-written CSS variables work. Above that, token-based generation pays off.
+
+## Measuring Token System Health
+
+A healthy token-to-variable system has:
+
+**Zero hand-edited CSS variables.** Every variable comes from token generation. Grep your codebase for manually defined `--color-*` or `--spacing-*`. The count should be zero.
+
+**High token coverage.** What percentage of your component styles use CSS variables vs. hardcoded values? Aim for 90%+. A quick audit:
+
+```bash
+# Count var() usages
+grep -r "var(--" src/ | wc -l
+
+# Count hardcoded colors (hex, rgb, named)
+grep -rE "#[0-9a-f]{6}|rgb\(|rgba\(|hsl\(" src/ | wc -l
+```
+
+**Minimal token sprawl.** Count your tokens. If you have 200+ color tokens, the system is probably over-segmented. Most systems need 20-40 color tokens, 8-12 spacing values, and 5-8 typography presets.
+
+**Fast rebuild times.** Running the token build should take seconds, not minutes. If it's slow, simplify transformations or split token files.
+
+**No drift between platforms.** If you generate iOS and Android tokens, spot-check that values match. `color.action.primary` should produce the same visual color on all platforms.
+
+## What This Looks Like at Scale
+
+A mature token system powering a component library:
+
+```
+Design team updates Figma Variables
+  ↓
+Export tokens to JSON (automated via Figma plugin)
+  ↓
+Token build generates:
+  - CSS variables (web)
+  - TypeScript types (web)
+  - Swift constants (iOS)
+  - Kotlin constants (Android)
+  ↓
+Component libraries import generated tokens
+  ↓
+AI tools query token files for valid values
+  ↓
+Generated code uses correct token names
+```
+
+The token file is the single source of truth. Every downstream artifact regenerates from it. Changes propagate automatically. There's no manual sync, no drift, no "the mobile app uses a slightly different blue."
+
+---
+
+Design tokens and CSS variables are not competitors. They're layers in a well-structured design system. Tokens define decisions. CSS variables implement them at runtime. Use both, understand what each does, and build the pipeline that connects them. The result is a design system that's maintainable, scalable, and ready for AI-assisted workflows.

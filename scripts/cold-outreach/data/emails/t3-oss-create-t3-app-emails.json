@@ -1,0 +1,1053 @@
+{
+  "repo": "t3-oss/create-t3-app",
+  "extractedAt": "2026-03-21T13:30:30.373Z",
+  "totalStargazers": 500,
+  "emailsFound": 174,
+  "successRate": "34.8%",
+  "emails": [
+    {
+      "login": "nexxeln",
+      "email": "shoubhit2005@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/nexxeln"
+    },
+    {
+      "login": "DaveKeehl",
+      "email": "davide.woelckner@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/DaveKeehl"
+    },
+    {
+      "login": "johtso",
+      "email": "johtso@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/johtso"
+    },
+    {
+      "login": "katungi",
+      "email": "dankatdennis@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/katungi"
+    },
+    {
+      "login": "gcavanunez",
+      "email": "gcavanunez@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/gcavanunez"
+    },
+    {
+      "login": "asrvd",
+      "email": "ashirvadbhushan@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/asrvd"
+    },
+    {
+      "login": "aslakhol",
+      "email": "aslakhol@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/aslakhol"
+    },
+    {
+      "login": "jandrerivera",
+      "email": "jorge@jarivera.com",
+      "source": "profile",
+      "url": "https://github.com/jandrerivera"
+    },
+    {
+      "login": "barrybtw",
+      "email": "nicolai.bernhard03@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/barrybtw"
+    },
+    {
+      "login": "JudeTejada",
+      "email": "judelaurentetejada@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/JudeTejada"
+    },
+    {
+      "login": "anthonylaflamme",
+      "email": "anthonylaflammex@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/anthonylaflamme"
+    },
+    {
+      "login": "mallsjr",
+      "email": "allsjr@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/mallsjr"
+    },
+    {
+      "login": "redxzeta",
+      "email": "xzetanzero@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/redxzeta"
+    },
+    {
+      "login": "amirfakhrullah",
+      "email": "amirfakhrullah96@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/amirfakhrullah"
+    },
+    {
+      "login": "zhuyudong",
+      "email": "yudong8.zhu@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/zhuyudong"
+    },
+    {
+      "login": "Dhravya",
+      "email": "dhravya@supermemory.com",
+      "source": "profile",
+      "url": "https://github.com/Dhravya"
+    },
+    {
+      "login": "FusionSid",
+      "email": "siddheshadsv@icloud.com",
+      "source": "profile",
+      "url": "https://github.com/FusionSid"
+    },
+    {
+      "login": "c-ehrlich",
+      "email": "ehrlich.christopher@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/c-ehrlich"
+    },
+    {
+      "login": "vitorwlima",
+      "email": "vitorwlima13@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/vitorwlima"
+    },
+    {
+      "login": "s0rus",
+      "email": "piotrmolkontakt@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/s0rus"
+    },
+    {
+      "login": "nramkissoon",
+      "email": "nick@nkrkn.com",
+      "source": "profile",
+      "url": "https://github.com/nramkissoon"
+    },
+    {
+      "login": "er1chu",
+      "email": "mail@erichu.info",
+      "source": "profile",
+      "url": "https://github.com/er1chu"
+    },
+    {
+      "login": "jaronheard",
+      "email": "jaronheard@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jaronheard"
+    },
+    {
+      "login": "alexeiaccio",
+      "email": "alexei.accio@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/alexeiaccio"
+    },
+    {
+      "login": "DR2K",
+      "email": "devdeep@umich.edu",
+      "source": "profile",
+      "url": "https://github.com/DR2K"
+    },
+    {
+      "login": "faileon",
+      "email": "pt4cekt@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/faileon"
+    },
+    {
+      "login": "panteliselef",
+      "email": "panteliselef@outlook.com",
+      "source": "profile",
+      "url": "https://github.com/panteliselef"
+    },
+    {
+      "login": "PaulBratslavsky",
+      "email": "paul.bratslavsky@strapi.io",
+      "source": "profile",
+      "url": "https://github.com/PaulBratslavsky"
+    },
+    {
+      "login": "Gennadiixd",
+      "email": "gennadiixd@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Gennadiixd"
+    },
+    {
+      "login": "armandsalle",
+      "email": "armand.salle@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/armandsalle"
+    },
+    {
+      "login": "mystica2000",
+      "email": "mysticainf@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/mystica2000"
+    },
+    {
+      "login": "tefkah",
+      "email": "hello@tefkah.com",
+      "source": "profile",
+      "url": "https://github.com/tefkah"
+    },
+    {
+      "login": "mfaridzia",
+      "email": "muhfaridzia@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/mfaridzia"
+    },
+    {
+      "login": "masmeert",
+      "email": "pro@masmeert.com",
+      "source": "profile",
+      "url": "https://github.com/masmeert"
+    },
+    {
+      "login": "batusai513",
+      "email": "batusai513@msn.com",
+      "source": "profile",
+      "url": "https://github.com/batusai513"
+    },
+    {
+      "login": "alexcarpenter",
+      "email": "im.alexcarpenter@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/alexcarpenter"
+    },
+    {
+      "login": "MatheusBBarni",
+      "email": "brehm.matheus@hotmail.com",
+      "source": "profile",
+      "url": "https://github.com/MatheusBBarni"
+    },
+    {
+      "login": "joaopaulomoraes",
+      "email": "joaopaulomoraes@outlook.com",
+      "source": "profile",
+      "url": "https://github.com/joaopaulomoraes"
+    },
+    {
+      "login": "jmulca",
+      "email": "mulcahy.jason@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jmulca"
+    },
+    {
+      "login": "alan2207",
+      "email": "alan2207@live.com",
+      "source": "profile",
+      "url": "https://github.com/alan2207"
+    },
+    {
+      "login": "nazmifeeroz",
+      "email": "nazmifeeroz@hotmail.com",
+      "source": "profile",
+      "url": "https://github.com/nazmifeeroz"
+    },
+    {
+      "login": "andrewrosss",
+      "email": "andrew.ross.mail@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/andrewrosss"
+    },
+    {
+      "login": "joshfinnie",
+      "email": "josh@jfin.us",
+      "source": "profile",
+      "url": "https://github.com/joshfinnie"
+    },
+    {
+      "login": "markorusic",
+      "email": "markorusic98@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/markorusic"
+    },
+    {
+      "login": "jocdiazm",
+      "email": "jocdiazmuic@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jocdiazm"
+    },
+    {
+      "login": "fernandoxu",
+      "email": "fernandoxu9@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/fernandoxu"
+    },
+    {
+      "login": "archilkarchava",
+      "email": "hello@archil.dev",
+      "source": "profile",
+      "url": "https://github.com/archilkarchava"
+    },
+    {
+      "login": "vipoooooo",
+      "email": "vipoopoopoo@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/vipoooooo"
+    },
+    {
+      "login": "simenvl",
+      "email": "lsimen89@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/simenvl"
+    },
+    {
+      "login": "juanprq",
+      "email": "juan.ramirez.q@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/juanprq"
+    },
+    {
+      "login": "fersilva16",
+      "email": "hello@fersilva.dev",
+      "source": "profile",
+      "url": "https://github.com/fersilva16"
+    },
+    {
+      "login": "phelpa",
+      "email": "pliniohelpa@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/phelpa"
+    },
+    {
+      "login": "jpbretanha",
+      "email": "jpbretanha@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jpbretanha"
+    },
+    {
+      "login": "immannino",
+      "email": "tonymannino@me.com",
+      "source": "profile",
+      "url": "https://github.com/immannino"
+    },
+    {
+      "login": "Daveiano",
+      "email": "david.baetge@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Daveiano"
+    },
+    {
+      "login": "nikivdev",
+      "email": "github@nikiv.dev",
+      "source": "profile",
+      "url": "https://github.com/nikivdev"
+    },
+    {
+      "login": "younessbennaj",
+      "email": "youness.bennaj@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/younessbennaj"
+    },
+    {
+      "login": "jtx007",
+      "email": "jamesjacobthomas7@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jtx007"
+    },
+    {
+      "login": "bastibuck",
+      "email": "mail@bastibuck.de",
+      "source": "profile",
+      "url": "https://github.com/bastibuck"
+    },
+    {
+      "login": "ArthurDias01",
+      "email": "Arthursantos01@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/ArthurDias01"
+    },
+    {
+      "login": "MadCoderr",
+      "email": "msrfarooqi@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/MadCoderr"
+    },
+    {
+      "login": "JonatanSalas",
+      "email": "jonatan.salas@blackbox-vision.tech",
+      "source": "profile",
+      "url": "https://github.com/JonatanSalas"
+    },
+    {
+      "login": "abehidek",
+      "email": "me@hidek.xyz",
+      "source": "profile",
+      "url": "https://github.com/abehidek"
+    },
+    {
+      "login": "diego3g",
+      "email": "diego.schell.f@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/diego3g"
+    },
+    {
+      "login": "JamesUlph",
+      "email": "james.ulph@hotmail.co.uk",
+      "source": "profile",
+      "url": "https://github.com/JamesUlph"
+    },
+    {
+      "login": "reymundolopez",
+      "email": "reymundolopez@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/reymundolopez"
+    },
+    {
+      "login": "waptik",
+      "email": "github@waptik.xyz",
+      "source": "profile",
+      "url": "https://github.com/waptik"
+    },
+    {
+      "login": "ReallyBadNews",
+      "email": "github@kennyelshoff.com",
+      "source": "profile",
+      "url": "https://github.com/ReallyBadNews"
+    },
+    {
+      "login": "trupakufi",
+      "email": "mariovarela99@outlook.com",
+      "source": "profile",
+      "url": "https://github.com/trupakufi"
+    },
+    {
+      "login": "vtalbot",
+      "email": "vincent.talbot@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/vtalbot"
+    },
+    {
+      "login": "gaprados",
+      "email": "gaprados3@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/gaprados"
+    },
+    {
+      "login": "mikecebul",
+      "email": "mikecebul@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/mikecebul"
+    },
+    {
+      "login": "gabrielcarloto",
+      "email": "gabrielcidralcarloto@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/gabrielcarloto"
+    },
+    {
+      "login": "invisicat",
+      "email": "andy@lyek.me",
+      "source": "profile",
+      "url": "https://github.com/invisicat"
+    },
+    {
+      "login": "jin0x",
+      "email": "john.leskas@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jin0x"
+    },
+    {
+      "login": "iarchean",
+      "email": "zephyr422@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/iarchean"
+    },
+    {
+      "login": "szy0syz",
+      "email": "zhenyu.shi@compass.com",
+      "source": "profile",
+      "url": "https://github.com/szy0syz"
+    },
+    {
+      "login": "KATT",
+      "email": "alexander@n1s.se",
+      "source": "profile",
+      "url": "https://github.com/KATT"
+    },
+    {
+      "login": "Daynil",
+      "email": "dlibinrx@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Daynil"
+    },
+    {
+      "login": "Drzaln",
+      "email": "doddyrizaln@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Drzaln"
+    },
+    {
+      "login": "sreeisalso",
+      "email": "sreeisalso@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/sreeisalso"
+    },
+    {
+      "login": "zckly",
+      "email": "w.zachary.lee@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/zckly"
+    },
+    {
+      "login": "Givo29",
+      "email": "joelgiovinazzo@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Givo29"
+    },
+    {
+      "login": "hbk671104",
+      "email": "hbk671104@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/hbk671104"
+    },
+    {
+      "login": "noseratio",
+      "email": "noseratio@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/noseratio"
+    },
+    {
+      "login": "Fire-",
+      "email": "fire@com.github.incendiary.media",
+      "source": "profile",
+      "url": "https://github.com/Fire-"
+    },
+    {
+      "login": "pakoy3k",
+      "email": "pakoy3k@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/pakoy3k"
+    },
+    {
+      "login": "jad-delgadillo",
+      "email": "jorge.aldem@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jad-delgadillo"
+    },
+    {
+      "login": "wmalarski",
+      "email": "w.malarski@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/wmalarski"
+    },
+    {
+      "login": "AbstractNucleus",
+      "email": "noelhkleen@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/AbstractNucleus"
+    },
+    {
+      "login": "zephyrus21",
+      "email": "pandey.piyus@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/zephyrus21"
+    },
+    {
+      "login": "sebasbeleno",
+      "email": "sebasbeleno15@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/sebasbeleno"
+    },
+    {
+      "login": "therollingambit",
+      "email": "therollingambit@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/therollingambit"
+    },
+    {
+      "login": "Just-Moh-it",
+      "email": "mohit@mohitya.dev",
+      "source": "profile",
+      "url": "https://github.com/Just-Moh-it"
+    },
+    {
+      "login": "omdxp",
+      "email": "omar@omdxp.com",
+      "source": "profile",
+      "url": "https://github.com/omdxp"
+    },
+    {
+      "login": "jmyrland",
+      "email": "j@myrland.nu",
+      "source": "profile",
+      "url": "https://github.com/jmyrland"
+    },
+    {
+      "login": "wulucxy",
+      "email": "wulucxy@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/wulucxy"
+    },
+    {
+      "login": "rvndl",
+      "email": "rvndldev@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/rvndl"
+    },
+    {
+      "login": "kanazawabruno",
+      "email": "kanazawabruno@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/kanazawabruno"
+    },
+    {
+      "login": "GeovaRS",
+      "email": "gevsantos@hotmail.com",
+      "source": "profile",
+      "url": "https://github.com/GeovaRS"
+    },
+    {
+      "login": "scottarnold",
+      "email": "s@scottarnold.org",
+      "source": "profile",
+      "url": "https://github.com/scottarnold"
+    },
+    {
+      "login": "brattonross",
+      "email": "bratton.ross@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/brattonross"
+    },
+    {
+      "login": "lucassagas",
+      "email": "lucassaagas@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/lucassagas"
+    },
+    {
+      "login": "rossignolli",
+      "email": "vitorrossignolli@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/rossignolli"
+    },
+    {
+      "login": "jokull",
+      "email": "jokull@solberg.is",
+      "source": "profile",
+      "url": "https://github.com/jokull"
+    },
+    {
+      "login": "statusunknown418",
+      "email": "alvaro.aquije@icloud.com",
+      "source": "profile",
+      "url": "https://github.com/statusunknown418"
+    },
+    {
+      "login": "matheusfaggi",
+      "email": "matheusfaggi@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/matheusfaggi"
+    },
+    {
+      "login": "cerpinn",
+      "email": "me@a11i.dev",
+      "source": "profile",
+      "url": "https://github.com/cerpinn"
+    },
+    {
+      "login": "tedspare",
+      "email": "ted.spare@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/tedspare"
+    },
+    {
+      "login": "imarrsh",
+      "email": "marshallthomp@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/imarrsh"
+    },
+    {
+      "login": "wchatx",
+      "email": "wchatx@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/wchatx"
+    },
+    {
+      "login": "sgrund14",
+      "email": "sgrund626@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/sgrund14"
+    },
+    {
+      "login": "aaanh",
+      "email": "iam@hoanganh.dev",
+      "source": "profile",
+      "url": "https://github.com/aaanh"
+    },
+    {
+      "login": "jamesmcintyre",
+      "email": "james.checks.his.email@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jamesmcintyre"
+    },
+    {
+      "login": "Fabiomateusmelo",
+      "email": "fabioceto@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Fabiomateusmelo"
+    },
+    {
+      "login": "maxphillipsdev",
+      "email": "max@maxphillips.dev",
+      "source": "profile",
+      "url": "https://github.com/maxphillipsdev"
+    },
+    {
+      "login": "aryagustiana101",
+      "email": "aryagustiana101@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/aryagustiana101"
+    },
+    {
+      "login": "esneko",
+      "email": "esneko@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/esneko"
+    },
+    {
+      "login": "jaypitroda12",
+      "email": "jaypitroda12@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jaypitroda12"
+    },
+    {
+      "login": "DnzzL",
+      "email": "legrand.thomas5@hotmail.fr",
+      "source": "profile",
+      "url": "https://github.com/DnzzL"
+    },
+    {
+      "login": "0xleozera",
+      "email": "leonardo.pinheiro.dev@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/0xleozera"
+    },
+    {
+      "login": "lzl",
+      "email": "lizunlong@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/lzl"
+    },
+    {
+      "login": "ali-master",
+      "email": "ali_4286@live.com",
+      "source": "profile",
+      "url": "https://github.com/ali-master"
+    },
+    {
+      "login": "keksiqc",
+      "email": "hello@keksi.dev",
+      "source": "profile",
+      "url": "https://github.com/keksiqc"
+    },
+    {
+      "login": "andrewpomeroy",
+      "email": "andrewmichaelpomeroy@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/andrewpomeroy"
+    },
+    {
+      "login": "hamcher",
+      "email": "hamzaatcherbi@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/hamcher"
+    },
+    {
+      "login": "kevincfisher",
+      "email": "kevincliffordfisher@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/kevincfisher"
+    },
+    {
+      "login": "hiimnit",
+      "email": "ffilipsoukup@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/hiimnit"
+    },
+    {
+      "login": "mmattbtw",
+      "email": "matt@mmatt.net",
+      "source": "profile",
+      "url": "https://github.com/mmattbtw"
+    },
+    {
+      "login": "nicholasgriffintn",
+      "email": "nick@absent.computer",
+      "source": "profile",
+      "url": "https://github.com/nicholasgriffintn"
+    },
+    {
+      "login": "albbus-stack",
+      "email": "alberto.delbuonopaolini@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/albbus-stack"
+    },
+    {
+      "login": "alianza",
+      "email": "janwillemvanbremen@live.nl",
+      "source": "profile",
+      "url": "https://github.com/alianza"
+    },
+    {
+      "login": "chrishayes042",
+      "email": "chrishayes042@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/chrishayes042"
+    },
+    {
+      "login": "jsingason",
+      "email": "jsingason@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jsingason"
+    },
+    {
+      "login": "rvkaki",
+      "email": "rjvmcv.98@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/rvkaki"
+    },
+    {
+      "login": "AMBacelar",
+      "email": "a.m.bacelar@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/AMBacelar"
+    },
+    {
+      "login": "caferrari",
+      "email": "caferrari@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/caferrari"
+    },
+    {
+      "login": "JasonDocton",
+      "email": "Jdocton@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/JasonDocton"
+    },
+    {
+      "login": "sattwyk",
+      "email": "sattwyk@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/sattwyk"
+    },
+    {
+      "login": "danstans",
+      "email": "danielsstansberry@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/danstans"
+    },
+    {
+      "login": "Kennybll",
+      "email": "Kennybll@outlook.com",
+      "source": "profile",
+      "url": "https://github.com/Kennybll"
+    },
+    {
+      "login": "jeffhertzler",
+      "email": "jeffhertzler@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/jeffhertzler"
+    },
+    {
+      "login": "senghuotlay",
+      "email": "senghuotlay86@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/senghuotlay"
+    },
+    {
+      "login": "mefaba",
+      "email": "mefaba@outlook.com",
+      "source": "profile",
+      "url": "https://github.com/mefaba"
+    },
+    {
+      "login": "mikowl",
+      "email": "michael@mikowl.com",
+      "source": "profile",
+      "url": "https://github.com/mikowl"
+    },
+    {
+      "login": "dmmulroy",
+      "email": "dillon.mulroy@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/dmmulroy"
+    },
+    {
+      "login": "kpollich",
+      "email": "kpollich1@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/kpollich"
+    },
+    {
+      "login": "jmsherry",
+      "email": "james.m.sherry@googlemail.com",
+      "source": "profile",
+      "url": "https://github.com/jmsherry"
+    },
+    {
+      "login": "joepetrillo",
+      "email": "jpetrillo119@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/joepetrillo"
+    },
+    {
+      "login": "soorria",
+      "email": "soorria.ss@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/soorria"
+    },
+    {
+      "login": "thlmenezes",
+      "email": "thlmenezes@pm.me",
+      "source": "profile",
+      "url": "https://github.com/thlmenezes"
+    },
+    {
+      "login": "otaviosoares",
+      "email": "otaviokk@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/otaviosoares"
+    },
+    {
+      "login": "MrAjMann",
+      "email": "anthonyjmann87@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/MrAjMann"
+    },
+    {
+      "login": "subaanqasim",
+      "email": "subaan@subaanqasim.com",
+      "source": "profile",
+      "url": "https://github.com/subaanqasim"
+    },
+    {
+      "login": "lukemacauley",
+      "email": "github@lukemacauley.com",
+      "source": "profile",
+      "url": "https://github.com/lukemacauley"
+    },
+    {
+      "login": "asimsheikh",
+      "email": "asim.sardar.sheikh@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/asimsheikh"
+    },
+    {
+      "login": "airburst",
+      "email": "mark@fairhursts.net",
+      "source": "profile",
+      "url": "https://github.com/airburst"
+    },
+    {
+      "login": "yxshv",
+      "email": "yashverma30115@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/yxshv"
+    },
+    {
+      "login": "ahrbil",
+      "email": "ahrbil.me@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/ahrbil"
+    },
+    {
+      "login": "ayushpaharia",
+      "email": "ayush.paharia.18@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/ayushpaharia"
+    },
+    {
+      "login": "Teiger212",
+      "email": "eyalteiger@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/Teiger212"
+    },
+    {
+      "login": "erklyn",
+      "email": "uenesgursel@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/erklyn"
+    },
+    {
+      "login": "buenos-nachos",
+      "email": "hello@nachos.dev",
+      "source": "profile",
+      "url": "https://github.com/buenos-nachos"
+    },
+    {
+      "login": "alopes",
+      "email": "antonio@alopes.co.uk",
+      "source": "profile",
+      "url": "https://github.com/alopes"
+    },
+    {
+      "login": "chetanverma16",
+      "email": "hello@chetanverma.com",
+      "source": "profile",
+      "url": "https://github.com/chetanverma16"
+    },
+    {
+      "login": "EthanBarlo",
+      "email": "ethanbar266@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/EthanBarlo"
+    },
+    {
+      "login": "oussamaBGZ",
+      "email": "oussamamage16@hotmail.com",
+      "source": "profile",
+      "url": "https://github.com/oussamaBGZ"
+    },
+    {
+      "login": "refixshow",
+      "email": "adamscieszka@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/refixshow"
+    },
+    {
+      "login": "aymenBenadra",
+      "email": "aymanbenadra16@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/aymenBenadra"
+    },
+    {
+      "login": "valtism",
+      "email": "daniel4wood@icloud.com",
+      "source": "profile",
+      "url": "https://github.com/valtism"
+    },
+    {
+      "login": "Ph4seOn3",
+      "email": "Ph4seon3@proton.me",
+      "source": "profile",
+      "url": "https://github.com/Ph4seOn3"
+    },
+    {
+      "login": "brslv",
+      "email": "borislav.b.grigorov@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/brslv"
+    },
+    {
+      "login": "alkanoidev",
+      "email": "ivanovicf661@gmail.com",
+      "source": "profile",
+      "url": "https://github.com/alkanoidev"
+    },
+    {
+      "login": "intagaming",
+      "email": "xuanan2001@pm.me",
+      "source": "profile",
+      "url": "https://github.com/intagaming"
+    }
+  ]
+}

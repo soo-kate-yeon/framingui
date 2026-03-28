@@ -1,0 +1,758 @@
+---
+title: "The Maintainability Problem with AI-Generated Components"
+description: "AI generates components fast, but most become technical debt. Learn patterns for creating maintainable, evolvable code that survives long-term."
+date: "2026-03-28"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - maintainability
+  - component-architecture
+category: "Concept"
+coverImage: ""
+published: true
+---
+
+AI code generation has a hidden cost that surfaces weeks after the initial excitement fades. You generate a dashboard component in seconds. It looks great. It works. You ship it. Then requirements change. A designer updates the design system. A new developer joins the team. Suddenly, the AI-generated code is harder to modify than if you'd written it by hand.
+
+The problem isn't that AI generates bad code—it's that AI generates code optimized for immediate functionality, not long-term maintenance. The patterns that make code easy for AI to generate often make it hard for humans to maintain.
+
+This isn't an argument against AI code generation. It's a guide to generating maintainable code, not just functional code. The difference determines whether AI accelerates development or creates technical debt.
+
+## What Makes AI-Generated Code Hard to Maintain
+
+AI generates statistically plausible code. It combines patterns from training data in ways that work. But "works" and "maintainable" aren't the same thing.
+
+**Implicit dependencies instead of explicit contracts.** AI might generate a component that assumes specific global CSS, certain props being passed from parent components, or a particular directory structure. These assumptions aren't documented. They're baked into the generated code. When you refactor, you break things in non-obvious ways.
+
+**Arbitrary naming that doesn't follow system conventions.** AI learns from code across thousands of projects. It might generate `primaryButton`, `btnPrimary`, `button-primary`, and `buttonPrimary` in different files because all are valid patterns. Your design system uses one naming convention. AI doesn't know which.
+
+**Duplication instead of abstraction.** AI generates entire implementations. If you ask it to create three similar cards, it generates three separate card components with slightly different code. It doesn't extract the common pattern into a shared component. Duplication is easier to generate than abstraction.
+
+**Stateful logic embedded in UI components.** AI often puts state management, data fetching, and business logic directly in the component that renders UI. This is common in training data. It makes components hard to test, hard to reuse, and tightly coupled to specific use cases.
+
+**Missing types or overly permissive types.** TypeScript helps, but AI defaults to what compiles, not what's semantically correct. You get `props: any`, `string | undefined` where a union type belongs, or missing prop documentation.
+
+**No consideration for change vectors.** AI generates code for the current requirement. It doesn't anticipate which parts will change frequently (content, styling) and which are stable (structure, behavior). Good architecture isolates change. AI-generated code often doesn't.
+
+These issues aren't bugs. The code runs. But six months later when you need to add a feature, refactor layout, or fix an edge case, you realize the AI-generated foundation is fragile.
+
+## The Component Lifecycle Problem
+
+AI generates components at one point in time. Components live for years. The gap between generation and long-term viability is the maintainability problem.
+
+A component's lifecycle looks like:
+
+1. **Initial generation** — AI creates component based on prompt
+2. **Integration** — Developer connects component to app (data, routing, state)
+3. **Iteration** — Designer tweaks styles, PM adjusts behavior
+4. **Refactoring** — Team extracts patterns, consolidates duplication
+5. **Evolution** — Component gets new variants, props, features
+6. **Maintenance** — Bug fixes, accessibility improvements, performance optimization
+
+AI handles step 1 well. The rest require human-maintainable code. If the generated code isn't structured for evolution, each subsequent step becomes harder.
+
+Example: AI generates a ProductCard component. It works. Later you need:
+- A CompactProductCard variant with less spacing
+- A FeaturedProductCard with a badge
+- A ProductCardSkeleton for loading states
+- Consistent hover effects across all variants
+
+If the initial AI-generated code didn't anticipate variants, you have three options:
+1. Duplicate the entire component and modify (technical debt)
+2. Add conditional logic to one massive component (unmaintainable)
+3. Refactor to extract shared patterns (time-consuming, error-prone)
+
+Maintainable generation would have produced a variant-ready structure from the start.
+
+## Patterns for Maintainable AI-Generated Components
+
+The key is teaching AI to generate code structured for change, not just functionality.
+
+### 1. Separate Structure from Content
+
+AI should generate structural components with content passed as props, not components with hardcoded content.
+
+**Unmaintainable generation:**
+
+```tsx
+// AI generated this based on "create a pricing card for Pro plan"
+export function ProPricingCard() {
+  return (
+    <div className="border rounded-lg p-6">
+      <h3 className="text-2xl font-bold">Pro Plan</h3>
+      <p className="text-gray-600">$49/month</p>
+      <ul className="mt-4 space-y-2">
+        <li>✓ Unlimited projects</li>
+        <li>✓ Advanced analytics</li>
+        <li>✓ Priority support</li>
+      </ul>
+      <button className="mt-6 bg-blue-500 text-white px-4 py-2 rounded">
+        Start Free Trial
+      </button>
+    </div>
+  )
+}
+```
+
+This component is useless for the "Starter" or "Enterprise" plan. You'd have to generate three separate components or add plan-switching logic.
+
+**Maintainable generation:**
+
+```tsx
+// AI generated a reusable structure
+interface PricingCardProps {
+  plan: string
+  price: string
+  features: string[]
+  ctaText: string
+  onCtaClick: () => void
+  featured?: boolean
+}
+
+export function PricingCard({
+  plan,
+  price,
+  features,
+  ctaText,
+  onCtaClick,
+  featured = false
+}: PricingCardProps) {
+  return (
+    <div 
+      className={`border rounded-lg p-6 ${featured ? 'border-blue-500 shadow-lg' : ''}`}
+    >
+      <h3 className="text-2xl font-bold">{plan}</h3>
+      <p className="text-gray-600">{price}</p>
+      <ul className="mt-4 space-y-2">
+        {features.map((feature, i) => (
+          <li key={i}>✓ {feature}</li>
+        ))}
+      </ul>
+      <button
+        onClick={onCtaClick}
+        className="mt-6 bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        {ctaText}
+      </button>
+    </div>
+  )
+}
+```
+
+Now one component handles all plans. Content comes from data:
+
+```tsx
+const plans = [
+  { plan: "Starter", price: "$19/mo", features: [...], ctaText: "Start Free Trial" },
+  { plan: "Pro", price: "$49/mo", features: [...], ctaText: "Upgrade Now", featured: true },
+  { plan: "Enterprise", price: "Custom", features: [...], ctaText: "Contact Sales" }
+]
+
+<div className="grid grid-cols-3 gap-6">
+  {plans.map(plan => <PricingCard key={plan.plan} {...plan} onCtaClick={...} />)}
+</div>
+```
+
+**Prompt pattern:** "Create a reusable [component] that accepts [content] as props, not hardcoded."
+
+### 2. Use Variant Props Instead of Separate Components
+
+When components differ slightly, generate one component with variants, not multiple components.
+
+**Unmaintainable:**
+
+```tsx
+// AI generated three separate components
+export function PrimaryButton({ children, onClick }) {
+  return <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={onClick}>{children}</button>
+}
+
+export function SecondaryButton({ children, onClick }) {
+  return <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded" onClick={onClick}>{children}</button>
+}
+
+export function DestructiveButton({ children, onClick }) {
+  return <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={onClick}>{children}</button>
+}
+```
+
+Now you have three components to maintain. CSS changes require updating all three.
+
+**Maintainable:**
+
+```tsx
+// AI generated one variant-aware component
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'destructive'
+  size?: 'sm' | 'md' | 'lg'
+  children: React.ReactNode
+  onClick?: () => void
+}
+
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  children,
+  onClick
+}: ButtonProps) {
+  const variantStyles = {
+    primary: 'bg-blue-500 text-white',
+    secondary: 'bg-gray-200 text-gray-800',
+    destructive: 'bg-red-500 text-white'
+  }
+  
+  const sizeStyles = {
+    sm: 'px-3 py-1 text-sm',
+    md: 'px-4 py-2',
+    lg: 'px-6 py-3 text-lg'
+  }
+  
+  return (
+    <button
+      className={`rounded ${variantStyles[variant]} ${sizeStyles[size]}`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+Usage:
+
+```tsx
+<Button variant="primary">Submit</Button>
+<Button variant="secondary" size="sm">Cancel</Button>
+<Button variant="destructive">Delete</Button>
+```
+
+**Prompt pattern:** "Create a Button component with variants for [primary, secondary, destructive] and sizes [sm, md, lg]."
+
+### 3. Extract Tokens, Don't Hardcode Styles
+
+AI loves hardcoding colors, spacing, and font sizes. This creates maintenance nightmares when design systems change.
+
+**Unmaintainable:**
+
+```tsx
+export function Alert({ message }) {
+  return (
+    <div style={{
+      backgroundColor: '#fee2e2',
+      border: '1px solid #ef4444',
+      padding: '16px',
+      borderRadius: '8px',
+      color: '#991b1b'
+    }}>
+      {message}
+    </div>
+  )
+}
+```
+
+When your brand color changes, you grep the codebase for `#ef4444` and hope you find every instance.
+
+**Maintainable:**
+
+```tsx
+import { tokens } from '@/design-tokens'
+
+export function Alert({ message }) {
+  return (
+    <div style={{
+      backgroundColor: tokens.color.feedback.error.surface,
+      border: `1px solid ${tokens.color.feedback.error.border}`,
+      padding: tokens.spacing[4],
+      borderRadius: tokens.radius.md,
+      color: tokens.color.feedback.error.text
+    }}>
+      {message}
+    </div>
+  )
+}
+```
+
+Design system updates propagate automatically. Token names are semantic, so intent is clear.
+
+**Prompt pattern:** "Use design tokens from @/design-tokens for all colors, spacing, and typography. Never use hardcoded values."
+
+### 4. Composition Over Configuration
+
+Instead of generating monolithic components with dozens of conditional branches, generate composable pieces.
+
+**Unmaintainable:**
+
+```tsx
+// One massive component with complex logic
+export function ProductCard({
+  title,
+  price,
+  image,
+  badge,
+  showRating,
+  rating,
+  showAddToCart,
+  showQuickView,
+  layout = 'default'
+}) {
+  return (
+    <div className={layout === 'compact' ? 'p-2' : 'p-4'}>
+      {badge && <span className="badge">{badge}</span>}
+      <img src={image} />
+      <h3>{title}</h3>
+      <p>{price}</p>
+      {showRating && rating && <Rating value={rating} />}
+      <div className="actions">
+        {showAddToCart && <button>Add to Cart</button>}
+        {showQuickView && <button>Quick View</button>}
+      </div>
+    </div>
+  )
+}
+```
+
+This component has 8 props and complex conditional rendering. Every new feature adds another prop and another branch.
+
+**Maintainable:**
+
+```tsx
+// Composable structure
+export function ProductCard({ children }) {
+  return <div className="product-card">{children}</div>
+}
+
+export function ProductCardImage({ src, alt }) {
+  return <img src={src} alt={alt} className="product-card-image" />
+}
+
+export function ProductCardBadge({ children }) {
+  return <span className="product-card-badge">{children}</span>
+}
+
+export function ProductCardTitle({ children }) {
+  return <h3 className="product-card-title">{children}</h3>
+}
+
+export function ProductCardPrice({ children }) {
+  return <p className="product-card-price">{children}</p>
+}
+
+export function ProductCardActions({ children }) {
+  return <div className="product-card-actions">{children}</div>
+}
+
+// Usage
+<ProductCard>
+  <ProductCardBadge>New</ProductCardBadge>
+  <ProductCardImage src="..." alt="Product" />
+  <ProductCardTitle>Product Name</ProductCardTitle>
+  <ProductCardPrice>$99</ProductCardPrice>
+  <Rating value={4.5} />
+  <ProductCardActions>
+    <Button>Add to Cart</Button>
+    <Button variant="secondary">Quick View</Button>
+  </ProductCardActions>
+</ProductCard>
+```
+
+Each piece is simple. Consumers compose them as needed. New features (wish list button, comparison checkbox) slot in without modifying ProductCard.
+
+**Prompt pattern:** "Create a composable [component] using the compound component pattern with sub-components for [header, content, actions]."
+
+### 5. Typed Props with Documentation
+
+AI often generates components with minimal TypeScript or no prop documentation. Future maintainers can't tell what's required vs optional, what values are valid, or what each prop does.
+
+**Unmaintainable:**
+
+```tsx
+export function DataTable({ data, columns, onRowClick, sortable, filterable }) {
+  // Implementation
+}
+```
+
+What shape is `data`? What's in `columns`? Is `onRowClick` optional? Does `sortable` enable sorting for all columns or just some?
+
+**Maintainable:**
+
+```tsx
+interface Column<T> {
+  /** Unique identifier for the column */
+  id: string
+  /** Column header text */
+  header: string
+  /** Accessor function to extract cell value from row data */
+  accessor: (row: T) => React.ReactNode
+  /** Whether this column is sortable */
+  sortable?: boolean
+  /** Whether this column is filterable */
+  filterable?: boolean
+}
+
+interface DataTableProps<T> {
+  /** Array of data objects to display */
+  data: T[]
+  /** Column definitions */
+  columns: Column<T>[]
+  /** Callback when user clicks a row */
+  onRowClick?: (row: T) => void
+  /** Enable sorting controls */
+  sortable?: boolean
+  /** Enable filtering controls */
+  filterable?: boolean
+}
+
+export function DataTable<T>({
+  data,
+  columns,
+  onRowClick,
+  sortable = false,
+  filterable = false
+}: DataTableProps<T>) {
+  // Implementation
+}
+```
+
+Now:
+- TypeScript enforces correct usage
+- JSDoc comments document intent
+- Generic `<T>` makes component reusable for any data shape
+- Default values are explicit
+
+**Prompt pattern:** "Generate TypeScript interfaces with JSDoc comments for all props. Use generics where appropriate."
+
+### 6. Separate Concerns: UI, Logic, Data
+
+AI tends to mix UI rendering, state management, and data fetching in one component. This makes testing and reuse difficult.
+
+**Unmaintainable:**
+
+```tsx
+export function UserProfile({ userId }) {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(r => r.json())
+      .then(data => {
+        setUser(data)
+        setLoading(false)
+      })
+  }, [userId])
+  
+  if (loading) return <div>Loading...</div>
+  
+  return (
+    <div className="profile">
+      <img src={user.avatar} />
+      <h2>{user.name}</h2>
+      <p>{user.bio}</p>
+    </div>
+  )
+}
+```
+
+This component does three things: fetch data, manage loading state, and render UI. You can't test the UI without mocking fetch. You can't reuse the UI with different data sources.
+
+**Maintainable:**
+
+```tsx
+// Hook handles data fetching
+function useUser(userId: string) {
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+  
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then(r => r.json())
+      .then(setUser)
+      .catch(setError)
+      .finally(() => setLoading(false))
+  }, [userId])
+  
+  return { user, loading, error }
+}
+
+// Component handles UI only
+interface UserProfileProps {
+  user: User
+}
+
+export function UserProfile({ user }: UserProfileProps) {
+  return (
+    <div className="profile">
+      <img src={user.avatar} alt={user.name} />
+      <h2>{user.name}</h2>
+      <p>{user.bio}</p>
+    </div>
+  )
+}
+
+// Container connects them
+export function UserProfileContainer({ userId }: { userId: string }) {
+  const { user, loading, error } = useUser(userId)
+  
+  if (loading) return <LoadingSpinner />
+  if (error) return <ErrorMessage error={error} />
+  if (!user) return <NotFound />
+  
+  return <UserProfile user={user} />
+}
+```
+
+Now:
+- `UserProfile` is a pure component (easy to test, easy to reuse)
+- `useUser` is a reusable hook (works with any component that needs user data)
+- `UserProfileContainer` handles integration (loading states, error handling)
+
+**Prompt pattern:** "Create a [component] that accepts data as props. Generate a separate hook for data fetching and a container component for integration."
+
+## Teaching AI Maintainable Patterns
+
+The patterns above work when AI is instructed to use them. Without guidance, AI defaults to expedient generation.
+
+**Use Cursor Rules or Claude Code system prompts:**
+
+```
+## Maintainability Standards
+
+### Component Structure
+- Separate structure from content (content as props)
+- Use variant props instead of multiple similar components
+- Prefer composition over configuration
+- Extract shared logic to hooks
+- Keep components pure when possible
+
+### Typing
+- Always use TypeScript interfaces for props
+- Add JSDoc comments for complex props
+- Use generics for reusable components
+- No `any` types
+
+### Styling
+- Import design tokens from @/design-tokens
+- Never hardcode colors, spacing, or typography
+- Use semantic token names (color.action.primary, not color.blue.500)
+
+### Separation of Concerns
+- UI components receive data as props
+- Data fetching lives in hooks or server actions
+- Business logic lives in utility functions
+- Components are responsible for rendering only
+```
+
+**Example prompt for maintainable generation:**
+
+```
+Create a reusable BlogPostCard component that:
+- Accepts title, excerpt, author, date, and coverImage as props
+- Has variants for "default" and "featured" layouts
+- Uses design tokens from @/design-tokens for all styling
+- Uses TypeScript with documented prop types
+- Is composable (BlogPostCard.Header, BlogPostCard.Content, BlogPostCard.Footer)
+- Does not fetch data (receives props)
+```
+
+AI generates:
+
+```tsx
+import { tokens } from '@/design-tokens'
+
+interface BlogPostCardProps {
+  /** Post title */
+  title: string
+  /** Short excerpt of post content */
+  excerpt: string
+  /** Author name */
+  author: string
+  /** Publication date */
+  date: string
+  /** Cover image URL */
+  coverImage?: string
+  /** Layout variant */
+  variant?: 'default' | 'featured'
+}
+
+export function BlogPostCard({
+  title,
+  excerpt,
+  author,
+  date,
+  coverImage,
+  variant = 'default'
+}: BlogPostCardProps) {
+  const isFeatured = variant === 'featured'
+  
+  return (
+    <article
+      style={{
+        padding: tokens.spacing[6],
+        backgroundColor: tokens.color.surface.card,
+        borderRadius: tokens.radius.lg,
+        border: isFeatured ? `2px solid ${tokens.color.border.focus}` : 'none'
+      }}
+    >
+      {coverImage && (
+        <img
+          src={coverImage}
+          alt=""
+          style={{ width: '100%', borderRadius: tokens.radius.md }}
+        />
+      )}
+      <h3 style={tokens.typography.h3}>{title}</h3>
+      <p style={{ ...tokens.typography.body, color: tokens.color.text.secondary }}>
+        {excerpt}
+      </p>
+      <footer style={{ marginTop: tokens.spacing[4], ...tokens.typography.caption }}>
+        {author} · {date}
+      </footer>
+    </article>
+  )
+}
+```
+
+This component is immediately maintainable:
+- Reusable (content as props)
+- Typed with documentation
+- Uses design tokens
+- Has variants
+- Pure (no side effects)
+
+## Measuring Maintainability
+
+Track maintainability metrics for AI-generated code:
+
+**Time-to-modify:** How long does it take to add a feature to an AI-generated component? If simple changes require extensive refactoring, maintainability is low.
+
+**Duplication rate:** How many nearly-identical components exist? High duplication suggests AI is generating instead of reusing.
+
+```bash
+# Find similar components
+npx jscpd src/components
+```
+
+**Token usage:** What percentage of styling uses design tokens vs hardcoded values?
+
+```bash
+grep -r "tokens\." src/components | wc -l  # Token usage
+grep -rE "#[0-9a-f]{6}|rgb\(" src/components | wc -l  # Hardcoded colors
+```
+
+**Type coverage:** Are AI-generated components fully typed?
+
+```bash
+# Check for any or missing types
+grep -r ": any" src/components
+```
+
+**Test coverage:** Do AI-generated components include tests? Can they be tested easily?
+
+Aim for:
+- 90%+ design token usage
+- <5% code duplication across similar components
+- 100% type coverage (no `any`)
+- Tests generated alongside components
+
+## Refactoring AI-Generated Components
+
+When you inherit AI-generated code that isn't maintainable:
+
+**Step 1: Extract tokens.** Replace hardcoded values with design token references. This is mechanical—regex find-and-replace handles most cases.
+
+**Step 2: Extract variants.** If you have `Button.tsx`, `ButtonSecondary.tsx`, `ButtonDestruct.tsx`, consolidate into one component with a `variant` prop.
+
+**Step 3: Separate concerns.** Move data fetching to hooks, business logic to utilities. Make components pure.
+
+**Step 4: Add types.** Convert props to TypeScript interfaces. Add JSDoc comments.
+
+**Step 5: Test.** Write tests for the refactored component to lock in behavior before further changes.
+
+This process is time-consuming. The goal is generating maintainable code from the start so refactoring isn't necessary.
+
+## FramingUI's Approach to Maintainable Generation
+
+FramingUI is designed for maintainable AI generation:
+
+**Token-driven components.** Every component uses design tokens via CSS variables. AI can't generate hardcoded styles—tokens are the only option.
+
+**Variant-based APIs.** Components accept `variant` and `size` props rather than separate component files. AI generates correct variant usage via MCP server queries.
+
+**Composition patterns.** Complex components (Card, Dialog, Dropdown) use compound component patterns. AI learns composition from examples.
+
+**Typed contracts.** Every component exports TypeScript interfaces. MCP server exposes these to AI. Generated code is correctly typed by default.
+
+**Separation of concerns.** FramingUI components are pure UI. No data fetching, no business logic. AI generates data hooks separately.
+
+Setup:
+
+```bash
+npm install framingui
+```
+
+Configure Claude Code MCP server:
+
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "command": "npx",
+      "args": ["framingui-mcp"]
+    }
+  }
+}
+```
+
+Now AI generates maintainable FramingUI components automatically:
+
+```
+You: Create a settings page with cards for account, billing, and notifications
+```
+
+AI generates:
+
+```tsx
+import { Card, CardHeader, CardTitle, CardContent, Button } from 'framingui'
+import { tokens } from 'framingui/tokens'
+
+export function SettingsPage() {
+  return (
+    <div style={{ display: 'grid', gap: tokens.spacing[6] }}>
+      <Card>
+        <CardHeader>
+          <CardTitle>Account Settings</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Account settings form */}
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Billing</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Billing info */}
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Notifications</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {/* Notification preferences */}
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+Tokens, composition, types—all correct by default.
+
+---
+
+Maintainability isn't automatic with AI-generated code. It requires teaching AI patterns that prioritize long-term evolution over immediate functionality. Structure over content, composition over configuration, tokens over hardcoded values, types over any. The difference between throwaway prototypes and production-ready components is whether AI generates code that humans can maintain.

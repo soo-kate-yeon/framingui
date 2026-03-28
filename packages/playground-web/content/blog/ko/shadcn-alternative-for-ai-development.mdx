@@ -1,0 +1,456 @@
+---
+title: "Why AI Code Editors Need More Than shadcn/ui"
+description: "Why AI code editors need more than copy-paste components. Learn how queryable design systems improve AI-generated code quality."
+date: "2026-03-28"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - component-library
+  - design-system
+category: "Concept"
+coverImage: ""
+published: true
+---
+
+shadcn/ui has become the default component library for modern React projects. Copy the component, paste it into your codebase, customize freely. No npm package, no version conflicts, no abstraction overhead. For human developers working with static code, this model is brilliant.
+
+For AI-assisted development, it's insufficient. AI doesn't browse documentation and copy code snippets. It needs programmatic access to component contracts, token definitions, and usage patterns. The copy-paste model that empowers human developers creates friction for AI code generation.
+
+This isn't a criticism of shadcn/ui—it was never designed for AI workflows. It's an explanation of why AI-first component libraries need different architecture.
+
+## What shadcn/ui Optimizes For
+
+shadcn/ui's core value proposition is ownership. You don't import components from a package; you copy source files into your project. This gives you:
+
+**Complete customization control.** Want to change how `<Button>` works? Edit the file. No need to fork a repo, wrap components, or fight with CSS specificity.
+
+**No dependency on external packages.** The component code lives in your repo. If the shadcn/ui project disappears tomorrow, your code keeps working.
+
+**Framework flexibility.** shadcn/ui doesn't force opinions about state management, routing, or data fetching. It's just UI primitives.
+
+**Learning by reading.** Because the source is in your codebase, developers can read implementations and understand patterns.
+
+This model works exceptionally well when:
+- A human developer is selecting and copying components
+- The project is primarily hand-coded with occasional AI assistance
+- The team wants full control over component internals
+- You're building a bespoke design system from scratch
+
+It works less well when:
+- AI is generating entire features autonomously
+- The design system needs to stay synchronized across multiple projects
+- You need runtime query access to component contracts
+- Tokens and variants must be machine-readable for AI tooling
+
+## What AI Code Editors Actually Need
+
+When Claude Code or Cursor generates a component, it operates on statistical patterns and explicit constraints. The AI has seen thousands of React components in training data. Without additional context, it generates "statistically average" components—they look plausible but don't match your design system.
+
+The constraints AI needs to generate brand-specific code are:
+
+**Queryable component APIs.** The AI needs to know: What components exist? What props do they accept? What variants are valid? This information must be accessible at generation time, not just in documentation you read beforehand.
+
+**Semantic token definitions.** Instead of "use blue-500," the AI needs to understand "use action.primary for CTAs." Token names that encode meaning enable AI to make contextually appropriate choices.
+
+**Compositional patterns.** The AI needs examples of how components compose: "Cards contain headers, content sections, and optional footers." These patterns should be encoded in types or documentation that AI can query.
+
+**Validation at generation time.** If AI tries to generate `<Button variant="super-primary">` but that variant doesn't exist, feedback should surface immediately—ideally before the code is even written.
+
+shadcn/ui provides excellent documentation for humans, but the component contracts aren't programmatically queryable. AI can't ask "what button variants exist?" and get a structured answer. It relies on training data and prompt context, which means it will sometimes hallucinate variants.
+
+## The MCP Server Approach
+
+Model Context Protocol (MCP) servers solve the queryability problem. An MCP server runs alongside your development environment and provides AI-accessible APIs for your design system.
+
+When you use FramingUI with Claude Code via the MCP server:
+
+**AI queries component contracts in real-time:**
+```
+AI: What button variants are available in FramingUI?
+MCP Server: { variants: ["default", "destructive", "outline", "secondary", "ghost", "link"] }
+```
+
+**AI queries token definitions:**
+```
+AI: What's the correct token for primary action color?
+MCP Server: { token: "color.action.primary", value: "#3b82f6" }
+```
+
+**AI gets composition examples:**
+```
+AI: How do I compose a card with a header?
+MCP Server: {
+  example: "<Card><CardHeader><CardTitle>...</CardTitle></CardHeader><CardContent>...</CardContent></Card>",
+  requiredImports: ["Card", "CardHeader", "CardTitle", "CardContent"]
+}
+```
+
+This happens automatically. You don't manually query the MCP server—Claude Code does it when generating components. The AI has real-time access to your design system's source of truth.
+
+With shadcn/ui, this context doesn't exist. The AI relies on whatever shadcn patterns appeared in training data, which might be outdated or misremembered. You get components that look like shadcn but use incorrect prop names or missing variants.
+
+## Token-Driven Component Architecture
+
+The architectural difference is that AI-optimized component libraries are token-driven rather than style-driven.
+
+A shadcn/ui button defines styles directly:
+
+```tsx
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input hover:bg-accent hover:text-accent-foreground",
+      }
+    }
+  }
+)
+```
+
+This is perfectly fine for human usage. AI, however, doesn't know what `bg-primary` means without additional context. Is `primary` a Tailwind color? A CSS variable? What's the relationship between `bg-primary` and `bg-primary/90`?
+
+A token-driven button makes relationships explicit:
+
+```tsx
+// tokens.ts
+export const tokens = {
+  color: {
+    action: {
+      primary: { value: '#3b82f6', description: 'Primary CTA color' },
+      primaryHover: { value: '#2563eb', description: 'Hover state for primary actions' }
+    },
+    destructive: {
+      default: { value: '#ef4444' },
+      defaultHover: { value: '#dc2626' }
+    }
+  }
+}
+
+// Button.tsx
+export function Button({ variant = 'default', ...props }: ButtonProps) {
+  const styles = {
+    default: {
+      backgroundColor: 'var(--color-action-primary)',
+      color: 'var(--color-text-inverse)'
+    },
+    destructive: {
+      backgroundColor: 'var(--color-destructive-default)',
+      color: 'var(--color-text-inverse)'
+    }
+  }
+  
+  return <button style={styles[variant]} {...props} />
+}
+```
+
+Now AI can:
+1. Query `tokens.ts` to see what color tokens exist
+2. Understand that `action.primary` is for CTAs
+3. Generate code that uses correct token names
+4. Validate that token references are valid
+
+The component consumes tokens via CSS variables (for runtime theming), but the token definitions are machine-readable. AI has access to both the structure and the semantics.
+
+## Compositional Contracts for AI
+
+Another gap in copy-paste libraries is composition patterns. Humans learn by example: they see a card component with header, content, and footer, then replicate the pattern. AI needs explicit contracts.
+
+A shadcn card might be documented like this:
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Card Title</CardTitle>
+    <CardDescription>Card Description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Card Content</p>
+  </CardContent>
+  <CardFooter>
+    <p>Card Footer</p>
+  </CardFooter>
+</Card>
+```
+
+This is a great example for humans. For AI, it's ambiguous:
+- Are `CardHeader`, `CardContent`, `CardFooter` required?
+- Can they appear in any order?
+- Can you nest multiple `CardContent` sections?
+- What props do they accept?
+
+An AI-optimized component library encodes these rules as types:
+
+```tsx
+interface CardProps {
+  children: React.ReactNode
+  variant?: 'default' | 'elevated' | 'outlined'
+}
+
+interface CardHeaderProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface CardContentProps {
+  children: React.ReactNode
+  className?: string
+}
+
+interface CardFooterProps {
+  children: React.ReactNode
+  actions?: React.ReactNode
+}
+
+// Composition contract
+type CardComposition = 
+  | { header: CardHeaderProps; content: CardContentProps; footer?: CardFooterProps }
+  | { content: CardContentProps; footer?: CardFooterProps }
+```
+
+TypeScript enforces the contract. AI querying the MCP server gets structured information about valid compositions. Invalid compositions fail at compile time, not runtime.
+
+With shadcn/ui, these contracts exist in documentation but not code. AI has to infer rules from examples, which leads to invalid compositions that pass TypeScript checks but produce broken UI.
+
+## The Update Problem
+
+Copy-paste components create an update synchronization problem at scale. Say you have ten projects using shadcn/ui. A new version improves the Button component's accessibility. How do you propagate that change?
+
+With npm packages, you bump the version. With copy-paste components, you manually copy the new code into all ten projects. This works for small teams with few projects. It breaks down as you scale.
+
+For AI-generated codebases, the problem compounds. AI generates dozens of components per day. Each component might reference buttons, cards, inputs. If the Button implementation changes, you need to regenerate or manually update every generated component.
+
+A versioned component library solves this:
+
+```bash
+npm install framingui@latest
+```
+
+All projects get the updated button. All AI-generated code uses the new implementation automatically (after cache clear). No manual propagation needed.
+
+The trade-off is less customization freedom. You can't casually edit button internals without forking. But for projects where consistency across AI-generated code matters more than per-component customization, this trade-off is worthwhile.
+
+## Hybrid Approach: Versioned Core + Local Extensions
+
+The optimal architecture for AI-assisted development combines both models:
+
+**Core components as npm package.** Button, Input, Card, Select—the primitives that need consistency across all AI-generated code. These are versioned, distributed via npm, and queryable via MCP server.
+
+**Local extensions as custom components.** Domain-specific components (InvoiceCard, ProductGallery, CheckoutForm) live in your codebase. You own them completely. They compose the core primitives.
+
+AI generates code using both:
+
+```tsx
+// AI queries MCP server, learns about core components
+import { Button, Card, Input } from 'framingui'
+
+// AI also sees your local components
+import { InvoiceCard } from '@/components/invoice'
+
+export function BillingPage() {
+  return (
+    <div>
+      <InvoiceCard> {/* Local extension */}
+        <Card> {/* Core component */}
+          <CardContent>
+            <Input placeholder="Amount" /> {/* Core component */}
+            <Button variant="primary">Pay</Button> {/* Core component */}
+          </CardContent>
+        </Card>
+      </InvoiceCard>
+    </div>
+  )
+}
+```
+
+Core components ensure visual consistency. Local extensions enable domain customization. AI has access to both via the MCP server.
+
+This is how FramingUI works:
+1. Core component library as npm package (`framingui`)
+2. MCP server exposes component contracts and tokens
+3. Your project extends with custom components
+4. AI generates code using both core and custom components
+
+## Practical Migration from shadcn/ui
+
+If you're currently using shadcn/ui and want to enable better AI-assisted workflows:
+
+**Step 1: Identify your most-used components.** These are candidates for extraction into a versioned library. Run:
+
+```bash
+# Count component usages
+grep -r "import.*from.*components/ui" src/ | cut -d: -f2 | sort | uniq -c | sort -rn
+```
+
+**Step 2: Extract token definitions.** If you're using CSS variables or Tailwind config for theming, export these as a structured token file:
+
+```typescript
+// design-tokens.ts
+export const tokens = {
+  color: {
+    action: {
+      primary: { value: '#your-primary-color', type: 'color' }
+      // ... other tokens
+    }
+  }
+}
+```
+
+**Step 3: Create a local component package.** Don't publish to npm yet. Start with a local workspace package:
+
+```
+/packages
+  /ui
+    /src
+      Button.tsx
+      Card.tsx
+      ...
+    package.json
+```
+
+**Step 4: Refactor components to consume tokens.** Replace hardcoded Tailwind classes with token references:
+
+```tsx
+// Before
+<button className="bg-blue-500 hover:bg-blue-600">
+
+// After
+<button style={{ 
+  backgroundColor: 'var(--color-action-primary)',
+  '&:hover': { backgroundColor: 'var(--color-action-primary-hover)' }
+}}>
+```
+
+**Step 5: Set up MCP server (if using Claude Code).** Configure the FramingUI MCP server or build a custom one that exposes your component contracts:
+
+```json
+// claude_desktop_config.json
+{
+  "mcpServers": {
+    "your-design-system": {
+      "command": "npx",
+      "args": ["your-design-system-mcp-server"]
+    }
+  }
+}
+```
+
+**Step 6: Test AI generation.** Ask Claude Code to generate a component using your library. Verify it:
+- Queries available components
+- Uses correct token names
+- Generates valid compositions
+- Doesn't hallucinate non-existent variants
+
+**Step 7: Gradually migrate.** Don't rewrite everything. Migrate high-value components first. Keep shadcn/ui for components you rarely use or customize heavily.
+
+The goal isn't 100% replacement. It's ensuring the components AI generates most often have queryable contracts and semantic tokens.
+
+## Measuring AI Code Quality
+
+How do you know if your component library works well with AI? Track these metrics:
+
+**Token usage rate.** What percentage of AI-generated styles use design tokens vs. arbitrary values?
+
+```bash
+# Good: uses tokens
+<div style={{ color: 'var(--color-text-primary)' }}>
+
+# Bad: arbitrary values
+<div style={{ color: '#333' }}>
+```
+
+Aim for 90%+ token usage in AI-generated code.
+
+**Component hallucination rate.** How often does AI invent components or props that don't exist?
+
+```tsx
+// Hallucinated variant
+<Button variant="super-primary"> 
+
+// Valid variant from your system
+<Button variant="primary">
+```
+
+With a good MCP server, hallucination rate should be near zero. AI queries available variants before generating.
+
+**Compositional correctness.** Do AI-generated compositions follow your design system patterns?
+
+```tsx
+// Correct composition
+<Card>
+  <CardHeader>...</CardHeader>
+  <CardContent>...</CardContent>
+</Card>
+
+// Incorrect (missing CardContent wrapper)
+<Card>
+  <CardHeader>...</CardHeader>
+  <p>Content without wrapper</p>
+</Card>
+```
+
+Manual review or automated tests can catch these. High correctness means your composition contracts are clear.
+
+**Regeneration churn.** When you ask AI to regenerate a component, how much does it change?
+
+If every regeneration produces wildly different code, your constraints are too loose. AI is guessing. Tight constraints (via tokens and type contracts) produce stable outputs.
+
+## When shadcn/ui Is Still the Right Choice
+
+Not every project needs AI-optimized component libraries. Stick with shadcn/ui if:
+
+**You're building a single product with a small team.** Copy-paste gives you maximum flexibility. Coordination overhead is low.
+
+**AI is a minor assistant, not a primary code generator.** If you're writing 90% of code manually with AI helping 10%, queryable contracts aren't critical.
+
+**Your design system is rapidly evolving.** Copy-paste lets you experiment freely. Lock in architecture after patterns stabilize.
+
+**You want to learn component implementation details.** Having source code in your repo is educational. Abstractions hide learning opportunities.
+
+The threshold shifts as:
+- Team size grows (coordination needs versioned components)
+- AI generates more code (needs queryable contracts)
+- Multi-platform support matters (tokens enable iOS/Android generation)
+- Design system matures (benefits from centralization)
+
+## What FramingUI Provides
+
+FramingUI is designed specifically for AI-assisted workflows:
+
+**Token-first architecture.** Every component consumes design tokens via CSS variables. Token definitions are machine-readable and exposed via MCP server.
+
+**Queryable component contracts.** Claude Code can ask "what button variants exist?" and get a structured answer. No hallucinated props.
+
+**Compositional patterns as types.** TypeScript enforces valid component composition. AI can query types to understand correct usage.
+
+**Versioned distribution.** Updates propagate via npm. AI-generated code stays consistent across projects.
+
+**Design tool integration.** Tokens export to Figma Variables, import from design tools. Design and code stay synchronized.
+
+The setup is:
+
+```bash
+npm install framingui
+```
+
+Configure Claude Code's MCP server:
+
+```json
+{
+  "mcpServers": {
+    "framingui": {
+      "command": "npx",
+      "args": ["framingui-mcp"]
+    }
+  }
+}
+```
+
+Now when AI generates components, it queries your design system automatically. You get brand-consistent code without manual prompt engineering.
+
+---
+
+shadcn/ui is excellent for human-driven development where copy-paste and customization freedom matter most. AI-assisted development needs queryable design systems with semantic tokens and compositional contracts. FramingUI provides that architecture while maintaining the flexibility to extend with custom components. The result is AI-generated code that belongs to your brand, not statistical averages.

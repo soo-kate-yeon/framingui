@@ -1,0 +1,389 @@
+---
+title: "Building Landing Pages with AI: Why Structure Beats Speed"
+description: "Learn how to combine AI generation with design systems to build landing pages that are fast to create and maintainable long-term."
+date: "2026-03-28"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-tools
+  - landing-pages
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+AI landing page builders have flooded the market. Type a prompt, get a page. Most generate something that looks finished but feels generic. The code is a black box. Customization means fighting the generator's defaults. Six months later, you have twelve landing pages with twelve different styles because there was no shared foundation.
+
+The alternative isn't avoiding AI—it's using AI with structure. Generate pages using your design system rather than generic templates. The result ships faster than traditional development and stays consistent across every page you build.
+
+## What Most AI Landing Page Builders Actually Do
+
+The typical AI landing page workflow goes like this: describe what you want, the AI generates HTML and CSS, you get a preview, you deploy. The output usually looks professional. It has proper hierarchy, reasonable color choices, readable typography. It's also completely disconnected from your brand.
+
+The AI pulls from training data that spans thousands of websites. It generates statistically average design decisions. The color palette is safe. The spacing follows common patterns. The component structure looks like every other SaaS landing page.
+
+This works for one-off projects or rapid prototyping. It breaks down when you need:
+
+**Brand consistency across multiple pages.** Each generation produces slightly different interpretations of "professional SaaS landing page." Your homepage uses one blue. Your pricing page uses another. Your product pages use a third.
+
+**Maintainability over time.** The generated code is often thousands of lines of inline styles and arbitrary class names. Updating the primary button style across all pages means find-and-replace archaeology.
+
+**Custom component behavior.** The AI generates static markup. If you need interactive pricing calculators, animated testimonials, or dynamic content sections, you're writing custom code anyway.
+
+**Design system integration.** Your company already has a design system. The AI doesn't know it exists. Every landing page becomes a visual fork.
+
+The core problem is that most AI landing page builders treat generation as a one-time export rather than an ongoing workflow. They optimize for the first five minutes, not the next five months.
+
+## The Token-First Approach to AI Landing Pages
+
+A structured approach inverts the typical flow. Instead of generating arbitrary markup and styling it afterward, you generate markup that consumes pre-defined design tokens.
+
+**Step 1: Define your landing page token palette.** This is smaller than your full product design system. You need color roles (action, surface, text hierarchy), spacing scale, typography presets, and elevation values. Not dozens of tokens—twelve to twenty carefully chosen values.
+
+```typescript
+// landing-tokens.ts
+export const landingTokens = {
+  color: {
+    action: {
+      primary: 'var(--color-action-primary)',
+      secondary: 'var(--color-action-secondary)',
+      accent: 'var(--color-accent)'
+    },
+    surface: {
+      background: 'var(--color-surface-bg)',
+      card: 'var(--color-surface-card)',
+      elevated: 'var(--color-surface-elevated)'
+    },
+    text: {
+      primary: 'var(--color-text-primary)',
+      secondary: 'var(--color-text-secondary)',
+      inverse: 'var(--color-text-inverse)'
+    }
+  },
+  spacing: {
+    section: 'var(--spacing-section)', // vertical spacing between major sections
+    content: 'var(--spacing-content)', // internal content spacing
+    component: 'var(--spacing-component)' // spacing between related elements
+  },
+  typography: {
+    hero: 'var(--typography-hero)',
+    heading: 'var(--typography-heading)',
+    body: 'var(--typography-body)',
+    label: 'var(--typography-label)'
+  }
+}
+```
+
+**Step 2: Build reusable landing page components.** Don't generate entire pages from scratch each time. Build a library of composable sections: hero, feature grid, testimonial carousel, pricing table, CTA banner. Each component uses your token palette.
+
+```tsx
+// HeroSection.tsx
+import { landingTokens } from './landing-tokens'
+
+export function HeroSection({
+  headline,
+  subheadline,
+  ctaPrimary,
+  ctaSecondary,
+  image
+}: HeroSectionProps) {
+  return (
+    <section 
+      style={{ 
+        backgroundColor: landingTokens.color.surface.background,
+        padding: `${landingTokens.spacing.section} 1rem`
+      }}
+    >
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: landingTokens.spacing.content }}>
+          <h1 style={{ ...landingTokens.typography.hero, color: landingTokens.color.text.primary }}>
+            {headline}
+          </h1>
+          <p style={{ ...landingTokens.typography.body, color: landingTokens.color.text.secondary }}>
+            {subheadline}
+          </p>
+          <div style={{ display: 'flex', gap: landingTokens.spacing.component }}>
+            <button className="btn-primary">{ctaPrimary}</button>
+            {ctaSecondary && <button className="btn-secondary">{ctaSecondary}</button>}
+          </div>
+        </div>
+        <div>
+          <img src={image} alt="" className="w-full" />
+        </div>
+      </div>
+    </section>
+  )
+}
+```
+
+**Step 3: Use AI to compose pages, not generate raw markup.** When you need a new landing page, you ask AI to assemble sections using your component library. The prompt becomes:
+
+> "Create a landing page for [product] using HeroSection, FeatureGrid, TestimonialCarousel, and CTABanner. Hero headline: [text]. Features: [list]. Testimonials: [data]."
+
+The AI generates a composition file, not arbitrary HTML:
+
+```tsx
+// pages/product-launch.tsx
+import { HeroSection } from '@/components/landing/HeroSection'
+import { FeatureGrid } from '@/components/landing/FeatureGrid'
+import { TestimonialCarousel } from '@/components/landing/TestimonialCarousel'
+import { CTABanner } from '@/components/landing/CTABanner'
+
+export default function ProductLaunchPage() {
+  return (
+    <>
+      <HeroSection
+        headline="Ship Landing Pages 10x Faster"
+        subheadline="AI-powered page generation using your design system"
+        ctaPrimary="Get Started"
+        ctaSecondary="View Demo"
+        image="/images/hero-product.png"
+      />
+      <FeatureGrid
+        features={[
+          { icon: "⚡", title: "Token-First", description: "Every component uses your design tokens" },
+          { icon: "🎨", title: "Brand Consistent", description: "No more visual drift across pages" },
+          { icon: "🔧", title: "Fully Maintainable", description: "Update design tokens, all pages update" }
+        ]}
+      />
+      <TestimonialCarousel testimonials={testimonialData} />
+      <CTABanner
+        headline="Ready to build?"
+        cta="Start Free Trial"
+        ctaUrl="/signup"
+      />
+    </>
+  )
+}
+```
+
+This code is human-readable, maintainable, and brand-consistent. It uses your tokens throughout. When you update `landingTokens.color.action.primary`, every landing page updates.
+
+## Building the Core Landing Page Component Kit
+
+Most landing pages use variations of the same ten patterns. Build these once, generate compositions forever.
+
+**Hero sections** come in three layouts: centered text with background, split with image, and full-width with video. Make them configurable:
+
+```tsx
+export function HeroSection({
+  layout = 'split',
+  headline,
+  subheadline,
+  cta,
+  media
+}: HeroSectionProps) {
+  const layouts = {
+    centered: <CenteredHero {...props} />,
+    split: <SplitHero {...props} />,
+    fullWidth: <FullWidthHero {...props} />
+  }
+  
+  return layouts[layout]
+}
+```
+
+**Feature displays** need grid, list, and alternating layouts:
+
+```tsx
+export function FeatureDisplay({
+  features,
+  layout = 'grid',
+  columns = 3
+}: FeatureDisplayProps) {
+  const layoutClasses = {
+    grid: `grid grid-cols-1 md:grid-cols-${columns} gap-8`,
+    list: 'flex flex-col gap-6',
+    alternating: 'flex flex-col gap-16'
+  }
+  
+  return (
+    <section style={{ padding: landingTokens.spacing.section }}>
+      <div className={layoutClasses[layout]}>
+        {features.map((feature, i) => (
+          <FeatureCard key={i} {...feature} />
+        ))}
+      </div>
+    </section>
+  )
+}
+```
+
+**Social proof** covers testimonials, customer logos, and stats:
+
+```tsx
+export function SocialProof({
+  type = 'testimonials',
+  data
+}: SocialProofProps) {
+  const components = {
+    testimonials: <TestimonialCarousel testimonials={data} />,
+    logos: <LogoGrid logos={data} />,
+    stats: <StatsDisplay stats={data} />
+  }
+  
+  return components[type]
+}
+```
+
+**Pricing tables** need comparison mode and feature highlight mode:
+
+```tsx
+export function PricingTable({
+  plans,
+  highlight,
+  period = 'monthly'
+}: PricingTableProps) {
+  return (
+    <section style={{ padding: landingTokens.spacing.section }}>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {plans.map(plan => (
+          <PricingCard
+            key={plan.id}
+            {...plan}
+            highlighted={plan.id === highlight}
+            period={period}
+          />
+        ))}
+      </div>
+    </section>
+  )
+}
+```
+
+**CTA sections** close the page with high-emphasis conversion asks:
+
+```tsx
+export function CTASection({
+  headline,
+  subheadline,
+  cta,
+  style = 'elevated'
+}: CTASectionProps) {
+  return (
+    <section
+      style={{
+        padding: landingTokens.spacing.section,
+        backgroundColor: style === 'elevated' 
+          ? landingTokens.color.action.primary 
+          : landingTokens.color.surface.card,
+        color: style === 'elevated' 
+          ? landingTokens.color.text.inverse 
+          : landingTokens.color.text.primary
+      }}
+    >
+      <div className="max-w-4xl mx-auto text-center">
+        <h2>{headline}</h2>
+        <p>{subheadline}</p>
+        <button className="btn-large">{cta}</button>
+      </div>
+    </section>
+  )
+}
+```
+
+These five patterns handle 90% of landing page needs. AI assembles them into specific pages. You maintain five components instead of fifty page files.
+
+## The AI-Assisted Landing Page Workflow
+
+With components built, the AI becomes a composition assistant rather than a code generator.
+
+**Designer creates brief.** The brief specifies the goal (launch page, feature announcement, event promotion), target audience, key messages, and required sections. No mockups needed—the component library already defines visual structure.
+
+**Developer or marketer writes prompt.** The prompt references components by name and provides content:
+
+> "Build a launch page for AI Analytics using:
+> - HeroSection: headline 'Analytics That Understand Your Data', subheadline '[copy]', split layout with dashboard screenshot
+> - FeatureDisplay: grid layout, 3 columns, features: [list]
+> - SocialProof: testimonials from [customer data]
+> - PricingTable: 3 plans, highlight 'Pro'
+> - CTASection: 'Start Free Trial Today'"
+
+**AI generates page composition.** Claude Code or Cursor generates the page file using your component imports. Because components are strongly typed, the AI knows what props are valid. If it tries to pass an invalid layout value, TypeScript catches it.
+
+**Developer reviews for content and flow, not styling.** The review focuses on: Does the content make sense? Is the section order logical? Are CTAs placed effectively? Visual consistency is guaranteed by the component library.
+
+**Deploy and iterate.** Because pages use shared components and tokens, you can A/B test layout variations (hero layout: split vs. centered) without worrying about visual drift. Updates to the design system cascade to all pages automatically.
+
+The entire process—brief to deployed page—takes hours instead of days. More importantly, the next landing page takes hours too, because you're not rebuilding foundations each time.
+
+## Integrating with FramingUI
+
+FramingUI's component library is built for this workflow. Every component uses CSS variables bound to design tokens. The token structure is semantic (action, surface, text) rather than presentational (blue-500, gray-100), so AI can reason about intent.
+
+When you use FramingUI with Claude Code via the MCP server, the AI has real-time access to your component APIs and token definitions. A prompt like "create a hero section with primary CTA" generates code using `<Button variant="primary">` because the AI knows that's a valid variant in your system.
+
+The setup is:
+
+1. Install FramingUI and configure your token palette
+2. Enable the FramingUI MCP server in Claude Code
+3. Write prompts that reference component names and tokens
+4. AI generates pages using your design system automatically
+
+No custom training, no fine-tuning. The MCP server provides runtime context that makes generic AI models specific to your system.
+
+## When to Generate vs. Compose
+
+Not every landing page needs AI generation. The decision tree:
+
+**Generate when:**
+- You're building a new page with standard sections
+- Content is ready but layout needs assembly
+- You have multiple similar pages (product features, use cases, customer segments)
+- Speed matters more than pixel-perfect custom layouts
+
+**Hand-code when:**
+- The page has truly unique interaction patterns
+- You're building the core component library itself
+- Brand requirements demand custom visual treatment
+- The page is so simple that composition overhead isn't worth it
+
+The middle ground is the most common: AI generates the initial structure, developer refines specific sections. This combines speed with craftsmanship.
+
+## Measuring Success Beyond Speed
+
+AI landing page builders market on speed: "Build in 5 minutes!" Speed matters, but the real value is consistency and maintainability.
+
+**Track visual consistency across pages.** Are all primary CTAs using the same color? Do all hero sections follow the same spacing rules? If every page looks slightly different, your AI workflow isn't working—even if it's fast.
+
+**Measure design system adoption.** What percentage of landing page code uses design tokens vs. arbitrary values? Grep your codebase for hardcoded hex colors and pixel values. The goal is zero.
+
+**Monitor maintenance velocity.** When you need to update button styles across all landing pages, how long does it take? With token-based components, it's one line change. With generated black-box markup, it's manual find-and-replace across dozens of files.
+
+**Evaluate developer autonomy.** Can non-designers create brand-consistent pages? If your workflow requires designer approval for every color choice, the structure isn't strong enough.
+
+The best AI landing page workflow is the one that stays fast after the first page, the tenth page, and the hundredth page.
+
+## What This Looks Like in Practice
+
+A typical project structure for token-first AI landing pages:
+
+```
+/landing
+  /components
+    HeroSection.tsx
+    FeatureGrid.tsx
+    TestimonialCarousel.tsx
+    PricingTable.tsx
+    CTABanner.tsx
+  /tokens
+    colors.ts
+    spacing.ts
+    typography.ts
+  /pages
+    index.tsx          # Homepage - AI composed
+    pricing.tsx        # Pricing - AI composed
+    features/
+      analytics.tsx    # Feature page - AI composed
+      automation.tsx   # Feature page - AI composed
+  /content
+    testimonials.json  # Structured data for AI
+    features.json      # Feature descriptions
+```
+
+Each page in `/pages` is 50-100 lines of component composition. Each component in `/components` is 100-200 lines of token-consuming code. The entire landing site might be 2000 lines of maintainable, structured code rather than 20,000 lines of generated markup.
+
+---
+
+AI landing page builders work best when they generate structure, not style. Build a token-first component library. Use AI to compose pages from that library. The result ships as fast as pure AI generation but stays maintainable and consistent as you scale from one page to one hundred.
