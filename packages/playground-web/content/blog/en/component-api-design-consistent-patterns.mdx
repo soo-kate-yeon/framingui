@@ -1,0 +1,850 @@
+---
+title: "Component API Design for Consistent Patterns: Props, Variants, and Composition"
+description: "Design component APIs that enable consistent usage patterns through prop naming conventions, variant systems, and composition patterns."
+date: "2026-03-30"
+author:
+  name: "FramingUI Team"
+tags:
+  - component-api
+  - design-patterns
+  - react
+  - typescript
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+# Component API Design for Consistent Patterns: Props, Variants, and Composition
+
+Every component library eventually faces the same problem: developers use components inconsistently because the API doesn't guide them toward correct patterns. One developer uses `<Button type="primary">`, another uses `<Button variant="primary">`, and a third writes `<Button className="btn-primary">`. The components work, but the codebase becomes a maze of overlapping patterns.
+
+The root issue isn't developer discipline—it's API design. When component interfaces are ambiguous or overly flexible, inconsistency is inevitable. When they encode constraints and patterns directly into the type system, consistency becomes automatic.
+
+Design tokens solve the "what" (color values, spacing, typography). Component API design solves the "how" (interaction patterns, composition rules, variant systems). Together, they create a system where correct usage is the path of least resistance.
+
+This guide covers component API patterns that enforce consistency: prop naming conventions, variant systems, polymorphic types, and composition patterns. When AI assistants generate components with these APIs, they automatically produce maintainable, consistent code.
+
+## The Problem with Flexible APIs
+
+Consider a typical button component:
+
+```tsx
+// Too flexible - allows arbitrary customization
+interface ButtonProps {
+  children: React.ReactNode
+  onClick?: () => void
+  className?: string
+  style?: React.CSSProperties
+  type?: string
+  variant?: string
+  size?: string
+  color?: string
+  disabled?: boolean
+}
+```
+
+This API creates several problems:
+
+1. **Overlapping concerns**: `className`, `style`, `color`, and `variant` all affect appearance
+2. **No constraints**: `type`, `variant`, and `size` accept any string
+3. **Unclear hierarchy**: Which prop takes precedence when they conflict?
+4. **Escape hatches everywhere**: `className` and `style` bypass the design system
+
+A well-designed API constrains choices to valid options:
+
+```tsx
+// Constrained - guides toward correct usage
+interface ButtonProps {
+  children: React.ReactNode
+  onClick?: () => void
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
+  disabled?: boolean
+  fullWidth?: boolean
+}
+```
+
+Now TypeScript enforces valid values. Developers can't create arbitrary button styles—they choose from predefined variants that align with the design system.
+
+## Prop Naming Conventions
+
+Consistent naming across components reduces cognitive load.
+
+### Standard Props
+
+These should work identically across all components:
+
+```tsx
+// Standard naming patterns
+interface StandardProps {
+  // Visual variants
+  variant?: 'primary' | 'secondary' | 'tertiary'  // Not "type" or "kind"
+  size?: 'sm' | 'md' | 'lg'                      // Not "dimension" or "scale"
+  
+  // State
+  disabled?: boolean                              // Not "isDisabled"
+  loading?: boolean                               // Not "isLoading"
+  error?: boolean                                 // Not "hasError"
+  
+  // Layout
+  fullWidth?: boolean                             // Not "block" or "fluid"
+  
+  // Interaction
+  onClick?: () => void                            // Standard React naming
+  onChange?: (value: T) => void                   // Standard React naming
+}
+```
+
+### Semantic Prop Groups
+
+Group related props with clear prefixes:
+
+```tsx
+interface InputProps {
+  // Value and change handling
+  value: string
+  onChange: (value: string) => void
+  
+  // Validation state
+  error?: string
+  success?: string
+  warning?: string
+  
+  // Accessibility
+  'aria-label'?: string
+  'aria-describedby'?: string
+  'aria-invalid'?: boolean
+  
+  // Descriptive content
+  label?: string
+  hint?: string
+  placeholder?: string
+  
+  // Configuration
+  type?: 'text' | 'email' | 'password' | 'tel'
+  required?: boolean
+  disabled?: boolean
+  readOnly?: boolean
+  autoComplete?: string
+}
+```
+
+Notice how validation states (`error`, `success`, `warning`) follow the same pattern—no mixing `isError` with `hasSuccess`.
+
+## Variant Systems
+
+Variants define predefined style combinations:
+
+```tsx
+// Button variants encode complete visual patterns
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
+
+interface ButtonProps {
+  variant?: ButtonVariant
+  size?: 'sm' | 'md' | 'lg'
+  children: React.ReactNode
+  onClick?: () => void
+  disabled?: boolean
+}
+
+export function Button({ 
+  variant = 'primary',
+  size = 'md',
+  children,
+  onClick,
+  disabled = false,
+}: ButtonProps) {
+  // Variant styles from design tokens
+  const variantStyles = {
+    primary: {
+      backgroundColor: tokens.color.interactivePrimary,
+      color: tokens.color.textInverse,
+      border: 'none',
+    },
+    secondary: {
+      backgroundColor: tokens.color.interactiveSecondary,
+      color: tokens.color.textPrimary,
+      border: `1px solid ${tokens.color.borderDefault}`,
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+      color: tokens.color.interactivePrimary,
+      border: 'none',
+    },
+    danger: {
+      backgroundColor: tokens.color.statusError,
+      color: tokens.color.textInverse,
+      border: 'none',
+    },
+  }
+  
+  const sizeStyles = {
+    sm: {
+      height: '2rem',
+      padding: '0 0.75rem',
+      fontSize: '0.875rem',
+    },
+    md: {
+      height: '2.5rem',
+      padding: '0 1rem',
+      fontSize: '1rem',
+    },
+    lg: {
+      height: '3rem',
+      padding: '0 1.5rem',
+      fontSize: '1.125rem',
+    },
+  }
+  
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        ...variantStyles[variant],
+        ...sizeStyles[size],
+        borderRadius: '0.375rem',
+        fontWeight: '500',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+        transition: 'all 150ms ease',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+### Compound Variants
+
+Sometimes you need style combinations based on multiple props:
+
+```tsx
+// Alert component with status × variant combinations
+type AlertStatus = 'success' | 'warning' | 'error' | 'info'
+type AlertVariant = 'filled' | 'outlined' | 'subtle'
+
+interface AlertProps {
+  status: AlertStatus
+  variant?: AlertVariant
+  children: React.ReactNode
+}
+
+export function Alert({ 
+  status, 
+  variant = 'subtle',
+  children 
+}: AlertProps) {
+  // Base status colors
+  const statusColors = {
+    success: tokens.color.statusSuccess,
+    warning: tokens.color.statusWarning,
+    error: tokens.color.statusError,
+    info: tokens.color.statusInfo,
+  }
+  
+  // Variant styles depend on both status and variant
+  const getStyles = () => {
+    const baseColor = statusColors[status]
+    
+    switch (variant) {
+      case 'filled':
+        return {
+          backgroundColor: baseColor,
+          color: tokens.color.textInverse,
+          border: 'none',
+        }
+      case 'outlined':
+        return {
+          backgroundColor: 'transparent',
+          color: baseColor,
+          border: `2px solid ${baseColor}`,
+        }
+      case 'subtle':
+        return {
+          backgroundColor: tokens.color.backgroundTertiary,
+          color: tokens.color.textPrimary,
+          borderLeft: `4px solid ${baseColor}`,
+        }
+    }
+  }
+  
+  return (
+    <div style={{
+      ...getStyles(),
+      padding: '1rem',
+      borderRadius: '0.375rem',
+      display: 'flex',
+      gap: '0.75rem',
+    }}>
+      {children}
+    </div>
+  )
+}
+```
+
+Usage:
+
+```tsx
+<Alert status="success" variant="filled">Operation completed</Alert>
+<Alert status="error" variant="outlined">Invalid input</Alert>
+<Alert status="info" variant="subtle">Pro tip: Use keyboard shortcuts</Alert>
+```
+
+## Polymorphic Components
+
+Components that can render as different HTML elements:
+
+```tsx
+// Polymorphic "as" prop pattern
+type PolymorphicProps<E extends React.ElementType> = {
+  as?: E
+  children: React.ReactNode
+} & Omit<React.ComponentPropsWithoutRef<E>, 'as' | 'children'>
+
+export function Text<E extends React.ElementType = 'span'>({
+  as,
+  children,
+  ...props
+}: PolymorphicProps<E>) {
+  const Component = as || 'span'
+  
+  return (
+    <Component
+      style={{
+        color: tokens.color.textPrimary,
+        fontSize: tokens.typography.fontSize.base,
+      }}
+      {...props}
+    >
+      {children}
+    </Component>
+  )
+}
+```
+
+Usage with full type safety:
+
+```tsx
+// Renders as <span>
+<Text>Default span</Text>
+
+// Renders as <p>
+<Text as="p">Paragraph text</Text>
+
+// Renders as <a> with href (TypeScript knows 'href' is valid)
+<Text as="a" href="https://example.com">Link text</Text>
+
+// TypeScript error: 'href' not valid for 'p'
+<Text as="p" href="...">Error</Text>
+```
+
+## Composition Patterns
+
+Design components that work together predictably.
+
+### Slot-Based Composition
+
+Provide named slots for flexible layouts:
+
+```tsx
+interface CardProps {
+  header?: React.ReactNode
+  footer?: React.ReactNode
+  children: React.ReactNode
+  variant?: 'default' | 'elevated'
+}
+
+export function Card({ 
+  header, 
+  footer, 
+  children,
+  variant = 'default' 
+}: CardProps) {
+  return (
+    <div style={{
+      backgroundColor: tokens.color.surfaceBase,
+      border: `1px solid ${tokens.color.borderDefault}`,
+      borderRadius: '0.5rem',
+      boxShadow: variant === 'elevated' ? tokens.elevation.medium : 'none',
+    }}>
+      {header && (
+        <div style={{
+          padding: '1rem',
+          borderBottom: `1px solid ${tokens.color.borderSubtle}`,
+          fontWeight: '600',
+        }}>
+          {header}
+        </div>
+      )}
+      
+      <div style={{ padding: '1rem' }}>
+        {children}
+      </div>
+      
+      {footer && (
+        <div style={{
+          padding: '1rem',
+          borderTop: `1px solid ${tokens.color.borderSubtle}`,
+        }}>
+          {footer}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+Usage:
+
+```tsx
+<Card
+  header="User Profile"
+  footer={<Button>Save Changes</Button>}
+>
+  <p>Profile content here</p>
+</Card>
+```
+
+### Compound Components
+
+Components that work together through shared context:
+
+```tsx
+// Tab system using compound components
+interface TabsContextValue {
+  activeTab: string
+  setActiveTab: (tab: string) => void
+}
+
+const TabsContext = React.createContext<TabsContextValue | undefined>(undefined)
+
+function Tabs({ 
+  defaultTab,
+  children 
+}: { 
+  defaultTab: string
+  children: React.ReactNode 
+}) {
+  const [activeTab, setActiveTab] = React.useState(defaultTab)
+  
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab }}>
+      <div>{children}</div>
+    </TabsContext.Provider>
+  )
+}
+
+function TabList({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      display: 'flex',
+      gap: '0.5rem',
+      borderBottom: `1px solid ${tokens.color.borderDefault}`,
+      marginBottom: '1rem',
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function Tab({ 
+  value, 
+  children 
+}: { 
+  value: string
+  children: React.ReactNode 
+}) {
+  const context = React.useContext(TabsContext)
+  if (!context) throw new Error('Tab must be inside Tabs')
+  
+  const isActive = context.activeTab === value
+  
+  return (
+    <button
+      onClick={() => context.setActiveTab(value)}
+      style={{
+        padding: '0.75rem 1rem',
+        border: 'none',
+        backgroundColor: 'transparent',
+        color: isActive 
+          ? tokens.color.interactivePrimary 
+          : tokens.color.textSecondary,
+        borderBottom: isActive 
+          ? `2px solid ${tokens.color.interactivePrimary}` 
+          : '2px solid transparent',
+        cursor: 'pointer',
+        fontWeight: isActive ? '600' : '400',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
+function TabPanel({ 
+  value, 
+  children 
+}: { 
+  value: string
+  children: React.ReactNode 
+}) {
+  const context = React.useContext(TabsContext)
+  if (!context) throw new Error('TabPanel must be inside Tabs')
+  
+  if (context.activeTab !== value) return null
+  
+  return <div>{children}</div>
+}
+
+// Export compound component
+export { Tabs, TabList, Tab, TabPanel }
+```
+
+Usage:
+
+```tsx
+<Tabs defaultTab="profile">
+  <TabList>
+    <Tab value="profile">Profile</Tab>
+    <Tab value="settings">Settings</Tab>
+    <Tab value="billing">Billing</Tab>
+  </TabList>
+  
+  <TabPanel value="profile">
+    <ProfileContent />
+  </TabPanel>
+  
+  <TabPanel value="settings">
+    <SettingsContent />
+  </TabPanel>
+  
+  <TabPanel value="billing">
+    <BillingContent />
+  </TabPanel>
+</Tabs>
+```
+
+This pattern makes relationships explicit and prevents misuse (can't use `Tab` outside `Tabs`).
+
+## Render Props Pattern
+
+For maximum flexibility without losing type safety:
+
+```tsx
+interface ListProps<T> {
+  items: T[]
+  renderItem: (item: T, index: number) => React.ReactNode
+  emptyState?: React.ReactNode
+}
+
+export function List<T>({ 
+  items, 
+  renderItem,
+  emptyState = <p>No items</p>
+}: ListProps<T>) {
+  if (items.length === 0) {
+    return <>{emptyState}</>
+  }
+  
+  return (
+    <ul style={{
+      listStyle: 'none',
+      padding: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.5rem',
+    }}>
+      {items.map((item, index) => (
+        <li key={index}>{renderItem(item, index)}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+Usage with full type inference:
+
+```tsx
+interface User {
+  id: string
+  name: string
+  email: string
+}
+
+const users: User[] = [...]
+
+<List
+  items={users}
+  renderItem={(user) => (
+    // TypeScript knows 'user' is type User
+    <div>
+      <strong>{user.name}</strong>
+      <p>{user.email}</p>
+    </div>
+  )}
+  emptyState={<p>No users found</p>}
+/>
+```
+
+## Controlled vs. Uncontrolled Components
+
+Support both patterns for flexibility:
+
+```tsx
+interface InputProps {
+  // Controlled
+  value?: string
+  onChange?: (value: string) => void
+  
+  // Uncontrolled
+  defaultValue?: string
+  
+  // Common props
+  label: string
+  type?: 'text' | 'email' | 'password'
+}
+
+export function Input({
+  value: controlledValue,
+  onChange,
+  defaultValue,
+  label,
+  type = 'text',
+}: InputProps) {
+  // Determine if controlled
+  const isControlled = controlledValue !== undefined
+  
+  // Internal state for uncontrolled mode
+  const [internalValue, setInternalValue] = React.useState(defaultValue || '')
+  
+  const value = isControlled ? controlledValue : internalValue
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    
+    if (!isControlled) {
+      setInternalValue(newValue)
+    }
+    
+    onChange?.(newValue)
+  }
+  
+  return (
+    <div>
+      <label style={{
+        display: 'block',
+        marginBottom: '0.5rem',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+      }}>
+        {label}
+      </label>
+      
+      <input
+        type={type}
+        value={value}
+        onChange={handleChange}
+        style={{
+          width: '100%',
+          padding: '0.75rem',
+          border: `1px solid ${tokens.color.borderDefault}`,
+          borderRadius: '0.375rem',
+          fontSize: '1rem',
+        }}
+      />
+    </div>
+  )
+}
+```
+
+Usage:
+
+```tsx
+// Controlled
+const [email, setEmail] = useState('')
+<Input label="Email" value={email} onChange={setEmail} />
+
+// Uncontrolled
+<Input label="Email" defaultValue="user@example.com" />
+```
+
+## AI-Friendly Component APIs
+
+When AI assistants generate components, clear APIs guide them:
+
+**Prompt:**
+```
+Create a modal dialog component using our component API patterns.
+Should support: title, content, footer actions, close callback.
+Use design tokens from @/tokens.
+```
+
+**AI Output:**
+```tsx
+import { tokens } from '@/tokens'
+import { Button } from '@/components/Button'
+import React from 'react'
+
+interface ModalProps {
+  open: boolean
+  onClose: () => void
+  title: string
+  children: React.ReactNode
+  footer?: React.ReactNode
+  size?: 'sm' | 'md' | 'lg'
+}
+
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  size = 'md',
+}: ModalProps) {
+  if (!open) return null
+  
+  const sizeStyles = {
+    sm: { maxWidth: '400px' },
+    md: { maxWidth: '600px' },
+    lg: { maxWidth: '800px' },
+  }
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      inset: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000,
+    }}>
+      <div style={{
+        backgroundColor: tokens.color.surfaceBase,
+        borderRadius: '0.5rem',
+        boxShadow: tokens.elevation.highest,
+        width: '90%',
+        ...sizeStyles[size],
+      }}>
+        {/* Header */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '1.5rem',
+          borderBottom: `1px solid ${tokens.color.borderDefault}`,
+        }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: tokens.color.textPrimary,
+          }}>
+            {title}
+          </h2>
+          
+          <button
+            onClick={onClose}
+            style={{
+              border: 'none',
+              background: 'none',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+              color: tokens.color.textSecondary,
+            }}
+          >
+            ×
+          </button>
+        </div>
+        
+        {/* Content */}
+        <div style={{
+          padding: '1.5rem',
+          color: tokens.color.textPrimary,
+        }}>
+          {children}
+        </div>
+        
+        {/* Footer */}
+        {footer && (
+          <div style={{
+            padding: '1.5rem',
+            borderTop: `1px solid ${tokens.color.borderDefault}`,
+            display: 'flex',
+            justifyContent: 'flex-end',
+            gap: '0.75rem',
+          }}>
+            {footer}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+The AI followed the established patterns:
+- Standard prop names (`open`, `onClose`, `size`)
+- Variant system for sizes
+- Slot-based composition (`footer`)
+- Design token references
+- TypeScript types
+
+## FramingUI Component APIs
+
+FramingUI components follow these patterns out of the box:
+
+```tsx
+import { Button, Card, Input, Modal } from 'framingui'
+
+// Consistent variant systems
+<Button variant="primary" size="md">Submit</Button>
+
+// Slot-based composition
+<Card
+  header="Title"
+  footer={<Button>Action</Button>}
+>
+  Content
+</Card>
+
+// Controlled/uncontrolled support
+<Input label="Email" value={email} onChange={setEmail} />
+<Input label="Name" defaultValue="John" />
+
+// Compound components
+<Tabs defaultTab="profile">
+  <TabList>
+    <Tab value="profile">Profile</Tab>
+  </TabList>
+  <TabPanel value="profile">Content</TabPanel>
+</Tabs>
+```
+
+When connected to AI assistants via MCP, they understand these patterns and generate components that fit seamlessly into your codebase.
+
+## Best Practices
+
+1. **Limit escape hatches**: Avoid `className` and `style` props unless absolutely necessary
+2. **Use enums for variants**: TypeScript enums or string unions, never plain strings
+3. **Consistent naming**: Same prop names across similar components
+4. **Composition over configuration**: Prefer slots and compound components over giant prop interfaces
+5. **Document patterns**: Comment why APIs are designed a certain way
+
+## Conclusion
+
+Component API design determines whether your design system enables consistency or fights against it. Well-designed APIs:
+
+- **Guide developers** toward correct patterns through type constraints
+- **Eliminate ambiguity** with clear prop hierarchies and naming conventions
+- **Enable AI assistants** to generate maintainable code automatically
+- **Scale gracefully** as your component library grows
+
+Combined with design tokens (which solve the "what"), component API patterns solve the "how"—creating a complete system where consistency is automatic, not aspirational.
+
+Further reading:
+- [React Component Patterns](https://www.patterns.dev/posts/react-component-patterns)
+- [Compound Components Pattern](https://kentcdodds.com/blog/compound-components-with-react-hooks)
+- [FramingUI Component API Documentation](https://framingui.tekton.so/docs/api/components)

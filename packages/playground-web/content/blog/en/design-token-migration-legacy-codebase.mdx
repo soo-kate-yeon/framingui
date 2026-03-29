@@ -1,0 +1,739 @@
+---
+title: "Migrating Legacy Codebases to Design Tokens: A Step-by-Step Strategy"
+description: "Migrate existing applications to design token systems without breaking production using automated detection and incremental refactoring."
+date: "2026-03-30"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - migration
+  - refactoring
+  - legacy-code
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+# Migrating Legacy Codebases to Design Tokens: A Step-by-Step Strategy
+
+You've seen the benefits of design tokens: consistency, maintainability, AI compatibility. But your production app has 50,000 lines of CSS with hardcoded `#3b82f6`, `rgba(0,0,0,0.1)`, and `padding: 24px` scattered everywhere. Migrating feels impossible—you can't pause feature development for three months to refactor everything, and any mistake could break production for thousands of users.
+
+The solution isn't a big-bang rewrite. It's an incremental migration strategy where tokens coexist with legacy styles, new code uses tokens from day one, and old code migrates gradually through automated tooling and opportunistic refactoring.
+
+This guide provides a practical, battle-tested migration plan: detecting existing values, generating initial tokens, building codemods, establishing migration boundaries, and measuring progress.
+
+## Why Migration Fails
+
+Most token migration attempts fail for predictable reasons:
+
+1. **Big-bang approach**: Trying to convert everything at once overwhelms the team
+2. **No automated tooling**: Manual find-replace is error-prone and incomplete
+3. **Breaking production**: Subtle color shifts or spacing changes break layouts
+4. **No clear boundaries**: Mixing old and new styles creates unpredictable results
+5. **Lost momentum**: Migration drags on for months, competing with feature work
+
+A successful migration needs:
+
+- **Incremental progress**: Migrate component by component, not file by file
+- **Automated detection**: Tools that find all hardcoded values
+- **Non-breaking changes**: Tokens that match existing values exactly
+- **Clear boundaries**: Isolated "token zones" that don't leak
+- **Measurable progress**: Metrics showing migration percentage
+
+## Phase 1: Audit Existing Styles
+
+Before defining tokens, understand what you have.
+
+### Automated Value Detection
+
+Build a script to extract all hardcoded values from your codebase:
+
+```typescript
+// scripts/audit-styles.ts
+import * as fs from 'fs'
+import * as path from 'path'
+import { glob } from 'glob'
+
+interface StyleValue {
+  type: 'color' | 'spacing' | 'fontSize' | 'fontWeight'
+  value: string
+  occurrences: number
+  files: string[]
+}
+
+async function auditStyles(sourceDir: string): Promise<Map<string, StyleValue>> {
+  const values = new Map<string, StyleValue>()
+  
+  // Patterns to detect
+  const patterns = {
+    color: /#[0-9a-f]{3,8}|rgba?\([^)]+\)|hsl\([^)]+\)/gi,
+    spacing: /\d+(?:px|rem|em)/gi,
+    fontSize: /font-size:\s*(\d+(?:px|rem))/gi,
+    fontWeight: /font-weight:\s*(\d{3})/gi,
+  }
+  
+  // Find all style files
+  const files = await glob(`${sourceDir}/**/*.{css,scss,tsx,jsx}`)
+  
+  for (const file of files) {
+    const content = fs.readFileSync(file, 'utf-8')
+    
+    for (const [type, pattern] of Object.entries(patterns)) {
+      const matches = content.matchAll(pattern)
+      
+      for (const match of matches) {
+        const value = match[0]
+        const existing = values.get(value)
+        
+        if (existing) {
+          existing.occurrences++
+          if (!existing.files.includes(file)) {
+            existing.files.push(file)
+          }
+        } else {
+          values.set(value, {
+            type: type as StyleValue['type'],
+            value,
+            occurrences: 1,
+            files: [file],
+          })
+        }
+      }
+    }
+  }
+  
+  return values
+}
+
+// Run audit
+auditStyles('./src').then(values => {
+  // Sort by occurrence count
+  const sorted = Array.from(values.values()).sort(
+    (a, b) => b.occurrences - a.occurrences
+  )
+  
+  // Output report
+  console.log('=== Style Audit Report ===\n')
+  
+  const byType = {
+    color: sorted.filter(v => v.type === 'color'),
+    spacing: sorted.filter(v => v.type === 'spacing'),
+    fontSize: sorted.filter(v => v.type === 'fontSize'),
+    fontWeight: sorted.filter(v => v.type === 'fontWeight'),
+  }
+  
+  for (const [type, items] of Object.entries(byType)) {
+    console.log(`\n${type.toUpperCase()} (${items.length} unique values):`)
+    items.slice(0, 20).forEach(item => {
+      console.log(`  ${item.value} - ${item.occurrences} occurrences`)
+    })
+  }
+  
+  // Write detailed report to JSON
+  fs.writeFileSync(
+    './style-audit-report.json',
+    JSON.stringify(sorted, null, 2)
+  )
+})
+```
+
+Run this to generate a report:
+
+```bash
+npx tsx scripts/audit-styles.ts
+```
+
+Output:
+
+```
+=== Style Audit Report ===
+
+COLOR (143 unique values):
+  #3b82f6 - 89 occurrences
+  #ffffff - 76 occurrences
+  rgba(0,0,0,0.1) - 54 occurrences
+  #6b7280 - 47 occurrences
+  #10b981 - 34 occurrences
+  ...
+
+SPACING (67 unique values):
+  16px - 234 occurrences
+  24px - 189 occurrences
+  8px - 156 occurrences
+  32px - 98 occurrences
+  ...
+```
+
+### Cluster Similar Values
+
+Normalize similar values to reduce token count:
+
+```typescript
+// scripts/normalize-values.ts
+function normalizeColor(color: string): string {
+  // Convert all formats to hex
+  if (color.startsWith('rgb')) {
+    return rgbToHex(color)
+  }
+  return color.toLowerCase()
+}
+
+function normalizeSpacing(spacing: string): string {
+  // Convert px to rem (assuming 16px = 1rem)
+  if (spacing.endsWith('px')) {
+    const px = parseFloat(spacing)
+    const rem = px / 16
+    return `${rem}rem`
+  }
+  return spacing
+}
+
+function clusterValues(values: StyleValue[]): Map<string, StyleValue[]> {
+  const clusters = new Map<string, StyleValue[]>()
+  
+  for (const value of values) {
+    const normalized = value.type === 'color' 
+      ? normalizeColor(value.value)
+      : normalizeSpacing(value.value)
+    
+    if (!clusters.has(normalized)) {
+      clusters.set(normalized, [])
+    }
+    clusters.get(normalized)!.push(value)
+  }
+  
+  return clusters
+}
+```
+
+This reveals that `#3b82f6`, `#3B82F6`, and `rgb(59, 130, 246)` are the same color—reduce them to a single token.
+
+## Phase 2: Generate Initial Tokens
+
+Create tokens that exactly match existing values:
+
+```typescript
+// scripts/generate-tokens.ts
+import auditReport from './style-audit-report.json'
+
+function generateColorTokens(colors: StyleValue[]): Record<string, string> {
+  // Group by semantic meaning (manual or AI-assisted)
+  const tokens: Record<string, string> = {}
+  
+  // Most common blue → primary
+  tokens.colorPrimary = colors.find(c => c.value === '#3b82f6')?.value || '#3b82f6'
+  
+  // Most common gray → neutral scale
+  const grays = colors.filter(c => isGray(c.value))
+  grays.forEach((gray, i) => {
+    tokens[`colorNeutral${i * 100}`] = gray.value
+  })
+  
+  // Status colors
+  tokens.colorSuccess = colors.find(c => c.value === '#10b981')?.value || '#10b981'
+  tokens.colorError = colors.find(c => c.value === '#ef4444')?.value || '#ef4444'
+  
+  return tokens
+}
+
+function generateSpacingTokens(spacings: StyleValue[]): Record<string, string> {
+  const tokens: Record<string, string> = {}
+  
+  // Create scale from existing values
+  const unique = [...new Set(spacings.map(s => s.value))].sort(
+    (a, b) => parseFloat(a) - parseFloat(b)
+  )
+  
+  // Map to scale (0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32...)
+  unique.forEach((value, i) => {
+    tokens[`spacing${i}`] = value
+  })
+  
+  return tokens
+}
+
+// Generate token file
+const colorTokens = generateColorTokens(auditReport.filter(v => v.type === 'color'))
+const spacingTokens = generateSpacingTokens(auditReport.filter(v => v.type === 'spacing'))
+
+const output = `
+// Generated from legacy styles - do not edit manually
+// Run \`npm run generate-tokens\` to regenerate
+
+export const tokens = {
+  color: ${JSON.stringify(colorTokens, null, 2)},
+  spacing: ${JSON.stringify(spacingTokens, null, 2)},
+}
+`
+
+fs.writeFileSync('./src/tokens/generated.ts', output)
+```
+
+This creates a token file that matches your existing styles exactly—no visual changes.
+
+## Phase 3: Build Migration Tooling
+
+Automate value replacement with codemods:
+
+```typescript
+// scripts/migrate-to-tokens.ts
+import { Project, SyntaxKind } from 'ts-morph'
+import { tokens } from '../src/tokens/generated'
+
+function createTokenLookup(): Map<string, string> {
+  const lookup = new Map<string, string>()
+  
+  // Invert token object: value → token name
+  for (const [category, values] of Object.entries(tokens)) {
+    for (const [name, value] of Object.entries(values)) {
+      lookup.set(value, `tokens.${category}.${name}`)
+    }
+  }
+  
+  return lookup
+}
+
+function migrateFile(filePath: string, lookup: Map<string, string>) {
+  const project = new Project()
+  const sourceFile = project.addSourceFileAtPath(filePath)
+  
+  // Find all string literals
+  sourceFile.getDescendantsOfKind(SyntaxKind.StringLiteral).forEach(node => {
+    const value = node.getLiteralValue()
+    const tokenPath = lookup.get(value)
+    
+    if (tokenPath) {
+      // Replace with token reference
+      node.replaceWithText(tokenPath)
+      
+      // Add import if not present
+      const importDecl = sourceFile.getImportDeclaration(
+        decl => decl.getModuleSpecifierValue() === '@/tokens'
+      )
+      
+      if (!importDecl) {
+        sourceFile.addImportDeclaration({
+          namedImports: ['tokens'],
+          moduleSpecifier: '@/tokens',
+        })
+      }
+    }
+  })
+  
+  // Save changes
+  sourceFile.saveSync()
+}
+
+// Run migration
+const lookup = createTokenLookup()
+const files = glob.sync('./src/components/**/*.{ts,tsx}')
+
+files.forEach(file => {
+  console.log(`Migrating ${file}...`)
+  migrateFile(file, lookup)
+})
+```
+
+### CSS-in-JS Migration
+
+For styled-components or Emotion:
+
+```typescript
+// Before
+const Button = styled.button`
+  background-color: #3b82f6;
+  padding: 16px;
+  font-size: 14px;
+`
+
+// After (automated transformation)
+const Button = styled.button`
+  background-color: ${tokens.color.colorPrimary};
+  padding: ${tokens.spacing.spacing4};
+  font-size: ${tokens.typography.fontSizeSm};
+`
+```
+
+### Inline Styles Migration
+
+For React inline styles:
+
+```typescript
+// Before
+<div style={{
+  backgroundColor: '#3b82f6',
+  padding: '16px',
+  fontSize: '14px',
+}}>
+  Content
+</div>
+
+// After
+<div style={{
+  backgroundColor: tokens.color.colorPrimary,
+  padding: tokens.spacing.spacing4,
+  fontSize: tokens.typography.fontSizeSm,
+}}>
+  Content
+</div>
+```
+
+## Phase 4: Incremental Migration Strategy
+
+Migrate component by component, not file by file:
+
+### Migration Boundaries
+
+1. **New components**: Use tokens from day one (enforce with linting)
+2. **Shared components**: Migrate first (highest impact)
+3. **Page-level components**: Migrate opportunistically during feature work
+4. **Legacy pages**: Migrate last or leave as-is
+
+### Coexistence Strategy
+
+Allow old and new styles to coexist safely:
+
+```tsx
+// components/Button.tsx - MIGRATED
+import { tokens } from '@/tokens'
+
+export function Button({ children }: { children: React.ReactNode }) {
+  return (
+    <button style={{
+      backgroundColor: tokens.color.colorPrimary,
+      padding: tokens.spacing.spacing3,
+      // Token-based styles only
+    }}>
+      {children}
+    </button>
+  )
+}
+```
+
+```tsx
+// pages/legacy-page.tsx - NOT YET MIGRATED
+export function LegacyPage() {
+  return (
+    <div style={{
+      backgroundColor: '#f3f4f6', // Old hardcoded value
+      padding: '24px',            // Old hardcoded value
+    }}>
+      <Button>Use New Button</Button> {/* Uses tokens */}
+    </div>
+  )
+}
+```
+
+Mark migrated components:
+
+```tsx
+// Add JSDoc comment for tracking
+/**
+ * @migrated-to-tokens
+ */
+export function Button() { ... }
+```
+
+### Linting Rules
+
+Prevent new hardcoded values in migrated code:
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'no-hardcoded-colors': 'error',
+    'no-hardcoded-spacing': 'error',
+  },
+  overrides: [
+    {
+      // Exempt legacy files
+      files: ['src/legacy/**/*.tsx'],
+      rules: {
+        'no-hardcoded-colors': 'off',
+        'no-hardcoded-spacing': 'off',
+      },
+    },
+  ],
+}
+```
+
+Custom ESLint rule:
+
+```javascript
+// eslint-rules/no-hardcoded-colors.js
+module.exports = {
+  create(context) {
+    const colorPattern = /#[0-9a-f]{3,6}|rgba?\(/i
+    
+    return {
+      Literal(node) {
+        if (typeof node.value === 'string' && colorPattern.test(node.value)) {
+          context.report({
+            node,
+            message: 'Use design tokens instead of hardcoded colors',
+          })
+        }
+      },
+    }
+  },
+}
+```
+
+## Phase 5: Measure Progress
+
+Track migration percentage:
+
+```typescript
+// scripts/measure-progress.ts
+async function measureProgress() {
+  const allFiles = await glob('./src/**/*.{ts,tsx}')
+  
+  let totalFiles = 0
+  let migratedFiles = 0
+  let legacyValues = 0
+  
+  for (const file of allFiles) {
+    totalFiles++
+    
+    const content = fs.readFileSync(file, 'utf-8')
+    
+    // Check if file imports tokens
+    const usesTokens = content.includes("from '@/tokens'")
+    
+    // Check for hardcoded values
+    const hasHardcodedColors = /#[0-9a-f]{3,6}/i.test(content)
+    const hasHardcodedSpacing = /\d+px/.test(content)
+    
+    if (usesTokens && !hasHardcodedColors && !hasHardcodedSpacing) {
+      migratedFiles++
+    } else {
+      legacyValues += (content.match(/#[0-9a-f]{3,6}/gi) || []).length
+      legacyValues += (content.match(/\d+px/g) || []).length
+    }
+  }
+  
+  const percentage = ((migratedFiles / totalFiles) * 100).toFixed(1)
+  
+  console.log(`
+=== Migration Progress ===
+
+Files migrated: ${migratedFiles} / ${totalFiles} (${percentage}%)
+Remaining hardcoded values: ${legacyValues}
+  `)
+  
+  // Write badge for README
+  const badge = `![Migration Progress](https://img.shields.io/badge/token_migration-${percentage}%25-blue)`
+  fs.writeFileSync('./.github/migration-badge.md', badge)
+}
+
+measureProgress()
+```
+
+Add to CI to track progress over time:
+
+```yaml
+# .github/workflows/measure-migration.yml
+name: Measure Token Migration
+
+on: [push]
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run measure-progress
+      - run: cat .github/migration-badge.md >> $GITHUB_STEP_SUMMARY
+```
+
+## Phase 6: Refine Tokens
+
+Once initial migration is complete, optimize tokens:
+
+### Semantic Naming
+
+Replace generic names with semantic ones:
+
+```typescript
+// Before (generated from audit)
+export const tokens = {
+  color: {
+    color1: '#3b82f6',
+    color2: '#10b981',
+    neutral0: '#ffffff',
+    neutral100: '#f3f4f6',
+  },
+}
+
+// After (semantic refactoring)
+export const tokens = {
+  color: {
+    interactivePrimary: '#3b82f6',
+    statusSuccess: '#10b981',
+    backgroundPrimary: '#ffffff',
+    backgroundSecondary: '#f3f4f6',
+  },
+}
+```
+
+Run a second codemod to update references:
+
+```typescript
+// scripts/rename-tokens.ts
+function renameTokens(filePath: string, mapping: Record<string, string>) {
+  const content = fs.readFileSync(filePath, 'utf-8')
+  let updated = content
+  
+  for (const [oldName, newName] of Object.entries(mapping)) {
+    const regex = new RegExp(`tokens\\.color\\.${oldName}`, 'g')
+    updated = updated.replace(regex, `tokens.color.${newName}`)
+  }
+  
+  if (updated !== content) {
+    fs.writeFileSync(filePath, updated)
+  }
+}
+```
+
+### Consolidate Duplicates
+
+After migration, some tokens may be functionally identical:
+
+```typescript
+// Audit token usage
+function auditTokenUsage() {
+  const usage = new Map<string, number>()
+  
+  // Count references to each token
+  const files = glob.sync('./src/**/*.{ts,tsx}')
+  
+  files.forEach(file => {
+    const content = fs.readFileSync(file, 'utf-8')
+    const matches = content.matchAll(/tokens\.(color|spacing)\.(\w+)/g)
+    
+    for (const match of matches) {
+      const tokenPath = `${match[1]}.${match[2]}`
+      usage.set(tokenPath, (usage.get(tokenPath) || 0) + 1)
+    }
+  })
+  
+  // Find unused tokens
+  const allTokens = Object.keys(tokens.color).map(k => `color.${k}`)
+  const unused = allTokens.filter(t => !usage.has(t))
+  
+  console.log('Unused tokens:', unused)
+}
+```
+
+Remove unused tokens to simplify the system.
+
+## Common Migration Challenges
+
+### Challenge 1: Responsive Values
+
+Legacy code often has media queries with different values:
+
+```css
+.container {
+  padding: 16px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 32px;
+  }
+}
+```
+
+Solution: Use responsive tokens:
+
+```typescript
+export const tokens = {
+  spacing: {
+    containerPadding: {
+      mobile: '1rem',
+      desktop: '2rem',
+    },
+  },
+}
+```
+
+### Challenge 2: Calculated Values
+
+Legacy code uses `calc()`:
+
+```css
+width: calc(100% - 32px);
+```
+
+Solution: Preserve calculation, use tokens for operands:
+
+```typescript
+width: `calc(100% - ${tokens.spacing.spacing8})`
+```
+
+### Challenge 3: Opacity Variants
+
+Legacy code has multiple opacity versions:
+
+```css
+background-color: rgba(59, 130, 246, 0.1);
+background-color: rgba(59, 130, 246, 0.5);
+```
+
+Solution: Create opacity scale:
+
+```typescript
+export const tokens = {
+  opacity: {
+    subtle: '0.1',
+    medium: '0.5',
+    strong: '0.8',
+  },
+}
+
+// Usage
+backgroundColor: `${tokens.color.colorPrimary}${tokens.opacity.subtle}`
+```
+
+## FramingUI Migration Tools
+
+FramingUI provides migration tooling out of the box:
+
+```bash
+# Audit existing styles
+npx framingui audit ./src
+
+# Generate token file from audit
+npx framingui generate-tokens --from-audit
+
+# Migrate component to tokens
+npx framingui migrate ./src/components/Button.tsx
+
+# Measure progress
+npx framingui measure-migration
+```
+
+These tools automate the entire migration process, from detection through transformation to progress tracking.
+
+## Conclusion
+
+Migrating legacy codebases to design tokens doesn't require a big-bang rewrite. A successful migration:
+
+1. **Audits existing styles** to understand what you have
+2. **Generates initial tokens** that match existing values exactly
+3. **Builds automated tooling** to transform code safely
+4. **Migrates incrementally** with clear boundaries
+5. **Measures progress** to maintain momentum
+6. **Refines tokens** once migration is complete
+
+With this strategy, you can migrate large production applications over weeks or months without breaking existing features, while immediately benefiting from tokens in new code.
+
+The key is tooling—manual migration fails. Automated codemods, linting rules, and progress tracking make incremental migration sustainable.
+
+Further reading:
+- [AST Explorer for Building Codemods](https://astexplorer.net/)
+- [ts-morph Documentation](https://ts-morph.com/)
+- [FramingUI Migration Guide](https://framingui.tekton.so/docs/migration/legacy-codebases)

@@ -1,0 +1,816 @@
+---
+title: "Responsive Layout Patterns with Design Tokens: From Mobile to Desktop"
+description: "Build fluid, responsive layouts using design tokens for breakpoints, spacing scales, and container widths across all screen sizes."
+date: "2026-03-30"
+author:
+  name: "FramingUI Team"
+tags:
+  - responsive-design
+  - design-tokens
+  - layout
+  - mobile-first
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+# Responsive Layout Patterns with Design Tokens: From Mobile to Desktop
+
+Most responsive design implementations use magic numbers scattered across media queries: `max-width: 768px`, `padding: 2rem`, `gap: 1.5rem`. Each breakpoint duplicates these values with slight variations. When you need to adjust spacing or change a breakpoint, you hunt through CSS files updating numbers one by one.
+
+Design tokens solve this by centralizing responsive logic into a single source of truth. Instead of maintaining separate mobile, tablet, and desktop styles, you define a spacing scale, breakpoint system, and container constraints once—then reference them throughout your components.
+
+When AI assistants generate layouts using these tokens, they automatically produce responsive designs that adapt correctly across all screen sizes without manual media query management.
+
+This guide covers responsive layout patterns using design tokens, from basic fluid typography to complex grid systems.
+
+## The Problem with Hardcoded Breakpoints
+
+Consider a typical component with manual breakpoints:
+
+```css
+.container {
+  padding: 1rem;
+  max-width: 1200px;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 2.5rem;
+    max-width: 1280px;
+  }
+}
+```
+
+Now replicate this across 50 components. When your design team decides the tablet breakpoint should be 768px instead of 640px, you have hundreds of updates to make.
+
+## Token-Based Responsive Architecture
+
+A token-based system separates *what* changes from *when* it changes:
+
+```typescript
+// tokens/breakpoints.ts
+export const breakpoints = {
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
+  '2xl': '1536px',
+}
+
+// tokens/spacing.ts
+export const spacing = {
+  container: {
+    mobile:  '1rem',    // 16px
+    tablet:  '1.5rem',  // 24px
+    desktop: '2.5rem',  // 40px
+  },
+  section: {
+    mobile:  '2rem',    // 32px
+    tablet:  '3rem',    // 48px
+    desktop: '4rem',    // 64px
+  },
+  element: {
+    xs: '0.25rem',  // 4px
+    sm: '0.5rem',   // 8px
+    md: '1rem',     // 16px
+    lg: '1.5rem',   // 24px
+    xl: '2rem',     // 32px
+  },
+}
+
+// tokens/layout.ts
+export const layout = {
+  containerMaxWidth: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+  },
+  contentMaxWidth: '65ch', // Optimal reading width
+}
+```
+
+Now your component references tokens instead of magic numbers:
+
+```tsx
+// components/Container.tsx
+import { breakpoints, spacing, layout } from '@/tokens'
+
+export function Container({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      width: '100%',
+      maxWidth: layout.containerMaxWidth.xl,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      padding: spacing.container.mobile,
+      
+      [`@media (min-width: ${breakpoints.md})`]: {
+        padding: spacing.container.tablet,
+      },
+      
+      [`@media (min-width: ${breakpoints.lg})`]: {
+        padding: spacing.container.desktop,
+      },
+    }}>
+      {children}
+    </div>
+  )
+}
+```
+
+Change the `md` breakpoint once, and every component updates automatically.
+
+## Fluid Typography with Clamp
+
+Modern CSS `clamp()` eliminates breakpoint-specific font sizes by defining a fluid scale:
+
+```typescript
+// tokens/typography.ts
+export const typography = {
+  // Fluid scale: min size, preferred (viewport-based), max size
+  fontSize: {
+    xs:   'clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem)',    // 12-14px
+    sm:   'clamp(0.875rem, 0.8rem + 0.375vw, 1rem)',      // 14-16px
+    base: 'clamp(1rem, 0.9rem + 0.5vw, 1.125rem)',        // 16-18px
+    lg:   'clamp(1.125rem, 1rem + 0.625vw, 1.25rem)',     // 18-20px
+    xl:   'clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem)',      // 20-24px
+    '2xl': 'clamp(1.5rem, 1.3rem + 1vw, 2rem)',           // 24-32px
+    '3xl': 'clamp(1.875rem, 1.6rem + 1.375vw, 2.5rem)',   // 30-40px
+    '4xl': 'clamp(2.25rem, 1.9rem + 1.75vw, 3rem)',       // 36-48px
+  },
+  
+  lineHeight: {
+    tight:  '1.25',
+    normal: '1.5',
+    relaxed: '1.75',
+  },
+  
+  letterSpacing: {
+    tight:  '-0.025em',
+    normal: '0',
+    wide:   '0.025em',
+  },
+}
+```
+
+Now your headings scale smoothly without media queries:
+
+```tsx
+// components/Heading.tsx
+import { typography } from '@/tokens/typography'
+
+export function Heading({ level = 1, children }) {
+  const Tag = `h${level}` as const
+  
+  const sizeMap = {
+    1: typography.fontSize['4xl'],
+    2: typography.fontSize['3xl'],
+    3: typography.fontSize['2xl'],
+    4: typography.fontSize.xl,
+    5: typography.fontSize.lg,
+    6: typography.fontSize.base,
+  }
+  
+  return (
+    <Tag style={{
+      fontSize: sizeMap[level],
+      lineHeight: typography.lineHeight.tight,
+      letterSpacing: typography.letterSpacing.tight,
+    }}>
+      {children}
+    </Tag>
+  )
+}
+```
+
+On a 375px mobile screen, `h1` renders at 36px. On a 1920px desktop, it's 48px. Between those points, it scales proportionally—no breakpoints needed.
+
+## Responsive Grid System
+
+Build a flexible grid using tokens for gaps and columns:
+
+```typescript
+// tokens/grid.ts
+export const grid = {
+  columns: {
+    mobile: 4,
+    tablet: 8,
+    desktop: 12,
+  },
+  
+  gap: {
+    mobile:  spacing.element.sm,  // 8px
+    tablet:  spacing.element.md,  // 16px
+    desktop: spacing.element.lg,  // 24px
+  },
+}
+```
+
+```tsx
+// components/Grid.tsx
+import { breakpoints, grid } from '@/tokens'
+
+interface GridProps {
+  children: React.ReactNode
+  cols?: {
+    mobile?: number
+    tablet?: number
+    desktop?: number
+  }
+  gap?: string
+}
+
+export function Grid({ 
+  children, 
+  cols = { mobile: 1, tablet: 2, desktop: 3 },
+  gap 
+}: GridProps) {
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: `repeat(${cols.mobile}, 1fr)`,
+      gap: gap || grid.gap.mobile,
+      
+      [`@media (min-width: ${breakpoints.md})`]: {
+        gridTemplateColumns: `repeat(${cols.tablet}, 1fr)`,
+        gap: gap || grid.gap.tablet,
+      },
+      
+      [`@media (min-width: ${breakpoints.lg})`]: {
+        gridTemplateColumns: `repeat(${cols.desktop}, 1fr)`,
+        gap: gap || grid.gap.desktop,
+      },
+    }}>
+      {children}
+    </div>
+  )
+}
+```
+
+Usage:
+
+```tsx
+<Grid cols={{ mobile: 1, tablet: 2, desktop: 4 }}>
+  <Card>Product 1</Card>
+  <Card>Product 2</Card>
+  <Card>Product 3</Card>
+  <Card>Product 4</Card>
+</Grid>
+```
+
+On mobile: 1 column. Tablet: 2 columns. Desktop: 4 columns. The gap scales with the viewport automatically.
+
+## Responsive Spacing Stack
+
+Vertical spacing that adapts to screen size:
+
+```typescript
+// tokens/spacing.ts
+export const stackSpacing = {
+  xs: {
+    mobile:  '0.5rem',  // 8px
+    desktop: '0.75rem', // 12px
+  },
+  sm: {
+    mobile:  '1rem',    // 16px
+    desktop: '1.5rem',  // 24px
+  },
+  md: {
+    mobile:  '1.5rem',  // 24px
+    desktop: '2rem',    // 32px
+  },
+  lg: {
+    mobile:  '2rem',    // 32px
+    desktop: '3rem',    // 48px
+  },
+  xl: {
+    mobile:  '3rem',    // 48px
+    desktop: '4rem',    // 64px
+  },
+}
+```
+
+```tsx
+// components/Stack.tsx
+import { breakpoints, stackSpacing } from '@/tokens'
+
+interface StackProps {
+  children: React.ReactNode
+  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+}
+
+export function Stack({ children, gap = 'md' }: StackProps) {
+  const gapValue = stackSpacing[gap]
+  
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: gapValue.mobile,
+      
+      [`@media (min-width: ${breakpoints.lg})`]: {
+        gap: gapValue.desktop,
+      },
+    }}>
+      {children}
+    </div>
+  )
+}
+```
+
+## Fluid Container Width
+
+Containers that adapt to content and viewport:
+
+```typescript
+// tokens/container.ts
+export const container = {
+  // Content-first containers
+  narrow:  '45rem',   // 720px - Forms, single-column content
+  content: '65rem',   // 1040px - Articles, blog posts
+  wide:    '80rem',   // 1280px - Dashboards, wide layouts
+  full:    '90rem',   // 1440px - Marketing pages
+  
+  // Percentage-based with max
+  fluid: {
+    width: '90%',
+    maxWidth: '75rem', // 1200px
+  },
+  
+  // Padding (safe area)
+  padding: {
+    mobile:  '1rem',
+    tablet:  '2rem',
+    desktop: '3rem',
+  },
+}
+```
+
+```tsx
+// components/Container.tsx
+import { breakpoints, container } from '@/tokens'
+
+interface ContainerProps {
+  children: React.ReactNode
+  size?: 'narrow' | 'content' | 'wide' | 'full' | 'fluid'
+}
+
+export function Container({ children, size = 'content' }: ContainerProps) {
+  const getWidth = () => {
+    if (size === 'fluid') {
+      return {
+        width: container.fluid.width,
+        maxWidth: container.fluid.maxWidth,
+      }
+    }
+    return { maxWidth: container[size] }
+  }
+  
+  return (
+    <div style={{
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      paddingLeft: container.padding.mobile,
+      paddingRight: container.padding.mobile,
+      ...getWidth(),
+      
+      [`@media (min-width: ${breakpoints.md})`]: {
+        paddingLeft: container.padding.tablet,
+        paddingRight: container.padding.tablet,
+      },
+      
+      [`@media (min-width: ${breakpoints.lg})`]: {
+        paddingLeft: container.padding.desktop,
+        paddingRight: container.padding.desktop,
+      },
+    }}>
+      {children}
+    </div>
+  )
+}
+```
+
+## Aspect Ratio Tokens
+
+Maintain consistent aspect ratios across devices:
+
+```typescript
+// tokens/aspect-ratio.ts
+export const aspectRatio = {
+  square:    '1 / 1',
+  video:     '16 / 9',
+  portrait:  '3 / 4',
+  landscape: '4 / 3',
+  wide:      '21 / 9',
+  card:      '3 / 2',
+}
+```
+
+```tsx
+// components/AspectRatio.tsx
+import { aspectRatio } from '@/tokens'
+
+interface AspectRatioProps {
+  ratio: keyof typeof aspectRatio
+  children: React.ReactNode
+}
+
+export function AspectRatio({ ratio, children }: AspectRatioProps) {
+  return (
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      aspectRatio: aspectRatio[ratio],
+    }}>
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+      }}>
+        {children}
+      </div>
+    </div>
+  )
+}
+```
+
+Usage:
+
+```tsx
+<AspectRatio ratio="video">
+  <img src="/thumbnail.jpg" alt="Video thumbnail" />
+</AspectRatio>
+```
+
+## Responsive Navigation Pattern
+
+A header that adapts from mobile hamburger to desktop horizontal nav:
+
+```tsx
+// components/Header.tsx
+import { breakpoints, spacing, layout } from '@/tokens'
+import { useState } from 'react'
+
+export function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  
+  return (
+    <header style={{
+      position: 'sticky',
+      top: 0,
+      backgroundColor: 'white',
+      borderBottom: '1px solid #e5e7eb',
+      zIndex: 50,
+    }}>
+      <div style={{
+        maxWidth: layout.containerMaxWidth.xl,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        padding: spacing.container.mobile,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        
+        [`@media (min-width: ${breakpoints.lg})`]: {
+          padding: spacing.container.desktop,
+        },
+      }}>
+        {/* Logo */}
+        <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+          Brand
+        </div>
+        
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          style={{
+            display: 'block',
+            [`@media (min-width: ${breakpoints.lg})`]: {
+              display: 'none',
+            },
+          }}
+        >
+          <svg width="24" height="24" fill="none" stroke="currentColor">
+            <path d="M4 6h16M4 12h16M4 18h16" strokeWidth="2" />
+          </svg>
+        </button>
+        
+        {/* Desktop nav */}
+        <nav style={{
+          display: 'none',
+          [`@media (min-width: ${breakpoints.lg})`]: {
+            display: 'flex',
+            gap: spacing.element.lg,
+          },
+        }}>
+          <a href="/features">Features</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/docs">Docs</a>
+          <a href="/blog">Blog</a>
+        </nav>
+      </div>
+      
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <nav style={{
+          padding: spacing.container.mobile,
+          borderTop: '1px solid #e5e7eb',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: spacing.element.md,
+          
+          [`@media (min-width: ${breakpoints.lg})`]: {
+            display: 'none',
+          },
+        }}>
+          <a href="/features">Features</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/docs">Docs</a>
+          <a href="/blog">Blog</a>
+        </nav>
+      )}
+    </header>
+  )
+}
+```
+
+## Real-World Example: Product Grid
+
+Combining multiple responsive patterns:
+
+```tsx
+// components/ProductGrid.tsx
+import { breakpoints, spacing, grid } from '@/tokens'
+
+interface Product {
+  id: string
+  name: string
+  price: string
+  image: string
+}
+
+interface ProductGridProps {
+  products: Product[]
+}
+
+export function ProductGrid({ products }: ProductGridProps) {
+  return (
+    <section style={{
+      padding: `${spacing.section.mobile} ${spacing.container.mobile}`,
+      
+      [`@media (min-width: ${breakpoints.md})`]: {
+        padding: `${spacing.section.tablet} ${spacing.container.tablet}`,
+      },
+      
+      [`@media (min-width: ${breakpoints.lg})`]: {
+        padding: `${spacing.section.desktop} ${spacing.container.desktop}`,
+      },
+    }}>
+      <h2 style={{
+        fontSize: 'clamp(1.5rem, 1.3rem + 1vw, 2rem)',
+        marginBottom: spacing.element.xl,
+      }}>
+        Featured Products
+      </h2>
+      
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(1, 1fr)',
+        gap: grid.gap.mobile,
+        
+        [`@media (min-width: ${breakpoints.sm})`]: {
+          gridTemplateColumns: 'repeat(2, 1fr)',
+        },
+        
+        [`@media (min-width: ${breakpoints.md})`]: {
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: grid.gap.tablet,
+        },
+        
+        [`@media (min-width: ${breakpoints.lg})`]: {
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gap: grid.gap.desktop,
+        },
+      }}>
+        {products.map(product => (
+          <article key={product.id} style={{
+            borderRadius: '0.5rem',
+            overflow: 'hidden',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          }}>
+            <div style={{
+              aspectRatio: '1 / 1',
+              backgroundColor: '#f3f4f6',
+            }}>
+              <img 
+                src={product.image} 
+                alt={product.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+            
+            <div style={{ padding: spacing.element.md }}>
+              <h3 style={{
+                fontSize: 'clamp(1rem, 0.9rem + 0.5vw, 1.125rem)',
+                marginBottom: spacing.element.xs,
+              }}>
+                {product.name}
+              </h3>
+              <p style={{
+                fontSize: 'clamp(0.875rem, 0.8rem + 0.375vw, 1rem)',
+                color: '#6b7280',
+              }}>
+                {product.price}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}
+```
+
+This grid:
+- Shows 1 column on mobile
+- Expands to 2 columns at 640px
+- 3 columns at 768px
+- 4 columns at 1024px
+- Gap spacing increases with viewport
+- Typography scales fluidly
+- Images maintain 1:1 aspect ratio
+
+All controlled by tokens.
+
+## Using Tokens with AI Assistants
+
+When you provide these tokens to AI coding assistants, they generate responsive layouts automatically:
+
+**Prompt:**
+```
+Create a feature section with heading, description, and 3 cards.
+Use responsive grid from @/tokens, fluid typography, and proper spacing.
+Mobile: stack vertically. Tablet: 2 columns. Desktop: 3 columns.
+```
+
+**AI Output:**
+```tsx
+import { breakpoints, spacing, grid, typography } from '@/tokens'
+
+export function FeatureSection() {
+  const features = [
+    { title: 'Fast', description: 'Optimized for speed', icon: '⚡' },
+    { title: 'Secure', description: 'Built with security first', icon: '🔒' },
+    { title: 'Scalable', description: 'Grows with your needs', icon: '📈' },
+  ]
+  
+  return (
+    <section style={{
+      padding: `${spacing.section.mobile} ${spacing.container.mobile}`,
+      maxWidth: layout.containerMaxWidth.xl,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      
+      [`@media (min-width: ${breakpoints.lg})`]: {
+        padding: `${spacing.section.desktop} ${spacing.container.desktop}`,
+      },
+    }}>
+      <h2 style={{
+        fontSize: typography.fontSize['3xl'],
+        lineHeight: typography.lineHeight.tight,
+        marginBottom: spacing.element.md,
+        textAlign: 'center',
+      }}>
+        Why Choose Us
+      </h2>
+      
+      <p style={{
+        fontSize: typography.fontSize.lg,
+        color: '#6b7280',
+        textAlign: 'center',
+        maxWidth: '40rem',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginBottom: spacing.element.xl,
+      }}>
+        Built for developers who value quality and performance
+      </p>
+      
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gap: grid.gap.mobile,
+        
+        [`@media (min-width: ${breakpoints.md})`]: {
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: grid.gap.tablet,
+        },
+        
+        [`@media (min-width: ${breakpoints.lg})`]: {
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: grid.gap.desktop,
+        },
+      }}>
+        {features.map(feature => (
+          <div key={feature.title} style={{
+            padding: spacing.element.lg,
+            border: '1px solid #e5e7eb',
+            borderRadius: '0.5rem',
+          }}>
+            <div style={{
+              fontSize: typography.fontSize['2xl'],
+              marginBottom: spacing.element.sm,
+            }}>
+              {feature.icon}
+            </div>
+            <h3 style={{
+              fontSize: typography.fontSize.xl,
+              marginBottom: spacing.element.xs,
+            }}>
+              {feature.title}
+            </h3>
+            <p style={{
+              fontSize: typography.fontSize.base,
+              color: '#6b7280',
+            }}>
+              {feature.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+```
+
+The AI understood the token structure and created a fully responsive section with proper spacing, fluid typography, and adaptive grid—no manual breakpoint tuning needed.
+
+## FramingUI's Responsive System
+
+FramingUI provides pre-configured responsive tokens and utilities. Instead of defining breakpoints manually, you can use the built-in system:
+
+```typescript
+// framingui.config.ts
+import { defineConfig } from 'framingui'
+
+export default defineConfig({
+  theme: {
+    extend: {
+      breakpoints: {
+        xs: '475px',  // Custom extra-small breakpoint
+      },
+      spacing: {
+        section: {
+          mobile: '2rem',
+          tablet: '4rem',
+          desktop: '6rem',
+        },
+      },
+    },
+  },
+})
+```
+
+FramingUI's responsive components automatically adapt to your token configuration. When connected to AI assistants via MCP, they can query your exact responsive specifications and generate layouts that match your design system perfectly.
+
+## Best Practices
+
+1. **Mobile-first approach**: Define base styles for mobile, then enhance for larger screens
+2. **Fluid scales over fixed breakpoints**: Use `clamp()` for typography and spacing when possible
+3. **Semantic breakpoint names**: `md`, `lg` are more maintainable than `768px`, `1024px`
+4. **Consistent spacing scale**: Use token references, not arbitrary values
+5. **Test on real devices**: Emulators don't catch all responsive issues
+6. **Consider touch targets**: Minimum 44×44px for interactive elements on mobile
+
+## Conclusion
+
+Responsive design with design tokens transforms breakpoint management from scattered magic numbers into a centralized, maintainable system. By defining breakpoints, spacing scales, and layout constraints once, you enable:
+
+- **Consistency**: Same responsive behavior across all components
+- **Maintainability**: Change one token, update everywhere
+- **AI compatibility**: Assistants generate responsive layouts automatically
+- **Performance**: Fewer media queries, more efficient CSS
+
+You can implement this architecture from scratch or use FramingUI's pre-configured responsive system. Either way, the benefits are the same: responsive designs that adapt gracefully across all devices with minimal manual intervention.
+
+Further reading:
+- [Intrinsic Web Design (Jen Simmons)](https://www.youtube.com/watch?v=AMPKmh98XLY)
+- [Utopia Fluid Responsive Design](https://utopia.fyi/)
+- [FramingUI Responsive Documentation](https://framingui.tekton.so/docs/layout/responsive)

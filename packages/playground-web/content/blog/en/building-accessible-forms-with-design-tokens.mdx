@@ -1,0 +1,734 @@
+---
+title: "Building Accessible Forms with Design Tokens: A Complete Guide"
+description: "Build WCAG-compliant forms using design tokens for consistent spacing, color contrast, focus states, and error handling."
+date: "2026-03-30"
+author:
+  name: "FramingUI Team"
+tags:
+  - accessibility
+  - design-tokens
+  - forms
+  - wcag
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+# Building Accessible Forms with Design Tokens: A Complete Guide
+
+Forms are the most common point of failure for web accessibility. A single missing label, insufficient color contrast, or ambiguous error message can block entire user groups from completing critical tasks. Yet most form implementations treat accessibility as an afterthought—something to audit after the component is built.
+
+Design tokens flip this model. Instead of retrofitting accessibility, you encode it into the constraints that generate your forms. When your input field automatically inherits proper focus states, minimum touch targets, and semantic color mappings from tokens, accessibility becomes a default outcome rather than a manual checklist.
+
+This guide shows you how to structure design tokens specifically for form accessibility, covering color contrast, spacing, states, and error handling with practical examples you can implement today.
+
+## Why Forms Fail Accessibility
+
+Most form accessibility issues stem from inconsistency and missing context:
+
+- **Color-only error indicators**: Red text without icons or explicit error messages fails for colorblind users
+- **Insufficient contrast**: Light gray placeholders on white backgrounds fall below 4.5:1 minimum
+- **Tiny touch targets**: 20px buttons fail on mobile (minimum is 44×44px)
+- **Missing focus indicators**: Keyboard users lose their place without visible focus states
+- **Ambiguous labels**: "Name" could mean full name, first name, or username
+
+The root problem isn't that developers ignore accessibility—it's that every form field requires dozens of micro-decisions, and manual implementation introduces variance.
+
+## Token Architecture for Accessible Forms
+
+A robust form token system needs four layers:
+
+1. **Primitive tokens**: Base values (colors, spacing, typography)
+2. **Semantic tokens**: Intent-based mappings (error, success, focus)
+3. **Component tokens**: Form-specific constraints (input height, label spacing)
+4. **State tokens**: Interaction feedback (hover, focus, disabled, error)
+
+Let's build each layer.
+
+### Layer 1: Color Primitives with Contrast Ratios
+
+Start with a primitive palette that encodes WCAG AA contrast ratios (4.5:1 for normal text, 3:1 for large text and UI components):
+
+```typescript
+// tokens/primitives/colors.ts
+export const colorPrimitives = {
+  // Neutral scale optimized for contrast
+  neutral: {
+    0:   'oklch(1.00 0 0)',      // Pure white
+    50:  'oklch(0.98 0 0)',      // Off-white background
+    100: 'oklch(0.95 0 0)',      // Input background
+    200: 'oklch(0.90 0 0)',      // Disabled background
+    300: 'oklch(0.75 0 0)',      // Disabled text (3.8:1 on white)
+    500: 'oklch(0.55 0 0)',      // Placeholder text (4.6:1 on white)
+    700: 'oklch(0.40 0 0)',      // Secondary text (7.2:1)
+    900: 'oklch(0.20 0 0)',      // Primary text (15.4:1)
+  },
+  
+  // Semantic colors with guaranteed contrast
+  blue: {
+    500: 'oklch(0.55 0.15 250)', // Interactive (4.5:1 on white)
+    600: 'oklch(0.48 0.16 250)', // Interactive hover (6.1:1)
+    700: 'oklch(0.40 0.17 250)', // Focus ring (7.8:1)
+  },
+  
+  red: {
+    500: 'oklch(0.55 0.20 25)',  // Error (4.5:1)
+    600: 'oklch(0.48 0.22 25)',  // Error hover (6.2:1)
+    50:  'oklch(0.97 0.02 25)',  // Error background
+  },
+  
+  green: {
+    600: 'oklch(0.50 0.15 145)', // Success (5.2:1)
+    50:  'oklch(0.97 0.02 145)', // Success background
+  },
+}
+```
+
+Notice the OKLCH format—it provides perceptually uniform lightness, making it easier to guarantee contrast ratios across hue variations.
+
+### Layer 2: Semantic Form Tokens
+
+Map primitives to form-specific semantic meanings:
+
+```typescript
+// tokens/semantic/forms.ts
+import { colorPrimitives } from '../primitives/colors'
+
+export const formColors = {
+  // Input fields
+  inputBackground:        colorPrimitives.neutral[100],
+  inputBackgroundHover:   colorPrimitives.neutral[50],
+  inputBackgroundFocus:   colorPrimitives.neutral[0],
+  inputBackgroundDisabled: colorPrimitives.neutral[200],
+  
+  inputBorder:           colorPrimitives.neutral[300],
+  inputBorderHover:      colorPrimitives.neutral[500],
+  inputBorderFocus:      colorPrimitives.blue[600],
+  inputBorderError:      colorPrimitives.red[500],
+  inputBorderDisabled:   colorPrimitives.neutral[300],
+  
+  // Text content
+  inputText:             colorPrimitives.neutral[900],
+  inputTextDisabled:     colorPrimitives.neutral[300],
+  inputPlaceholder:      colorPrimitives.neutral[500],
+  
+  labelText:             colorPrimitives.neutral[900],
+  labelTextOptional:     colorPrimitives.neutral[700],
+  
+  // Validation states
+  errorText:             colorPrimitives.red[600],
+  errorBackground:       colorPrimitives.red[50],
+  errorIcon:             colorPrimitives.red[600],
+  
+  successText:           colorPrimitives.green[600],
+  successBackground:     colorPrimitives.green[50],
+  
+  // Focus indicators
+  focusRing:             colorPrimitives.blue[700],
+  focusRingOffset:       colorPrimitives.neutral[0],
+}
+```
+
+These semantic names communicate *when* to use each color, making it clear to both humans and AI assistants.
+
+### Layer 3: Spacing and Sizing Tokens
+
+Define minimum touch targets and consistent spacing:
+
+```typescript
+// tokens/semantic/spacing.ts
+export const formSpacing = {
+  // Touch targets (minimum 44×44px for WCAG AA)
+  inputHeightSmall:   '2.75rem',  // 44px
+  inputHeightMedium:  '3rem',     // 48px
+  inputHeightLarge:   '3.5rem',   // 56px
+  
+  // Internal padding
+  inputPaddingX:      '0.75rem',  // 12px
+  inputPaddingY:      '0.625rem', // 10px
+  
+  // Spacing between elements
+  labelToInput:       '0.5rem',   // 8px
+  inputToHint:        '0.375rem', // 6px
+  inputToError:       '0.5rem',   // 8px
+  fieldGap:           '1.5rem',   // 24px
+  
+  // Focus ring
+  focusRingWidth:     '3px',
+  focusRingOffset:    '2px',
+}
+
+export const formTypography = {
+  labelSize:      '0.875rem', // 14px
+  inputSize:      '1rem',     // 16px (prevents iOS zoom)
+  hintSize:       '0.875rem', // 14px
+  errorSize:      '0.875rem', // 14px
+  
+  labelWeight:    '500',
+  inputWeight:    '400',
+}
+```
+
+The `inputSize: '1rem'` (16px) is critical—iOS Safari auto-zooms on input focus if the font size is below 16px, disrupting the user experience.
+
+### Layer 4: State Tokens
+
+Encode all interaction states:
+
+```typescript
+// tokens/semantic/states.ts
+export const formStates = {
+  default: {
+    background: formColors.inputBackground,
+    border: formColors.inputBorder,
+    text: formColors.inputText,
+    placeholder: formColors.inputPlaceholder,
+  },
+  
+  hover: {
+    background: formColors.inputBackgroundHover,
+    border: formColors.inputBorderHover,
+  },
+  
+  focus: {
+    background: formColors.inputBackgroundFocus,
+    border: formColors.inputBorderFocus,
+    ring: formColors.focusRing,
+    ringOffset: formColors.focusRingOffset,
+  },
+  
+  disabled: {
+    background: formColors.inputBackgroundDisabled,
+    border: formColors.inputBorderDisabled,
+    text: formColors.inputTextDisabled,
+    cursor: 'not-allowed',
+  },
+  
+  error: {
+    border: formColors.inputBorderError,
+    text: formColors.errorText,
+    background: formColors.errorBackground,
+    icon: formColors.errorIcon,
+  },
+}
+```
+
+## Building an Accessible Input Component
+
+Now let's apply these tokens to a React input component with full accessibility support:
+
+```tsx
+// components/FormInput.tsx
+import { formColors, formSpacing, formTypography, formStates } from '@/tokens'
+import { useState } from 'react'
+
+interface FormInputProps {
+  id: string
+  label: string
+  type?: 'text' | 'email' | 'password' | 'tel'
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  required?: boolean
+  disabled?: boolean
+  error?: string
+  hint?: string
+  autoComplete?: string
+}
+
+export function FormInput({
+  id,
+  label,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  disabled = false,
+  error,
+  hint,
+  autoComplete,
+}: FormInputProps) {
+  const [isFocused, setIsFocused] = useState(false)
+  
+  const hasError = Boolean(error)
+  const describedByIds = [
+    hint && `${id}-hint`,
+    error && `${id}-error`,
+  ].filter(Boolean).join(' ')
+  
+  return (
+    <div style={{ marginBottom: formSpacing.fieldGap }}>
+      {/* Label */}
+      <label
+        htmlFor={id}
+        style={{
+          display: 'block',
+          fontSize: formTypography.labelSize,
+          fontWeight: formTypography.labelWeight,
+          color: formColors.labelText,
+          marginBottom: formSpacing.labelToInput,
+        }}
+      >
+        {label}
+        {!required && (
+          <span
+            style={{
+              marginLeft: '0.25rem',
+              fontWeight: '400',
+              color: formColors.labelTextOptional,
+            }}
+          >
+            (optional)
+          </span>
+        )}
+      </label>
+      
+      {/* Hint text */}
+      {hint && !error && (
+        <p
+          id={`${id}-hint`}
+          style={{
+            fontSize: formTypography.hintSize,
+            color: formColors.labelTextOptional,
+            marginBottom: formSpacing.inputToHint,
+            marginTop: 0,
+          }}
+        >
+          {hint}
+        </p>
+      )}
+      
+      {/* Input field */}
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        placeholder={placeholder}
+        required={required}
+        disabled={disabled}
+        autoComplete={autoComplete}
+        aria-invalid={hasError}
+        aria-describedby={describedByIds || undefined}
+        style={{
+          width: '100%',
+          height: formSpacing.inputHeightMedium,
+          padding: `${formSpacing.inputPaddingY} ${formSpacing.inputPaddingX}`,
+          fontSize: formTypography.inputSize,
+          fontWeight: formTypography.inputWeight,
+          
+          // State-dependent styles
+          backgroundColor: disabled 
+            ? formStates.disabled.background
+            : hasError
+            ? formStates.error.background
+            : isFocused
+            ? formStates.focus.background
+            : formStates.default.background,
+            
+          borderWidth: '1px',
+          borderStyle: 'solid',
+          borderColor: disabled
+            ? formStates.disabled.border
+            : hasError
+            ? formStates.error.border
+            : isFocused
+            ? formStates.focus.border
+            : formStates.default.border,
+            
+          borderRadius: '0.375rem',
+          color: disabled ? formStates.disabled.text : formStates.default.text,
+          cursor: disabled ? formStates.disabled.cursor : 'text',
+          
+          // Focus ring
+          outline: isFocused ? `${formSpacing.focusRingWidth} solid ${formStates.focus.ring}` : 'none',
+          outlineOffset: formSpacing.focusRingOffset,
+          
+          transition: 'all 150ms ease',
+        }}
+      />
+      
+      {/* Error message */}
+      {error && (
+        <div
+          id={`${id}-error`}
+          role="alert"
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.5rem',
+            marginTop: formSpacing.inputToError,
+            fontSize: formTypography.errorSize,
+            color: formColors.errorText,
+          }}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            aria-hidden="true"
+            style={{ flexShrink: 0, marginTop: '0.125rem' }}
+          >
+            <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm1 13H7v-2h2v2zm0-3H7V4h2v6z"/>
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Accessibility Features
+
+This component implements multiple WCAG 2.1 AA requirements:
+
+1. **Proper labeling**: `<label htmlFor={id}>` explicitly associates label with input
+2. **Required indicators**: Visual and semantic (HTML `required` attribute)
+3. **Error announcement**: `role="alert"` announces errors to screen readers immediately
+4. **Descriptive relationships**: `aria-describedby` links hint and error text
+5. **Invalid state**: `aria-invalid={hasError}` communicates validation state
+6. **Visible focus**: 3px outline with 2px offset meets minimum size requirements
+7. **Color + icon**: Error state uses both color and icon (not color alone)
+8. **Touch target**: 48px minimum height exceeds WCAG's 44×44px requirement
+9. **Font size**: 16px prevents iOS auto-zoom
+10. **High contrast**: All color combinations meet 4.5:1 minimum
+
+## Using the Component with AI Assistants
+
+When you provide these tokens to AI coding assistants (Claude Code, Cursor, etc.), they can generate accessible forms automatically. Here's an example prompt:
+
+```
+Create a user registration form with email, password, and confirm password fields.
+Use FormInput component from @/components and form tokens from @/tokens.
+Include proper validation and error handling.
+```
+
+The AI will reference your tokens and produce:
+
+```tsx
+// app/register/page.tsx
+import { FormInput } from '@/components/FormInput'
+import { useState } from 'react'
+
+export default function RegisterPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  
+  const validateEmail = (value: string) => {
+    if (!value) return 'Email is required'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return 'Please enter a valid email address'
+    }
+    return ''
+  }
+  
+  const validatePassword = (value: string) => {
+    if (!value) return 'Password is required'
+    if (value.length < 8) return 'Password must be at least 8 characters'
+    return ''
+  }
+  
+  const validateConfirmPassword = (value: string) => {
+    if (!value) return 'Please confirm your password'
+    if (value !== password) return 'Passwords do not match'
+    return ''
+  }
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    const newErrors = {
+      email: validateEmail(email),
+      password: validatePassword(password),
+      confirmPassword: validateConfirmPassword(confirmPassword),
+    }
+    
+    setErrors(newErrors)
+    
+    if (!Object.values(newErrors).some(Boolean)) {
+      // Submit form
+      console.log('Form valid, submitting:', { email, password })
+    }
+  }
+  
+  return (
+    <form onSubmit={handleSubmit} style={{ maxWidth: '400px', margin: '0 auto' }}>
+      <h1>Create Account</h1>
+      
+      <FormInput
+        id="email"
+        label="Email"
+        type="email"
+        value={email}
+        onChange={setEmail}
+        error={errors.email}
+        autoComplete="email"
+        required
+      />
+      
+      <FormInput
+        id="password"
+        label="Password"
+        type="password"
+        value={password}
+        onChange={setPassword}
+        error={errors.password}
+        hint="Must be at least 8 characters"
+        autoComplete="new-password"
+        required
+      />
+      
+      <FormInput
+        id="confirm-password"
+        label="Confirm Password"
+        type="password"
+        value={confirmPassword}
+        onChange={setConfirmPassword}
+        error={errors.confirmPassword}
+        autoComplete="new-password"
+        required
+      />
+      
+      <button type="submit">Create Account</button>
+    </form>
+  )
+}
+```
+
+The AI understood the token structure and generated a form with proper validation, error handling, ARIA attributes, and autocomplete hints—all accessible by default.
+
+## Extending to Complex Form Patterns
+
+The same token architecture scales to complex patterns:
+
+### Checkbox Groups
+
+```typescript
+// components/CheckboxGroup.tsx
+export function CheckboxGroup({ 
+  legend, 
+  options, 
+  selected, 
+  onChange 
+}: CheckboxGroupProps) {
+  return (
+    <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+      <legend style={{
+        fontSize: formTypography.labelSize,
+        fontWeight: formTypography.labelWeight,
+        color: formColors.labelText,
+        marginBottom: formSpacing.labelToInput,
+      }}>
+        {legend}
+      </legend>
+      
+      {options.map(option => (
+        <label key={option.value} style={{
+          display: 'flex',
+          alignItems: 'center',
+          minHeight: formSpacing.inputHeightSmall, // 44px touch target
+          marginBottom: '0.5rem',
+          cursor: 'pointer',
+        }}>
+          <input
+            type="checkbox"
+            value={option.value}
+            checked={selected.includes(option.value)}
+            onChange={(e) => {
+              const newSelected = e.target.checked
+                ? [...selected, option.value]
+                : selected.filter(v => v !== option.value)
+              onChange(newSelected)
+            }}
+            style={{
+              width: '1.25rem',   // 20px
+              height: '1.25rem',
+              marginRight: '0.75rem',
+            }}
+          />
+          <span style={{ fontSize: formTypography.inputSize }}>
+            {option.label}
+          </span>
+        </label>
+      ))}
+    </fieldset>
+  )
+}
+```
+
+### File Upload with Drag-and-Drop
+
+```typescript
+// components/FileUpload.tsx
+export function FileUpload({ 
+  id, 
+  label, 
+  onUpload, 
+  accept 
+}: FileUploadProps) {
+  const [isDragging, setIsDragging] = useState(false)
+  
+  return (
+    <div>
+      <label htmlFor={id} style={{
+        fontSize: formTypography.labelSize,
+        fontWeight: formTypography.labelWeight,
+        color: formColors.labelText,
+        marginBottom: formSpacing.labelToInput,
+        display: 'block',
+      }}>
+        {label}
+      </label>
+      
+      <div
+        onDragOver={(e) => {
+          e.preventDefault()
+          setIsDragging(true)
+        }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={(e) => {
+          e.preventDefault()
+          setIsDragging(false)
+          onUpload(Array.from(e.dataTransfer.files))
+        }}
+        style={{
+          minHeight: formSpacing.inputHeightLarge,
+          padding: formSpacing.inputPaddingY,
+          border: `2px dashed ${
+            isDragging 
+              ? formColors.inputBorderFocus 
+              : formColors.inputBorder
+          }`,
+          borderRadius: '0.375rem',
+          backgroundColor: isDragging 
+            ? formColors.inputBackgroundHover 
+            : formColors.inputBackground,
+          textAlign: 'center',
+          cursor: 'pointer',
+        }}
+      >
+        <input
+          id={id}
+          type="file"
+          accept={accept}
+          onChange={(e) => onUpload(Array.from(e.target.files || []))}
+          style={{ display: 'none' }}
+        />
+        <label htmlFor={id} style={{ cursor: 'pointer' }}>
+          Drop files here or click to upload
+        </label>
+      </div>
+    </div>
+  )
+}
+```
+
+## FramingUI Integration
+
+FramingUI provides pre-configured form tokens with built-in accessibility. Instead of defining all tokens manually, you can extend the base theme:
+
+```typescript
+// framingui.config.ts
+import { defineConfig } from 'framingui'
+
+export default defineConfig({
+  theme: {
+    forms: {
+      // Override specific tokens
+      inputHeight: '3.25rem', // Custom 52px height
+      focusRingColor: 'oklch(0.45 0.18 280)', // Brand purple
+      
+      // Add custom validation states
+      warningText: 'oklch(0.50 0.15 70)',
+      warningBackground: 'oklch(0.97 0.02 70)',
+    }
+  }
+})
+```
+
+FramingUI generates accessible form components with proper ARIA attributes, focus management, and validation patterns out of the box. When you connect it with AI assistants via MCP (Model Context Protocol), the AI can query your exact form specifications and generate perfectly compliant forms without manual token definition.
+
+## Testing Accessibility
+
+Automated testing catches many issues:
+
+```typescript
+// __tests__/FormInput.test.tsx
+import { render, screen } from '@testing-library/react'
+import { axe, toHaveNoViolations } from 'jest-axe'
+import { FormInput } from '@/components/FormInput'
+
+expect.extend(toHaveNoViolations)
+
+describe('FormInput accessibility', () => {
+  it('should have no axe violations', async () => {
+    const { container } = render(
+      <FormInput
+        id="test-input"
+        label="Test Label"
+        value=""
+        onChange={() => {}}
+      />
+    )
+    
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
+  })
+  
+  it('should announce errors to screen readers', () => {
+    render(
+      <FormInput
+        id="email"
+        label="Email"
+        value=""
+        onChange={() => {}}
+        error="Invalid email address"
+      />
+    )
+    
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent('Invalid email address')
+  })
+  
+  it('should have minimum 44px touch target', () => {
+    render(
+      <FormInput
+        id="test"
+        label="Test"
+        value=""
+        onChange={() => {}}
+      />
+    )
+    
+    const input = screen.getByLabelText('Test')
+    const styles = window.getComputedStyle(input)
+    expect(parseInt(styles.height)).toBeGreaterThanOrEqual(44)
+  })
+})
+```
+
+## Conclusion
+
+Accessible forms aren't a special case—they're a constraint architecture problem. When you encode accessibility requirements into design tokens (minimum contrast ratios, touch target sizes, state indicators), every form component inherits those guarantees automatically.
+
+The token structure presented here provides:
+
+- **WCAG AA compliance by default**: Color contrast, touch targets, and semantic HTML
+- **AI compatibility**: Semantic names guide AI code generation
+- **Maintainability**: Change one token, update all forms
+- **Consistency**: Same interaction patterns across your entire application
+
+You can implement this from scratch or use FramingUI's pre-configured accessible form tokens. Either way, the architecture remains the same: encode accessibility into the constraints, not into individual component implementations.
+
+Further reading:
+- [WCAG 2.1 Form Guidelines](https://www.w3.org/WAI/WCAG21/Understanding/)
+- [Inclusive Components: Form Fields](https://inclusive-components.design/)
+- [FramingUI Form Documentation](https://framingui.tekton.so/docs/components/forms)
