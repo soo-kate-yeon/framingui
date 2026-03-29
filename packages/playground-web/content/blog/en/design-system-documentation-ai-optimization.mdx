@@ -1,0 +1,852 @@
+---
+title: "AI-Optimized Design System Documentation: A Practical Guide"
+description: "Structure design system docs for AI consumption—machine-readable patterns, usage rules, and automated compliance."
+date: "2026-03-29"
+author:
+  name: "FramingUI Team"
+tags:
+  - documentation
+  - ai-coding
+  - design-system
+  - automation
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Design system documentation serves two audiences now: humans who need to understand design decisions, and AI assistants that generate code following those patterns. Traditional documentation optimizes for human readability—visual examples, narrative explanations, design rationale. AI-optimized documentation adds machine-readable structure, explicit constraints, and code-first examples.
+
+This guide shows how to restructure design system docs so AI assistants like Claude Code, Cursor, and GitHub Copilot can apply your patterns correctly without constant human correction.
+
+## Why AI Needs Different Documentation
+
+Human developers read design documentation and interpret intent. They see a button example and understand "this is the primary action style, use it for main CTAs." AI assistants don't infer—they pattern-match.
+
+Traditional documentation for humans:
+
+> **Primary Button**
+> 
+> Use the primary button style for the main action on a page. It should stand out visually and indicate the most important user action.
+> 
+> *Example: Sign up forms, checkout flows, modal confirmations*
+
+This tells humans when to use primary buttons, but an AI can't extract "when editing user profiles, the save button should be primary" from this prose.
+
+AI-optimized documentation adds machine-readable structure:
+
+````markdown
+## Button Component
+
+### API
+
+```typescript
+interface ButtonProps {
+  /** Visual variant - determines color and emphasis */
+  variant: 'primary' | 'secondary' | 'outline' | 'destructive';
+  
+  /** Size variant */
+  size?: 'small' | 'medium' | 'large';
+  
+  /** Disabled state */
+  disabled?: boolean;
+  
+  children: React.ReactNode;
+}
+```
+
+### Usage Rules
+
+**Use `variant="primary"` when:**
+- Main call-to-action on a page (one per screen)
+- Form submission buttons
+- Confirming modal actions
+- Proceeding to next step in multi-step flows
+
+**Use `variant="secondary"` when:**
+- Subordinate actions next to primary (e.g., "Cancel" next to "Save")
+- Navigation between sections
+- Non-destructive actions that aren't the main focus
+
+**Use `variant="destructive"` when:**
+- Deleting data
+- Irreversible actions that need visual warning
+- Confirming dangerous operations
+
+### Code Examples
+
+```tsx
+// ✅ Correct: Form with primary submit
+<form>
+  <Button type="submit" variant="primary">
+    Create Account
+  </Button>
+</form>
+
+// ✅ Correct: Modal with primary and secondary
+<Modal>
+  <ModalActions>
+    <Button variant="secondary" onClick={onCancel}>
+      Cancel
+    </Button>
+    <Button variant="primary" onClick={onConfirm}>
+      Confirm
+    </Button>
+  </ModalActions>
+</Modal>
+
+// ❌ Incorrect: Multiple primary buttons
+<form>
+  <Button variant="primary">Save</Button>
+  <Button variant="primary">Save and Continue</Button> {/* Should be secondary */}
+</form>
+```
+````
+
+The AI can parse TypeScript interfaces, match its generated code against the examples, and follow the explicit rules.
+
+## Documentation Structure for AI Consumption
+
+AI assistants need predictable documentation structure. Use these sections consistently:
+
+### 1. Component API Contract
+
+Start with TypeScript interface or prop types:
+
+```typescript
+/**
+ * Input field with label, error handling, and validation states
+ */
+export interface InputProps {
+  /**
+   * Input label text (required for accessibility)
+   */
+  label: string;
+  
+  /**
+   * Input type
+   * @default 'text'
+   */
+  type?: 'text' | 'email' | 'password' | 'number' | 'url' | 'tel';
+  
+  /**
+   * Placeholder text
+   */
+  placeholder?: string;
+  
+  /**
+   * Error message - shows red border and error text when present
+   */
+  error?: string;
+  
+  /**
+   * Disabled state
+   */
+  disabled?: boolean;
+  
+  /**
+   * Required field indicator
+   */
+  required?: boolean;
+  
+  /**
+   * Value (controlled component)
+   */
+  value?: string;
+  
+  /**
+   * Change handler
+   */
+  onChange?: (value: string) => void;
+}
+```
+
+AI assistants parse JSDoc comments and understand that `error?: string` makes the input show error styling when provided.
+
+### 2. Usage Patterns
+
+Explicit rules for when to use the component:
+
+```markdown
+## Input Usage Patterns
+
+### Basic Text Input
+
+Use for single-line text entry:
+- Names, emails, phone numbers
+- Search boxes
+- Short-form answers
+
+```tsx
+<Input
+  label="Email Address"
+  type="email"
+  placeholder="you@example.com"
+  required
+/>
+```
+
+### Error Handling
+
+Always provide descriptive error messages:
+
+```tsx
+const [email, setEmail] = useState('');
+const [error, setError] = useState<string>();
+
+function validateEmail() {
+  if (!email.includes('@')) {
+    setError('Please enter a valid email address');
+  } else {
+    setError(undefined);
+  }
+}
+
+<Input
+  label="Email"
+  type="email"
+  value={email}
+  onChange={setEmail}
+  error={error}
+  onBlur={validateEmail}
+/>
+```
+
+### Form Integration
+
+Wrap inputs in FormField for consistent spacing:
+
+```tsx
+<form className="space-y-4">
+  <FormField>
+    <Input label="First Name" required />
+  </FormField>
+  
+  <FormField>
+    <Input label="Last Name" required />
+  </FormField>
+  
+  <FormField>
+    <Input label="Email" type="email" required />
+  </FormField>
+</form>
+```
+```
+
+The AI sees the pattern: "When building forms, wrap Input in FormField and use `space-y-4` for vertical spacing."
+
+### 3. Composition Rules
+
+How components combine:
+
+```markdown
+## Card Composition
+
+Cards use semantic sub-components for structure:
+
+```tsx
+// ✅ Correct composition
+<Card>
+  <CardHeader>
+    <CardTitle>User Profile</CardTitle>
+    <CardDescription>Manage your account settings</CardDescription>
+  </CardHeader>
+  
+  <CardContent>
+    {/* Main content here */}
+  </CardContent>
+  
+  <CardFooter>
+    <Button variant="primary">Save Changes</Button>
+  </CardFooter>
+</Card>
+
+// ❌ Incorrect: Manual layout
+<Card>
+  <div className="p-6 border-b">
+    <h3 className="font-bold">User Profile</h3>
+    <p className="text-gray-600">Manage your account settings</p>
+  </div>
+  {/* Don't recreate header structure manually */}
+</Card>
+```
+
+**Rules:**
+- Always use CardHeader, CardContent, CardFooter for layout
+- Never apply padding/borders manually inside Card
+- CardTitle and CardDescription are optional but recommended for clarity
+- CardFooter typically contains actions (buttons)
+```
+
+AI assistants will generate the correct composition because the "Incorrect" example explicitly shows what not to do.
+
+### 4. Accessibility Requirements
+
+Explicit ARIA and semantic HTML rules:
+
+```markdown
+## Dialog Accessibility
+
+Required attributes:
+
+```tsx
+<Dialog
+  isOpen={isOpen}
+  onClose={onClose}
+  aria-labelledby="dialog-title"  // Required: references title element
+  aria-describedby="dialog-desc"  // Recommended: references description
+>
+  <DialogTitle id="dialog-title">
+    Confirm Deletion
+  </DialogTitle>
+  
+  <DialogContent id="dialog-desc">
+    Are you sure you want to delete this item? This action cannot be undone.
+  </DialogContent>
+  
+  <DialogActions>
+    <Button variant="secondary" onClick={onClose}>
+      Cancel
+    </Button>
+    <Button variant="destructive" onClick={onConfirm}>
+      Delete
+    </Button>
+  </DialogActions>
+</Dialog>
+```
+
+**Keyboard Behavior:**
+- `Escape` closes dialog
+- Focus traps inside dialog when open
+- Focus returns to trigger element on close
+- Tab cycles through interactive elements
+```
+
+The AI learns that dialogs need `aria-labelledby` and generates that attribute automatically.
+
+## Token Documentation Format
+
+Design tokens need structured documentation that AI can query:
+
+```typescript
+/**
+ * Semantic color tokens for theming
+ * 
+ * @category Design Tokens
+ */
+export const colors = {
+  /**
+   * Action colors for interactive elements
+   */
+  action: {
+    /**
+     * Primary action color (main CTAs, links)
+     * Use for: submit buttons, primary navigation, key interactive elements
+     */
+    primary: {
+      /** Default state */
+      default: '#0066FF',
+      /** Hover state - 10% darker */
+      hover: '#0052CC',
+      /** Active/pressed state - 20% darker */
+      active: '#003D99',
+      /** Disabled state - 50% opacity applied to default */
+      disabled: '#99BFFF'
+    },
+    
+    /**
+     * Secondary action color (less emphasis than primary)
+     * Use for: cancel buttons, alternative actions, navigation
+     */
+    secondary: {
+      default: '#6B7280',
+      hover: '#4B5563',
+      active: '#374151',
+      disabled: '#D1D5DB'
+    },
+    
+    /**
+     * Destructive action color (delete, remove, dangerous actions)
+     * Use for: delete buttons, remove actions, data loss warnings
+     */
+    destructive: {
+      default: '#DC2626',
+      hover: '#B91C1C',
+      active: '#991B1B',
+      disabled: '#FCA5A5'
+    }
+  },
+  
+  /**
+   * Surface colors for backgrounds and containers
+   */
+  surface: {
+    /** Base background (main page background) */
+    base: '#FFFFFF',
+    /** Raised surface (cards, panels - slight elevation) */
+    raised: '#F9FAFB',
+    /** Overlay surface (modals, popovers) */
+    overlay: '#FFFFFF',
+    /** Inverse surface (tooltips, badges on light backgrounds) */
+    inverse: '#111827'
+  },
+  
+  /**
+   * Text colors with semantic hierarchy
+   */
+  text: {
+    /** Primary text (headings, body copy, high emphasis) */
+    primary: '#111827',
+    /** Secondary text (supporting text, medium emphasis) */
+    secondary: '#6B7280',
+    /** Tertiary text (captions, timestamps, low emphasis) */
+    tertiary: '#9CA3AF',
+    /** Inverse text (text on dark backgrounds) */
+    inverse: '#FFFFFF',
+    /** Link text (default state) */
+    link: '#0066FF',
+    /** Link text (hover state) */
+    linkHover: '#0052CC'
+  }
+} as const;
+```
+
+The comments tell AI when to use each token. When an AI generates a delete button, it searches for "delete" or "destructive" in token docs and finds `action.destructive`.
+
+## Creating a Machine-Readable Design System Guide
+
+Put all documentation in a single, AI-friendly file at your repo root:
+
+```markdown
+# DESIGN_SYSTEM.md
+
+This document defines design patterns for the project. Follow these rules when generating UI code.
+
+## Principles
+
+1. **Use design tokens, never arbitrary values**
+   - ✅ `bg-surface-raised`
+   - ❌ `bg-gray-50`
+
+2. **Prefer semantic component composition over custom layout**
+   - ✅ `<Card><CardHeader><CardTitle>`
+   - ❌ `<div className="p-6 border rounded-lg">`
+
+3. **One primary action per screen/modal**
+   - Forms should have exactly one `variant="primary"` button
+   - Use `variant="secondary"` for alternative actions
+
+4. **Consistent spacing scale**
+   - Use `space-y-{n}` for vertical stacks
+   - Use `gap-{n}` for flex/grid layouts
+   - Standard values: 2, 4, 6, 8, 12, 16
+
+## Component Patterns
+
+### Forms
+
+```tsx
+<form className="space-y-6" onSubmit={handleSubmit}>
+  <FormField label="Email" error={errors.email}>
+    <Input type="email" name="email" required />
+  </FormField>
+  
+  <FormField label="Password" error={errors.password}>
+    <Input type="password" name="password" required />
+  </FormField>
+  
+  <FormActions>
+    <Button variant="primary" type="submit">
+      Sign In
+    </Button>
+    <Button variant="secondary" type="button" onClick={onCancel}>
+      Cancel
+    </Button>
+  </FormActions>
+</form>
+```
+
+### Modal Dialogs
+
+```tsx
+<Dialog isOpen={isOpen} onClose={onClose}>
+  <DialogTitle>Confirm Action</DialogTitle>
+  <DialogContent>
+    <p>Are you sure you want to proceed?</p>
+  </DialogContent>
+  <DialogActions>
+    <Button variant="secondary" onClick={onClose}>Cancel</Button>
+    <Button variant="primary" onClick={onConfirm}>Confirm</Button>
+  </DialogActions>
+</Dialog>
+```
+
+### Data Tables
+
+```tsx
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableHead>Name</TableHead>
+      <TableHead>Email</TableHead>
+      <TableHead>Role</TableHead>
+      <TableHead className="text-right">Actions</TableHead>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    {users.map(user => (
+      <TableRow key={user.id}>
+        <TableCell>{user.name}</TableCell>
+        <TableCell>{user.email}</TableCell>
+        <TableCell>{user.role}</TableCell>
+        <TableCell className="text-right">
+          <Button size="small" variant="outline">Edit</Button>
+        </TableCell>
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+```
+
+## Color Usage
+
+**Text Hierarchy:**
+- Headings: `text-primary`
+- Body text: `text-primary`
+- Supporting text: `text-secondary`
+- Captions/metadata: `text-tertiary`
+
+**Backgrounds:**
+- Page background: `bg-surface-base`
+- Cards/panels: `bg-surface-raised`
+- Modals/overlays: `bg-surface-overlay`
+
+**Borders:**
+- Default: `border-default`
+- Strong emphasis: `border-strong`
+- Subtle dividers: `border-subtle`
+- Focus rings: `ring-focus`
+
+## Spacing
+
+**Component Spacing:**
+- Between form fields: `space-y-4` or `space-y-6`
+- Between sections: `space-y-8` or `space-y-12`
+- Card internal padding: automatic (CardHeader, CardContent handle this)
+- Button padding: automatic (size prop controls this)
+
+**Layout Spacing:**
+- Page margins: `px-4 md:px-6 lg:px-8`
+- Content max width: `max-w-7xl mx-auto`
+- Grid gaps: `gap-4` or `gap-6`
+
+## Typography
+
+**Heading Hierarchy:**
+```tsx
+<h1 className="text-3xl font-bold text-primary">Page Title</h1>
+<h2 className="text-2xl font-semibold text-primary">Section Title</h2>
+<h3 className="text-xl font-semibold text-primary">Subsection Title</h3>
+```
+
+**Body Text:**
+```tsx
+<p className="text-base text-primary">Main content</p>
+<p className="text-sm text-secondary">Supporting text</p>
+<p className="text-xs text-tertiary">Caption or metadata</p>
+```
+
+## Loading States
+
+**Skeleton Loaders:**
+```tsx
+function UserListSkeleton() {
+  return (
+    <div className="space-y-4">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="animate-pulse">
+          <div className="h-4 bg-surface-raised rounded w-3/4 mb-2" />
+          <div className="h-3 bg-surface-raised rounded w-1/2" />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+**Loading Buttons:**
+```tsx
+<Button variant="primary" isLoading={isSubmitting} disabled={isSubmitting}>
+  {isSubmitting ? 'Saving...' : 'Save Changes'}
+</Button>
+```
+
+## Error States
+
+**Form Errors:**
+```tsx
+<FormField label="Email" error={errors.email}>
+  <Input type="email" name="email" />
+</FormField>
+```
+
+**Page-Level Errors:**
+```tsx
+<Alert variant="error">
+  <AlertTitle>Something went wrong</AlertTitle>
+  <AlertDescription>
+    {error.message}
+  </AlertDescription>
+</Alert>
+```
+
+## Empty States
+
+```tsx
+<EmptyState
+  icon={<InboxIcon />}
+  title="No messages yet"
+  description="When you receive messages, they'll appear here"
+  action={
+    <Button variant="primary" onClick={onCompose}>
+      Compose Message
+    </Button>
+  }
+/>
+```
+```
+
+Save this as `DESIGN_SYSTEM.md` in your repo root. Configure AI assistants to always read this file.
+
+## Integrating with AI Assistant Configurations
+
+### Claude Code Configuration
+
+Create `.clauderc.json`:
+
+```json
+{
+  "contextFiles": [
+    "DESIGN_SYSTEM.md",
+    "components/ui/**/*.tsx",
+    "tokens/**/*.ts"
+  ],
+  "rules": [
+    "Follow all patterns defined in DESIGN_SYSTEM.md",
+    "Never use arbitrary Tailwind values - always use design tokens",
+    "Import components from @/components/ui, not building custom implementations",
+    "Check component prop types before using - respect required fields",
+    "Follow composition patterns for Card, Dialog, Form components",
+    "Use semantic color names (text-primary, bg-surface-base) not generic names"
+  ],
+  "guidelines": "When generating UI code, prioritize design system consistency over speed. If unsure about a pattern, check DESIGN_SYSTEM.md examples first."
+}
+```
+
+### Cursor Configuration
+
+Create `.cursorrules`:
+
+```
+# UI Development Rules
+
+When generating or modifying UI code:
+
+1. ALWAYS read DESIGN_SYSTEM.md first
+2. Use components from @/components/ui
+3. Never write arbitrary Tailwind values (e.g., bg-gray-100)
+4. Use design tokens: text-primary, bg-surface-raised, border-default
+5. Follow composition patterns (Card > CardHeader > CardTitle)
+6. Forms must use FormField wrapper
+7. Dialogs must include aria-labelledby and aria-describedby
+8. One primary button per screen/modal
+9. Use space-y-{n} for vertical stacks, gap-{n} for grids
+10. Check component TypeScript types before using
+
+If a pattern isn't in DESIGN_SYSTEM.md, ask before implementing.
+```
+
+### GitHub Copilot Hints
+
+Add comments in component files:
+
+```typescript
+// components/ui/button.tsx
+
+/**
+ * Button component following design system patterns.
+ * 
+ * AI Usage Notes:
+ * - Use variant="primary" for main CTAs (one per screen)
+ * - Use variant="secondary" for alternative actions
+ * - Use variant="destructive" for delete/remove actions
+ * - Always provide children (button text)
+ * - Avoid manually styling - variants handle all styling
+ * 
+ * See DESIGN_SYSTEM.md for complete usage patterns.
+ */
+export function Button({ variant = 'primary', ...props }: ButtonProps) {
+  // Implementation
+}
+```
+
+Copilot reads these comments and suggests correct usage.
+
+## Generating Documentation from Code
+
+Automate documentation generation from TypeScript:
+
+```typescript
+// scripts/generate-component-docs.ts
+import * as ts from 'typescript';
+import { writeFileSync } from 'fs';
+
+function extractComponentDocs(sourceFile: ts.SourceFile) {
+  const components: any[] = [];
+  
+  function visit(node: ts.Node) {
+    if (ts.isFunctionDeclaration(node) || ts.isVariableStatement(node)) {
+      const jsDocTags = ts.getJSDocTags(node);
+      const propsInterface = extractPropsInterface(node);
+      
+      if (propsInterface) {
+        components.push({
+          name: getComponentName(node),
+          description: getJSDocDescription(node),
+          props: propsInterface,
+          examples: getJSDocExamples(node)
+        });
+      }
+    }
+    
+    ts.forEachChild(node, visit);
+  }
+  
+  visit(sourceFile);
+  return components;
+}
+
+function generateMarkdownDocs(components: any[]): string {
+  return components.map(comp => `
+## ${comp.name}
+
+${comp.description}
+
+### Props
+
+\`\`\`typescript
+${comp.props}
+\`\`\`
+
+### Examples
+
+${comp.examples.map(ex => `\`\`\`tsx\n${ex}\n\`\`\``).join('\n\n')}
+  `).join('\n\n');
+}
+
+// Usage
+const program = ts.createProgram(['components/ui/**/*.tsx'], {});
+const sourceFiles = program.getSourceFiles();
+const allDocs = sourceFiles.flatMap(sf => extractComponentDocs(sf));
+const markdown = generateMarkdownDocs(allDocs);
+
+writeFileSync('docs/COMPONENTS.md', markdown);
+```
+
+This keeps documentation in sync with code automatically.
+
+## Measuring Documentation Effectiveness
+
+Track whether AI assistants are following your design system:
+
+**Token Usage Rate:**
+
+```typescript
+// scripts/audit-token-usage.ts
+import { glob } from 'glob';
+import { readFileSync } from 'fs';
+
+const files = glob.sync('src/**/*.{tsx,jsx}');
+let totalColors = 0;
+let tokenColors = 0;
+
+const tokenPattern = /(text|bg|border)-(primary|secondary|tertiary|surface-\w+|action-\w+)/g;
+const arbitraryPattern = /(text|bg|border)-(gray|blue|red|green)-\d{2,3}/g;
+
+for (const file of files) {
+  const content = readFileSync(file, 'utf-8');
+  const tokens = content.match(tokenPattern)?.length ?? 0;
+  const arbitrary = content.match(arbitraryPattern)?.length ?? 0;
+  
+  totalColors += tokens + arbitrary;
+  tokenColors += tokens;
+}
+
+console.log(`Token usage: ${(tokenColors / totalColors * 100).toFixed(1)}%`);
+// Target: >95%
+```
+
+**Component Pattern Compliance:**
+
+```typescript
+// scripts/audit-patterns.ts
+
+// Check if Cards use proper composition
+const cardPattern = /<Card>[\s\S]*?<CardHeader>[\s\S]*?<\/Card>/g;
+const manualCardPattern = /<Card>[\s\S]*?<div className="[^"]*p-6/g;
+
+// Violations = manual layout inside Card
+```
+
+Run these audits in CI to catch deviations early.
+
+## Advanced: RAG for Design System Queries
+
+For very large design systems, implement retrieval-augmented generation:
+
+```typescript
+// lib/design-system-rag.ts
+import { embed } from '@/lib/embeddings';
+import { searchSimilar } from '@/lib/vector-search';
+
+interface DesignPattern {
+  id: string;
+  title: string;
+  content: string;
+  category: 'component' | 'pattern' | 'token' | 'guideline';
+  embedding?: number[];
+}
+
+export async function indexDesignSystem(patterns: DesignPattern[]) {
+  for (const pattern of patterns) {
+    pattern.embedding = await embed(pattern.content);
+  }
+  // Store in vector DB
+}
+
+export async function queryDesignSystem(query: string): Promise<DesignPattern[]> {
+  const queryEmbedding = await embed(query);
+  return searchSimilar(queryEmbedding, { limit: 5 });
+}
+```
+
+When an AI assistant needs a pattern, it queries the system: "How should I build a settings form?" and retrieves relevant documentation chunks.
+
+## Real-World Example
+
+FramingUI's design system documentation is optimized for AI consumption from the start. Each component includes:
+
+- TypeScript interface with JSDoc
+- Usage rules (when to use this component)
+- Composition patterns (how it combines with others)
+- Accessibility requirements
+- Code examples (correct and incorrect)
+
+This structure makes AI-generated code consistent without requiring developers to manually review every component for design system compliance.
+
+## Conclusion
+
+AI-optimized design system documentation requires upfront structure—TypeScript interfaces, explicit usage rules, code examples showing correct and incorrect patterns. The investment pays off every time an AI assistant generates code: instead of generic, inconsistent components, it produces system-compliant code that rarely needs correction.
+
+Start with your most-used components. Add TypeScript props, write usage rules, include code examples. Create a `DESIGN_SYSTEM.md` file summarizing patterns. Configure AI assistants to reference these docs. Measure compliance with automated audits.
+
+The goal isn't to replace human designers—it's to encode design knowledge in a form that AI assistants can consume, letting designers focus on creating new patterns rather than correcting AI mistakes.

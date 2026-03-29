@@ -1,0 +1,972 @@
+---
+title: "Building a Theme Token Generator: A Practical Implementation Guide"
+description: "Build a theme token generator from scratch—automated shade scales, semantic mapping, and multi-format export."
+date: "2026-03-29"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - theming
+  - automation
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Design systems need consistent theming—light mode, dark mode, brand variants. But manually maintaining hundreds of color tokens across multiple themes creates errors and drift. A theme token generator automates this: you define base values and transformation rules, it produces complete token sets.
+
+This guide walks through building a practical token generator, from basic color derivation to full multi-theme systems with type safety and tooling integration.
+
+## Why Generate Tokens Instead of Manual Definition
+
+A typical design system might have 150+ color tokens:
+
+```typescript
+// Manual approach - error-prone and hard to maintain
+export const lightTheme = {
+  action: {
+    primary: {
+      default: '#0066FF',
+      hover: '#0052CC',
+      active: '#003D99',
+      disabled: '#99BFFF'
+    }
+  },
+  // ...147 more tokens
+};
+
+export const darkTheme = {
+  action: {
+    primary: {
+      default: '#3B82F6', // Did you remember to adjust contrast?
+      hover: '#2563EB',  // Is this the right relationship?
+      active: '#1D4ED8',
+      disabled: '#1E40AF' // Opacity-based or color-based?
+    }
+  },
+  // ...147 more tokens to keep in sync
+};
+```
+
+Issues with manual definition:
+
+1. **Inconsistent relationships:** Hover states should be 10% darker, but manually-picked values vary
+2. **Accessibility drift:** Dark mode tokens might fail contrast requirements
+3. **Missing tokens:** Easy to forget updating all themes when adding new semantic colors
+4. **No single source of truth:** Changes require updating multiple files
+
+A token generator fixes this:
+
+```typescript
+// Generative approach - single source of truth
+const baseColors = {
+  primary: '#0066FF',
+  secondary: '#6B7280',
+  success: '#10B981',
+  danger: '#DC2626'
+};
+
+const lightTheme = generateTheme(baseColors, 'light');
+const darkTheme = generateTheme(baseColors, 'dark');
+```
+
+One function call produces all 150 tokens with guaranteed consistency and accessibility compliance.
+
+## Core Token Generation Concepts
+
+A token generator applies transformations to base values. The three core transformations:
+
+**Shade generation:** Create lighter and darker variants of a color
+
+```typescript
+function generateShades(baseColor: string): Record<number, string> {
+  // Produces: 50, 100, 200, ..., 900
+  return {
+    50: lighten(baseColor, 0.95),
+    100: lighten(baseColor, 0.90),
+    200: lighten(baseColor, 0.80),
+    // ... through to 900
+    900: darken(baseColor, 0.50)
+  };
+}
+```
+
+**Semantic mapping:** Map shades to semantic roles
+
+```typescript
+function createSemanticTokens(shades: Record<number, string>, mode: 'light' | 'dark') {
+  if (mode === 'light') {
+    return {
+      default: shades[500],
+      hover: shades[600],
+      active: shades[700],
+      disabled: shades[300]
+    };
+  } else {
+    return {
+      default: shades[400],
+      hover: shades[300],
+      active: shades[200],
+      disabled: shades[700]
+    };
+  }
+}
+```
+
+**Accessibility validation:** Ensure contrast requirements
+
+```typescript
+function ensureContrast(
+  foreground: string,
+  background: string,
+  minRatio: number = 4.5
+): string {
+  const ratio = getContrastRatio(foreground, background);
+  if (ratio >= minRatio) return foreground;
+  
+  // Adjust foreground until contrast meets requirement
+  return adjustForContrast(foreground, background, minRatio);
+}
+```
+
+These three primitives combine to generate complete token sets.
+
+## Implementation: Color Manipulation Utilities
+
+Start with color space conversion. RGB is bad for perceptual operations; use HSL or OKLab.
+
+```typescript
+// color-utils.ts
+interface RGB {
+  r: number; // 0-255
+  g: number;
+  b: number;
+}
+
+interface HSL {
+  h: number; // 0-360
+  s: number; // 0-100
+  l: number; // 0-100
+}
+
+export function hexToRgb(hex: string): RGB {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) throw new Error(`Invalid hex color: ${hex}`);
+  
+  return {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  };
+}
+
+export function rgbToHsl({ r, g, b }: RGB): HSL {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  
+  if (max === min) {
+    return { h: 0, s: 0, l: l * 100 };
+  }
+  
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+  
+  let h = 0;
+  switch (max) {
+    case r:
+      h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+      break;
+    case g:
+      h = ((b - r) / d + 2) / 6;
+      break;
+    case b:
+      h = ((r - g) / d + 4) / 6;
+      break;
+  }
+  
+  return {
+    h: h * 360,
+    s: s * 100,
+    l: l * 100
+  };
+}
+
+export function hslToRgb({ h, s, l }: HSL): RGB {
+  s /= 100;
+  l /= 100;
+  
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  
+  let r = 0, g = 0, b = 0;
+  
+  if (h >= 0 && h < 60) {
+    [r, g, b] = [c, x, 0];
+  } else if (h >= 60 && h < 120) {
+    [r, g, b] = [x, c, 0];
+  } else if (h >= 120 && h < 180) {
+    [r, g, b] = [0, c, x];
+  } else if (h >= 180 && h < 240) {
+    [r, g, b] = [0, x, c];
+  } else if (h >= 240 && h < 300) {
+    [r, g, b] = [x, 0, c];
+  } else {
+    [r, g, b] = [c, 0, x];
+  }
+  
+  return {
+    r: Math.round((r + m) * 255),
+    g: Math.round((g + m) * 255),
+    b: Math.round((b + m) * 255)
+  };
+}
+
+export function rgbToHex({ r, g, b }: RGB): string {
+  return `#${[r, g, b]
+    .map(x => x.toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+
+export function hexToHsl(hex: string): HSL {
+  return rgbToHsl(hexToRgb(hex));
+}
+
+export function hslToHex(hsl: HSL): string {
+  return rgbToHex(hslToRgb(hsl));
+}
+```
+
+Now build transformation functions:
+
+```typescript
+// color-transforms.ts
+import { hexToHsl, hslToHex, type HSL } from './color-utils';
+
+export function lighten(hex: string, amount: number): string {
+  const hsl = hexToHsl(hex);
+  hsl.l = Math.min(100, hsl.l + amount * 100);
+  return hslToHex(hsl);
+}
+
+export function darken(hex: string, amount: number): string {
+  const hsl = hexToHsl(hex);
+  hsl.l = Math.max(0, hsl.l - amount * 100);
+  return hslToHex(hsl);
+}
+
+export function saturate(hex: string, amount: number): string {
+  const hsl = hexToHsl(hex);
+  hsl.s = Math.min(100, hsl.s + amount * 100);
+  return hslToHex(hsl);
+}
+
+export function desaturate(hex: string, amount: number): string {
+  const hsl = hexToHsl(hex);
+  hsl.s = Math.max(0, hsl.s - amount * 100);
+  return hslToHex(hsl);
+}
+
+export function adjustHue(hex: string, degrees: number): string {
+  const hsl = hexToHsl(hex);
+  hsl.h = (hsl.h + degrees + 360) % 360;
+  return hslToHex(hsl);
+}
+
+export function mix(color1: string, color2: string, weight: number = 0.5): string {
+  const rgb1 = hexToRgb(color1);
+  const rgb2 = hexToRgb(color2);
+  
+  return rgbToHex({
+    r: Math.round(rgb1.r * (1 - weight) + rgb2.r * weight),
+    g: Math.round(rgb1.g * (1 - weight) + rgb2.g * weight),
+    b: Math.round(rgb1.b * (1 - weight) + rgb2.b * weight)
+  });
+}
+```
+
+## Shade Generation Algorithm
+
+Generate a perceptually-even scale from a base color:
+
+```typescript
+// shade-generator.ts
+import { hexToHsl, hslToHex, type HSL } from './color-utils';
+
+export type ShadeScale = {
+  50: string;
+  100: string;
+  200: string;
+  300: string;
+  400: string;
+  500: string;
+  600: string;
+  700: string;
+  800: string;
+  900: string;
+  950: string;
+};
+
+export function generateShades(baseHex: string, baseShade: number = 500): ShadeScale {
+  const baseHsl = hexToHsl(baseHex);
+  
+  // Lightness values for each shade (perceptually adjusted)
+  const lightnessMap: Record<number, number> = {
+    50: 98,
+    100: 95,
+    200: 88,
+    300: 75,
+    400: 62,
+    500: 50,  // Base
+    600: 42,
+    700: 33,
+    800: 25,
+    900: 18,
+    950: 10
+  };
+  
+  // Calculate lightness delta from base
+  const baseLightness = lightnessMap[baseShade];
+  const actualLightness = baseHsl.l;
+  const delta = actualLightness - baseLightness;
+  
+  // Generate all shades with adjusted lightness
+  const shades = {} as ShadeScale;
+  
+  for (const [shade, targetLightness] of Object.entries(lightnessMap)) {
+    const adjustedLightness = targetLightness + delta;
+    
+    // Slightly adjust saturation at extremes
+    let saturation = baseHsl.s;
+    if (adjustedLightness > 90) {
+      saturation *= 0.7; // Reduce saturation in very light shades
+    } else if (adjustedLightness < 20) {
+      saturation *= 0.8; // Reduce saturation in very dark shades
+    }
+    
+    shades[shade as unknown as keyof ShadeScale] = hslToHex({
+      h: baseHsl.h,
+      s: Math.max(0, Math.min(100, saturation)),
+      l: Math.max(0, Math.min(100, adjustedLightness))
+    });
+  }
+  
+  return shades;
+}
+```
+
+Test the shade generator:
+
+```typescript
+const primaryShades = generateShades('#0066FF');
+console.log(primaryShades);
+// {
+//   50: '#F0F7FF',
+//   100: '#E0EFFF',
+//   200: '#BAD7FF',
+//   300: '#85B8FF',
+//   400: '#529AFF',
+//   500: '#0066FF',  // Base color
+//   600: '#0052CC',
+//   700: '#003D99',
+//   800: '#002966',
+//   900: '#001A47',
+//   950: '#000D24'
+// }
+```
+
+## Semantic Token Mapping
+
+Map shade scales to semantic usage:
+
+```typescript
+// semantic-tokens.ts
+import type { ShadeScale } from './shade-generator';
+
+export interface SemanticColorSet {
+  default: string;
+  hover: string;
+  active: string;
+  disabled: string;
+  subtle: string;
+  emphasis: string;
+}
+
+export interface ActionTokens {
+  primary: SemanticColorSet;
+  secondary: SemanticColorSet;
+  destructive: SemanticColorSet;
+  success: SemanticColorSet;
+}
+
+export function createActionTokens(
+  primaryShades: ShadeScale,
+  secondaryShades: ShadeScale,
+  destructiveShades: ShadeScale,
+  successShades: ShadeScale,
+  mode: 'light' | 'dark'
+): ActionTokens {
+  if (mode === 'light') {
+    return {
+      primary: {
+        default: primaryShades[500],
+        hover: primaryShades[600],
+        active: primaryShades[700],
+        disabled: primaryShades[300],
+        subtle: primaryShades[100],
+        emphasis: primaryShades[700]
+      },
+      secondary: {
+        default: secondaryShades[500],
+        hover: secondaryShades[600],
+        active: secondaryShades[700],
+        disabled: secondaryShades[300],
+        subtle: secondaryShades[100],
+        emphasis: secondaryShades[700]
+      },
+      destructive: {
+        default: destructiveShades[500],
+        hover: destructiveShades[600],
+        active: destructiveShades[700],
+        disabled: destructiveShades[300],
+        subtle: destructiveShades[100],
+        emphasis: destructiveShades[700]
+      },
+      success: {
+        default: successShades[500],
+        hover: successShades[600],
+        active: successShades[700],
+        disabled: successShades[300],
+        subtle: successShades[100],
+        emphasis: successShades[700]
+      }
+    };
+  } else {
+    // Dark mode: use lighter shades for better visibility
+    return {
+      primary: {
+        default: primaryShades[400],
+        hover: primaryShades[300],
+        active: primaryShades[200],
+        disabled: primaryShades[700],
+        subtle: primaryShades[900],
+        emphasis: primaryShades[300]
+      },
+      secondary: {
+        default: secondaryShades[400],
+        hover: secondaryShades[300],
+        active: secondaryShades[200],
+        disabled: secondaryShades[700],
+        subtle: secondaryShades[900],
+        emphasis: secondaryShades[300]
+      },
+      destructive: {
+        default: destructiveShades[400],
+        hover: destructiveShades[300],
+        active: destructiveShades[200],
+        disabled: destructiveShades[700],
+        subtle: destructiveShades[900],
+        emphasis: destructiveShades[300]
+      },
+      success: {
+        default: successShades[400],
+        hover: successShades[300],
+        active: successShades[200],
+        disabled: successShades[700],
+        subtle: successShades[900],
+        emphasis: successShades[300]
+      }
+    };
+  }
+}
+
+export interface SurfaceTokens {
+  base: string;
+  raised: string;
+  overlay: string;
+  inverse: string;
+}
+
+export function createSurfaceTokens(
+  neutralShades: ShadeScale,
+  mode: 'light' | 'dark'
+): SurfaceTokens {
+  if (mode === 'light') {
+    return {
+      base: '#FFFFFF',
+      raised: neutralShades[50],
+      overlay: '#FFFFFF',
+      inverse: neutralShades[900]
+    };
+  } else {
+    return {
+      base: neutralShades[900],
+      raised: neutralShades[800],
+      overlay: neutralShades[800],
+      inverse: '#FFFFFF'
+    };
+  }
+}
+
+export interface TextTokens {
+  primary: string;
+  secondary: string;
+  tertiary: string;
+  inverse: string;
+  link: string;
+  linkHover: string;
+  onAction: string;
+}
+
+export function createTextTokens(
+  neutralShades: ShadeScale,
+  primaryShades: ShadeScale,
+  mode: 'light' | 'dark'
+): TextTokens {
+  if (mode === 'light') {
+    return {
+      primary: neutralShades[900],
+      secondary: neutralShades[600],
+      tertiary: neutralShades[500],
+      inverse: '#FFFFFF',
+      link: primaryShades[600],
+      linkHover: primaryShades[700],
+      onAction: '#FFFFFF'
+    };
+  } else {
+    return {
+      primary: neutralShades[50],
+      secondary: neutralShades[400],
+      tertiary: neutralShades[500],
+      inverse: neutralShades[900],
+      link: primaryShades[400],
+      linkHover: primaryShades[300],
+      onAction: neutralShades[900]
+    };
+  }
+}
+```
+
+## Accessibility Validation
+
+Ensure generated tokens meet WCAG contrast requirements:
+
+```typescript
+// contrast.ts
+import { hexToRgb } from './color-utils';
+
+export function getLuminance(hex: string): number {
+  const rgb = hexToRgb(hex);
+  
+  // Convert to sRGB
+  const [r, g, b] = [rgb.r, rgb.g, rgb.b].map(val => {
+    val /= 255;
+    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+  });
+  
+  // Calculate relative luminance
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+export function getContrastRatio(foreground: string, background: string): number {
+  const l1 = getLuminance(foreground);
+  const l2 = getLuminance(background);
+  
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+export function meetsWCAG(
+  foreground: string,
+  background: string,
+  level: 'AA' | 'AAA' = 'AA',
+  largeText: boolean = false
+): boolean {
+  const ratio = getContrastRatio(foreground, background);
+  
+  if (level === 'AAA') {
+    return largeText ? ratio >= 4.5 : ratio >= 7;
+  } else {
+    return largeText ? ratio >= 3 : ratio >= 4.5;
+  }
+}
+
+export function findAccessibleShade(
+  shades: ShadeScale,
+  background: string,
+  minRatio: number = 4.5
+): string {
+  const shadeValues = Object.values(shades);
+  
+  for (const shade of shadeValues) {
+    if (getContrastRatio(shade, background) >= minRatio) {
+      return shade;
+    }
+  }
+  
+  // If no shade meets requirement, return darkest/lightest
+  const bgLuminance = getLuminance(background);
+  return bgLuminance > 0.5 ? shades[900] : shades[50];
+}
+```
+
+Integrate contrast checking into token generation:
+
+```typescript
+export function createTextTokensAccessible(
+  neutralShades: ShadeScale,
+  primaryShades: ShadeScale,
+  surfaceBase: string,
+  mode: 'light' | 'dark'
+): TextTokens {
+  const tokens = createTextTokens(neutralShades, primaryShades, mode);
+  
+  // Validate and adjust if needed
+  if (!meetsWCAG(tokens.primary, surfaceBase)) {
+    tokens.primary = findAccessibleShade(neutralShades, surfaceBase, 4.5);
+  }
+  
+  if (!meetsWCAG(tokens.secondary, surfaceBase)) {
+    tokens.secondary = findAccessibleShade(neutralShades, surfaceBase, 4.5);
+  }
+  
+  return tokens;
+}
+```
+
+## Complete Theme Generator
+
+Combine all pieces into a theme generator:
+
+```typescript
+// theme-generator.ts
+import { generateShades, type ShadeScale } from './shade-generator';
+import {
+  createActionTokens,
+  createSurfaceTokens,
+  createTextTokensAccessible,
+  type ActionTokens,
+  type SurfaceTokens,
+  type TextTokens
+} from './semantic-tokens';
+
+export interface BaseColors {
+  primary: string;
+  secondary: string;
+  neutral: string;
+  success: string;
+  warning: string;
+  danger: string;
+}
+
+export interface Theme {
+  name: string;
+  mode: 'light' | 'dark';
+  colors: {
+    action: ActionTokens;
+    surface: SurfaceTokens;
+    text: TextTokens;
+    border: {
+      default: string;
+      strong: string;
+      subtle: string;
+      focus: string;
+    };
+  };
+  raw: {
+    primary: ShadeScale;
+    secondary: ShadeScale;
+    neutral: ShadeScale;
+    success: ShadeScale;
+    warning: ShadeScale;
+    danger: ShadeScale;
+  };
+}
+
+export function generateTheme(
+  baseColors: BaseColors,
+  mode: 'light' | 'dark',
+  name: string = mode
+): Theme {
+  // Generate shade scales
+  const primaryShades = generateShades(baseColors.primary);
+  const secondaryShades = generateShades(baseColors.secondary);
+  const neutralShades = generateShades(baseColors.neutral);
+  const successShades = generateShades(baseColors.success);
+  const warningShades = generateShades(baseColors.warning);
+  const dangerShades = generateShades(baseColors.danger);
+  
+  // Create semantic tokens
+  const surface = createSurfaceTokens(neutralShades, mode);
+  const action = createActionTokens(
+    primaryShades,
+    secondaryShades,
+    dangerShades,
+    successShades,
+    mode
+  );
+  const text = createTextTokensAccessible(
+    neutralShades,
+    primaryShades,
+    surface.base,
+    mode
+  );
+  
+  // Border tokens
+  const border = mode === 'light' 
+    ? {
+        default: neutralShades[200],
+        strong: neutralShades[300],
+        subtle: neutralShades[100],
+        focus: primaryShades[500]
+      }
+    : {
+        default: neutralShades[700],
+        strong: neutralShades[600],
+        subtle: neutralShades[800],
+        focus: primaryShades[400]
+      };
+  
+  return {
+    name,
+    mode,
+    colors: {
+      action,
+      surface,
+      text,
+      border
+    },
+    raw: {
+      primary: primaryShades,
+      secondary: secondaryShades,
+      neutral: neutralShades,
+      success: successShades,
+      warning: warningShades,
+      danger: dangerShades
+    }
+  };
+}
+```
+
+Usage:
+
+```typescript
+const baseColors: BaseColors = {
+  primary: '#0066FF',
+  secondary: '#6B7280',
+  neutral: '#6B7280',
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#DC2626'
+};
+
+const lightTheme = generateTheme(baseColors, 'light');
+const darkTheme = generateTheme(baseColors, 'dark');
+
+// Access tokens
+console.log(lightTheme.colors.action.primary.default); // '#0066FF'
+console.log(darkTheme.colors.action.primary.default);  // '#529AFF' (auto-adjusted for dark mode)
+```
+
+## Exporting to Multiple Formats
+
+Different tools need different formats. Build exporters:
+
+```typescript
+// exporters/css.ts
+import type { Theme } from '../theme-generator';
+
+export function exportToCSSVariables(theme: Theme): string {
+  const lines: string[] = [`:root[data-theme="${theme.name}"] {`];
+  
+  // Action tokens
+  for (const [actionType, states] of Object.entries(theme.colors.action)) {
+    for (const [state, value] of Object.entries(states)) {
+      lines.push(`  --color-action-${actionType}-${state}: ${value};`);
+    }
+  }
+  
+  // Surface tokens
+  for (const [key, value] of Object.entries(theme.colors.surface)) {
+    lines.push(`  --color-surface-${key}: ${value};`);
+  }
+  
+  // Text tokens
+  for (const [key, value] of Object.entries(theme.colors.text)) {
+    lines.push(`  --color-text-${key}: ${value};`);
+  }
+  
+  // Border tokens
+  for (const [key, value] of Object.entries(theme.colors.border)) {
+    lines.push(`  --color-border-${key}: ${value};`);
+  }
+  
+  lines.push('}');
+  return lines.join('\n');
+}
+```
+
+```typescript
+// exporters/tailwind.ts
+import type { Theme } from '../theme-generator';
+
+export function exportToTailwindConfig(themes: Theme[]): string {
+  const colorConfig: Record<string, Record<string, string>> = {};
+  
+  for (const theme of themes) {
+    const prefix = theme.mode === 'dark' ? 'dark-' : '';
+    
+    // Flatten action tokens
+    for (const [actionType, states] of Object.entries(theme.colors.action)) {
+      for (const [state, value] of Object.entries(states)) {
+        const key = `${prefix}action-${actionType}-${state}`;
+        colorConfig[key] = { DEFAULT: value };
+      }
+    }
+    
+    // Flatten surface, text, border similarly...
+  }
+  
+  return `module.exports = {
+  theme: {
+    extend: {
+      colors: ${JSON.stringify(colorConfig, null, 2)}
+    }
+  }
+};`;
+}
+```
+
+```typescript
+// exporters/typescript.ts
+import type { Theme } from '../theme-generator';
+
+export function exportToTypeScript(themes: Theme[]): string {
+  const themeExports = themes.map(theme => 
+    `export const ${theme.name}Theme = ${JSON.stringify(theme, null, 2)} as const;`
+  ).join('\n\n');
+  
+  return `// Auto-generated theme tokens
+${themeExports}
+
+export const themes = {
+  ${themes.map(t => `${t.name}: ${t.name}Theme`).join(',\n  ')}
+} as const;
+
+export type ThemeName = keyof typeof themes;
+`;
+}
+```
+
+## CLI Tool for Token Generation
+
+Make it practical with a CLI:
+
+```typescript
+#!/usr/bin/env node
+// bin/generate-tokens.ts
+import { Command } from 'commander';
+import { generateTheme } from './theme-generator';
+import { exportToCSSVariables } from './exporters/css';
+import { exportToTailwindConfig } from './exporters/tailwind';
+import { exportToTypeScript } from './exporters/typescript';
+import { writeFileSync } from 'fs';
+
+const program = new Command();
+
+program
+  .name('generate-tokens')
+  .description('Generate design tokens from base colors')
+  .requiredOption('--primary <color>', 'Primary brand color')
+  .option('--secondary <color>', 'Secondary color', '#6B7280')
+  .option('--neutral <color>', 'Neutral color', '#6B7280')
+  .option('--success <color>', 'Success color', '#10B981')
+  .option('--warning <color>', 'Warning color', '#F59E0B')
+  .option('--danger <color>', 'Danger color', '#DC2626')
+  .option('--format <format>', 'Output format (css|tailwind|typescript|all)', 'all')
+  .option('--output <path>', 'Output directory', './tokens')
+  .parse();
+
+const options = program.opts();
+
+const baseColors = {
+  primary: options.primary,
+  secondary: options.secondary,
+  neutral: options.neutral,
+  success: options.success,
+  warning: options.warning,
+  danger: options.danger
+};
+
+const lightTheme = generateTheme(baseColors, 'light');
+const darkTheme = generateTheme(baseColors, 'dark');
+
+if (options.format === 'css' || options.format === 'all') {
+  const css = [
+    exportToCSSVariables(lightTheme),
+    exportToCSSVariables(darkTheme)
+  ].join('\n\n');
+  writeFileSync(`${options.output}/tokens.css`, css);
+  console.log('✓ Generated tokens.css');
+}
+
+if (options.format === 'tailwind' || options.format === 'all') {
+  const config = exportToTailwindConfig([lightTheme, darkTheme]);
+  writeFileSync(`${options.output}/tailwind.config.js`, config);
+  console.log('✓ Generated tailwind.config.js');
+}
+
+if (options.format === 'typescript' || options.format === 'all') {
+  const ts = exportToTypeScript([lightTheme, darkTheme]);
+  writeFileSync(`${options.output}/themes.ts`, ts);
+  console.log('✓ Generated themes.ts');
+}
+```
+
+Usage:
+
+```bash
+npx generate-tokens --primary "#0066FF" --format all --output ./src/tokens
+```
+
+## Real-World Integration
+
+FramingUI provides a token generator pre-configured with sensible defaults and optimized for AI code generation. Instead of building from scratch, you can extend its base:
+
+```typescript
+import { generateTheme, type BaseColors } from '@framingui/tokens';
+
+const brandColors: BaseColors = {
+  primary: '#0066FF',    // Your brand blue
+  secondary: '#6B7280',
+  neutral: '#6B7280',
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#DC2626'
+};
+
+const themes = {
+  light: generateTheme(brandColors, 'light'),
+  dark: generateTheme(brandColors, 'dark')
+};
+
+export default themes;
+```
+
+The generated tokens integrate with FramingUI's component library, giving you type-safe, accessible theming out of the box.
+
+## Conclusion
+
+A theme token generator eliminates manual token maintenance and guarantees consistency across themes. The core pattern—generate shade scales, map to semantic roles, validate accessibility—scales from simple two-theme systems to complex multi-brand setups.
+
+Start with base color definitions, build shade generation, add semantic mapping, validate contrast, and export to your tools. The upfront investment in token generation infrastructure pays dividends every time you add a theme, adjust a color, or onboard a new brand variant.
+
+Token generation isn't about automation for its own sake—it's about making design systems maintainable and ensuring accessibility requirements can't be accidentally violated. When tokens are generated from rules rather than manually specified, those rules become the enforcement mechanism.

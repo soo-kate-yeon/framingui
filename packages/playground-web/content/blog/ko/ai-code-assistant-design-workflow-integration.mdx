@@ -1,0 +1,567 @@
+---
+title: "Integrating AI Code Assistants Into Your Design Workflow"
+description: "Restructure your design workflow for AI code assistants—practical patterns, real examples, and integration strategies."
+date: "2026-03-29"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - workflow
+  - design-system
+  - automation
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+AI code assistants like Claude Code, Cursor, and GitHub Copilot don't just speed up coding—they fundamentally change how design decisions flow into production. The traditional handoff from designer to developer becomes a three-way collaboration between designer, AI, and developer, where the AI acts as the primary implementer.
+
+This shift breaks most existing workflows. Designers who hand off "final" Figma files find their carefully chosen colors replaced with generic `bg-gray-100`. Developers who rely on AI autocomplete discover inconsistent component usage across features. The problem isn't the AI—it's workflows built for human translation that don't account for how AI interprets design intent.
+
+This guide walks through restructuring your workflow to make AI assistants productive contributors rather than sources of inconsistency.
+
+## Understanding How AI Assistants Interpret Design
+
+When you ask an AI to "build a user settings page," it generates code based on:
+
+1. **Statistical patterns** from training data (what settings pages commonly look like)
+2. **Available context** from your codebase (existing components it can import)
+3. **Explicit instructions** you provide (specific requirements in prompts)
+4. **Structured constraints** from configuration files (design tokens, component APIs)
+
+The crucial insight: AI follows explicit rules better than implicit patterns. If your design system exists only as visual artifacts (Figma files, screenshots), the AI can't access it. It needs machine-readable definitions.
+
+Here's what happens without structured design context:
+
+```tsx
+// AI generates generic, inconsistent code
+function SettingsPanel() {
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-4">
+        Settings
+      </h2>
+      <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+        Save Changes
+      </button>
+    </div>
+  );
+}
+```
+
+And with proper design system integration:
+
+```tsx
+// AI generates system-consistent code
+function SettingsPanel() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Settings</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Button variant="primary">Save Changes</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+The second version uses your actual component library, semantic variant names, and established composition patterns. The AI didn't magically get better—it had better inputs.
+
+## Step 1: Convert Design Decisions to Structured Tokens
+
+The first workflow change: design tokens become the source of truth, not Figma files.
+
+Traditional workflow:
+1. Designer creates mockups in Figma
+2. Developer extracts values from inspect panel
+3. Developer writes CSS/Tailwind classes
+4. Designer reviews and requests changes
+
+AI-integrated workflow:
+1. Designer defines token structure (semantic names, categories)
+2. Designer assigns values to tokens in code
+3. AI generates components using token references
+4. Designer reviews token usage, not pixel values
+
+Here's a practical token definition that AI assistants can consume:
+
+```typescript
+// tokens/colors.ts
+export const colors = {
+  // Semantic action colors
+  action: {
+    primary: {
+      default: '#0066FF',
+      hover: '#0052CC',
+      active: '#003D99',
+      disabled: '#99BFFF'
+    },
+    secondary: {
+      default: '#6B7280',
+      hover: '#4B5563',
+      active: '#374151',
+      disabled: '#D1D5DB'
+    },
+    destructive: {
+      default: '#DC2626',
+      hover: '#B91C1C',
+      active: '#991B1B',
+      disabled: '#FCA5A5'
+    }
+  },
+  
+  // Semantic surface colors
+  surface: {
+    base: '#FFFFFF',
+    raised: '#F9FAFB',
+    overlay: '#FFFFFF',
+    inverse: '#111827'
+  },
+  
+  // Semantic text colors
+  text: {
+    primary: '#111827',
+    secondary: '#6B7280',
+    tertiary: '#9CA3AF',
+    inverse: '#FFFFFF',
+    link: '#0066FF',
+    linkHover: '#0052CC'
+  },
+  
+  // Semantic border colors
+  border: {
+    default: '#E5E7EB',
+    strong: '#D1D5DB',
+    subtle: '#F3F4F6',
+    focus: '#0066FF'
+  }
+} as const;
+
+export type ColorToken = typeof colors;
+```
+
+The structure communicates intent. An AI that sees `action.primary.hover` understands this applies to interactive elements in their hover state. It won't use `action.primary.hover` for static text.
+
+If you're using Tailwind, generate a config from these tokens:
+
+```typescript
+// tailwind.config.ts
+import { colors } from './tokens/colors';
+
+function flattenTokens(obj: any, prefix = ''): Record<string, string> {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    const newPrefix = prefix ? `${prefix}-${key}` : key;
+    if (typeof value === 'string') {
+      acc[newPrefix] = value;
+    } else {
+      Object.assign(acc, flattenTokens(value, newPrefix));
+    }
+    return acc;
+  }, {} as Record<string, string>);
+}
+
+export default {
+  theme: {
+    extend: {
+      colors: flattenTokens(colors)
+    }
+  }
+};
+```
+
+Now AI assistants can generate `bg-action-primary-default` and `hover:bg-action-primary-hover` that match your design system exactly.
+
+## Step 2: Document Component APIs for AI Consumption
+
+AI assistants autocomplete based on TypeScript types and JSDoc comments. Well-typed components guide AI toward correct usage.
+
+Bad component definition (AI will guess):
+
+```tsx
+// ❌ Unclear API, AI invents random props
+export function Button({ children, ...props }: any) {
+  return <button {...props}>{children}</button>;
+}
+```
+
+Good component definition (AI follows contract):
+
+```tsx
+// ✅ Clear API, AI generates correct usage
+export interface ButtonProps {
+  /**
+   * Visual style variant
+   * @default 'primary'
+   */
+  variant?: 'primary' | 'secondary' | 'outline' | 'destructive';
+  
+  /**
+   * Size variant
+   * @default 'medium'
+   */
+  size?: 'small' | 'medium' | 'large';
+  
+  /**
+   * Disabled state
+   */
+  disabled?: boolean;
+  
+  /**
+   * Loading state - shows spinner and disables interaction
+   */
+  isLoading?: boolean;
+  
+  /**
+   * Click handler
+   */
+  onClick?: () => void;
+  
+  children: React.ReactNode;
+}
+
+export function Button({
+  variant = 'primary',
+  size = 'medium',
+  disabled = false,
+  isLoading = false,
+  onClick,
+  children
+}: ButtonProps) {
+  // Implementation
+}
+```
+
+The JSDoc comments are crucial. When an AI assistant autocompletes, it reads those descriptions and understands that `variant` controls visual style, not behavior.
+
+For more complex components, add usage examples:
+
+```tsx
+/**
+ * Modal dialog component with accessibility features
+ * 
+ * @example
+ * ```tsx
+ * <Modal
+ *   isOpen={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   title="Confirm Action"
+ * >
+ *   <p>Are you sure you want to delete this item?</p>
+ *   <ModalActions>
+ *     <Button variant="secondary" onClick={() => setIsOpen(false)}>
+ *       Cancel
+ *     </Button>
+ *     <Button variant="destructive" onClick={handleDelete}>
+ *       Delete
+ *     </Button>
+ *   </ModalActions>
+ * </Modal>
+ * ```
+ */
+export function Modal({ ... }: ModalProps) {
+  // Implementation
+}
+```
+
+AI assistants parse these examples and generate code that follows the pattern.
+
+## Step 3: Create AI-Friendly Design System Documentation
+
+Traditional design documentation lives in Storybook or Figma. AI assistants need documentation in code comments or markdown files in the repository.
+
+Create a `DESIGN_SYSTEM.md` file at your repo root:
+
+```markdown
+# Design System Guidelines
+
+## Component Composition Patterns
+
+### Cards
+Cards group related content. Use semantic layout components for internal structure:
+
+✅ Correct:
+<Card>
+  <CardHeader>
+    <CardTitle>User Profile</CardTitle>
+    <CardDescription>Manage your account settings</CardDescription>
+  </CardHeader>
+  <CardContent>
+    {/* Main content */}
+  </CardContent>
+  <CardFooter>
+    <Button>Save Changes</Button>
+  </CardFooter>
+</Card>
+
+❌ Incorrect:
+<Card>
+  <div className="font-bold">User Profile</div>
+  <p className="text-gray-600">Manage your account settings</p>
+  {/* Don't manually recreate header structure */}
+</Card>
+
+### Forms
+Always use FormField wrapper for consistent layout and error handling:
+
+<form>
+  <FormField label="Email" error={errors.email}>
+    <Input type="email" name="email" />
+  </FormField>
+  
+  <FormField label="Password" error={errors.password}>
+    <Input type="password" name="password" />
+  </FormField>
+  
+  <Button type="submit">Sign In</Button>
+</form>
+
+## Spacing Conventions
+
+- Use `space-y-{size}` for vertical stacks
+- Use `gap-{size}` for flex/grid layouts
+- Standard sizes: 2 (8px), 4 (16px), 6 (24px), 8 (32px)
+- Prefer semantic spacing over arbitrary values
+
+## Color Usage
+
+- Text: Use `text-primary`, `text-secondary`, `text-tertiary` hierarchy
+- Backgrounds: Use `bg-surface-base`, `bg-surface-raised` for elevation
+- Actions: Use `bg-action-primary-*` for primary buttons, `bg-action-secondary-*` for secondary
+- Never use arbitrary hex colors in components
+```
+
+When you prompt an AI assistant, you can reference this file: "Build a settings form following the patterns in DESIGN_SYSTEM.md."
+
+## Step 4: Integrate Design Tokens Into AI Workflows
+
+Most AI code assistants let you configure context that gets included automatically. Use this to inject design token awareness.
+
+For Claude Code (`.clauderc.json`):
+
+```json
+{
+  "contextFiles": [
+    "tokens/**/*.ts",
+    "components/**/*.tsx",
+    "DESIGN_SYSTEM.md"
+  ],
+  "rules": [
+    "Always use design tokens from tokens/ directory",
+    "Never use arbitrary color values",
+    "Follow component composition patterns from DESIGN_SYSTEM.md",
+    "Import components from @/components/ui, not building from scratch"
+  ]
+}
+```
+
+For Cursor (`.cursorrules`):
+
+```
+When generating UI code:
+- Import components from @/components/ui
+- Use design tokens from tokens/colors.ts and tokens/spacing.ts
+- Follow semantic color naming (text-primary, bg-surface-base, etc.)
+- Never write inline styles or arbitrary Tailwind values
+- Check DESIGN_SYSTEM.md for composition patterns before creating layouts
+```
+
+These configuration files turn one-time instructions into persistent context that applies to every AI interaction.
+
+## Step 5: Establish Review Checkpoints
+
+AI assistants generate code fast—too fast to manually review every line. Instead, establish automated checks:
+
+**Linting rules for token usage:**
+
+```typescript
+// eslint-custom-rules/no-arbitrary-colors.js
+module.exports = {
+  meta: {
+    type: 'problem',
+    docs: {
+      description: 'Disallow arbitrary color values, require design tokens',
+    },
+  },
+  create(context) {
+    return {
+      JSXAttribute(node) {
+        if (node.name.name === 'className') {
+          const value = node.value.value;
+          // Check for arbitrary Tailwind colors like bg-[#FF0000]
+          if (value && /\[#[0-9A-Fa-f]{6}\]/.test(value)) {
+            context.report({
+              node,
+              message: 'Use design tokens instead of arbitrary colors',
+            });
+          }
+        }
+      },
+    };
+  },
+};
+```
+
+**Type checking for component props:**
+
+TypeScript already catches incorrect prop usage, but you can add runtime validation for complex cases:
+
+```typescript
+// components/ui/button.tsx
+import { z } from 'zod';
+
+const buttonPropsSchema = z.object({
+  variant: z.enum(['primary', 'secondary', 'outline', 'destructive']),
+  size: z.enum(['small', 'medium', 'large']),
+  disabled: z.boolean().optional(),
+  isLoading: z.boolean().optional(),
+});
+
+export function Button(props: ButtonProps) {
+  if (process.env.NODE_ENV === 'development') {
+    buttonPropsSchema.parse(props);
+  }
+  // Implementation
+}
+```
+
+**Visual regression testing:**
+
+Use tools like Playwright or Chromatic to catch when AI-generated code produces unexpected visual changes:
+
+```typescript
+// tests/visual-regression.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('settings panel matches design', async ({ page }) => {
+  await page.goto('/settings');
+  await expect(page).toHaveScreenshot('settings-panel.png');
+});
+```
+
+These checks catch issues automatically, so you don't need to manually review every AI-generated component.
+
+## Real-World Example: Building a Dashboard
+
+Let's walk through building a dashboard page with an AI assistant, applying these workflow principles.
+
+**Traditional prompt (produces inconsistent results):**
+
+> "Build a dashboard with a header, sidebar, and main content area showing user stats"
+
+**AI-workflow-optimized prompt:**
+
+> "Build a dashboard page following DESIGN_SYSTEM.md patterns. Use DashboardLayout component for structure, Card components for stat display, and design tokens from tokens/colors.ts. Show user stats: total users, active sessions, revenue. Reference existing dashboard pages in src/pages/dashboard for composition patterns."
+
+The AI generates:
+
+```tsx
+// src/pages/dashboard/overview.tsx
+import { DashboardLayout } from '@/components/layouts/dashboard-layout';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Stat } from '@/components/ui/stat';
+
+export function DashboardOverview() {
+  return (
+    <DashboardLayout title="Overview">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Stat value="12,345" change="+12%" trend="up" />
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Active Sessions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Stat value="1,234" change="+5%" trend="up" />
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Stat value="$45,678" change="-2%" trend="down" />
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
+  );
+}
+```
+
+This code:
+- Uses existing layout components (DashboardLayout)
+- Follows card composition patterns from DESIGN_SYSTEM.md
+- Applies consistent spacing (gap-6)
+- Uses semantic component structure (CardHeader, CardContent)
+
+All because the AI had the right context and constraints.
+
+## When AI Workflows Break Down
+
+Even with proper structure, AI assistants have limitations:
+
+**Complex animations and micro-interactions:** AI can generate basic Framer Motion code, but nuanced timing curves and orchestration require human refinement.
+
+**Novel design patterns:** If you're inventing a new interaction model not represented in the AI's training data, you'll need to hand-code the first implementation, then the AI can adapt it.
+
+**Accessibility edge cases:** AI generates basic ARIA attributes, but complex keyboard navigation or screen reader optimization needs manual testing and adjustment.
+
+**Performance optimization:** AI doesn't profile render performance. If a generated component causes performance issues, you'll need to identify and fix bottlenecks manually.
+
+The workflow isn't about eliminating developers—it's about shifting developer effort from routine implementation to areas where human judgment matters.
+
+## Measuring Workflow Success
+
+Track these metrics to evaluate whether AI integration improves your design-to-code workflow:
+
+**Design token adoption rate:** What percentage of color/spacing values in production code reference design tokens vs. arbitrary values? Target: >95%.
+
+**Component reuse rate:** How often do features use existing components vs. creating one-off implementations? Higher reuse indicates AI is following system patterns.
+
+**Design review cycle time:** How long from "design approved" to "code in production"? AI workflows should reduce this significantly.
+
+**Consistency audit results:** Run automated checks for token usage, component API compliance, and pattern adherence. Fewer violations = better AI integration.
+
+## Tools and Resources
+
+Several tools make AI-integrated design workflows more practical:
+
+**FramingUI** provides structured design token definitions and component scaffolding optimized for AI code generation. Instead of configuring token schemas manually, you start with a working system that AI assistants understand.
+
+**Style Dictionary** converts design tokens between formats (CSS variables, Tailwind config, JavaScript objects) so AI assistants can consume them regardless of your tech stack.
+
+**Storybook with auto-generated docs** creates browsable component documentation from TypeScript types, which AI assistants can reference when generating code.
+
+**ESLint plugins** enforce token usage and component patterns automatically, catching issues before code review.
+
+## Practical Next Steps
+
+To integrate AI assistants into your design workflow:
+
+1. **Audit current design artifacts:** Identify which design decisions exist only as visual mockups vs. structured definitions
+2. **Extract 10 core tokens:** Start small—define your primary colors, spacing scale, and typography system as code
+3. **Document 3 component patterns:** Pick your most-used components (Button, Card, Input) and write clear API contracts with JSDoc
+4. **Configure AI context:** Add token files and pattern documentation to your AI assistant's context files
+5. **Run a pilot project:** Build one feature end-to-end using AI generation, measure consistency, adjust workflow
+
+The goal isn't perfection immediately—it's establishing a foundation that improves with every iteration.
+
+## Conclusion
+
+AI code assistants change design workflows from linear handoffs to collaborative loops. Designers encode intent as structured tokens and component APIs. AI assistants generate implementation code following those constraints. Developers review for correctness and handle edge cases.
+
+The workflow works when design decisions are machine-readable. Token definitions replace pixel specifications. Component contracts replace visual inspection. Documented patterns replace tribal knowledge.
+
+Start small—convert your core design decisions to structured tokens, document your key components, and configure your AI assistant to prefer system patterns over generic code. Each improvement compounds, making AI-generated code progressively more consistent with your design system.
+
+The teams seeing the most value from AI assistants aren't those with the best prompts—they're the ones who restructured their design systems to be AI-compatible from the start.
