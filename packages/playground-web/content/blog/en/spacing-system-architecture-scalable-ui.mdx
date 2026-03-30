@@ -1,0 +1,811 @@
+---
+title: "Spacing System Architecture for Scalable UI: Build Rhythm and Hierarchy with Tokens"
+description: "Design systematic spacing scales that create visual rhythm and hierarchy. Implement spacing tokens for padding, margin, gaps, and layouts."
+date: "2026-03-31"
+author:
+  name: "FramingUI Team"
+tags:
+  - spacing
+  - layout
+  - design-tokens
+  - typography
+  - design-systems
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Random spacing destroys visual coherence. A button gets 12px padding. A card gets 20px. A section gets 35px. Each component picks arbitrary values, creating chaotic layouts that feel disconnected.
+
+The problem isn't spacing itself—it's the lack of systematic spacing architecture.
+
+## Why Spacing Needs a System
+
+Spacing isn't just whitespace. It creates:
+
+- **Visual rhythm** - Consistent spacing intervals create flow
+- **Hierarchy** - Larger spacing groups related content
+- **Breathing room** - Proper spacing improves readability
+- **Alignment** - Systematic spacing enables predictable layouts
+- **Scalability** - Spacing tokens adapt to different screen sizes
+
+Without a system, spacing becomes guesswork.
+
+## Building a Base-Unit Spacing Scale
+
+Start with a mathematical scale based on a fundamental unit:
+
+```typescript
+// tokens/spacing.ts
+
+// Base unit (typically 4px or 8px)
+const baseUnit = 4;
+
+// Generate spacing scale
+export const spacing = {
+  0: '0',
+  px: '1px',
+  0.5: `${baseUnit * 0.5}px`, // 2px
+  1: `${baseUnit * 1}px`,      // 4px
+  2: `${baseUnit * 2}px`,      // 8px
+  3: `${baseUnit * 3}px`,      // 12px
+  4: `${baseUnit * 4}px`,      // 16px
+  5: `${baseUnit * 5}px`,      // 20px
+  6: `${baseUnit * 6}px`,      // 24px
+  8: `${baseUnit * 8}px`,      // 32px
+  10: `${baseUnit * 10}px`,    // 40px
+  12: `${baseUnit * 12}px`,    // 48px
+  16: `${baseUnit * 16}px`,    // 64px
+  20: `${baseUnit * 20}px`,    // 80px
+  24: `${baseUnit * 24}px`,    // 96px
+  32: `${baseUnit * 32}px`,    // 128px
+  40: `${baseUnit * 40}px`,    // 160px
+  48: `${baseUnit * 48}px`,    // 192px
+  56: `${baseUnit * 56}px`,    // 224px
+  64: `${baseUnit * 64}px`,    // 256px
+} as const;
+
+// Semantic spacing tokens
+export const spacingSemantic = {
+  // Component padding
+  padding: {
+    xs: spacing[2],  // 8px
+    sm: spacing[3],  // 12px
+    md: spacing[4],  // 16px
+    lg: spacing[6],  // 24px
+    xl: spacing[8],  // 32px
+  },
+  
+  // Layout gaps
+  gap: {
+    xs: spacing[2],  // 8px
+    sm: spacing[4],  // 16px
+    md: spacing[6],  // 24px
+    lg: spacing[8],  // 32px
+    xl: spacing[12], // 48px
+  },
+  
+  // Section spacing
+  section: {
+    sm: spacing[12], // 48px
+    md: spacing[16], // 64px
+    lg: spacing[24], // 96px
+    xl: spacing[32], // 128px
+  },
+  
+  // Container padding
+  container: {
+    sm: spacing[4],  // 16px
+    md: spacing[6],  // 24px
+    lg: spacing[8],  // 32px
+    xl: spacing[12], // 48px
+  },
+} as const;
+```
+
+This creates a predictable scale where every value is a multiple of 4px.
+
+## The 8-Point Grid System
+
+Many design systems use an 8px base unit for easier mental math:
+
+```typescript
+// tokens/spacing-8pt.ts
+const baseUnit = 8;
+
+export const spacing8pt = {
+  0: '0',
+  1: '8px',   // 1 unit
+  2: '16px',  // 2 units
+  3: '24px',  // 3 units
+  4: '32px',  // 4 units
+  5: '40px',  // 5 units
+  6: '48px',  // 6 units
+  8: '64px',  // 8 units
+  10: '80px', // 10 units
+  12: '96px', // 12 units
+} as const;
+```
+
+Choose based on your design needs. 4px offers more granularity; 8px simplifies decisions.
+
+## Component-Level Spacing Tokens
+
+Define spacing for specific component types:
+
+```typescript
+// tokens/component-spacing.ts
+import { spacing } from './spacing';
+
+export const componentSpacing = {
+  button: {
+    paddingX: spacing[4], // 16px
+    paddingY: spacing[2], // 8px
+    gap: spacing[2],      // icon-to-text gap
+  },
+  
+  input: {
+    paddingX: spacing[3], // 12px
+    paddingY: spacing[2], // 8px
+    gap: spacing[3],      // label-to-input gap
+  },
+  
+  card: {
+    padding: spacing[6],       // 24px
+    gap: spacing[4],           // internal content gap
+    headerGap: spacing[3],     // title-to-description gap
+  },
+  
+  form: {
+    fieldGap: spacing[4],      // between form fields
+    sectionGap: spacing[8],    // between form sections
+    labelGap: spacing[2],      // label-to-input
+  },
+  
+  list: {
+    itemGap: spacing[3],       // between list items
+    contentGap: spacing[2],    // within list item content
+  },
+  
+  navigation: {
+    itemGap: spacing[1],       // compact nav items
+    sectionGap: spacing[6],    // between nav sections
+  },
+} as const;
+```
+
+## Building Spacing-Aware Components
+
+Create components that consume spacing tokens automatically:
+
+```tsx
+// components/Card.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const cardVariants = cva(
+  [
+    'rounded-lg',
+    'border',
+    'border-neutral-200',
+    'bg-white',
+  ].join(' '),
+  {
+    variants: {
+      padding: {
+        none: 'p-0',
+        sm: 'p-4',   // 16px
+        md: 'p-6',   // 24px
+        lg: 'p-8',   // 32px
+        xl: 'p-12',  // 48px
+      },
+      gap: {
+        none: 'space-y-0',
+        sm: 'space-y-2',  // 8px
+        md: 'space-y-4',  // 16px
+        lg: 'space-y-6',  // 24px
+        xl: 'space-y-8',  // 32px
+      },
+    },
+    defaultVariants: {
+      padding: 'md',
+      gap: 'md',
+    },
+  }
+);
+
+interface CardProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof cardVariants> {}
+
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ padding, gap, className, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cardVariants({ padding, gap, className })}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Card.displayName = 'Card';
+
+// Compound components for semantic structure
+export const CardHeader = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={`space-y-2 ${className || ''}`} {...props} />
+  )
+);
+CardHeader.displayName = 'CardHeader';
+
+export const CardTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h3 
+      ref={ref} 
+      className={`text-xl font-semibold ${className || ''}`} 
+      {...props} 
+    />
+  )
+);
+CardTitle.displayName = 'CardTitle';
+
+export const CardDescription = forwardRef<HTMLParagraphElement, HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => (
+    <p 
+      ref={ref} 
+      className={`text-sm text-neutral-600 ${className || ''}`} 
+      {...props} 
+    />
+  )
+);
+CardDescription.displayName = 'CardDescription';
+
+export const CardContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={className} {...props} />
+  )
+);
+CardContent.displayName = 'CardContent';
+
+export const CardFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div 
+      ref={ref} 
+      className={`flex items-center gap-2 ${className || ''}`} 
+      {...props} 
+    />
+  )
+);
+CardFooter.displayName = 'CardFooter';
+```
+
+Usage:
+
+```tsx
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardContent,
+  CardFooter 
+} from '@/components/Card';
+import { Button } from '@/components/Button';
+
+export function ProductCard() {
+  return (
+    <Card padding="md" gap="md">
+      <CardHeader>
+        <CardTitle>Premium Plan</CardTitle>
+        <CardDescription>
+          Best for growing teams
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent>
+        <p className="text-3xl font-bold">$29<span className="text-base font-normal">/mo</span></p>
+        <ul className="mt-4 space-y-2">
+          <li>✓ Unlimited projects</li>
+          <li>✓ Advanced analytics</li>
+          <li>✓ Priority support</li>
+        </ul>
+      </CardContent>
+      
+      <CardFooter>
+        <Button className="w-full">Get Started</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+Spacing is consistent without manual className tweaks.
+
+## Stack Component for Vertical Rhythm
+
+Build a layout primitive for vertical spacing:
+
+```tsx
+// components/Stack.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const stackVariants = cva(
+  'flex flex-col',
+  {
+    variants: {
+      gap: {
+        0: 'gap-0',
+        1: 'gap-1',   // 4px
+        2: 'gap-2',   // 8px
+        3: 'gap-3',   // 12px
+        4: 'gap-4',   // 16px
+        6: 'gap-6',   // 24px
+        8: 'gap-8',   // 32px
+        12: 'gap-12', // 48px
+        16: 'gap-16', // 64px
+      },
+      align: {
+        start: 'items-start',
+        center: 'items-center',
+        end: 'items-end',
+        stretch: 'items-stretch',
+      },
+    },
+    defaultVariants: {
+      gap: 4,
+      align: 'stretch',
+    },
+  }
+);
+
+interface StackProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof stackVariants> {}
+
+export const Stack = forwardRef<HTMLDivElement, StackProps>(
+  ({ gap, align, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={stackVariants({ gap, align, className })}
+        {...props}
+      />
+    );
+  }
+);
+
+Stack.displayName = 'Stack';
+```
+
+Usage:
+
+```tsx
+export function SettingsPanel() {
+  return (
+    <Stack gap={8}>
+      <section>
+        <h2 className="text-2xl font-bold mb-4">Account Settings</h2>
+        
+        <Stack gap={4}>
+          <Input label="Email" type="email" />
+          <Input label="Username" type="text" />
+          <Input label="Bio" as="textarea" rows={4} />
+        </Stack>
+      </section>
+      
+      <section>
+        <h2 className="text-2xl font-bold mb-4">Notifications</h2>
+        
+        <Stack gap={3}>
+          <Checkbox label="Email notifications" />
+          <Checkbox label="Push notifications" />
+          <Checkbox label="SMS notifications" />
+        </Stack>
+      </section>
+    </Stack>
+  );
+}
+```
+
+## Inline Component for Horizontal Spacing
+
+Create a horizontal spacing primitive:
+
+```tsx
+// components/Inline.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const inlineVariants = cva(
+  'flex flex-row',
+  {
+    variants: {
+      gap: {
+        0: 'gap-0',
+        1: 'gap-1',
+        2: 'gap-2',
+        3: 'gap-3',
+        4: 'gap-4',
+        6: 'gap-6',
+        8: 'gap-8',
+      },
+      align: {
+        start: 'items-start',
+        center: 'items-center',
+        end: 'items-end',
+        baseline: 'items-baseline',
+      },
+      justify: {
+        start: 'justify-start',
+        center: 'justify-center',
+        end: 'justify-end',
+        between: 'justify-between',
+        around: 'justify-around',
+      },
+      wrap: {
+        true: 'flex-wrap',
+        false: 'flex-nowrap',
+      },
+    },
+    defaultVariants: {
+      gap: 2,
+      align: 'center',
+      justify: 'start',
+      wrap: false,
+    },
+  }
+);
+
+interface InlineProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof inlineVariants> {}
+
+export const Inline = forwardRef<HTMLDivElement, InlineProps>(
+  ({ gap, align, justify, wrap, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={inlineVariants({ gap, align, justify, wrap, className })}
+        {...props}
+      />
+    );
+  }
+);
+
+Inline.displayName = 'Inline';
+```
+
+Usage:
+
+```tsx
+export function ActionBar() {
+  return (
+    <Inline gap={3} justify="between" align="center">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+      
+      <Inline gap={2}>
+        <Button variant="secondary">Export</Button>
+        <Button variant="primary">Create New</Button>
+      </Inline>
+    </Inline>
+  );
+}
+```
+
+## Responsive Spacing
+
+Define breakpoint-specific spacing:
+
+```typescript
+// tokens/responsive-spacing.ts
+export const responsiveSpacing = {
+  container: {
+    paddingX: {
+      sm: spacing[4],  // 16px mobile
+      md: spacing[6],  // 24px tablet
+      lg: spacing[8],  // 32px desktop
+      xl: spacing[12], // 48px wide
+    },
+  },
+  
+  section: {
+    paddingY: {
+      sm: spacing[12], // 48px mobile
+      md: spacing[16], // 64px tablet
+      lg: spacing[24], // 96px desktop
+    },
+  },
+  
+  grid: {
+    gap: {
+      sm: spacing[4],  // 16px mobile
+      md: spacing[6],  // 24px tablet
+      lg: spacing[8],  // 32px desktop
+    },
+  },
+} as const;
+```
+
+Implement with responsive utilities:
+
+```tsx
+// components/Container.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+
+export const Container = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={`
+          w-full 
+          max-w-7xl 
+          mx-auto 
+          px-4 
+          sm:px-6 
+          lg:px-8 
+          xl:px-12
+          ${className || ''}
+        `}
+        {...props}
+      />
+    );
+  }
+);
+
+Container.displayName = 'Container';
+```
+
+## Grid Systems with Token-Based Gaps
+
+Build flexible grid layouts:
+
+```tsx
+// components/Grid.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const gridVariants = cva(
+  'grid',
+  {
+    variants: {
+      cols: {
+        1: 'grid-cols-1',
+        2: 'grid-cols-1 md:grid-cols-2',
+        3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+        4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+        6: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6',
+      },
+      gap: {
+        0: 'gap-0',
+        2: 'gap-2',
+        4: 'gap-4',
+        6: 'gap-6',
+        8: 'gap-8',
+        12: 'gap-12',
+      },
+    },
+    defaultVariants: {
+      cols: 3,
+      gap: 6,
+    },
+  }
+);
+
+interface GridProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof gridVariants> {}
+
+export const Grid = forwardRef<HTMLDivElement, GridProps>(
+  ({ cols, gap, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={gridVariants({ cols, gap, className })}
+        {...props}
+      />
+    );
+  }
+);
+
+Grid.displayName = 'Grid';
+```
+
+Usage:
+
+```tsx
+export function ProductGrid({ products }: { products: Product[] }) {
+  return (
+    <Grid cols={3} gap={6}>
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </Grid>
+  );
+}
+```
+
+## Section Spacing for Page Layout
+
+Create consistent page section rhythm:
+
+```tsx
+// components/Section.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const sectionVariants = cva(
+  'w-full',
+  {
+    variants: {
+      spacing: {
+        none: 'py-0',
+        sm: 'py-12',  // 48px
+        md: 'py-16',  // 64px
+        lg: 'py-24',  // 96px
+        xl: 'py-32',  // 128px
+      },
+      background: {
+        transparent: 'bg-transparent',
+        white: 'bg-white',
+        neutral: 'bg-neutral-50',
+        accent: 'bg-accent-50',
+      },
+    },
+    defaultVariants: {
+      spacing: 'md',
+      background: 'transparent',
+    },
+  }
+);
+
+interface SectionProps 
+  extends HTMLAttributes<HTMLElement>,
+          VariantProps<typeof sectionVariants> {}
+
+export const Section = forwardRef<HTMLElement, SectionProps>(
+  ({ spacing, background, className, ...props }, ref) => {
+    return (
+      <section
+        ref={ref}
+        className={sectionVariants({ spacing, background, className })}
+        {...props}
+      />
+    );
+  }
+);
+
+Section.displayName = 'Section';
+```
+
+Build full page layouts:
+
+```tsx
+export function LandingPage() {
+  return (
+    <>
+      <Section spacing="xl" background="accent">
+        <Container>
+          <Stack gap={6} align="center">
+            <h1 className="text-5xl font-bold text-center">
+              Build Better Products
+            </h1>
+            <p className="text-xl text-center max-w-2xl">
+              Ship consistent, accessible UI with systematic design tokens
+            </p>
+            <Button size="lg">Get Started</Button>
+          </Stack>
+        </Container>
+      </Section>
+      
+      <Section spacing="lg">
+        <Container>
+          <Stack gap={12}>
+            <h2 className="text-3xl font-bold">Features</h2>
+            <Grid cols={3} gap={8}>
+              <FeatureCard />
+              <FeatureCard />
+              <FeatureCard />
+            </Grid>
+          </Stack>
+        </Container>
+      </Section>
+      
+      <Section spacing="md" background="neutral">
+        <Container>
+          <TestimonialCarousel />
+        </Container>
+      </Section>
+    </>
+  );
+}
+```
+
+## Optical Spacing Adjustments
+
+Sometimes mathematical spacing needs visual adjustment:
+
+```typescript
+// tokens/optical-spacing.ts
+export const opticalSpacing = {
+  // Negative margin for optical alignment of rounded elements
+  roundedNegative: '-2px',
+  
+  // Extra spacing for elements with shadows
+  shadowCompensation: '4px',
+  
+  // Text optical centering
+  textCenterAdjust: '-0.05em', // Pull text up slightly for optical center
+  
+  // Icon-to-text optical spacing
+  iconTextGap: {
+    opticalLeft: '0.5rem',  // Slightly more when icon is on left
+    opticalRight: '0.375rem', // Slightly less when icon is on right
+  },
+} as const;
+```
+
+Apply in components:
+
+```tsx
+export function IconButton({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <button className="flex items-center gap-2">
+      <span className="flex-shrink-0">{icon}</span>
+      {/* Optical adjustment: text pulls slightly left toward icon */}
+      <span style={{ marginLeft: '-2px' }}>{children}</span>
+    </button>
+  );
+}
+```
+
+## Using FramingUI for Spacing Systems
+
+[FramingUI](https://framingui.com) provides battle-tested spacing components:
+
+```tsx
+import { Stack, Inline, Grid, Section, Container } from 'framingui';
+
+export function Dashboard() {
+  return (
+    <Container>
+      <Section spacing="lg">
+        <Stack gap={8}>
+          <Inline justify="between">
+            <h1>Dashboard</h1>
+            <Button>Create</Button>
+          </Inline>
+          
+          <Grid cols={4} gap={6}>
+            <MetricCard />
+            <MetricCard />
+            <MetricCard />
+            <MetricCard />
+          </Grid>
+        </Stack>
+      </Section>
+    </Container>
+  );
+}
+```
+
+This eliminates spacing decisions while maintaining flexibility.
+
+## Key Takeaways
+
+Systematic spacing creates visual rhythm:
+
+1. **Base-unit scale** - Mathematical progression (4px or 8px base)
+2. **Semantic tokens** - Named spacing for specific contexts
+3. **Layout primitives** - Stack, Inline, Grid components
+4. **Responsive spacing** - Breakpoint-specific values
+5. **Optical adjustments** - Visual fine-tuning when needed
+
+Spacing isn't arbitrary whitespace—it's architectural structure.
+
+Start with a base-unit scale. Define semantic spacing tokens. Build layout primitives. Your UI will have consistent rhythm and hierarchy without manual spacing tweaks.

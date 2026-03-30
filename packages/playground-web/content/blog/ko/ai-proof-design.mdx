@@ -1,111 +1,111 @@
 ---
-title: "AI가 코드를 생성해도 깨지지 않는 UI 만들기"
-description: "AI 생성 UI 코드가 왜 디자인 시스템을 망가뜨리는지, 그리고 디자인 토큰으로 AI-proof 인터페이스를 만드는 실전 방법입니다."
+title: "Building UIs That Survive AI Code Generation"
+description: "Why AI-generated UI code breaks design systems, how design tokens create AI-proof interfaces, and practical strategies for maintaining consistency."
 date: "2026-03-07"
 author:
   name: "FramingUI Team"
 tags:
-  - ai
   - design-tokens
   - design-system
+  - ui-consistency
 category: "Concept"
 coverImage: ""
 published: true
 ---
 
-디자인 시스템의 강도는 가장 약한 생성 컴포넌트 하나가 결정해요. AI 도구에 UI를 만들어 달라고 할 때마다 그 컴포넌트가 시각적 일관성을 깰 가능성이 꽤 높습니다.
+Your design system is only as strong as its weakest generated component. And right now, every time you ask an AI tool to build UI, that component has a decent chance of breaking your visual consistency.
 
-AI 탓이 아니에요. 컨텍스트 문제예요. LLM은 학습 데이터, 즉 여러분의 여백 스케일도 모르고 시맨틱 색상 이름도 모르고 `surface.elevated`와 `surface.default`의 차이도 모르는 수백만 개의 공개 저장소를 기반으로 그럴듯한 코드를 생성하거든요. 그 컨텍스트 없이는 모든 생성이 추측입니다.
+It's not the AI's fault. It's a context problem. LLMs generate plausible code based on training data — millions of public repositories that don't know your spacing scale, your semantic color names, or the difference between `surface.elevated` and `surface.default`. Without that context, every generation is a guess.
 
-AI-proof 디자인은 그 간극을 좁히는 거예요. AI가 작동하지 못하게 막는 게 아니라, 기본적으로 AI가 올바른 출력을 향하도록 유도하는 시스템을 만드는 거죠.
+AI-proof design is about closing that gap. Not preventing AI from working, but designing systems that guide AI toward correct output by default.
 
-## AI 생성 UI가 자주 망가지는 이유
+## Why AI-Generated UI Code Breaks So Often
 
-### AI는 우리 시스템이 아닌 "그럴듯함"을 최적화한다
+### AI Optimizes for Plausibility, Not Your System
 
-제약 없이 버튼을 요청하면 모델은 웹 전반에서 버튼이 일반적으로 어떻게 생겼는지를 생성해요. `padding: 12px 24px`. `background: #3b82f6`. `border-radius: 8px`. 각 값은 독립적으로는 합리적입니다. 수십 개의 컴포넌트에 걸치면 디자인 기반이 무너져요.
+When you prompt for a button without constraints, the model generates what buttons typically look like across the web. `padding: 12px 24px`. `background: #3b82f6`. `border-radius: 8px`. Each value is reasonable in isolation. Across dozens of components, they erode your design foundation.
 
-모델이 부주의한 게 아니에요. 학습에서 가장 통계적으로 그럴듯한 값으로 빈칸을 채우는 거예요. 그 값이 우리 시스템과 맞지 않을 뿐이고요.
+The model isn't being careless. It's filling gaps with the most statistically likely values from training. Those values don't match your system.
 
-### 암묵적 지식은 전달되지 않는다
+### Implicit Knowledge Doesn't Transfer
 
-팀의 디자인 지식은 Figma 코멘트, Slack 스레드, 구전으로 살아있어요. 디자이너는 `elevated` 대신 `default` 표면을 쓸 때를 알아요. 엔지니어는 폼 입력이 항상 특정 레이블 스타일과 쌍을 이룬다는 걸 알죠.
+Your team carries design knowledge in Figma comments, Slack threads, and tribal memory. Designers know when to use `elevated` vs `default` surfaces. Engineers know that form inputs always pair with a specific label style.
 
-명시적으로 인코딩하지 않으면 AI에게 전달이 안 됩니다. "일관된 여백 사용"은 모델에게 아무 의미가 없어요. `spacing.3 → 16px`는 의미가 있죠.
+None of this reaches AI unless you encode it explicitly. "Use consistent spacing" means nothing to a model. `spacing.3 → 16px` means something.
 
-### 컨텍스트 윈도우는 유한하다
+### Context Windows Are Finite
 
-디자인 가이드라인을 매 프롬프트에 붙여 넣어도 기능 요구사항과 컨텍스트 공간을 경쟁해요. 그리고 모델은 여전히 가이드라인을 특정 컴포넌트에 어떻게 적용할지 추론해야 합니다. 그 추론 과정에서 노이즈가 생기고요.
+Even if you paste your design guidelines into every prompt, you're competing with feature requirements for context window space. And the model still has to infer how to apply guidelines to a specific component — inference that introduces noise.
 
-구조화된 토큰은 이걸 다르게 해결해요. 압축적이고, 조회 가능하고, 제약 목적으로 만들어진 구조예요.
+Structured tokens solve this differently. They're compact, queryable, and purpose-built for constraint.
 
-## "AI-Proof" 디자인이란 무엇인가
+## What Makes a Design "AI-Proof"
 
-AI-proof 디자인 시스템은 함께 작동하며 생성을 올바른 출력으로 제약하는 세 가지 속성을 가집니다.
+An AI-proof design system has three properties that work together to constrain generation toward correct output.
 
-### 명시적 제약
+### Explicit Constraints
 
-값과 관계가 산문이 아닌 기계 판독 가능한 형식으로 정의돼요. 여백이 "일관됨"이 아니에요. `spacing.3 = 16px`, `spacing.4 = 24px`이고 컴포넌트는 항상 이 키를 참조해요. AI가 제약을 읽을 수 있으면 따를 수 있습니다.
+Values and relationships are defined in machine-readable formats, not prose. Spacing isn't "consistent" — it's `spacing.3 = 16px`, `spacing.4 = 24px`, and components always reference these keys. When AI can read the constraint, it can follow it.
 
-### 의미적 명확성
+### Semantic Clarity
 
-토큰 이름이 외형이 아닌 의도를 인코딩해요. `color.blue.500`은 AI에게 외형을 알려주고, `color.primary.solid`는 역할을 알려줘요. 시맨틱 토큰으로 작업하는 모델은 primary 액션 버튼을 만들 때 어떤 토큰을 써야 할지 알아요. 외형 기반 이름으로 작업하는 모델은 매핑을 추론해야 합니다.
+Token names encode intent, not appearance. `color.blue.500` tells AI an appearance. `color.primary.solid` tells AI a role. When generating a primary action button, a model working with semantic tokens knows which token to reach for. A model working with appearance-based names has to infer the mapping.
 
-### 조합 가능한 프리미티브
+### Composable Primitives
 
-컴포넌트가 안정적이고 열거된 단위로 구성돼요. `<Button variant="primary" size="md">`는 유한한 유효 상태를 가져요. AI는 새 variant를 발명할 수 없어요. 정의된 것에서 조합합니다. 이건 리뷰 단계가 아닌 API 단계에서의 강제예요.
+Components are built from stable, enumerated units. `<Button variant="primary" size="md">` has a finite set of valid states. AI cannot invent new variants. It composes from what's defined. This is enforcement at the API level, not the review level.
 
-## 제약 레이어로서의 디자인 토큰
+## Design Tokens as the Constraint Layer
 
-토큰이 AI-proof 디자인의 기반인 이유는 암묵적 디자인 지식을 명시적이고 조회 가능한 계약으로 변환하기 때문이에요.
+Tokens are the foundation of AI-proof design because they transform implicit design knowledge into an explicit, queryable contract.
 
-AI 워크플로우에서 좋은 토큰 스키마는 세 가지 역할을 해요. 디자인 의도와 생성 코드 사이의 **계약**, 무한한 추측에서 유효한 조합으로 솔루션 공간을 줄이는 **제약 레이어**, 인간 프롬프트와 AI 출력을 정렬하는 **공유 어휘**입니다.
+For AI workflows, a good token schema serves three functions: it's a **contract** between design intent and generated code, a **constraint layer** that reduces the solution space from arbitrary guesses to valid compositions, and a **shared vocabulary** that aligns what humans mean in prompts with what AI produces in output.
 
-엔터프라이즈급 스키마가 필요하지 않아요. 가장 일반적인 생성 시나리오를 커버하는 최소 레이어로 시작하세요.
+You don't need an enterprise-scale schema to see the benefit. Start with the minimum layers that cover the most common generation scenarios.
 
-**색상 토큰:** 텍스트용 `color.text.primary`, `color.text.secondary`, `color.text.inverse`. 배경용 `color.surface.default`, `color.surface.elevated`, `color.surface.sunken`. 테두리용 `color.border.default`, `color.border.focus`. 브랜드용 `color.primary.solid`, `color.primary.fg`, `color.primary.border`.
+**Color tokens:** `color.text.primary`, `color.text.secondary`, `color.text.inverse` for text. `color.surface.default`, `color.surface.elevated`, `color.surface.sunken` for backgrounds. `color.border.default`, `color.border.focus` for borders. `color.primary.solid`, `color.primary.fg`, `color.primary.border` for brand.
 
-**여백:** 컴포넌트가 항상 참조하는 일관된 스케일. `spacing.1 = 4px`, `spacing.2 = 8px`, `spacing.3 = 16px`, `spacing.4 = 24px`.
+**Spacing:** A consistent scale that components always reference. `spacing.1 = 4px`, `spacing.2 = 8px`, `spacing.3 = 16px`, `spacing.4 = 24px`.
 
-**타이포그래피:** `font.size.body`, `font.size.label`, `font.size.heading`. `font.weight.regular`, `font.weight.medium`, `font.weight.semibold`.
+**Typography:** `font.size.body`, `font.size.label`, `font.size.heading`. `font.weight.regular`, `font.weight.medium`, `font.weight.semibold`.
 
-**컴포넌트 의미 토큰:** `button.primary.bg`, `button.primary.fg`, `input.bg`, `input.border`, `input.focus`.
+**Component semantic tokens:** `button.primary.bg`, `button.primary.fg`, `input.bg`, `input.border`, `input.focus`.
 
-이 스키마가 일반적인 UI 생성 시나리오의 대부분을 커버해요.
+This schema covers the majority of common UI generation scenarios.
 
-## FramingUI로 실전 적용하기
+## Practical Strategies with FramingUI
 
-### 항상 토큰 컨텍스트와 함께 생성하기
+### Always Generate with Token Context
 
-AI 메모리나 캐시된 예제에 의존하지 마세요. 모든 생성마다 명시적으로 토큰 컨텍스트를 제공하세요. 프롬프트 템플릿이든, 프로젝트 지식 파일이든, 생성 시점에 토큰을 조회 가능하게 만드는 MCP 서버든요.
+Don't rely on AI memory or cached examples. Provide token context explicitly on every generation — either through a prompt template, a project knowledge file, or an MCP server that makes tokens queryable at generation time.
 
-토큰 컨텍스트 없는 프롬프트:
-
-```
-이메일이랑 비밀번호 필드 있는 로그인 폼 만들어줘
-```
-
-결과: AI가 색상, 여백, focus 상태를 추측함.
-
-토큰 컨텍스트 있는 프롬프트:
+A prompt without token context:
 
 ```
-다음을 사용해서 로그인 폼 만들어줘:
-- @framingui/ui의 Input 컴포넌트
-- 간격은 var(--spacing-3), 패딩은 var(--spacing-5)
-- 제출 액션은 Button variant="default"
-- default, focus, error, disabled 상태 전부 포함
+Create a login form with email and password fields
 ```
 
-결과: 실제 시스템을 사용하는 코드.
+Result: AI guesses at colors, spacing, and focus states.
 
-FramingUI MCP 서버를 쓴다면 토큰 컨텍스트가 생성 중에 자동으로 제공돼요. 아니라면 프롬프트 템플릿에 간단한 토큰 참조를 넣어도 같은 제약을 만들 수 있습니다.
+A prompt with token context:
 
-### 스타일 div 대신 프리미티브 컴포넌트
+```
+Create a login form using:
+- Input component from @framingui/ui
+- Spacing: var(--spacing-3) for gaps, var(--spacing-5) for padding
+- Button variant="default" for the submit action
+- Include default, focus, error, and disabled states
+```
 
-AI는 학습 데이터에서 수백만 개의 커스텀 스타일 div 패턴을 봤어요. 내버려두면 그걸 생성하거든요. 이걸 적극적으로 저항해야 해요.
+Result: Code that uses your actual system.
 
-깨지기 쉬운 패턴:
+If you're using FramingUI's MCP server, token context is automatically available during generation. If not, a compact token reference in your prompt template achieves the same constraint.
+
+### Use Primitive Components, Not Styled Divs
+
+AI has seen millions of custom-styled div patterns in training data. Left to its own devices, it will generate them. Resist this actively.
+
+The brittle pattern:
 
 ```tsx
 <div style={{
@@ -114,54 +114,54 @@ AI는 학습 데이터에서 수백만 개의 커스텀 스타일 div 패턴을 
   borderRadius: '8px',
   color: 'white'
 }}>
-  제출
+  Submit
 </div>
 ```
 
-모든 생성이 버튼을 재발명해요. 값이 흘러내려요. 일관성을 유지하는 유일한 방법이 수동 리뷰뿐이에요.
+Every generation reinvents the button. Values drift. The only way to maintain consistency is manual review.
 
-AI-proof 패턴:
+The AI-proof pattern:
 
 ```tsx
 <Button variant="primary" size="md">
-  제출
+  Submit
 </Button>
 ```
 
-AI가 새 variant를 발명할 수 없어요. 승인된 프리미티브에서 조합합니다. 일관성이 리뷰 단계가 아닌 컴포넌트 인터페이스에서 강제돼요.
+AI cannot invent new variants. It composes from approved primitives. Consistency is enforced at the component interface, not during review.
 
-이걸 프롬프트에서 ("@framingui/ui의 컴포넌트만 사용해. 커스텀 스타일 요소 만들지 마."), 린팅에서 (인라인 스타일 감지), 리뷰에서 (프리미티브를 우회하는 PR 거부) 강제하세요.
+Enforce this in prompts ("Only use components from `@framingui/ui`. Do not create custom styled elements."), in linting (detect inline styles), and in reviews (reject PRs that bypass primitives).
 
-### 자동화 검증 추가하기
+### Add Automated Validation
 
-좋은 토큰 컨텍스트가 있어도 AI는 실수해요. 코드베이스에 들어오기 전에 잡으세요.
+Even with good token context, AI makes mistakes. Catch them before they land in the codebase.
 
-원시 hex 색상, 임의 픽셀 값, 승인되지 않은 유틸리티 조합을 잡아내는 **린트 규칙**.
+**Lint rules** that flag raw hex colors, arbitrary pixel values, and unapproved utility combinations.
 
-스타일 프리미티브가 임의 문자열이 아닌 유효한 토큰 키만 받도록 하는 **TypeScript 제약**.
+**TypeScript constraints** that make your styled primitives accept only valid token keys, not arbitrary strings.
 
-AI가 새 컴포넌트를 생성할 때 예상치 못한 시각적 표류를 잡는 **스냅샷 테스트**.
+**Snapshot tests** that catch unexpected visual drift when AI generates new components.
 
-이건 AI 오류에 대한 보호막일 뿐만 아니라 사람이 저지르는 같은 실수도 잡아줘요.
+These aren't just safeguards against AI errors — they catch the same mistakes humans make.
 
-## 깨질 때 디버깅하기
+## Debugging When Things Break
 
-**AI가 존재하지 않는 토큰 이름을 발명해요** — 토큰 스키마가 제공되지 않았거나 불완전합니다. 모든 생성 프롬프트에 토큰 컨텍스트가 포함됐는지 확인하세요. MCP를 쓴다면 서버 연결을 확인하세요.
+**AI invents non-existent token names** — The token schema isn't being provided or is incomplete. Ensure token context is included in every generation prompt. If using MCP, verify the server connection.
 
-**AI가 맞는 토큰을 쓰는데 잘못된 의미 매핑이에요** — 토큰 이름이 너무 애매합니다. `color.blue.500`은 외형을 알려주지 역할을 알려주지 않아요. 시맨틱 네이밍으로 리팩터링하고 의도를 명확히 하는 프롬프트로 업데이트하세요.
+**AI uses correct tokens but wrong semantic mapping** — Token names are too ambiguous. `color.blue.500` tells AI an appearance, not a role. Refactor toward semantic naming and update your prompts to clarify intent.
 
-**올바른 프리미티브를 만드는데 잘못된 조합이에요** — 컴포넌트 API는 맞는데 AI가 어떤 variant를 언제 쓸지 모르는 거예요. 프롬프트에 조합 가이드라인을 추가하세요: "주요 액션에는 primary 버튼, 취소/뒤로에는 secondary 사용."
+**AI generates correct primitives but wrong composition** — The component API is right, but AI doesn't understand when to use which variant. Add composition guidelines to prompts: "Use primary buttons for main actions, secondary for cancel or back."
 
-**생성 코드가 시간이 지나면서 시각적으로 흘러내려요** — 자동화 검증이 없습니다. 린트 규칙과 스냅샷 테스트를 추가하세요.
+**Generated code drifts visually over time** — Automated validation is missing. Add lint rules and snapshot tests.
 
-## 투자는 복리로 돌아온다
+## The Investment Compounds
 
-AI-proof 디자인은 선행 투자가 필요해요. 토큰 정의, 프리미티브 구축, 프롬프트 템플릿 생성이요. 하지만 수익은 사용량과 함께 커져요.
+AI-proof design takes upfront work: defining tokens, building primitives, creating prompt templates. But the returns scale with usage.
 
-디자이너가 토큰 하나를 업데이트하면 AI가 생성한 모든 컴포넌트에 변경이 전파돼요. 엔지니어는 토큰 위반 수정이 아닌 동작과 UX에 리뷰 시간을 써요. 팀이 AI로 더 많은 코드를 생성할수록 품질이 저하되지 않아요. 시스템이 정확성을 강제하거든요.
+Designers can update a token once and see changes propagate through all AI-generated components. Engineers spend review time on behavior and logic instead of token violations. As the team generates more code with AI, quality doesn't degrade — the system enforces correctness.
 
-이게 AI를 위험한 프로토타입 도구가 아닌 신뢰할 수 있는 프로덕션 워크플로우로 취급하는 전환이에요. 그 전환을 가능하게 하는 건 아키텍처입니다.
+This is the difference between treating AI as a risky prototype tool and treating it as a reliable production workflow. The architecture is what makes that shift possible.
 
 ---
 
-디자인 토큰은 단순 테마 변수가 아니에요. AI 지원 개발에서 토큰은 일반적인 추측을 시스템 정렬 구현으로 바꾸는 제어 인터페이스예요. 제약을 먼저 만들면 일관성은 따라옵니다.
+Design tokens are not just theming variables. In AI-assisted development, they're the control surface that turns generative output from generic guesswork into system-aligned implementation. Build the constraints first, and the consistency follows.

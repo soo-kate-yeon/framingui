@@ -1,6 +1,6 @@
 ---
-title: "FramingUI로 첫 디자인 토큰 시스템 만들기"
-description: "FramingUI을 사용하여 OKLCH 기반 디자인 토큰을 생성하고 일관된 디자인 시스템을 구축하는 방법을 알아보세요."
+title: "FramingUI Generates OKLCH Design Tokens in One Step"
+description: "Learn how to use FramingUI to generate OKLCH-based design tokens and build consistent design systems for your web applications."
 date: "2026-02-10"
 author:
   name: "FramingUI Team"
@@ -11,45 +11,45 @@ coverImage: ""
 published: true
 ---
 
-HSL로 만든 팔레트는 색상마다 밝기가 달라 보여요. 같은 50% 명도라도 노란색은 눈에 확 들어오는데 파란색은 칙칙해 보이는 그 문제, FramingUI은 OKLCH 색상 공간으로 해결하고 있거든요.
+Most color tools still generate palettes that look mismatched across hues—a problem baked into HSL itself. FramingUI takes a different approach, using the OKLCH color space to build perceptually uniform palettes that your whole team can trust.
 
-OKLCH는 사람이 색을 실제로 인식하는 방식에 맞춰 밝기를 계산해요. L=0.5라고 하면 어떤 색조에서든 시각적으로 비슷한 밝기로 보이도록 설계됐죠. 실용적으로 풀면 이런 얘기예요. primary, success, warning, error 팔레트를 함께 놓았을 때 수동으로 조정하지 않아도 시각적 균형이 맞아요.
+OKLCH corrects a fundamental flaw in older color models. In HSL, "50% lightness" looks dramatically brighter in yellow than in blue. OKLCH maps lightness to how humans actually perceive it, so a color at L=0.5 reads as equally bright regardless of hue. The practical result: your primary, success, warning, and error palettes feel visually balanced without manual tweaking.
 
-## 첫 번째 토큰 세트 만들기
+## Generating Your First Token Set
 
-[framingui.com](https://framingui.com)의 인터랙티브 플레이그라운드를 열어보세요. 브랜드 메인 색상의 색조(hue)를 선택하면, FramingUI이 나머지를 처리해요.
+Open the interactive playground at [framingui.com](https://framingui.com). Choose a base hue for your brand's primary color—FramingUI handles the rest.
 
-이 하나의 입력값에서 다음이 자동으로 만들어져요.
+From that single input, the generator builds:
 
-- 지각적으로 균일한 10단계 **프라이머리 팔레트**
-- success, warning, error, info를 포함한 **시맨틱 색상 역할**
-- 동일한 밝기 곡선으로 보정된 **뉴트럴 스케일**
+- A **primary palette** with 10 perceptually uniform shades
+- **Semantic color roles**: success, warning, error, info
+- A **neutral scale** calibrated against the same lightness curve
 
-생성되는 과정에서 WCAG 2.1 명도 대비 기준도 실시간으로 검사해요. AA 기준을 통과하지 못하는 조합은 내보내기 전에 미리 표시되고요. 다크 모드 팔레트도 라이트 모드와 함께 생성되는데, 두 모드 모두 같은 시각적 계층 구조와 대비 비율을 유지해요.
+Every color combination is checked against WCAG 2.1 contrast ratios in real time. Pairs that fall below the AA threshold are flagged before you export anything. Dark mode palettes are generated alongside light mode, maintaining the same visual hierarchy and contrast across both.
 
-컴포넌트 프리뷰 패널에서는 실제 UI 요소에 토큰이 적용된 모습을 확인할 수 있어요. 버튼, 폼 필드, 카드, 배지 같은 것들이요. 추상적인 색상 스와치가 아니라 실제 맥락에서 결정을 검증할 수 있는 거죠.
+The component preview panel applies your tokens to real UI elements—buttons, form fields, cards, badges—so you can validate decisions in context rather than in the abstract.
 
-## 토큰 내보내기
+## Exporting Your Tokens
 
-FramingUI은 스택의 각 부분에 맞는 세 가지 형식으로 내보내기를 지원해요.
+FramingUI exports in three formats, each suited to a different part of your stack:
 
-**CSS Custom Properties**는 어떤 프로젝트에도 바로 적용할 수 있어요. 생성된 파일은 전체에 걸쳐 `var(--token-name)` 참조를 사용해서, JavaScript 없이도 테마가 작동해요.
+**CSS Custom Properties** drop directly into any project. The generated file uses `var(--token-name)` references throughout, so theming works without JavaScript.
 
-**Tailwind CSS** 출력물은 토큰 이름을 키로 하는 colors 객체로 `tailwind.config.js`를 확장해요. 모든 Tailwind 유틸리티 클래스가 토큰으로 연결되는 구조죠.
+**Tailwind CSS** output extends your `tailwind.config.js` with a colors object keyed to your token names. Every Tailwind utility class maps back to a token.
 
-**JSON**은 W3C 디자인 토큰 형식을 따르는 원시 토큰 구조를 제공해요. Style Dictionary와 함께 쓰거나, Tokens Studio를 통해 Figma로 가져오거나, FramingUI의 MCP 서버에 공급해서 AI 도구가 디자인 시스템을 직접 읽게 할 수 있어요.
+**JSON** gives you the raw token structure following the W3C Design Token format. Use it with Style Dictionary, import it into Figma via Tokens Studio, or feed it to FramingUI's MCP server so AI tools can read your design system directly.
 
-## AI 도구와 연결하기
+## Connecting to AI Tools
 
-`tokens.json` 파일이 준비됐다면, FramingUI의 MCP 서버를 통해 Claude Code나 Cursor에 연결할 수 있어요. 이 서버는 Model Context Protocol로 토큰을 노출해서, AI가 학습 데이터 기본값에 의존하지 않고 필요할 때마다 토큰을 직접 조회할 수 있게 해줘요.
+Once you have a `tokens.json` file, you can wire it to Claude Code or Cursor through FramingUI's MCP server. The server exposes your tokens over the Model Context Protocol so AI can query them on demand rather than relying on training data defaults.
 
-처음 한 번만 하면 되는 설정이에요.
+The one-time setup looks like this:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-이 명령어는 프로젝트 프레임워크를 자동으로 감지하고, 필요한 패키지를 설치하고, 프로젝트 루트에 `.mcp.json`을 작성해요.
+This command detects your project framework, installs the necessary packages, and writes a `.mcp.json` at the project root:
 
 ```json
 {
@@ -63,12 +63,12 @@ npx -y @framingui/mcp-server@latest init
 }
 ```
 
-Claude Code를 재시작하고 컴포넌트를 만들어달라고 요청해보세요. AI가 `bg-blue-500`이나 `#3B82F6` 대신 디자인 시스템의 실제 토큰 이름을 사용해서 코드를 생성하는 걸 확인할 수 있어요.
+Restart Claude Code, then ask it to build any component. Instead of generating `bg-blue-500` or `#3B82F6`, the AI queries your tokens and uses the actual names from your design system.
 
-## 실제로 어떻게 쓰이나요
+## What the Workflow Looks Like in Practice
 
-일반적인 세션을 따라가면 이런 흐름이에요. 브랜드 색조를 고르고, 대비 수준 목표(AA 또는 AAA)를 조정하고, 컴포넌트 세트에 적용된 팔레트를 미리봐요. 결과가 마음에 들면 JSON으로 내보내고 `init`을 실행하는 거죠. 그 이후로는 AI가 생성하는 모든 컴포넌트가 Tailwind 기본값이 아니라 여러분의 토큰에서 출발해요.
+A typical session: you pick a brand hue, adjust the contrast level target (AA or AAA), and preview the generated palette against your component set. Satisfied with the result, you export to JSON and run `init`. From that point, every AI-generated component starts from your tokens rather than from generic Tailwind defaults.
 
-플레이그라운드는 비파괴적으로 작동해요. 코드베이스를 건드리지 않고 색조, 채도, 뉴트럴 균형을 자유롭게 조정할 수 있어요. 만족스럽게 완성되면 그때 `tokens.json`을 커밋하면 돼요. MCP 서버는 파일을 필요할 때 읽기 때문에, 이후 AI 생성에서 변경사항이 자동으로 반영돼요.
+The playground is non-destructive—you can iterate on hue, chroma, and neutral balance without touching your codebase. Commit the `tokens.json` when you're ready. The MCP server reads the file on demand, so the next AI generation automatically picks up any changes.
 
-브랜드 색상 하나에서 시작해서 완전하고 접근 가능하며 AI 친화적인 디자인 시스템을 한 세션에 만들 수 있어요.
+Start with a single brand color. Build a complete, accessible, AI-ready design system in one session.

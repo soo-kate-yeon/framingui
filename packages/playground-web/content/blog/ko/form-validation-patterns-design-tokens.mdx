@@ -1,0 +1,768 @@
+---
+title: "Form Validation Patterns with Design Tokens: Build Accessible, Consistent Forms"
+description: "Implement robust form validation UX using design tokens. Error states, success feedback, inline validation, and accessibility patterns."
+date: "2026-03-31"
+author:
+  name: "FramingUI Team"
+tags:
+  - forms
+  - validation
+  - design-tokens
+  - accessibility
+  - react
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Form validation UX is where most design systems fall apart. Error messages appear in random red shades. Success states use inconsistent checkmarks. Focus indicators vary across inputs. Validation timing feels arbitrary.
+
+The problem isn't implementation—it's the lack of systematic validation design tokens.
+
+## The Validation State Problem
+
+Consider a typical login form. Without token-driven validation patterns, developers make ad-hoc decisions:
+
+```tsx
+// ❌ Inconsistent validation UX
+<input 
+  className={error ? "border-red-500" : "border-gray-300"}
+  style={{ 
+    boxShadow: error ? "0 0 0 3px rgba(239, 68, 68, 0.1)" : "none" 
+  }}
+/>
+{error && (
+  <p className="text-sm text-red-600 mt-1">{error}</p>
+)}
+```
+
+Every form reinvents validation styling. The result: jarring inconsistency across your app.
+
+## Building Validation State Tokens
+
+Start with semantic validation state tokens:
+
+```typescript
+// tokens/validation.ts
+export const validation = {
+  state: {
+    error: {
+      border: 'var(--color-error-primary)',
+      background: 'var(--color-error-surface)',
+      text: 'var(--color-error-text)',
+      icon: 'var(--color-error-primary)',
+      focusRing: 'var(--color-error-focus)',
+    },
+    warning: {
+      border: 'var(--color-warning-primary)',
+      background: 'var(--color-warning-surface)',
+      text: 'var(--color-warning-text)',
+      icon: 'var(--color-warning-primary)',
+      focusRing: 'var(--color-warning-focus)',
+    },
+    success: {
+      border: 'var(--color-success-primary)',
+      background: 'var(--color-success-surface)',
+      text: 'var(--color-success-text)',
+      icon: 'var(--color-success-primary)',
+      focusRing: 'var(--color-success-focus)',
+    },
+    neutral: {
+      border: 'var(--color-neutral-border)',
+      background: 'var(--color-neutral-surface)',
+      text: 'var(--color-neutral-text)',
+      icon: 'var(--color-neutral-icon)',
+      focusRing: 'var(--color-accent-focus)',
+    },
+  },
+  
+  timing: {
+    debounce: '300ms',
+    errorShake: '400ms',
+    successFade: '200ms',
+  },
+  
+  feedback: {
+    message: {
+      fontSize: '0.875rem', // 14px
+      lineHeight: '1.25rem',
+      marginTop: '0.5rem',
+      gap: '0.5rem', // icon-to-text spacing
+    },
+    icon: {
+      size: '1rem',
+      strokeWidth: '2px',
+    },
+  },
+  
+  animation: {
+    errorShake: 'shake 400ms cubic-bezier(0.36, 0.07, 0.19, 0.97)',
+    successPulse: 'pulse 200ms ease-out',
+    warningBounce: 'bounce 300ms ease-in-out',
+  },
+} as const;
+
+// Define color tokens for validation states
+export const validationColors = {
+  error: {
+    primary: 'oklch(55% 0.22 25)', // Vibrant red
+    surface: 'oklch(97% 0.02 25)', // Light red tint
+    text: 'oklch(45% 0.18 25)', // Darker red for text
+    focus: 'oklch(55% 0.22 25 / 0.2)', // Red focus ring
+  },
+  warning: {
+    primary: 'oklch(70% 0.15 85)', // Amber
+    surface: 'oklch(97% 0.03 85)',
+    text: 'oklch(50% 0.12 85)',
+    focus: 'oklch(70% 0.15 85 / 0.2)',
+  },
+  success: {
+    primary: 'oklch(60% 0.17 145)', // Green
+    surface: 'oklch(97% 0.03 145)',
+    text: 'oklch(45% 0.14 145)',
+    focus: 'oklch(60% 0.17 145 / 0.2)',
+  },
+  neutral: {
+    border: 'oklch(80% 0.01 280)',
+    surface: 'oklch(100% 0 0)',
+    text: 'oklch(35% 0.02 280)',
+    icon: 'oklch(60% 0.01 280)',
+  },
+  accent: {
+    focus: 'oklch(60% 0.15 260 / 0.3)', // Default focus state
+  },
+} as const;
+```
+
+## Building a Token-Driven Input Component
+
+Create a foundational input that consumes validation tokens:
+
+```tsx
+// components/Input.tsx
+import { forwardRef, InputHTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const inputVariants = cva(
+  // Base styles
+  [
+    'w-full',
+    'rounded-lg',
+    'border',
+    'px-4',
+    'py-2.5',
+    'text-base',
+    'transition-all',
+    'duration-200',
+    'placeholder:text-neutral-text/60',
+    'disabled:opacity-50',
+    'disabled:cursor-not-allowed',
+  ].join(' '),
+  {
+    variants: {
+      validation: {
+        neutral: [
+          'border-neutral-border',
+          'bg-neutral-surface',
+          'text-neutral-text',
+          'focus:border-accent-primary',
+          'focus:ring-4',
+          'focus:ring-accent-focus',
+          'focus:outline-none',
+        ].join(' '),
+        error: [
+          'border-error-primary',
+          'bg-error-surface',
+          'text-error-text',
+          'focus:border-error-primary',
+          'focus:ring-4',
+          'focus:ring-error-focus',
+          'focus:outline-none',
+          'animate-error-shake',
+        ].join(' '),
+        warning: [
+          'border-warning-primary',
+          'bg-warning-surface',
+          'text-warning-text',
+          'focus:border-warning-primary',
+          'focus:ring-4',
+          'focus:ring-warning-focus',
+          'focus:outline-none',
+        ].join(' '),
+        success: [
+          'border-success-primary',
+          'bg-success-surface',
+          'text-success-text',
+          'focus:border-success-primary',
+          'focus:ring-4',
+          'focus:ring-success-focus',
+          'focus:outline-none',
+        ].join(' '),
+      },
+    },
+    defaultVariants: {
+      validation: 'neutral',
+    },
+  }
+);
+
+interface InputProps 
+  extends InputHTMLAttributes<HTMLInputElement>,
+          VariantProps<typeof inputVariants> {
+  label?: string;
+  message?: string;
+  icon?: React.ReactNode;
+}
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, message, icon, validation = 'neutral', className, ...props }, ref) => {
+    const inputId = props.id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const messageId = `${inputId}-message`;
+    
+    return (
+      <div className="flex flex-col gap-1.5">
+        {label && (
+          <label 
+            htmlFor={inputId}
+            className="text-sm font-medium text-neutral-text"
+          >
+            {label}
+          </label>
+        )}
+        
+        <div className="relative">
+          <input
+            ref={ref}
+            id={inputId}
+            aria-invalid={validation === 'error'}
+            aria-describedby={message ? messageId : undefined}
+            className={inputVariants({ validation, className })}
+            {...props}
+          />
+          
+          {icon && (
+            <div 
+              className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              aria-hidden="true"
+            >
+              {icon}
+            </div>
+          )}
+        </div>
+        
+        {message && (
+          <div 
+            id={messageId}
+            className={`flex items-start gap-2 text-sm ${
+              validation === 'error' ? 'text-error-text' :
+              validation === 'warning' ? 'text-warning-text' :
+              validation === 'success' ? 'text-success-text' :
+              'text-neutral-text'
+            }`}
+            role={validation === 'error' ? 'alert' : 'status'}
+          >
+            {icon && <span className="flex-shrink-0 w-4 h-4">{icon}</span>}
+            <span>{message}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+);
+
+Input.displayName = 'Input';
+```
+
+## Validation Icons with Semantic Tokens
+
+Define validation icons as reusable components:
+
+```tsx
+// components/ValidationIcons.tsx
+interface IconProps {
+  className?: string;
+}
+
+export const ErrorIcon = ({ className = '' }: IconProps) => (
+  <svg 
+    className={className || 'w-4 h-4 text-error-primary'}
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+    aria-hidden="true"
+  >
+    <path 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      strokeWidth={2} 
+      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+    />
+  </svg>
+);
+
+export const WarningIcon = ({ className = '' }: IconProps) => (
+  <svg 
+    className={className || 'w-4 h-4 text-warning-primary'}
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+    aria-hidden="true"
+  >
+    <path 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      strokeWidth={2} 
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
+    />
+  </svg>
+);
+
+export const SuccessIcon = ({ className = '' }: IconProps) => (
+  <svg 
+    className={className || 'w-4 h-4 text-success-primary'}
+    fill="none" 
+    viewBox="0 0 24 24" 
+    stroke="currentColor"
+    aria-hidden="true"
+  >
+    <path 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      strokeWidth={2} 
+      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+    />
+  </svg>
+);
+```
+
+## Inline Validation with Debouncing
+
+Implement smart validation timing using token-defined delays:
+
+```tsx
+// hooks/useValidation.ts
+import { useState, useEffect, useCallback } from 'react';
+import { validation } from '@/tokens/validation';
+
+interface ValidationRule {
+  test: (value: string) => boolean;
+  message: string;
+}
+
+interface UseValidationOptions {
+  rules: ValidationRule[];
+  debounce?: number;
+}
+
+export function useValidation({ rules, debounce = 300 }: UseValidationOptions) {
+  const [value, setValue] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
+  
+  const validate = useCallback((val: string) => {
+    for (const rule of rules) {
+      if (!rule.test(val)) {
+        return rule.message;
+      }
+    }
+    return null;
+  }, [rules]);
+  
+  useEffect(() => {
+    if (!touched || !value) return;
+    
+    const timer = setTimeout(() => {
+      const validationError = validate(value);
+      setError(validationError);
+    }, debounce);
+    
+    return () => clearTimeout(timer);
+  }, [value, touched, debounce, validate]);
+  
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+    if (!touched) setTouched(true);
+  };
+  
+  const handleBlur = () => {
+    setTouched(true);
+    const validationError = validate(value);
+    setError(validationError);
+  };
+  
+  return {
+    value,
+    error,
+    touched,
+    isValid: !error && touched,
+    onChange: handleChange,
+    onBlur: handleBlur,
+    reset: () => {
+      setValue('');
+      setError(null);
+      setTouched(false);
+    },
+  };
+}
+```
+
+Usage:
+
+```tsx
+// components/EmailInput.tsx
+import { Input } from './Input';
+import { ErrorIcon, SuccessIcon } from './ValidationIcons';
+import { useValidation } from '@/hooks/useValidation';
+
+export function EmailInput() {
+  const { value, error, isValid, onChange, onBlur } = useValidation({
+    rules: [
+      {
+        test: (v) => v.length > 0,
+        message: 'Email is required',
+      },
+      {
+        test: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+        message: 'Please enter a valid email address',
+      },
+    ],
+    debounce: 300, // from validation.timing.debounce
+  });
+  
+  return (
+    <Input
+      type="email"
+      label="Email"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
+      validation={error ? 'error' : isValid ? 'success' : 'neutral'}
+      message={error || (isValid ? 'Email looks good!' : undefined)}
+      icon={error ? <ErrorIcon /> : isValid ? <SuccessIcon /> : undefined}
+      placeholder="you@example.com"
+    />
+  );
+}
+```
+
+## Password Strength Validation
+
+Build progressive validation feedback:
+
+```tsx
+// components/PasswordInput.tsx
+import { useState } from 'react';
+import { Input } from './Input';
+import { ErrorIcon, WarningIcon, SuccessIcon } from './ValidationIcons';
+
+interface PasswordStrength {
+  score: number; // 0-4
+  label: string;
+  validation: 'error' | 'warning' | 'success' | 'neutral';
+  checks: {
+    length: boolean;
+    uppercase: boolean;
+    lowercase: boolean;
+    number: boolean;
+    special: boolean;
+  };
+}
+
+function calculatePasswordStrength(password: string): PasswordStrength {
+  const checks = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  };
+  
+  const score = Object.values(checks).filter(Boolean).length;
+  
+  let label = '';
+  let validation: PasswordStrength['validation'] = 'neutral';
+  
+  if (password.length === 0) {
+    label = '';
+    validation = 'neutral';
+  } else if (score <= 2) {
+    label = 'Weak password';
+    validation = 'error';
+  } else if (score === 3) {
+    label = 'Fair password';
+    validation = 'warning';
+  } else if (score === 4) {
+    label = 'Good password';
+    validation = 'success';
+  } else {
+    label = 'Strong password';
+    validation = 'success';
+  }
+  
+  return { score, label, validation, checks };
+}
+
+export function PasswordInput() {
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [touched, setTouched] = useState(false);
+  
+  const strength = calculatePasswordStrength(password);
+  
+  return (
+    <div className="space-y-3">
+      <Input
+        type={showPassword ? 'text' : 'password'}
+        label="Password"
+        value={password}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          if (!touched) setTouched(true);
+        }}
+        onBlur={() => setTouched(true)}
+        validation={touched ? strength.validation : 'neutral'}
+        message={touched ? strength.label : undefined}
+        icon={
+          touched ? (
+            strength.validation === 'error' ? <ErrorIcon /> :
+            strength.validation === 'warning' ? <WarningIcon /> :
+            strength.validation === 'success' ? <SuccessIcon /> :
+            undefined
+          ) : undefined
+        }
+        placeholder="Enter your password"
+      />
+      
+      {touched && password.length > 0 && (
+        <div className="space-y-2 text-sm">
+          <p className="font-medium text-neutral-text">Password must contain:</p>
+          <ul className="space-y-1">
+            <RequirementCheck met={strength.checks.length}>
+              At least 8 characters
+            </RequirementCheck>
+            <RequirementCheck met={strength.checks.uppercase}>
+              One uppercase letter
+            </RequirementCheck>
+            <RequirementCheck met={strength.checks.lowercase}>
+              One lowercase letter
+            </RequirementCheck>
+            <RequirementCheck met={strength.checks.number}>
+              One number
+            </RequirementCheck>
+            <RequirementCheck met={strength.checks.special}>
+              One special character
+            </RequirementCheck>
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RequirementCheck({ 
+  met, 
+  children 
+}: { 
+  met: boolean; 
+  children: React.ReactNode;
+}) {
+  return (
+    <li className="flex items-center gap-2">
+      {met ? (
+        <SuccessIcon className="w-4 h-4 flex-shrink-0" />
+      ) : (
+        <span className="w-4 h-4 flex-shrink-0 rounded-full border-2 border-neutral-border" />
+      )}
+      <span className={met ? 'text-success-text' : 'text-neutral-text'}>
+        {children}
+      </span>
+    </li>
+  );
+}
+```
+
+## Form-Level Validation
+
+Coordinate multiple inputs:
+
+```tsx
+// components/LoginForm.tsx
+import { FormEvent, useState } from 'react';
+import { EmailInput } from './EmailInput';
+import { PasswordInput } from './PasswordInput';
+import { Button } from './Button';
+
+export function LoginForm() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    setIsSubmitting(true);
+    
+    try {
+      // Simulate API call
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          if (email === 'error@test.com') {
+            reject(new Error('Invalid credentials'));
+          } else {
+            resolve(true);
+          }
+        }, 1000);
+      });
+      
+      // Success - redirect or show success message
+      console.log('Login successful');
+    } catch (error) {
+      setFormError(
+        error instanceof Error 
+          ? error.message 
+          : 'An error occurred during login'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+      <div className="space-y-4">
+        <EmailInput />
+        <PasswordInput />
+      </div>
+      
+      {formError && (
+        <div 
+          className="flex items-start gap-2 p-4 rounded-lg bg-error-surface border border-error-primary"
+          role="alert"
+        >
+          <ErrorIcon className="flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-error-text">{formError}</p>
+        </div>
+      )}
+      
+      <Button 
+        type="submit" 
+        disabled={isSubmitting}
+        className="w-full"
+      >
+        {isSubmitting ? 'Signing in...' : 'Sign In'}
+      </Button>
+    </form>
+  );
+}
+```
+
+## Accessible Validation CSS
+
+Define animations in your stylesheet:
+
+```css
+/* styles/validation.css */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-error-shake {
+  animation: shake 400ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.animate-success-pulse {
+  animation: pulse 200ms ease-out;
+}
+
+.animate-warning-bounce {
+  animation: bounce 300ms ease-in-out;
+}
+
+/* Ensure animations respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-error-shake,
+  .animate-success-pulse,
+  .animate-warning-bounce {
+    animation: none;
+  }
+}
+```
+
+## Using FramingUI for Form Validation
+
+[FramingUI](https://framingui.com) provides pre-built validation components with full token integration:
+
+```tsx
+import { FormInput, useFormValidation } from 'framingui';
+
+export function SignupForm() {
+  const form = useFormValidation({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationRules: {
+      email: [
+        { required: true },
+        { email: true },
+      ],
+      password: [
+        { required: true },
+        { minLength: 8 },
+        { pattern: /[A-Z]/, message: 'Must contain uppercase' },
+      ],
+    },
+  });
+  
+  return (
+    <form onSubmit={form.handleSubmit}>
+      <FormInput
+        {...form.register('email')}
+        label="Email"
+        type="email"
+      />
+      
+      <FormInput
+        {...form.register('password')}
+        label="Password"
+        type="password"
+        showStrength
+      />
+      
+      <button type="submit" disabled={!form.isValid}>
+        Create Account
+      </button>
+    </form>
+  );
+}
+```
+
+This eliminates validation boilerplate while maintaining full accessibility.
+
+## Key Takeaways
+
+Token-driven form validation provides:
+
+1. **Consistent error states** - Same visual language across all forms
+2. **Accessible by default** - ARIA attributes, semantic HTML, focus management
+3. **Smart timing** - Debounced validation prevents jarring error flashes
+4. **Progressive disclosure** - Show requirements as users type
+5. **Reusable patterns** - Build once, use everywhere
+
+Forms are the hardest UX to get right. Design tokens make validation systematic instead of ad-hoc.
+
+Start with validation state tokens. Build a foundational Input component. Add validation hooks. Your forms become predictably excellent.

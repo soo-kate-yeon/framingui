@@ -1,6 +1,6 @@
 ---
-title: "v0과 FramingUI 중 어느 AI UI 도구로 시작해야 할까"
-description: "v0과 framingui의 공정한 비교. 각 AI UI 도구가 언제 적합한지, 어떤 문제를 해결하는지 알아봅니다."
+title: "v0 vs FramingUI: Two Different Bets on AI UI"
+description: "v0 vs framingui: A fair comparison. When to use each AI UI tool and how they solve different problems."
 date: "2026-02-25"
 author:
   name: "FramingUI Team"
@@ -12,63 +12,63 @@ coverImage: ""
 published: true
 ---
 
-v0 by Vercel과 FramingUI 모두 AI로 UI를 생성합니다. 하지만 프로젝트의 서로 다른 단계에서 서로 다른 문제를 해결해요. 둘 중 하나를 선택하는 건 품질 문제가 아니라 워크플로우 문제입니다.
+Both v0 by Vercel and FramingUI help you generate UI with AI. They solve different problems for different stages of a project, and choosing between them isn't primarily a quality question—it's a workflow question.
 
-## v0이 하는 것
+## What v0 Does
 
-v0은 Vercel의 채팅 기반 UI 생성기예요. 원하는 것을 설명하면 shadcn/ui를 사용해 React 컴포넌트를 생성합니다. 라이브 시각적 프리뷰를 보고, 대화로 반복하고, 만족스러우면 코드를 내보낼 수 있어요.
+v0 is Vercel's chat-based UI generator. You describe what you want, and v0 generates React components using shadcn/ui. You get a live visual preview, can iterate through conversation, and export the code when you're satisfied.
 
-프로토타이핑 경험이 매우 유연합니다. v0은 설정이 필요 없어요. 설명을 입력하고, 결과를 보고, 수정하고, 코드를 추출합니다. 아이디어를 빠르게 검증하거나, 레이아웃 접근법을 테스트하거나, 구현에 착수하기 전에 이해관계자에게 보여줄 것을 만들 때 탁월합니다.
+The experience is frictionless for prototyping. v0 requires no setup. You type a description, see a result, refine it, and extract the code. For validating an idea quickly, testing a layout approach, or creating something to show stakeholders before committing to implementation, it's hard to beat.
 
-출력은 Tailwind 유틸리티 클래스로 스타일된 shadcn/ui 컴포넌트예요. 즉 생성된 코드는 shadcn의 기본값—색상 스케일, 테두리 반경 관례, 타이포그래피 선택—을 반영합니다. 여러분의 것이 아니라요.
+The output is shadcn/ui components styled with Tailwind utility classes. That means the generated code reflects shadcn's defaults—its color scale, its border radius conventions, its typography choices—not yours.
 
-## FramingUI가 하는 것
+## What FramingUI Does
 
-FramingUI는 AI가 생성 시점에 브랜드를 이해하도록 만드는 디자인 시스템 툴체인이에요. 테마, 컴포넌트, 토큰 정의의 구조화된 카탈로그를 MCP 서버를 통해 노출하고, Claude Code 같은 AI 편집기가 쿼리할 수 있습니다.
+FramingUI is a design system toolchain that makes AI understand your brand at generation time. It exposes a structured catalog of themes, components, and token definitions through an MCP server that AI editors like Claude Code can query.
 
-Claude Code에 FramingUI MCP 서버가 활성화되면, 어떤 테마를 쓸 수 있는지, 어떤 컴포넌트가 포함되어 있는지, 컴포넌트가 지원하는 변형은 무엇인지, 그 변형이 참조하는 CSS 변수는 무엇인지 물어볼 수 있어요. 훈련 데이터 기본값이 아니라 실제 디자인 시스템 값으로 코드를 생성합니다.
+When Claude Code has the FramingUI MCP server active, it can ask which themes are available, what components they include, what variants those components support, and what CSS variables those variants reference. It generates code using your design system's actual values rather than training data defaults.
 
-설정은 명령어 하나면 돼요:
+The setup requires one command:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-런타임 계약을 연결합니다. 의존성 설치, CSS 임포트 설정, provider 마운트, 테마 모듈 생성, `.mcp.json`에 MCP 서버 등록. 인증(`framingui-mcp login`)하고 Claude Code를 재시작하면, 모델이 하드코딩된 Tailwind 유틸리티 대신 테마의 CSS 변수—`var(--foreground-accent)`, `var(--background-page)`—를 참조하는 컴포넌트를 생성합니다.
+This wires the runtime contract: installs dependencies, sets up the CSS import, mounts the provider, creates the theme module, and registers the MCP server in `.mcp.json`. After authenticating (`framingui-mcp login`) and restarting Claude Code, the model generates components that reference your theme's CSS variables—`var(--foreground-accent)`, `var(--background-page)`—instead of hardcoded Tailwind utilities.
 
-## 각각 어디서 빛나는가
+## Where Each Excels
 
-v0은 첫 결과까지의 속도에서 이깁니다. 설정도, 인증도, 연결할 계약도 없어요. 브라우저 탭을 열고 생성을 시작합니다. 5분 안에 시각적인 것이 필요하다면 v0이 답입니다.
+v0 wins on speed-to-first-result. No configuration, no authentication, no contract to establish. Open a browser tab and start generating. If you need something visual in five minutes, v0 gets you there.
 
-v0은 학습과 탐색에서도 이겨요. 시각적 프리뷰가 다양한 레이아웃의 동작, shadcn 컴포넌트 조합 방법, 각 프롬프트 변경의 효과를 쉽게 볼 수 있게 합니다. React를 배우는 개발자나 아이디어를 테스트하기 위한 빠른 프로토타입을 만드는 경우, 라이브 피드백 루프가 가치 있습니다.
+v0 also wins for learning and exploration. The visual preview makes it easy to see how different layouts behave, how shadcn components compose, and what the effect of each prompt change is. For developers learning React or building a quick prototype to test an idea, the live feedback loop is valuable.
 
-FramingUI는 시간이 지나도 유지되는 일관성에서 이겨요. 디자인 시스템이 프롬프트가 아니라 MCP 서버에 존재하기 때문에, 모든 생성 세션이 같은 소스로 작동합니다. 1주차에 생성된 컴포넌트가 12주차에 생성된 컴포넌트와 같은 CSS 변수를 참조해요. 세션 간 드리프트가 쌓이지 않습니다.
+FramingUI wins on consistency over time. Because the design system lives in the MCP server rather than in the prompt, every generation session works from the same source. The component generated in week one references the same CSS variables as the component generated in week twelve. Drift between sessions doesn't accumulate.
 
-FramingUI는 shadcn 기본값을 넘어서는 브랜드 요구사항이 있을 때도 이깁니다. v0은 shadcn의 버튼, 카드, 입력 스타일을 생성해요. 제품에 특정 색상 시스템, 독특한 테두리 반경 관례, 특별한 타이포그래피 리듬이 필요하다면 AI가 읽을 수 있는 디자인 시스템이 필요합니다. FramingUI가 그것을 제공해요.
+FramingUI also wins when you have brand requirements that go beyond shadcn defaults. v0 generates shadcn's button, card, and input styles. If your product needs something different—a specific color system, a distinct border radius convention, a particular typographic rhythm—you need a design system that the AI can read. FramingUI provides that.
 
-## 마이그레이션 경로
+## The Migration Path
 
-일반적인 패턴은 초기 탐색에 v0, 프로덕션 개발에 FramingUI를 사용하는 거예요. 실제로 간단합니다.
+A common pattern is to use v0 for early-stage exploration and FramingUI for production development. This is straightforward in practice.
 
-v0에서 초기 레이아웃을 생성해서 구조를 검증하고 이해관계자 피드백을 받아요. 코드를 내보냅니다. 그다음 FramingUI가 설정된 상태에서 Claude Code를 사용해 실제 디자인 시스템으로 그 컴포넌트를 재생성하거나 확장합니다. v0 출력은 구조적 참조로 활용하고, FramingUI 생성 버전이 하드코딩된 값을 의미론적 CSS 변수로 교체해요.
+Generate initial layouts in v0 to validate the structure and get stakeholder feedback. Export the code. Then, with FramingUI configured, use Claude Code to regenerate or extend those components using your actual design system. The v0 output serves as a structural reference; the FramingUI-generated version replaces the hardcoded values with semantic CSS variables.
 
-결과 코드는 v0 버전이 `bg-white`를 쓰던 자리에 `var(--background-page)`를, `bg-blue-500`을 쓰던 자리에 `var(--foreground-accent)`를 씁니다. 모든 값이 테마가 제어하는 토큰으로 거슬러 올라갑니다.
+The resulting code uses `var(--background-page)` where the v0 version used `bg-white`, and `var(--foreground-accent)` where it used `bg-blue-500`. Every value traces back to a token your theme controls.
 
-## 실용적인 판단 기준
+## Practical Decision Points
 
-v0을 사용하세요:
-- 디자인 시스템이 존재하기 전에 프로토타이핑할 때
-- 이해관계자 검토를 위해 시각적 결과물이 빠르게 필요할 때
-- shadcn/ui 컴포넌트 패턴을 배우는 중일 때
-- 프로젝트가 내부용이고 브랜드 일관성이 중요하지 않을 때
+Use v0 when:
+- You're prototyping before a design system exists
+- You need visual output quickly for stakeholder review
+- You're learning shadcn/ui component patterns
+- The project is internal and brand consistency isn't critical
 
-FramingUI를 사용하세요:
-- 라이선스된 테마나 커스텀 디자인 시스템이 있을 때
-- AI가 수동 수정 없이 브랜드에 맞는 컴포넌트를 생성해야 할 때
-- Claude Code나 다른 MCP 호환 편집기로 개발할 때
-- 많은 생성 세션에 걸쳐 디자인 일관성이 유지되어야 할 때
+Use FramingUI when:
+- You have a licensed theme or custom design system
+- AI should generate components that match your brand without manual correction
+- You're building with Claude Code or another MCP-compatible editor
+- Design consistency needs to hold across many generation sessions
 
-둘 다 사용하세요:
-- v0의 시각적 탐색으로 초기 레이아웃 아이디어를 얻고 프로덕션 컴포넌트에는 FramingUI의 디자인 시스템 통합을 원할 때
+Use both when:
+- You want v0's visual exploration for early layout ideas and FramingUI's design system integration for production components
 
-두 도구는 같은 워크플로우를 두고 경쟁하지 않아요. v0은 프로젝트의 첫 한 시간을 최적화합니다. FramingUI는 그 이후의 지속적인 개발을 최적화해요.
+The tools aren't competing for the same workflow. v0 optimizes the first hour of a project. FramingUI optimizes the ongoing development that follows.

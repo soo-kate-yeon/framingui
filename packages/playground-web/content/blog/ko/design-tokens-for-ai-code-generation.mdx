@@ -1,6 +1,6 @@
 ---
-title: "MCP로 AI에게 디자인 토큰 전달해서 일관성 잡기"
-description: "MCP를 사용해 디자인 시스템을 AI 도구에 연결하세요. Claude와 Cursor가 디자인 토큰으로 브랜드에 맞는 UI 컴포넌트를 생성하게 만드세요."
+title: "Feeding Design Tokens to AI via MCP"
+description: "Connect your design system to AI tools using MCP. Make Claude and Cursor generate on-brand UI components with design tokens."
 date: "2026-02-25"
 author:
   name: "FramingUI Team"
@@ -13,33 +13,33 @@ coverImage: ""
 published: true
 ---
 
-Claude에게 프로필 카드를 만들어달라고 하면 깔끔하고 작동하는 코드가 나와요. 그러면 `bg-blue-500`, `#3B82F6`, `px-4`를 디자인 시스템의 실제 토큰으로 교체하는 데 10분을 써요. 매번이요. AI가 실수를 하는 게 아니에요. 여러분의 디자인 결정에 대해 진짜로 모르는 거거든요.
+Ask Claude to build a profile card and it generates clean, working code—then you spend ten minutes replacing `bg-blue-500`, `#3B82F6`, and `px-4` with the actual tokens from your design system. Every time. The AI isn't making mistakes; it genuinely has no idea what your design decisions are.
 
-Model Context Protocol이 그걸 바꿔요. AI 도구에 디자인 시스템과의 실시간 연결을 줘서, 첫 번째 출력물이 학습 데이터 기본값이 아니라 실제 토큰을 사용하도록 해요.
+Model Context Protocol changes that. It gives AI tools a live connection to your design system so the first output uses your actual tokens, not training data defaults.
 
-## MCP가 하는 일
+## What MCP Does
 
-Model Context Protocol은 AI 어시스턴트를 외부 데이터 소스에 연결하기 위한 Anthropic의 오픈 표준이에요. 프롬프트마다 토큰 목록을 붙여넣는 대신, AI가 로컬 서버를 통해 필요할 때 디자인 시스템을 조회해요.
+Model Context Protocol is Anthropic's open standard for connecting AI assistants to external data sources. Instead of pasting your token list into every prompt, the AI queries your design system on demand through a local server.
 
-흐름은 이렇게 됩니다.
+The flow looks like this:
 
 ```
 Claude Code ◄──── MCP ────► @framingui/mcp-server ◄──── tokens.json
 ```
 
-AI에게 컴포넌트를 만들어달라고 하면, MCP 서버에 쿼리하고, 토큰 이름과 값을 받고, 처음부터 그 이름을 사용해서 코드를 생성해요. 나중에 수동으로 교체할 필요가 없어요.
+When you ask the AI to build a component, it queries the MCP server, receives your token names and values, and generates code using those names from the start. No manual substitution after the fact.
 
-토큰은 필요할 때 읽히기 때문에 `tokens.json`을 업데이트하면 다음 AI 생성에서 자동으로 새 값이 사용돼요. 프롬프트에 맥락을 다시 붙여넣거나 오래된 토큰 목록을 유지할 필요가 없어요.
+The tokens are read on demand, so when you update `tokens.json`, the next AI generation automatically uses the new values. There's no re-pasting context into prompts and no stale token list to maintain.
 
-## MCP 서버 설정하기
+## Setting Up the MCP Server
 
-가장 빠른 방법은 `init` 명령어예요. 프레임워크 감지, 패키지 설치, MCP 설정을 한 번에 처리해요.
+The fastest path is the `init` command, which handles framework detection, package installation, and MCP configuration in one step:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-프로젝트 루트에 `.mcp.json`이 작성돼요.
+This writes `.mcp.json` at your project root:
 
 ```json
 {
@@ -53,21 +53,21 @@ npx -y @framingui/mcp-server@latest init
 }
 ```
 
-Claude Code를 재시작하면 돼요. MCP 서버가 실행되고 AI가 디자인 시스템을 조회할 수 있어요.
+Restart Claude Code. The MCP server is now running and the AI can query your design system.
 
-`init`을 사용하지 않고 기존 프로젝트에 FramingUI를 추가한다면, 패키지를 직접 설치하세요.
+If you're adding FramingUI to an existing project without using `init`, install the packages manually:
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-그리고 위의 설정으로 `.mcp.json`을 직접 만들면 돼요.
+Then create `.mcp.json` with the config above.
 
-## AI가 받는 것
+## What the AI Receives
 
-Claude가 MCP 서버에 쿼리하면, 이름, 값, 타입, 설명을 담은 구조화된 JSON 토큰 데이터를 받아요. 이 구조가 일반적인 응답과 디자인 시스템 인식 응답의 차이를 만들어요.
+When Claude queries the MCP server, it gets your token data in structured JSON—names, values, types, and descriptions. That structure is what makes the difference between a generic response and a design-system-aware one.
 
-MCP 없이:
+Without MCP:
 
 ```tsx
 <div className="p-4 bg-white rounded-lg shadow-md">
@@ -78,7 +78,7 @@ MCP 없이:
 </div>
 ```
 
-MCP 사용 후:
+With MCP:
 
 ```tsx
 <div className="bg-surface-elevated p-6 rounded-lg shadow-sm">
@@ -89,16 +89,16 @@ MCP 사용 후:
 </div>
 ```
 
-차이는 두 번째 버전의 모든 값이 여러분이 정의한 토큰으로 연결된다는 거예요. 토큰을 바꾸면 그것을 사용하는 모든 AI 생성 컴포넌트가 다음 생성에서 업데이트돼요.
+The difference is that every value in the second version maps to a token you defined. Change the token, and every AI-generated component using it updates on the next generation.
 
-토큰 설명이 여기서 중요해요. "프라이머리 브랜드 색상. CTA, 링크, 포커스 상태에 사용."이라는 설명이 있는 `color.primary.500` 토큰은 AI에게 값과 의도를 둘 다 알려줘요. 버튼에 `primary-500`을 선택하고 카드 배경에 `surface-elevated`를 선택하는 이유는 각 토큰이 무엇을 위한 것인지 이해하기 때문이에요.
+Token descriptions matter here. A token named `color.primary.500` with a description "Primary brand color. Use for CTAs, links, and focus states" tells the AI both the value and the intent. It can choose `primary-500` for a button and `surface-elevated` for a card background because it understands what each token is for.
 
-## 기존 코드 검증하기
+## Validating Existing Code
 
-생성을 넘어서, MCP로 기존 컴포넌트를 디자인 시스템에 대해 검증할 수 있어요. 감사하고 싶은 컴포넌트를 AI에게 전달하세요.
+Beyond generation, MCP lets you validate existing components against your design system. Prompt the AI with a component you want to audit:
 
 ```
-이 컴포넌트의 디자인 시스템 준수 여부를 확인해줘:
+Check this component for design system compliance:
 
 const Card = () => (
   <div style={{ background: '#ffffff', padding: '16px' }}>
@@ -107,46 +107,46 @@ const Card = () => (
 );
 ```
 
-AI가 토큰을 조회하고 불일치를 찾아요.
+The AI queries your tokens and identifies the mismatches:
 
 ```
-하드코딩된 색상 #ffffff → var(--bg-surface-base) 사용
-하드코딩된 간격 16px  → var(--spacing-4) 사용
-하드코딩된 색상 #1a1a1a → var(--fg-primary) 사용
+Hardcoded color #ffffff → use var(--bg-surface-base)
+Hardcoded spacing 16px  → use var(--spacing-4)
+Hardcoded color #1a1a1a → use var(--fg-primary)
 ```
 
-코드베이스 감사, 새 팀원의 토큰 시스템 온보딩, 누군가 하드코딩된 값을 추가했을 때의 회귀 포착에 유용해요.
+This is useful for codebase audits, onboarding new team members to the token system, and catching regressions when someone introduces a hardcoded value.
 
-## 문제 해결
+## Troubleshooting
 
-**AI가 여전히 하드코딩된 값을 생성해요.** 프롬프트에 명시적 지시를 추가하세요. "MCP 서버의 토큰만 사용해줘. 하드코딩된 색상, 간격, 크기는 사용하지 마." AI가 생성 전에 토큰을 조회해요.
+**AI still generates hardcoded values.** Add explicit instruction to your prompt: "Use only tokens from the MCP server. Do not use hardcoded colors, spacing, or sizing." The AI will query tokens before generating.
 
-**MCP 서버가 연결되지 않아요.** 서버가 올바르게 시작되는지 확인해보세요.
+**MCP server not connecting.** Verify the server starts cleanly:
 
 ```bash
 npx -y @framingui/mcp-server@latest
 ```
 
-`.mcp.json`이 프로젝트 루트에 있는지, 생성 후 Claude Code를 재시작했는지 확인하세요. 디버깅이 필요하면 Claude Code의 Help → Toggle Developer Tools → Console에서 MCP 연결 오류를 확인할 수 있어요.
+Check that `.mcp.json` is at the project root and that you've restarted Claude Code after creating it. For debugging, check Help → Toggle Developer Tools → Console in Claude Code for MCP connection errors.
 
-**토큰을 찾을 수 없어요.** `tokens.json` 경로가 프로젝트 루트에서 상대적으로 올바른지 확인하세요. MCP 서버는 파일을 필요할 때 읽어요. 경로가 잘못되면 오류 대신 빈 결과가 반환돼요.
+**Tokens not found.** Confirm your `tokens.json` path is correct relative to the project root. The MCP server reads the file on demand—if the path is wrong, queries return empty results rather than an error.
 
-## 기존 토큰 사용하기
+## Using Your Existing Tokens
 
-MCP 서버는 FramingUI가 생성한 토큰뿐만 아니라 어떤 JSON 토큰 구조와도 작동해요. Tokens Studio, Style Dictionary, 또는 다른 소스의 토큰이 이미 있다면 서버가 기존 파일을 가리키게 하면 돼요.
+The MCP server works with any JSON token structure, not just tokens generated by FramingUI. If you already have tokens from Tokens Studio, Style Dictionary, or another source, point the server at your existing file.
 
-Style Dictionary를 사용하는 프로젝트라면 MCP 서버가 `--format style-dictionary` 플래그를 받아서 빌드 출력을 직접 읽어요. Tailwind만 사용하는 프로젝트라면 FramingUI가 `tailwind.config.js`에서 토큰 표현을 추출할 수 있어요.
+For projects using Style Dictionary, the MCP server accepts a `--format style-dictionary` flag and reads the build output directly. For Tailwind-only projects, FramingUI can extract a token representation from your `tailwind.config.js`.
 
-목표는 디자인 결정이 현재 어디에 있든, 기존 워크플로우를 바꾸지 않고 MCP 서버가 그것을 AI 도구에 제공할 수 있게 하는 거예요.
+The goal is that wherever your design decisions currently live, the MCP server can make them available to your AI tools without requiring you to change your existing workflow.
 
-## 인증
+## Authentication
 
-사용 가능한 6개 테마(classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism)는 인증이 필요해요. 설정 후 로그인 명령어를 실행하세요.
+The six available themes (classic-magazine, dark-boldness, minimal-workspace, neutral-workspace, pebble, square-minimalism) require authentication. Run the login command after setup:
 
 ```bash
 framingui-mcp login
 ```
 
-브라우저 기반 인증이 열리고 크레덴셜이 `~/.framingui/credentials.json`에 저장돼요. CI 환경이거나 브라우저 인증을 선호하지 않는다면 `FRAMINGUI_API_KEY` 환경 변수를 직접 설정할 수도 있어요.
+This opens browser-based authentication and saves credentials to `~/.framingui/credentials.json`. Alternatively, set the `FRAMINGUI_API_KEY` environment variable directly if you're working in a CI environment or prefer not to use browser authentication.
 
-토큰 조회와 디자인 시스템 기능은 `init` 직후 바로 작동해요. 인증은 라이선스된 테마 카탈로그에 접근할 때만 필요해요.
+Token querying and design system features work immediately after `init`. Authentication is required specifically for the licensed theme catalog.

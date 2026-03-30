@@ -1,5 +1,5 @@
 ---
-title: "토큰 하나로 반응형 타이포그래피 브레이크포인트 없애기"
+title: "Scaling Typography Across Devices with Design Tokens"
 description: "Build fluid, responsive typography systems with design tokens and CSS clamp(). Scale perfectly across devices without breakpoint hell."
 date: "2026-03-11"
 author:
@@ -12,13 +12,13 @@ coverImage: ""
 published: true
 ---
 
-h1 하나에 미디어 쿼리 다섯 개가 붙어 있다면, 그건 코드가 아니라 기술 부채예요. 그 h1이 전체 디자인 시스템의 모든 텍스트 요소에 곱해지면, 건드리기 두려운 수백 개의 `@media` 블록이 남습니다.
+A hero heading that requires five separate media queries is a maintenance problem waiting to happen. Multiply that across every text element in your design system and you end up with hundreds of breakpoint rules that nobody wants to touch.
 
-`clamp()`와 디자인 토큰의 조합이 이 문제를 풉니다. 폰트 사이즈가 최솟값과 최댓값 사이에서 연속으로 스케일되고, 토큰 하나가 미디어 쿼리 스택 전체를 대체해요.
+CSS `clamp()` combined with design tokens eliminates that problem. Font sizes scale continuously between a minimum and maximum, and a single token definition replaces the entire media query stack.
 
-## 브레이크포인트 방식이 무너지는 이유
+## Why Breakpoint-Based Typography Breaks Down
 
-전형적인 반응형 h1은 이렇게 생겼어요:
+The typical responsive heading looks like this:
 
 ```css
 h1 { font-size: 32px; }
@@ -29,43 +29,44 @@ h1 { font-size: 32px; }
 @media (min-width: 1536px) { h1 { font-size: 56px; } }
 ```
 
-h1 하나에 브레이크포인트 다섯 개. 그리고 각 브레이크포인트를 넘을 때 텍스트는 점프해요 — 자연스럽게 흐르는 게 아니라 딱딱 끊기는 거죠. 900px 뷰포트 사용자는 768px와 1024px 정의 사이 어딘가에 어정쩡하게 낀 상태가 됩니다.
+Five breakpoints. One heading. And each breakpoint jump is visible—text snaps to a new size rather than scaling smoothly. Now apply this to every heading level, body copy, and caption in your system. The combinatorial explosion is why large codebases accumulate hundreds of `@media` blocks that gradually diverge from the original intent.
 
-이걸 모든 헤딩 레벨, 본문, 캡션에 적용하면... 결국 누구도 손대고 싶지 않은 코드베이스가 남아요.
+The visual problem is just as real. Resize a browser window past a breakpoint and text jumps rather than flows. Users on 900px viewports sit in an arbitrary gap between your 768px and 1024px definitions.
 
-## clamp()가 하는 일
+## How clamp() Works
 
-`clamp()`는 세 값을 받아요: 최솟값, 선호값(뷰포트 상대), 최댓값.
+`clamp()` takes three values: a minimum, a preferred (viewport-relative) value, and a maximum.
 
 ```css
-font-size: clamp(최솟값, 선호값, 최댓값);
+font-size: clamp(MIN, PREFERRED, MAX);
 ```
 
-선호값은 `vw` 단위를 써서 뷰포트 너비에 따라 스케일돼요. 최솟값과 최댓값이 양 끝 가드 역할을 하고, 그 사이에서 폰트 사이즈가 선형으로 커집니다.
+The preferred value uses `vw` units so it scales with viewport width. The min and max act as guards. Between the two viewport extremes, the font size grows linearly.
 
-h1이 640px에서 2rem, 1536px에서 3rem이어야 한다면 계산은 이렇게:
+For an h1 that should be 2rem at 640px and 3rem at 1536px:
 
 ```
-기울기 = (3 - 2) / (1536 - 640) = 1 / 896 ≈ 1.786vw
+Slope = (3 - 2) / (1536 - 640) = 1 / 896 ≈ 0.00112 rem/px
+          = 1.786vw / 100 → 1.786vw
 
-Y절편 = 2 - (1.786 × 640 / 100) ≈ 1.286rem
+Y-intercept = 2 - (1.786 * 640 / 100) = 2 - 1.143 = 0.857rem → 1.286rem
 ```
 
-결과:
+Result:
 
 ```css
 font-size: clamp(2rem, 1.786vw + 1.286rem, 3rem);
 ```
 
-640px~1536px 사이에서 부드럽게 스케일되고, 그 아래에선 2rem, 그 위에선 3rem으로 고정돼요. 미디어 쿼리 필요 없습니다.
+Between 640px and 1536px the heading scales smoothly. Below 640px it clamps to 2rem; above 1536px it clamps to 3rem. No breakpoints required.
 
-한 가지 실용적인 팁: 최솟값과 최댓값에 `px` 말고 `rem`을 쓰세요. 브라우저 기본 폰트 사이즈를 변경한 사용자의 설정을 `px` 기반 clamp는 무시해버리거든요. WCAG에서 요구하는 사항이기도 해요.
+One practical note: use `rem` for the min and max, not `px`. That way the fluid scale respects users who have changed their browser's base font size, which is a WCAG requirement that `px`-based clamp values silently break.
 
-## 유체 값을 디자인 토큰으로 저장하기
+## Storing Fluid Values as Design Tokens
 
-진짜 레버리지는 clamp 공식을 토큰으로 만드는 데서 나와요. 한 번 정의하고, CSS 변수를 생성하고, 어디서든 변수를 참조하는 거죠.
+The real leverage comes from treating the clamp formula as a token. Define it once, generate CSS variables, and reference the variable everywhere.
 
-주요 헤딩 레벨을 커버하는 토큰 파일:
+A token file that covers the most common heading levels:
 
 ```json
 {
@@ -82,11 +83,11 @@ font-size: clamp(2rem, 1.786vw + 1.286rem, 3rem);
 }
 ```
 
-본문과 UI 레이블은 고정으로 유지해요. 유체 스케일링은 헤딩과 큰 디스플레이 텍스트에 가장 효과적이거든요. 읽기 크기의 본문 텍스트는 스케일해도 얻는 게 별로 없어요.
+Body and UI labels stay fixed. Fluid scaling benefits headings and large display text most—body text at reading size gains very little from scaling, and the added complexity isn't worth it.
 
-## 생성 결과물
+## What Gets Generated
 
-토큰 빌드 단계에서 위 정의들이 CSS 변수와 Tailwind 유틸리티로 변환돼요:
+A token build step transforms those definitions into CSS variables and, optionally, Tailwind utilities:
 
 ```css
 :root {
@@ -98,7 +99,7 @@ font-size: clamp(2rem, 1.786vw + 1.286rem, 3rem);
 ```
 
 ```js
-// tailwind.config.js (생성됨)
+// tailwind.config.js (generated)
 module.exports = {
   theme: {
     fontSize: {
@@ -111,7 +112,7 @@ module.exports = {
 }
 ```
 
-이 시스템을 쓰는 컴포넌트에는 반응형 클래스가 전혀 필요 없어요:
+A component using this system needs no responsive classes at all:
 
 ```tsx
 export function Hero({ title, subtitle }) {
@@ -124,11 +125,11 @@ export function Hero({ title, subtitle }) {
 }
 ```
 
-브레이크포인트 버전과 비교해보세요: `text-3xl md:text-4xl lg:text-5xl xl:text-6xl`. 토큰 버전이 더 짧고, 읽기 쉽고, 브레이크포인트 사이에서도 더 정확해요.
+Compare that to the breakpoint version: `text-3xl md:text-4xl lg:text-5xl xl:text-6xl`. The token version is shorter, easier to read, and more accurate between breakpoints.
 
-## 줄 간격과 자간도 함께 스케일하기
+## Scaling Line Height and Letter Spacing
 
-폰트 사이즈만 스케일할 필요는 없어요. 줄 간격도 작은 크기에서는 약간 촘촘하게, 큰 크기에서는 여유 있게 가져가는 게 좋고, 헤딩의 자간은 텍스트가 커질수록 더 좁아지는 게 자연스럽거든요.
+Font size isn't the only property that benefits from fluid values. Line height should tighten slightly at smaller sizes and open up at larger ones. Tight headings need negative letter spacing that becomes more pronounced as the text grows.
 
 ```json
 {
@@ -137,38 +138,38 @@ export function Hero({ title, subtitle }) {
       "fontSize": { "value": "clamp(2rem, 1.786vw + 1.286rem, 3rem)" },
       "letterSpacing": {
         "value": "clamp(-0.02em, -0.005vw + -0.017em, -0.01em)",
-        "description": "큰 사이즈에서 더 촘촘한 자간"
+        "description": "Tighter tracking at large sizes"
       }
     },
     "body": {
       "fontSize": { "value": "1rem" },
       "lineHeight": {
         "value": "clamp(1.4, 0.05vw + 1.37, 1.6)",
-        "description": "데스크탑에서 약간 더 여유 있는 줄 간격"
+        "description": "Slightly looser on desktop"
       }
     }
   }
 }
 ```
 
-비용 대비 타이포그래피 품질을 크게 높이는 작업이에요.
+These additions are small in cost but meaningful in typographic refinement.
 
-## 흔한 실수들
+## Common Mistakes
 
-**최솟값과 최댓값에 px 사용하기.** 사용자가 브라우저 기본 폰트를 20px로 설정했다면, `clamp(32px, ...)` 헤딩은 그 설정을 완전히 무시해요. `clamp(2rem, ...)`을 써야 사용자 설정이 반영돼요.
+**Using px instead of rem for min/max.** If a user sets their browser base font to 20px, a `clamp(32px, ...)` heading ignores that preference entirely. Use `clamp(2rem, ...)` so the scale respects user settings.
 
-**기울기를 너무 가파르게 설정하기.** `clamp(1rem, 10vw, 4rem)`은 500px 뷰포트에서 `10vw = 50px`이니까 이미 최댓값을 초과해요. 넓은 구간에서 4rem에 박혀 있다가 좁은 구간에서 갑자기 뚝 떨어지게 됩니다. 본문 크기 텍스트는 1vw~3vw 사이를 권장해요.
+**Setting the slope too steep.** `clamp(1rem, 10vw, 4rem)` sounds generous but on a 500px viewport `10vw = 50px`, which is already above the max. The font stays stuck at 4rem across most of the scaling range, then suddenly drops at narrow widths. Keep viewport multipliers between 1vw and 3vw for body-scale text.
 
-**모든 텍스트 스타일에 유체 스케일링 적용하기.** 버튼 레이블, 뱃지 텍스트, 캡션 같은 UI 텍스트는 고정 크기가 더 명확해요. 1rem 미만 요소에 clamp를 써봤자 복잡도만 늘어나고 얻는 게 없어요. 헤딩과 디스플레이 텍스트에 집중하세요.
+**Fluid scaling for every text style.** UI labels on buttons, badge text, and captions are clearest at a fixed size. Fluid scaling adds complexity without meaningful benefit for elements smaller than 1rem. Apply clamp to headings and display text; keep everything else fixed.
 
-## 계산 도구 활용하기
+## Calculating Formulas Without Manual Math
 
-기울기-절편 계산은 손으로 하면 실수하기 쉬워요. [Utopia](https://utopia.fyi/type/calculator/)는 최솟값, 최댓값, 최소 뷰포트, 최대 뷰포트를 입력하면 clamp 공식을 뽑아줘요. [Fluid Type Scale Calculator](https://www.fluid-type-scale.com/)는 슬라이더로 조정하면서 실시간 프리뷰를 볼 수 있고요. 둘 다 바로 쓸 수 있는 공식을 출력해줘요.
+The slope-intercept calculation is mechanical and error-prone by hand. Two tools automate it: [Utopia](https://utopia.fyi/type/calculator/) takes min size, max size, min viewport, max viewport, and an optional modular scale ratio; [Fluid Type Scale Calculator](https://www.fluid-type-scale.com/) provides a visual editor with live preview. Both output ready-to-use clamp formulas.
 
-## AI 코드 생성과의 관계
+## AI Code Generation
 
-AI 코딩 어시스턴트가 MCP 서버나 직접 파일 접근으로 디자인 토큰을 읽으면, 토큰 안의 `clamp()` 값을 문맥에서 파악해요. "가격 섹션을 헤딩과 설명으로 만들어줘"라는 프롬프트에서 `text-5xl`이나 `text-xl` 대신 `text-h1`, `text-body-lg`를 쓰는 컴포넌트가 나오죠.
+When an AI coding assistant reads your design tokens—whether via an MCP server or direct file access—it sees the `clamp()` values in context. A prompt like "create a pricing section with heading and description" produces components that use `text-h1` and `text-body-lg` instead of `text-5xl` and `text-xl`. The generated code is fluid from the first draft.
 
-토큰 없이는 AI가 자기가 학습 때 본 패턴 기반으로 Tailwind 고정 스케일(`text-5xl`은 딱딱한 3rem이에요)을 쓰고 브레이크포인트 수식어를 덧붙여요. 생성 때마다 여러분의 시스템에서 조금씩 멀어져요.
+Without tokens, AI defaults to Tailwind's fixed scale (`text-5xl` is a hard 3rem) and adds breakpoint modifiers based on patterns it saw during training. The result drifts from your system on every generation.
 
-유체 타이포그래피 토큰은 그 기본값을 바꿔요. AI가 여러분의 스케일을 쓰고, 그 스케일이 반응형이고, 그래서 브레이크포인트가 필요 없는 거예요.
+Fluid typography tokens change the default output. The AI uses your scale, which happens to be responsive, which happens to not need breakpoints.

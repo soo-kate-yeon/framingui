@@ -1,6 +1,6 @@
 ---
-title: "범용 UI 라이브러리에서 AI가 색상을 자꾸 틀리는 이유"
-description: "범용 UI 라이브러리에서 AI가 색상을 틀리는 이유와 시맨틱 디자인 토큰으로 일관성 문제를 해결하는 방법을 알아보세요."
+title: "Why AI Keeps Getting Colors Wrong in Generic UI"
+description: "Discover why AI struggles with colors in generic UI libraries and how semantic design tokens solve the consistency problem."
 date: "2026-03-07"
 author:
   name: "FramingUI Team"
@@ -13,76 +13,76 @@ coverImage: ""
 published: true
 ---
 
-Claude Code에게 대시보드를 만들어달라고 했어요. 몇 분 만에 스무 개 컴포넌트가 생성됐죠. 다 괜찮아 보였는데 — primary 버튼들이 서로 다르다는 걸 발견하기 전까지는요. 한쪽은 `bg-blue-500`, 다른 쪽은 `bg-indigo-600`, 또 다른 곳에는 `#4F46E5`가 하드코딩되어 있었어요.
+You ask Claude Code to build a dashboard. It generates twenty components in minutes. Everything looks good until you notice the primary buttons disagree: `bg-blue-500` in one place, `bg-indigo-600` in another, `#4F46E5` hardcoded in a third.
 
-이건 모델 품질 문제가 아니에요. 범용 UI 라이브러리가 확률적 코드 생성과 상호작용하는 방식의 구조적 문제예요.
+This isn't a model quality problem. It's a structural problem with how generic UI libraries interact with probabilistic code generation.
 
-## AI가 색상을 반복해서 틀리는 이유
+## Why AI Gets Colors Wrong Consistently
 
-범용 컴포넌트 라이브러리는 사람이 읽는 것을 위해 만들어졌어요. 기계 소비용이 아니에요. 사람이 `bg-blue-500`을 사용하는 예시를 보면 "이 프로젝트의 primary 색상이구나"라고 컨텍스트에서 이해해요. AI가 같은 예시를 보면 상관관계를 기록해요. 버튼은 때로 `bg-blue-500`을 사용한다고요. 다음번에 버튼을 생성할 때 봐온 값들의 확률 분포에서 뽑아요 — `bg-blue-500`이 나올 수도, `bg-blue-600`이나 `bg-indigo-500`이나 `#3B82F6`이 나올 수도 있어요.
+Generic component libraries are built for human readers, not machine consumers. When a human reads an example using `bg-blue-500`, they understand from context that this is "the primary color in this project." When an AI reads the same example, it records a correlation: buttons sometimes use `bg-blue-500`. Next time it generates a button, it draws from the probability distribution of values it has seen — which might produce `bg-blue-500`, `bg-blue-600`, `bg-indigo-500`, or `#3B82F6`.
 
-값에 디자인 의도가 담겨 있지 않아요. AI는 "이게 브랜드 primary 색상"과 "이게 문서에 있던 예시"를 구분할 수 없어요.
+There's no design intent encoded in the value. The AI cannot distinguish "this is your primary brand color" from "this was the example in the docs."
 
-두 번째 문제는 컨텍스트 윈도우 한계예요. 컨텍스트에 기존 컴포넌트 50개가 있어도 AI는 12번 컴포넌트에서 쓴 정확한 색조를 잘못 기억하거나, 두 섹션의 패턴을 혼합하거나, 시스템에 없는 값을 보간할 수 있어요. 드리프트는 점진적이고 코드 리뷰에서 잡기 어려워요. 각각의 선택이 개별적으로는 그럴듯해 보이니까요.
+The second problem is context window limits. Even with fifty existing components in context, an AI might misremember the exact shade used in component twelve, mix patterns from two different sections, or interpolate a value that doesn't exist in your system. The drift is gradual and hard to catch in code review because each individual choice looks plausible.
 
-## 시맨틱 토큰이 바꾸는 것
+## What Semantic Tokens Change
 
-시맨틱 토큰은 값만이 아니라 의미를 인코딩해요. `bg-primary`는 AI에게 `bg-blue-500`이 전달할 수 없는 것을 알려줘요. 이게 브랜드 primary 색상이고, primary 브랜드 색상이 적절한 곳에 사용하라고요.
+A semantic token encodes meaning, not just value. `bg-primary` tells the AI something `bg-blue-500` cannot: this is the primary brand color, use it wherever primary brand color is appropriate.
 
-생성된 코드의 차이는 점진적이 아니라 범주적이에요. 코드베이스에 시맨틱 토큰 이름이 일관되게 나타나면, AI는 일관된 이름을 생성해요. 출력이 색상 이름의 확률 분포를 떠다니는 게 아니라 토큰 어휘에 고정되거든요.
+The difference in generated code is categorical, not incremental. When semantic token names appear consistently in the codebase, AI generates consistent names. The output is anchored by the token vocabulary rather than floating across a probability distribution of color names.
 
 ```tsx
-// 시맨틱 토큰 없이 — 세션마다 AI가 만드는 것
-<Button className="bg-blue-500 hover:bg-blue-600 text-white">로그인</Button>
-<Button className="bg-indigo-600 hover:bg-indigo-700 text-white">계정 만들기</Button>
-<Button className="bg-primary-600 hover:bg-primary-700 text-white">계속</Button>
+// Without semantic tokens — what AI produces across sessions
+<Button className="bg-blue-500 hover:bg-blue-600 text-white">Sign In</Button>
+<Button className="bg-indigo-600 hover:bg-indigo-700 text-white">Create Account</Button>
+<Button className="bg-primary-600 hover:bg-primary-700 text-white">Continue</Button>
 ```
 
 ```tsx
-// 시맨틱 토큰으로 — 토큰 인식 시스템에서 AI가 만드는 것
-<Button variant="primary">로그인</Button>
-<Button variant="primary">계정 만들기</Button>
-<Button variant="primary">계속</Button>
+// With semantic tokens — what AI produces with a token-aware system
+<Button variant="primary">Sign In</Button>
+<Button variant="primary">Create Account</Button>
+<Button variant="primary">Continue</Button>
 ```
 
-두 번째 패턴은 수동 정리가 필요 없어요. 토큰이 시스템이 primary로 정의한 것으로 해석되고, 그 정의 변경이 모든 곳에 전파되거든요.
+The second pattern requires no manual cleanup. The token resolves to whatever your system defines as primary — and changes to that definition propagate everywhere.
 
-## 추정치에 잡히지 않는 추가 비용
+## The Additional Cost That Doesn't Show Up in Estimates
 
-AI로 UI 코드를 생성하는 팀은 생성 시간은 추정하지만 정리 시간은 잘 추정하지 않아요. 정리 내용은 반복적이에요. 하드코딩된 값 찾기, 색상을 시스템으로 되돌리기, PR 리뷰에서 버튼 하나가 왜 다른 색조인지 설명하기.
+Teams that generate UI code with AI tend to estimate the generation time but not the cleanup time. The cleanup is consistent: finding hardcoded values, aligning colors back to the system, explaining in PR review why one button is a different shade than the others.
 
-시맨틱 토큰이 있으면 이 정리 사이클이 사라져요. AI가 `variant="primary"`를 생성하는 건 그게 코드베이스에 있는 것이기 때문이에요. 색상은 토큰 정의에서 와요. 디자인 시스템 의도가 중간 인간 수정 단계 없이 토큰에서 출력으로 전달돼요.
+With semantic tokens, the cleanup loop breaks. AI generates `variant="primary"` because that's what appears in the codebase. The color comes from the token definition. Design system intent transfers from the token to the output without an intermediate human correction step.
 
-놓치기 쉬운 다른 비용은 테마 지원이에요. 토큰이 CSS 변수 — `var(--foreground-accent)`, `var(--background-page)` — 에 매핑되면 다크 모드는 컴포넌트 로직을 복제하는 게 아니라 변수를 재정의해서 나와요. AI가 생성한 컴포넌트는 같은 토큰 이름을 사용하니까 이걸 자동으로 상속해요.
+The other cost that's easy to miss is theme support. If your tokens map to CSS variables — `var(--foreground-accent)`, `var(--background-page)` — then dark mode comes from redefining the variables, not from duplicating component logic. AI-generated components inherit this automatically because they use the same token names.
 
-## FramingUI로 시맨틱 토큰 설정하기
+## Setting Up Semantic Tokens with FramingUI
 
-FramingUI 컴포넌트는 시맨틱 CSS 변수를 전체에서 사용해요. pnpm으로 설치해요.
+FramingUI's components use semantic CSS variables throughout. Install with pnpm:
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-버튼 변형이 시맨틱 역할에 직접 매핑돼요.
+Button variants map directly to semantic roles:
 
 ```tsx
-<Button variant="primary">기본 액션</Button>
-<Button variant="secondary">보조 액션</Button>
-<Button variant="destructive">삭제</Button>
+<Button variant="primary">Primary Action</Button>
+<Button variant="secondary">Secondary Action</Button>
+<Button variant="destructive">Delete</Button>
 ```
 
-각 변형이 토큰 레이어를 통해 해석돼요 — `primary`는 `var(--foreground-accent)`를, `destructive`는 `var(--border-error)`를 사용해요. FramingUI 컴포넌트로 작업하는 AI 도구는 색상 값을 추측하는 게 아니라 이름으로 변형을 생성해요.
+Each variant resolves through the token layer — `primary` uses `var(--foreground-accent)`, `destructive` uses `var(--border-error)`. AI tools working with FramingUI components generate these variants by name rather than guessing color values.
 
-MCP 서버가 여기서 더 나아가 토큰 정의를 생성 시점에 조회 가능하게 만들어요.
+The MCP server extends this further by making your token definitions queryable at generation time:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-`init` 실행 후 Claude Code는 UI를 생성할 때 학습 데이터 패턴에 의존하는 게 아니라 실제 토큰 카탈로그를 가져올 수 있게 돼요.
+After running `init`, Claude Code can retrieve your actual token catalog when generating UI, rather than relying on training data patterns.
 
-## 실질적인 함의
+## The Practical Implication
 
-범용 UI 라이브러리는 사람이 신중하게 코드를 작성할 때 잘 작동해요. 신중함은 확률적 생성의 속성이 아니에요. 정리 비용은 일회성 부채가 아니에요 — 근본적인 신호 문제가 고쳐지기 전까지 생성 세션마다 반복돼요.
+Generic UI libraries work well when humans write code carefully. Careful is not a property of probabilistic generation. The cleanup cost is not a one-time debt — it recurs with every generation session until the underlying signal problem is fixed.
 
-시맨틱 토큰이 신호를 고쳐요. AI가 일관된 이름을 생성하는 건 코드베이스에 일관된 이름이 있기 때문이에요. 이게 메커니즘이고, 프롬프트 규율이나 생성 후 리뷰로 강제할 필요가 없어요.
+Semantic tokens fix the signal. AI generates consistent names because consistent names are what the codebase contains. That's the mechanism, and it doesn't require prompting discipline or post-generation review to enforce.

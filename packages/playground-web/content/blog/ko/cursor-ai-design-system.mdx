@@ -1,6 +1,6 @@
 ---
-title: "디자인 토큰으로 Cursor가 브랜드 UI를 생성하게 만들기"
-description: "design tokens을 사용하여 브랜드에 맞는 UI 컴포넌트를 생성하도록 Cursor AI를 설정하는 완전한 가이드. .cursorrules 설정 및 MCP 통합 포함."
+title: "Bringing Your Design Tokens into Cursor"
+description: "Complete guide to configuring Cursor AI to generate on-brand UI components using your design tokens. Includes .cursorrules setup and MCP integration."
 date: "2026-03-08"
 author:
   name: "FramingUI Team"
@@ -13,74 +13,74 @@ coverImage: ""
 published: true
 ---
 
-`Cmd+K`를 눌러서 알림 카드를 만들어달라고 했더니 5초 만에 코드가 나왔어요. 근데 배경색, 패딩, 아이콘 색상이 다 틀렸죠. 5초 만에 만든 걸 고치는 데 5분이 걸렸어요.
+You pressed `Cmd+K` and asked Cursor to create a notification card. It generated beautiful code in five seconds — wrong background color, wrong padding, wrong icon tint. You spent five minutes fixing what took five seconds to generate.
 
-Cursor는 일반적인 코드 생성에는 빠르거든요. 이 가이드는 *내 코드* 생성에도 빠르게 만들어줘요.
+Cursor is fast at producing generic code. This guide makes it fast at producing *your* code.
 
-## 두 가지 접근법
+## Two Approaches
 
-Cursor의 기본 동작과 내 디자인 시스템 사이의 간격을 좁히는 방법이 두 가지예요.
+There are two ways to close the gap between Cursor's defaults and your design system.
 
-**`.cursorrules`**는 프로젝트 루트에 있는 일반 텍스트 파일이에요. Cursor가 매번 생성하기 전에 읽거든요. 설정에 10분이면 돼요. 다만 한계가 있어요. 긴 세션에서 Cursor가 규칙을 잊어버릴 수 있고, 토큰이 바뀌면 파일을 수동으로 업데이트해야 해요.
+**`.cursorrules`** is a plain text file in your project root. Cursor reads it before every generation. It takes ten minutes to set up. The limitation: Cursor can drift from your rules in long sessions, and updating tokens requires manual edits to the file.
 
-**MCP 통합**은 Cursor를 토큰 소스에 프로그래밍 방식으로 연결해요. 정적 파일을 읽는 대신 실제 디자인 시스템을 직접 쿼리하죠. 항상 최신 상태고 "사용 가능한 간격 값이 뭐야?"같은 질문에도 동적으로 답할 수 있어요.
+**MCP integration** connects Cursor to your token source programmatically. Cursor queries your actual design system rather than reading a static file. It's always current and can answer questions like "what spacing values are available?" dynamically.
 
-`.cursorrules`로 시작하고, 팀이 커지거나 토큰이 자주 바뀌면 MCP를 추가해요.
+Start with `.cursorrules`. Add MCP when your team grows or your tokens change often.
 
-## 1단계: `.cursorrules` 설정
+## Setup Part 1: `.cursorrules`
 
-프로젝트 루트에 `.cursorrules`를 만들어요:
+Create `.cursorrules` in your project root:
 
 ```markdown
-# 프로젝트 디자인 시스템
+# Project Design System
 
-## 색상
-- 브랜드 primary: bg-brand-primary
-- 중립 배경: bg-neutral-50, bg-neutral-100, bg-neutral-900
-- 시맨틱: bg-semantic-success, bg-semantic-error, bg-semantic-warning
+## Colors
+- Primary brand: bg-brand-primary
+- Neutral backgrounds: bg-neutral-50, bg-neutral-100, bg-neutral-900
+- Semantic: bg-semantic-success, bg-semantic-error, bg-semantic-warning
 
-## 간격
-명명된 spacing 토큰만 사용 — px-[17px] 같은 임의 값 절대 금지:
+## Spacing
+Named spacing tokens only — never arbitrary values like px-[17px]:
 - xs = 0.5rem
 - sm = 0.75rem
 - md = 1rem
 - lg = 1.5rem
 - xl = 2rem
 
-## 컴포넌트 패턴
+## Component Patterns
 
-버튼:
+Buttons:
 - Primary: bg-brand-primary hover:bg-brand-primaryHover text-white px-md py-sm rounded-md
 - Secondary: bg-neutral-100 hover:bg-neutral-200 text-neutral-900 px-md py-sm rounded-md
 
-카드:
+Cards:
 - bg-neutral-50 border border-neutral-200 rounded-lg p-lg
 
-인풋:
+Inputs:
 - border border-neutral-300 rounded-md px-sm py-xs focus:border-brand-primary
 
-## 코드 규칙
-- 모든 컴포넌트에 TypeScript 사용
-- Tailwind 클래스만 — 인라인 스타일 금지
-- 색상이나 간격 절대 하드코딩하지 않기
-- 공유 컴포넌트는 @/components에서 임포트
+## Code Rules
+- TypeScript for all components
+- Tailwind classes only — no inline styles
+- Never hardcode colors or spacing
+- Import shared components from @/components
 ```
 
-테스트해봐요. Cursor에게 "primary 버튼 컴포넌트 만들어줘"라고 해보세요. `bg-blue-600`이 나오면 규칙에 예시가 더 필요해요. `bg-brand-primary`가 나오면 설정 완료예요.
+Test it: ask Cursor to "create a primary button component." If it generates `bg-blue-600`, your rules need more examples. If it generates `bg-brand-primary`, you're set.
 
-긴 세션에서 Cursor가 흐트러지면 프롬프트에 명시적으로 넣어요: ".cursorrules의 design tokens를 따라줘."
+When Cursor drifts in a long session, reference your rules explicitly in the prompt: "Follow the design tokens in .cursorrules."
 
-## 2단계: MCP 통합 설정
+## Setup Part 2: MCP Integration
 
-MCP는 Cursor에게 디자인 토큰에 대한 프로그래밍 방식 접근을 제공해요. FramingUI MCP 서버를 설치해요:
+MCP gives Cursor programmatic access to your design tokens. Install the FramingUI MCP server:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-이 명령어는 프로젝트 유형(Next.js 또는 Vite)을 자동으로 감지하고, 필요한 패키지 설치, CSS 임포트 설정, 프로바이더 설정, `.mcp.json` MCP 서버 등록까지 한 번에 처리해줘요.
+This command detects your project type (Next.js or Vite), installs the required packages, configures the CSS import, sets up the provider, and registers the MCP server in `.mcp.json`.
 
-생성되는 `.mcp.json`은 이렇게 생겼어요:
+The generated `.mcp.json` looks like this:
 
 ```json
 {
@@ -94,39 +94,39 @@ npx -y @framingui/mcp-server@latest init
 }
 ```
 
-`init` 실행 후 Cursor를 재시작해요. MCP 서버가 자동으로 시작되고, Cursor가 디자인 시스템을 동적으로 쿼리할 수 있게 돼요.
+Restart Cursor after running `init`. The MCP server starts automatically and Cursor can now query your design system dynamically.
 
-## 실제 워크플로우: 설정 페이지 만들기
+## Real Workflow: Building a Settings Page
 
-`.cursorrules`와 MCP가 모두 설정된 상태에서 실제 생성이 어떻게 이뤄지는지 볼게요.
+With both `.cursorrules` and MCP configured, here's what generation looks like in practice.
 
-Cursor에게 요청해요:
+Prompt Cursor:
 
 ```
-사용자 설정 페이지를 만들어줘:
-- 프로필 섹션 (아바타, 이름, 이메일)
-- 외관 섹션 (테마 토글, 언어 선택기)
-- 알림 섹션 (이메일 환경설정 체크박스)
+Create a user settings page with:
+- Profile section (avatar, name, email)
+- Appearance section (theme toggle, language selector)
+- Notifications section (email preference checkboxes)
 
-.cursorrules의 design tokens를 따라줘.
+Follow .cursorrules for design tokens.
 ```
 
-Cursor가 `text-gray-900` 대신 `text-neutral-900`, `py-xl`과 `p-lg` 같은 spacing 토큰, 배경 토큰 `bg-neutral-50`를 쓰는 컴포넌트를 만들어요. 수동 수정 없이요.
+Cursor generates components using `text-neutral-900` instead of `text-gray-900`, spacing tokens like `py-xl` and `p-lg`, and your background token `bg-neutral-50`. No manual correction needed.
 
-이어서 요청해요: "하단에 저장 버튼 추가해줘, primary variant로." Cursor가 `bg-brand-primary hover:bg-brand-primaryHover`를 바로 만들어줘요 — 첫 시도에 디자인 시스템에 맞아요.
+Follow up: "Add a save button at the bottom, primary variant." Cursor produces `bg-brand-primary hover:bg-brand-primaryHover` — consistent with the design system on the first try.
 
-## 문제 해결
+## Troubleshooting
 
-**긴 세션에서 Cursor가 규칙을 잊어요.** `.cursorrules`의 알려진 한계예요. MCP로 업그레이드하거나(잊지 않아요), 프롬프트에 상기시켜줘요: ".cursorrules의 design tokens 써줘."
+**Cursor ignores your rules after a long session.** This is a known limitation of `.cursorrules`. Either upgrade to MCP (which doesn't forget), or include a reminder in your prompt: "Use design tokens from .cursorrules."
 
-**Cursor가 잘못된 토큰 이름을 만들어요.** `brand.primary`만 있는데 `bg-brand-primary-500`을 생성한다면 `.cursorrules`에 사용 가능한 토큰 목록을 명시해요 — "사용 가능한 brand colors: brand.primary, brand.secondary (숫자 스케일 없음)."
+**Cursor generates invalid token names** like `bg-brand-primary-500` when you only have `bg-brand-primary`. Add the explicit available token list to `.cursorrules` — "Available brand colors: brand.primary, brand.secondary (no numeric scales)."
 
-**MCP 서버가 시작이 안 돼요.** `Cursor > View > Output > MCP`에서 에러 로그를 확인해요. 주요 원인: 토큰 경로 오류, Node.js 18 미만, `@framingui/mcp-server` 미설치.
+**MCP server not starting.** Check `Cursor > View > Output > MCP` for error logs. Common causes: path to tokens is wrong, Node.js version below 18, or `@framingui/mcp-server` isn't installed.
 
-**Cursor가 Tailwind 클래스 대신 인라인 스타일을 생성해요.** `.cursorrules`에 추가해요: "항상 Tailwind 클래스를 써. prop에서 오는 동적 값이 아니면 인라인 스타일 절대 금지."
+**Cursor generates inline styles** instead of Tailwind classes. Add to `.cursorrules`: "Always use Tailwind classes. Never use inline styles unless the value is dynamic from a prop."
 
-## 결론
+## The Payoff
 
-이 설정 전에는 Cursor가 일반적인 출력을 내는 빠른 코드 생성기예요. 설정 후에는 내 규칙을 아는 빠른 코드 생성기가 되는 거예요.
+Before this setup, Cursor is a fast code generator producing generic output. After this setup, Cursor is a fast code generator that knows your conventions.
 
-`.cursorrules` 방식이 대부분의 팀에 맞아요. MCP는 나머지를 커버해요 — 규모가 큰 팀, 계속 바뀌는 토큰 시스템, 세션 간 일관성이 타협의 여지가 없는 프로젝트들이요.
+The `.cursorrules` approach covers most teams. MCP covers the rest — larger teams, evolving token systems, or projects where consistency across sessions is non-negotiable.

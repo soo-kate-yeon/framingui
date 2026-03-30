@@ -1,6 +1,6 @@
 ---
-title: "AI로 관리자 대시보드 레이아웃 처음부터 만들기"
-description: "FramingUI 컴포넌트로 관리자 대시보드를 구성하는 과정을, 토큰이 있을 때 AI 도구가 어떻게 일관된 코드를 생성하는지와 함께 정리했습니다."
+title: "FramingUI Builds a Dashboard Layout with AI"
+description: "A practical walkthrough of composing an admin dashboard from FramingUI components, showing how AI tools generate consistent code when tokens are in place."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
@@ -13,31 +13,31 @@ coverImage: ""
 published: true
 ---
 
-# FramingUI와 AI로 대시보드 레이아웃 만들기
+# Building a Dashboard Layout with FramingUI and AI
 
-대시보드 레이아웃은 디자인 토큰 규율이 가장 눈에 띄게 성과를 내는 곳이에요. 사이드바, 헤더, 통계 카드 그리드, 데이터 테이블—각각 따로 만들더라도 결국 하나의 일관된 화면이 되어야 합니다. 디자인 시스템 없이 AI 도구가 이 컴포넌트들을 생성하면 불일치가 빠르게 쌓여요.
+Dashboard layouts are where design token discipline pays off most visibly. A sidebar, a header, a grid of stat cards, and a data table—each built separately—either cohere or they do not. When AI tools generate these components without a design system, the inconsistencies compound fast.
 
-이 글에서는 FramingUI 컴포넌트로 대시보드의 각 레이어를 만드는 방법을 단계별로 살펴보고, AI 보조 코드가 인터페이스 나머지 부분과 일관되게 유지되도록 프로젝트를 구조화하는 방법도 함께 다룹니다.
+This walkthrough shows how to build each layer of a dashboard using FramingUI components, and how to structure the project so AI-assisted code stays consistent with the rest of the interface.
 
-## 시작하기
+## Setting Up
 
-패키지 설치:
+Install the packages:
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-AI 도구 통합을 위한 MCP 서버 설정:
+For AI tool integration, set up the MCP server:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-이 명령어 하나가 전체 런타임 계약을 잡아줍니다. 프로바이더 설정, CSS 임포트, Claude Code MCP 설정까지요. Claude Code를 재시작하면 AI 생성 컴포넌트도 직접 작성한 컴포넌트와 동일한 디자인 토큰을 참조합니다.
+This command bootstraps the full runtime contract: provider setup, CSS imports, and Claude Code MCP configuration. After restarting Claude Code, AI-generated components will reference the same design tokens as the components you write manually.
 
-## 레이아웃 셸
+## Layout Shell
 
-바깥 구조가 레이아웃의 형태를 만들어요. 왼쪽의 고정 사이드바, 오른쪽의 flex 컬럼이 헤더와 스크롤 가능한 콘텐츠를 담습니다.
+The outer structure gives the layout its shape. A fixed sidebar on the left, a flex column on the right holding the header and scrollable content:
 
 ```tsx
 import { Separator } from '@framingui/ui'
@@ -54,7 +54,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       <div className="flex-1 flex flex-col">
         <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center px-[var(--spacing-6)]">
-          <h1 className="text-xl font-semibold">대시보드</h1>
+          <h1 className="text-xl font-semibold">Dashboard</h1>
         </header>
         <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
           {children}
@@ -65,11 +65,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 }
 ```
 
-간격과 테두리 값이 CSS 커스텀 프로퍼티에서 옵니다. 테마가 바뀌면 모든 치수가 자동으로 업데이트돼요.
+All spacing and border values come from CSS custom properties. When the theme changes, every dimension updates automatically.
 
-## 사이드바 내비게이션
+## Sidebar Navigation
 
-사이드바는 활성 상태 추적이 필요해요. FramingUI `Button` 컴포넌트의 variant 전환을 사용하면 커스텀 CSS 없이 활성 항목을 시각적으로 구분할 수 있습니다.
+The sidebar needs active state tracking. Using the FramingUI `Button` component with variant switching keeps the active item visually distinct without custom CSS:
 
 ```tsx
 'use client'
@@ -80,10 +80,10 @@ import { Button, Separator } from '@framingui/ui'
 import { cn } from '@framingui/ui/lib/utils'
 
 const navItems = [
-  { icon: Home,      label: '대시보드', href: '/dashboard' },
-  { icon: Users,     label: '사용자',   href: '/users' },
-  { icon: BarChart3, label: '분석',     href: '/analytics' },
-  { icon: Settings,  label: '설정',     href: '/settings' },
+  { icon: Home,     label: 'Dashboard', href: '/dashboard' },
+  { icon: Users,    label: 'Users',     href: '/users' },
+  { icon: BarChart3, label: 'Analytics', href: '/analytics' },
+  { icon: Settings, label: 'Settings',  href: '/settings' },
 ]
 
 export function DashboardSidebar() {
@@ -92,7 +92,7 @@ export function DashboardSidebar() {
   return (
     <aside className="w-64 border-r border-[var(--border-default)] bg-[var(--bg-card)] flex flex-col h-screen">
       <div className="p-[var(--spacing-6)]">
-        <h2 className="text-lg font-bold">MyApp 관리자</h2>
+        <h2 className="text-lg font-bold">MyApp Admin</h2>
       </div>
       <Separator />
 
@@ -118,11 +118,11 @@ export function DashboardSidebar() {
         <Button variant="ghost" className="w-full justify-between">
           <div className="flex items-center">
             <div className="w-8 h-8 rounded-full bg-[var(--bg-primary)] flex items-center justify-center text-sm font-bold text-[var(--bg-primary-foreground)] mr-[var(--spacing-3)]">
-              홍길동
+              JD
             </div>
             <div className="text-left">
-              <p className="text-sm font-medium">홍길동</p>
-              <p className="text-xs text-[var(--bg-muted-foreground)]">관리자</p>
+              <p className="text-sm font-medium">John Doe</p>
+              <p className="text-xs text-[var(--bg-muted-foreground)]">Admin</p>
             </div>
           </div>
           <ChevronDown className="h-4 w-4" />
@@ -133,9 +133,9 @@ export function DashboardSidebar() {
 }
 ```
 
-## 통계 카드 그리드
+## Stats Card Grid
 
-통계 그리드는 토큰 기반 간격이 왜 중요한지 잘 보여주는 예시예요. 모든 gap, padding, 아이콘 배경이 동일한 디자인 토큰 스케일을 사용하기 때문에, 카드들이 각자 스타일링된 요소가 아니라 하나의 통합된 시스템처럼 느껴집니다.
+The stat grid demonstrates why token-based spacing matters. Every gap, padding, and icon background uses the same design token scale, so the cards feel like a cohesive system rather than individually styled elements:
 
 ```tsx
 import { Card, CardContent } from '@framingui/ui'
@@ -143,10 +143,10 @@ import { Users, DollarSign, ShoppingCart, TrendingUp } from 'lucide-react'
 import { cn } from '@framingui/ui/lib/utils'
 
 const stats = [
-  { title: '총 수익',   value: '₩45,231,000', change: '+20.1%', icon: DollarSign,   trend: 'up'   },
-  { title: '총 사용자', value: '2,350',        change: '+12.5%', icon: Users,        trend: 'up'   },
-  { title: '총 주문',   value: '1,234',        change: '-4.3%',  icon: ShoppingCart, trend: 'down' },
-  { title: '전환율',    value: '3.24%',        change: '+0.5%',  icon: TrendingUp,   trend: 'up'   },
+  { title: 'Total Revenue',     value: '$45,231', change: '+20.1%', icon: DollarSign,  trend: 'up'   },
+  { title: 'Total Users',       value: '2,350',   change: '+12.5%', icon: Users,       trend: 'up'   },
+  { title: 'Total Orders',      value: '1,234',   change: '-4.3%',  icon: ShoppingCart, trend: 'down' },
+  { title: 'Conversion Rate',   value: '3.24%',   change: '+0.5%',  icon: TrendingUp,  trend: 'up'   },
 ] as const
 
 export function StatsGrid() {
@@ -182,11 +182,11 @@ export function StatsGrid() {
 }
 ```
 
-반응형 그리드가 컬럼 수를 자동으로 처리해요. 모바일 1열, 태블릿 2열, 데스크톱 4열로.
+The responsive grid handles column count automatically: one column on mobile, two on tablet, four on desktop.
 
-## 데이터 테이블
+## Data Table
 
-테이블을 `Card`로 감싸면 위의 통계 카드들과 시각적으로 일관됩니다. 상태 배지는 디자인 시스템이 적절한 색상으로 매핑하는 시맨틱 variant를 사용해요.
+Wrapping the table in a `Card` keeps it visually consistent with the stat cards above. Status badges use semantic variants that the design system maps to appropriate colors:
 
 ```tsx
 import {
@@ -196,27 +196,27 @@ import {
 import { MoreHorizontal } from 'lucide-react'
 
 const orders = [
-  { id: '#3210', customer: '김철수', amount: '₩250,000', status: 'completed',  date: '2026-02-27' },
-  { id: '#3211', customer: '이영희', amount: '₩120,500', status: 'pending',    date: '2026-02-27' },
-  { id: '#3212', customer: '박민수', amount: '₩89,990',  status: 'completed',  date: '2026-02-26' },
-  { id: '#3213', customer: '최지원', amount: '₩340,000', status: 'processing', date: '2026-02-26' },
+  { id: '#3210', customer: 'Alice Johnson', amount: '$250.00', status: 'completed', date: '2026-02-27' },
+  { id: '#3211', customer: 'Bob Smith',     amount: '$120.50', status: 'pending',   date: '2026-02-27' },
+  { id: '#3212', customer: 'Carol White',   amount: '$89.99',  status: 'completed', date: '2026-02-26' },
+  { id: '#3213', customer: 'David Brown',   amount: '$340.00', status: 'processing', date: '2026-02-26' },
 ]
 
 export function RecentOrdersTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>최근 주문</CardTitle>
+        <CardTitle>Recent Orders</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>주문 ID</TableHead>
-              <TableHead>고객</TableHead>
-              <TableHead>금액</TableHead>
-              <TableHead>상태</TableHead>
-              <TableHead>날짜</TableHead>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Date</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
           </TableHeader>
@@ -250,9 +250,9 @@ export function RecentOrdersTable() {
 }
 ```
 
-## 모바일 사이드바
+## Mobile Sidebar
 
-소형 화면에는 드로어 형태의 사이드바가 필요해요. FramingUI의 `Sheet` 컴포넌트가 오버레이를 처리합니다.
+The sidebar needs a drawer variant for small screens. FramingUI's `Sheet` component handles the overlay:
 
 ```tsx
 'use client'
@@ -284,25 +284,25 @@ export function MobileSidebar({ children }: { children: React.ReactNode }) {
 }
 ```
 
-## AI로 대시보드 확장하기
+## Using AI to Extend the Dashboard
 
-MCP를 설정하면 Claude Code에게 추가 대시보드 섹션을 생성해달라고 요청할 수 있고, 결과물이 위의 컴포넌트들과 동일한 토큰을 참조해요. 이런 프롬프트가 잘 작동합니다.
+With MCP configured, you can ask Claude Code to generate additional dashboard sections and the output will reference the same tokens as the components above. A prompt like this works well:
 
 ```
-대시보드에 수익 차트 섹션을 추가해줘.
-래퍼로 FramingUI Card를 사용해줘.
-차트 선 색상으로 var(--bg-primary)를 사용해줘.
-내부 패딩에 var(--spacing-6)를 사용해줘.
-차트 라이브러리는 Recharts를 사용해줘.
+Add a revenue chart section to the dashboard.
+Use FramingUI Card for the wrapper.
+Use var(--bg-primary) for the chart line color.
+Use var(--spacing-6) for all internal padding.
+Use Recharts for the chart library.
 ```
 
-프롬프트에 구체적인 토큰 참조를 넣는 게 핵심이에요. 없으면 AI가 `stroke="#3b82f6"`이나 `padding: "24px"`를 선택할 수 있는데, 지금은 맞아 보여도 테마가 바뀌면 깨지는 값들이거든요.
+The specific token references in the prompt constrain the AI's output. Without them, the AI might pick `stroke="#3b82f6"` or `padding: "24px"`—values that look right but break when the theme changes.
 
-## 최종 페이지 조합
+## Composing the Final Page
 
 ```tsx
-import { DashboardSidebar }  from './dashboard-sidebar'
-import { StatsGrid }         from './stats-grid'
+import { DashboardSidebar } from './dashboard-sidebar'
+import { StatsGrid }        from './stats-grid'
 import { RecentOrdersTable } from './recent-orders-table'
 import { Button }            from '@framingui/ui'
 
@@ -312,8 +312,8 @@ export default function DashboardPage() {
       <DashboardSidebar />
       <div className="flex-1 flex flex-col">
         <header className="h-16 border-b border-[var(--border-default)] bg-[var(--bg-card)] flex items-center justify-between px-[var(--spacing-6)]">
-          <h1 className="text-xl font-semibold">대시보드 개요</h1>
-          <Button variant="default">보고서 다운로드</Button>
+          <h1 className="text-xl font-semibold">Dashboard Overview</h1>
+          <Button variant="default">Download Report</Button>
         </header>
         <main className="flex-1 overflow-auto p-[var(--spacing-6)] bg-[var(--bg-background)]">
           <div className="space-y-[var(--spacing-6)]">
@@ -327,6 +327,6 @@ export default function DashboardPage() {
 }
 ```
 
-각 섹션이 독립적으로 만들어졌고 여기서 조합됩니다. 모든 컴포넌트가 동일한 토큰 세트를 참조하기 때문에, 컴포넌트 사이의 명시적인 조율 없이도 시각적으로 일관된 결과가 나와요.
+Each section was built independently and composed here. Because every component references the same token set, the visual result is coherent without explicit coordination between the components.
 
-실용적인 장점은 기능을 추가할 때 드러납니다. 새 섹션도 같은 패턴을 따르면—`@framingui/ui`에서 임포트하고, 모든 스타일 값에 CSS 커스텀 프로퍼티 사용—자동으로 나머지 대시보드와 맞아떨어져요.
+The practical benefit shows up when you add features. A new section follows the same pattern—import from `@framingui/ui`, use CSS custom properties for all style values—and it matches the rest of the dashboard automatically.

@@ -1,0 +1,783 @@
+---
+title: "Icon System Design for AI Workflows: Build Scalable, Consistent Icon Libraries"
+description: "Create systematic icon libraries using design tokens for size, color, and stroke. Make icons accessible, themeable, and AI-friendly."
+date: "2026-03-31"
+author:
+  name: "FramingUI Team"
+tags:
+  - icons
+  - design-tokens
+  - design-systems
+  - accessibility
+  - ai-workflows
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Icon libraries break down fast. Designers export SVGs at inconsistent sizes. Developers inline them with hardcoded colors. AI agents pick random icon packs, mixing Heroicons with Material Icons with custom SVGs. The result: visual chaos.
+
+The problem isn't icon quality—it's the lack of systematic icon design tokens.
+
+## Why Icons Need Design Tokens
+
+Icons are a design system primitive, just like typography and color. They need:
+
+- **Consistent sizing** - Predictable dimensions across all icons
+- **Themeable colors** - Icons adapt to light/dark modes automatically
+- **Stroke standardization** - Uniform line weights
+- **Semantic naming** - Icons map to intent, not visual appearance
+- **Accessibility** - Proper ARIA labels and roles
+
+Without tokens, every icon implementation becomes a one-off decision.
+
+## Building Icon Size Tokens
+
+Define a systematic size scale:
+
+```typescript
+// tokens/icons.ts
+export const icons = {
+  size: {
+    xs: '12px',
+    sm: '16px',
+    md: '20px',
+    lg: '24px',
+    xl: '32px',
+    '2xl': '48px',
+  },
+  
+  stroke: {
+    thin: '1px',
+    normal: '1.5px',
+    medium: '2px',
+    thick: '2.5px',
+  },
+  
+  // Semantic sizing for specific contexts
+  context: {
+    button: '20px',
+    input: '16px',
+    heading: '24px',
+    navigation: '20px',
+    avatar: '16px', // icon badge on avatar
+    notification: '20px',
+  },
+} as const;
+
+// Icon color tokens (references semantic colors)
+export const iconColors = {
+  primary: 'var(--color-text-primary)',
+  secondary: 'var(--color-text-secondary)',
+  tertiary: 'var(--color-text-tertiary)',
+  accent: 'var(--color-accent-primary)',
+  success: 'var(--color-success-primary)',
+  warning: 'var(--color-warning-primary)',
+  error: 'var(--color-error-primary)',
+  inverse: 'var(--color-text-inverse)',
+  muted: 'var(--color-neutral-400)',
+} as const;
+```
+
+## Creating a Token-Aware Icon Component
+
+Build a foundational icon component that consumes tokens:
+
+```tsx
+// components/Icon.tsx
+import { forwardRef, SVGAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const iconVariants = cva(
+  'inline-block flex-shrink-0',
+  {
+    variants: {
+      size: {
+        xs: 'w-3 h-3',
+        sm: 'w-4 h-4',
+        md: 'w-5 h-5',
+        lg: 'w-6 h-6',
+        xl: 'w-8 h-8',
+        '2xl': 'w-12 h-12',
+      },
+      color: {
+        primary: 'text-text-primary',
+        secondary: 'text-text-secondary',
+        tertiary: 'text-text-tertiary',
+        accent: 'text-accent-primary',
+        success: 'text-success-primary',
+        warning: 'text-warning-primary',
+        error: 'text-error-primary',
+        inverse: 'text-white',
+        muted: 'text-neutral-400',
+        inherit: 'text-current',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+      color: 'inherit',
+    },
+  }
+);
+
+interface IconProps 
+  extends Omit<SVGAttributes<SVGSVGElement>, 'color'>,
+          VariantProps<typeof iconVariants> {
+  children: React.ReactNode;
+  label?: string; // Accessibility label
+}
+
+export const Icon = forwardRef<SVGSVGElement, IconProps>(
+  ({ size, color, children, label, className, ...props }, ref) => {
+    return (
+      <svg
+        ref={ref}
+        className={iconVariants({ size, color, className })}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-label={label}
+        aria-hidden={!label}
+        role={label ? 'img' : undefined}
+        {...props}
+      >
+        {children}
+      </svg>
+    );
+  }
+);
+
+Icon.displayName = 'Icon';
+```
+
+## Building Semantic Icon Wrappers
+
+Create semantic icon components instead of generic SVG imports:
+
+```tsx
+// components/icons/UserIcon.tsx
+import { Icon } from '../Icon';
+import { IconProps } from '../Icon';
+
+export function UserIcon(props: Omit<IconProps, 'children'>) {
+  return (
+    <Icon {...props}>
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </Icon>
+  );
+}
+
+// components/icons/CheckIcon.tsx
+export function CheckIcon(props: Omit<IconProps, 'children'>) {
+  return (
+    <Icon {...props}>
+      <polyline points="20 6 9 17 4 12" />
+    </Icon>
+  );
+}
+
+// components/icons/SearchIcon.tsx
+export function SearchIcon(props: Omit<IconProps, 'children'>) {
+  return (
+    <Icon {...props}>
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </Icon>
+  );
+}
+
+// components/icons/AlertIcon.tsx
+export function AlertIcon(props: Omit<IconProps, 'children'>) {
+  return (
+    <Icon {...props}>
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </Icon>
+  );
+}
+```
+
+This creates a consistent API for all icons and makes token usage automatic.
+
+## Context-Aware Icon Sizing
+
+Build components that know the correct icon size for their context:
+
+```tsx
+// components/Button.tsx
+import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const buttonVariants = cva(
+  [
+    'inline-flex',
+    'items-center',
+    'gap-2',
+    'px-4',
+    'py-2',
+    'rounded-lg',
+    'font-medium',
+    'transition-colors',
+  ].join(' '),
+  {
+    variants: {
+      variant: {
+        primary: 'bg-accent-primary text-white hover:bg-accent-secondary',
+        secondary: 'bg-neutral-100 text-neutral-800 hover:bg-neutral-200',
+        ghost: 'bg-transparent text-neutral-700 hover:bg-neutral-100',
+      },
+      size: {
+        sm: 'text-sm px-3 py-1.5',
+        md: 'text-base px-4 py-2',
+        lg: 'text-lg px-6 py-3',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+);
+
+interface ButtonProps 
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+          VariantProps<typeof buttonVariants> {
+  icon?: React.ReactElement;
+  iconPosition?: 'left' | 'right';
+}
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ 
+    variant, 
+    size, 
+    icon, 
+    iconPosition = 'left',
+    children, 
+    className,
+    ...props 
+  }, ref) => {
+    // Clone icon and inject correct size
+    const iconElement = icon && cloneElement(icon, {
+      size: size === 'sm' ? 'sm' : size === 'lg' ? 'lg' : 'md',
+      color: 'inherit',
+    });
+    
+    return (
+      <button
+        ref={ref}
+        className={buttonVariants({ variant, size, className })}
+        {...props}
+      >
+        {iconPosition === 'left' && iconElement}
+        {children}
+        {iconPosition === 'right' && iconElement}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';
+```
+
+Usage:
+
+```tsx
+import { Button } from '@/components/Button';
+import { SearchIcon } from '@/components/icons/SearchIcon';
+
+export function SearchButton() {
+  return (
+    <Button 
+      size="md" 
+      icon={<SearchIcon />} // Icon automatically becomes 'md' size
+    >
+      Search
+    </Button>
+  );
+}
+```
+
+## Icon Badge Component
+
+Create badge components that position icons correctly:
+
+```tsx
+// components/IconBadge.tsx
+import { HTMLAttributes, forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const badgeVariants = cva(
+  [
+    'inline-flex',
+    'items-center',
+    'justify-center',
+    'rounded-full',
+  ].join(' '),
+  {
+    variants: {
+      variant: {
+        primary: 'bg-accent-primary text-white',
+        secondary: 'bg-neutral-100 text-neutral-700',
+        success: 'bg-success-primary text-white',
+        warning: 'bg-warning-primary text-white',
+        error: 'bg-error-primary text-white',
+      },
+      size: {
+        sm: 'w-6 h-6',
+        md: 'w-8 h-8',
+        lg: 'w-10 h-10',
+        xl: 'w-12 h-12',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+);
+
+interface IconBadgeProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof badgeVariants> {
+  icon: React.ReactElement;
+}
+
+export const IconBadge = forwardRef<HTMLDivElement, IconBadgeProps>(
+  ({ variant, size, icon, className, ...props }, ref) => {
+    // Map badge size to icon size
+    const iconSizeMap = {
+      sm: 'sm' as const,
+      md: 'md' as const,
+      lg: 'lg' as const,
+      xl: 'xl' as const,
+    };
+    
+    const iconElement = cloneElement(icon, {
+      size: iconSizeMap[size || 'md'],
+      color: 'inherit',
+    });
+    
+    return (
+      <div
+        ref={ref}
+        className={badgeVariants({ variant, size, className })}
+        {...props}
+      >
+        {iconElement}
+      </div>
+    );
+  }
+);
+
+IconBadge.displayName = 'IconBadge';
+```
+
+Usage:
+
+```tsx
+import { IconBadge } from '@/components/IconBadge';
+import { CheckIcon } from '@/components/icons/CheckIcon';
+
+export function SuccessBadge() {
+  return (
+    <IconBadge 
+      variant="success" 
+      size="lg"
+      icon={<CheckIcon />}
+    />
+  );
+}
+```
+
+## Loading and Empty State Icons
+
+Build specialized icon states for loading and empty states:
+
+```tsx
+// components/icons/LoadingIcon.tsx
+import { Icon } from '../Icon';
+import { IconProps } from '../Icon';
+
+export function LoadingIcon(props: Omit<IconProps, 'children'>) {
+  return (
+    <Icon {...props} className={`animate-spin ${props.className || ''}`}>
+      <circle 
+        className="opacity-25" 
+        cx="12" 
+        cy="12" 
+        r="10" 
+        stroke="currentColor" 
+        strokeWidth="4"
+      />
+      <path 
+        className="opacity-75" 
+        fill="currentColor" 
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </Icon>
+  );
+}
+
+// components/EmptyState.tsx
+import { ReactElement } from 'react';
+
+interface EmptyStateProps {
+  icon: ReactElement;
+  title: string;
+  description?: string;
+  action?: ReactElement;
+}
+
+export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+  const iconElement = cloneElement(icon, {
+    size: '2xl',
+    color: 'muted',
+  });
+  
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="mb-4">{iconElement}</div>
+      <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        {title}
+      </h3>
+      {description && (
+        <p className="text-sm text-neutral-600 mb-6 max-w-sm">
+          {description}
+        </p>
+      )}
+      {action}
+    </div>
+  );
+}
+```
+
+Usage:
+
+```tsx
+import { EmptyState } from '@/components/EmptyState';
+import { SearchIcon } from '@/components/icons/SearchIcon';
+import { Button } from '@/components/Button';
+
+export function NoResultsState() {
+  return (
+    <EmptyState
+      icon={<SearchIcon />}
+      title="No results found"
+      description="Try adjusting your search or filter criteria"
+      action={
+        <Button variant="secondary" onClick={() => window.location.reload()}>
+          Clear Filters
+        </Button>
+      }
+    />
+  );
+}
+```
+
+## Icon Color Inheritance
+
+Make icons inherit color from parent components:
+
+```tsx
+// components/Alert.tsx
+import { HTMLAttributes, forwardRef, ReactElement, cloneElement } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const alertVariants = cva(
+  [
+    'flex',
+    'items-start',
+    'gap-3',
+    'p-4',
+    'rounded-lg',
+    'border',
+  ].join(' '),
+  {
+    variants: {
+      variant: {
+        info: 'bg-blue-50 border-blue-200 text-blue-800',
+        success: 'bg-success-surface border-success-primary text-success-text',
+        warning: 'bg-warning-surface border-warning-primary text-warning-text',
+        error: 'bg-error-surface border-error-primary text-error-text',
+      },
+    },
+    defaultVariants: {
+      variant: 'info',
+    },
+  }
+);
+
+interface AlertProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof alertVariants> {
+  icon?: ReactElement;
+  title?: string;
+}
+
+export const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  ({ variant, icon, title, children, className, ...props }, ref) => {
+    const iconElement = icon && cloneElement(icon, {
+      size: 'md',
+      color: 'inherit', // Icon inherits alert color
+    });
+    
+    return (
+      <div
+        ref={ref}
+        className={alertVariants({ variant, className })}
+        role="alert"
+        {...props}
+      >
+        {iconElement && <div className="flex-shrink-0">{iconElement}</div>}
+        <div className="flex-1">
+          {title && <p className="font-semibold mb-1">{title}</p>}
+          <div className="text-sm">{children}</div>
+        </div>
+      </div>
+    );
+  }
+);
+
+Alert.displayName = 'Alert';
+```
+
+Usage:
+
+```tsx
+import { Alert } from '@/components/Alert';
+import { AlertIcon } from '@/components/icons/AlertIcon';
+import { CheckIcon } from '@/components/icons/CheckIcon';
+
+export function Notifications() {
+  return (
+    <>
+      <Alert variant="success" icon={<CheckIcon />} title="Success">
+        Your changes have been saved.
+      </Alert>
+      
+      <Alert variant="warning" icon={<AlertIcon />} title="Warning">
+        This action cannot be undone.
+      </Alert>
+    </>
+  );
+}
+```
+
+The icon automatically gets the correct color from the alert variant.
+
+## Building an Icon Index
+
+Create a centralized icon registry for easy AI agent discovery:
+
+```typescript
+// components/icons/index.ts
+export { UserIcon } from './UserIcon';
+export { CheckIcon } from './CheckIcon';
+export { SearchIcon } from './SearchIcon';
+export { AlertIcon } from './AlertIcon';
+export { LoadingIcon } from './LoadingIcon';
+export { HomeIcon } from './HomeIcon';
+export { SettingsIcon } from './SettingsIcon';
+export { BellIcon } from './BellIcon';
+export { ChevronDownIcon } from './ChevronDownIcon';
+
+// Icon metadata for AI agents
+export const iconMetadata = {
+  UserIcon: {
+    tags: ['user', 'profile', 'account', 'person'],
+    description: 'Represents a user or account',
+    commonUsage: ['Profile buttons', 'User menus', 'Account settings'],
+  },
+  CheckIcon: {
+    tags: ['check', 'success', 'complete', 'done', 'verified'],
+    description: 'Indicates success or completion',
+    commonUsage: ['Success messages', 'Completed tasks', 'Verified badges'],
+  },
+  SearchIcon: {
+    tags: ['search', 'find', 'lookup', 'query'],
+    description: 'Search or find functionality',
+    commonUsage: ['Search inputs', 'Search buttons', 'Filter actions'],
+  },
+  AlertIcon: {
+    tags: ['alert', 'warning', 'caution', 'important'],
+    description: 'Warnings or important notices',
+    commonUsage: ['Warning alerts', 'Error messages', 'Important notices'],
+  },
+  LoadingIcon: {
+    tags: ['loading', 'spinner', 'progress', 'waiting'],
+    description: 'Loading or processing state',
+    commonUsage: ['Loading states', 'Form submissions', 'Data fetching'],
+  },
+} as const;
+```
+
+AI agents can now search icon metadata to pick the right icon:
+
+```typescript
+// AI agent prompt context
+const iconContext = `
+Available icons:
+${Object.entries(iconMetadata).map(([name, meta]) => `
+  ${name}:
+    Tags: ${meta.tags.join(', ')}
+    Usage: ${meta.commonUsage.join(', ')}
+`).join('\n')}
+
+When implementing UI, choose icons based on semantic meaning, not visual appearance.
+Example: Use CheckIcon for success states, not because it's a checkmark.
+`;
+```
+
+## Icon Accessibility Patterns
+
+Ensure icons are accessible:
+
+```tsx
+// Decorative icons (no accessibility label needed)
+<Button icon={<SearchIcon />}>
+  Search
+</Button>
+
+// Standalone icon buttons (need aria-label)
+<button aria-label="Close dialog">
+  <XIcon size="md" />
+</button>
+
+// Icons with visible label (icon is decorative)
+<Alert icon={<AlertIcon />}>
+  Warning: This action is permanent
+</Alert>
+
+// Icon-only links (need descriptive label)
+<a href="/settings" aria-label="Go to settings">
+  <SettingsIcon size="lg" />
+</a>
+```
+
+Build an accessible icon button component:
+
+```tsx
+// components/IconButton.tsx
+import { ButtonHTMLAttributes, forwardRef, ReactElement, cloneElement } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const iconButtonVariants = cva(
+  [
+    'inline-flex',
+    'items-center',
+    'justify-center',
+    'rounded-lg',
+    'transition-colors',
+    'focus:outline-none',
+    'focus:ring-2',
+    'focus:ring-accent-primary',
+  ].join(' '),
+  {
+    variants: {
+      variant: {
+        primary: 'bg-accent-primary text-white hover:bg-accent-secondary',
+        secondary: 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200',
+        ghost: 'bg-transparent text-neutral-700 hover:bg-neutral-100',
+      },
+      size: {
+        sm: 'w-8 h-8',
+        md: 'w-10 h-10',
+        lg: 'w-12 h-12',
+      },
+    },
+    defaultVariants: {
+      variant: 'ghost',
+      size: 'md',
+    },
+  }
+);
+
+interface IconButtonProps 
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+          VariantProps<typeof iconButtonVariants> {
+  icon: ReactElement;
+  label: string; // Required for accessibility
+}
+
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
+  ({ variant, size, icon, label, className, ...props }, ref) => {
+    const iconSizeMap = {
+      sm: 'sm' as const,
+      md: 'md' as const,
+      lg: 'lg' as const,
+    };
+    
+    const iconElement = cloneElement(icon, {
+      size: iconSizeMap[size || 'md'],
+      color: 'inherit',
+    });
+    
+    return (
+      <button
+        ref={ref}
+        className={iconButtonVariants({ variant, size, className })}
+        aria-label={label}
+        {...props}
+      >
+        {iconElement}
+      </button>
+    );
+  }
+);
+
+IconButton.displayName = 'IconButton';
+```
+
+## Using FramingUI for Icon Systems
+
+[FramingUI](https://framingui.com) provides a complete icon system with automatic token integration:
+
+```tsx
+import { Icon, IconButton } from 'framingui';
+import * as Icons from 'framingui/icons';
+
+export function Header() {
+  return (
+    <header>
+      <IconButton 
+        icon={<Icons.Menu />} 
+        label="Open menu"
+        size="md"
+      />
+      
+      <Icon 
+        as={Icons.Logo} 
+        size="lg" 
+        color="primary"
+      />
+      
+      <IconButton 
+        icon={<Icons.User />} 
+        label="Account"
+        size="md"
+      />
+    </header>
+  );
+}
+```
+
+This eliminates boilerplate while maintaining full customization.
+
+## Key Takeaways
+
+Icon systems need systematic design:
+
+1. **Size tokens** - Consistent dimensions across all icons
+2. **Color inheritance** - Icons adapt to context automatically
+3. **Semantic wrappers** - Named components instead of raw SVGs
+4. **Context-aware sizing** - Components inject correct icon sizes
+5. **Accessibility patterns** - Proper ARIA labels for all use cases
+
+Icons aren't decorations—they're a design system primitive. Tokens make them systematic.
+
+Start with size and color tokens. Build a foundational Icon component. Create semantic wrappers. Your icon usage becomes predictable and accessible.

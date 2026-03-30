@@ -1,6 +1,6 @@
 ---
-title: "bg-blue-500 쓰기를 멈추고 시맨틱 컬러로 갈아타기"
-description: "bg-blue-500을 곳곳에 쓰는 것을 멈추세요. 스케일 가능하고 다크 모드를 지원하며 AI 코드 생성이 실제로 작동하는 디자인 시스템을 위한 시맨틱 컬러 네이밍을 알려드립니다."
+title: "Stop Using blue-500: Name Colors Semantically"
+description: "Stop using 'blue-500' everywhere. Learn semantic color naming for design systems that scale, support dark mode, and make AI code generation actually work."
 date: "2026-03-11"
 author:
   name: "FramingUI Team"
@@ -11,25 +11,25 @@ coverImage: ""
 published: true
 ---
 
-코드베이스에 파란색 계열이 47가지 있어요. 대부분은 그때그때 "좋아 보이는 것"을 고른 결과죠. 이제 브랜드 색상을 바꿔야 하는데, 빠진 것 없이 전부 찾을 수 있을지 걱정하면서 하루를 search-and-replace에 써야 할 것 같아요.
+Your codebase has 47 shades of blue. You added most of them by picking whatever looked right at the time. Now your brand color is changing, and you're about to spend a day doing search-and-replace while hoping you don't miss anything.
 
-이게 리터럴 컬러 네이밍이 치르는 비용이에요. 해결책은 더 많은 기율이 아니라 다른 네이밍 시스템이에요.
+This is what literal color naming costs. The fix isn't more discipline—it's a different naming system.
 
-## 리터럴 vs. 시맨틱 네이밍
+## Literal vs. Semantic Naming
 
-리터럴 이름은 색상이 어떻게 생겼는지를 묘사해요. `blue-500`, `gray-700`, `#3B82F6`. 베이스 팔레트에서는 괜찮지만, 컴포넌트에서 직접 사용하는 순간 부채가 돼요.
+Literal names describe what a color looks like: `blue-500`, `gray-700`, `#3B82F6`. They're fine for a base palette, but they become a liability the moment you use them directly in components.
 
-시맨틱 이름은 색상이 무엇을 하는지를 묘사해요. `primary`, `text-secondary`, `surface-elevated`, `border-subtle`. 의도를 전달하죠. 컴포넌트에서 `bg-surface-elevated`를 읽으면 이게 상승된 서피스, 즉 모달, 팝오버, 플로팅 요소용이라는 걸 알아요. `bg-gray-50`을 읽으면 추측해야 하죠.
+Semantic names describe what a color does: `primary`, `text-secondary`, `surface-elevated`, `border-subtle`. They communicate intent. When you read `bg-surface-elevated` in a component, you understand this is for elevated surfaces—modals, popovers, floating elements. When you read `bg-gray-50`, you have to guess.
 
-실용적인 차이: 리터럴 이름에서는 브랜드 색상을 바꾸면 이전 색상의 모든 인스턴스를 찾아서 교체해야 해요. 시맨틱 이름에서는 매핑 하나를 업데이트하면 모든 컴포넌트가 자동으로 바뀌어요.
+The practical difference: with literal names, changing your brand color requires finding every instance of the old color and replacing it. With semantic names, you update one mapping and every component updates automatically.
 
-## 2계층 시스템
+## The Two-Tier System
 
-가장 유지보수하기 좋은 구조는 원시 색상 값과 시맨틱 의미를 분리하는 거예요.
+The most maintainable structure separates raw color values from semantic meaning.
 
-**1계층: 베이스 팔레트**
+**Tier 1: Base palette**
 
-리터럴 이름을 가진 원시 색상 값이에요. 이게 구성 요소예요. 컴포넌트에서 직접 쓰지 않아요.
+Raw color values with literal names. These are your building blocks—not used directly in components.
 
 ```css
 :root {
@@ -44,70 +44,70 @@ published: true
 }
 ```
 
-**2계층: 시맨틱 별칭**
+**Tier 2: Semantic aliases**
 
-1계층 값을 참조하는 역할 기반 이름이에요. 컴포넌트에서 사용하는 게 이거예요.
+Role-based names that reference tier 1 values. These are what you use in components.
 
 ```css
 :root {
-  /* 브랜드 */
+  /* Brand */
   --color-primary:       var(--palette-blue-500);
   --color-primary-hover: var(--palette-blue-600);
 
-  /* 텍스트 */
+  /* Text */
   --color-text-primary:   var(--palette-gray-900);
   --color-text-secondary: var(--palette-gray-600);
   --color-text-disabled:  var(--palette-gray-400);
 
-  /* 서피스 */
+  /* Surfaces */
   --color-surface-base:     var(--palette-gray-50);
   --color-surface-card:     #FFFFFF;
   --color-surface-elevated: #FFFFFF;
 
-  /* 보더 */
+  /* Borders */
   --color-border-default: var(--palette-gray-200);
   --color-border-subtle:  var(--palette-gray-100);
   --color-border-strong:  var(--palette-gray-400);
 
-  /* 피드백 */
+  /* Feedback */
   --color-danger:         var(--palette-red-500);
   --color-danger-hover:   var(--palette-red-600);
   --color-danger-surface: #FEF2F2;
 }
 ```
 
-파란색에서 보라색으로 리브랜딩할 때는 1계층을 업데이트해요.
+When you rebrand from blue to purple, you update tier 1:
 
 ```css
---palette-blue-500: #8B5CF6;  /* 이제 보라색 */
+--palette-blue-500: #8B5CF6;  /* now purple */
 ```
 
-`--color-primary`를 참조하는 모든 것이 자동으로 바뀌어요. 컴포넌트 파일에서 바꿀 게 없어요.
+Everything that references `--color-primary` updates automatically. Nothing in your component files needs to change.
 
-## 수동 오버라이드 없이 다크 모드 구현
+## Dark Mode Without Manual Overrides
 
-시맨틱 시스템은 다크 모드를 수동으로 힘들게 처리하는 대신 구조적으로 단순하게 만들어줘요.
+The semantic system makes dark mode structurally simple rather than manually exhausting.
 
-잘못된 방식:
+Wrong approach:
 
 ```tsx
 <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-200 dark:border-gray-700">
 ```
 
-작동하긴 해요. 하지만 모든 컴포넌트에 개별 다크 모드 변형이 필요해요. 일부는 빠뜨리게 돼요. 다른 건 잘못 처리하고요.
+This works, but every component needs individual dark mode variants. You'll forget some. You'll get them wrong on others.
 
-올바른 방식:
+Right approach:
 
 ```css
 :root {
-  --color-surface-card:   #FFFFFF;
-  --color-text-primary:   #111827;
+  --color-surface-card:  #FFFFFF;
+  --color-text-primary:  #111827;
   --color-border-default: #E5E7EB;
 }
 
 [data-theme="dark"] {
-  --color-surface-card:   #1F2937;
-  --color-text-primary:   #F9FAFB;
+  --color-surface-card:  #1F2937;
+  --color-text-primary:  #F9FAFB;
   --color-border-default: #374151;
 }
 ```
@@ -116,36 +116,36 @@ published: true
 <div className="bg-[var(--color-surface-card)] text-[var(--color-text-primary)] border-[var(--color-border-default)]">
 ```
 
-루트 엘리먼트의 속성 하나를 바꾸면 앱 전체가 리테마돼요. 컴포넌트 코드를 건드리지 않고 하이 컨트라스트, 색각 이상 친화적, 브랜드 변형 등 원하는 수만큼 테마를 만들 수 있어요.
+One attribute change on the root element re-themes the entire app. This scales to any number of themes—high contrast, colorblind-friendly, brand variants—without touching component code.
 
-## 알아두면 좋은 시맨틱 카테고리
+## Semantic Categories Worth Knowing
 
-**브랜드 색상**은 의도적인 액션을 이끌어요. primary CTA, 활성 내비게이션 상태, 포커스 링, 링크 등이에요. 호버, 활성, 비활성 상태 변형을 포함해요.
+**Brand colors** drive intentional actions: primary CTAs, active navigation states, focus rings, links. Variations include hover, active, and disabled states.
 
-**피드백 색상**은 시스템 상태를 전달해요. 성공 확인, 에러 메시지, 경고, 정보 알림이죠. 각각 텍스트, 배경, 보더 변형이 필요해요. 에러 텍스트와 에러 배경 둘 다에 `--color-error` 하나를 쓰면 대비 문제가 생겨요.
+**Feedback colors** communicate system states: success confirmations, error messages, warnings, informational notices. Each needs text, background, and border variants—using one `--color-error` for both error text and error backgrounds leads to contrast problems.
 
-**텍스트 색상**은 콘텐츠 계층을 만들어요. 3단계 시스템이면 대부분의 경우를 커버해요. primary (제목, 본문 텍스트), secondary (메타데이터, 설명), disabled (비활성 상태). 어두운 배경 위의 텍스트를 위한 inverse 색상도 있으면 완성돼요.
+**Text colors** establish content hierarchy. A three-level system covers most cases: primary (headings, body copy), secondary (metadata, descriptions), and disabled (inactive states). An inverse color for text on dark backgrounds completes the set.
 
-**서피스 색상**은 배경 레이어를 정의해요. 서피스마다 시각적 무게감이 달라요. 페이지 배경, 카드, 모달과 툴팁 같은 상승된 요소, 오버레이 배경 각각에 고유한 토큰이 필요해요.
+**Surface colors** define background layers. Different surfaces have different visual weight: the page background, cards, elevated elements like modals and tooltips, and overlay backdrops each need a distinct token.
 
-**보더 색상**은 구분선, 외곽선, 포커스 링을 다루어요. Subtle, default, strong 변형으로 과도하게 세부화하지 않으면서 필요한 범위를 커버해요.
+**Border colors** handle dividers, outlines, and focus rings. Subtle, default, and strong variants give you the range needed without over-specifying.
 
-## 흔한 실수들
+## Common Mistakes
 
-**시맨틱 레이어에 너무 많은 shade.** `primary-50`부터 `primary-900`을 시맨틱 토큰으로 만들면, 개발자들은 버튼 배경에 어떤 것을 쓸지, 호버 상태에 어떤 것을 쓸지 모르게 돼요. 시맨틱 레이어는 얇고 구체적으로 유지하세요. `--color-primary`, `--color-primary-hover`, `--color-primary-surface`. 전체 범위는 베이스 팔레트가 가지게 하면 돼요.
+**Too many shades in the semantic layer.** If you have `primary-50` through `primary-900` as semantic tokens, developers don't know which one to use for a button background versus a hover state. Keep the semantic layer thin and specific: `--color-primary`, `--color-primary-hover`, `--color-primary-surface`. Let the base palette hold the full range.
 
-**네이밍 시스템 혼합.** `--blue-500`과 `--color-primary`가 같은 값으로 둘 다 존재하면 혼란이 생겨요. 개발자들은 그 순간 더 적합해 보이는 것을 집어요. 하나의 시스템을 선택하고 유지하세요.
+**Mixing naming systems.** Having both `--blue-500` and `--color-primary` with the same value creates confusion. Developers reach for whichever feels right in the moment. Pick one system and stick to it.
 
-**컴포넌트별 토큰 폭발.** `--button-primary-background`, `--card-background`, `--modal-background`, `--input-background`를 별도 토큰으로 만들면 이득 없이 표면적만 늘어나요. 카드 배경과 모달 배경은 보통 같은 서피스 색상을 공유해요. 시맨틱 토큰을 참조하고, 진짜 필요할 때만 컴포넌트별 오버라이드를 만드세요.
+**Component-specific token explosion.** Creating `--button-primary-background`, `--card-background`, `--modal-background`, `--input-background` as separate tokens multiplies your surface area without benefit. Card backgrounds and modal backgrounds usually share the same surface color. Reference the semantic token and only create component-specific overrides when you genuinely need them.
 
-## AI 코드 생성에 이게 중요한 이유
+## Why This Matters for AI Code Generation
 
-디자인 시스템 컨텍스트 없이 AI 도구가 UI 컴포넌트를 생성하면, 통계적으로 그럴듯한 색상 선택을 해요. 카드에는 `bg-white`, 보조 텍스트에는 `text-gray-600`, 에러에는 `bg-red-500`. 흔하니까요.
+When AI tools generate UI components without design system context, they produce statistically likely color choices. `bg-white` for cards because that's common. `text-gray-600` for secondary text because that's common. `bg-red-500` for errors because that's common.
 
-이 선택들이 추상적으로 틀린 건 아니에요. 내 특정 시스템에 맞지 않는 거죠.
+These choices aren't wrong in the abstract. They're wrong for your specific system.
 
-MCP 연결로 시맨틱 토큰이 표면화되면, AI 도구가 코드를 생성하기 전에 디자인 시스템을 조회할 수 있어요. 보조 텍스트가 아마도 `text-gray-600`일 거라고 추론하는 대신, 토큰 정의를 읽어요. `--color-text-secondary`가 특정 값에 매핑되어 있고, 그걸 쓰는 거죠. 생성된 컴포넌트가 처음부터 내 시스템 안에 착지해요.
+With semantic tokens surfaced through an MCP connection, AI tools can query your design system before generating code. Instead of inferring that secondary text is probably `text-gray-600`, the AI reads your token definition: `--color-text-secondary` is mapped to a specific value, and that's what it uses. Generated components land in your system on the first attempt.
 
-토큰 이름이 의도를 담아요. `--color-danger`가 파괴적인 액션을 의미한다고 아는 AI는, 빨간색이 적절해 보이는 곳 어디서나가 아니라 올바른 자리에 `bg-[var(--color-danger)]`를 쓸 거예요.
+The token name carries the intent. An AI that knows `--color-danger` means destructive actions, not just any shade of red, will produce `bg-[var(--color-danger)]` in the right places—not wherever red seemed appropriate.
 
-시맨틱 컬러 네이밍은 프로젝트 초반에 할 수 있는 레버리지 높은 구조적 선택 중 하나예요. 네이밍 규약 자체는 비용이 없어요. 색상을 바꾸거나, 테마를 추가하거나, AI에 컴포넌트 생성을 요청할 때마다 돌아와요.
+Semantic color naming is one of the higher-leverage structural choices you can make early in a project. The naming convention costs nothing to establish. It pays off every time you change a color, add a theme, or ask an AI to generate a component.

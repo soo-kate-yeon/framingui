@@ -1,6 +1,6 @@
 ---
-title: "MCP로 Claude와 Cursor에 디자인 시스템 연결하기"
-description: "MCP를 통해 디자인 시스템을 Claude, Cursor에 연결해 AI가 토큰 기반으로 일관된 UI 코드를 생성하도록 만드는 실전 가이드입니다."
+title: "Connecting Your Design System to Claude and Cursor via MCP"
+description: "Step-by-step guide to connecting your design system to Claude and Cursor using MCP so AI generates consistent, token-aligned UI code."
 date: "2026-02-28"
 author:
   name: "FramingUI Team"
@@ -13,34 +13,34 @@ coverImage: ""
 published: true
 ---
 
-AI로 UI를 생성하면 속도는 빨라집니다. 문제는 그 다음이에요. 토큰을 무시한 코드가 쏟아지고, 세션이 끝날 때마다 `bg-blue-500`을 `bg-primary`로 되돌리는 작업이 반복되거든요.
+AI generates UI fast. But generated code that ignores your design tokens sends you back into manual cleanup for hours after every session.
 
-MCP(Model Context Protocol)는 이 문제를 구조적으로 해결해요. AI가 프롬프트 안의 문자만 보는 게 아니라, 디자인 시스템을 직접 조회하게 만드는 거거든요.
+Model Context Protocol (MCP) solves this by letting AI tools query structured context from external systems — including your design system — instead of guessing from whatever examples appear in the training data.
 
-## MCP 연동이 만드는 실질적인 차이
+## What Changes When You Connect a Design System Over MCP
 
-MCP 없이는 토큰 가이드라인을 매번 프롬프트에 붙여 넣고 AI가 따라주길 기대해야 해요. MCP가 있으면 AI가 필요할 때마다 실제 토큰 데이터를 직접 가져오게 됩니다.
+Without MCP, you paste your token guidelines into each prompt and hope the AI follows them consistently. With MCP, the AI queries your actual token data on demand.
 
-차이는 코드에서 바로 보여요. 생성된 컴포넌트가 Tailwind 팔레트 값 대신 의미 있는 색상 이름을 참조하고, 간격은 정해진 스케일을 따르고, 컴포넌트 변형이 실제 프리미티브 계약과 일치하게 되거든요. 생성 후 수작업으로 고치는 사이클이 눈에 띄게 줄어들어요.
+The shift is concrete. Generated components reference your semantic color names instead of raw Tailwind palette values. Spacing uses your scale. Component variants match the contracts your primitives actually expose. You stop patching `bg-blue-500` back to `bg-primary` after each generation session.
 
-Claude나 Cursor로 프런트엔드 작업을 매일 하는 팀이라면 특히 체감이 크죠. 프롬프트마다 긴 컨텍스트를 반복해서 넣는 오버헤드가 쌓이면 결코 작지 않으니까요.
+This is most valuable for teams that use Claude or Cursor daily for frontend work. The overhead of repeated prompt-based context injection accumulates fast.
 
-## 아키텍처의 구성 요소
+## What the Architecture Looks Like
 
-설정은 네 부분으로 이루어져요.
+The setup has four parts:
 
-1. 토큰 데이터가 저장소 안의 파일에 있다
-2. MCP 서버가 그 토큰과 컴포넌트 메타데이터를 조회 가능하게 노출한다
-3. Claude, Cursor가 생성 작업 중 MCP 서버를 호출한다
-4. 생성된 코드가 임의로 만들어낸 값 대신 조회한 값을 사용한다
+1. Token data lives in machine-readable files inside your repo
+2. An MCP server exposes those tokens and component metadata as queryable resources
+3. AI clients (Claude, Cursor) call the MCP server during generation tasks
+4. Generated code uses retrieved design system values instead of hallucinated defaults
 
-프롬프트가 짧아지는 이유는 컨텍스트가 서버에 있어서 메시지에 넣을 필요가 없기 때문이에요.
+Your prompts stay shorter because context lives in the server, not the message.
 
-한 가지 전제가 있어요. 토큰에 의미 기반 네이밍이 있어야 MCP가 실제로 도움이 돼요. 토큰이 `blue-500`처럼 팔레트 이름만 있다면, AI는 여전히 intent를 추론해야 하거든요. 시맨틱 구조를 먼저 잡고 연결하는 게 순서예요.
+The one prerequisite that matters most: your tokens need semantic naming before MCP can help. If your token library is `blue-500` mapped to nothing, AI will still have to guess intent. Clean semantics first, then connect.
 
-## Claude에 MCP 서버 설정하기
+## Setting Up the MCP Server for Claude
 
-프로젝트 루트에 MCP 설정 파일을 만들어요. Claude Code는 `.mcp.json`을 사용해요.
+Create an MCP configuration file in your project root. For Claude Code, the file is `.mcp.json`:
 
 ```json
 {
@@ -54,19 +54,19 @@ Claude나 Cursor로 프런트엔드 작업을 매일 하는 팀이라면 특히 
 }
 ```
 
-저장 후 Claude Code를 재시작하면 서버가 로드돼요. `framingui`이 AI 도구가 요청을 라우팅할 때 사용하는 서버 이름이고요, `-y` 플래그는 npx가 확인 프롬프트를 건너뛰게 해줘요.
+Restart Claude Code after saving. The `framingui` key is the server name AI tools use to route requests. The `-y` flag tells npx to skip confirmation prompts.
 
-FramingUI를 쓴다면 `init` 명령어로 이 과정을 자동으로 처리할 수 있어요.
+If you use FramingUI, the `init` command wires this automatically:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-`.mcp.json` 생성, 프로바이더 bootstrap, 로컬 가이드 문서 작성까지 한 번에 처리해줘서 경로를 수동으로 설정할 필요가 없어요.
+This creates `.mcp.json`, adds the provider bootstrap, and generates a local guide — without requiring you to configure paths manually.
 
-## Cursor에 MCP 서버 설정하기
+## Setting Up the MCP Server for Cursor
 
-Cursor도 비슷한 형식을 사용해요. `.cursor/mcp.json` 또는 전역 Cursor 설정에 이렇게 추가하면 돼요.
+Cursor uses a similar registration format. In `.cursor/mcp.json` or the global Cursor config:
 
 ```json
 {
@@ -80,49 +80,49 @@ Cursor도 비슷한 형식을 사용해요. `.cursor/mcp.json` 또는 전역 Cur
 }
 ```
 
-저장 후 재시작하면 Cursor가 시작 시 서버를 자동으로 인식해요.
+Restart Cursor after saving so it discovers the server on startup.
 
-## 연결 상태 확인하기
+## Verifying the Connection
 
-프로덕션에서 쓰기 전에 간단한 테스트를 먼저 해보는 게 좋아요.
+Run a quick capability check in each client before relying on the integration in production.
 
-확인용 프롬프트:
+Test prompts to use:
 
-- "사용 가능한 디자인 토큰 목록을 보여줘"
-- "버튼 관련 의미 토큰만 알려줘"
-- "기존 프리미티브와 의미 토큰만 써서 설정 폼을 만들어줘"
+- "List the available design tokens"
+- "Show me the semantic color tokens for buttons"
+- "Build a settings form using existing primitives and semantic tokens only"
 
-토큰 목록을 가져오지 못한다면 서버 명령 경로, 환경 변수 설정, 토큰 파일이 유효한 JSON인지를 순서대로 확인해 보세요. 대부분의 연결 오류는 이 세 가지 중 하나예요.
+If AI cannot list tokens, check three things: the server command path, environment variable configuration, and whether your token files are valid JSON. Most connection failures trace to one of these.
 
-## MCP 컨텍스트를 활용하는 프롬프트 방식
+## Prompting with MCP Context
 
-MCP가 컨텍스트를 제공하더라도, 프롬프트로 출력을 제어해야 해요. 가장 효과적인 패턴은 이거예요.
+MCP delivers context, but you still need to constrain the output through the prompt. The most effective pattern:
 
-- 기존 프리미티브만 사용
-- 의미 토큰만 사용, 팔레트 값 직접 사용 금지
-- 새로운 변형 임의 생성 금지
-- 로딩, 빈 상태, 에러 상태 포함
+- Use existing primitives only
+- Use semantic tokens only — no raw palette values
+- Do not invent new variants
+- Include loading, empty, and error states
 
-이 네 가지 제약이 실시간 토큰 조회와 결합되면 세션마다 일관된 결과가 나와요.
+These four constraints, combined with live token retrieval, produce consistent generation across sessions.
 
-## 자주 빠지는 함정 세 가지
+## Three Pitfalls Worth Avoiding
 
-**시맨틱 매핑 없이 팔레트 값만 노출하는 경우.** 토큰이 `blue-500`뿐이라면 AI는 여전히 "primary"가 무엇인지 추론해야 해요. 일관성의 핵심은 의미 매핑이에요.
+**Exposing raw palette values without semantic mapping.** If your token context only exposes `blue-500`, AI still has to infer what "primary" means. Semantic mapping is where consistency comes from.
 
-**컴포넌트 계약이 없는 경우.** 토큰 데이터만으로는 부족해요. 프리미티브 API가 모호하면 — 어떤 문자열이든 받는 props, variant enum 없음 — AI가 지원하지 않는 구성을 만들어내요.
+**No component contracts.** Token data alone is not enough. If your primitive API is vague — props that accept any string, no variant enum — AI will invent unsupported configurations.
 
-**오래된 토큰 소스 파일.** MCP 서버가 오래된 파일을 읽으면 생성된 코드가 실제 UI와 어긋나요. 컴포넌트가 빌드에 사용하는 토큰 소스와 서버가 참조하는 소스를 일치시켜야 해요.
+**Stale token source files.** If your MCP server reads outdated files, generated code will diverge from live UI. Pin the server to the same token source your components build against.
 
-## 팀 단위 도입 흐름
+## What a Team Rollout Looks Like
 
-제로에서 작동하는 연동까지 가장 빠른 경로는 다섯 단계예요.
+The fastest path from zero to working integration is five steps:
 
-1. 토큰 구조 점검 — 의미 기반 네이밍이 있는지 확인
-2. `.mcp.json`에 서버 항목 추가하고 저장소에 커밋
-3. 대표 컴포넌트 세 개 생성 테스트
-4. 하드코딩된 시각적 값을 잡는 린트 규칙 추가
-5. 팀 공통 프롬프트 템플릿 문서화
+1. Audit token schema quality — confirm semantic naming exists
+2. Add `.mcp.json` with the server entry to your repo
+3. Run three representative component generation tests
+4. Add a lint rule that catches hardcoded visual values
+5. Publish one shared prompt template the team uses for UI generation
 
-각 단계가 측정 가능한 체크포인트를 만들어요. 전체 과정이 스프린트 하나에 들어가요.
+Each step produces a measurable checkpoint. The full sequence fits inside a single sprint.
 
-MCP 디자인 시스템 연동은 미래의 최적화가 아니에요. Claude나 Cursor로 UI 작업을 하는 팀에게는, 빠르지만 시끄러운 생성과 빠르고 리뷰 가능한 생성을 가르는 차이예요.
+MCP design system integration is not a future optimization. For teams that use Claude or Cursor for UI work, it is what separates fast-and-noisy generation from fast-and-reviewable output.

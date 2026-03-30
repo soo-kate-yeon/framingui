@@ -1,6 +1,6 @@
 ---
-title: "Figma CSS 복사를 멈추고 디자인 토큰으로 갈아타기"
-description: "Figma에서 CSS 복사는 그만. 디자인 토큰이 전통적인 복사-붙여넣기 워크플로우보다 유지보수 가능하고 일관된 코드베이스를 만드는 이유를 알아보세요."
+title: "Replace Figma Copy-Paste with Design Tokens"
+description: "Stop copying CSS from Figma. Learn why design tokens create more maintainable, consistent codebases than traditional copy-paste workflows."
 date: "2025-03-06"
 author:
   name: "FramingUI Team"
@@ -13,43 +13,43 @@ coverImage: ""
 published: true
 ---
 
-Figma에서 복사-붙여넣기는 빠르게 느껴져요. 실제로 빠르기도 해요. 브랜드 메인 색상을 바꿔야 하는 시점까지는요. 그 색이 47개 파일에 흩어져 있다는 걸 발견하기 전까지는요.
+Copy-paste from Figma feels fast. It is fast—right up until you need to change your brand's primary color and discover it lives in 47 different files.
 
-Inspect 패널에서 CSS 값을 직접 복사하는 문제는, 숫자를 가져오지 의미를 가져오지 않는다는 거예요. `#3B82F6`은 이 색이 왜 쓰이는지 아무것도 말해주지 않아요. `24px`는 그게 카드 패딩인지, 섹션 간격인지, 아이콘 크기인지 설명하지 않고요. 하드코딩된 값은 조용히 쌓이고, 코드베이스는 서서히 디자인에서 멀어져요.
+The problem with copying CSS values directly from the Inspect panel is that you're capturing raw numbers, not meaning. `#3B82F6` says nothing about why that color is used. `24px` doesn't explain whether it's card padding, section spacing, or an icon size. Hardcoded values accumulate silently, and the codebase slowly diverges from the design.
 
-## 복사-붙여넣기가 실제로 치르는 비용
+## What Copy-Paste Actually Costs
 
-컴포넌트 하나에 값을 복사해서 CSS에 붙여넣는 데 20분이면 될 수 있어요. 효율적으로 느껴지죠. 숨은 비용은 나중에 나타나요.
+A new component might take 20 minutes to copy values and paste them into CSS. That feels efficient. The hidden cost appears later:
 
-**리브랜딩 작업.** 브랜드 색상을 바꾸려면 그 값을 하드코딩한 모든 파일에서 찾아서 바꿔야 해요. 하나라도 놓치면 시각적으로 깨져요.
+**Rebrand work.** Changing a brand color requires a find-replace across every file that hardcoded it. Miss one instance and the visual breaks.
 
-**다크 모드.** 하드코딩된 색상 하나하나마다 다크 테마용 대응 값을 수동으로 만들어야 해요. 컴포넌트가 늘어날수록 목록이 길어지고요.
+**Dark mode.** Every hardcoded color needs a manual counterpart in your dark theme. The list grows with every component.
 
-**디자인 드리프트.** 개발자 A는 `12px` 패딩을 쓰고, 개발자 B는 "비슷해 보이니까" `16px`를 써요. 6개월 후에는 일관된 게 하나도 없어요.
+**Design drift.** One developer uses `12px` padding; another uses `16px` because it "looked close." Over six months, nothing is consistent.
 
-**유지보수.** 1년 뒤에 `#3B82F6`이 PR에 나타나면, 그게 primary 색인지 accent인지 레거시 잔재인지 아무도 기억하지 못해요.
+**Maintenance.** A year from now, `#3B82F6` appears in a PR and nobody remembers whether it's the primary, an accent, or something legacy.
 
-## 시맨틱 네이밍으로의 전환
+## The Semantic Naming Shift
 
-디자인 토큰은 값과 의미의 관계를 뒤집어요. "이 값이 무엇인가?"가 아니라 "이 값이 무슨 역할을 하는가?"를 묻게 되는 거예요.
+Design tokens flip the relationship between value and meaning. Instead of asking "what is this value?" you ask "what does this value do?"
 
-`--color-primary`라는 이름의 토큰은 헥스값이 바뀌어도 그것을 참조하는 모든 곳을 깨뜨리지 않아요. 이름이 의도를 담고 있거든요. 브랜드 색이 파란색에서 보라색으로 바뀔 때는 이렇게 되는 거죠.
+A token named `--color-primary` can change its hex without breaking anything that references it. The name encodes the intent. When your brand moves from blue to purple:
 
 ```css
-/* 이전 */
+/* Before */
 --color-primary: #3B82F6;
 
-/* 이후 */
+/* After */
 --color-primary: #9333EA;
 ```
 
-모든 버튼, 링크, 포커스 상태가 즉시 업데이트돼요. 이름은 외관이 아니라 역할을 설명하기 때문에 여전히 의미가 있어요.
+Every button, link, and focus state updates immediately. The name stays meaningful because it describes role, not appearance.
 
-`--color-blue-500`을 `--color-purple-500`으로 이름 바꾸는 것과 비교해보면, 어차피 모든 참조를 찾아서 업데이트해야 하니 토큰을 쓰는 의미가 없어요.
+Compare that to renaming `--color-blue-500` to `--color-purple-500`—you'd have to find and update every reference anyway, which defeats the purpose.
 
-## FramingUI가 토큰을 사용하는 방식
+## How FramingUI Uses Tokens
 
-FramingUI는 디자인 토큰을 컴포넌트 API에 직접 내장해요. `variant="primary"`로 `Button` 컴포넌트를 사용하면 내부적으로 올바른 토큰이 적용돼요.
+FramingUI builds design tokens directly into its component API. When you use a `Button` component with `variant="primary"`, it applies the right tokens internally:
 
 ```css
 .button-primary {
@@ -60,9 +60,9 @@ FramingUI는 디자인 토큰을 컴포넌트 API에 직접 내장해요. `varia
 }
 ```
 
-어떤 요소에 어떤 토큰이 쓰이는지 찾아볼 필요가 없어요. 컴포넌트가 이미 알고 있거든요. 토큰 값을 한 곳에서 바꾸면 애플리케이션의 모든 버튼이 업데이트를 반영해요.
+You never look up which token goes with which element. The component already knows. Change the token value in one place; every button in the application reflects the update.
 
-테마 전환도 같은 방식으로 작동해요. 토큰은 다른 data 속성 아래에서 다른 값으로 해석돼요.
+Theme switching works the same way. The tokens resolve to different values under different data attributes:
 
 ```css
 :root {
@@ -76,27 +76,27 @@ FramingUI는 디자인 토큰을 컴포넌트 API에 직접 내장해요. `varia
 }
 ```
 
-컴포넌트 코드는 바뀌지 않아요. CSS 변수가 활성 테마에 따라 다르게 해석되는 거예요.
+The component code doesn't change. The CSS variable resolves differently based on the active theme.
 
-## 기존 코드베이스 마이그레이션
+## Migrating an Existing Codebase
 
-이미 하드코딩된 값으로 가득한 코드베이스가 있다면 전면 재작성은 필요 없어요. 점진적으로 이전할 수 있거든요.
+If you already have a codebase full of hardcoded values, a full rewrite isn't necessary. You can migrate incrementally.
 
-일관성 영향이 가장 큰 색상부터 시작해요.
+Start by auditing colors—they have the highest consistency impact:
 
 ```bash
-# 하드코딩된 헥스 색상 전부 찾기
+# Find all hardcoded hex colors
 rg '#[0-9A-Fa-f]{6}' --type css --type tsx
 ```
 
-값들을 의도별로 묶어요. `#3B82F6`이 12군데에 나타나고 항상 "주요 액션"을 의미한다면, 그게 `--color-primary` 토큰이에요. 토큰을 정의하고, 컴포넌트 하나씩 하드코딩된 값을 교체해나가면 돼요.
+Group the values by intent. If `#3B82F6` appears in 12 places and always means "primary action," that's your `--color-primary` token. Define the tokens, then replace the hardcoded values one component at a time.
 
-가장 많이 쓰이는 컴포넌트(버튼, 인풋, 카드)부터 시작해요. 하나씩 마이그레이션할수록 미래의 유지보수 부담이 줄어들어요. 타이포그래피와 간격도 같은 패턴이에요. 반복되는 값을 찾고, 시맨틱하게 이름 짓고, 리터럴을 교체해요.
+Start with the most-used components (buttons, inputs, cards). Each one you migrate reduces future maintenance overhead. Typography and spacing follow the same pattern—find the values that repeat, name them semantically, replace the literals.
 
-## 복사-붙여넣기가 여전히 맞는 경우
+## When Copy-Paste Still Makes Sense
 
-디자인 토큰이 모든 상황에서 정답은 아니에요. 독특한 아트 디렉션의 일회성 마케팅 페이지, 제어할 수 없는 외부 CSS, 빠르게 버려질 프로토타입은 토큰 시스템의 오버헤드가 맞지 않아요.
+Design tokens aren't the right tool for every situation. One-off marketing pages with custom art direction, external CSS you don't control, and quick throw-away prototypes don't justify the overhead of a token system.
 
-기준은 수명과 재사용이에요. 코드가 유지보수될 것이고, 여러 개발자가 손댈 것이고, 테마나 플랫폼을 넘어서 작동해야 한다면—토큰은 금세 본전을 뽑아요. 하루 실험으로 버려질 코드라면 값을 그냥 복사해도 괜찮아요.
+The dividing line is longevity and reuse. If the code will be maintained, if multiple developers will touch it, if it will need to work across themes or platforms—tokens pay for themselves quickly. If it's a one-day experiment that will be discarded, copying values directly is fine.
 
-프로덕트 UI, 컴포넌트 라이브러리, 몇 달이나 몇 년에 걸쳐 진화해야 하는 코드베이스가 바로 토큰 접근법이 복리로 가치를 쌓는 곳이에요. 초기 비용은 이름을 정의하는 일이에요. 계속되는 혜택은 의도가 코드 자체에 담기고 변경이 자동으로 전파된다는 거고요.
+Product UIs, component libraries, and any codebase that needs to evolve over months or years are where the token approach compounds in value. The upfront cost is defining the names. The ongoing benefit is that intent is encoded in the code itself, and changes propagate automatically.

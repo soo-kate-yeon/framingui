@@ -1,6 +1,6 @@
 ---
-title: "에이전틱 디자인 시스템이 AI 획일화를 깨는 방식"
-description: "에이전틱 디자인 시스템은 디자인 토큰과 AI를 결합해 브랜드에 맞는 UI를 생성합니다. 획일화된 AI 인터페이스를 없앱니다."
+title: "Agentic Design Systems Let AI Generate On-Brand UI"
+description: "Agentic design systems combine design tokens with AI to generate on-brand UI—eliminating generic AI interfaces."
 date: "2026-02-25"
 author:
   name: "FramingUI Team"
@@ -13,33 +13,33 @@ coverImage: ""
 published: true
 ---
 
-디자이너가 만든 디자인 시스템은 참조 문서예요. 개발자가 읽고, 값을 추출하고, 코드에 직접 적용합니다. 사람만 UI를 작성할 때는 잘 작동합니다. AI가 상당 부분을 작성하기 시작하면 무너지기 시작해요.
+A designer-built design system is a reference document. Developers read it, extract values, and apply them to code by hand. This works when humans are the only ones writing UI. It breaks down when AI starts writing substantial portions of it.
 
-에이전틱 디자인 시스템은 다른 것입니다. AI가 프로그래밍적으로 쿼리할 수 있는 디자인 시스템이에요. 디자인 결정이 사람이 읽는 문서가 아니라 기계가 읽는 구조로 인코딩됩니다.
+An agentic design system is something different. It's a design system that AI can query programmatically—where the design decisions are encoded in machine-readable structures rather than human-readable documentation.
 
-## 기존 디자인 시스템이 AI에게 주는 것
+## What Traditional Design Systems Give AI
 
-Claude에게 "우리 디자인 시스템을 사용해서" 컴포넌트를 생성하라고 하면 모델은 그게 무슨 의미인지 추론해야 해요. 토큰 값을 프롬프트에 붙여넣었다면 숫자가 있습니다. 문서에 링크했다면 훈련 중에 읽었을 수도 있어요. 어느 쪽이든 디자인 결정을 간접적으로 적용합니다. 사람이 읽는 텍스트를 해석해서 코드에 매핑하는 거예요.
+When you tell Claude to generate a component "using your design system," the model has to infer what that means. If you've pasted token values into the prompt, it has numbers to work with. If you've linked to documentation, it may have read it during training. Either way, it's applying design decisions indirectly—interpreting human-readable text and mapping it to code.
 
-출력에서 그 격차가 드러납니다. 모델은 의미론적이 아닌 기계적으로 토큰을 적용해요. `--color-primary-500`이 파란 값에 매핑된다는 걸 알지만, 이 특정 파란색이 브랜드 언어에서 신뢰를 나타내고, 화면당 최대 한 번 등장해야 하고, 채도 높은 보조 색상이 아닌 중립적 회색과 짝을 이뤄야 한다는 걸 모릅니다. 그 제약들은 디자이너 지식에 존재하지, 토큰 파일에는 없거든요.
+The gap shows up in the output. The model applies tokens mechanically rather than semantically. It knows that `--color-primary-500` maps to a blue value, but not that this specific blue represents trust in your brand language, should appear at most once per screen, and should pair with neutral grays rather than saturated secondary colors. Those constraints live in designer knowledge, not in the token file.
 
-그 구조화된 지식에 접근하지 못하면 AI는 시각적으로는 그럴듯하지만 브랜드에 의미론적으로 맞지 않는 컴포넌트를 생성합니다.
+Without access to that structured knowledge, AI generates components that are visually plausible but semantically wrong for your brand.
 
-## 디자인 시스템을 에이전틱으로 만드는 것
+## What Makes a Design System Agentic
 
-에이전틱 디자인 시스템은 기존 시스템이 암묵적으로 남겨두는 세 가지를 인코딩합니다.
+An agentic design system encodes three things that traditional systems leave implicit:
 
-**토큰 의미 체계.** `--foreground-accent`가 특정 OKLCH 값에 매핑된다는 것만 정의하는 게 아니에요. 그 토큰이 무엇을 의미하는지도 기록합니다. 주 액션 색상, 뷰포트당 최대 1회, 고강조 인터랙티브 요소용. AI가 이 의미론적 레이어를 쿼리해서 기계적이 아닌 의도를 가지고 토큰을 적용할 수 있습니다.
+**Token semantics.** Rather than just defining that `--foreground-accent` maps to a specific OKLCH value, the system records what that token means: primary action color, maximum one per viewport, intended for high-emphasis interactive elements. The AI can query this semantic layer and apply tokens with intent rather than mechanically.
 
-**컴포넌트 지식.** 사용 가능한 컴포넌트와 props를 나열하는 게 아니라 각 컴포넌트를 언제 왜 사용하는지를 기록합니다. 어떤 시각적 임팩트를 가지는지, 레이아웃에서 어디에 속하는지, 어떤 변형이 어떤 컨텍스트에 적절한지. 버튼 컴포넌트에는 `variant="primary"`와 `variant="ghost"`만 있는 게 아니에요. primary 버튼은 모달 푸터와 카드 액션 영역에 속하고, ghost 버튼은 시각적으로 primary와 경쟁하지 않아야 하는 보조 액션에 사용한다는 지식이 있습니다.
+**Component knowledge.** Rather than listing available components and their props, the system records when and why to use each component—what visual impact it carries, where in a layout it belongs, which variants are appropriate for which contexts. A button component doesn't just have `variant="primary"` and `variant="ghost"`. It has knowledge that primary buttons belong in modal footers and card action areas, while ghost buttons serve secondary actions that shouldn't compete visually with the primary.
 
-**쿼리 가능한 접근.** 모든 프롬프트에 디자인 시스템을 포함시키는 대신, AI 도구가 생성 시점에 쿼리할 수 있는 프로토콜로 노출합니다. 디자인 시스템이 대화 컨텍스트 밖에 존재하고 필요할 때 가져옵니다.
+**Queryable access.** Rather than requiring the design system to be included in every prompt, the system is exposed through a protocol that AI tools can query at generation time. The design system lives outside the conversation context and gets retrieved on demand.
 
-Model Context Protocol이 FramingUI가 이 세 번째 레이어에 사용하는 기술 메커니즘이에요.
+The Model Context Protocol is the technical mechanism FramingUI uses for this third layer.
 
-## MCP 연결이 작동하는 방식
+## How the MCP Connection Works
 
-FramingUI MCP 서버는 디자인 시스템을 쿼리 가능한 도구 집합으로 노출합니다. Claude Code는 설정 항목 하나로 연결됩니다:
+The FramingUI MCP server exposes your design system as a set of queryable tools. Claude Code connects to it through a single configuration entry:
 
 ```json
 {
@@ -53,30 +53,30 @@ FramingUI MCP 서버는 디자인 시스템을 쿼리 가능한 도구 집합으
 }
 ```
 
-연결되면 Claude는 서버에 어떤 테마를 쓸 수 있고 각 테마에 무엇이 있는지, 어떤 컴포넌트가 존재하고 변형은 무엇인지, 특정 변형이 사용하는 CSS 변수는 무엇인지, 코드를 생성하기 전에 주어진 스크린 정의가 유효한지 물어볼 수 있어요.
+Once connected, Claude can ask the server which themes are available and what each theme contains, which components exist and what their variants are, what CSS variables a specific variant uses, and whether a given screen definition is valid before generating code from it.
 
-서버는 FramingUI 컴포넌트 카탈로그와 설정된 테마에서 가져온 구조화된 데이터로 응답합니다. 모델은 이 데이터를 사용해서 훈련 데이터에서 추론한 하드코딩된 값이 아니라 실제 CSS 변수를 참조하는 코드를 생성해요. `var(--background-page)`, `var(--foreground-primary)`, `var(--border-default)` 같은 형태로요.
+The server responds with structured data drawn from the FramingUI component catalog and your configured theme. The model uses this data to generate code that references real CSS variables—`var(--background-page)`, `var(--foreground-primary)`, `var(--border-default)`—rather than hardcoded values it inferred from training data.
 
-## 4단계 생성 워크플로우
+## The Four-Step Generation Workflow
 
-MCP 서버의 스크린 생성 워크플로우는 오류를 코드 출력 단계 전에 잡도록 설계되어 있어요. 단계는 이렇습니다:
+The MCP server's screen generation workflow is designed to catch errors before they reach the code output stage. The steps are:
 
-1. `get-screen-generation-context` — "사용자 메트릭이 있는 분석 대시보드" 같은 자연어 설명이 주어지면, 서버는 매칭되는 템플릿, 관련 컴포넌트, 유효한 스크린 정의에 필요한 스키마 구조를 반환합니다.
+1. `get-screen-generation-context` — given a natural language description like "analytics dashboard with user metrics," the server returns matching templates, relevant components, and the schema structure required for a valid screen definition.
 
-2. `validate-screen-definition` — 모델이 구조화된 JSON 정의를 만들어 검증을 요청합니다. 서버는 참조된 컴포넌트가 존재하는지, 변형이 유효한지, 필수 필드가 있는지 확인해요. 검증 실패 시 구체적인 오류 메시지와 수정 제안이 반환됩니다.
+2. `validate-screen-definition` — the model creates a structured JSON definition and submits it for validation. The server checks that referenced components exist, variants are valid, and required fields are present. Validation failures return specific error messages and correction suggestions.
 
-3. `generate_screen` — 검증된 정의로 서버가 테마의 CSS 변수와 카탈로그의 컴포넌트를 사용하는 React 컴포넌트 코드를 생성합니다.
+3. `generate_screen` — with a validated definition, the server generates React component code that uses your theme's CSS variables and the components from the catalog.
 
-4. `validate-environment` — 선택적으로 서버가 프로젝트에 필요한 패키지가 설치되어 있고 런타임 계약(전역 스타일시트 임포트, provider 마운트, 테마 모듈)이 올바르게 설정되어 있는지 확인해요.
+4. `validate-environment` — optionally, the server checks that your project has the required packages installed and the runtime contract configured correctly (global stylesheet import, provider mount, theme module).
 
-이 4단계 흐름이 에이전틱 생성을 프롬프트 기반 생성과 구분하는 것입니다. 디자인 시스템이 단순한 참조 문서가 아니라 생성 과정에 능동적으로 참여해요.
+This four-step flow is what separates agentic generation from prompt-based generation. The design system participates actively in the generation process, not just as a reference document.
 
-## 팀에 무엇이 달라지는가
+## What This Changes for Teams
 
-개인 개발자에게는 드리프트 없는 속도가 주요 이점이에요. AI가 첫 시도에 선택한 테마와 일치하는 컴포넌트를 생성합니다. 환각된 유틸리티 클래스를 수정하거나 팔레트와 맞지 않는 하드코딩된 색상 값을 찾아다니는 시간을 쓰지 않아요.
+For solo developers, the primary benefit is speed without drift. AI generates components that match your chosen theme on the first attempt. You're not spending time correcting hallucinated utility classes or hunting for hardcoded color values that don't match your palette.
 
-팀에게는 기여자 간의 일관성이 이점입니다. AI 지원을 사용하는 주니어 개발자가 생성하든, 직접 작성하는 시니어 개발자가 만들든, 출력에 같은 CSS 변수가 나타납니다. 디자인 시스템이 코드 리뷰로 강제되는 사회적 계약이 아니라 생성 시점에 강제되는 기술적 제약이 됩니다.
+For teams, the benefit is consistency across contributors. Whether a component is generated by a junior developer using AI assistance or by a senior developer writing by hand, the same CSS variables appear in the output. The design system isn't a social contract enforced through code review—it's a technical constraint enforced at generation time.
 
-에이전틱 디자인 시스템은 디자이너의 판단을 대체하지 않아요. 디자이너가 여전히 결정을 내립니다. 어떤 테마가 브랜드를 포착하는지, 어떤 컴포넌트 변형이 각 인터랙션 패턴을 가장 잘 서비스하는지, 시각적 계층이 어떻게 가중되어야 하는지. 달라지는 건 그 결정이 코드로 전달되는 방식이에요. AI가 해석해야 하는 문서가 아니라 기계 가독형 시스템을 통해 흐릅니다.
+The agentic design system doesn't replace designer judgment. Designers still make the decisions: which theme captures the brand, which component variants best serve each interaction pattern, how the visual hierarchy should be weighted. What changes is how those decisions propagate into code. They flow through a machine-readable system rather than through documentation that AI has to interpret.
 
-그것이 사람을 위해 만든 디자인 시스템과 AI 에이전트를 위해 만든 디자인 시스템의 실질적인 차이입니다.
+That's the practical difference between a design system built for humans and one built for AI agents.

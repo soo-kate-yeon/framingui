@@ -1,6 +1,6 @@
 ---
-title: "shadcn과 FramingUI 중 무엇을 골라야 할지 가르는 기준"
-description: "shadcn과 FramingUI를 공정하게 비교합니다. 도입 속도, 커스터마이징, 유지보수, AI 워크플로우 기준으로 선택 포인트를 정리했습니다."
+title: "shadcn vs FramingUI: Pick the Right System in 2026"
+description: "A fair comparison of shadcn and FramingUI for teams choosing a design system path, including setup speed, customization, maintenance, and AI workflows."
 date: "2026-02-28"
 author:
   name: "FramingUI Team"
@@ -11,57 +11,57 @@ coverImage: ""
 published: true
 ---
 
-`shadcn`과 `FramingUI` 둘 다 합리적인 선택이에요. 불편한 진실은 "뭐가 더 낫냐"는 질문 자체가 별로 도움이 안 된다는 거예요. 제품이 라이프사이클 어디에 있느냐, 어떻게 스케일할 계획이냐에 따라 답이 달라지거든요. 대부분의 비교 글이 이 부분을 건너뛰고 기능 표로 넘어가는데, 이 글은 그러지 않을게요.
+Both shadcn and FramingUI are defensible choices. The frustrating answer is that the right pick depends on where your product is in its lifecycle and how you plan to scale it. Most comparisons skip that part and jump to feature tables. This one won't.
 
-## 핵심 철학의 차이
+## Core Philosophy
 
-shadcn은 컴포넌트 소스 코드를 저장소에 복사해 줘요. 코드를 직접 소유하는 거죠. 최소한의 추상화로 완전한 로컬 제어를 원할 때 진짜 강력한 방식이에요. Radix UI + Tailwind 기반이 탄탄하고, 생태계가 크고, Next.js에 익숙한 개발자라면 패턴을 바로 알아볼 거예요.
+shadcn copies component source into your repository. You own the code directly. This is genuinely powerful when you want full local control with minimal abstraction. The Radix UI + Tailwind foundation is solid, the ecosystem is large, and any developer familiar with Next.js will recognize the conventions immediately.
 
-FramingUI는 다른 방향으로 접근해요. 처음부터 디자인 시스템 구조를 내장해요. 시맨틱 CSS 변수 토큰, 그 토큰을 강제하는 컴포넌트 계약, AI 지원 개발에서 디자인 시스템 컨텍스트를 제공하는 툴링까지요. 트레이드오프는 초기 설정이 약간 더 무겁다는 거예요. 이점은 일관성이 팀이 수동으로 유지해야 하는 규약이 아니라 시스템의 속성이 된다는 거고요.
+FramingUI takes a different approach. It builds design system structure in from the start: semantic CSS variable tokens, component contracts that enforce those tokens, and tooling that surfaces your design system as context for AI-assisted development. The tradeoff is a slightly heavier setup. The benefit is that consistency is a property of the system, not a convention your team has to manually maintain.
 
-철학적 차이를 한 문장으로 요약하면, "컴포넌트를 주면 내가 관계를 결정할게"와 "컴포넌트가 이미 관계를 가진 시스템"의 차이예요.
+The philosophical difference is between "give me the components, I'll decide how they relate" and "here's a system where the components already have relationships."
 
-## 각자 강한 영역
+## Where Each Has an Edge
 
-**초기 도입 속도.** 1일차 속도는 shadcn이 확실히 앞서요. CLI 실행하고, 컴포넌트 추가하고, 바로 배포할 수 있어요. FramingUI의 `npx -y @framingui/mcp-server@latest init` 명령어가 부트스트랩을 많이 자동화하긴 했지만, 여전히 초기에 시스템 구조에 투자하는 선택이에요.
+**Setup speed.** shadcn wins clearly for day-one velocity. You run the CLI, add components, and ship. FramingUI's `npx -y @framingui/mcp-server@latest init` command automates the bootstrap considerably, but you're still choosing to invest in system structure upfront.
 
-**커스터마이징.** shadcn은 컴포넌트별 자유도가 최대예요. 파일 직접 수정하면 돼요. FramingUI는 커스터마이징을 토큰 시맨틱과 변형 정의를 통해 채널링해요. 즉흥적으로 뭔가 빨리 바꿔야 할 때는 더 제약된 느낌이지만, 시간이 지나면서 모든 컴포넌트가 조금씩 다르게 흘러가는 패턴을 막아줘요.
+**Customization.** shadcn gives you maximum per-component freedom. You edit the file directly. FramingUI channels customization through token semantics and variant definitions. This feels more constrained when you need a quick one-off, but it prevents the pattern where every component diverges slightly over time.
 
-**장기 유지보수.** 제품이 커질수록 shadcn의 직접 소유 모델이 유지보수 부담을 만들 수 있어요. 버튼 결정을 조금씩 다르게 한 화면들이 나중에 디자인을 바꿀 때 각각 다른 것이 되어 있어요. FramingUI의 토큰 기반 아키텍처는 전역 업데이트가 한 곳에서 이루어져요.
+**Long-term maintainability.** As a product grows, shadcn's direct ownership model can produce maintenance burden. Every screen that made a slightly different button decision is now a slightly different thing to update when you change the design. FramingUI's token-based architecture means global updates happen in one place.
 
-**AI 지원 개발.** 격차가 가장 뚜렷한 영역이에요. 디자인 시스템 컨텍스트 없이 UI 코드를 생성하는 AI 도구는 합리적으로 보이지만 내 시스템에는 맞지 않는 컴포넌트를 만들어요. shadcn 생태계가 크다 보니 AI가 shadcn 스타일 코드를 많이 봤지만, 내 토큰은 여전히 모르거든요. FramingUI의 MCP 서버는 AI 도구에 디자인 시스템 정의를 직접 제공해서, 수동 수정 없이 시스템 안에 있는 결과물을 만들어요.
+**AI-assisted development.** This is where the gap is most pronounced. AI tools that generate UI code without design system context will produce components that look reasonable but don't match your specific system. shadcn's large ecosystem means AI has seen a lot of shadcn-style code—but it still doesn't know your tokens. FramingUI's MCP server gives AI tools direct access to your design system definition, which produces on-system outputs without manual correction.
 
-**생태계 친숙도.** shadcn이 앞서요. 커뮤니티가 크고, 문서가 충실하고, 팀에 합류하는 개발자가 패턴을 알고 있을 가능성이 높아요. FramingUI 생태계는 규모가 작지만 규모에서 구조적 일관성이 필요한 팀을 위해 만들어진 거예요.
+**Ecosystem familiarity.** shadcn wins. The community is large, the documentation is thorough, and contributors to your team are likely to recognize the patterns. FramingUI's ecosystem is smaller but purpose-built for teams that need structured consistency at scale.
 
-## 상황별 선택 가이드
+## Choosing Based on Your Situation
 
-**shadcn이 맞는 경우:**
-- 앞으로 몇 주 안에 기능을 배포해야 하고 속도가 최우선인 경우
-- 팀에 강한 프런트엔드 규약이 이미 있고, 리뷰를 통해 강제하고 있는 경우
-- 장기적인 디자인 시스템 투자가 맞지 않는 일회성 프로젝트를 만드는 경우
+**You should start with shadcn if:**
+- You need to ship features in the next few weeks and speed is everything
+- Your team already has strong frontend conventions and enforces them through review
+- You're building a one-off product where long-term design system investment doesn't make sense
 
-**FramingUI가 맞는 경우:**
-- 여러 화면과 반복되는 UI 서피스가 있는 제품을 만드는 경우
-- AI 도구를 UI 생성에 적극 활용하고 일관된 결과물을 원하는 경우
-- 다크 모드, 테마, 브랜드 변경이 수동 작업이 아닌 구조적인 것이기를 원하는 경우
-- 기율 오버헤드 없이 시스템이 일관성을 강제해 주기를 원하는 1인 개발자인 경우
+**You should start with FramingUI if:**
+- You're building a product with multiple screens and repeated UI surfaces
+- You use AI tools heavily for UI generation and want consistent outputs
+- You want dark mode, theming, and brand changes to be structural rather than manual
+- You're a solo developer who wants the system to enforce consistency without discipline overhead
 
-**혼합 경로도 있어요.** shadcn 컴포넌트를 FramingUI 토큰으로 스타일링하는 방식이에요. 컴포넌트 API는 친숙하게 유지되고, 스타일 레이어는 시스템 수준의 거버넌스를 얻어요. 점진적으로 도입하는 경우라면 고려할 만해요.
+**There's also a hybrid path.** You can run shadcn components styled through FramingUI tokens. The component API stays familiar; the styling layer gains system-level governance. This is worth considering if you're adopting incrementally.
 
-## 잘 보이지 않는 비용들
+## The Hidden Costs
 
-스타일 드리프트는 조용히 쌓여요. 1개월에 패딩 값 몇 개가 어긋난 게 6개월이 지나면 시각적 비일관성 패턴이 돼요. 고치려면 전역 감사를 하거나 기술 부채를 안고 가야 해요.
+Style drift compounds silently. A few inconsistent padding values in month one become a visual inconsistency pattern by month six. Fixing it requires either a global audit or accepting the technical debt.
 
-AI 정리 시간이 자동화 이득을 잡아먹을 수 있어요. 생성된 컴포넌트마다 디자인 시스템 수정을 수동으로 해야 한다면, AI 지원 개발의 속도 이점이 크게 줄어들어요.
+AI cleanup time can erase your automation gains. If every generated component needs manual design-system corrections before it's production-ready, the speed benefit of AI-assisted development shrinks significantly.
 
-리팩터링 비용은 현실이에요. 컴포넌트별 커스터마이징이 쌓일수록 전역 변경이 비싸져요. 5분이면 될 브랜드 색상 변경이 하드코딩된 값을 일일이 찾아야 해서 몇 시간이 걸려요.
+Refactoring cost is real. The more per-component customizations you accumulate, the more expensive global changes become. A brand color change that should take five minutes takes hours when it requires hunting down every hardcoded value.
 
-이 비용들은 shadcn에 반대하는 주장이 아니에요. 어떤 거버넌스 구조를 선택하는지 눈을 뜨고 결정하자는 거예요.
+These costs aren't arguments against shadcn—they're arguments for going in with clear eyes about what governance structure you're committing to.
 
-## 솔직한 권고
+## The Honest Recommendation
 
-둘 다 좋은 도구예요. 뭘 최적화하느냐가 문제예요.
+Both tools are good. The question is what you're optimizing for.
 
-즉각적인 로컬 제어가 우선이고 규약을 수동으로 유지할 기율이 있다면 shadcn이 잘 맞아요. 워크플로우에 AI 도구가 있고, 일관성이 팀 규약이 아니라 시스템의 속성이기를 원한다면, 제품이 성숙해갈수록 FramingUI가 더 나은 레버리지를 제공해요.
+If immediate local control is the priority and you have the discipline to maintain conventions manually, shadcn works well. If you want consistency to be a structural property of the system rather than a team convention, especially with AI tools in your workflow, FramingUI provides better leverage as the product matures.
 
-오늘 제품 상태가 아니라 6개월 뒤 제품 상태를 기준으로 선택하세요.
+Pick based on where your product will be in six months, not where it is today.

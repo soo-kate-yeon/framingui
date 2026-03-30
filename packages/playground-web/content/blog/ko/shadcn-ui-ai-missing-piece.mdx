@@ -1,6 +1,6 @@
 ---
-title: "Shadcn UI와 AI 코드 생성 사이에서 빠진 조각 채우기"
-description: "FramingUI가 디자인 토큰과 일관된 스타일링으로 shadcn UI와 AI 코드 생성 사이의 간극을 어떻게 메우는지 알아보세요."
+title: "FramingUI Fills the Gap Between shadcn and AI"
+description: "How FramingUI fills the gap between shadcn UI and AI code generation with design tokens and consistent styling."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
@@ -12,64 +12,64 @@ coverImage: ""
 published: true
 ---
 
-Claude Code나 Cursor에 버튼을 만들어달라고 하면 `bg-blue-600`을 선택해요. 카드를 만들어달라고 하면 `bg-white`를 써요. 에러 메시지를 만들어달라고 하면 `text-red-500`을 고르죠. 각 선택은 합리적이에요. 하지만 그 어느 것도 내 디자인 시스템이 아니에요.
+Ask Claude Code or Cursor to build a button, and it will reach for `bg-blue-600`. Ask it to build a card, and it will use `bg-white`. Ask it to build an error message, and it will use `text-red-500`. Every choice is reasonable. None of them are your design system.
 
-이게 디자인 시스템 컨텍스트 없이 AI 지원 UI 개발을 할 때 나타나는 특유의 실패 패턴이에요. AI 도구는 학습 데이터를 패턴 매칭해요. 명확한 제약이 없으면 일반적으로 올바른 코드를 만들어요. 컴파일되고 렌더링되지만, 내 제품에 속하지 않는 코드요.
+This is the specific failure mode of AI-assisted UI development without design system context. AI tools pattern-match against training data. Without explicit constraints, they produce generically correct code—code that compiles and renders, but doesn't belong to your product.
 
-## shadcn만으로는 AI 워크플로우에 부족한 이유
+## Why shadcn Alone Isn't Enough for AI Workflows
 
-shadcn은 자기 역할을 잘 해요. 직접 소유하고 커스터마이징할 수 있는 컴포넌트 소스 코드를 줘요. Radix UI 기반이 접근성을 담당해요. Tailwind 기반 스타일링은 친숙하고 문서도 충실하죠.
+shadcn is excellent at what it does. It gives you component source code that you own and customize directly. The Radix UI foundation handles accessibility. The Tailwind-based styling is familiar and well-documented.
 
-문제는 shadcn의 디자인 언어가 원시 Tailwind 클래스 이름으로 표현된다는 거예요. AI가 shadcn 프로젝트에서 코드를 생성할 때, `bg-brand-primary` 대신 `bg-blue-500`을 써요. `text-text-secondary` 대신 `text-gray-600`을 쓰죠. 이 클래스들은 작동하지만 의도를 담지 않아요. 생성된 컴포넌트 6개가 쌓이면, "보조 텍스트"가 무엇인지에 대한 해석이 6가지가 돼요.
+The problem is that shadcn's design language is expressed as raw Tailwind class names. When AI generates code in a shadcn project, it writes `bg-blue-500` instead of `bg-brand-primary`. It writes `text-gray-600` instead of `text-text-secondary`. These classes work, but they don't carry intent. Six generated components later, you have six different interpretations of what "secondary text" means.
 
-빠진 건 AI에게 어떤 컴포넌트를 쓸지뿐만 아니라 어떤 디자인 결정을 적용할지를 알려주는 레이어예요.
+What's missing is a layer that tells AI not just which components to use, but which design decisions to apply.
 
-## 디자인 토큰이 AI 코드 생성을 고치는 방법
+## How Design Tokens Fix AI Code Generation
 
-디자인 토큰은 결정에 이름을 붙여요. 색상이 hex 값이나 Tailwind 클래스로만 존재하는 게 아니라, 목적을 설명하는 시맨틱 이름을 갖게 되죠.
+Design tokens name your decisions explicitly. Instead of a color existing only as a hex value or a Tailwind class, it has a semantic name that describes its purpose.
 
 ```css
-/* 토큰 없이: AI가 추측해야 함 */
-bg-blue-500  /* 브랜드 primary? CTA 호버? 임의의 파란색? */
+/* Without tokens: AI must guess */
+bg-blue-500  /* Is this brand primary? CTA hover? A random blue? */
 
-/* 토큰과 함께: 의도가 명확함 */
-var(--color-brand-primary)  /* 이건 primary 브랜드 액션 컬러다 */
+/* With tokens: intent is explicit */
+var(--color-brand-primary)  /* This is the primary brand action color */
 ```
 
-AI가 토큰 정의에 접근할 수 있으면 — 이름, 값, 적용 컨텍스트 — 통계적으로 그럴듯한 결정이 아니라 올바른 결정을 내릴 수 있어요.
+When AI has access to your token definitions—the names, their values, and the contexts where they apply—it can make correct decisions rather than statistically likely ones.
 
-FramingUI의 컴포넌트는 전체에 CSS 변수를 사용해요. `Button` 컴포넌트의 primary 변형은 하드코딩된 Tailwind 클래스가 아니라 `var(--bg-primary-default)`를 참조해요. AI가 그 컴포넌트를 import해서 사용하면, 토큰 바인딩이 이미 되어 있어요.
+FramingUI's components use CSS variables throughout. The `Button` component's primary variant references `var(--bg-primary-default)` rather than a hardcoded Tailwind class. When AI imports and uses that component, the token binding is already in place.
 
 ```tsx
 import { Button } from '@framingui/ui';
 
-// AI가 이걸 생성 — 토큰은 컴포넌트 내부에 이미 연결되어 있음
+// AI generates this — tokens are already wired inside the component
 function LoginForm() {
   return (
     <div className="space-y-[var(--spacing-4)]">
-      <Button variant="default">로그인</Button>
-      <Button variant="outline">계정 생성</Button>
-      <Button variant="destructive">계정 삭제</Button>
+      <Button variant="default">Sign In</Button>
+      <Button variant="outline">Create Account</Button>
+      <Button variant="destructive">Delete Account</Button>
     </div>
   );
 }
 ```
 
-`bg-blue-600`도 없고, `hover:bg-blue-700`도 없어요. 올바른 색상이 컴포넌트의 속성이고, 토큰 시스템에서 파생돼요.
+No `bg-blue-600`. No `hover:bg-blue-700`. The correct colors are a property of the component, derived from your token system.
 
-## MCP 레이어
+## The MCP Layer
 
-컴포넌트 내부의 토큰 강제는 한 조각이에요. 다른 조각은 AI 도구에 코드를 생성하기 전에 디자인 시스템 정의에 실시간으로 접근하게 하는 거예요.
+The token enforcement inside components is one piece. The other is giving AI tools real-time access to your design system definition before they generate code.
 
-FramingUI의 MCP 서버가 이걸 해요. 설정되면 Claude Code가 사용 가능한 컴포넌트를 조회하고, 토큰 값을 검사하고, 코드 한 줄 쓰기 전에 디자인 시스템 구조를 파악할 수 있어요.
+FramingUI's MCP server does this. Once configured, Claude Code can query your available components, inspect token values, and understand your design system structure before writing a single line.
 
-설정:
+Setup:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-이 명령어가 MCP config를 작성하고 런타임 계약을 연결해요. 생성되는 `.mcp.json`은 이래요.
+This writes the MCP config and wires the runtime contract. The resulting `.mcp.json`:
 
 ```json
 {
@@ -83,30 +83,30 @@ npx -y @framingui/mcp-server@latest init
 }
 ```
 
-Claude Code를 재시작하면, 컴포넌트 목록, 테마 미리보기, 토큰 정의 검사를 위한 도구 접근 권한이 생겨요. 가격 카드를 만들어달라고 하면, 사용 가능한 컴포넌트와 외관을 결정하는 토큰을 조회한 다음 내 시스템에 속하는 코드를 생성할 수 있어요.
+After restarting Claude Code, it has tool access to list components, preview themes, and inspect your token definitions. When you ask it to build a pricing card, it can look up what components are available and what tokens govern their appearance—then generate code that belongs to your system.
 
-## OKLCH와 색상 일관성이 중요한 이유
+## OKLCH and Why Color Consistency Matters
 
-FramingUI 토큰은 OKLCH 색상 공간을 사용해요. 이게 AI 코드 생성에 미묘하지만 중요한 이유가 있어요.
+FramingUI tokens use OKLCH color space. This matters for AI code generation in a subtle but important way.
 
-HSL 밝기는 지각적으로 균일하지 않아요. `hsl(220, 100%, 50%)`는 `hsl(60, 100%, 50%)`보다 눈에 띄게 어두워 보여요. 둘 다 50% 밝기를 지정하는데도요. 팔레트 전체에서 일관된 시각적 무게감을 유지하려면 매 단계마다 수동 튜닝이 필요해요.
+HSL lightness isn't perceptually uniform. `hsl(220, 100%, 50%)` looks noticeably darker than `hsl(60, 100%, 50%)` even though both specify 50% lightness. This means maintaining consistent visual weight across your palette requires manual tuning at every step.
 
-OKLCH 밝기는 지각적으로 균일해요. `oklch(0.5 0.15 220)`과 `oklch(0.5 0.15 60)`은 실제로 동일하게 밝아 보여요. AI가 "중간 강도"여야 하는 새 컴포넌트를 생성할 때, 0.5 밝기 티어를 쓰면 나머지 팔레트와 일관되게 보일 거라고 확신할 수 있어요.
+OKLCH lightness is perceptually uniform. `oklch(0.5 0.15 220)` and `oklch(0.5 0.15 60)` actually look equally bright. When AI generates a new component that should have "medium emphasis," it can use the 0.5 lightness tier and be confident the result will look consistent with the rest of your palette.
 
-WCAG 대비 준수도 더 예측 가능해져요. 밝기 0.25 배경 위에 밝기 0.9 텍스트는 색조에 상관없이 AA 대비 요건을 통과해요.
+It also makes WCAG contrast compliance more predictable. Text at lightness 0.9 on a background at lightness 0.25 will reliably pass AA contrast requirements regardless of hue.
 
-## shadcn에서 마이그레이션하기
+## Migrating from shadcn
 
-이미 shadcn 컴포넌트를 쓰고 있다면 버릴 필요가 없어요. FramingUI 컴포넌트를 점진적으로 도입할 수 있어요. 호환 가능한 import 패턴을 공유하거든요.
+If you're already using shadcn components, you don't need to abandon them. You can adopt FramingUI components incrementally—they share compatible import patterns.
 
 ```tsx
-// 이전 (shadcn)
+// Before (shadcn)
 import { Button } from '@/components/ui/button';
 
-// 이후 (FramingUI)
+// After (FramingUI)
 import { Button } from '@framingui/ui';
 ```
 
-API 표면이 의도적으로 비슷해요. 차이는 내부에 있어요. FramingUI 컴포넌트는 원시 Tailwind 클래스가 아닌 CSS 변수 토큰을 참조해요. FramingUI 컴포넌트를 추가할수록, 그걸 사용하는 AI 생성 코드가 추측하는 대신 자동으로 내 디자인 시스템을 사용하게 돼요.
+The API surface is similar by design. The difference is internal: FramingUI components reference your CSS variable tokens rather than raw Tailwind classes. As you add FramingUI components, AI-generated code using them will automatically use your design system instead of guessing.
 
-토큰에 바인딩된 컴포넌트와 AI 도구의 디자인 시스템 정의 접근이 결합되는 게 간극을 메우는 방식이에요. 생성마다 수동 수정 없이, 구조적으로도 시각적으로도 브랜드에 맞는 코드가 나오는 거예요.
+The combination of token-bound components and AI tool access to your design system definition is what closes the gap. Generated code that is both structurally correct and visually on-brand, without manual correction after each generation.

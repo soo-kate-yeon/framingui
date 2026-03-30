@@ -1,6 +1,6 @@
 ---
-title: "AI가 디자인 시스템을 읽는 방식, MCP로 직접 보기"
-description: "디자이너 관점에서 Model Context Protocol을 이해하고, AI 에이전트가 디자인 토큰을 활용해 일관된 UI를 생성하는 방법을 알아봅니다."
+title: "How AI Agents Read Your Design System via MCP"
+description: "Understanding Model Context Protocol from a designer's perspective and how AI agents use design tokens to build consistent UIs without guesswork."
 date: "2025-03-06"
 author:
   name: "FramingUI Team"
@@ -13,60 +13,60 @@ coverImage: ""
 published: true
 ---
 
-토큰 시스템 만드는 데 3주 썼어요. 색상 정리, 스페이싱 스케일 확정, 타이포그래피 위계 잠금. 2주 뒤 개발자 PR을 보니 버튼 파란색이 틀리고 패딩이 시스템 정의 16px 대신 20px로 구현돼 있어요. 부주의한 게 아니에요 — 필요한 순간에 토큰을 찾지 못한 거예요.
+You spent three weeks building out a token system. Colors documented, spacing scale finalized, typography hierarchy locked. Two weeks later a developer's PR shows buttons with the wrong blue and 20px padding where your system specifies 16px. They weren't being careless—they just couldn't find your tokens at the moment they needed them.
 
-Model Context Protocol은 AI 도구가 코드를 쓸 때 접근할 수 있는 것을 바꿔줘요. AI 에이전트가 디자인 시스템에 직접 연결되면, 학습 데이터에서 본 패턴을 추측하는 대신 실제 토큰을 사용해요.
+Model Context Protocol changes what AI tools can access when they write code. When an AI agent has a direct connection to your design system, it uses your actual tokens rather than guessing from patterns it saw during training.
 
-## MCP가 하는 일
+## What MCP Does
 
-MCP는 Anthropic이 만든 오픈 표준이에요. AI 어시스턴트가 대화 중에 외부 데이터 소스 — 파일, API, 데이터베이스, 디자인 시스템 — 를 쿼리할 수 있게 해줘요. 학습 데이터에 있던 것에 의존하는 대신 실시간으로 조회하는 거죠.
+MCP is an open standard created by Anthropic. It gives AI assistants a way to query external data sources—files, APIs, databases, design systems—during a conversation rather than relying on what was in their training data.
 
-디자인 시스템에서 이건 토큰 정의와 생성된 코드 사이의 간격이 좁아진다는 의미예요. FramingUI MCP 서버에 연결된 AI 에이전트가 "주요 액션 색상이 뭐야?"라고 물으면 일반적인 파랑이 아니라 현재 토큰 값을 돌려받아요.
+For design systems, this means the gap between your token definitions and generated code closes. An AI agent connected to a FramingUI MCP server can ask "what is the primary action color?" and get back your current token value, not a generic blue.
 
-그 차이는 중요해요. 라이브 연결 없이는 AI가 학습 분포로 폴백해요 — 파랑에는 `#3b82f6`, 여백에는 `padding: 16px`, 타이포그래피에는 Tailwind 내장 스케일. 그 값들은 그럴듯하지만 여러분 시스템에는 맞지 않아요. MCP 연결이 있으면 AI가 토큰을 직접 쿼리하고 그 토큰을 참조하는 코드를 생성해요.
+The difference is consequential. Without a live connection, AI falls back to its training distribution—which means widely-used defaults like `#3b82f6` for blue, `padding: 16px` for spacing, and Tailwind's built-in scale for typography. Those values are plausible but wrong for your system. With an MCP connection, the AI queries your tokens directly and generates code that references them.
 
-## 핸드오프 문제, 다시 보기
+## The Handoff Problem, Restated
 
-전통적인 핸드오프는 지연 시간 문제가 있어요. 디자이너가 색상 토큰을 업데이트해요. 문서가 몇 시간 뒤에 갱신돼요. 그 사이에 코드를 생성하는 개발자는 이전 값을 써요. 일주일 뒤 누군가가 프로덕션에서 불일치를 발견해요.
+Traditional handoff has a latency problem. A designer updates a color token. The documentation gets updated, maybe a few hours later. A developer generating code in the meantime uses the old value. A week later someone notices a mismatch in production.
 
-토큰 기반 MCP 접근으로는 지연이 없어요. AI가 코드를 생성하는 순간 디자인 시스템의 현재 상태를 읽어요. `--primary-600`을 업데이트하면 다음 생성된 버튼이 자동으로 새 값을 써요.
+With token-based MCP access, there's no lag. The AI reads the current state of your design system at the moment of code generation. Update `--primary-600` and the next generated button uses the new value automatically.
 
-이건 단순한 편의가 아니에요 — 디자인-코드 관계를 생각하는 방식을 바꿔요. 토큰이 계약이 돼요. 핸드오프 양쪽 — 디자이너가 정의하고, 개발자가 생성하는 — 이 같은 라이브 소스에서 작업해요.
+This isn't just a convenience—it changes how you think about the design-to-code relationship. The tokens become the contract. Both sides of the handoff—designer defining, developer generating—work from the same live source.
 
-## MCP로 AI가 읽을 수 있는 것들
+## What AI Can Read Through MCP
 
-Claude Code가 FramingUI MCP 서버에 연결되면 디자인 토큰 카탈로그에 접근할 수 있어요: 색상 스케일과 시맨틱 색상 지정, 스페이싱 값, 타이포그래피 정의(패밀리, 사이즈, 굵기, 줄 간격), 테두리 반경, 그림자 레벨, 성공/경고/오류 상태의 시맨틱 토큰들.
+When Claude Code connects to FramingUI's MCP server, it gains access to the design token catalog: color scales and semantic color assignments, spacing values, typography definitions (families, sizes, weights, line heights), border radii, shadow levels, and semantic state tokens for success, warning, and error states.
 
-원시 값을 넘어서 토큰이 시맨틱 의미를 담고 있어요. AI는 `primary-600`의 hex 코드만 받는 게 아니라 이 토큰이 인터랙티브 요소를 위한 거라는 걸 알아요. `neutral-100`이 배경이고 텍스트 색상이 아니라는 것, `spacing-4`가 버튼 패딩이지 페이지 여백이 아니라는 걸 알죠. 이 시맨틱 이해가 생성된 코드를 숫자적으로 정확할 뿐만 아니라 구성적으로 올바르게 만들어요.
+Beyond raw values, the tokens carry semantic meaning. The AI doesn't just get a hex code for `primary-600`—it knows this token is intended for interactive elements. It knows `neutral-100` is a background, not a text color. It knows `spacing-4` is button padding, not page margin. That semantic understanding is what makes generated code compositionally correct, not just numerically accurate.
 
-## 개발자 워크플로우가 어떻게 바뀌나
+## How This Changes the Developer Workflow
 
-팀 개발자가 Claude Code에게 물어요: "이메일, 비밀번호, 알림 설정이 있는 설정 폼 만들어줘."
+A developer on your team asks Claude Code: "Create a settings form with email, password, and notification preferences."
 
-MCP 없이: Claude가 Tailwind 기본값으로 그럴듯한 폼을 생성해요. 제출 버튼에 `bg-blue-600`, 필드 패딩에 `p-4`, 레이블에 `text-gray-700`. 구조는 맞고, 값은 시스템에서 어긋나요.
+Without MCP: Claude generates a plausible form using Tailwind defaults. `bg-blue-600` for the submit button. `p-4` for field padding. `text-gray-700` for labels. The structure is right; the values drift from your system.
 
-MCP 있이: Claude가 생성 전에 토큰 서버를 쿼리해요. `bg-primary-600`, 실제 패딩 토큰, 텍스트 색상 시맨틱을 써요. 첫 번째 초안이 디자인 시스템과 맞아요. 토큰 레벨에서 고칠 게 없으니 리뷰 시간이 줄어요.
+With MCP: Claude queries the token server before generating. It uses `bg-primary-600`, your actual padding tokens, your text color semantics. The first draft matches the design system. Review time drops because there's nothing to correct on the token level.
 
-개발자가 채팅에 토큰 문서를 붙여넣거나 스페이싱 스케일을 설명할 필요가 없어요. 연결이 처리해줘요.
+The developer doesn't need to paste your token documentation into the chat or describe your spacing scale. The connection handles it.
 
-## 디자이너가 해야 할 일
+## What Designers Need to Do
 
-최소 요건은 디자인 결정이 Figma 주석에 흩어져 있지 않고 토큰 형태로 존재하는 거예요. 디자인 파일에만 있는 토큰은 MCP 서버가 쿼리할 수 없어요 — 코드에 존재해야 해요.
+The minimal requirement is that your design decisions live in tokens rather than scattered as Figma annotations. Tokens that exist only in design files can't be queried by an MCP server—they need to exist in code.
 
-코드를 배울 필요는 없어요. FramingUI는 비주얼 인터페이스로 토큰을 정의하는 도구를 제공해요. 거기서 정의하면 MCP 서버가 자동으로 노출해요.
+This doesn't require learning to write code. FramingUI provides tooling to define tokens through a visual interface. Once they're defined there, the MCP server exposes them automatically.
 
-실용적인 워크플로우:
+The practical workflow:
 
-1. 팔레트, 스페이싱 스케일, 타이포그래피를 토큰 형태로 정의하세요. 시맨틱 이름이 중요해요 — 색이 파란색이라 해서 `blue-600`보다 `primary-action`이 AI 에이전트에게 더 유용해요.
-2. FramingUI MCP 서버를 실행하세요. Claude Code의 `.mcp.json`에서 한 번만 설정하면 돼요.
-3. AI가 생성한 컴포넌트를 리뷰할 때 hex 값이 맞는지 확인하는 대신 구조와 인터랙션 패턴에 집중하세요. 토큰 충실도는 연결 레벨에서 처리돼요.
+1. Define your palette, spacing scale, and typography in token form. Semantic naming matters—`primary-action` is more useful to an AI agent than `blue-600` when the color happens to be blue.
+2. Run the FramingUI MCP server. This is a one-time config change in Claude Code's `.mcp.json`.
+3. When reviewing AI-generated components, focus your attention on structure and interaction patterns rather than checking that hex values are correct. Token fidelity is handled at the connection level.
 
-## 자주 묻는 질문들
+## Common Concerns
 
-**"Figma를 대체하나요?"** 아니요. Figma는 탐색하고 프로토타이핑하고 고품질 스펙을 만드는 곳이에요. MCP는 Figma에서 내린 결정과 개발자가 생성하는 코드 사이의 다리예요. 여전히 선호하는 도구로 디자인하고, 토큰이 코드가 알아야 할 결정들을 캡처해요.
+**Does this replace Figma?** No. Figma is where you explore, prototype, and produce high-fidelity specs. MCP is a bridge between the decisions you make in Figma and the code that developers generate. You still design in your preferred tool; the tokens capture the decisions that code needs to know about.
 
-**"토큰을 업데이트하면 어떻게 되나요?"** 다음 코드 생성이 업데이트된 값을 읽어요. 토큰 이름으로 참조하는 코드베이스의 컴포넌트들은 CSS 변수가 바뀔 때 자동으로 업데이트돼요. 하드코딩된 값을 쓰는 컴포넌트는 안 돼요 — 생성된 코드의 토큰 참조가 중요한 이유가 바로 이거예요.
+**What happens when I update a token?** The next code generation reads the updated value. Components already in the codebase that reference the token by name update automatically when the CSS variable changes. Components that used hardcoded values don't—which is exactly why token references in generated code matter.
 
-**"목업이랑 AI 결과물이 안 맞으면요?"** 대개 토큰 문제가 아니라 구조나 인터랙션 문제예요. MCP가 연결되면 색상과 여백 불일치는 드물어져요. 남는 건 레이아웃, 상태 처리, 컴포넌트 구성에 관한 결정들 — 진짜 흥미로운 디자인 피드백이에요.
+**What if AI generates something that doesn't match the mockup?** That's usually a structural or interaction issue, not a token issue. With MCP connected, color and spacing mismatches become rare. What remains are decisions about layout, state handling, and component composition—which is the interesting design feedback to give.
 
-여러분이 공들여 만든 디자인 시스템을 이제 팀 개발자가 매일 쓰는 도구가 직접 읽을 수 있어요. 토큰 파일과 프로덕션 컴포넌트 사이의 간격이 훨씬 좁아져요.
+The design system you built carefully can now be read directly by the tools your developers use every day. The gap between your token file and production components gets a lot narrower.

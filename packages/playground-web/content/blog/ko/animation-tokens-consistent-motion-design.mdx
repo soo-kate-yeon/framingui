@@ -1,0 +1,796 @@
+---
+title: "Animation Tokens for Consistent Motion Design: Build Fluid, Purposeful UI Animations"
+description: "Design motion systems with animation tokens for duration, easing, and choreography. Create smooth, accessible animations that enhance UX."
+date: "2026-03-31"
+author:
+  name: "FramingUI Team"
+tags:
+  - animation
+  - motion-design
+  - design-tokens
+  - accessibility
+  - performance
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Most UI animations feel arbitrary. A modal fades in over 150ms. A dropdown slides down in 300ms. A toast notification bounces for 500ms. Each component picks random timing, creating a jarring, uncoordinated user experience.
+
+The problem isn't the animations themselves—it's the lack of systematic motion design tokens.
+
+## Why Animation Needs Tokens
+
+Animation is a design system problem. Just like you wouldn't let developers pick random colors or spacing values, they shouldn't choose arbitrary animation durations and easing curves.
+
+Good motion design follows principles:
+
+- **Purposeful** - Every animation communicates state or guides attention
+- **Consistent** - Similar actions have similar timing across the app
+- **Respectful** - Motion enhances UX without overwhelming users
+- **Accessible** - Respects `prefers-reduced-motion` settings
+- **Performant** - Uses GPU-accelerated properties (transform, opacity)
+
+Tokens enforce these principles systematically.
+
+## Building a Motion System
+
+Start with duration tokens based on content complexity:
+
+```typescript
+// tokens/animation.ts
+export const animation = {
+  duration: {
+    instant: '0ms',
+    fast: '100ms',
+    normal: '200ms',
+    moderate: '300ms',
+    slow: '400ms',
+    slower: '600ms',
+    slowest: '800ms',
+  },
+  
+  easing: {
+    // Standard easings
+    linear: 'linear',
+    ease: 'ease',
+    easeIn: 'ease-in',
+    easeOut: 'ease-out',
+    easeInOut: 'ease-in-out',
+    
+    // Custom bezier curves for specific use cases
+    bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+    spring: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    smooth: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+    sharp: 'cubic-bezier(0.4, 0.0, 0.6, 1)',
+    emphasized: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+    decelerate: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+    accelerate: 'cubic-bezier(0.4, 0.0, 1, 1)',
+  },
+  
+  // Choreography patterns - how multiple elements animate together
+  stagger: {
+    fast: '50ms',
+    normal: '100ms',
+    slow: '150ms',
+  },
+  
+  // Specific animation patterns
+  transition: {
+    fade: {
+      duration: '200ms',
+      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+    },
+    slide: {
+      duration: '300ms',
+      easing: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
+    },
+    scale: {
+      duration: '200ms',
+      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+    },
+    collapse: {
+      duration: '250ms',
+      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+    },
+  },
+} as const;
+
+// Component-specific animation presets
+export const componentAnimation = {
+  modal: {
+    backdrop: {
+      duration: animation.duration.normal,
+      easing: animation.easing.smooth,
+    },
+    content: {
+      duration: animation.duration.moderate,
+      easing: animation.easing.spring,
+    },
+  },
+  
+  dropdown: {
+    duration: animation.duration.fast,
+    easing: animation.easing.emphasized,
+  },
+  
+  toast: {
+    enter: {
+      duration: animation.duration.moderate,
+      easing: animation.easing.spring,
+    },
+    exit: {
+      duration: animation.duration.normal,
+      easing: animation.easing.smooth,
+    },
+  },
+  
+  tooltip: {
+    duration: animation.duration.fast,
+    easing: animation.easing.smooth,
+  },
+  
+  skeleton: {
+    duration: animation.duration.slower,
+    easing: animation.easing.ease,
+  },
+} as const;
+```
+
+## Duration Guidelines by Content Type
+
+Different UI elements need different timing:
+
+```typescript
+export const durationGuidelines = {
+  // Micro-interactions (hover, focus states)
+  microInteraction: animation.duration.fast, // 100ms
+  
+  // Simple transitions (opacity, color)
+  simple: animation.duration.normal, // 200ms
+  
+  // Complex transitions (transform + opacity)
+  complex: animation.duration.moderate, // 300ms
+  
+  // Large elements (modals, drawers)
+  large: animation.duration.slow, // 400ms
+  
+  // Full-screen transitions
+  fullScreen: animation.duration.slower, // 600ms
+  
+  // Loading states (skeleton, spinner)
+  loading: animation.duration.slowest, // 800ms
+} as const;
+```
+
+## Building Animated Components
+
+Create a fade component using motion tokens:
+
+```tsx
+// components/Fade.tsx
+import { AnimationEventHandler, HTMLAttributes, forwardRef } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const fadeVariants = cva(
+  'transition-opacity',
+  {
+    variants: {
+      speed: {
+        fast: 'duration-100',
+        normal: 'duration-200',
+        slow: 'duration-400',
+      },
+      easing: {
+        linear: 'ease-linear',
+        in: 'ease-in',
+        out: 'ease-out',
+        inOut: 'ease-in-out',
+        smooth: 'ease-[cubic-bezier(0.4,0.0,0.2,1)]',
+      },
+      show: {
+        true: 'opacity-100',
+        false: 'opacity-0',
+      },
+    },
+    defaultVariants: {
+      speed: 'normal',
+      easing: 'smooth',
+      show: true,
+    },
+  }
+);
+
+interface FadeProps 
+  extends Omit<HTMLAttributes<HTMLDivElement>, 'onAnimationEnd'>,
+          VariantProps<typeof fadeVariants> {
+  show?: boolean;
+  onAnimationEnd?: () => void;
+}
+
+export const Fade = forwardRef<HTMLDivElement, FadeProps>(
+  ({ show = true, speed, easing, className, children, onAnimationEnd, ...props }, ref) => {
+    const handleAnimationEnd: AnimationEventHandler<HTMLDivElement> = (e) => {
+      if (e.target === e.currentTarget) {
+        onAnimationEnd?.();
+      }
+    };
+    
+    return (
+      <div
+        ref={ref}
+        className={fadeVariants({ show, speed, easing, className })}
+        onTransitionEnd={handleAnimationEnd}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Fade.displayName = 'Fade';
+```
+
+Usage:
+
+```tsx
+export function NotificationBanner() {
+  const [show, setShow] = useState(true);
+  
+  return (
+    <Fade 
+      show={show} 
+      speed="normal" 
+      easing="smooth"
+      onAnimationEnd={() => !show && console.log('Fade out complete')}
+    >
+      <div className="p-4 bg-accent-surface rounded-lg">
+        <p>Your changes have been saved!</p>
+        <button onClick={() => setShow(false)}>Dismiss</button>
+      </div>
+    </Fade>
+  );
+}
+```
+
+## Slide Transitions with Motion Tokens
+
+Create directional slide components:
+
+```tsx
+// components/Slide.tsx
+import { forwardRef, HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const slideVariants = cva(
+  'transition-transform',
+  {
+    variants: {
+      direction: {
+        up: 'data-[show=false]:translate-y-full data-[show=true]:translate-y-0',
+        down: 'data-[show=false]:-translate-y-full data-[show=true]:translate-y-0',
+        left: 'data-[show=false]:translate-x-full data-[show=true]:translate-x-0',
+        right: 'data-[show=false]:-translate-x-full data-[show=true]:translate-x-0',
+      },
+      speed: {
+        fast: 'duration-100',
+        normal: 'duration-300',
+        slow: 'duration-500',
+      },
+      easing: {
+        emphasized: 'ease-[cubic-bezier(0.0,0.0,0.2,1)]',
+        decelerate: 'ease-[cubic-bezier(0.0,0.0,0.2,1)]',
+        spring: 'ease-[cubic-bezier(0.175,0.885,0.32,1.275)]',
+      },
+    },
+    defaultVariants: {
+      direction: 'up',
+      speed: 'normal',
+      easing: 'emphasized',
+    },
+  }
+);
+
+interface SlideProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof slideVariants> {
+  show?: boolean;
+}
+
+export const Slide = forwardRef<HTMLDivElement, SlideProps>(
+  ({ show = true, direction, speed, easing, className, children, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        data-show={show}
+        className={slideVariants({ direction, speed, easing, className })}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Slide.displayName = 'Slide';
+```
+
+## Modal Animation with Choreography
+
+Coordinate backdrop and content animations:
+
+```tsx
+// components/Modal.tsx
+import { useEffect, useState } from 'react';
+import { Fade } from './Fade';
+import { Slide } from './Slide';
+
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+export function Modal({ open, onClose, children }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    if (open) {
+      setMounted(true);
+    }
+  }, [open]);
+  
+  const handleAnimationEnd = () => {
+    if (!open) {
+      setMounted(false);
+    }
+  };
+  
+  if (!mounted) return null;
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop - fades in quickly */}
+      <Fade 
+        show={open}
+        speed="normal"
+        onClick={onClose}
+        onAnimationEnd={handleAnimationEnd}
+        className="absolute inset-0 bg-black/50"
+        aria-hidden="true"
+      />
+      
+      {/* Content - slides up with spring easing */}
+      <Slide
+        show={open}
+        direction="up"
+        speed="normal"
+        easing="spring"
+        className="relative bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6"
+        role="dialog"
+        aria-modal="true"
+      >
+        {children}
+      </Slide>
+    </div>
+  );
+}
+```
+
+The backdrop fades while content slides—creating layered choreography.
+
+## Stagger Animations for Lists
+
+Animate list items with sequential delays:
+
+```tsx
+// components/StaggerList.tsx
+import { Children, cloneElement, ReactElement } from 'react';
+import { animation } from '@/tokens/animation';
+
+interface StaggerListProps {
+  children: ReactElement[];
+  stagger?: keyof typeof animation.stagger;
+  show?: boolean;
+}
+
+export function StaggerList({ 
+  children, 
+  stagger = 'normal',
+  show = true,
+}: StaggerListProps) {
+  const staggerDelay = parseInt(animation.stagger[stagger]);
+  
+  return (
+    <>
+      {Children.map(children, (child, index) => {
+        return cloneElement(child, {
+          style: {
+            ...child.props.style,
+            transitionDelay: show ? `${index * staggerDelay}ms` : '0ms',
+          },
+        });
+      })}
+    </>
+  );
+}
+```
+
+Usage:
+
+```tsx
+export function FeatureList({ features }: { features: string[] }) {
+  return (
+    <StaggerList stagger="normal" show={true}>
+      {features.map((feature, i) => (
+        <div 
+          key={i}
+          className="opacity-0 animate-fade-in-up"
+        >
+          <h3>{feature}</h3>
+        </div>
+      ))}
+    </StaggerList>
+  );
+}
+```
+
+Define the animation in CSS:
+
+```css
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 300ms cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
+}
+```
+
+## Skeleton Loading with Pulse Animation
+
+Create loading skeletons using animation tokens:
+
+```tsx
+// components/Skeleton.tsx
+import { HTMLAttributes } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const skeletonVariants = cva(
+  [
+    'bg-neutral-200',
+    'rounded',
+    'animate-pulse',
+  ].join(' '),
+  {
+    variants: {
+      variant: {
+        text: 'h-4',
+        heading: 'h-6',
+        avatar: 'w-12 h-12 rounded-full',
+        thumbnail: 'w-full h-48',
+        button: 'h-10 w-24',
+      },
+      speed: {
+        normal: 'duration-800',
+        slow: 'duration-1000',
+        fast: 'duration-600',
+      },
+    },
+    defaultVariants: {
+      variant: 'text',
+      speed: 'normal',
+    },
+  }
+);
+
+interface SkeletonProps 
+  extends HTMLAttributes<HTMLDivElement>,
+          VariantProps<typeof skeletonVariants> {}
+
+export function Skeleton({ variant, speed, className, ...props }: SkeletonProps) {
+  return (
+    <div 
+      className={skeletonVariants({ variant, speed, className })}
+      aria-busy="true"
+      aria-live="polite"
+      {...props}
+    />
+  );
+}
+```
+
+Create full skeleton layouts:
+
+```tsx
+export function ProfileSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-4">
+        <Skeleton variant="avatar" />
+        <div className="flex-1 space-y-2">
+          <Skeleton variant="heading" className="w-32" />
+          <Skeleton variant="text" className="w-48" />
+        </div>
+      </div>
+      <Skeleton variant="thumbnail" />
+      <Skeleton variant="text" className="w-full" />
+      <Skeleton variant="text" className="w-5/6" />
+    </div>
+  );
+}
+```
+
+## Respecting Reduced Motion Preferences
+
+Always respect user accessibility preferences:
+
+```css
+/* styles/animations.css */
+
+/* Default animations */
+@keyframes slide-in {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Disable animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Maintain instant feedback for interactive states */
+  .animate-pulse {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+```
+
+Or in React:
+
+```tsx
+// hooks/useReducedMotion.ts
+import { useEffect, useState } from 'react';
+
+export function useReducedMotion() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    
+    const handler = (e: MediaQueryListEvent) => {
+      setPrefersReducedMotion(e.matches);
+    };
+    
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+  
+  return prefersReducedMotion;
+}
+```
+
+Usage:
+
+```tsx
+export function AnimatedCard() {
+  const prefersReducedMotion = useReducedMotion();
+  
+  return (
+    <div 
+      className={prefersReducedMotion 
+        ? 'opacity-100' 
+        : 'opacity-0 animate-fade-in-up'
+      }
+    >
+      Card content
+    </div>
+  );
+}
+```
+
+## Performance: GPU-Accelerated Properties
+
+Only animate properties that don't trigger layout recalculation:
+
+```typescript
+// tokens/animation-properties.ts
+
+// ✅ Safe to animate (GPU-accelerated)
+export const gpuProperties = [
+  'transform',
+  'opacity',
+  'filter',
+] as const;
+
+// ⚠️ Avoid animating (triggers layout/paint)
+export const expensiveProperties = [
+  'width',
+  'height',
+  'top',
+  'left',
+  'padding',
+  'margin',
+  'border-width',
+] as const;
+```
+
+Transform instead of position:
+
+```css
+/* ❌ Bad - triggers layout */
+.dropdown {
+  top: -100px;
+  transition: top 300ms;
+}
+
+.dropdown.open {
+  top: 0;
+}
+
+/* ✅ Good - GPU-accelerated */
+.dropdown {
+  transform: translateY(-100%);
+  transition: transform 300ms;
+}
+
+.dropdown.open {
+  transform: translateY(0);
+}
+```
+
+## Toast Notification Animation
+
+Build a complete toast system with enter/exit animations:
+
+```tsx
+// components/Toast.tsx
+import { useEffect, useState } from 'react';
+import { Slide } from './Slide';
+import { SuccessIcon, ErrorIcon, WarningIcon } from './ValidationIcons';
+
+interface ToastProps {
+  message: string;
+  variant?: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+  onClose: () => void;
+}
+
+export function Toast({ 
+  message, 
+  variant = 'info', 
+  duration = 5000,
+  onClose,
+}: ToastProps) {
+  const [show, setShow] = useState(false);
+  
+  useEffect(() => {
+    // Enter animation
+    requestAnimationFrame(() => {
+      setShow(true);
+    });
+    
+    // Auto-dismiss after duration
+    const timer = setTimeout(() => {
+      setShow(false);
+    }, duration);
+    
+    return () => clearTimeout(timer);
+  }, [duration]);
+  
+  const handleExitComplete = () => {
+    if (!show) {
+      onClose();
+    }
+  };
+  
+  const icons = {
+    success: <SuccessIcon />,
+    error: <ErrorIcon />,
+    warning: <WarningIcon />,
+    info: null,
+  };
+  
+  const styles = {
+    success: 'bg-success-surface border-success-primary text-success-text',
+    error: 'bg-error-surface border-error-primary text-error-text',
+    warning: 'bg-warning-surface border-warning-primary text-warning-text',
+    info: 'bg-neutral-surface border-neutral-border text-neutral-text',
+  };
+  
+  return (
+    <Slide
+      show={show}
+      direction="right"
+      speed="normal"
+      easing="spring"
+      onTransitionEnd={handleExitComplete}
+      className={`
+        flex items-center gap-3 
+        px-4 py-3 
+        rounded-lg border 
+        shadow-lg
+        min-w-[300px]
+        ${styles[variant]}
+      `}
+      role="alert"
+    >
+      {icons[variant]}
+      <span className="flex-1">{message}</span>
+      <button
+        onClick={() => setShow(false)}
+        className="text-current hover:opacity-70"
+        aria-label="Close notification"
+      >
+        ✕
+      </button>
+    </Slide>
+  );
+}
+```
+
+## Using FramingUI for Animation
+
+[FramingUI](https://framingui.com) includes pre-configured animation tokens and components:
+
+```tsx
+import { Animate, useAnimation } from 'framingui';
+
+export function AnimatedFeature() {
+  const { ref, inView } = useAnimation();
+  
+  return (
+    <Animate
+      ref={ref}
+      show={inView}
+      variant="fade-up"
+      duration="normal"
+      stagger={100}
+    >
+      <h2>Feature Heading</h2>
+      <p>Feature description...</p>
+    </Animate>
+  );
+}
+```
+
+This provides motion design best practices out of the box.
+
+## Key Takeaways
+
+Animation tokens create systematic motion:
+
+1. **Duration scales** - Consistent timing based on content complexity
+2. **Easing curves** - Semantic easings for different interaction types
+3. **Choreography** - Coordinate multiple animations with stagger
+4. **Accessibility** - Respect `prefers-reduced-motion`
+5. **Performance** - Only animate GPU-accelerated properties
+
+Animation isn't decoration—it's communication. Tokens make that communication consistent.
+
+Start with duration and easing tokens. Build reusable animation components. Add choreography for complex interactions. Your UI will feel intentionally designed, not randomly animated.

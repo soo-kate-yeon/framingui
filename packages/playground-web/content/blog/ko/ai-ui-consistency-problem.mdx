@@ -1,6 +1,6 @@
 ---
-title: "AI가 UI 일관성을 계속 놓치는 진짜 이유"
-description: "AI는 멋진 UI 코드를 생성해요. 다만 일관되게는 아니죠. MCP를 통한 디자인 토큰이 이 맥락 부재를 해결합니다."
+title: "How AI Loses UI Consistency Without Token Context"
+description: "AI generates beautiful UI code — just not consistently. Design tokens via MCP fix the context gap."
 date: "2026-03-08"
 author:
   name: "FramingUI Team"
@@ -13,9 +13,9 @@ coverImage: ""
 published: true
 ---
 
-## 프롬프트 두 번이면 충분합니다
+## The Problem in Two Prompts
 
-Claude에게 프로필 카드를 만들어 달라고 했어요. 결과물:
+You ask Claude to create a profile card. It generates:
 
 ```tsx
 <div className="bg-white rounded-lg p-6 shadow-md">
@@ -24,7 +24,7 @@ Claude에게 프로필 카드를 만들어 달라고 했어요. 결과물:
 </div>
 ```
 
-이틀 뒤, 알림 카드를 요청했죠:
+Two days later, you ask for a notification card:
 
 ```tsx
 <div className="bg-slate-50 rounded-xl p-4 border border-gray-200">
@@ -33,47 +33,47 @@ Claude에게 프로필 카드를 만들어 달라고 했어요. 결과물:
 </div>
 ```
 
-각각 따로 보면 괜찮아요. 그런데 나란히 놓으면요? `bg-white` vs `bg-slate-50`. `rounded-lg` vs `rounded-xl`. `p-6` vs `p-4`. `text-gray-900` vs `text-slate-800`. **서로 다른 앱에서 온 컴포넌트처럼 보여요.**
+Both look fine in isolation. But side by side: `bg-white` vs. `bg-slate-50`. `rounded-lg` vs. `rounded-xl`. `p-6` vs. `p-4`. `text-gray-900` vs. `text-slate-800`. Your AI just produced two components that look like they belong to different apps.
 
-이건 버그가 아니에요. 맥락의 부재입니다.
+This isn't a bug. It's a context gap.
 
-## AI는 왜 흔들리는가
+## Why AI Drifts
 
-LLM은 UI 코드를 생성할 때 학습 데이터에서 패턴을 매칭해요. Material Design, Tailwind UI, shadcn/ui, 수많은 GitHub 저장소에서 본 수천 개의 카드 구현을 참고하죠. 각각 다른 색상 팔레트, 간격 체계, border radius를 쓰거든요. "카드 컴포넌트"를 요청하면, 모델은 이 모든 것에서 샘플링합니다.
+LLMs generate UI code by pattern-matching against training data — thousands of card implementations from Material Design, Tailwind UI, shadcn/ui, and random GitHub repos. Each uses different color palettes, spacing scales, and border radii. When you say "card component," the model samples from all of them.
 
-**어떤 패턴이 '내 것'인지 알 방법이 없어요.**
+The model has no way to know which pattern is *yours*.
 
-당연히 디자인 시스템을 프롬프트에 붙여넣는 방법을 떠올릴 수 있어요. 한 번은 통하죠. 하지만 대화가 길어지면 초반 맥락의 영향력이 줄어들어요. 이걸 맥락 감쇠(context decay)라고 부르기도 하는데, 첫 번째 메시지에 넣은 토큰 정의가 열 번째 메시지쯤 되면 힘을 잃는 거예요. 게다가 매번 2,000개 이상의 토큰을 대화에 붙여넣는 건 번거롭고, 비용도 들고, 팀 전체로 확장되지 않아요.
+The obvious fix is to paste your design system into the prompt. This helps for a single generation, but it breaks down fast. In long conversations, early context loses influence — a phenomenon sometimes called context decay. Your tokens from message one carry less weight by message ten. And pasting 2,000+ tokens of design definitions into every conversation is tedious, expensive, and doesn't scale across a team.
 
-"일관성 있게 만들어줘"라고 지시하는 건 어떨까요? "일관성"이 모호하다는 게 문제예요. 하나의 응답 안에서는 일관되겠지만, 세션이 바뀌고, 개발자가 바뀌고, 시간이 지나면 통계적 기본값으로 돌아가요. 버튼은 blue-600, 모서리는 rounded-md. 인터넷의 평균적인 디자인 시스템이죠.
+You could also try telling the AI to "be consistent." But "consistent" is vague. The model will be internally consistent within one response. Across sessions, across developers, across weeks — it drifts back to statistical defaults. Blue-600 for buttons. Rounded-md for corners. The internet's median design system.
 
-## 해법: AI에게 프로그래밍 방식의 접근권을 주세요
+## The Fix: Give AI Programmatic Access
 
-핵심 아이디어는 단순해요. 디자인 시스템을 자연어로 설명하고 모델이 기억하길 바라는 대신, **모델이 필요할 때 직접 조회할 수 있는 구조화된 데이터**로 연결하는 거예요.
+The core insight is simple. Instead of describing your design system in natural language and hoping the model remembers, you connect it as a structured data source the model can query on demand.
 
-MCP(Model Context Protocol)가 바로 이걸 가능하게 합니다:
+This is what MCP (Model Context Protocol) enables:
 
 ```
 ┌──────────────┐         MCP          ┌─────────────────┐
 │   Cursor /   │ ◄─────────────────► │  Design Token   │
-│   Claude     │  "primary가 뭐야?"   │     Server      │
+│   Claude     │  "What's primary?"   │     Server      │
 │              │ ◄─────────────────► │                 │
-└──────────────┘    반환: #4338CA     └─────────────────┘
+└──────────────┘    Returns: #4338CA  └─────────────────┘
 ```
 
-AI가 UI 컴포넌트를 생성할 때, 토큰 서버에 질의해요. `bg-blue-600`을 추측하는 대신 `primary: '#4338CA'`라는 실제 값을 받아서 사용하죠. 매번, 모든 세션에서, 팀의 모든 개발자가 동일한 결과를 얻어요.
+When the AI detects it's generating a UI component, it queries your token server. Instead of guessing `bg-blue-600`, it receives `primary: '#4338CA'` and uses your actual value. Every time, every session, every developer on the team.
 
-한 달 간격으로 생성한 두 컴포넌트가 동일한 디자인 언어를 쓰게 되는 거예요. 같은 간격 클래스, 같은 색상 토큰, 같은 border radius. 아무도 복사-붙여넣기를 하지 않아도요.
+The result: two components generated a month apart produce identical design language — same spacing classes, same color tokens, same border radii — without anyone copy-pasting anything.
 
-## 명령어 하나로 설정 끝
+## Setup in One Command
 
-FramingUI의 `init` 명령어가 패키지 설치, Tailwind 설정, MCP 연결, 가이드 생성까지 한 번에 처리해요:
+FramingUI's `init` command handles the entire setup — package installation, Tailwind configuration, MCP connection, and guide generation:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-프로젝트 타입(Next.js / Vite)을 자동 감지하고, `@framingui/ui`를 설치하고, Tailwind CSS를 설정하고, `.mcp.json`에 MCP 서버를 등록합니다:
+This detects your project type (Next.js / Vite), installs `@framingui/ui`, configures Tailwind CSS, and registers the MCP server in `.mcp.json`:
 
 ```json
 {
@@ -87,14 +87,14 @@ npx -y @framingui/mcp-server@latest init
 }
 ```
 
-Claude Code를 재시작하면, AI가 디자인 토큰을 직접 조회할 수 있어요. `bg-blue-600`을 추측하는 대신 `var(--bg-primary-default)`, `var(--spacing-4)` 같은 CSS 변수를 사용하죠.
+After restarting Claude Code, the AI can query your design tokens directly — CSS variables like `var(--bg-primary-default)` and `var(--spacing-4)` instead of guessing `bg-blue-600` or `p-4`.
 
-토큰은 시맨틱 구조를 따라요. 배경(`bg.surface`, `bg.primary`), 전경(`fg.primary`, `fg.muted`), 간격(4px 기반 스케일), radius, 타이포그래피, 그림자, 모션. AI는 매번 생성할 때마다 MCP 서버에서 이 값들을 읽어오기 때문에, 추측할 필요가 없어요.
+The tokens follow a semantic structure: backgrounds (`bg.surface`, `bg.primary`), foregrounds (`fg.primary`, `fg.muted`), spacing (4px-based scale), radius, typography, shadows, and motion. The AI reads these from the MCP server on every generation, so it never has to guess.
 
-## 실제로 뭐가 달라지나요
+## What Changes in Practice
 
-변화는 미묘하지만 복리처럼 쌓여요. 개별 프롬프트는 똑같이 느껴져요. 여전히 버튼이나 카드를 평범한 말로 요청하니까요. 하지만 일주일쯤 개발하다 보면, 디자인 리뷰에서 색상 불일치를 발견하는 일이 사라져요. 새로 합류한 팀원이 스타일 가이드를 읽지 않아도 기존 컴포넌트와 맞는 결과물을 만들어내죠. 코드베이스가 패딩의 열두 가지 변형을 쌓아가는 대신, 하나의 간격 체계로 수렴해요.
+The shift is subtle but compounding. Individual prompts don't feel different — you still ask for buttons and cards in plain English. But across a week of development, you stop finding color mismatches during design review. New team members generate components that match existing ones without reading a style guide. The codebase converges on a single spacing scale instead of accumulating twelve variations of padding.
 
-이 원칙은 특정 도구를 넘어서 적용돼요. AI로 UI 코드를 반복 생성하는 워크플로우라면, 가장 효과적인 투자는 디자인 결정을 **대화에서 반복 가능하게** 만드는 게 아니라 **구조화된 데이터로 조회 가능하게** 만드는 거예요. MCP는 그런 프로토콜 중 하나고, 구현보다 패턴이 중요합니다.
+The underlying principle applies beyond any specific tool. If your AI workflow involves generating UI code repeatedly, the highest-leverage investment is making your design decisions queryable — not repeatable in conversation, but *accessible as structured data*. MCP is one protocol for doing this. The pattern matters more than the implementation.
 
-**문제는 AI의 능력이 아니었어요. AI의 맥락이었죠.** 디자인 시스템을 실시간 데이터 소스로 연결하면, 일관성이 예외가 아니라 기본값이 됩니다.
+**The problem was never AI's capability. It was AI's context.** Give it your design system as a live data source, and consistency becomes the default instead of the exception.

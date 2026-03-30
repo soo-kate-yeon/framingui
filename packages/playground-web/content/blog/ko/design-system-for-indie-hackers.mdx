@@ -1,6 +1,6 @@
 ---
-title: "인디해커가 디자인 시스템을 고르는 기준 찾기"
-description: "속도, 유지보수, AI 호환성을 솔직하게 비교해서, 지금 단계에 맞는 디자인 시스템 접근법을 고르는 방법을 정리했습니다."
+title: "Choosing a Design System Approach as an Indie Hacker"
+description: "A practical decision framework for indie hackers choosing a design system approach, with honest tradeoffs across speed, maintenance, and AI compatibility."
 date: "2026-02-28"
 author:
   name: "FramingUI Team"
@@ -12,106 +12,106 @@ coverImage: ""
 published: true
 ---
 
-# 인디해커를 위한 디자인 시스템 선택 가이드
+# Design System for Indie Hackers: Choosing the Right Approach
 
-인디해커가 기능이 없어서 실패하는 경우는 드뭐요. 빠르게 움직이면서 품질을 유지하지 못해서 실패하는 경우가 훨씬 많죠. UI 드리프트는 그 문제가 가장 먼저 드러나는 곳이고, 기여자가 늘거나 AI 생성 코드에 의존하기 시작하면 더 빠르게 악화됩니다.
+Indie hackers rarely fail because they lack features. They often fail because they cannot keep quality stable while moving fast. UI drift is one of the first places this shows up—and it gets worse when you add contributors or rely on AI-generated code.
 
-"가장 인기 있는 컴포넌트 라이브러리를 쓴다"가 답이 아니에요. 지금 단계, 실제로 쓸 수 있는 시간, 성장 방향에 맞는 접근법을 고르는 게 답입니다. 세 가지 현실적인 경로와, 어느 쪽을 선택할지 결정하는 질문들을 정리했어요.
+The answer is not "use the most popular component library." The answer is choosing an approach that matches your current stage, available time, and growth expectations. This post lays out three realistic paths and the questions that should determine which one you pick.
 
-## 선택 전에 답해야 할 4가지 질문
+## Four Questions Before You Choose
 
-### UI 인프라에 실제로 쓸 수 있는 시간이 얼마나 되는가?
+### How much time can you actually spend on UI infrastructure?
 
-당위가 아니라 현실을 보세요. 한 달에 솔직히 2~4시간이 전부라면, 커스터마이징이 많은 시스템은 가치를 발휘하기 전에 기술 부채가 됩니다.
+Not how much time you think you should spend—how much you realistically can. If the honest answer is two to four hours per month, a highly customized system will become technical debt before it delivers value.
 
-### 지금 브랜드 차별화가 얼마나 중요한가?
+### How much does brand differentiation matter right now?
 
-검증 단계라면 기본 일관성만으로 충분할 수 있어요. 사용자 신뢰와 제품 완성도로 경쟁하는 단계라면, 어디서나 본 듯한 UI가 신뢰를 깎습니다. 어느 단계에 있는지에 따라 계산이 달라져요.
+At validation stage, baseline consistency is often enough. Once you are competing on user trust and product polish, generic UI hurts. Knowing which stage you are in changes the calculus significantly.
 
-### 앞으로 화면과 기능이 얼마나 자주 바뀔 것인가?
+### How often does your product surface change?
 
-제품-시장 적합성을 아직 찾고 있다면 변경이 잦을 거예요. 설정이 복잡한 시스템은 매번 변경에 마찰을 더합니다. 토큰 기반 시스템은 한 곳에서 바꾸면 자동으로 전파되기 때문에 변화에 더 잘 견뎌요.
+Products that are still finding product-market fit change frequently. A configuration-heavy design system adds friction to every iteration. Token-based systems tolerate change better because updates happen in one place and propagate automatically.
 
-### AI로 UI 코드를 자주 생성할 것인가?
+### Will you use AI to generate UI code?
 
-그렇다면, 이건 나중에 챙길 사항이 아니라 디자인 시스템 선택의 1순위 요건이에요. AI 도구는 참조할 구조화된 토큰 데이터가 없으면 그럴듯하지만 브랜드와 어긋난 UI를 만들어냅니다. AI 코딩 도구를 자주 쓸 계획이라면 토큰 명확성은 선택이 아닙니다.
+If yes, this is now a first-class requirement for your design system, not an afterthought. AI tools generate plausible but off-brand UI when they have no structured token data to reference. If you plan to use AI coding tools regularly, token clarity is non-negotiable.
 
-## 세 가지 경로
+## Three Paths
 
-### 선택지 A: 유틸리티 클래스 직접 사용
+### Path A: Utility Classes Directly
 
-모든 컴포넌트를 유틸리티 클래스로 스타일링하고, 토큰 추상화 없이 구성합니다.
+You style every component with utility classes and no token abstraction.
 
-극초기 실험에는 맞아요. 빠르고, 설정 비용이 없고, 유지할 것도 없습니다. 비용은 제품이 성장하면서 발생해요. 불일치가 빠르게 쌓이고, 반복 스타일 코드가 곳곳에 퍼지고, AI 생성 코드는 생성할 때마다 브랜드와 더 멀어집니다.
+This works for very early experiments. Iteration is fast, setup is zero, and there is nothing to maintain. The cost arrives when the product starts growing: inconsistency compounds quickly, repeated style logic spreads everywhere, and AI-generated code drifts further from your visual language with every generation.
 
-지금 이달 아이디어를 검증 중이고 나중에 UI를 다시 만들 계획이 있다면 이 경로를 선택하세요.
+Pick this path if you are validating an idea this month and expect to rebuild UI later.
 
-### 선택지 B: 컴포넌트 라이브러리 + 로컬 규칙
+### Path B: Component Library With Local Conventions
 
-컴포넌트 라이브러리를 도입하고 가벼운 로컬 규칙을 얹습니다. 설정에 커스텀 색상을 넣고, 이름 규칙 몇 가지를 문서화하는 식으로요.
+You adopt a component library and layer lightweight local rules on top—custom colors in the config, a few documented naming decisions.
 
-기본 접근성 확보가 빠르고, 초기 출시 속도가 높고, 새 기여자 온보딩이 수월합니다. 단점은 규칙이 문서화되지 않거나 구조적으로 강제되지 않으면 결국 무너진다는 거예요. 두 번째 개발자나 AI 도구가 합류하면, 규칙이 명문화되고 시스템에 내재되어 있지 않으면 금세 무력화됩니다.
+This gives you better baseline accessibility, faster initial shipping, and easier onboarding for new contributors. The downside is that conventions often stay undocumented and unenforceable. When a second developer or an AI tool joins, the conventions degrade unless they are written down and structurally reinforced.
 
-지금 당장 안정적인 결과물이 필요하고, 같은 라이브러리를 쓰는 다른 제품들과 시각적으로 비슷해도 괜찮다면 이 경로를 선택하세요.
+Pick this path if you need reliable output now and can accept moderate visual similarity with other products using the same library.
 
-### 선택지 C: 토큰 중심 디자인 시스템
+### Path C: Token-First Design System
 
-색상, 간격, 타이포그래피, 라디우스를 먼저 토큰으로 정의하고, 컴포넌트를 그 토큰 의미론의 구현체로 만듭니다.
+You define tokens first—color, spacing, type, radius—and build components as implementations of those token semantics.
 
-초기 비용이 더 들지만 확장성이 월등히 좋아요. 전역 변경이 한 번의 수정으로 이루어지고, 테마 변경과 리브랜딩이 일상적인 작업이 됩니다. AI 생성 코드도 토큰을 직접 참조해서, 사람이 작성한 컴포넌트와 일관성을 유지할 수 있어요. 트레이드오프는 기존 UI에 대한 명확한 이관 계획이 필요하고, 초기 설정에 규율이 필요하다는 점입니다.
+This approach costs more upfront but scales substantially better. Global changes take one edit. Theming and rebranding become routine. AI-generated code can reference tokens directly, which keeps it consistent with human-written components. The tradeoff is that you need a clear migration plan for existing UI, and the initial setup requires discipline.
 
-화면과 복잡도가 계속 늘어나거나, AI 도구로 상당한 양의 UI를 생성하는 경우라면 이 경로를 선택하세요.
+Pick this path if your product is growing in surfaces and complexity, or if you are generating meaningful amounts of UI with AI tools.
 
-진지하게 성장하는 인디 제품은 결국 시작점과 무관하게 선택지 C로 이동합니다. 계획적으로 도달하느냐, 고통스러운 리팩터링 후에 필요에 의해 도달하느냐의 차이예요.
+Most serious indie products eventually move to Path C regardless of where they start. The question is whether you arrive there by design or by necessity after a painful refactor.
 
-## 어떤 옵션이든 확인해야 할 것
+## What to Evaluate in Any Option
 
-**토큰 모델의 명확성.** 시맨틱 이름으로 된 토큰—`blue-500`이 아닌 `button.primary.bg`—이 있는지 확인하세요. 테마 지원, 다크 모드 처리, 안정적인 확장 전략이 있는지 보세요. 이게 없으면 드리프트와 영원히 싸우게 됩니다.
+**Token model quality.** Look for semantic tokens with clear naming—`button.primary.bg`, not `blue-500`. Check for theme support, dark mode handling, and a stable extension strategy. Without this, you will fight drift indefinitely.
 
-**프리미티브 API의 제약 수준.** 컴포넌트가 기본으로 모든 스타일 오버라이드를 허용한다면 일관성이 취약해요. 좋은 프리미티브 API는 정당한 사용 케이스에 복잡한 우회로를 요구하지 않으면서도 안전하지 않은 커스터마이징을 제한합니다.
+**Primitive API constraints.** If a component accepts raw style overrides by default, your consistency is fragile. Good primitive APIs limit unsafe customization without requiring workarounds for legitimate use cases.
 
-**문서와 운영 명확성.** 디자인 시스템은 비주얼 도구인 동시에 운영 도구예요. 각 변형을 언제 쓰는지 설명할 수 있는가? 새 컴포넌트 추가 프로세스가 명확한가? 답이 아니라면, 시스템은 일반적인 사용 속에서 자연스럽게 무너집니다.
+**Documentation and operational clarity.** A design system is an operational tool, not just a visual one. Can you explain when to use each variant? Is there a clear process for adding a new component? If the answer is no, the system will degrade under normal usage.
 
-**AI 워크플로우 호환성.** 구조화된 토큰 데이터와 명시적 컴포넌트 계약을 통해 AI 도구가 시스템을 소비할 수 있는지 확인하세요. 이건 미래 로드맵 항목이 아니라 지금 당장 중요한 요건이에요.
+**AI workflow compatibility.** Can AI tools consume your system through structured token data and explicit component contracts? This is relevant now, not in a future roadmap item.
 
-## 기존 프로젝트 이관 순서
+## Migrating an Existing Product
 
-대부분의 인디 제품은 처음부터 새로 시작하지 않아요. 기능 작업을 멈추지 않고 할 수 있는 현실적인 이관 순서예요.
+Most indie products are not greenfield. A practical migration sequence that does not require stopping feature work:
 
-**1단계: 핵심 토큰 정의.** 색상, 간격, 타이포, 라디우스부터 시작하세요. 처음 버전은 의도적으로 작게—쓸지 확신 없는 50개 토큰보다 색상 10개, 간격 5개가 나은 출발점입니다.
+**Phase 1: Define core tokens.** Start with color, spacing, type, and radius. Keep the first version intentionally small—ten color tokens and five spacing values is a better starting point than fifty tokens you are not sure you will use.
 
-**2단계: 사용 빈도 높은 프리미티브 교체.** `Button`, `Input`, `Card`, `Badge`를 우선시하세요. 이 네 컴포넌트가 거의 모든 화면에 등장하기 때문에 체감 효과가 큽니다.
+**Phase 2: Refactor high-usage primitives.** Prioritize `Button`, `Input`, `Card`, `Badge`. Replace raw styling patterns with token-based variants. These four components appear on nearly every screen.
 
-**3단계: 핵심 플로우 우선 적용.** 긴 꼬리 페이지보다 온보딩, 결제, 청구, 설정에 먼저 새 프리미티브를 적용하세요. 트래픽이 많은 화면이 일관성 개선의 혜택을 가장 많이 받습니다.
+**Phase 3: Migrate revenue-critical flows.** Apply new primitives to onboarding, checkout, billing, and settings before working through long-tail pages. High-traffic screens benefit most from consistency improvements.
 
-**4단계: 거버넌스 추가.** 린트 규칙을 설정하세요. 컴포넌트에 브랜드 색상 하드코딩 금지, 새 UI에 토큰 사용 필수, 변형 추가 시 이유 명시. 이 단계 없이는 원래 상태로 조용히 돌아갑니다.
+**Phase 4: Add governance.** Set lint rules: no hardcoded brand colors in components, token usage required for new UI, variant additions require a rationale. This step prevents silent regression.
 
-FramingUI를 토큰 기반으로 설치하려면:
+To set up FramingUI as your token foundation:
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-AI 도구와 MCP 통합을 위해:
+For MCP integration with AI tools:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-init 명령어 하나로 프로바이더 부트스트랩, CSS 임포트, Claude Code용 MCP 설정까지 전체 런타임 계약을 잡아줍니다.
+The init command sets up the full runtime contract—provider bootstrap, CSS imports, MCP config for Claude Code—in one step.
 
-## 자주 만나는 선택 실수
+## Common Selection Mistakes
 
-**외형만 보고 고른다.** 멋진 컴포넌트 스크린샷은 6개월 후 유지보수성에 대해 거의 아무것도 알려주지 않아요.
+**Choosing by aesthetics.** A polished component screenshot tells you almost nothing about how maintainable the system is six months from now.
 
-**유지보수 비용을 과소평가한다.** 디자인 시스템의 실제 비용은 설정이 아니라, 변화하는 제품에 맞춰 일관성을 유지하는 지속적인 작업이에요. 시스템이 계속 수동 정리를 요구한다면, 작은 팀에게 너무 비쌉니다.
+**Underestimating maintenance cost.** The real cost of a design system is not setup—it is the ongoing work to keep it consistent with a changing product. If the system requires constant manual cleanup, it is too expensive for a small team.
 
-**토큰 결정을 미룬다.** "나중에 표준화하자"는 거의 항상 복리로 증가하는 불일치를 의미해요. 나중보다 지금이 비용이 낮습니다.
+**Deferring token decisions.** "We will standardize later" almost always means compounding inconsistency. Later has a higher cost than now.
 
-**AI 호환성을 무시한다.** AI 코딩 도구를 자주 쓰는데 기계 판독 가능한 토큰이 없는 디자인 시스템이라면, 매번 생성할 때마다 불일치가 곱해집니다.
+**Ignoring AI compatibility.** If you use AI coding tools regularly, a design system without machine-readable tokens multiplies inconsistency with every generation.
 
-## 실제로 어떻게 결정하는가
+## The Decision in Practice
 
-선택 전에 이 질문들에 명확히 답할 수 있는지 확인하세요. 토큰 모델을 한 페이지로 설명할 수 있는가? 프리미티브 API가 일관성을 강제할 만큼 제약되어 있는가? 점진적으로 이관할 수 있는가? AI 코딩 워크플로우를 지원하는가? 현재 팀 리소스로 운영 가능한가?
+Before committing, verify you can answer these clearly: Can you explain your token model in one page? Are primitive APIs constrained enough to enforce consistency? Can migration happen incrementally? Does the system support your AI coding workflow? Is ongoing maintenance feasible with your real team capacity?
 
-인디해커에게 필요한 건 가장 기능이 풍부한 플랫폼이 아니에요. 출시 속도를 유지하면서 시각적 엔트로피를 막아주는 디자인 시스템입니다. 제품이 순수한 검증 단계를 벗어났다면, 토큰 중심 접근이 장기적으로 가장 좋은 레버리지를 제공합니다. 빨리 도입할수록 이관 비용이 작아요.
+Indie hackers do not need the most feature-complete platform. They need a design system that preserves shipping speed while preventing visual entropy. A token-first approach provides the best long-term leverage once a product is past the pure validation stage—and the sooner it is in place, the smaller the migration cost.

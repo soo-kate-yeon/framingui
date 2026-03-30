@@ -1,6 +1,6 @@
 ---
-title: "FramingUI로 접근성 갖춘 로그인 폼 완성하기"
-description: "FramingUI 디자인 시스템을 사용하여 검증, 접근성, 일관된 스타일링을 갖춘 프로덕션 준비 로그인 폼을 빌드하세요."
+title: "FramingUI Builds an Accessible Login Form"
+description: "Build a production-ready login form with validation, accessibility, and consistent styling using FramingUI design system."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
@@ -12,25 +12,25 @@ coverImage: ""
 published: true
 ---
 
-로그인 폼은 대부분의 사용자가 제품과 처음 만나는 지점이에요. 포커스 링이 깨져 있거나, 에러 메시지가 스크린 리더에게 전달되지 않거나, 로딩 중에 버튼이 아무 반응도 안 하는 것들 — 이런 디테일이 제품을 보여주기도 전에 신뢰를 깎아요.
+The login form is the first thing most users interact with. A broken focus ring, a missing error announcement, or a submit button that goes silent during loading — these details cost you user trust before anyone sees your product.
 
-FramingUI의 폼 컴포넌트는 접근성 계약을 자동으로 처리해줘요. 레이블 연결, aria-describedby 연결, 에러 role 알림이 컴포넌트 구조에서 나오기 때문에 따로 유지보수할 커스텀 코드가 필요 없어요.
+FramingUI's form components handle the accessibility contract automatically: label association, aria-describedby wiring, and error role announcements come from the component structure, not custom code you have to maintain.
 
-## 의존성 설치
+## Installing Dependencies
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-검증을 위해 react-hook-form과 zod도 추가해요.
+Then add react-hook-form and zod for validation:
 
 ```bash
 pnpm add react-hook-form zod @hookform/resolvers
 ```
 
-## 기본 로그인 폼 만들기
+## Building the Basic Login Form
 
-아래 컴포넌트는 검증, 로딩 상태, 접근 가능한 에러 메시지를 최소한의 코드로 연결해요.
+The component below wires validation, loading state, and accessible error messages with minimal boilerplate.
 
 ```tsx
 'use client';
@@ -57,8 +57,8 @@ import {
 } from '@framingui/ui';
 
 const loginSchema = z.object({
-  email: z.string().email('올바른 이메일을 입력하세요'),
-  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  email: z.string().email('Please enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -78,7 +78,7 @@ export function LoginForm() {
         method: 'POST',
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error('잘못된 자격 증명');
+      if (!response.ok) throw new Error('Invalid credentials');
     } finally {
       setIsLoading(false);
     }
@@ -87,8 +87,8 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>로그인</CardTitle>
-        <CardDescription>계정에 접근하려면 자격 증명을 입력하세요</CardDescription>
+        <CardTitle>Sign In</CardTitle>
+        <CardDescription>Enter your credentials to access your account</CardDescription>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -98,7 +98,7 @@ export function LoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>이메일</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="you@example.com" {...field} />
                   </FormControl>
@@ -111,7 +111,7 @@ export function LoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>비밀번호</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
@@ -122,14 +122,14 @@ export function LoginForm() {
           </CardContent>
           <CardFooter className="flex flex-col space-y-[var(--spacing-4)]">
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? '로그인 중...' : '로그인'}
+              {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
             <div className="text-sm text-center">
               <a
                 href="/forgot-password"
                 className="text-[var(--foreground-accent)] hover:underline"
               >
-                비밀번호를 잊으셨나요?
+                Forgot your password?
               </a>
             </div>
           </CardFooter>
@@ -140,11 +140,11 @@ export function LoginForm() {
 }
 ```
 
-구현에서 알아두면 좋은 점 몇 가지예요. 간격은 모두 `var(--spacing-*)` CSS 변수를 사용해요. `FormMessage` 컴포넌트는 각 필드의 검증 상태와 연결되고, `role="alert"`으로 렌더링돼서 제출 시 스크린 리더가 에러를 알려줘요. 버튼은 비동기 호출 중에 비활성화돼서 중복 제출을 막아요.
+A few things worth noting about this implementation. All spacing uses `var(--spacing-*)` CSS variables, not arbitrary pixel values. The `FormMessage` component connects to each field's validation state and renders with `role="alert"` so screen readers announce errors on submission. The submit button disables during the async call to prevent double-submission.
 
-## 소셜 로그인과 로그인 유지 추가하기
+## Adding Social Auth and Remember Me
 
-확장 버전에는 OAuth 버튼과 세션 유지 옵션이 추가돼요.
+The enhanced version adds OAuth buttons and a persistent session option:
 
 ```tsx
 'use client';
@@ -174,8 +174,8 @@ import {
 import { Github, Mail } from 'lucide-react';
 
 const loginSchema = z.object({
-  email: z.string().email('올바른 이메일을 입력하세요'),
-  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  email: z.string().email('Please enter a valid email'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
   remember: z.boolean().default(false),
 });
 
@@ -192,21 +192,21 @@ export function EnhancedLoginForm() {
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      // 인증 API 호출
+      // Call your authentication API here
     } finally {
       setIsLoading(false);
     }
   }
 
   async function handleSocialLogin(provider: 'github' | 'google') {
-    // OAuth 흐름 시작
+    // Initiate OAuth flow
   }
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>환영합니다</CardTitle>
-        <CardDescription>선호하는 로그인 방법을 선택하세요</CardDescription>
+        <CardTitle>Welcome Back</CardTitle>
+        <CardDescription>Choose your preferred sign in method</CardDescription>
       </CardHeader>
       <CardContent className="space-y-[var(--spacing-4)]">
         <div className="grid grid-cols-2 gap-[var(--spacing-4)]">
@@ -226,7 +226,7 @@ export function EnhancedLoginForm() {
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-[var(--background-page)] px-[var(--spacing-2)] text-[var(--foreground-secondary)]">
-              또는 계속하기
+              Or continue with
             </span>
           </div>
         </div>
@@ -238,7 +238,7 @@ export function EnhancedLoginForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>이메일</FormLabel>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input type="email" placeholder="you@example.com" {...field} />
                   </FormControl>
@@ -251,7 +251,7 @@ export function EnhancedLoginForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>비밀번호</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} />
                   </FormControl>
@@ -268,22 +268,22 @@ export function EnhancedLoginForm() {
                     <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                   </FormControl>
                   <div className="space-y-[var(--spacing-1)] leading-none">
-                    <FormLabel>로그인 유지</FormLabel>
+                    <FormLabel>Remember me</FormLabel>
                   </div>
                 </FormItem>
               )}
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? '로그인 중...' : '로그인'}
+              {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex justify-center">
         <p className="text-sm text-[var(--foreground-secondary)]">
-          계정이 없으신가요?{' '}
+          Don't have an account?{' '}
           <a href="/signup" className="text-[var(--foreground-accent)] hover:underline">
-            가입하기
+            Sign up
           </a>
         </p>
       </CardFooter>
@@ -292,36 +292,36 @@ export function EnhancedLoginForm() {
 }
 ```
 
-## 접근성이 내부적으로 작동하는 방식
+## How Accessibility Works Under the Hood
 
-FramingUI의 `Form` 컴포넌트는 전체 ARIA 관계를 자동으로 만들어요. 이렇게 쓰면:
+FramingUI's `Form` components build the full ARIA relationship automatically. When you write this:
 
 ```tsx
-<FormLabel>이메일</FormLabel>
+<FormLabel>Email</FormLabel>
 <FormControl>
   <Input type="email" {...field} />
 </FormControl>
 <FormMessage />
 ```
 
-렌더링된 HTML은 모든 요소를 연결해요.
+The rendered HTML connects every piece:
 
 ```html
-<label for="email-form-item">이메일</label>
+<label for="email-form-item">Email</label>
 <input
   id="email-form-item"
   aria-describedby="email-form-item-message"
 />
 <p id="email-form-item-message" role="alert">
-  올바른 이메일을 입력하세요
+  Please enter a valid email
 </p>
 ```
 
-에러 메시지의 `role="alert"`는 추가 설정 없이도 제출 시 검증 실패를 스크린 리더가 알려주게 해줘요.
+The `role="alert"` on the error message ensures screen readers announce validation failures on submission without requiring any additional configuration.
 
-## API 에러 처리
+## Handling API Errors
 
-검증 스키마 에러는 자동으로 표시돼요. 서버 측 에러는 별도 상태가 필요해요.
+Validation schema errors display automatically. Server-side errors need a separate state:
 
 ```tsx
 const [apiError, setApiError] = useState('');
@@ -334,15 +334,15 @@ async function onSubmit(data: LoginFormData) {
       method: 'POST',
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('잘못된 자격 증명');
+    if (!response.ok) throw new Error('Invalid credentials');
   } catch (error) {
-    setApiError(error instanceof Error ? error.message : '문제가 발생했습니다');
+    setApiError(error instanceof Error ? error.message : 'Something went wrong');
   } finally {
     setIsLoading(false);
   }
 }
 
-// JSX에서 제출 버튼 위에:
+// In JSX, above the submit button:
 {apiError && (
   <p className="text-sm text-[var(--border-error)]" role="alert">
     {apiError}
@@ -350,7 +350,7 @@ async function onSubmit(data: LoginFormData) {
 )}
 ```
 
-폼을 페이지 중앙에 배치하는 건 레이아웃 래퍼 하나면 충분해요.
+Centering the form on a page is one layout wrapper:
 
 ```tsx
 <div className="flex min-h-screen items-center justify-center p-[var(--spacing-4)]">
@@ -358,4 +358,4 @@ async function onSubmit(data: LoginFormData) {
 </div>
 ```
 
-위 구조는 출발점이에요. 실제 작업은 `onSubmit`을 인증 프로바이더 — NextAuth.js, Supabase, Firebase, 또는 커스텀 API — 와 연결하는 거예요. 컴포넌트가 UI 계약을 담당하고, 인증 로직은 직접 연결해야 해요.
+The form structure above is a starting point. The real work is connecting `onSubmit` to your auth provider — NextAuth.js, Supabase, Firebase, or a custom API. The component handles the UI contract; the auth logic is yours to wire.

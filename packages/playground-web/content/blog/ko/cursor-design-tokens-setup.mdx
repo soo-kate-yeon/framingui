@@ -1,6 +1,6 @@
 ---
-title: "Cursor에 FramingUI 디자인 토큰 연결해서 일관성 잡기"
-description: "AI 기반 UI 생성을 위해 FramingUI 디자인 토큰을 Cursor IDE와 통합하는 단계별 가이드입니다."
+title: "Wiring FramingUI Design Tokens into Cursor"
+description: "Step-by-step guide to integrate FramingUI design tokens with Cursor IDE for AI-powered UI generation."
 date: "2026-02-27"
 author:
   name: "FramingUI Team"
@@ -11,25 +11,25 @@ coverImage: ""
 published: true
 ---
 
-Cursor가 알림 카드를 5초 만에 만들어줬어요. 근데 색상, 패딩, 테두리 반경을 디자인 시스템에 맞게 고치는 데 5분이 걸렸죠. 이 비율 — 5초 생성, 5분 수정 — 이 바로 이 가이드가 해결하는 문제예요.
+Cursor generates a notification card in five seconds. You spend five minutes correcting the colors, padding, and border radius to match your design system. That ratio — five seconds to generate, five minutes to fix — is the problem this guide solves.
 
-해결책은 `.cursorrules` 파일이에요. 설정에 15분이면 충분하고, 수동 수정 작업 대부분을 없애줘요.
+The fix is a `.cursorrules` file. It takes fifteen minutes to set up and eliminates most of the manual correction work.
 
-## Cursor가 엉뚱한 걸 추측하는 이유
+## Why Cursor Guesses Wrong
 
-명시적인 규칙이 없으면 Cursor는 학습 데이터에서 가져와요. 유명 오픈소스 레포, 공개 컴포넌트 라이브러리, 일반적인 Tailwind 패턴들이죠. 내 프로젝트가 `blue-600` 대신 `indigo-600`을 쓰는지, `p-4` 대신 `p-6`을 쓰는지, `bg-white` 대신 `bg-neutral-50`을 쓰는지 Cursor는 알 방법이 없어요.
+Without explicit rules, Cursor pulls from its training data: popular open-source repos, public component libraries, generic Tailwind patterns. It has no idea that your project uses `indigo-600` not `blue-600`, `p-6` not `p-4`, or `bg-neutral-50` not `bg-white`.
 
-FramingUI 디자인 토큰은 CSS 변수예요 — `var(--background-page)`, `var(--foreground-primary)`, `var(--foreground-accent)` — JavaScript 객체가 아니고 하드코딩된 hex 값도 아니에요. Cursor에게 알려주지 않으면 절대 쓰지 않아요.
+FramingUI's design tokens are CSS variables — `var(--bg-primary-default)`, `var(--foreground-primary)`, `var(--foreground-accent)` — not JavaScript objects or hardcoded hex values. Cursor won't use them unless you tell it to.
 
-## 설치
+## Installation
 
-pnpm으로 패키지를 설치해요:
+Install the packages with pnpm:
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-앱의 전역 레이아웃에 스타일을 임포트해요:
+Import the styles in your app's global layout:
 
 ```tsx
 // app/layout.tsx (Next.js App Router)
@@ -38,49 +38,49 @@ import './globals.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
 }
 ```
 
-## Cursor 설정
+## Cursor Configuration
 
-### `.cursorrules` 만들기
+### Create `.cursorrules`
 
-프로젝트 루트에 `.cursorrules`를 만들어요. 이 파일이 Cursor의 코드베이스 설명서가 돼요.
+Create `.cursorrules` in your project root. This file is Cursor's instruction manual for your codebase.
 
 ```
 # Design System: FramingUI
 
-## 컴포넌트 라이브러리
-항상 @framingui/ui에서 UI 컴포넌트를 임포트하세요:
+## Component Library
+Always import UI components from @framingui/ui:
 - Button, Input, Card, Form, Dialog, Sheet, Tabs
 - Label, Checkbox, RadioGroup, Select, Switch
 - Table, Avatar, Badge, Tooltip, Popover
 
-## 디자인 토큰
-모든 스타일링에 CSS 커스텀 속성을 사용하세요. 색상이나 간격을 절대 하드코딩하지 마세요.
+## Design Tokens
+Use CSS custom properties for all styling. Never hardcode colors or spacing.
 
-### 색상
-- 주요 배경: var(--background-page)
-- 주요 텍스트: var(--foreground-primary)
-- 액션 primary: var(--foreground-accent)
-- 뮤트 텍스트: var(--foreground-muted)
+### Colors
+- Primary background: var(--background-page)
+- Primary text: var(--foreground-primary)
+- Action primary: var(--foreground-accent)
+- Muted text: var(--foreground-muted)
 
-### 스타일링
-토큰을 참조하는 Tailwind 클래스를 사용하세요:
+### Spacing
+Use Tailwind classes that reference tokens:
 - bg-[var(--background-page)]
 - text-[var(--foreground-primary)]
 
-## 코드 생성 규칙
-1. 색상을 절대 하드코딩하지 않기 — 항상 var(--*) 사용
-2. 로컬 파일이 아닌 @framingui/ui에서 컴포넌트 임포트
-3. 색상 이름(blue, red)이 아닌 시맨틱 토큰 이름 사용
-4. 원시 HTML 요소보다 FramingUI 컴포넌트 선호
+## Code Generation Rules
+1. Never hardcode colors — always use var(--*)
+2. Import components from @framingui/ui, not local files
+3. Use semantic token names, not color names (blue, red)
+4. Prefer FramingUI components over raw HTML elements
 
-## 예제 컴포넌트
+## Example Component
 ```tsx
 import { Button, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
 
@@ -88,10 +88,10 @@ export function ExampleCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>예제</CardTitle>
+        <CardTitle>Example</CardTitle>
       </CardHeader>
       <CardContent>
-        <Button variant="default">클릭하세요</Button>
+        <Button variant="default">Click me</Button>
       </CardContent>
     </Card>
   );
@@ -99,9 +99,9 @@ export function ExampleCard() {
 ```
 ```
 
-### 토큰 자동완성을 위한 VSCode 설정
+### VSCode Settings for Token Autocomplete
 
-`.vscode/settings.json`에 추가해요:
+Add to `.vscode/settings.json`:
 
 ```json
 {
@@ -112,7 +112,7 @@ export function ExampleCard() {
 }
 ```
 
-`.vscode/css-custom-data.json`을 만들어요:
+Create `.vscode/css-custom-data.json`:
 
 ```json
 {
@@ -120,27 +120,27 @@ export function ExampleCard() {
   "properties": [
     {
       "name": "--background-page",
-      "description": "주요 캔버스 배경색"
+      "description": "Primary canvas background"
     },
     {
       "name": "--foreground-primary",
-      "description": "주요 텍스트 색상"
+      "description": "Primary text color"
     },
     {
       "name": "--foreground-accent",
-      "description": "주요 액션/브랜드 색상"
+      "description": "Primary action / brand color"
     }
   ]
 }
 ```
 
-이 파일을 만들고 나서 Cursor를 재시작해요.
+Restart Cursor after creating this file.
 
-## 통합 테스트
+## Testing the Integration
 
-Cursor에게 요청해봐요: "이메일과 비밀번호 필드가 있는 로그인 폼을 FramingUI 컴포넌트로 만들어줘."
+Ask Cursor: "Create a login form using FramingUI components with email and password fields."
 
-제대로 설정됐다면 이런 결과가 나와야 해요:
+A correctly configured Cursor should produce something like this:
 
 ```tsx
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardContent } from '@framingui/ui';
@@ -149,19 +149,19 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>로그인</CardTitle>
+        <CardTitle>Sign In</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">이메일</Label>
+          <Label htmlFor="email">Email</Label>
           <Input id="email" type="email" placeholder="you@example.com" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">비밀번호</Label>
+          <Label htmlFor="password">Password</Label>
           <Input id="password" type="password" />
         </div>
         <Button className="w-full" variant="default">
-          로그인
+          Sign In
         </Button>
       </CardContent>
     </Card>
@@ -169,19 +169,19 @@ export function LoginForm() {
 }
 ```
 
-확인할 것: 하드코딩된 hex 값 없음, `@framingui/ui`에서 컴포넌트 임포트, 임의의 Tailwind 색상 클래스 없음.
+Verify: no hardcoded hex values, components imported from `@framingui/ui`, no arbitrary Tailwind color classes.
 
-## 문제 해결
+## Troubleshooting
 
-**Cursor가 토큰 없이 일반 Tailwind를 생성해요:** `.cursorrules`를 업데이트하고 구체적인 예시를 추가해요. "배경색은 `bg-white`가 아닌 `bg-[var(--background-page)]`를 써"라고 명시적으로 적어요.
+**Cursor generates raw Tailwind without tokens:** Update your `.cursorrules` and add explicit examples. Be specific: "Use `bg-[var(--background-page)]` not `bg-white`."
 
-**토큰 자동완성이 안 돼요:** `.vscode/css-custom-data.json`을 추가한 후 Cursor를 재시작해요. Cursor가 시작하기 전에 파일이 있어야 해요.
+**Token autocomplete not working:** Restart Cursor after adding `.vscode/css-custom-data.json`. The file must exist before Cursor starts.
 
-**컴포넌트를 찾을 수 없어요:** `pnpm list @framingui/ui`로 설치를 확인해요. 없으면 설치 명령어를 다시 실행해요.
+**Components not found:** Verify installation with `pnpm list @framingui/ui`. If missing, rerun the install command.
 
-## 토큰 시스템 확장
+## Extending the Token System
 
-FramingUI 기본 위에 프로젝트 고유 토큰을 추가할 수 있어요:
+You can layer project-specific tokens on top of the FramingUI base:
 
 ```css
 /* globals.css */
@@ -193,6 +193,6 @@ FramingUI 기본 위에 프로젝트 고유 토큰을 추가할 수 있어요:
 }
 ```
 
-이것도 `.cursorrules`와 `.vscode/css-custom-data.json`에 추가해서 Cursor가 알 수 있게 해요.
+Add these to your `.cursorrules` and `.vscode/css-custom-data.json` so Cursor knows about them.
 
-15분짜리 설정은 Cursor가 처음으로 올바른 컴포넌트를 생성하는 순간 본전을 찾아요. 그 이후로는 계속 복리로 돌아오는 거예요.
+The fifteen-minute setup pays back on the first complex component Cursor generates correctly. Every component after that is compounding return.

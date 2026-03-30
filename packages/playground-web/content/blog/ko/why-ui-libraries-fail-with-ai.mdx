@@ -1,6 +1,6 @@
 ---
-title: "기존 UI 라이브러리가 AI 앞에서 실패하는 구조적 이유"
-description: "Tailwind, shadcn/ui 같은 인기 프레임워크가 왜 AI hallucination을 일으키는지, 그리고 FramingUI의 디자인 토큰 접근이 이를 어떻게 해결하는지 알아봅니다."
+title: "How Traditional UI Libraries Break AI Code Generation"
+description: "Discover why popular UI frameworks like Tailwind and shadcn/ui cause AI hallucinations, and how FramingUI's design token approach solves this problem."
 date: "2025-03-06"
 author:
   name: "FramingUI Team"
@@ -13,41 +13,41 @@ coverImage: ""
 published: true
 ---
 
-Claude에게 디자인 시스템의 버튼 컴포넌트를 만들어달라고 해보세요. 십중팔구 `bg-blue-600`, `px-4 py-2`, `rounded-md`가 돌아옵니다. 실제 프로젝트는 `bg-brand-primary`, `px-6 py-3`, `rounded-lg`를 쓰는데 말이죠. 모델이 부주의한 게 아니에요. 훈련 데이터에서 통계적으로 가장 자주 등장하는 Tailwind 버튼을 생성한 거거든요. 단지 여러분의 시스템을 모를 뿐입니다.
+Ask Claude to build a button component using your design system. Chances are it comes back with `bg-blue-600`, `px-4 py-2`, and `rounded-md`. Your brand uses `bg-brand-primary`, `px-6 py-3`, and `rounded-lg`. The model wasn't careless—it generated the most statistically likely Tailwind button from its training data. It just doesn't know your system.
 
-이것이 AI 코드 생성에서 인기 UI 라이브러리가 겪는 핵심 실패 패턴이에요. 그리고 더 많이 의존할수록 더 악화됩니다.
+This is the core failure mode of popular UI libraries when used with AI generation, and it gets worse the more you rely on them.
 
-## Tailwind CSS가 Hallucination을 일으키는 이유
+## Why Tailwind CSS Causes Hallucinations
 
-Tailwind의 유틸리티 우선 접근법은 사람 개발자에게 진짜 강력해요. 예측 가능한 원자적 클래스 집합으로 스타일을 조합합니다. 문제는 그 조합이 어떤 클래스가 존재하는지, 어떤 게 프로젝트에서 커스터마이징되었는지, 어떤 의미론적 의도가 그것들을 연결하는지 알아야 가능하다는 점입니다.
+Tailwind's utility-first approach is genuinely powerful for human developers. You compose styles from a predictable set of atomic classes. The problem is that composing styles requires knowing which classes exist, which are customized in your project, and what semantic intent connects them.
 
-사람 개발자는 문서 참조, 근육 기억, 코드 리뷰를 조합해서 이 지식을 얻어요. AI 모델은 순전히 훈련 데이터에 대한 통계적 패턴 매칭으로만 작동합니다. 수천 개의 Tailwind 코드베이스를 학습했고 가장 자주 등장하는 것을 생성해요. 여러분의 특정 설정에 맞는 것이 아니라요.
+For a human developer, this knowledge comes from a combination of documentation lookup, muscle memory, and code review. For an AI model, it comes purely from statistical pattern matching against training data. The model has seen thousands of Tailwind codebases and generates what appears most often—not what's correct for your specific configuration.
 
-`tailwind.config.js` 커스터마이징은 모델의 컨텍스트에 거의 들어가지 않아요. 매번 프롬프트에 전체 설정을 붙여넣는 건 낭비고, 그 문법은 LLM이 소비하기에 최적화되지 않았으며, 커스텀 유틸리티는 여전히 수동 매핑이 필요합니다. 모델은 설정과 무관하게 Tailwind의 표준 팔레트와 간격 스케일로 기본 설정됩니다.
+Your `tailwind.config.js` customizations rarely make it into the model's context. Pasting the entire config into every prompt is wasteful, the syntax isn't optimized for LLM consumption, and custom utilities still require manual mapping. The model defaults to Tailwind's standard palette and spacing scale regardless.
 
-더 깊은 문제는 의미 체계예요. `text-gray-700`은 색상 값을 설명합니다. 그 요소가 본문인지, 보조 라벨인지, 장식적 캡션인지는 알려주지 않아요. `px-4`는 치수를 설명합니다. 이게 compact 버튼인지 기본 크기 버튼인지는 모릅니다. AI 모델은 유틸리티 이름만으로 의미론적 의도를 추론할 수 없어요. 의미가 아닌 확률로 생성합니다.
+The deeper problem is semantic. `text-gray-700` describes a color value. It does not describe whether the element is body text, a secondary label, or a decorative caption. `px-4` describes a measurement. It does not describe whether this is a compact button or a default-sized one. AI models cannot infer semantic intent from utility names alone—they generate based on probability, not meaning.
 
-## shadcn/ui가 문제를 더 키우는 방식
+## How shadcn/ui Compounds the Problem
 
-shadcn/ui의 접근법은 Tailwind와 달라요. npm 패키지가 아니라 복사-붙여넣기 가능한 컴포넌트 소스 코드를 제공합니다. 모델이 전체 컴포넌트 구현을 볼 수 있어서 AI 친화적으로 보이죠.
+shadcn/ui's approach differs from Tailwind: it provides copy-paste component source code rather than an npm package. This seems more AI-friendly at first because the model can theoretically see the full component implementation.
 
-실제로는 독특한 종류의 hallucination을 만들어냅니다. AI가 shadcn 컴포넌트로 코드를 생성할 때, 해당 프로젝트에 존재하지 않는 변형을 자주 참조해요. 표준 `Button`은 `variant="default" | "destructive" | "outline" | "ghost" | "link"`를 받습니다. 그런데 shadcn 기반 코드베이스를 많이 본 모델은 자신 있게 `variant="primary"`나 `variant="outline-primary"`를 생성해요. 그 패턴에서 자연스럽게 이어지는 문자열처럼 보이니까요.
+In practice, it introduces a distinct category of hallucination. When an AI generates code using shadcn components, it frequently references variants that don't exist in your specific project. The standard `Button` component accepts `variant="default" | "destructive" | "outline" | "ghost" | "link"`. A model that has seen many shadcn-based codebases will confidently generate `variant="primary"` or `variant="outline-primary"` because those strings are plausible given the pattern.
 
-이 문제는 컴포넌트 다양성이 커질수록 심해집니다. 모든 shadcn 컴포넌트는 프로젝트가 어떤 커스터마이징을 했느냐에 따라 조금씩 달라요. 정확한 소스를 보지 않고서는 어떤 변형을 구현했는지 모델이 알 수 없어요. 컴포넌트를 컨텍스트에 붙여넣어도 모델은 TypeScript 타입 정의를 파싱하고 사용 가능한 props를 추론해야 하는데, 이 과정에서 자신 있게 틀리기 쉽습니다.
+The issue scales with component diversity. Every shadcn component is a slightly different version depending on what customizations a project has applied. The model cannot know which variants you've implemented without seeing your exact source. Even when you paste the component into context, the model must parse TypeScript type definitions and infer available props—a process prone to confident error.
 
-## 근본 원인: 사람을 위해 설계된 디자인 시스템
+## The Root Cause: Design Systems Built for Humans
 
-Tailwind와 shadcn/ui 모두 핵심 가정 위에서 설계되었어요. 사람 개발자가 도구와 디자인 의도 사이의 간극을 메울 거라는 가정입니다. 사람은 관례를 기억하고, 불확실할 때 문서를 보고, 코드 리뷰로 일관성을 강제합니다.
+Both Tailwind and shadcn/ui were designed around a critical assumption: human developers will bridge the gap between tooling and design intent. Humans remember conventions, consult documentation when uncertain, and enforce consistency through code review.
 
-AI 모델은 이 중 어느 것도 믿을 수 있게 하지 못해요. 훈련 데이터에서 패턴을 매칭할 뿐입니다. 천 개의 버튼에서 `bg-blue-600`을 본 모델은 `bg-blue-600`을 생성합니다. 통계적 기본값을 재정의하는 구조화되고 쿼리 가능한 진실 공급원에 접근하지 않는 한요.
+AI models do none of these things reliably. They pattern-match against training data. A model that has seen `bg-blue-600` on a thousand buttons will generate `bg-blue-600`—unless it has access to a structured, queryable source of truth that overrides the statistical default.
 
-## FramingUI가 이를 해결하는 방법
+## How FramingUI Solves This
 
-FramingUI의 MCP 서버는 AI 모델에게 생성 시점에 디자인 시스템에 대한 직접적이고 프로그래밍적인 접근을 제공해요.
+FramingUI's MCP server gives AI models direct, programmatic access to your design system at generation time.
 
-Claude Code에 FramingUI MCP 서버가 활성화되면, 사용 가능한 테마를 쿼리하고, 라이선스된 컴포넌트를 나열하고, 실제 토큰 매핑이 포함된 컴포넌트 변형을 미리보고, 코드 생성 전에 스크린 정의를 검증할 수 있어요. 모델이 추측하는 게 아니라 구조화된 카탈로그를 읽는 거예요.
+When Claude Code has the FramingUI MCP server active, it can query the available themes, list licensed components, preview component variants with their actual token mappings, and validate screen definitions before generating code. The model isn't guessing—it's reading a structured catalog.
 
-Claude Code용 MCP 설정은 이렇습니다:
+The MCP configuration for Claude Code looks like this:
 
 ```json
 {
@@ -61,16 +61,16 @@ Claude Code용 MCP 설정은 이렇습니다:
 }
 ```
 
-`.mcp.json`의 이 항목 하나가 Claude에게 16개 디자인 시스템 도구 접근을 줍니다. 어떤 버튼 변형이 있는지 물으면 확정적인 목록을 받아요. 특정 컴포넌트가 사용하는 CSS 변수를 확인할 수 있어요. 컴포넌트 코드 한 줄 쓰기 전에 스크린 정의가 실제 컴포넌트의 실제 props를 참조하는지 검증할 수 있습니다.
+This single entry in `.mcp.json` gives Claude access to 16 design system tools. It can ask which button variants are available and receive a definitive list. It can check what CSS variables a specific component uses. It can validate that a screen definition references real components with real props before writing a single line of component code.
 
-토큰 자체는 CSS 커스텀 속성이에요. `var(--foreground-accent)`, `var(--background-page)`, `var(--foreground-primary)` 같은 형태입니다. 모델이 primary 버튼을 생성할 때 하드코딩된 색상이 아니라 의미론적 변수 이름을 출력해요. 테마가 바뀌면 변수가 자동으로 새 값으로 해석됩니다. 코드베이스 전체를 검색하고 바꿀 필요가 없어요.
+The tokens themselves are CSS custom properties—`var(--foreground-accent)`, `var(--background-page)`, `var(--foreground-primary)`. When a model generates a primary button, it outputs the semantic variable name rather than a hardcoded color. If your theme changes, the variable resolves to a new value automatically. No search-and-replace across the codebase.
 
-## 실제로 어떻게 다른가
+## What This Looks Like in Practice
 
-실제 출력 품질 차이가 즉시 드러납니다. Tailwind에 디자인 시스템 컨텍스트 없이 primary 버튼을 생성하는 건 추측이에요. 모델이 그럴듯한 유틸리티 클래스를 골라서 프로젝트 관례와 맞기를 바라는 거죠.
+The practical difference shows up immediately in generated output quality. With Tailwind and no design system context, a primary button generation is a guess. The model picks plausible utility classes and hopes they match your project's conventions.
 
-FramingUI MCP가 활성화된 상태에서 모델은 사용 가능한 컴포넌트를 쿼리하고, 변형 정의와 토큰 매핑을 받고, 실제 디자인 시스템을 참조하는 코드를 생성합니다. 잘못된 색상 추측이나 부정확한 패딩으로 인해 버튼이 이상하게 보이는 일이 없어요. 모델이 카탈로그의 값을 사용했거든요.
+With FramingUI MCP active, the model queries available components, receives the component's variant definitions and token mappings, and generates code that references your actual design system. A button that looks wrong due to a bad color guess or incorrect padding doesn't happen—the model used the values from the catalog.
 
-AI 코드 생성이 확률적 방식에서 결정론적 방식으로 이동합니다. 모델은 여전히 결정을 내립니다. 레이아웃 선택, 컴포넌트 조합, 인터랙션 패턴 같은 것들이요. 하지만 디자인 시스템 값 자체는 훈련 데이터 보간이 아니라 신뢰할 수 있는 소스에서 나옵니다.
+This shifts AI code generation from probabilistic to deterministic. The model still makes decisions—layout choices, component composition, interaction patterns—but the design system values themselves come from a reliable source rather than training data interpolation.
 
-기존 UI 라이브러리는 사람이 주도하는 개발에는 훌륭한 도구예요. AI가 UI 코드의 상당 부분을 작성하는 세상을 위해 설계된 게 아닐 뿐입니다. FramingUI는 그 세상을 위해 설계되었습니다.
+Traditional UI libraries are excellent tools for human-driven development. They weren't designed for a world where AI writes a substantial portion of UI code. FramingUI was.

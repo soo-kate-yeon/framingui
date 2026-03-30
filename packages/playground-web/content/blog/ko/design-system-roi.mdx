@@ -1,6 +1,6 @@
 ---
-title: "3인 팀에서 디자인 시스템이 실제로 비용을 줄이는 방식"
-description: "디자인 시스템을 안 만들었을 때의 비용이 어디서 발생하는지, 3~5인 팀에게 현실적인 최소 투자 경로는 무엇인지 정리했습니다."
+title: "How Design Systems Pay Off for Teams of 2–5"
+description: "A realistic look at the time cost of skipping a design system, and a practical path to one that pays off fast for teams of 2–5 people."
 date: "2026-03-08"
 author:
   name: "FramingUI Team"
@@ -12,76 +12,76 @@ coverImage: ""
 published: true
 ---
 
-# 작은 팀에서 디자인 시스템이 실제로 돈이 되는 이유
+# The ROI of Design Systems for Small Teams
 
-소규모 팀은 디자인 시스템을 전담 플랫폼 팀이 있는 대기업의 전유물이라고 생각하는 경향이 있어요. 이 가정이 꽤 비쌉니다. 진짜 질문은 디자인 시스템을 만들 여유가 있냐가 아니라, 없어서 지금 얼마를 낭비하고 있느냐예요.
+Small teams assume design systems are for companies with dedicated platform teams. That assumption is expensive. The real question is not whether you can afford to build one—it is how much you are paying by not having one.
 
-이 글에서는 그 비용이 어디서 발생하는지, 3~5인 팀에게 현실적인 최소 투자가 뭔지 살펴봅니다.
+This post breaks down where that cost comes from, and what a realistic minimum investment looks like for a team of three to five people.
 
-## 디자인 시스템 없이 시간이 어디로 사라지는가
+## Where Time Actually Goes Without a Design System
 
-낭비는 눈에 잘 띄지 않아요. 한 번에 한 시간씩 날아가는 게 아니라 여기저기서 조금씩 새거든요.
+The waste is not obvious because it is distributed. No single incident costs an hour. But the pattern across a week adds up.
 
-디자이너가 기존과 약간 다른 버튼 변형으로 목업을 만들었어요. 어느 게 표준인지 확실하지 않아서 팀이 Figma 댓글에서 시간을 씁니다. 개발자는 토큰 파일 대신 인스펙터를 확인하다가 기존에 쓰던 `#4338CA` 대신 `#4F46E5`로 구현해요. 코드 리뷰에서 오류가 발견되고, 수정에 또 시간이 들죠.
+A designer creates mockups with a button variant slightly different from the one used elsewhere. Nobody is certain which is canonical, so the team spends time in Figma comments deciding. A developer implements with `#4F46E5` instead of the `#4338CA` used across the rest of the codebase, because they checked the inspector instead of a token file. The error surfaces in code review. The fix takes half an hour.
 
-2주 뒤, 제품 결정으로 버튼 색상을 전체적으로 바꿔야 합니다. 개발자가 12개 파일을 뒤지고 업데이트했는데, 3곳을 빠뜨렸어요. 버그 리포트가 들어옵니다.
+Two weeks later, a product decision requires changing the primary button color across the product. The developer searches twelve files, updates them, and still misses three. A bug report comes in.
 
-계약직이 합류하면 "spacing scale이 어떻게 되나요?", "파란색은 어떤 걸 쓰나요?" 같은 질문이 쏟아집니다. 정답을 아는 사람이 없어서, 새 사람은 기존 코드를 역분석하는 데 몇 시간을 씁니다. 그래도 결국 근사치일 뿐이에요.
+When a contractor joins, the first questions are about the spacing scale and which shade of blue to use. Nobody has a definitive answer, so the new person reverse-engineers from existing code. That takes several hours and still produces an approximation.
 
-이 사건들 하나하나는 치명적으로 보이지 않아요. 그런데 3인 팀에서 1년 동안 쌓이면, 토큰 파일 하나와 문서화된 컴포넌트 몇 개로 없앨 수 있었던 문제에 엔지니어링과 디자인 시간의 상당 부분을 쓰는 거예요.
+None of these individual incidents look catastrophic. Together, across a three-person team for a year, they represent a meaningful fraction of engineering and design time spent on problems that a token file and a few documented components would eliminate.
 
-## 최소한의 디자인 시스템에 드는 비용
+## What a Minimum Viable Design System Costs
 
-디자인 시스템이라면 Figma 라이브러리, Storybook, 비주얼 회귀 테스트, 문서 사이트가 필요하다는 오해가 있어요. 작은 팀에게는 처음에 그 중 어느 것도 필요하지 않습니다. 기반은 훨씬 단순해요.
+There is a common misconception that a design system means Figma libraries, Storybook, visual regression tests, and a documentation site. For a small team, none of that is necessary at the start. The foundation is simpler.
 
-**토큰 정의** (약 3시간): 시맨틱 별칭이 있는 색상 팔레트, 간격 스케일, 타입 크기. 결과물은 다른 모든 것이 임포트하는 TypeScript 파일 하나예요.
+**Define tokens** (approximately three hours): color palette with semantic aliases, a spacing scale, and type sizes. The output is a TypeScript file that everything else imports from.
 
-**핵심 컴포넌트 5개** (약 5시간): Button, Input, Card, Modal, Select. 새로 만드는 게 아니라 이미 있는 컴포넌트를 토큰 파일을 쓰도록 리팩터링하는 거예요.
+**Build five core components** (approximately five hours): Button, Input, Card, Modal, and a Select. Not from scratch—refactor the ones you already have to use the token file.
 
-**한 페이지짜리 README** (약 2시간): 토큰 사용법, 컴포넌트 목록, 새 컴포넌트를 추가할 때와 기존 것을 변형할 때의 기준.
+**Write a one-page README** (approximately two hours): how to use tokens, the component list, and the rule about when to add a new component versus adapting an existing one.
 
-총 약 10시간의 집중 작업이에요. FramingUI를 시작점으로 쓰면 이게 6시간 정도로 줄어들어요. 토큰 구조, shadcn/ui 기반 컴포넌트, MCP 통합이 이미 갖춰져 있으니까요.
+Total: roughly ten hours of focused work. Using FramingUI as a starting point—which provides the token structure, a component base built on shadcn/ui, and MCP integration—compresses this to closer to six hours.
 
 ```bash
 pnpm add @framingui/ui @framingui/core @framingui/tokens tailwindcss-animate
 ```
 
-토큰은 CSS 커스텀 프로퍼티로 제공됩니다. 컴포넌트에서 직접 사용하면 돼요.
+Tokens ship as CSS custom properties. Use them directly in your components:
 
 ```css
-/* 하드코딩 대신 토큰을 사용 */
+/* your component uses the token, not a hardcoded value */
 background: var(--foreground-accent);
 padding: var(--spacing-4);
 ```
 
-이게 기반 전부예요. 배포 파이프라인도, 문서 인프라도 필요 없습니다.
+That is the entire foundation. No deployment pipeline. No documentation infrastructure.
 
-## 투자 회수 타임라인
+## The Payoff Timeline
 
-설정 후 2~3주는 손익분기점이에요. 10시간을 투자했고, 색상 논쟁과 코드 리뷰 시간 감소로 회수하는 중입니다.
+The first two to three weeks after setup are breakeven. You spent ten hours building, and you are recovering that time through fewer color debates and faster code reviews.
 
-2개월차부터는 복리 효과가 보이기 시작해요. 디자인 결정이 토큰 수준에서 이미 내려져 있으니 새 기능 구현 시간이 줄어들고, 브랜드 색상이 바뀌면 값 하나 수정으로 모든 컴포넌트가 반영됩니다.
+By month two, you start seeing the compounding effects. New features take less design-to-code time because the design decisions are already made at the token level. When a brand color changes, you update one value and every component reflects it.
 
-AI 개발 케이스는 따로 언급할 가치가 있어요. 디자인 토큰 없이 Claude Code나 Cursor를 쓰면, AI는 매번 그럴듯하지만 틀린 값을 생성합니다. AI가 읽을 수 있는 토큰 파일과 MCP 통합이 있으면, AI가 실제 디자인 시스템을 참조하는 코드를 만들어냅니다. FramingUI MCP 서버는 한 번 설정하면 끝이에요.
+The AI development case is worth calling out separately. When you use Claude Code, Cursor, or another AI coding tool without design tokens, the AI generates plausible-but-wrong values every time. With token files the AI can read, plus an MCP integration, the AI generates code that references your actual design system. Set up FramingUI's MCP server once:
 
 ```bash
 npx -y @framingui/mcp-server@latest init
 ```
 
-이후 AI가 생성한 컴포넌트는 개발자가 직접 작성할 때와 동일한 토큰을 참조합니다. 재생성하고, 색상을 확인하고, 수정하는 루프가 눈에 띄게 짧아져요.
+After that, AI-generated components reference the same tokens a human developer would use. The manual correction loop—where you regenerate, check the colors, and fix them—shortens significantly.
 
-## 만들지 말아야 할 것
+## What Not to Build
 
-10시간 버전이 대부분의 소규모 팀에게 적절한 범위예요. 지금 당장 투자할 가치가 없는 것들이 있어요.
+The ten-hour version is the right scope for most small teams. Things that are not worth the investment yet:
 
-Storybook은 규모가 커지면 가치 있지만, 8~10명이 되기 전에는 유지보수 부담만 더해집니다. 비주얼 회귀 테스트는 아직 제품-시장 적합성을 찾는 단계라면 시기상조예요. 5인 팀에서 문서 사이트는 저장소의 마크다운 파일로 충분한 역할을 합니다. Figma 자동 동기화는 개발자들이 토큰 파일을 직접 읽는다면 필수가 아니에요.
+Storybook is valuable at scale but adds maintenance overhead before you reach eight or ten engineers. Visual regression testing is premature for a product that is still finding product-market fit. A documentation site is overkill when a markdown file in the repository serves the same function for a team of five. Figma auto-sync is useful but not necessary if developers are reading token files directly.
 
-팀이 성장하면 순서대로 추가하세요. 일찍 만든다고 디자인 시스템이 더 효과적이 되는 게 아니라, 유지비만 더 비싸집니다.
+Add these as the team grows. Building them early does not make your design system more effective—it makes it more expensive to maintain.
 
-## 결국 어떤 결정인가
+## The Decision Question
 
-디자인 시스템은 디자인 인프라가 아니에요. 타입 안전한 API 클라이언트나 공유 에러 처리 모듈과 같은 범주의 엔지니어링 인프라입니다. 10개 파일을 건드리는 기능을 테스트 없이 출시하지 않는 것처럼, 디자인 시스템은 UI 일관성을 위한 동등한 안전망이에요.
+A design system is not design infrastructure. It is engineering infrastructure, in the same category as a type-safe API client or a shared error handling module. You would not ship a feature that touches ten files without tests. The design system is the equivalent guardrail for UI consistency.
 
-6개월 후에도 살아있을 제품을 만드는 팀이라면, 투자 시간은 스프린트 절반 정도예요. 회수는 다음 스프린트부터 시작되고 멈추지 않습니다.
+For a team building a product that will be around in six months, the time investment is roughly half a sprint. The time recovered starts accumulating in the following sprint and does not stop.
 
-실용적인 시작점을 제안하면: 코드베이스를 열고, 주요 색상으로 쓰인 서로 다른 hex 값의 수를 세어보고, 버튼 변형의 수를 세어보세요. 둘 중 하나라도 2를 넘는다면, 디자인 시스템 문제가 이미 존재하는 겁니다. 토큰 파일이 그 문제를 해결하는 첫 번째 단계예요.
+The practical starting point: open your codebase, count the number of distinct hex values used for your primary color, and count the number of button variants. If either number is higher than two, you already have a design system problem. The token file is the first step toward fixing it.

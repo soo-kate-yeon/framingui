@@ -1,6 +1,6 @@
 ---
-title: "Tailwind만으론 부족한 이유를 토큰으로 채우기"
-description: "Tailwind만으로는 일관된 디자인 시스템에 충분하지 않은 이유와 design tokens이 Tailwind의 속도를 잃지 않고 간격을 메우는 방법을 설명합니다."
+title: "Extending Tailwind with Design Tokens for Consistency"
+description: "Why Tailwind alone isn't enough for consistent design systems, and how design tokens fill the gap without losing Tailwind's speed."
 date: "2026-03-08"
 author:
   name: "FramingUI Team"
@@ -13,41 +13,41 @@ coverImage: ""
 published: true
 ---
 
-Tailwind 프로젝트를 6개월 정도 운영하다 보면 대부분의 코드베이스에서 비슷한 증상이 나타나요. 파란색 계열 클래스가 스무 가지 넘게 섞여 있고, 버튼 패딩은 파일마다 제각각이고, 간격 값은 레이아웃마다 달라져 있죠. Tailwind가 문제가 아니에요. 결정의 부재가 문제입니다.
+Six months into a Tailwind project, most codebases have drifted: 20-plus shades of blue, buttons with four different padding values, and spacing that differs between every layout section. Tailwind didn't cause this. The absence of decisions did.
 
-Tailwind는 유틸리티 툴킷이고, 디자인 시스템은 결정의 집합이에요. 이 둘은 다른 개념이거든요. Tailwind 없이 디자인 시스템을 운영할 수 있고, 디자인 시스템 없이 Tailwind를 쓸 수도 있습니다. 하지만 후자의 경우 시간이 갈수록 비일관성 부채가 쌓여요. 이 글에서는 Tailwind의 속도를 유지하면서 디자인 토큰으로 구조를 더하는 방법을 알려드릴게요.
+Tailwind is a utility toolkit. A design system is a set of decisions. These are different things. You can use Tailwind without a design system, but you'll accumulate inconsistency debt that compounds over time. This post shows how design tokens layer structure on top of Tailwind without giving up its speed.
 
-## Tailwind만으로는 왜 부족할까요
+## Why Tailwind Alone Isn't Enough
 
-Tailwind는 색상마다 22가지 shade를 제공해요. 이건 기능이지, 제약이 아니에요. 문제는 명확한 규칙이 없으면 같은 유형의 컴포넌트를 만들 때도 팀원마다 다른 shade를 선택한다는 거예요.
+Tailwind ships with 22 shades of every color. That's a feature, not a constraint. The problem is that without an explicit rule, different developers will reach for different shades when building the same type of component.
 
-개발자 A는 primary 버튼에 `bg-blue-600`을 쓰고, 개발자 B는 다른 화면에서 `bg-blue-500`을 써요. 각자의 화면에서는 멀쩡해 보이지만, 나란히 놓으면 설계된 제품이 아니라 조립된 느낌을 주죠.
+Developer A writes `bg-blue-600` for the primary button. Developer B, working on a different screen, writes `bg-blue-500`. Both look fine in isolation. Side-by-side, they produce a product that feels hand-assembled rather than designed.
 
-간격도 마찬가지예요. `px-4`, `px-5`, `px-6` 모두 유효한 Tailwind 클래스예요. 어떤 걸 어떤 상황에 쓸지 규칙이 없으면 같은 앱의 버튼들이 제각각의 패딩을 갖게 돼요.
+The same fragmentation happens with spacing. `px-4`, `px-5`, and `px-6` are all valid Tailwind classes. Without a rule distinguishing them, you'll find all three on buttons across the same app.
 
-다크 모드가 추가되면 문제가 더 심해져요. `bg-blue-600`을 라이트 모드에 써뒀다면, 모든 컴포넌트마다 다크 모드 equivalent를 수동으로 결정해야 하거든요. 이 둘을 연결해주는 시스템이 없으니까요.
+Dark mode compounds the problem. When you've written `bg-blue-600` for light mode, you have to manually decide what the dark mode equivalent should be for every single component. There's no system connecting them.
 
-## 디자인 토큰이 실제로 해결하는 것
+## What Design Tokens Actually Solve
 
-디자인 토큰은 이름 붙은 결정이에요. `--color-brand-primary`가 특정 값에 매핑되는 거죠. 원시 클래스 대신 토큰을 참조하면 의도가 명확해져요.
+A design token is a named decision: `--color-brand-primary` maps to a specific value. When you reference the token instead of the raw class, you make the intent explicit.
 
 ```css
-/* 이전: 이 파란색이 뭘 의미하지? */
+/* Before: what is this blue? */
 bg-blue-600
 
-/* 이후: 이건 primary 브랜드 액션 컬러다 */
+/* After: this is the primary brand action color */
 bg-[var(--color-brand-primary)]
 ```
 
-브랜드 색상을 바꿔야 한다면 값 하나만 업데이트하면 돼요. 그 토큰을 참조하는 모든 컴포넌트가 자동으로 바뀌죠. grep-and-replace도 없고, 놓친 인스턴스도 없어요.
+When you need to change the brand color, you update one value. Every component using that token updates automatically. No grep-and-replace, no missed instances.
 
-시맨틱 네이밍은 의도도 전달해요. 개발자가 `bg-surface-elevated`를 보면 이게 모달이나 팝오버용이라는 걸 알 수 있어요. `bg-gray-50`을 보면 추측해야 하지만요.
+The semantic naming also communicates intent. When a developer reads `bg-surface-elevated`, they understand this is for modals and popovers. When they read `bg-gray-50`, they have to guess.
 
-## 두 레이어 아키텍처
+## The Two-Layer Architecture
 
-가장 깔끔한 패턴은 Tailwind의 유틸리티 레이어 위에 토큰 레이어를 얹는 거예요.
+The cleanest pattern combines Tailwind's utility layer with a token layer above it.
 
-**레이어 1: 베이스 팔레트**
+**Layer 1: Base palette**
 
 ```css
 :root {
@@ -58,7 +58,7 @@ bg-[var(--color-brand-primary)]
 }
 ```
 
-**레이어 2: 시맨틱 별칭**
+**Layer 2: Semantic aliases**
 
 ```css
 :root {
@@ -74,7 +74,7 @@ bg-[var(--color-brand-primary)]
 }
 ```
 
-**레이어 3: Tailwind config**
+**Layer 3: Tailwind config**
 
 ```javascript
 // tailwind.config.js
@@ -83,8 +83,8 @@ export default {
     extend: {
       colors: {
         brand: {
-          primary:      'var(--color-brand-primary)',
-          primaryHover: 'var(--color-brand-primary-hover)',
+          primary:       'var(--color-brand-primary)',
+          primaryHover:  'var(--color-brand-primary-hover)',
         },
         surface: {
           base: 'var(--color-surface-base)',
@@ -98,13 +98,13 @@ export default {
 }
 ```
 
-이제 `bg-brand-primary`를 쓰면 Tailwind 클래스 경험을 유지하면서 아래에 토큰 시스템이 작동하는 거예요.
+Now you write `bg-brand-primary` and get the Tailwind class experience with the token system underneath.
 
-## 간격과 타이포그래피
+## Spacing and Typography
 
-색상부터 시작하는 개발자가 많지만, 같은 원리가 간격과 타이포그래피에도 적용돼요.
+Color is where most developers start, but the same principle applies to spacing and typography.
 
-`px-4`와 `px-5` 중에 "더 나아 보이는 것"을 고르는 대신, 스케일을 정의하세요.
+Instead of choosing between `px-4` and `px-5` based on what looks right, define a spacing scale:
 
 ```css
 :root {
@@ -114,7 +114,7 @@ export default {
 }
 ```
 
-이걸 Tailwind에 매핑해요.
+Map these into Tailwind:
 
 ```javascript
 theme: {
@@ -128,42 +128,44 @@ theme: {
 }
 ```
 
-이제 컴포넌트는 `px-4` 대신 `px-md`를 써요. 6개월 뒤에 코드를 보는 사람도 이게 medium 패딩이라는 결정임을 알 수 있죠. 임의적인 값이 아니라요.
+Your component now uses `px-md` instead of `px-4`. When someone reads it six months later, the name communicates a decision. It's the medium padding, not an arbitrary value.
 
-## 다크 모드가 단순해져요
+## Dark Mode Becomes Simple
 
-시맨틱 토큰을 쓰면 다크 모드는 CSS 변수 교체가 되지, 클래스 이름 감사가 아니에요.
+With semantic tokens, dark mode is a CSS variable swap rather than a class-name audit.
 
 ```css
 :root {
-  --color-surface-base:     #FFFFFF;
+  --color-surface-base:    #FFFFFF;
   --color-surface-elevated: #F9FAFB;
-  --color-text-primary:     #111827;
-  --color-text-secondary:   #6B7280;
+  --color-text-primary:    #111827;
+  --color-text-secondary:  #6B7280;
 }
 
 [data-theme="dark"] {
-  --color-surface-base:     #111827;
+  --color-surface-base:    #111827;
   --color-surface-elevated: #1F2937;
-  --color-text-primary:     #F9FAFB;
-  --color-text-secondary:   #9CA3AF;
+  --color-text-primary:    #F9FAFB;
+  --color-text-secondary:  #9CA3AF;
 }
 ```
 
-`bg-surface-base text-text-primary`를 쓰는 컴포넌트는 테마 속성이 바뀌면 자동으로 적응해요. JSX 전체에 `dark:` 접두사를 뿌릴 필요가 없죠.
+A component using `bg-surface-base text-text-primary` adapts automatically when the theme attribute changes. No `dark:` prefixes scattered through JSX.
 
-## 전체 재작성 없이 마이그레이션하기
+## Migrating Without a Rewrite
 
-한꺼번에 다 리팩터링할 필요는 없어요. Tailwind의 `extend` 키 덕분에 기존 클래스는 그대로 작동하면서 토큰 기반 클래스를 나란히 도입할 수 있거든요.
+You don't have to refactor everything at once. Tailwind's `extend` key means your existing classes still work while you introduce token-powered ones alongside them.
 
-코드베이스에서 가장 많이 쓰이는 색상을 찾는 것부터 시작하세요. 거기에 시맨틱 토큰을 정의하고, Tailwind config에 새 클래스 이름을 추가해요. 그 시점부터 새 컴포넌트에는 시맨틱 클래스를 써요.
+Start by identifying your most-used color in the codebase. Define a semantic token for it. Update Tailwind's config to add the new class name. From that point forward, use the semantic class in new components.
 
-다른 이유로 기존 파일을 수정할 때, 그 파일의 색상 클래스도 마이그레이션하면 돼요. 몇 달에 걸쳐 코드베이스가 자연스럽게 수렴해요. 별도의 리팩터링 스프린트가 필요 없어요.
+When you touch an existing file for another reason, migrate its color classes. Over a few months, the codebase converges naturally. No dedicated refactor sprint required.
 
-## AI 도구와 더 잘 맞아요
+## AI Tools Work Better with Tokens
 
-Claude Code나 Cursor 같은 AI 도구가 UI 컴포넌트를 생성할 때, 일반적인 Tailwind 클래스를 패턴 매칭해요. 컨텍스트가 없으면 학습 데이터에서 흔한 `bg-blue-600`을 선택하죠. 당신의 브랜드 색상이라서가 아니라요.
+When AI tools like Claude Code or Cursor generate UI components, they pattern-match against common Tailwind classes. Without context, they'll pick `bg-blue-600` because it's common across training data—not because it's your brand color.
 
-디자인 시스템이 CSS 변수로 표현되고 Tailwind에 매핑되면, AI 도구에 명확한 지침을 줄 수 있어요. 원시 색상 클래스 말고 `bg-brand-primary`를 쓰라고요. 토큰 이름이 hex 값으로는 전달할 수 없는 의도를 담고 있거든요. 생성된 컴포넌트가 처음부터 시스템에 더 가까이 착지해요.
+When your design system is expressed as CSS variables and mapped into Tailwind, you can give AI tools explicit guidance: use `bg-brand-primary`, not raw color classes. The token name communicates intent that a hex value cannot. Generated components land closer to your system on the first attempt.
 
-Tailwind의 속도는 생각과 코드 사이의 마찰을 없애는 데서 나와요. 디자인 토큰은 엔트로피가 쌓이는 걸 막는 구조를 더해줘요. 이 둘은 경쟁하는 게 아니라 서로를 보완하는 관계예요.
+FramingUI's MCP server surfaces your design tokens directly to AI tools, so component generation happens within your system's constraints from the start.
+
+Tailwind's speed comes from removing friction between thought and code. Design tokens add the structure that prevents entropy from accumulating. The two are complementary, not competing.

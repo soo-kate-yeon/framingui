@@ -1,6 +1,6 @@
 ---
-title: "AI 일관성을 무너뜨리는 디자인 시스템 실수 5가지"
-description: "AI 도구가 일관성 없는 UI를 생성하게 만드는 구조적 원인과, 각각을 고치는 방법을 정리했습니다."
+title: "5 Design System Patterns That Break AI Generation"
+description: "Common design system patterns that cause AI tools to generate inconsistent UI, and the structural fixes that prevent it."
 date: "2026-03-09"
 author:
   name: "FramingUI Team"
@@ -13,92 +13,86 @@ coverImage: ""
 published: true
 ---
 
-# AI 코드 생성을 망치는 디자인 시스템 실수 5가지
+# 5 Design System Mistakes That Break AI Code Generation
 
-디자인 시스템이 있어요. 문서화된 컴포넌트, 스타일 가이드, 재사용 가능한 프리미티브. 그런데 Claude나 Cursor에게 새 기능을 만들어달라고 하면, 색상이 틀리고 간격이 제각각이고 border radius는 다른 제품에서 온 것 같습니다.
+You have a design system. Documented components, style guides, reusable primitives. Then you ask Claude or Cursor to generate a new feature, and the output uses the wrong blue, inconsistent spacing, and border radii that belong to a different product entirely.
 
-이건 AI 능력의 문제가 아니에요. AI 코드 생성기는 그럴듯한 UI를 만드는 데 능숙해요. 문제는 "그럴듯함"과 "우리 시스템과 일치함"이 다른 개념이라는 거예요. 디자인 시스템이 기계가 읽을 수 있는 형태로 구조화되어 있지 않으면, AI는 공개 저장소에서 학습한 패턴을 기본으로 씁니다. 그것들은 당신 제품과 맞지 않아요.
+This is not an AI capability problem. AI code generators are good at producing plausible UI. The issue is that "plausible" and "consistent with your system" are different things. If your design system is not structured for machine consumption, AI defaults to patterns learned from public repositories—and none of those match your product.
 
-이 문제를 일으키는 구조적 실수 다섯 가지, 그리고 각각의 해결책을 정리했습니다.
+Here are five structural mistakes that cause this, and how to fix each one.
 
-## 실수 1: 토큰이 Figma에만 존재한다
+## Mistake 1: Tokens Only Exist in Figma
 
-디자이너가 색상, 간격, 타이포그래피를 Figma에서 관리해요. 개발자들은 인스펙터를 확인하고 값을 하드코딩합니다.
+Your designer maintains colors, spacing, and type in Figma. Developers check the inspector and hardcode values:
 
 ```tsx
 <button style={{ padding: '12px 24px', background: '#3b82f6', borderRadius: '8px' }}>
-  제출
+  Submit
 </button>
 ```
 
-AI가 코드를 생성할 때 Figma에 접근할 수 없어요. 학습 데이터 기반으로 그럴듯한 값을 만들어냅니다.
+When AI generates code, it has no access to Figma. It produces what seems reasonable based on training data:
 
 ```tsx
-<button className="px-6 py-3 bg-blue-500 rounded-lg">제출</button>
+<button className="px-6 py-3 bg-blue-500 rounded-lg">Submit</button>
 ```
 
-비슷하지만 틀렸어요. `blue-500`은 우리 주요 색상이 아니고, `px-6`는 우리 간격 스케일이 아닙니다.
+Close, but wrong. `blue-500` is not your primary color. `px-6` is not your spacing scale.
 
-**해결책:** AI가 임포트할 수 있는 TypeScript 파일로 토큰을 내보내세요.
+**The fix:** Export tokens to a TypeScript file the AI can import:
 
 ```typescript
 // src/design-system/tokens.ts
 export const tokens = {
   color: {
-    primary: {
-      solid: 'var(--foreground-accent)',
-      hover: 'var(--color-primary-700)',
-    },
-    neutral: {
-      text:  'var(--foreground-primary)',
-      muted: 'var(--foreground-secondary)',
-    },
+    primary: { solid: 'var(--foreground-accent)', hover: 'var(--color-primary-700)' },
+    neutral: { text: 'var(--foreground-primary)', muted: 'var(--foreground-secondary)' },
   },
   spacing: { sm: '0.5rem', md: '1rem', lg: '1.5rem' },
-  radius:  { md: '0.375rem', lg: '0.5rem' },
+  radius: { md: '0.375rem', lg: '0.5rem' },
 }
 ```
 
-이제 AI가 추측 대신 실제 값을 참조합니다. `CLAUDE.md`나 AI 설정에 이 파일 경로를 명시해서 도구가 어디를 봐야 할지 알게 하세요.
+Now the AI can import and reference real values instead of guessing. Point to this file in your `CLAUDE.md` or AI config so the tool knows where to look.
 
-## 실수 2: 컴포넌트 이름이 일관되지 않다
+## Mistake 2: Inconsistent Component Naming
 
-코드베이스에 `PrimaryButton`, `ButtonPrimary`, `MainButton`이 모두 존재해요. 사람은 이 셋이 같은 역할을 한다는 걸 추론할 수 있지만, AI는 그렇지 않아요.
+Your codebase has `PrimaryButton`, `ButtonPrimary`, and `MainButton`—all doing roughly the same thing. Humans infer the equivalence. AI cannot.
 
-"주요 액션 버튼"을 요청하면 AI가 컴포넌트 대신 일반 `<button>`을 생성할 수 있어요. 셋 중 어느 이름이 표준인지 모르니까요.
+When you ask for "a primary action button," the AI might generate a generic `<button>` instead of using your component, because it does not recognize which of the three names is canonical.
 
-**해결책:** 하나의 이름을 정하고 강제하세요.
+**The fix:** Pick one name and enforce it:
 
 ```typescript
-// 하나의 컴포넌트, 하나의 이름, variant로 구분
+// One component, one name, variants via props
 export const Button = ({ variant }: { variant: 'primary' | 'secondary' | 'ghost' }) => {
   /* ... */
 }
 ```
 
-README에 이렇게 명시하세요. "`<Button variant="primary">`를 쓰세요. `PrimaryButton`이나 `MainButton`은 사용하지 않습니다." AI는 이 내용을 읽고, 이후 버튼이 필요하면 `<Button variant="primary">`를 일관되게 생성합니다.
+Document this in your README: "Use `<Button variant="primary">`, not `PrimaryButton` or `MainButton`." AI reads this. When it needs a button, it generates `<Button variant="primary">` consistently.
 
-## 실수 3: 기계가 읽을 수 없는 컴포넌트 문서
+## Mistake 3: Components Without Machine-Readable Documentation
 
-Storybook은 브라우저에서 보기 좋지만, AI는 Storybook을 브라우징하지 않아요. 코드를 읽습니다.
+Storybook looks great in a browser. AI does not browse Storybook. It reads code.
 
-JSDoc이나 명시적 TypeScript 타입이 없는 컴포넌트는 AI가 API를 추측하도록 강요해요.
+A component without JSDoc or explicit TypeScript types forces the AI to guess the API:
 
 ```tsx
-// AI가 모든 prop 이름을 추측해야 함
+// AI has to guess every prop name
 export const TextField = (props) => { /* ... */ }
 ```
 
-AI가 `<TextField text="이메일" onChange={setEmail} />`을 생성합니다. 실제 API는 `label`과 `onValueChange`예요. 사용자가 버그를 신고하고, prop 이름 디버깅에 시간을 씁니다.
+The AI generates `<TextField text="Email" onChange={setEmail} />`. Your actual API is `label` and `onValueChange`. A user reports a bug. You spend time debugging a prop name.
 
-**해결책:** 타입과 사용 예시를 추가하세요.
+**The fix:** Add types and a usage example:
 
 ```tsx
 /**
- * 레이블과 유효성 검사를 지원하는 텍스트 입력 필드.
+ * Text input with label and validation support.
  *
  * @example
- * <TextField label="이메일" value={email} onValueChange={setEmail} error={errors.email} />
+ * <TextField label="Email" value={email} onValueChange={setEmail} error={errors.email} />
  */
 export const TextField = ({
   label,
@@ -113,51 +107,51 @@ export const TextField = ({
 }) => { /* ... */ }
 ```
 
-AI가 JSDoc 예시를 읽고 올바른 prop 이름을 생성합니다. 타입 시그니처가 어긋남을 잡아내죠.
+The AI reads the JSDoc example and generates the correct prop names. The type signature catches any deviation.
 
-## 실수 4: 기존 컴포넌트의 매직 넘버
+## Mistake 4: Magic Numbers in Existing Components
 
-간격 시스템은 잘 정의되어 있어요. 그런데 기존 컴포넌트들이 값을 하드코딩합니다.
+Your spacing system is well defined. But existing components hardcode values:
 
 ```tsx
 <div style={{ marginTop: '24px', paddingLeft: '16px' }}>
 ```
 
-AI는 컨텍스트에서 학습해요. 코드베이스에서 하드코딩된 값을 보면, 새 컴포넌트도 같은 패턴으로 생성합니다. 결국 `12px`, `18px`, `20px`, `24px`가 곳곳에 흩어지게 돼요. 모두 8px 그리드에 근접하지만 정확히 맞지는 않아요.
+AI learns from context. When it sees hardcoded values in your codebase, it produces the same pattern for new components. You end up with `12px`, `18px`, `20px`, and `24px` scattered throughout—all approximating your 8px grid, none matching exactly.
 
-**해결책:** 하드코딩을 시맨틱 토큰 이름으로 교체하세요.
+**The fix:** Replace hardcoded values with semantic token names:
 
 ```typescript
 export const spacing = {
-  xs: '0.25rem', // 4px — 아이콘 간격, 좁은 레이블
-  sm: '0.5rem',  // 8px — 컴팩트 리스트 항목
-  md: '1rem',    // 16px — 기본 컴포넌트 패딩
-  lg: '1.5rem',  // 24px — 섹션 간격
-  xl: '2rem',    // 32px — 페이지 레벨 여백
+  xs:  '0.25rem', // 4px — icon gap, tight labels
+  sm:  '0.5rem',  // 8px — compact list items
+  md:  '1rem',    // 16px — default component padding
+  lg:  '1.5rem',  // 24px — section spacing
+  xl:  '2rem',    // 32px — page-level margins
 }
 ```
 
-의도를 설명하는 주석과 함께면, AI는 값뿐만 아니라 언제 쓸지도 이해합니다. 새 UI 생성이 그리드 안에 머물러요.
+With comments explaining intent, AI understands not just the value but when to use it. New UI generation stays on the grid.
 
-## 실수 5: 색조로만 이름 붙인 색상 토큰
+## Mistake 5: Colors Named by Hue, Not Intent
 
-`--blue-500`이나 `gray-700` 같은 색상 정의는 AI에게 사용 컨텍스트를 전달하지 않아요. `blue-500`이 주요 액션용인지, 링크용인지, 정보 상태용인지, 차트 채움용인지 알 수 없거든요.
+Defining colors like `--blue-500` or `gray-700` gives AI no signal about usage context. Is `blue-500` for primary actions, links, info states, or chart fills?
 
-결과: AI는 파란색이 필요한 곳이면 어디든 `blue-500`을 씁니다. 주요 액션 색상이 장식 요소에 등장하고, 링크 색상이 상태 배지에 올라갑니다.
+Result: AI picks `blue-500` whenever it needs something blue, regardless of semantic meaning. Your primary action color appears in decorative elements. Your link color ends up on status badges.
 
-**해결책:** 시맨틱 역할로 토큰 이름을 정하세요.
+**The fix:** Name tokens by their semantic role:
 
 ```typescript
 export const color = {
   primary: {
-    solid: 'var(--foreground-accent)',       // 주요 액션, CTA
-    hover: 'var(--color-primary-700)',
-    text:  'var(--foreground-inverse)',  // 밝은 배경의 주요 색상
+    solid:   'var(--foreground-accent)',   // primary actions, CTAs
+    hover:   'var(--color-primary-700)',
+    text:    'var(--foreground-inverse)', // primary color on light bg
   },
   neutral: {
-    solid:  'var(--foreground-primary)',        // 기본 텍스트, 테두리
-    muted:  'var(--foreground-secondary)',      // 보조 텍스트
-    subtle: 'var(--foreground-muted)',       // 비활성, 플레이스홀더
+    solid:   'var(--foreground-primary)',     // default text, borders
+    muted:   'var(--foreground-secondary)',   // secondary text
+    subtle:  'var(--foreground-muted)',    // disabled, placeholder
   },
   feedback: {
     success: 'var(--color-success-500)',
@@ -166,53 +160,53 @@ export const color = {
 }
 ```
 
-AI가 주요 버튼 색상이 필요하면 `color.primary.solid`를 씁니다. 보조 텍스트가 필요하면 `color.neutral.muted`를. 의도가 명확하니, 추가 지침 없이도 올바른 선택을 해요.
+When AI needs a primary button color, it uses `color.primary.solid`. When it needs secondary text, `color.neutral.muted`. The intent is explicit, and the AI makes the right choice without additional instruction.
 
-## 모든 것을 잇는 구조적 해결책
+## The Structural Fix That Ties Everything Together
 
-AI는 디자인 규칙을 찾으려고 코드베이스 전체를 탐색하지 않아요. 명확한 진입점을 찾습니다. 토큰이 `styles/colors.css`, `theme/spacing.ts`, `constants/typography.js`에 흩어져 있으면 AI가 연결하지 못해요.
+AI does not explore your entire codebase to find design conventions. It looks for a clear entry point. If tokens are scattered across `styles/colors.css`, `theme/spacing.ts`, and `constants/typography.js`, the AI will not connect them.
 
-단일 임포트 지점을 만드세요.
+Create a single import point:
 
 ```
 src/
   design-system/
-    tokens.ts       ← 모든 것이 한 곳에
+    tokens.ts      ← everything in one place
     components/
-      Button.tsx    ← tokens.ts에서 임포트
+      Button.tsx   ← imports from tokens.ts
       TextField.tsx
 ```
 
-`CLAUDE.md`나 프로젝트 README에 이렇게 명시하세요.
+In your `CLAUDE.md` or project README:
 
 ```markdown
-## 디자인 시스템
+## Design System
 
-모든 토큰은 `src/design-system/tokens.ts`에 있습니다.
-모든 컴포넌트는 이 파일에서 임포트합니다.
-UI 생성 시 이 경로에서 토큰을 임포트하세요.
+All tokens are in `src/design-system/tokens.ts`.
+All components import from that file.
+When generating UI, import tokens from this path.
 ```
 
-파일 하나, 지침 하나. AI가 일관되게 따를 수 있어요.
+One file. One instruction. The AI can follow it consistently.
 
-## 수정 후 달라지는 것
+## What Changes After These Fixes
 
-수정 전:
+Before:
 
 ```tsx
-// AI가 공개 패턴에서 추측
-<button className="px-6 py-3 bg-blue-500 rounded-lg font-semibold">제출</button>
+// AI guesses from public patterns
+<button className="px-6 py-3 bg-blue-500 rounded-lg font-semibold">Submit</button>
 ```
 
-수정 후:
+After:
 
 ```tsx
-// AI가 실제 시스템을 참조
+// AI references your actual system
 import { Button } from '@/design-system/components'
 
-<Button variant="primary">제출</Button>
+<Button variant="primary">Submit</Button>
 ```
 
-AI가 즉흥을 멈추고 시스템을 따르기 시작해요. 빠른 속도로 UI를 생성하더라도 일관성이 유지됩니다. 제약이 지침이 아닌 구조에 있으니까요.
+The AI stops improvising and starts following your system. Consistency holds even when you are generating UI at high velocity, because the constraints are structural rather than instruction-dependent.
 
-위의 다섯 가지 실수는 AI 코드 생성의 볼륨이 어느 수준에 달했을 때 비로소 표면에 드러나기 때문에 놓치기 쉬워요. 그 전에 고쳐두면, AI는 디자인 시스템을 위협하는 요소가 아닌 신뢰할 수 있는 확장 수단이 됩니다.
+The five mistakes above are easy to miss because they only surface when AI code generation reaches a certain volume. Fix them before that point, and AI becomes a reliable way to extend your design system rather than a source of drift.

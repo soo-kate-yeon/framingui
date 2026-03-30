@@ -1,5 +1,5 @@
 ---
-title: "AI가 제대로 읽는 React 컴포넌트 라이브러리 만들기"
+title: "Structuring React Components for Reliable AI Generation"
 description: "Learn how to structure React components for AI code generation—clear props, semantic tokens, predictable patterns, and machine-readable documentation."
 date: "2026-03-09"
 author:
@@ -12,15 +12,15 @@ coverImage: ""
 published: true
 ---
 
-AI가 생성한 버튼은 패딩이 미묘하게 다르고, 색이 브랜드 컬러랑 비슷하지만 딱 맞지 않고, 여백은 어떤 패턴도 따르지 않아요. 문제는 프롬프트가 아니에요 — 컴포넌트 라이브러리 구조가 문제예요.
+AI coding tools generate buttons with the wrong padding, colors that are close but not quite your brand, spacing that follows no pattern. The fix isn't a better prompt—it's a better component library.
 
-대부분의 컴포넌트 라이브러리는 사람 개발자를 위해 만들어졌어요. Storybook을 열거나, 문서 링크를 따라가거나, 문맥에서 관례를 추론할 수 있는 독자를 전제하죠. AI 도구는 TypeScript 타입과 코드 구조를 읽어요. 여러분 시스템을 아는 사람에게는 당연한 것들이, 그걸 본 적 없는 모델에게는 보이지 않아요.
+Most component libraries are built for human developers. They assume readers who can open Storybook, follow documentation links, and infer conventions from context. AI tools read TypeScript types and code structure. What's obvious to a developer who knows your system is invisible to a model that hasn't seen it. Here's what to change.
 
-## 시맨틱 토큰 vs 하드코딩된 값
+## Semantic Tokens Instead of Hardcoded Values
 
-이게 가장 효과가 큰 변화예요. AI가 픽셀 값과 hex 코드가 박힌 컴포넌트를 읽으면, 그 숫자를 추출해서 대략적으로 재사용해요. 다음에 버튼을 생성할 때 `12px 24px`를 봤으니까 `14px 28px`을 쓰는 거죠. 색이 미끄러지고, 여백이 흘러가고, 생성을 반복할수록 코드베이스가 디자인 시스템에서 멀어져요.
+This is the single highest-leverage change you can make. When an AI reads a component that uses inline pixel values and hex codes, it extracts those numbers and reuses them—approximately. The next time it generates a button, it will use `14px 28px` because it saw `12px 24px` and approximated. Colors shift. Spacing drifts. Over many generations, the codebase diverges from the design system.
 
-해결책은 토큰에 이름을 주고, 그 이름을 코드에 넣는 거예요:
+The fix is to give tokens names and put those names in the code:
 
 ```typescript
 // tokens.ts
@@ -51,13 +51,13 @@ export const tokens = {
 </button>
 ```
 
-이제 AI가 토큰 이름을 읽어요. 버튼이 세로 패딩에 `tokens.spacing.md`, 가로 패딩에 `tokens.spacing.lg`를 쓴다는 걸 학습하죠. 새 버튼을 만들 때 같은 토큰 파일을 임포트하고 같은 이름을 써요. 생성된 코드가 시스템 안에 남아요.
+Now the AI reads the token names. It learns that buttons use `tokens.spacing.md` for vertical padding and `tokens.spacing.lg` for horizontal. When it generates a new button, it imports the same token file and uses the same names. The generated code stays in system.
 
-## 명시적인 TypeScript 변형(Variant)
+## Explicit TypeScript Variants
 
-열려있는 string 타입은 AI가 추측하게 만들고, 추측은 불일치를 만들어요. `variant: string` prop은 `"primary"`, `"solid"`, `"filled"`, `"blue"`, `"default"` 중 뭐든 받을 수 있어요. AI는 다른 코드베이스 패턴 기반으로 가장 그럴듯한 걸 골라요.
+Open-ended string props let AI guess, and guessing means inconsistency. A `variant: string` prop could accept `"primary"`, `"solid"`, `"filled"`, `"blue"`, or `"default"`. The AI picks whichever seems most plausible based on patterns from other codebases.
 
-리터럴 타입이 그 틈을 닫아줘요:
+String literal types close the gap:
 
 ```tsx
 type ButtonProps = {
@@ -67,22 +67,22 @@ type ButtonProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 ```
 
-이 타입 정의를 읽으면 AI는 정확히 어떤 값이 유효한지 알아요. `variant="solid"`나 `variant="outline"` 대신 `variant="primary"` 또는 `variant="ghost"`가 나오죠. 유한한 유효값을 가진 prop에는 항상 이렇게 해야 해요 — `string`을 열거형으로 표현할 수 있을 때 `string`을 쓰는 건 피해요.
+When AI reads this type definition, it knows exactly which values are valid. Generated code will use `variant="primary"` or `variant="ghost"`, not `variant="solid"` or `variant="outline"`. This applies to every prop that has a finite set of valid values—never reach for `string` when you can enumerate.
 
-## JSDoc이 기계가 읽는 문서예요
+## JSDoc as Machine-Readable Documentation
 
-Storybook은 사람이 읽는 거예요. AI 도구는 소스 코드를 읽어요. 내보내는 컴포넌트에 직접 달린 JSDoc 주석은 코드와 함께 이동하고, TypeScript를 읽는 모든 도구가 가져가죠:
+Storybook is for human readers. AI tools read source code. JSDoc comments placed directly on exported components travel with the code and get picked up by every tool that reads TypeScript:
 
 ```tsx
 /**
- * 주요 액션용 버튼.
+ * Button for primary actions.
  *
- * @param variant - 시각 스타일: `primary` (기본값), `secondary`, `ghost`
- * @param size - 크기: `sm`, `md` (기본값), `lg`
- * @param children - 버튼 레이블 텍스트
+ * @param variant - Visual style: `primary` (default), `secondary`, `ghost`
+ * @param size - Dimensions: `sm`, `md` (default), `lg`
+ * @param children - Button label text
  *
  * @example
- * <Button variant="primary" size="lg">저장</Button>
+ * <Button variant="primary" size="lg">Save Changes</Button>
  */
 export const Button = ({
   variant = 'primary',
@@ -92,55 +92,55 @@ export const Button = ({
 }: ButtonProps) => { ... };
 ```
 
-`@example` 태그가 특히 유용해요. 컴포넌트를 어떻게 사용하는지 실제 예시를 본 AI는 그 패턴을 추론하는 대신 따라가거든요.
+The `@example` tag is especially useful. When the AI has seen a working example of how to use the component, generated code follows the pattern rather than inferring it.
 
-## 설정 중심 말고 조합 중심으로
+## Composition Over Configuration
 
-`title`, `subtitle`, `footer`, `padding="large"` 같은 props는 모호해요. 콘텐츠 영역 prop이 `body`인지 `content`인지? footer는 ReactNode를 받나요 string을 받나요? 설정 prop이 많은 컴포넌트는 AI가 prop 이름과 중첩 방식을 추측해야 해요.
+Props like `title`, `subtitle`, `footer`, and `padding="large"` are ambiguous. Is the content area prop called `body` or `content`? Does footer take a ReactNode or a string? When a component accepts many configuration props, the AI has to guess prop names and nesting.
 
-서브 컴포넌트 조합 방식이 그 모호함을 없애줘요:
+Composable sub-components eliminate that ambiguity:
 
 ```tsx
-// 설정 중심 (AI에게 어려움)
+// Configuration-heavy (hard for AI)
 <Card
-  title="사용자 프로필"
-  footer={<Button>저장</Button>}
+  title="User Profile"
+  footer={<Button>Save</Button>}
   padding="large"
 />
 
-// 조합 방식 (AI에게 쉬움)
+// Compositional (easy for AI)
 <Card>
   <CardHeader>
-    <CardTitle>사용자 프로필</CardTitle>
+    <CardTitle>User Profile</CardTitle>
   </CardHeader>
   <CardContent>
-    {/* 폼 필드들 */}
+    {/* form fields */}
   </CardContent>
   <CardFooter>
-    <Button>저장</Button>
+    <Button>Save</Button>
   </CardFooter>
 </Card>
 ```
 
-조합 API는 자기 설명적이에요. 컴포넌트 트리가 시각 구조를 그대로 반영해요. 이 방식으로 만들어진 카드를 한 번 본 AI는 내용이 달라도 같은 패턴을 그대로 씁니다.
+The compositional API is self-documenting. The component tree mirrors the visual structure. AI tools that have seen one card composed this way will replicate the pattern across all cards, regardless of content.
 
-## 컴포넌트 전반에 걸친 일관된 Prop 이름
+## Consistent Prop Naming Across Components
 
-`TextInput`이 `val`을 쓰고 `NumberInput`이 `value`를 쓰면, AI는 관례 두 개를 따로 배워야 해요. `TextInput`이 `change`를 쓰고 `Checkbox`가 `onCheck`를 쓰면, 생성된 폼에 관례가 뒤섞여요.
+When `TextInput` uses `val` and `NumberInput` uses `value`, the AI has to learn two conventions. When `TextInput` uses `change` and `Checkbox` uses `onCheck`, generated forms will mix conventions randomly.
 
-관례를 하나 정하고 전체에 적용하세요:
+Pick a convention and enforce it everywhere:
 
-| 컴포넌트 유형 | 값 prop | 변경 핸들러 |
+| Component type | Value prop | Change handler |
 |---|---|---|
-| 텍스트, 숫자 입력 | `value` | `onValueChange` |
-| 체크박스, 스위치 | `checked` | `onCheckedChange` |
-| 셀렉트, 라디오 | `value` | `onValueChange` |
+| Text, Number inputs | `value` | `onValueChange` |
+| Checkboxes, Switches | `checked` | `onCheckedChange` |
+| Selects, Radio groups | `value` | `onValueChange` |
 
-모든 레이블 prop은 `text`나 `caption`이 아니라 `label`로 통일해요. 이 일관성 덕분에 컴포넌트 하나에서 학습한 AI의 멘탈 모델이 라이브러리 전체로 일반화돼요.
+All label props should be `label`, not `text`, `caption`, or `title`. The uniformity means the AI's mental model of your library generalizes from one component to all others.
 
-## 단일 진입점
+## A Single Entry Point
 
-AI 도구는 디렉토리 트리를 탐색하지 않아요. 컴포넌트를 임포트해야 할 때 경로를 알거나, 모르면 범용 컴포넌트로 넘어가거든요. 배럴 익스포트 하나가 이를 해결해요:
+AI tools don't explore directory trees. When a model needs to import a component, it either knows the import path or falls back to generic components. A single barrel export solves this:
 
 ```typescript
 // src/design-system/index.ts
@@ -151,26 +151,26 @@ export { Field } from './components/Field';
 export { tokens } from './tokens';
 ```
 
-README나 `CLAUDE.md`에 한 줄 추가하세요:
+Add one line to your README or `CLAUDE.md`:
 
 ```markdown
-모든 컴포넌트는 `@/design-system`에서 임포트하세요. 서브경로에서 직접 임포트하지 마세요.
+Import all components from `@/design-system`. Never import from subpaths.
 ```
 
-Claude, Cursor, Copilot은 프로젝트 문서를 읽어요. 이 지시가 지켜져요.
+Claude, Cursor, and Copilot read project documentation. This instruction gets followed.
 
-## 라이브러리를 AI로 테스트하기
+## Testing the Library Against AI
 
-변경 완료 후 실제 테스트를 해보세요. AI에게 이렇게 프롬프트하세요: "이메일, 비밀번호, 비밀번호 확인, 제출 버튼이 있는 회원가입 폼을 우리 디자인 시스템으로 만들어줘."
+After making these changes, run a real test. Prompt the AI with: "Create a user registration form with email, password, confirm password, and a submit button. Use our design system."
 
-출력물을 네 가지 기준으로 확인해요:
-- 올바른 경로에서 임포트하고 있나?
-- 하드코딩된 값 대신 토큰 참조를 쓰고 있나?
-- variant와 size prop 철자가 맞나?
-- 폼 입력에 `<Field>` 래퍼 패턴을 따르고 있나?
+Check the output against four criteria:
+- Does it import from the correct path?
+- Does it use token references, not hardcoded values?
+- Are variant and size props spelled correctly?
+- Does it follow the `<Field>` wrapper pattern for form inputs?
 
-기준을 못 통과하면 라이브러리 구조로 거슬러 올라가 원인을 찾아요. 가장 흔한 원인은 JSDoc이 없거나 모호한 거예요. 두 번째는 토큰 파일이 컨텍스트에서 보이지 않는 경우예요.
+If any check fails, trace the failure back to the library structure. Missing or ambiguous JSDoc is the most common cause. The token file not being visible in context is the second most common.
 
-모든 실패는 구조적 신호예요. 프롬프트가 아니라 라이브러리를 고치세요.
+Every failure is a structural signal. Fix the library, not the prompt.
 
-이렇게 만든 컴포넌트 라이브러리는 AI 도구에게 사람 개발자에게 주는 것과 같은 어포던스를 줘요: 명확한 계약, 명시적인 관례, 단일 진실 공급원. 생성된 코드가 기본적으로 여러분 시스템의 품질을 상속해요.
+A component library built this way gives AI tools the same affordances it gives human developers: clear contracts, explicit conventions, and a single source of truth. Generated code inherits your system's quality by default.
