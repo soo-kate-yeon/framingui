@@ -1,0 +1,953 @@
+---
+title: "Multi-Platform Design Tokens: Web, iOS, Android from One Source"
+description: "Structure design tokens for web, iOS, and Android from one source. Learn Style Dictionary, platform transforms, and automation strategies."
+date: "2026-04-01"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - multi-platform
+  - ios
+  - android
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+Your design system has three implementations: CSS for web, Swift for iOS, XML for Android. A designer changes the primary color. Now you need to update it in three places, in three different formats, hoping you got the conversion right.
+
+This is the multi-platform token problem. The same design decision exists in multiple formats, and keeping them in sync is manual, error-prone, and slow.
+
+The solution: **Single source of truth, multiple outputs**.
+
+## The Multi-Platform Challenge
+
+Design tokens represent design decisions: colors, spacing, typography, etc. These decisions are platform-agnostic, but their implementation is not.
+
+### Same Token, Different Formats
+
+A single color token needs different formats:
+
+**Web (CSS)**:
+```css
+--color-primary: #3B82F6;
+```
+
+**iOS (Swift)**:
+```swift
+Color("primary", hex: "3B82F6")
+```
+
+**Android (XML)**:
+```xml
+<color name="primary">#3B82F6</color>
+```
+
+**React Native**:
+```typescript
+export const colors = {
+  primary: '#3B82F6',
+};
+```
+
+**Flutter**:
+```dart
+const Color primary = Color(0xFF3B82F6);
+```
+
+### Manual Sync is Broken
+
+Updating tokens manually across platforms:
+- Takes hours (designer updates in Figma, then engineers update 3+ platforms)
+- Introduces mistakes (typos, conversion errors, missed updates)
+- Creates drift (platforms get out of sync)
+- Slows iteration (fear of making changes)
+
+### The Fix: Transform Tokens Programmatically
+
+Define tokens once, transform into platform-specific formats automatically.
+
+```
+tokens.json (source of truth)
+    │
+    ├── → CSS variables (web)
+    ├── → Swift structs (iOS)
+    ├── → Kotlin objects (Android)
+    ├── → TypeScript (React Native)
+    └── → Dart constants (Flutter)
+```
+
+Change `tokens.json`, regenerate all formats. Guaranteed consistency.
+
+## Tool: Style Dictionary
+
+[Style Dictionary](https://amzn.github.io/style-dictionary/) is the industry standard for multi-platform tokens. Built by Amazon, used by Adobe, Salesforce, and countless others.
+
+### Installation
+
+```bash
+npm install --save-dev style-dictionary
+```
+
+### Basic Setup
+
+```
+design-tokens/
+├── tokens/               # Source tokens (JSON)
+│   ├── color.json
+│   ├── spacing.json
+│   └── typography.json
+├── build/                # Generated output
+│   ├── web/
+│   ├── ios/
+│   └── android/
+└── config.json           # Style Dictionary config
+```
+
+## Step 1: Define Source Tokens
+
+Tokens are defined in JSON using a specific schema.
+
+### tokens/color.json
+
+```json
+{
+  "color": {
+    "primitive": {
+      "blue": {
+        "400": { "value": "#60A5FA" },
+        "500": { "value": "#3B82F6" },
+        "600": { "value": "#2563EB" }
+      },
+      "gray": {
+        "50":  { "value": "#F9FAFB" },
+        "100": { "value": "#F3F4F6" },
+        "900": { "value": "#111827" }
+      }
+    },
+    "semantic": {
+      "text": {
+        "primary":   { "value": "{color.primitive.gray.900}" },
+        "secondary": { "value": "{color.primitive.gray.600}" }
+      },
+      "background": {
+        "surface": { "value": "#FFFFFF" },
+        "subtle":  { "value": "{color.primitive.gray.50}" }
+      },
+      "interactive": {
+        "primary": {
+          "default": { "value": "{color.primitive.blue.500}" },
+          "hover":   { "value": "{color.primitive.blue.600}" },
+          "active":  { "value": "{color.primitive.blue.700}" }
+        }
+      }
+    }
+  }
+}
+```
+
+Notice the structure:
+- **Nested categories**: Logical grouping
+- **Aliasing**: `{color.primitive.blue.500}` references another token
+- **Semantic layer**: Separates primitive values from application tokens
+
+### tokens/spacing.json
+
+```json
+{
+  "spacing": {
+    "scale": {
+      "0":  { "value": "0" },
+      "1":  { "value": "4" },
+      "2":  { "value": "8" },
+      "3":  { "value": "12" },
+      "4":  { "value": "16" },
+      "6":  { "value": "24" },
+      "8":  { "value": "32" },
+      "12": { "value": "48" }
+    },
+    "inline": {
+      "sm": { "value": "{spacing.scale.2}" },
+      "md": { "value": "{spacing.scale.3}" },
+      "lg": { "value": "{spacing.scale.4}" }
+    },
+    "stack": {
+      "sm": { "value": "{spacing.scale.2}" },
+      "md": { "value": "{spacing.scale.4}" },
+      "lg": { "value": "{spacing.scale.6}" }
+    },
+    "inset": {
+      "sm": { "value": "{spacing.scale.3}" },
+      "md": { "value": "{spacing.scale.4}" },
+      "lg": { "value": "{spacing.scale.6}" }
+    }
+  }
+}
+```
+
+### tokens/typography.json
+
+```json
+{
+  "font": {
+    "family": {
+      "sans": {
+        "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+      },
+      "mono": {
+        "value": "'SF Mono', Monaco, 'Courier New', monospace"
+      }
+    },
+    "size": {
+      "sm":  { "value": "14" },
+      "md":  { "value": "16" },
+      "lg":  { "value": "18" },
+      "xl":  { "value": "20" },
+      "2xl": { "value": "24" }
+    },
+    "weight": {
+      "normal":   { "value": "400" },
+      "medium":   { "value": "500" },
+      "semibold": { "value": "600" },
+      "bold":     { "value": "700" }
+    }
+  },
+  "typography": {
+    "heading": {
+      "lg": {
+        "fontSize":   { "value": "{font.size.2xl}" },
+        "fontWeight": { "value": "{font.weight.bold}" },
+        "lineHeight": { "value": "1.2" }
+      }
+    },
+    "body": {
+      "md": {
+        "fontSize":   { "value": "{font.size.md}" },
+        "fontWeight": { "value": "{font.weight.normal}" },
+        "lineHeight": { "value": "1.5" }
+      }
+    }
+  }
+}
+```
+
+## Step 2: Configure Output Platforms
+
+Style Dictionary uses a config file to define transformations.
+
+### config.json
+
+```json
+{
+  "source": ["tokens/**/*.json"],
+  "platforms": {
+    "web": {
+      "transformGroup": "css",
+      "buildPath": "build/web/",
+      "files": [
+        {
+          "destination": "tokens.css",
+          "format": "css/variables"
+        }
+      ]
+    },
+    "ios": {
+      "transformGroup": "ios",
+      "buildPath": "build/ios/",
+      "files": [
+        {
+          "destination": "Tokens.swift",
+          "format": "ios-swift/class.swift",
+          "className": "DesignTokens"
+        }
+      ]
+    },
+    "android": {
+      "transformGroup": "android",
+      "buildPath": "build/android/",
+      "files": [
+        {
+          "destination": "tokens.xml",
+          "format": "android/resources"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Step 3: Build Tokens
+
+```bash
+npx style-dictionary build
+```
+
+This generates platform-specific files:
+
+### build/web/tokens.css
+
+```css
+:root {
+  --color-primitive-blue-400: #60A5FA;
+  --color-primitive-blue-500: #3B82F6;
+  --color-primitive-blue-600: #2563EB;
+  --color-semantic-text-primary: #111827;
+  --color-semantic-background-surface: #FFFFFF;
+  --color-semantic-interactive-primary-default: #3B82F6;
+  --color-semantic-interactive-primary-hover: #2563EB;
+  
+  --spacing-inline-sm: 8px;
+  --spacing-inline-md: 12px;
+  --spacing-inline-lg: 16px;
+  
+  --font-family-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-md: 16px;
+  --font-weight-normal: 400;
+}
+```
+
+### build/ios/Tokens.swift
+
+```swift
+import UIKit
+
+public class DesignTokens {
+  public static let colorPrimitiveBlue400 = UIColor(hex: "60A5FA")
+  public static let colorPrimitiveBlue500 = UIColor(hex: "3B82F6")
+  public static let colorPrimitiveBlue600 = UIColor(hex: "2563EB")
+  public static let colorSemanticTextPrimary = UIColor(hex: "111827")
+  public static let colorSemanticBackgroundSurface = UIColor(hex: "FFFFFF")
+  public static let colorSemanticInteractivePrimaryDefault = UIColor(hex: "3B82F6")
+  
+  public static let spacingInlineSm: CGFloat = 8
+  public static let spacingInlineMd: CGFloat = 12
+  public static let spacingInlineLg: CGFloat = 16
+  
+  public static let fontSizeMd: CGFloat = 16
+  public static let fontWeightNormal = UIFont.Weight.regular
+}
+```
+
+### build/android/tokens.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <color name="color_primitive_blue_400">#60A5FA</color>
+  <color name="color_primitive_blue_500">#3B82F6</color>
+  <color name="color_primitive_blue_600">#2563EB</color>
+  <color name="color_semantic_text_primary">#111827</color>
+  <color name="color_semantic_background_surface">#FFFFFF</color>
+  <color name="color_semantic_interactive_primary_default">#3B82F6</color>
+  
+  <dimen name="spacing_inline_sm">8dp</dimen>
+  <dimen name="spacing_inline_md">12dp</dimen>
+  <dimen name="spacing_inline_lg">16dp</dimen>
+  
+  <dimen name="font_size_md">16sp</dimen>
+</resources>
+```
+
+Same source, three different outputs. Guaranteed consistency.
+
+## Advanced: Custom Transforms
+
+Style Dictionary has built-in transforms, but you can add custom ones.
+
+### Example: Convert px to rem for Web
+
+```javascript
+// build-tokens.js
+const StyleDictionary = require('style-dictionary');
+
+// Custom transform: px to rem
+StyleDictionary.registerTransform({
+  name: 'size/rem',
+  type: 'value',
+  matcher: (token) => {
+    return token.attributes.category === 'spacing' || 
+           token.attributes.category === 'font';
+  },
+  transformer: (token) => {
+    const val = parseFloat(token.original.value);
+    if (isNaN(val)) return token.value;
+    return `${val / 16}rem`;
+  },
+});
+
+// Use custom transform in web platform
+const sd = StyleDictionary.extend({
+  source: ['tokens/**/*.json'],
+  platforms: {
+    web: {
+      transforms: [
+        'attribute/cti',
+        'name/cti/kebab',
+        'size/rem',        // Our custom transform
+        'color/hex',
+      ],
+      buildPath: 'build/web/',
+      files: [
+        {
+          destination: 'tokens.css',
+          format: 'css/variables',
+        },
+      ],
+    },
+  },
+});
+
+sd.buildAllPlatforms();
+```
+
+Now spacing values are converted to rem:
+
+```css
+:root {
+  --spacing-inline-sm: 0.5rem;   /* 8px / 16 */
+  --spacing-inline-md: 0.75rem;  /* 12px / 16 */
+  --spacing-inline-lg: 1rem;     /* 16px / 16 */
+}
+```
+
+### Example: Platform-Specific Values
+
+Some tokens need different values per platform.
+
+```json
+{
+  "font": {
+    "family": {
+      "sans": {
+        "value": "-apple-system, BlinkMacSystemFont, sans-serif",
+        "ios": {
+          "value": ".SF UI Text"
+        },
+        "android": {
+          "value": "Roboto"
+        }
+      }
+    }
+  }
+}
+```
+
+Custom transform to pick platform-specific value:
+
+```javascript
+StyleDictionary.registerTransform({
+  name: 'platform-specific',
+  type: 'value',
+  transitive: true,
+  matcher: (token) => token.original[process.env.PLATFORM],
+  transformer: (token) => {
+    return token.original[process.env.PLATFORM].value;
+  },
+});
+
+// Build for iOS
+process.env.PLATFORM = 'ios';
+sd.buildPlatform('ios');
+
+// Build for Android
+process.env.PLATFORM = 'android';
+sd.buildPlatform('android');
+```
+
+## Integrating with Figma
+
+Design teams work in Figma. Engineers work in code. Tokens bridge them.
+
+### Approach 1: Figma Tokens Plugin → Style Dictionary
+
+Use the [Figma Tokens](https://www.figma.com/community/plugin/843461159747178978) plugin:
+
+1. Designers define tokens in Figma using the plugin
+2. Export tokens as JSON
+3. Feed JSON into Style Dictionary
+4. Generate platform-specific code
+
+**Workflow**:
+```
+Figma (design)
+  ↓ (export from plugin)
+tokens.json
+  ↓ (Style Dictionary)
+CSS / Swift / Kotlin
+```
+
+### Approach 2: Style Dictionary → Figma Variables
+
+Reverse direction: tokens defined in code, imported to Figma.
+
+```javascript
+// scripts/sync-to-figma.js
+const axios = require('axios');
+const tokens = require('../tokens/color.json');
+
+const syncToFigma = async () => {
+  const figmaVariables = Object.entries(tokens.color.semantic).map(([name, token]) => ({
+    name: `color/${name}`,
+    value: token.value,
+  }));
+  
+  await axios.post(
+    `https://api.figma.com/v1/files/${FIGMA_FILE_ID}/variables`,
+    { variables: figmaVariables },
+    { headers: { 'X-Figma-Token': FIGMA_TOKEN } }
+  );
+};
+
+syncToFigma();
+```
+
+Now designers see the latest tokens in Figma.
+
+### Two-Way Sync (Advanced)
+
+For larger teams, use tools like:
+- [Specify](https://specifyapp.com/)
+- [Zeroheight](https://zeroheight.com/)
+- [Supernova](https://www.supernova.io/)
+
+These provide bidirectional sync between design and code.
+
+## Handling Platform Differences
+
+Not all design decisions translate 1:1 across platforms.
+
+### Typography: Platform-Specific Font Stacks
+
+Web, iOS, and Android use different system fonts.
+
+```json
+{
+  "font": {
+    "family": {
+      "sans": {
+        "value": "system-ui, sans-serif",
+        "web": {
+          "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        },
+        "ios": {
+          "value": ".AppleSystemUIFont"
+        },
+        "android": {
+          "value": "Roboto"
+        }
+      }
+    }
+  }
+}
+```
+
+Custom transform picks the right value per platform.
+
+### Spacing: Different Units
+
+Web uses `px` or `rem`, iOS uses `CGFloat` points, Android uses `dp`.
+
+```json
+{
+  "spacing": {
+    "md": {
+      "value": 16,
+      "unit": {
+        "web": "px",
+        "ios": "pt",
+        "android": "dp"
+      }
+    }
+  }
+}
+```
+
+Transform appends correct unit:
+
+```javascript
+StyleDictionary.registerTransform({
+  name: 'size/platform-unit',
+  type: 'value',
+  matcher: (token) => token.attributes.category === 'spacing',
+  transformer: (token, platform) => {
+    const unit = token.unit?.[platform.name] || 'px';
+    return `${token.value}${unit}`;
+  },
+});
+```
+
+Output:
+- **Web**: `16px`
+- **iOS**: `16` (Swift uses CGFloat, no unit string)
+- **Android**: `16dp`
+
+### Colors: Different Formats
+
+**Web**: Hex (`#3B82F6`) or `rgb()`  
+**iOS**: UIColor (hex or RGB components)  
+**Android**: XML hex (`#FF3B82F6` with alpha)
+
+Style Dictionary handles this with built-in transforms:
+
+```javascript
+platforms: {
+  web: {
+    transforms: ['color/hex'],
+  },
+  ios: {
+    transforms: ['color/UIColor'],
+  },
+  android: {
+    transforms: ['color/hex8android'], // Includes alpha channel
+  },
+}
+```
+
+## Real-World Example: Complete Setup
+
+### Project Structure
+
+```
+my-design-system/
+├── tokens/
+│   ├── color.json
+│   ├── spacing.json
+│   ├── typography.json
+│   └── border.json
+├── build/
+│   ├── web/
+│   ├── ios/
+│   ├── android/
+│   └── react-native/
+├── build-tokens.js
+├── package.json
+└── config.json
+```
+
+### package.json
+
+```json
+{
+  "name": "@myorg/design-tokens",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build-tokens.js",
+    "build:web": "PLATFORM=web node build-tokens.js",
+    "build:ios": "PLATFORM=ios node build-tokens.js",
+    "build:android": "PLATFORM=android node build-tokens.js",
+    "watch": "nodemon --watch tokens -e json -x 'npm run build'"
+  },
+  "devDependencies": {
+    "style-dictionary": "^3.9.0",
+    "nodemon": "^3.0.1"
+  }
+}
+```
+
+### build-tokens.js
+
+```javascript
+const StyleDictionary = require('style-dictionary');
+
+// Custom transform: size to rem
+StyleDictionary.registerTransform({
+  name: 'size/rem',
+  type: 'value',
+  matcher: (token) => {
+    return ['spacing', 'fontSize'].includes(token.attributes.category);
+  },
+  transformer: (token) => {
+    const val = parseFloat(token.value);
+    if (isNaN(val)) return token.value;
+    return `${val / 16}rem`;
+  },
+});
+
+// Custom format: TypeScript
+StyleDictionary.registerFormat({
+  name: 'typescript/module',
+  formatter: ({ dictionary }) => {
+    const tokens = dictionary.allTokens
+      .map(token => `  ${token.name}: '${token.value}',`)
+      .join('\n');
+    
+    return `export const tokens = {\n${tokens}\n};\n`;
+  },
+});
+
+const config = {
+  source: ['tokens/**/*.json'],
+  platforms: {
+    web: {
+      transformGroup: 'css',
+      transforms: ['attribute/cti', 'name/cti/kebab', 'size/rem', 'color/hex'],
+      buildPath: 'build/web/',
+      files: [
+        {
+          destination: 'tokens.css',
+          format: 'css/variables',
+        },
+      ],
+    },
+    ios: {
+      transformGroup: 'ios',
+      buildPath: 'build/ios/',
+      files: [
+        {
+          destination: 'Tokens.swift',
+          format: 'ios-swift/class.swift',
+          className: 'DesignTokens',
+        },
+      ],
+    },
+    android: {
+      transformGroup: 'android',
+      buildPath: 'build/android/',
+      files: [
+        {
+          destination: 'tokens.xml',
+          format: 'android/resources',
+        },
+      ],
+    },
+    reactNative: {
+      transformGroup: 'js',
+      buildPath: 'build/react-native/',
+      files: [
+        {
+          destination: 'tokens.ts',
+          format: 'typescript/module',
+        },
+      ],
+    },
+  },
+};
+
+const sd = StyleDictionary.extend(config);
+sd.buildAllPlatforms();
+
+console.log('✅ Tokens built for all platforms');
+```
+
+### Usage in Projects
+
+**Web**:
+```typescript
+import 'build/web/tokens.css';
+
+// Use tokens in CSS
+.button {
+  background: var(--color-interactive-primary);
+  padding: var(--spacing-inline-md);
+}
+```
+
+**iOS**:
+```swift
+import UIKit
+
+let primaryColor = DesignTokens.colorInteractivePrimary
+let spacing = DesignTokens.spacingInlineMd
+
+button.backgroundColor = primaryColor
+button.contentEdgeInsets = UIEdgeInsets(
+  top: spacing, left: spacing, 
+  bottom: spacing, right: spacing
+)
+```
+
+**Android**:
+```kotlin
+import android.content.Context
+import android.graphics.Color
+
+val primaryColor = context.getColor(R.color.color_interactive_primary)
+val spacing = context.resources.getDimension(R.dimen.spacing_inline_md)
+
+button.setBackgroundColor(primaryColor)
+button.setPadding(spacing.toInt(), spacing.toInt(), spacing.toInt(), spacing.toInt())
+```
+
+**React Native**:
+```typescript
+import { tokens } from './build/react-native/tokens';
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: tokens.colorInteractivePrimary,
+    padding: parseFloat(tokens.spacingInlineMd),
+  },
+});
+```
+
+Same tokens, different platforms. All in sync.
+
+## Automation: CI/CD Integration
+
+Automatically rebuild tokens on every change.
+
+### GitHub Actions Workflow
+
+```yaml
+# .github/workflows/build-tokens.yml
+name: Build Design Tokens
+
+on:
+  push:
+    paths:
+      - 'tokens/**'
+  pull_request:
+    paths:
+      - 'tokens/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build tokens
+        run: npm run build
+      
+      - name: Commit generated files
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add build/
+          git diff --staged --quiet || git commit -m "chore: rebuild tokens"
+          git push
+      
+      - name: Publish to npm
+        if: github.ref == 'refs/heads/main'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+```
+
+Now every token change:
+1. Rebuilds all platform outputs
+2. Commits generated files
+3. Publishes new version to npm
+
+Teams consume tokens as a package:
+
+```bash
+npm install @myorg/design-tokens@latest
+```
+
+## Testing Token Consistency
+
+Ensure tokens generate correctly across platforms.
+
+### Snapshot Tests
+
+```javascript
+// tests/tokens.test.js
+const fs = require('fs');
+const path = require('path');
+
+describe('Design Tokens', () => {
+  it('generates consistent color values across platforms', () => {
+    const webTokens = fs.readFileSync('build/web/tokens.css', 'utf-8');
+    const iosTokens = fs.readFileSync('build/ios/Tokens.swift', 'utf-8');
+    const androidTokens = fs.readFileSync('build/android/tokens.xml', 'utf-8');
+    
+    // Web: --color-interactive-primary: #3B82F6
+    expect(webTokens).toContain('--color-interactive-primary: #3B82F6');
+    
+    // iOS: UIColor(hex: "3B82F6")
+    expect(iosTokens).toContain('UIColor(hex: "3B82F6")');
+    
+    // Android: #3B82F6
+    expect(androidTokens).toContain('#3B82F6');
+  });
+  
+  it('generates consistent spacing values', () => {
+    const webTokens = fs.readFileSync('build/web/tokens.css', 'utf-8');
+    const iosTokens = fs.readFileSync('build/ios/Tokens.swift', 'utf-8');
+    
+    // Web: 1rem (16px)
+    expect(webTokens).toContain('--spacing-inline-md: 1rem');
+    
+    // iOS: 16
+    expect(iosTokens).toContain('spacingInlineMd: CGFloat = 16');
+  });
+});
+```
+
+Run tests in CI to catch regressions.
+
+## Documentation: Token Reference
+
+Auto-generate documentation from token definitions.
+
+```javascript
+// scripts/generate-docs.js
+const tokens = require('../tokens/color.json');
+
+const generateMarkdown = (tokens) => {
+  let md = '# Design Tokens\n\n';
+  
+  md += '## Colors\n\n';
+  md += '| Token | Value | Preview |\n';
+  md += '|-------|-------|:-------:|\n';
+  
+  Object.entries(tokens.color.semantic).forEach(([name, token]) => {
+    const value = token.value;
+    md += `| \`color-${name}\` | \`${value}\` | ![](https://via.placeholder.com/30/${value.replace('#', '')}/000000?text=+) |\n`;
+  });
+  
+  return md;
+};
+
+fs.writeFileSync('docs/tokens.md', generateMarkdown(tokens));
+```
+
+Output:
+
+```markdown
+# Design Tokens
+
+## Colors
+
+| Token | Value | Preview |
+|-------|-------|:-------:|
+| `color-text-primary` | `#111827` | ![](https://via.placeholder.com/30/111827/000000?text=+) |
+| `color-interactive-primary` | `#3B82F6` | ![](https://via.placeholder.com/30/3B82F6/000000?text=+) |
+```
+
+## Conclusion
+
+Multi-platform design tokens solve the consistency problem at scale. Define tokens once, generate platform-specific code automatically.
+
+Key principles:
+
+1. **Single source of truth** (JSON tokens)
+2. **Automated transformation** (Style Dictionary)
+3. **Platform-specific output** (CSS, Swift, Kotlin, etc.)
+4. **CI/CD integration** (auto-rebuild on changes)
+5. **Versioned packages** (npm, CocoaPods, Maven)
+
+This approach:
+- Guarantees consistency across platforms
+- Eliminates manual sync errors
+- Speeds up iteration (change once, deploy everywhere)
+- Scales to any number of platforms
+
+Tools like FramingUI extend this foundation by providing:
+- Structured token management
+- Validation and type safety
+- Integration with AI code generation
+- Real-time preview across platforms
+
+Start small: pick 2-3 token categories (color, spacing), set up Style Dictionary, and add platforms incrementally. Once you see the value, expand to cover your entire design system.
+
+Your designers and engineers will thank you. Your users will get a more consistent experience. And you'll ship faster.

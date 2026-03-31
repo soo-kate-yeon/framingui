@@ -1,0 +1,839 @@
+---
+title: "Design System Versioning Strategy: How to Evolve Without Breaking Things"
+description: "Practical versioning strategies for design systems. Learn semantic versioning, migration paths, and deprecation policies with real examples."
+date: "2026-04-01"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-systems
+  - versioning
+  - best-practices
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+Your design system has 47 components in production across 12 apps. You need to rename `color-primary` to `color-interactive-primary` for clarity. How do you make this change without breaking every app?
+
+This is the versioning problem. Design systems evolve, but products using them need stability. Get versioning right, and you can iterate quickly. Get it wrong, and every update becomes a coordination nightmare.
+
+## Why Design Systems Need Versioning
+
+Unlike typical software libraries, design systems have unique versioning challenges:
+
+**Multiple consumers**: Different teams, different apps, different update schedules
+**Visual breaking changes**: A color change might be "non-breaking" in code but breaks visual consistency
+**Human perception**: Users notice even small visual changes
+**Cross-platform sync**: Web, iOS, Android need coordinated updates
+**Token dependencies**: Changing one token can cascade through dozens of components
+
+Without a clear versioning strategy, you end up with:
+- Apps stuck on old versions, never updating
+- Breaking changes shipped without warning
+- Inconsistent UIs across products
+- Fear of making any changes
+
+## Semantic Versioning for Design Systems
+
+Semantic versioning (semver) is the foundation: `MAJOR.MINOR.PATCH`
+
+```
+1.2.3
+│ │ │
+│ │ └─ PATCH: Bug fixes, backward compatible
+│ └─── MINOR: New features, backward compatible
+└───── MAJOR: Breaking changes
+```
+
+### Applying Semver to Design Systems
+
+**PATCH (1.0.0 → 1.0.1)**: Bug fixes that don't change behavior
+
+```typescript
+// Fix broken focus styles
+.button:focus-visible {
+  // Before: broken
+  outline: none; // ❌ Accessibility issue
+  
+  // After: fixed
+  outline: 2px solid var(--color-focus-ring); // ✅ Fixed
+}
+```
+
+**MINOR (1.0.0 → 1.1.0)**: New tokens or components, all backward compatible
+
+```typescript
+// Add new tokens without changing existing ones
+:root {
+  // Existing (unchanged)
+  --spacing-md: 1rem;
+  
+  // New (additive)
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+}
+```
+
+**MAJOR (1.0.0 → 2.0.0)**: Breaking changes
+
+```typescript
+// Rename token (breaking - old code won't work)
+:root {
+  // Before (v1.x)
+  --color-primary: blue;
+  
+  // After (v2.0)
+  --color-interactive-primary: blue;
+  // --color-primary removed ❌
+}
+```
+
+## What Counts as a Breaking Change?
+
+This is less obvious than traditional software.
+
+### Clearly Breaking Changes
+
+✅ **Renaming tokens**
+```css
+/* v1 */
+--color-primary
+
+/* v2 - BREAKING */
+--color-interactive-primary
+```
+
+✅ **Removing tokens**
+```css
+/* v1 */
+--spacing-md: 1rem;
+
+/* v2 - BREAKING */
+/* --spacing-md removed */
+```
+
+✅ **Changing token structure**
+```typescript
+// v1
+export const colors = {
+  primary: '#3B82F6',
+};
+
+// v2 - BREAKING
+export const colors = {
+  interactive: {
+    primary: '#3B82F6',
+  },
+};
+```
+
+✅ **Removing component props**
+```typescript
+// v1
+<Button variant="primary" />
+
+// v2 - BREAKING (variant prop removed)
+<Button color="primary" />
+```
+
+### Debatable: Visual Breaking Changes
+
+These don't break code, but they break visual consistency:
+
+⚠️ **Changing token values**
+```css
+/* v1 */
+--color-interactive-primary: #3B82F6; /* blue */
+
+/* v2 - visual breaking change? */
+--color-interactive-primary: #10B981; /* green */
+```
+
+**Guideline**: If the change is intentional (rebrand), it's MAJOR. If it's refinement (slightly darker blue), it's MINOR.
+
+⚠️ **Changing component layouts**
+```css
+/* v1 - horizontal */
+.button-group {
+  display: flex;
+  flex-direction: row;
+}
+
+/* v2 - vertical */
+.button-group {
+  display: flex;
+  flex-direction: column;
+}
+```
+
+**Guideline**: If layout changes affect composition, it's MAJOR.
+
+⚠️ **Changing default values**
+```typescript
+// v1
+<Button size="md" /> // default md
+
+// v2
+<Button size="lg" /> // default now lg
+```
+
+**Guideline**: Changing defaults is MINOR if old behavior is still achievable. It's MAJOR if it forces consumers to update code to maintain current behavior.
+
+## Strategy 1: Deprecation Before Removal
+
+Never remove tokens in a MINOR release. Deprecate first, remove later.
+
+### Phase 1: Deprecate (v1.5.0 - MINOR)
+
+Add new token, keep old one:
+
+```css
+:root {
+  /* New token (canonical) */
+  --color-interactive-primary: #3B82F6;
+  
+  /* Old token (deprecated, aliased to new) */
+  --color-primary: var(--color-interactive-primary);
+}
+```
+
+Add deprecation warnings:
+
+```typescript
+// design-system/tokens.ts
+export const tokens = {
+  get colorPrimary() {
+    console.warn(
+      'DEPRECATED: `colorPrimary` is deprecated. Use `colorInteractivePrimary` instead. ' +
+      'This will be removed in v2.0.0.'
+    );
+    return this.colorInteractivePrimary;
+  },
+  colorInteractivePrimary: '#3B82F6',
+};
+```
+
+Document in changelog:
+
+```markdown
+## v1.5.0
+
+### Deprecated
+- `--color-primary` → Use `--color-interactive-primary` instead
+- Will be removed in v2.0.0
+```
+
+### Phase 2: Migration Period
+
+Give consumers time to migrate (at least one MAJOR version cycle):
+
+```typescript
+// consumers/app/styles.css
+/* Before */
+.button {
+  background: var(--color-primary);
+}
+
+/* After migration */
+.button {
+  background: var(--color-interactive-primary);
+}
+```
+
+Track adoption:
+
+```javascript
+// Track deprecation warnings in production
+const deprecationCounts = {};
+
+export const tokens = {
+  get colorPrimary() {
+    deprecationCounts['colorPrimary'] = (deprecationCounts['colorPrimary'] || 0) + 1;
+    
+    // Report to analytics
+    if (deprecationCounts['colorPrimary'] === 1) {
+      analytics.track('deprecated_token_used', {
+        token: 'colorPrimary',
+        replacement: 'colorInteractivePrimary',
+      });
+    }
+    
+    return this.colorInteractivePrimary;
+  },
+};
+```
+
+### Phase 3: Remove (v2.0.0 - MAJOR)
+
+After sufficient migration period:
+
+```css
+:root {
+  /* New token (canonical) */
+  --color-interactive-primary: #3B82F6;
+  
+  /* Old token REMOVED */
+  /* --color-primary: ... */
+}
+```
+
+Document in changelog:
+
+```markdown
+## v2.0.0
+
+### BREAKING CHANGES
+- **Removed**: `--color-primary` (deprecated in v1.5.0)
+  - **Migration**: Replace with `--color-interactive-primary`
+  - **Reason**: Clearer semantic naming
+```
+
+## Strategy 2: Codemods for Automated Migration
+
+For large breaking changes, provide automated migration tools.
+
+### Example: Renaming Token Codemod
+
+```javascript
+// migrations/v2-rename-tokens.js
+const { execSync } = require('child_process');
+
+const migrations = [
+  { from: '--color-primary', to: '--color-interactive-primary' },
+  { from: '--color-secondary', to: '--color-interactive-secondary' },
+  { from: '--spacing-md', to: '--spacing-inline-md' },
+];
+
+migrations.forEach(({ from, to }) => {
+  console.log(`Migrating ${from} → ${to}...`);
+  
+  // Find and replace across all CSS/SCSS files
+  execSync(
+    `find ./src -type f \\( -name "*.css" -o -name "*.scss" \\) -exec sed -i '' 's/${from}/${to}/g' {} +`
+  );
+});
+
+console.log('Migration complete! Review changes before committing.');
+```
+
+### Run Migration
+
+```bash
+node node_modules/@your-org/design-system/migrations/v2-rename-tokens.js
+```
+
+### Even Better: AST-Based Codemods
+
+For TypeScript/JavaScript:
+
+```javascript
+// migrations/v2-rename-token-imports.js
+const jscodeshift = require('jscodeshift');
+
+module.exports = function transformer(file, api) {
+  const j = api.jscodeshift;
+  const root = j(file.source);
+  
+  // Find: import { colorPrimary } from 'tokens'
+  // Replace: import { colorInteractivePrimary } from 'tokens'
+  root
+    .find(j.ImportSpecifier, {
+      imported: { name: 'colorPrimary' }
+    })
+    .forEach(path => {
+      path.node.imported.name = 'colorInteractivePrimary';
+      
+      // Also update local binding if it matches
+      if (path.node.local.name === 'colorPrimary') {
+        path.node.local.name = 'colorInteractivePrimary';
+      }
+    });
+  
+  // Update all references
+  root
+    .find(j.Identifier, { name: 'colorPrimary' })
+    .forEach(path => {
+      path.node.name = 'colorInteractivePrimary';
+    });
+  
+  return root.toSource();
+};
+```
+
+Run with jscodeshift:
+
+```bash
+npx jscodeshift -t migrations/v2-rename-token-imports.js src/**/*.tsx
+```
+
+## Strategy 3: Versioned Token Namespaces
+
+For gradual migrations, use versioned namespaces.
+
+### Approach 1: Explicit Versions
+
+```css
+/* v1 tokens */
+:root {
+  --v1-color-primary: #3B82F6;
+  --v1-spacing-md: 1rem;
+}
+
+/* v2 tokens (coexist) */
+:root {
+  --v2-color-interactive-primary: #3B82F6;
+  --v2-spacing-inline-md: 1rem;
+}
+```
+
+Components can gradually migrate:
+
+```css
+/* Old component (still on v1) */
+.button-old {
+  background: var(--v1-color-primary);
+}
+
+/* New component (migrated to v2) */
+.button-new {
+  background: var(--v2-color-interactive-primary);
+}
+```
+
+**Pros**: Both versions work simultaneously  
+**Cons**: Bloated stylesheet, confusing naming
+
+### Approach 2: Feature Flags
+
+```css
+:root {
+  /* Default: v1 */
+  --color-primary: #3B82F6;
+}
+
+/* Opt-in to v2 */
+[data-design-system-version="2"] {
+  --color-interactive-primary: #3B82F6;
+}
+```
+
+Apps opt in per route or component:
+
+```html
+<!-- v1 behavior -->
+<div>
+  <button style="background: var(--color-primary)">Old</button>
+</div>
+
+<!-- v2 behavior -->
+<div data-design-system-version="2">
+  <button style="background: var(--color-interactive-primary)">New</button>
+</div>
+```
+
+## Strategy 4: Migration Guides
+
+Automated codemods can't cover everything. Provide clear migration guides.
+
+### Good Migration Guide Template
+
+```markdown
+# Migrating from v1.x to v2.0
+
+## Overview
+v2.0 introduces clearer token naming and removes deprecated tokens.
+
+**Estimated migration time**: 2-4 hours for a typical app
+
+## Breaking Changes
+
+### 1. Color Token Renames
+
+| v1 Token | v2 Token |
+|----------|----------|
+| `--color-primary` | `--color-interactive-primary` |
+| `--color-secondary` | `--color-interactive-secondary` |
+| `--color-text` | `--color-text-primary` |
+
+**Migration**:
+```diff
+- background: var(--color-primary);
++ background: var(--color-interactive-primary);
+```
+
+**Automated**: Run `npm run migrate:v2-colors`
+
+### 2. Spacing Token Restructure
+
+v1 had generic spacing. v2 separates inline, stack, and inset.
+
+**Before (v1)**:
+```css
+padding: var(--spacing-md);
+gap: var(--spacing-sm);
+```
+
+**After (v2)**:
+```css
+/* For padding */
+padding: var(--spacing-inset-md);
+
+/* For gap in horizontal layout */
+gap: var(--spacing-inline-sm);
+
+/* For gap in vertical layout */
+gap: var(--spacing-stack-sm);
+```
+
+**Migration guide**:
+- `padding`: Use `--spacing-inset-*`
+- `gap` in row flex: Use `--spacing-inline-*`
+- `gap` in column flex: Use `--spacing-stack-*`
+
+**Automated**: Partially automated with `npm run migrate:v2-spacing`. Review manually.
+
+### 3. Button Prop Changes
+
+`variant` prop renamed to `appearance` for consistency.
+
+**Before (v1)**:
+```tsx
+<Button variant="primary" />
+```
+
+**After (v2)**:
+```tsx
+<Button appearance="primary" />
+```
+
+**Automated**: Run `npm run migrate:v2-button-props`
+
+## Step-by-Step Migration
+
+### Step 1: Update package
+
+```bash
+npm install @your-org/design-system@^2.0.0
+```
+
+### Step 2: Run automated migrations
+
+```bash
+npm run migrate:v2-colors
+npm run migrate:v2-spacing
+npm run migrate:v2-button-props
+```
+
+### Step 3: Review changes
+
+```bash
+git diff
+```
+
+Automated migrations may not catch edge cases. Review carefully.
+
+### Step 4: Test
+
+```bash
+npm run test
+npm run build
+```
+
+### Step 5: Visual regression testing
+
+Use your visual testing tool (Percy, Chromatic, etc.) to catch unintended visual changes.
+
+## Rollback Plan
+
+If you encounter issues, you can temporarily rollback:
+
+```bash
+npm install @your-org/design-system@^1.9.0
+```
+
+## Support
+
+Questions? Open an issue or ask in #design-system Slack channel.
+```
+
+## Strategy 5: Changelog Discipline
+
+Your changelog is your communication channel. Make it useful.
+
+### Bad Changelog
+
+```markdown
+## v2.0.0
+- Updated tokens
+- Fixed bugs
+- Improved performance
+```
+
+This tells consumers nothing.
+
+### Good Changelog
+
+```markdown
+## v2.0.0 (2026-04-01)
+
+### 🚨 BREAKING CHANGES
+
+#### Color Token Renames
+Color tokens have been renamed for clarity:
+- `--color-primary` → `--color-interactive-primary`
+- `--color-secondary` → `--color-interactive-secondary`
+
+**Migration**: See [v2 migration guide](./docs/migrations/v2.md)  
+**Codemod**: `npm run migrate:v2-colors`
+
+#### Button Component API
+- **REMOVED**: `variant` prop
+- **ADDED**: `appearance` prop (same values, clearer naming)
+
+**Migration**:
+```diff
+- <Button variant="primary" />
++ <Button appearance="primary" />
+```
+
+**Codemod**: `npm run migrate:v2-button-props`
+
+### ✨ New Features
+
+#### New Spacing Tokens
+Added semantic spacing tokens:
+- `--spacing-inline-*`: for horizontal spacing
+- `--spacing-stack-*`: for vertical spacing
+- `--spacing-inset-*`: for padding
+
+See [spacing documentation](./docs/tokens/spacing.md)
+
+#### New Component: Toast
+Added `Toast` component for notifications.
+
+```tsx
+import { Toast } from '@your-org/design-system';
+
+<Toast variant="success">Saved successfully!</Toast>
+```
+
+See [Toast documentation](./docs/components/toast.md)
+
+### 🐛 Bug Fixes
+
+- **Button**: Fixed focus ring appearing on mouse click ([#234](link))
+- **Input**: Fixed placeholder color in dark mode ([#245](link))
+- **Select**: Fixed dropdown positioning in scrolled containers ([#256](link))
+
+### 📚 Documentation
+
+- Added [component composition guide](./docs/guides/composition.md)
+- Updated [theming documentation](./docs/guides/theming.md)
+- New [migration guide for v2](./docs/migrations/v2.md)
+
+### 🔧 Internal
+
+- Migrated build tooling to Vite
+- Improved TypeScript types
+- Added visual regression tests
+```
+
+Notice:
+- Clear section headers with emoji for scanning
+- Specific migration instructions inline
+- Links to full documentation
+- Context for why changes were made
+
+## Strategy 6: Release Branches
+
+Use Git branches to support multiple versions simultaneously.
+
+### Branch Strategy
+
+```
+main (v2.x development)
+├── v1.x (v1 maintenance)
+└── v0.x (legacy, security only)
+```
+
+**main**: Active development, future major version  
+**v1.x**: Maintenance branch for v1 (backport critical fixes)  
+**v0.x**: Legacy support (security patches only)
+
+### Example: Backporting a Fix
+
+Critical bug found in v1.9.0:
+
+```bash
+# Fix on main (v2.x)
+git checkout main
+git commit -m "fix: button focus ring"
+
+# Backport to v1.x
+git checkout v1.x
+git cherry-pick <commit-hash>
+
+# Release patch
+npm version patch # → v1.9.1
+npm publish
+```
+
+### Version Support Policy
+
+Document how long you support old versions:
+
+```markdown
+## Version Support Policy
+
+| Version | Status | Support Until |
+|---------|--------|---------------|
+| 2.x | Active | Current |
+| 1.x | Maintenance | 2027-01-01 |
+| 0.x | Security only | 2026-07-01 |
+
+**Active**: New features, bug fixes, documentation  
+**Maintenance**: Critical bug fixes, security patches  
+**Security only**: Security patches only
+```
+
+## Real-World Example: MUI (Material-UI)
+
+MUI manages breaking changes well. Let's analyze their v4 → v5 migration:
+
+### What They Did Right
+
+**1. Long deprecation period**
+- Deprecated old APIs in v4.12
+- Kept deprecated APIs working for 6+ months
+- Clear console warnings
+
+**2. Comprehensive migration guide**
+- Step-by-step instructions
+- Before/after code examples
+- Automated codemod tools
+
+**3. Codemods for major changes**
+```bash
+npx @mui/codemod v5.0.0/preset-safe <path>
+```
+
+**4. Side-by-side installation**
+```json
+{
+  "dependencies": {
+    "@mui/material": "^5.0.0",     // v5
+    "@material-ui/core": "^4.12.0" // v4 (during migration)
+  }
+}
+```
+
+Apps could migrate component-by-component.
+
+**5. Clear version support policy**
+- v4 maintenance support for 1 year after v5 release
+- Security patches for 2 years
+
+### What We Can Learn
+
+- **Gradual is better than big-bang**: Allow partial migrations
+- **Automate what you can**: Codemods reduce migration friction
+- **Communicate early**: Deprecation warnings give advance notice
+- **Support old versions**: Don't force immediate upgrades
+
+## Versioning Design Tokens vs. Components
+
+Tokens and components evolve differently.
+
+### Tokens: More Conservative
+
+Tokens are foundational—changing them affects everything. Be conservative:
+
+- **MAJOR** bumps for renames or removals
+- Long deprecation periods (at least one major version)
+- Clear migration paths
+
+### Components: More Flexible
+
+Components can evolve more quickly:
+
+- **MINOR** for new props or variants
+- **MAJOR** for removed props or behavior changes
+- Okay to iterate faster
+
+### Separate Package Versions?
+
+Some systems version tokens and components separately:
+
+```json
+{
+  "dependencies": {
+    "@your-org/design-tokens": "^3.0.0",
+    "@your-org/components": "^2.5.0"
+  }
+}
+```
+
+**Pros**: Tokens can evolve independently  
+**Cons**: More coordination needed
+
+**Recommendation**: Start with monolithic versioning. Split only if token and component release cadences diverge significantly.
+
+## Testing Version Compatibility
+
+How do you ensure v2 doesn't break consumers still on v1 tokens?
+
+### Compatibility Test Matrix
+
+```javascript
+// tests/compatibility.test.ts
+import { renderComponent } from 'test-utils';
+import { Button } from '../components/Button';
+
+describe('v1 token compatibility', () => {
+  it('works with v1 color tokens', () => {
+    // Load v1 tokens
+    document.documentElement.style.setProperty('--color-primary', '#3B82F6');
+    
+    const { getByRole } = renderComponent(<Button />);
+    const button = getByRole('button');
+    
+    // Component should still render with v1 tokens
+    expect(button).toHaveStyle({ backgroundColor: '#3B82F6' });
+  });
+  
+  it('prefers v2 tokens when available', () => {
+    // Load both v1 and v2 tokens
+    document.documentElement.style.setProperty('--color-primary', '#3B82F6');
+    document.documentElement.style.setProperty('--color-interactive-primary', '#10B981');
+    
+    const { getByRole } = renderComponent(<Button />);
+    const button = getByRole('button');
+    
+    // Component should prefer v2 token
+    expect(button).toHaveStyle({ backgroundColor: '#10B981' });
+  });
+});
+```
+
+## Conclusion
+
+Versioning design systems is more nuanced than versioning code libraries. Visual changes matter. Coordination across teams matters. Migration friction matters.
+
+Make versioning predictable:
+
+1. **Use semantic versioning** (MAJOR.MINOR.PATCH)
+2. **Deprecate before removing** (at least one MAJOR version)
+3. **Provide codemods** for breaking changes
+4. **Write detailed changelogs** and migration guides
+5. **Support multiple versions** with clear policies
+6. **Test compatibility** across versions
+
+The goal isn't to never break things—it's to break things predictably, with clear paths forward.
+
+Tools like FramingUI help by:
+- Enforcing token structure, making breaking changes obvious
+- Generating migration scripts from schema changes
+- Validating token usage across versions
+- Providing type safety to catch breaking changes early
+
+Your design system will evolve. Make sure it evolves without leaving consumers behind.

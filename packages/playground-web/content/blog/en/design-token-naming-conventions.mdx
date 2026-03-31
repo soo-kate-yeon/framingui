@@ -1,0 +1,572 @@
+---
+title: "Design Token Naming Conventions That Scale (With Examples)"
+description: "Learn proven naming conventions for design tokens that scale across teams, platforms, and AI-assisted development workflows."
+date: "2026-04-01"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - best-practices
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+Your design system has `spacing-md`, `spacing-medium`, and `space-m` all referring to 16px. Three developers made three different assumptions, and now your spacing is inconsistent across 200 components.
+
+This is the cost of ad-hoc naming. The fix isn't a style guide that nobody reads—it's a naming convention that makes the right choice obvious.
+
+## Why Naming Matters More Than You Think
+
+Design token names are API surface. Once they're in production code, changing them means coordinating updates across every component, every platform, every developer. Poor names create:
+
+- **Ambiguity**: Does `color-text-primary` mean the primary color applied to text, or the primary text color?
+- **Inconsistency**: Some tokens use `sm/md/lg`, others use `small/medium/large`, others use `1/2/3`
+- **Scalability issues**: You have `spacing-sm` and `spacing-lg`. Where does `spacing-xs` or `spacing-xl` go in the scale?
+- **AI confusion**: Code generation tools work best with predictable, systematic naming
+
+A good naming convention makes these problems impossible.
+
+## The Anatomy of a Token Name
+
+The most maintainable token names follow this structure:
+
+```
+[category]-[concept]-[variant]-[state]
+```
+
+Breaking this down:
+
+**Category** (required): The high-level type
+- `color`, `spacing`, `typography`, `border`, `shadow`, `animation`
+
+**Concept** (required): What role or element this applies to
+- For colors: `text`, `background`, `border`, `surface`, `interactive`
+- For spacing: `inline`, `stack`, `inset`, `layout`
+- For typography: `heading`, `body`, `label`, `caption`
+
+**Variant** (optional): Size, intensity, or hierarchy
+- Scale: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, etc.
+- Hierarchy: `primary`, `secondary`, `tertiary`
+- Intensity: `subtle`, `moderate`, `strong`
+
+**State** (optional): Interactive or contextual state
+- `hover`, `active`, `focus`, `disabled`, `selected`, `error`, `warning`
+
+### Examples
+
+```
+color-text-primary
+color-text-secondary
+color-text-disabled
+
+color-background-surface
+color-background-surface-hover
+color-background-overlay
+
+spacing-inline-sm
+spacing-inline-md
+spacing-stack-lg
+
+typography-heading-xl
+typography-body-md
+typography-label-sm
+
+border-radius-sm
+border-width-thick
+
+shadow-elevation-low
+shadow-elevation-high
+```
+
+## Rule 1: Use Semantic Names for Application Tokens
+
+Application tokens (the ones used directly in components) should describe **purpose**, not appearance.
+
+**❌ Bad (literal):**
+```css
+--blue-500
+--gray-200
+--spacing-16
+--font-18
+```
+
+You can't tell what these are for without context.
+
+**✅ Good (semantic):**
+```css
+--color-text-primary
+--color-background-subtle
+--spacing-stack-md
+--typography-body-lg
+```
+
+The purpose is embedded in the name.
+
+### The Exception: Primitive Tokens
+
+Primitive/base tokens that serve as raw values can use literal names:
+
+```css
+/* Primitives: literal names OK */
+--primitive-blue-400: #60A5FA;
+--primitive-blue-500: #3B82F6;
+--primitive-blue-600: #2563EB;
+
+/* Application tokens: semantic names required */
+--color-interactive-primary: var(--primitive-blue-500);
+--color-interactive-primary-hover: var(--primitive-blue-600);
+```
+
+This two-tier system gives you flexibility at the primitive level while maintaining clarity at the application level.
+
+## Rule 2: Use Consistent Scale Notation
+
+Pick **one** scale system and use it everywhere. The most common options:
+
+### T-shirt sizes (recommended for beginners)
+```
+xs, sm, md, lg, xl, 2xl, 3xl
+```
+
+**Pros:** Intuitive, easy to remember, familiar to designers  
+**Cons:** Limited granularity, what comes before `xs`?
+
+### Numeric scales
+```
+100, 200, 300, 400, 500, 600, 700, 800, 900
+```
+
+**Pros:** Infinite extensibility, clear ordering  
+**Cons:** Less intuitive meaning, requires documentation
+
+### Ordinal numbers
+```
+1, 2, 3, 4, 5, 6, 7, 8
+```
+
+**Pros:** Simple, compact  
+**Cons:** No semantic meaning, hard to insert between values
+
+**My recommendation:** Start with t-shirt sizes. Migrate to numeric scales when you need more granularity.
+
+### Mixing scales (don't do this)
+
+**❌ Bad:**
+```css
+--spacing-sm      /* t-shirt */
+--spacing-medium  /* full word */
+--spacing-3       /* number */
+--spacing-large   /* full word again */
+```
+
+This creates confusion. Stick to one system.
+
+## Rule 3: Nest Concepts Hierarchically
+
+Structure token names from general → specific.
+
+**❌ Bad (flat):**
+```css
+--primary-text-color
+--text-color-secondary
+--disabled-text
+--text-error-color
+```
+
+The category appears in different positions, making these hard to sort and autocomplete.
+
+**✅ Good (hierarchical):**
+```css
+--color-text-primary
+--color-text-secondary
+--color-text-disabled
+--color-text-error
+```
+
+All text color tokens are grouped together. Autocomplete becomes useful. Sorting makes sense.
+
+### Grouping in Code
+
+This hierarchical naming makes code organization intuitive:
+
+```typescript
+// tokens/color.ts
+export const colorTokens = {
+  text: {
+    primary: 'hsl(0 0% 9%)',
+    secondary: 'hsl(0 0% 45%)',
+    disabled: 'hsl(0 0% 70%)',
+    error: 'hsl(0 84% 60%)',
+  },
+  background: {
+    surface: 'hsl(0 0% 100%)',
+    subtle: 'hsl(0 0% 97%)',
+    overlay: 'hsla(0 0% 0% / 0.5)',
+  },
+  border: {
+    default: 'hsl(0 0% 89%)',
+    strong: 'hsl(0 0% 70%)',
+    focus: 'hsl(215 100% 50%)',
+  },
+};
+```
+
+When using tools like FramingUI that manage design tokens programmatically, this structure translates directly to type-safe token references.
+
+## Rule 4: Be Explicit About States
+
+Interactive components have states. Token names should make state-specific tokens obvious.
+
+**❌ Bad (ambiguous):**
+```css
+--color-button: #3B82F6;
+--color-button-2: #2563EB;
+```
+
+What is `button-2`? Is it a variant? A darker shade? Hover state?
+
+**✅ Good (explicit):**
+```css
+--color-interactive-primary: #3B82F6;
+--color-interactive-primary-hover: #2563EB;
+--color-interactive-primary-active: #1D4ED8;
+--color-interactive-primary-disabled: #93C5FD;
+```
+
+No guessing required.
+
+### Common State Suffixes
+
+```
+-hover
+-active
+-focus
+-disabled
+-selected
+-error
+-warning
+-success
+-loading
+```
+
+## Rule 5: Don't Encode Implementation Details
+
+Token names should describe **what**, not **how**.
+
+**❌ Bad (implementation details):**
+```css
+--color-rgb-255-0-0
+--spacing-16px
+--font-inter-18
+--border-1px-solid
+```
+
+These names break when the implementation changes. What if you switch from px to rem? From RGB to HSL? From Inter to a different font?
+
+**✅ Good (purpose-based):**
+```css
+--color-error-primary
+--spacing-stack-md
+--typography-body-lg
+--border-width-thin
+```
+
+These names remain meaningful regardless of implementation.
+
+## Real-World Example: Button Component Tokens
+
+Here's how these rules come together for a complete button system:
+
+```css
+/* Base colors (primitives) */
+--primitive-blue-400: #60A5FA;
+--primitive-blue-500: #3B82F6;
+--primitive-blue-600: #2563EB;
+--primitive-blue-700: #1D4ED8;
+
+/* Application tokens (semantic) */
+--color-interactive-primary: var(--primitive-blue-500);
+--color-interactive-primary-hover: var(--primitive-blue-600);
+--color-interactive-primary-active: var(--primitive-blue-700);
+--color-interactive-primary-disabled: var(--primitive-blue-400);
+
+--color-text-on-primary: #FFFFFF;
+--color-text-on-primary-disabled: rgba(255, 255, 255, 0.6);
+
+--spacing-inline-sm: 0.75rem;
+--spacing-inline-md: 1rem;
+--spacing-inline-lg: 1.5rem;
+
+--spacing-stack-xs: 0.5rem;
+--spacing-stack-sm: 0.75rem;
+
+--border-radius-md: 0.375rem;
+--border-radius-lg: 0.5rem;
+
+--typography-label-sm: 0.875rem;
+--typography-label-md: 1rem;
+```
+
+Using these tokens in a component:
+
+```tsx
+// Button.tsx
+const buttonStyles = {
+  backgroundColor: 'var(--color-interactive-primary)',
+  color: 'var(--color-text-on-primary)',
+  paddingInline: 'var(--spacing-inline-md)',
+  paddingBlock: 'var(--spacing-stack-sm)',
+  borderRadius: 'var(--border-radius-md)',
+  fontSize: 'var(--typography-label-md)',
+  
+  '&:hover': {
+    backgroundColor: 'var(--color-interactive-primary-hover)',
+  },
+  '&:active': {
+    backgroundColor: 'var(--color-interactive-primary-active)',
+  },
+  '&:disabled': {
+    backgroundColor: 'var(--color-interactive-primary-disabled)',
+    color: 'var(--color-text-on-primary-disabled)',
+  },
+};
+```
+
+Every token name clearly communicates its purpose.
+
+## Naming for AI Code Generation
+
+AI tools like Claude, Cursor, and GitHub Copilot benefit from consistent naming patterns. When token names follow predictable conventions, AI can:
+
+**Autocomplete accurately:**
+```typescript
+// AI sees this pattern:
+color-text-primary
+color-text-secondary
+
+// And correctly suggests:
+color-text-tertiary  // ✅
+color-text-error     // ✅
+
+// Instead of:
+text-color-3         // ❌
+color-tertiary-text  // ❌
+```
+
+**Generate variants systematically:**
+```typescript
+// You define:
+spacing-inline-sm
+spacing-inline-md
+
+// AI generates:
+spacing-inline-lg    // ✅ follows pattern
+spacing-inline-xl    // ✅ extends logically
+```
+
+**Infer relationships:**
+When you use a semantic token like `color-interactive-primary`, AI tools can infer you'll need `color-interactive-primary-hover`, `color-text-on-interactive-primary`, etc.
+
+Tools like FramingUI make this even more powerful by providing AI agents direct access to your token schema, enabling them to suggest tokens that actually exist in your system.
+
+## Creating Your Naming Convention
+
+Here's a practical process:
+
+### 1. Document Your Structure
+
+Create a naming convention guide:
+
+```markdown
+# Token Naming Convention
+
+## Structure
+[category]-[concept]-[variant]-[state]
+
+## Categories
+- color
+- spacing
+- typography
+- border
+- shadow
+- animation
+
+## Scale System
+xs, sm, md, lg, xl, 2xl, 3xl
+
+## State Suffixes
+-hover, -active, -focus, -disabled
+```
+
+### 2. Define Token Categories
+
+List out all token types you'll need:
+
+```typescript
+// tokens/schema.ts
+export const tokenCategories = {
+  color: ['text', 'background', 'border', 'surface', 'interactive'],
+  spacing: ['inline', 'stack', 'inset', 'layout'],
+  typography: ['heading', 'body', 'label', 'caption', 'code'],
+  border: ['radius', 'width'],
+  shadow: ['elevation', 'color'],
+  animation: ['duration', 'easing'],
+};
+```
+
+### 3. Establish Variants
+
+Define your scales:
+
+```typescript
+// tokens/scales.ts
+export const sizeScale = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'];
+export const hierarchyScale = ['primary', 'secondary', 'tertiary'];
+export const intensityScale = ['subtle', 'moderate', 'strong'];
+```
+
+### 4. Generate Tokens Programmatically
+
+Use your convention to generate tokens systematically:
+
+```typescript
+// tokens/generate.ts
+const textColorTokens = hierarchyScale.map(level => ({
+  name: `color-text-${level}`,
+  value: textColors[level],
+}));
+
+const spacingInlineTokens = sizeScale.map(size => ({
+  name: `spacing-inline-${size}`,
+  value: spacingValues[size],
+}));
+```
+
+## Migrating Existing Tokens
+
+Already have inconsistent token names? Here's how to migrate:
+
+### 1. Audit Current Tokens
+
+```bash
+# Find all CSS custom properties
+grep -r "\-\-" src/ | grep ":" | cut -d: -f1 | sort | uniq
+```
+
+### 2. Create Mapping
+
+```typescript
+// tokens/migration-map.ts
+export const tokenMigration = {
+  // Old name → New name
+  'blue-500': 'color-interactive-primary',
+  'gray-200': 'color-background-subtle',
+  'spacing-md': 'spacing-inline-md',
+  'font-lg': 'typography-body-lg',
+};
+```
+
+### 3. Automated Replacement
+
+```typescript
+// scripts/migrate-tokens.ts
+import { tokenMigration } from './tokens/migration-map';
+
+// Replace old tokens with new ones across codebase
+Object.entries(tokenMigration).forEach(([oldToken, newToken]) => {
+  // Use your preferred find-and-replace tool
+  // Be careful with partial matches!
+});
+```
+
+### 4. Deprecation Period
+
+Support both old and new names temporarily:
+
+```css
+:root {
+  /* New name (canonical) */
+  --color-interactive-primary: #3B82F6;
+  
+  /* Old name (deprecated, will be removed) */
+  --blue-500: var(--color-interactive-primary);
+}
+```
+
+Add console warnings when deprecated tokens are used, then remove after a migration period.
+
+## Common Pitfalls to Avoid
+
+### Pitfall 1: Over-abstraction
+
+**❌ Bad:**
+```css
+--token-a
+--token-b
+--token-c
+```
+
+Too abstract. No meaning.
+
+**✅ Good:**
+```css
+--color-text-primary
+--color-text-secondary
+--color-text-tertiary
+```
+
+### Pitfall 2: Over-specification
+
+**❌ Bad:**
+```css
+--color-button-primary-background-hover-with-icon-left-aligned
+```
+
+Too specific. This becomes unmaintainable.
+
+**✅ Good:**
+```css
+--color-interactive-primary-hover
+```
+
+Component layout concerns don't belong in token names.
+
+### Pitfall 3: Inconsistent Casing
+
+**❌ Bad:**
+```css
+--Color-Text-Primary    /* PascalCase */
+--color_text_secondary  /* snake_case */
+--colorTextTertiary     /* camelCase */
+```
+
+**✅ Good:**
+```css
+--color-text-primary
+--color-text-secondary
+--color-text-tertiary
+```
+
+Pick one: kebab-case for CSS, camelCase for JavaScript objects.
+
+## Conclusion
+
+Good token naming is boring and predictable—and that's the point. When everyone can predict what a token should be named, your design system becomes self-documenting.
+
+Follow these rules:
+1. **Semantic names** for application tokens, literal for primitives
+2. **Consistent scales** (pick one, use everywhere)
+3. **Hierarchical structure** (general → specific)
+4. **Explicit states** (no ambiguous suffixes)
+5. **Purpose over implementation** (what, not how)
+
+When you get naming right, everything else gets easier: onboarding new developers, AI code generation, refactoring, theming, multi-platform support.
+
+Your design system becomes a multiplier instead of a bottleneck.
+
+---
+
+**Tools like FramingUI** help enforce these conventions by managing tokens as structured data rather than scattered CSS variables, making it impossible to introduce inconsistent names and enabling AI agents to work with your design system reliably.
+
+Start with a small, well-named token set. Expand systematically. Your future self (and your AI coding assistant) will thank you.

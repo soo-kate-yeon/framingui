@@ -1,0 +1,791 @@
+---
+title: "AI UI Component Composition: A Practical Guide (with Code)"
+description: "Learn patterns for composing AI-generated components into cohesive interfaces. Covers design tokens, compound components, and layout primitives."
+date: "2026-04-01"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai
+  - component-architecture
+  - best-practices
+category: "How-to"
+coverImage: ""
+published: true
+---
+
+Your AI coding assistant just generated a beautiful `Button`, a clean `Input`, and a polished `Card` component. Each one works perfectly in isolation. Now you need to build a form with all three, and suddenly nothing lines up—spacing is off, colors clash, and the visual hierarchy makes no sense.
+
+This is the composition problem. AI tools are getting incredible at generating individual components, but composing them into cohesive interfaces requires a different approach.
+
+## The Component Composition Challenge
+
+Traditional component development (by humans) happens with the full UI in mind. You design a form, then build the pieces to fit together. AI development often works backwards: you generate pieces, then try to compose them into a whole.
+
+This creates three main problems:
+
+### Problem 1: Inconsistent Spacing
+
+```tsx
+// AI-generated Button
+<button style={{ padding: '12px 24px' }}>Submit</button>
+
+// AI-generated Input
+<input style={{ padding: '8px 16px' }} />
+
+// AI-generated Card
+<div style={{ padding: '20px' }}>...</div>
+```
+
+Three different padding scales. When composed together, they look disconnected.
+
+### Problem 2: Mismatched Visual Hierarchy
+
+```tsx
+// Each component looks fine alone
+<Card>
+  <h2 style={{ fontSize: '24px' }}>Title</h2>
+  <Input placeholder="Name" style={{ fontSize: '18px' }} />
+  <Button>Submit</Button> {/* fontSize: 14px internally */}
+</Card>
+```
+
+Font sizes don't relate to each other. The input text is bigger than the button text, which is confusing.
+
+### Problem 3: Broken Relationships
+
+```tsx
+// Input with error state
+<Input error={true} />
+
+// Separate error message
+<p className="error">This field is required</p>
+```
+
+The input and error message aren't connected—no ARIA relationship, no visual connection, no guarantee they'll stay consistent.
+
+## Composition Strategy 1: Design Tokens as the Common Language
+
+The most reliable way to ensure components compose well is to have them all reference the same token system.
+
+### Without Tokens (Brittle)
+
+Each component has hardcoded values:
+
+```tsx
+// Button.tsx
+const Button = ({ children }) => (
+  <button style={{
+    padding: '10px 20px',
+    fontSize: '14px',
+    borderRadius: '6px',
+    backgroundColor: '#3B82F6',
+  }}>
+    {children}
+  </button>
+);
+
+// Input.tsx
+const Input = ({ ...props }) => (
+  <input style={{
+    padding: '8px 12px',
+    fontSize: '16px',
+    borderRadius: '4px',
+    border: '1px solid #D1D5DB',
+  }} {...props} />
+);
+```
+
+When composed, these don't harmonize because they were never designed to.
+
+### With Tokens (Resilient)
+
+Components reference shared design tokens:
+
+```tsx
+// Button.tsx
+const Button = ({ children, size = 'md' }) => (
+  <button style={{
+    padding: 'var(--spacing-inline-md) var(--spacing-inline-lg)',
+    fontSize: 'var(--typography-label-md)',
+    borderRadius: 'var(--border-radius-md)',
+    backgroundColor: 'var(--color-interactive-primary)',
+  }}>
+    {children}
+  </button>
+);
+
+// Input.tsx
+const Input = ({ ...props }) => (
+  <input style={{
+    padding: 'var(--spacing-inline-sm) var(--spacing-inline-md)',
+    fontSize: 'var(--typography-body-md)',
+    borderRadius: 'var(--border-radius-md)',
+    border: '1px solid var(--color-border-default)',
+  }} {...props} />
+);
+```
+
+Now both components:
+- Use the same spacing scale (`spacing-inline-*`)
+- Use the same typography scale (`typography-*`)
+- Use the same border radius (`border-radius-md`)
+- Reference semantic colors that can be themed together
+
+When AI generates components using tokens, they compose harmoniously by default.
+
+### Prompting AI with Token Context
+
+Instead of asking:
+> "Create a button component"
+
+Provide token context:
+> "Create a button component using these design tokens:
+> - Padding: var(--spacing-inline-md) var(--spacing-inline-lg)
+> - Font size: var(--typography-label-md)
+> - Background: var(--color-interactive-primary)
+> - Border radius: var(--border-radius-md)"
+
+Even better, if you're using a design system like FramingUI, point the AI to your token schema:
+
+> "Create a button component using the design tokens defined in tokens.config.ts. Follow the spacing and color conventions from existing components."
+
+## Composition Strategy 2: Compound Components
+
+Some UI patterns require multiple components to work together. Compound components formalize these relationships.
+
+### Example: Form Field
+
+A form field isn't just an input—it's a label, input, error message, and optional help text working together.
+
+**❌ Fragile composition:**
+
+```tsx
+<div>
+  <label htmlFor="email">Email</label>
+  <input id="email" type="email" />
+  {error && <span className="error">{error}</span>}
+</div>
+```
+
+AI might generate this, but it's fragile: no guaranteed spacing, inconsistent error styling, accessibility is manual.
+
+**✅ Compound component:**
+
+```tsx
+// FormField.tsx
+const FormField = ({ 
+  label, 
+  error, 
+  helpText, 
+  children 
+}) => {
+  const id = useId();
+  const errorId = useId();
+  
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'var(--spacing-stack-xs)',
+    }}>
+      <label 
+        htmlFor={id}
+        style={{
+          fontSize: 'var(--typography-label-sm)',
+          fontWeight: 500,
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {label}
+      </label>
+      
+      {React.cloneElement(children, {
+        id,
+        'aria-invalid': !!error,
+        'aria-describedby': error ? errorId : undefined,
+      })}
+      
+      {helpText && (
+        <span style={{
+          fontSize: 'var(--typography-caption-sm)',
+          color: 'var(--color-text-secondary)',
+        }}>
+          {helpText}
+        </span>
+      )}
+      
+      {error && (
+        <span 
+          id={errorId}
+          role="alert"
+          style={{
+            fontSize: 'var(--typography-caption-sm)',
+            color: 'var(--color-text-error)',
+          }}
+        >
+          {error}
+        </span>
+      )}
+    </div>
+  );
+};
+
+// Usage
+<FormField 
+  label="Email" 
+  error={emailError}
+  helpText="We'll never share your email"
+>
+  <Input 
+    type="email" 
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+  />
+</FormField>
+```
+
+Now the composition is:
+- **Consistent**: Same spacing, typography, colors
+- **Accessible**: Automatic ARIA relationships
+- **Maintainable**: Change the pattern once, updates everywhere
+
+### Prompting AI for Compound Components
+
+Instead of generating pieces:
+> "Create a label component, input component, and error message component"
+
+Generate the composition:
+> "Create a FormField compound component that composes a label, input, optional help text, and error message. Ensure proper accessibility with aria-describedby and aria-invalid. Use tokens for spacing (--spacing-stack-xs) and typography (--typography-label-sm, --typography-caption-sm)."
+
+## Composition Strategy 3: Layout Primitives
+
+UI composition often breaks because components have conflicting layout assumptions. Some components assume they're block-level, others inline, others flex children.
+
+### The Problem
+
+```tsx
+// Button assumes it's inline
+<button style={{ display: 'inline-block' }}>Click me</button>
+
+// Card assumes it's a flex container
+<div style={{ display: 'flex', flexDirection: 'column' }}>
+  {/* Expects flex children */}
+</div>
+
+// When composed:
+<Card>
+  <Button>Click me</Button> {/* Layout breaks */}
+</Card>
+```
+
+### Layout Primitives Pattern
+
+Create explicit layout components that handle spacing and positioning:
+
+```tsx
+// Stack.tsx - Vertical spacing
+const Stack = ({ gap = 'md', children }) => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: `var(--spacing-stack-${gap})`,
+  }}>
+    {children}
+  </div>
+);
+
+// Inline.tsx - Horizontal spacing
+const Inline = ({ gap = 'md', align = 'start', children }) => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: align,
+    gap: `var(--spacing-inline-${gap})`,
+  }}>
+    {children}
+  </div>
+);
+
+// Box.tsx - Padding/margin
+const Box = ({ padding, children }) => (
+  <div style={{
+    padding: `var(--spacing-inset-${padding})`,
+  }}>
+    {children}
+  </div>
+);
+```
+
+Now compose without layout conflicts:
+
+```tsx
+<Card>
+  <Stack gap="lg">
+    <h2>Sign up</h2>
+    
+    <Stack gap="md">
+      <FormField label="Name">
+        <Input />
+      </FormField>
+      
+      <FormField label="Email">
+        <Input type="email" />
+      </FormField>
+    </Stack>
+    
+    <Inline gap="sm">
+      <Button variant="secondary">Cancel</Button>
+      <Button>Submit</Button>
+    </Inline>
+  </Stack>
+</Card>
+```
+
+Layout primitives make composition predictable:
+- `Stack` handles vertical spacing
+- `Inline` handles horizontal spacing
+- `Box` handles internal padding
+- Components don't fight over layout
+
+### Prompting AI with Layout Primitives
+
+```
+Create a profile card using these layout primitives:
+- Stack: for vertical spacing between elements
+- Inline: for horizontal button groups
+- Box: for internal padding
+
+Use tokens for gaps:
+- --spacing-stack-sm/md/lg
+- --spacing-inline-sm/md/lg
+- --spacing-inset-sm/md/lg
+```
+
+## Composition Strategy 4: Props Interface Patterns
+
+Composable components need consistent prop interfaces. When AI generates components with wildly different prop patterns, composition becomes confusing.
+
+### Standardize Common Props
+
+Define conventions for props that appear across components:
+
+```typescript
+// types/component-props.ts
+
+// Size variants
+type Size = 'sm' | 'md' | 'lg';
+
+// Visual variants
+type Variant = 'primary' | 'secondary' | 'tertiary';
+
+// Common base props
+interface BaseComponentProps {
+  size?: Size;
+  disabled?: boolean;
+  className?: string;
+}
+
+// Interactive component props
+interface InteractiveProps extends BaseComponentProps {
+  variant?: Variant;
+  loading?: boolean;
+}
+```
+
+Apply consistently:
+
+```tsx
+// Button
+interface ButtonProps extends InteractiveProps {
+  onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+// Input
+interface InputProps extends BaseComponentProps {
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  error?: boolean;
+}
+```
+
+Now when you compose:
+
+```tsx
+<Stack gap="md">
+  <Input size="md" />
+  <Button size="md" variant="primary">Submit</Button>
+</Stack>
+```
+
+Both components respond to the same `size` prop, so they visually match.
+
+### Prompt AI with Type Definitions
+
+```
+Create a Button component with this TypeScript interface:
+
+interface ButtonProps extends InteractiveProps {
+  onClick?: () => void;
+  type?: 'button' | 'submit' | 'reset';
+}
+
+where InteractiveProps is:
+interface InteractiveProps {
+  size?: 'sm' | 'md' | 'lg';
+  variant?: 'primary' | 'secondary' | 'tertiary';
+  disabled?: boolean;
+  loading?: boolean;
+}
+
+Map size to design tokens:
+- sm: --spacing-inline-sm, --typography-label-sm
+- md: --spacing-inline-md, --typography-label-md
+- lg: --spacing-inline-lg, --typography-label-lg
+```
+
+## Real-World Example: Composing a Sign-Up Form
+
+Let's compose a complete sign-up form using all these strategies:
+
+### Step 1: Token Foundation
+
+```css
+/* tokens.css */
+:root {
+  /* Spacing */
+  --spacing-stack-xs: 0.25rem;
+  --spacing-stack-sm: 0.5rem;
+  --spacing-stack-md: 1rem;
+  --spacing-stack-lg: 1.5rem;
+  
+  --spacing-inline-sm: 0.5rem;
+  --spacing-inline-md: 0.75rem;
+  --spacing-inline-lg: 1rem;
+  
+  --spacing-inset-md: 1rem;
+  --spacing-inset-lg: 1.5rem;
+  
+  /* Typography */
+  --typography-heading-lg: 1.5rem;
+  --typography-body-md: 1rem;
+  --typography-label-sm: 0.875rem;
+  --typography-caption-sm: 0.75rem;
+  
+  /* Colors */
+  --color-text-primary: hsl(0 0% 9%);
+  --color-text-secondary: hsl(0 0% 45%);
+  --color-text-error: hsl(0 84% 60%);
+  
+  --color-background-surface: hsl(0 0% 100%);
+  --color-border-default: hsl(0 0% 89%);
+  
+  --color-interactive-primary: hsl(215 100% 50%);
+  --color-interactive-primary-hover: hsl(215 100% 45%);
+}
+```
+
+### Step 2: Layout Primitives
+
+```tsx
+// components/Stack.tsx
+const Stack = ({ gap = 'md', children }) => (
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    gap: `var(--spacing-stack-${gap})`,
+  }}>
+    {children}
+  </div>
+);
+
+// components/Box.tsx
+const Box = ({ padding = 'md', children }) => (
+  <div style={{
+    padding: `var(--spacing-inset-${padding})`,
+  }}>
+    {children}
+  </div>
+);
+```
+
+### Step 3: Compound FormField
+
+```tsx
+// components/FormField.tsx
+const FormField = ({ label, error, helpText, children }) => {
+  const id = useId();
+  const errorId = useId();
+  
+  return (
+    <Stack gap="xs">
+      <label 
+        htmlFor={id}
+        style={{
+          fontSize: 'var(--typography-label-sm)',
+          fontWeight: 500,
+          color: 'var(--color-text-primary)',
+        }}
+      >
+        {label}
+      </label>
+      
+      {React.cloneElement(children, {
+        id,
+        'aria-invalid': !!error,
+        'aria-describedby': error ? errorId : undefined,
+      })}
+      
+      {helpText && (
+        <span style={{
+          fontSize: 'var(--typography-caption-sm)',
+          color: 'var(--color-text-secondary)',
+        }}>
+          {helpText}
+        </span>
+      )}
+      
+      {error && (
+        <span 
+          id={errorId}
+          role="alert"
+          style={{
+            fontSize: 'var(--typography-caption-sm)',
+            color: 'var(--color-text-error)',
+          }}
+        >
+          {error}
+        </span>
+      )}
+    </Stack>
+  );
+};
+```
+
+### Step 4: Token-Based Components
+
+```tsx
+// components/Input.tsx
+const Input = ({ error, ...props }) => (
+  <input 
+    style={{
+      padding: 'var(--spacing-inline-sm) var(--spacing-inline-md)',
+      fontSize: 'var(--typography-body-md)',
+      borderRadius: 'var(--border-radius-md)',
+      border: `1px solid ${error ? 'var(--color-border-error)' : 'var(--color-border-default)'}`,
+      outline: 'none',
+      transition: 'border-color 0.2s',
+    }}
+    {...props}
+  />
+);
+
+// components/Button.tsx
+const Button = ({ children, variant = 'primary', ...props }) => (
+  <button
+    style={{
+      padding: 'var(--spacing-inline-md) var(--spacing-inline-lg)',
+      fontSize: 'var(--typography-label-md)',
+      borderRadius: 'var(--border-radius-md)',
+      backgroundColor: variant === 'primary' 
+        ? 'var(--color-interactive-primary)' 
+        : 'transparent',
+      color: variant === 'primary' 
+        ? 'white' 
+        : 'var(--color-interactive-primary)',
+      border: variant === 'primary' 
+        ? 'none' 
+        : '1px solid var(--color-interactive-primary)',
+      cursor: 'pointer',
+      transition: 'all 0.2s',
+    }}
+    {...props}
+  >
+    {children}
+  </button>
+);
+```
+
+### Step 5: Compose the Form
+
+```tsx
+// SignUpForm.tsx
+const SignUpForm = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({});
+  
+  return (
+    <Box padding="lg" style={{
+      maxWidth: '400px',
+      backgroundColor: 'var(--color-background-surface)',
+      borderRadius: 'var(--border-radius-lg)',
+      boxShadow: 'var(--shadow-elevation-low)',
+    }}>
+      <Stack gap="lg">
+        <h2 style={{
+          fontSize: 'var(--typography-heading-lg)',
+          color: 'var(--color-text-primary)',
+          margin: 0,
+        }}>
+          Create your account
+        </h2>
+        
+        <Stack gap="md">
+          <FormField 
+            label="Full name" 
+            error={errors.name}
+            helpText="As it appears on your ID"
+          >
+            <Input 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              error={!!errors.name}
+            />
+          </FormField>
+          
+          <FormField 
+            label="Email address" 
+            error={errors.email}
+          >
+            <Input 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!errors.email}
+            />
+          </FormField>
+        </Stack>
+        
+        <Stack gap="sm">
+          <Button variant="primary">Create account</Button>
+          <Button variant="secondary">Sign in instead</Button>
+        </Stack>
+      </Stack>
+    </Box>
+  );
+};
+```
+
+Every piece composes harmoniously because:
+- **Design tokens** ensure visual consistency
+- **Layout primitives** handle spacing predictably
+- **Compound components** formalize relationships
+- **Consistent props** make behavior predictable
+
+## Prompting Strategies for Composable AI Components
+
+### Strategy 1: Context Before Generation
+
+Don't generate in isolation. Provide composition context:
+
+```
+I'm building a sign-up form with these components already existing:
+- Input (uses --spacing-inline-md, --typography-body-md)
+- Button (uses --spacing-inline-lg, --typography-label-md)
+
+Create a FormField compound component that wraps Input with a label and error message.
+Use the same spacing and typography tokens for consistency.
+```
+
+### Strategy 2: Show Don't Tell
+
+Provide an example of good composition:
+
+```
+Here's how our Button and Input compose together:
+
+<Stack gap="md">
+  <Input value={name} />
+  <Button>Submit</Button>
+</Stack>
+
+Create a Select component that composes the same way.
+Follow the same token usage pattern as Input.
+```
+
+### Strategy 3: Iterative Refinement
+
+Generate, compose, refine:
+
+1. Generate individual components
+2. Try composing them
+3. Identify mismatches
+4. Ask AI to refine: "The Button and Input don't align visually. Update Button to use the same height as Input by matching padding tokens."
+
+### Strategy 4: Use Design System Tools
+
+Tools like FramingUI help by:
+- Providing AI with your token schema
+- Ensuring generated components reference actual tokens
+- Making composition patterns discoverable
+- Validating that components follow conventions
+
+```
+Using FramingUI tokens, create a FormField component that composes:
+- Label (--typography-label-sm)
+- Input (from existing components)
+- Error message (--typography-caption-sm, --color-text-error)
+
+Stack them with --spacing-stack-xs gap.
+```
+
+## Testing Component Composition
+
+How do you know if your components compose well?
+
+### Composition Checklist
+
+✅ **Visual consistency**: Do components look like they belong together?
+✅ **Spacing harmony**: Is there a clear rhythm to spacing?
+✅ **Typography scale**: Do font sizes relate logically?
+✅ **Color relationships**: Do colors work together in context?
+✅ **Behavior consistency**: Do similar interactions work similarly?
+✅ **Accessibility**: Are relationships properly expressed (ARIA)?
+
+### Composition Stress Test
+
+Try composing components in unexpected ways:
+
+```tsx
+// Can you nest them?
+<Card>
+  <Card>
+    <Button />
+  </Card>
+</Card>
+
+// Can you compose multiple?
+<Stack>
+  <Input />
+  <Input />
+  <Input />
+</Stack>
+
+// Do they respond to the same props?
+<Inline>
+  <Button size="sm" />
+  <Input size="sm" />
+</Inline>
+```
+
+If composition breaks, your components aren't composable enough.
+
+## Conclusion
+
+AI-generated components are only as good as their ability to compose. Individual components might be perfect, but if they don't work together, they're not useful.
+
+Make components composable by:
+
+1. **Using design tokens** as the common language
+2. **Creating compound components** for related pieces
+3. **Providing layout primitives** to avoid layout conflicts
+4. **Standardizing prop interfaces** for consistent behavior
+
+When you prompt AI, don't think in isolated components—think in compositions. Provide context, examples, and constraints that ensure generated components will work together.
+
+The goal isn't perfect individual components. It's a system of components that compose effortlessly.
+
+Tools like FramingUI make this easier by managing tokens, enforcing conventions, and giving AI agents the structure they need to generate composable components reliably.
+
+Build for composition from day one, and your AI-generated UI will feel cohesive instead of cobbled together.
