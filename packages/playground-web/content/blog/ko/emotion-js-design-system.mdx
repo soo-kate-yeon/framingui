@@ -1,0 +1,912 @@
+---
+title: "Building a Design System with Emotion.js and Design Tokens"
+description: "A practical guide to architecting scalable design systems using Emotion.js, design tokens, and component composition patterns."
+date: "2026-04-02"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - emotion
+  - css-in-js
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Emotion.js gives you powerful CSS-in-JS capabilities: the `css` prop for inline composition, `styled` for component creation, and excellent TypeScript support. But power without structure leads to inconsistency. A button using `padding: 12px`, a card using `padding: 16px`, and an input using `padding: 0.75rem` — all arbitrary, all impossible to maintain.
+
+A design system built on design tokens eliminates this chaos. Tokens define your spacing scale, color palette, typography, and other primitives. Emotion provides the styling engine. Together, they create a foundation where every component pulls from the same source of truth.
+
+This guide walks through building a production-ready design system with Emotion and tokens, from initial setup to component composition and team workflows.
+
+## Why Emotion for Design Systems
+
+### Framework-Agnostic with React Optimization
+
+Emotion works with React, Preact, Vue, and vanilla JavaScript. For React specifically, the `css` prop and `styled` API offer ergonomic component authoring without sacrificing performance.
+
+### Composition Over Configuration
+
+Emotion's `css` function lets you compose styles functionally:
+
+```jsx
+import { css } from '@emotion/react';
+
+const baseButton = css`
+  padding: 12px 24px;
+  border-radius: 8px;
+`;
+
+const primaryButton = css`
+  ${baseButton}
+  background: blue;
+  color: white;
+`;
+```
+
+This composability is perfect for design systems where components share base styles and extend them with variants.
+
+### TypeScript-First
+
+Emotion's TypeScript support is excellent. Theme types propagate automatically, giving you autocomplete and type errors when referencing tokens.
+
+### Minimal Runtime Overhead
+
+Emotion generates atomic CSS classes and deduplicates styles. Your bundle contains only the CSS you use, and runtime performance is competitive with static solutions.
+
+## Setting Up Token Infrastructure
+
+### Token Schema Design
+
+Start with a structured token schema. Use nested objects for organization and semantic naming:
+
+```javascript
+// tokens/primitives.js
+export const primitives = {
+  // Color palette
+  blue: {
+    50: '#EFF6FF',
+    100: '#DBEAFE',
+    500: '#3B82F6',
+    600: '#2563EB',
+    700: '#1D4ED8',
+    900: '#1E3A8A',
+  },
+  gray: {
+    50: '#F9FAFB',
+    100: '#F3F4F6',
+    500: '#6B7280',
+    700: '#374151',
+    900: '#111827',
+  },
+  red: {
+    50: '#FEF2F2',
+    500: '#EF4444',
+    600: '#DC2626',
+  },
+  green: {
+    50: '#F0FDF4',
+    500: '#22C55E',
+  },
+  
+  // Spacing scale (4px base)
+  space: {
+    0: '0',
+    1: '4px',
+    2: '8px',
+    3: '12px',
+    4: '16px',
+    6: '24px',
+    8: '32px',
+    12: '48px',
+    16: '64px',
+  },
+  
+  // Typography
+  fontSize: {
+    xs: '12px',
+    sm: '14px',
+    base: '16px',
+    lg: '18px',
+    xl: '20px',
+    '2xl': '24px',
+    '3xl': '30px',
+  },
+  
+  fontWeight: {
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+  },
+  
+  lineHeight: {
+    tight: 1.25,
+    normal: 1.5,
+    relaxed: 1.75,
+  },
+  
+  // Radii
+  radius: {
+    none: '0',
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '16px',
+    full: '9999px',
+  },
+  
+  // Shadows
+  shadow: {
+    xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  },
+};
+```
+
+### Semantic Token Layer
+
+Map primitives to semantic usage:
+
+```javascript
+// tokens/semantic.js
+import { primitives } from './primitives';
+
+export const semantic = {
+  color: {
+    // Interactive elements
+    primary: {
+      solid: primitives.blue[500],
+      hover: primitives.blue[600],
+      active: primitives.blue[700],
+      subtle: primitives.blue[50],
+    },
+    
+    // Destructive actions
+    danger: {
+      solid: primitives.red[500],
+      hover: primitives.red[600],
+      subtle: primitives.red[50],
+    },
+    
+    // Success states
+    success: {
+      solid: primitives.green[500],
+      subtle: primitives.green[50],
+    },
+    
+    // Text hierarchy
+    text: {
+      primary: primitives.gray[900],
+      secondary: primitives.gray[700],
+      tertiary: primitives.gray[500],
+      inverse: '#FFFFFF',
+    },
+    
+    // Surfaces
+    surface: {
+      base: '#FFFFFF',
+      raised: primitives.gray[50],
+      overlay: primitives.gray[100],
+    },
+    
+    // Borders
+    border: {
+      default: primitives.gray[200],
+      subtle: primitives.gray[100],
+      focus: primitives.blue[500],
+    },
+  },
+  
+  spacing: primitives.space,
+  fontSize: primitives.fontSize,
+  fontWeight: primitives.fontWeight,
+  lineHeight: primitives.lineHeight,
+  radius: primitives.radius,
+  shadow: primitives.shadow,
+};
+```
+
+### Theme Configuration
+
+Create the Emotion theme:
+
+```javascript
+// tokens/theme.js
+import { semantic } from './semantic';
+
+export const theme = {
+  ...semantic,
+  
+  // Animation tokens
+  transition: {
+    fast: '150ms ease',
+    base: '200ms ease',
+    slow: '300ms ease',
+  },
+  
+  // Z-index scale
+  zIndex: {
+    base: 0,
+    dropdown: 1000,
+    sticky: 1100,
+    modal: 1200,
+    popover: 1300,
+    tooltip: 1400,
+  },
+  
+  // Breakpoints
+  breakpoint: {
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
+  },
+};
+```
+
+### TypeScript Theme Types
+
+Generate types for autocomplete and validation:
+
+```typescript
+// tokens/theme.ts
+import { theme } from './theme';
+
+export type Theme = typeof theme;
+
+// Emotion TypeScript declaration
+declare module '@emotion/react' {
+  export interface Theme extends Theme {}
+}
+```
+
+## Integrating Tokens with Emotion
+
+### ThemeProvider Setup
+
+Wrap your app with `ThemeProvider`:
+
+```jsx
+// App.jsx
+import { ThemeProvider } from '@emotion/react';
+import { theme } from './tokens/theme';
+
+export function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      {/* your app */}
+    </ThemeProvider>
+  );
+}
+```
+
+### Using Tokens with the `css` Prop
+
+Access theme tokens via the `theme` prop in `css`:
+
+```jsx
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+
+function Button({ children }) {
+  return (
+    <button
+      css={theme => css`
+        padding: ${theme.spacing[3]} ${theme.spacing[6]};
+        font-size: ${theme.fontSize.base};
+        font-weight: ${theme.fontWeight.medium};
+        border-radius: ${theme.radius.md};
+        background: ${theme.color.primary.solid};
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background ${theme.transition.fast};
+        
+        &:hover {
+          background: ${theme.color.primary.hover};
+        }
+        
+        &:active {
+          background: ${theme.color.primary.active};
+        }
+      `}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+### Using Tokens with `styled`
+
+For reusable components, use `styled`:
+
+```jsx
+import styled from '@emotion/styled';
+
+const Button = styled.button`
+  padding: ${p => p.theme.spacing[3]} ${p => p.theme.spacing[6]};
+  font-size: ${p => p.theme.fontSize.base};
+  font-weight: ${p => p.theme.fontWeight.medium};
+  border-radius: ${p => p.theme.radius.md};
+  background: ${p => p.theme.color.primary.solid};
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background ${p => p.theme.transition.fast};
+  
+  &:hover {
+    background: ${p => p.theme.color.primary.hover};
+  }
+  
+  &:active {
+    background: ${p => p.theme.color.primary.active};
+  }
+`;
+```
+
+## Building Design System Components
+
+### Button Component with Variants
+
+```jsx
+import styled from '@emotion/styled';
+
+const StyledButton = styled.button`
+  /* Base styles */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${p => p.theme.spacing[2]};
+  
+  font-family: inherit;
+  font-weight: ${p => p.theme.fontWeight.medium};
+  line-height: ${p => p.theme.lineHeight.tight};
+  
+  border: none;
+  border-radius: ${p => p.theme.radius.md};
+  cursor: pointer;
+  transition: all ${p => p.theme.transition.fast};
+  
+  /* Size variants */
+  ${p => p.size === 'sm' && `
+    padding: ${p.theme.spacing[2]} ${p.theme.spacing[4]};
+    font-size: ${p.theme.fontSize.sm};
+  `}
+  
+  ${p => (!p.size || p.size === 'md') && `
+    padding: ${p.theme.spacing[3]} ${p.theme.spacing[6]};
+    font-size: ${p.theme.fontSize.base};
+  `}
+  
+  ${p => p.size === 'lg' && `
+    padding: ${p.theme.spacing[4]} ${p.theme.spacing[8]};
+    font-size: ${p.theme.fontSize.lg};
+  `}
+  
+  /* Color variants */
+  ${p => (!p.variant || p.variant === 'primary') && `
+    background: ${p.theme.color.primary.solid};
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: ${p.theme.color.primary.hover};
+    }
+    
+    &:active:not(:disabled) {
+      background: ${p.theme.color.primary.active};
+    }
+  `}
+  
+  ${p => p.variant === 'danger' && `
+    background: ${p.theme.color.danger.solid};
+    color: white;
+    
+    &:hover:not(:disabled) {
+      background: ${p.theme.color.danger.hover};
+    }
+  `}
+  
+  ${p => p.variant === 'outline' && `
+    background: transparent;
+    border: 1px solid ${p.theme.color.border.default};
+    color: ${p.theme.color.text.primary};
+    
+    &:hover:not(:disabled) {
+      background: ${p.theme.color.surface.raised};
+    }
+  `}
+  
+  ${p => p.variant === 'ghost' && `
+    background: transparent;
+    color: ${p.theme.color.text.primary};
+    
+    &:hover:not(:disabled) {
+      background: ${p.theme.color.surface.raised};
+    }
+  `}
+  
+  /* Disabled state */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Focus state */
+  &:focus-visible {
+    outline: 2px solid ${p => p.theme.color.border.focus};
+    outline-offset: 2px;
+  }
+`;
+
+export function Button({ variant = 'primary', size = 'md', children, ...props }) {
+  return (
+    <StyledButton variant={variant} size={size} {...props}>
+      {children}
+    </StyledButton>
+  );
+}
+```
+
+Usage:
+
+```jsx
+<Button>Primary</Button>
+<Button variant="danger">Delete</Button>
+<Button variant="outline" size="sm">Cancel</Button>
+<Button variant="ghost" size="lg">Learn More</Button>
+```
+
+### Card Component
+
+```jsx
+import styled from '@emotion/styled';
+
+const CardContainer = styled.div`
+  background: ${p => p.theme.color.surface.base};
+  border: 1px solid ${p => p.theme.color.border.default};
+  border-radius: ${p => p.theme.radius.lg};
+  overflow: hidden;
+  box-shadow: ${p => p.theme.shadow.sm};
+  transition: all ${p => p.theme.transition.base};
+  
+  ${p => p.hoverable && `
+    cursor: pointer;
+    
+    &:hover {
+      box-shadow: ${p.theme.shadow.md};
+      border-color: ${p.theme.color.border.focus};
+    }
+  `}
+`;
+
+const CardHeader = styled.div`
+  padding: ${p => p.theme.spacing[6]};
+  border-bottom: 1px solid ${p => p.theme.color.border.subtle};
+`;
+
+const CardTitle = styled.h3`
+  margin: 0;
+  font-size: ${p => p.theme.fontSize.lg};
+  font-weight: ${p => p.theme.fontWeight.semibold};
+  color: ${p => p.theme.color.text.primary};
+`;
+
+const CardBody = styled.div`
+  padding: ${p => p.theme.spacing[6]};
+`;
+
+const CardFooter = styled.div`
+  padding: ${p => p.theme.spacing[4]} ${p => p.theme.spacing[6]};
+  background: ${p => p.theme.color.surface.raised};
+  border-top: 1px solid ${p => p.theme.color.border.subtle};
+`;
+
+export function Card({ title, children, footer, hoverable, ...props }) {
+  return (
+    <CardContainer hoverable={hoverable} {...props}>
+      {title && (
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+      )}
+      <CardBody>{children}</CardBody>
+      {footer && <CardFooter>{footer}</CardFooter>}
+    </CardContainer>
+  );
+}
+```
+
+### Input Component
+
+```jsx
+import styled from '@emotion/styled';
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${p => p.theme.spacing[2]};
+`;
+
+const Label = styled.label`
+  font-size: ${p => p.theme.fontSize.sm};
+  font-weight: ${p => p.theme.fontWeight.medium};
+  color: ${p => p.theme.color.text.primary};
+`;
+
+const StyledInput = styled.input`
+  padding: ${p => p.theme.spacing[3]};
+  font-size: ${p => p.theme.fontSize.base};
+  line-height: ${p => p.theme.lineHeight.normal};
+  color: ${p => p.theme.color.text.primary};
+  background: ${p => p.theme.color.surface.base};
+  border: 1px solid ${p => p.theme.color.border.default};
+  border-radius: ${p => p.theme.radius.md};
+  transition: all ${p => p.theme.transition.fast};
+  
+  &::placeholder {
+    color: ${p => p.theme.color.text.tertiary};
+  }
+  
+  &:hover:not(:disabled) {
+    border-color: ${p => p.theme.color.border.focus};
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: ${p => p.theme.color.border.focus};
+    box-shadow: 0 0 0 3px ${p => p.theme.color.primary.subtle};
+  }
+  
+  &:disabled {
+    background: ${p => p.theme.color.surface.raised};
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+  
+  ${p => p.error && `
+    border-color: ${p.theme.color.danger.solid};
+    
+    &:focus {
+      box-shadow: 0 0 0 3px ${p.theme.color.danger.subtle};
+    }
+  `}
+`;
+
+const HelperText = styled.span`
+  font-size: ${p => p.theme.fontSize.xs};
+  color: ${p => p.error ? p.theme.color.danger.solid : p.theme.color.text.secondary};
+`;
+
+export function Input({ label, error, helperText, ...props }) {
+  return (
+    <InputWrapper>
+      {label && <Label>{label}</Label>}
+      <StyledInput error={!!error} {...props} />
+      {(error || helperText) && (
+        <HelperText error={!!error}>{error || helperText}</HelperText>
+      )}
+    </InputWrapper>
+  );
+}
+```
+
+## Advanced Patterns
+
+### Responsive Design with Breakpoint Tokens
+
+Create a responsive utility:
+
+```javascript
+// utils/responsive.js
+export function mq(breakpoint) {
+  return `@media (min-width: ${breakpoint})`;
+}
+```
+
+Use in components:
+
+```jsx
+import styled from '@emotion/styled';
+import { mq } from '../utils/responsive';
+
+const Grid = styled.div`
+  display: grid;
+  gap: ${p => p.theme.spacing[4]};
+  grid-template-columns: 1fr;
+  
+  ${p => mq(p.theme.breakpoint.md)} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  ${p => mq(p.theme.breakpoint.lg)} {
+    grid-template-columns: repeat(3, 1fr);
+  }
+`;
+```
+
+### Dark Mode Support
+
+Extend your theme with mode-specific tokens:
+
+```javascript
+// tokens/themes.js
+export const lightTheme = {
+  ...baseTokens,
+  color: {
+    text: {
+      primary: primitives.gray[900],
+      secondary: primitives.gray[700],
+    },
+    surface: {
+      base: '#FFFFFF',
+      raised: primitives.gray[50],
+    },
+    border: {
+      default: primitives.gray[200],
+    },
+  },
+};
+
+export const darkTheme = {
+  ...baseTokens,
+  color: {
+    text: {
+      primary: primitives.gray[50],
+      secondary: primitives.gray[300],
+    },
+    surface: {
+      base: primitives.gray[900],
+      raised: primitives.gray[800],
+    },
+    border: {
+      default: primitives.gray[700],
+    },
+  },
+};
+```
+
+Toggle at runtime:
+
+```jsx
+import { useState } from 'react';
+import { ThemeProvider } from '@emotion/react';
+import { lightTheme, darkTheme } from './tokens/themes';
+
+export function App() {
+  const [mode, setMode] = useState('light');
+  const theme = mode === 'light' ? lightTheme : darkTheme;
+  
+  return (
+    <ThemeProvider theme={theme}>
+      <button onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}>
+        Toggle Mode
+      </button>
+      {/* app */}
+    </ThemeProvider>
+  );
+}
+```
+
+Components automatically adapt because they reference semantic tokens.
+
+### Component Composition with `css` Prop
+
+Compose styles inline for one-off customizations:
+
+```jsx
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+import { Button } from './Button';
+
+function Hero() {
+  return (
+    <Button
+      css={theme => css`
+        width: 100%;
+        font-size: ${theme.fontSize['2xl']};
+        padding: ${theme.spacing[6]} ${theme.spacing[12]};
+      `}
+    >
+      Get Started
+    </Button>
+  );
+}
+```
+
+This preserves base Button styles and extends them without creating a new component.
+
+## Tooling and Workflow
+
+### Token Extraction from Design Tools
+
+If you're using Figma, Sketch, or another design tool, export tokens as JSON and transform them:
+
+```json
+{
+  "color": {
+    "primary": {
+      "solid": { "value": "#3B82F6", "type": "color" }
+    }
+  },
+  "spacing": {
+    "4": { "value": "16px", "type": "dimension" }
+  }
+}
+```
+
+Transform script:
+
+```javascript
+// scripts/generateTokens.js
+const fs = require('fs');
+const rawTokens = require('./tokens.json');
+
+function flattenTokens(obj, prefix = '') {
+  let result = {};
+  for (const [key, val] of Object.entries(obj)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (val.value !== undefined) {
+      result[key] = val.value;
+    } else {
+      result[key] = flattenTokens(val, path);
+    }
+  }
+  return result;
+}
+
+const tokens = flattenTokens(rawTokens);
+fs.writeFileSync(
+  './src/tokens/generated.js',
+  `export const tokens = ${JSON.stringify(tokens, null, 2)};`
+);
+```
+
+Tools like FramingUI can automate this, syncing design and code tokens in real-time.
+
+### Linting for Token Usage
+
+Enforce token usage with ESLint:
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'TemplateLiteral[quasis.0.value.raw=/#[0-9A-Fa-f]{6}/]',
+        message: 'Use theme.color tokens instead of hardcoded hex colors',
+      },
+    ],
+  },
+};
+```
+
+### Storybook Integration
+
+Document components with Storybook:
+
+```jsx
+// Button.stories.jsx
+import { Button } from './Button';
+
+export default {
+  title: 'Components/Button',
+  component: Button,
+};
+
+export const Variants = () => (
+  <div style={{ display: 'flex', gap: '16px' }}>
+    <Button variant="primary">Primary</Button>
+    <Button variant="danger">Danger</Button>
+    <Button variant="outline">Outline</Button>
+    <Button variant="ghost">Ghost</Button>
+  </div>
+);
+
+export const Sizes = () => (
+  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+    <Button size="sm">Small</Button>
+    <Button size="md">Medium</Button>
+    <Button size="lg">Large</Button>
+  </div>
+);
+```
+
+## Real-World Application: Dashboard
+
+```jsx
+/** @jsxImportSource @emotion/react */
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
+import { Card } from './components/Card';
+import { Button } from './components/Button';
+
+const DashboardLayout = styled.div`
+  display: grid;
+  gap: ${p => p.theme.spacing[6]};
+  padding: ${p => p.theme.spacing[8]};
+  background: ${p => p.theme.color.surface.raised};
+  min-height: 100vh;
+`;
+
+const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const Title = styled.h1`
+  margin: 0;
+  font-size: ${p => p.theme.fontSize['3xl']};
+  font-weight: ${p => p.theme.fontWeight.bold};
+  color: ${p => p.theme.color.text.primary};
+`;
+
+const MetricGrid = styled.div`
+  display: grid;
+  gap: ${p => p.theme.spacing[4]};
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+`;
+
+const MetricValue = styled.div`
+  font-size: ${p => p.theme.fontSize['2xl']};
+  font-weight: ${p => p.theme.fontWeight.semibold};
+  color: ${p => p.theme.color.text.primary};
+  margin-bottom: ${p => p.theme.spacing[1]};
+`;
+
+const MetricLabel = styled.div`
+  font-size: ${p => p.theme.fontSize.sm};
+  color: ${p => p.theme.color.text.secondary};
+`;
+
+export function Dashboard() {
+  return (
+    <DashboardLayout>
+      <Header>
+        <Title>Dashboard</Title>
+        <Button>Export Report</Button>
+      </Header>
+      
+      <MetricGrid>
+        <Card>
+          <MetricValue>12,345</MetricValue>
+          <MetricLabel>Total Users</MetricLabel>
+        </Card>
+        <Card>
+          <MetricValue>$45,231</MetricValue>
+          <MetricLabel>Revenue</MetricLabel>
+        </Card>
+        <Card>
+          <MetricValue>89%</MetricValue>
+          <MetricLabel>Satisfaction</MetricLabel>
+        </Card>
+      </MetricGrid>
+    </DashboardLayout>
+  );
+}
+```
+
+Every spacing, color, and typographic decision comes from tokens. Change `theme.spacing[6]` globally and the entire dashboard updates.
+
+## When to Use Emotion for Your Design System
+
+Emotion works well when:
+
+- You need runtime theme switching (light/dark mode, user themes)
+- Your team prefers CSS-in-JS over utility classes or CSS Modules
+- You want strong TypeScript integration
+- Component composition and inline styling are important to your workflow
+
+If you need zero-runtime CSS extraction, consider Vanilla Extract or Panda CSS. If you prefer utility-first styling, Tailwind with token configuration might be better. But for flexible, component-driven design systems with runtime theming, Emotion + tokens is a solid foundation.
+
+---
+
+A design system built on Emotion and design tokens gives you both power and predictability. Tokens centralize decisions. Emotion provides the styling engine. Together, they create a scalable foundation where consistency is automatic, not aspirational.

@@ -1,0 +1,744 @@
+---
+title: "Managing Design Tokens Through Tailwind CSS Configuration"
+description: "A complete guide to centralizing design decisions in Tailwind config using design tokens for scalable, consistent utility-first styling."
+date: "2026-04-02"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - tailwind-css
+  - design-system
+  - utility-first
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Tailwind CSS is a utility-first framework that ships with a comprehensive default design system. But those defaults aren't your brand. `bg-blue-500` might look fine in isolation, but it's not *your* blue. `p-4` might be close to the spacing you need, but close isn't consistent.
+
+Design tokens turn Tailwind's configuration into your design system's single source of truth. Instead of using Tailwind's default palette and scale, you define tokens that represent your brand colors, spacing rhythm, typography hierarchy, and other primitives. Your utilities become an API for your design language, not generic building blocks.
+
+This guide shows you how to structure, configure, and maintain design tokens in Tailwind CSS for scalable, brand-aligned styling.
+
+## Why Tailwind Needs Custom Tokens
+
+### Tailwind's Defaults Are Generic
+
+Tailwind's default theme is well-designed but intentionally generic. The color palette is comprehensive, the spacing scale is logical, and the typography is balanced. But it's built for broad applicability, not your specific product.
+
+Using defaults means:
+- Your primary color is whatever `blue-500` happens to be
+- Your spacing might be `4` (16px) when your design system uses 12px or 20px
+- Your font sizes follow Tailwind's scale, which might not match your typography hierarchy
+- You're designing within constraints you didn't choose
+
+### Token Configuration Centralizes Decisions
+
+Customizing `tailwind.config.js` with design tokens means:
+
+- `bg-primary` pulls from your token, not a generic blue
+- `p-4` maps to *your* spacing scale, not an arbitrary 16px
+- `text-heading-lg` references your type scale, not Tailwind's default
+- Every utility reflects your design system, not Tailwind's opinions
+
+### Tokens Enable Cross-Tool Consistency
+
+If you're using the same tokens in Figma, React components, and CSS, Tailwind config becomes part of a unified system. Export tokens from design tools, transform them for Tailwind, and your utilities automatically match your designs.
+
+## Setting Up Token-Based Tailwind Config
+
+### Installation
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+This creates `tailwind.config.js` and `postcss.config.js`.
+
+### Basic Token Structure
+
+Define your tokens separately for reusability:
+
+```javascript
+// tokens/primitives.js
+export const primitives = {
+  color: {
+    blue: {
+      50: '#EFF6FF',
+      100: '#DBEAFE',
+      200: '#BFDBFE',
+      500: '#3B82F6',
+      600: '#2563EB',
+      700: '#1D4ED8',
+      900: '#1E3A8A',
+    },
+    gray: {
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      200: '#E5E7EB',
+      300: '#D1D5DB',
+      500: '#6B7280',
+      700: '#374151',
+      900: '#111827',
+    },
+    red: {
+      50: '#FEF2F2',
+      500: '#EF4444',
+      600: '#DC2626',
+    },
+    green: {
+      50: '#F0FDF4',
+      500: '#22C55E',
+    },
+  },
+  
+  spacing: {
+    0: '0',
+    1: '4px',
+    2: '8px',
+    3: '12px',
+    4: '16px',
+    5: '20px',
+    6: '24px',
+    8: '32px',
+    10: '40px',
+    12: '48px',
+    16: '64px',
+  },
+  
+  fontSize: {
+    xs: '12px',
+    sm: '14px',
+    base: '16px',
+    lg: '18px',
+    xl: '20px',
+    '2xl': '24px',
+    '3xl': '30px',
+    '4xl': '36px',
+  },
+  
+  fontWeight: {
+    normal: '400',
+    medium: '500',
+    semibold: '600',
+    bold: '700',
+  },
+  
+  lineHeight: {
+    tight: '1.25',
+    normal: '1.5',
+    relaxed: '1.75',
+  },
+  
+  borderRadius: {
+    none: '0',
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    xl: '16px',
+    full: '9999px',
+  },
+  
+  boxShadow: {
+    xs: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+  },
+};
+```
+
+### Semantic Token Layer
+
+Map primitives to semantic usage:
+
+```javascript
+// tokens/semantic.js
+import { primitives } from './primitives';
+
+export const semantic = {
+  colors: {
+    // Interactive
+    primary: primitives.color.blue[500],
+    'primary-hover': primitives.color.blue[600],
+    'primary-active': primitives.color.blue[700],
+    'primary-subtle': primitives.color.blue[50],
+    
+    // Destructive
+    danger: primitives.color.red[500],
+    'danger-hover': primitives.color.red[600],
+    'danger-subtle': primitives.color.red[50],
+    
+    // Success
+    success: primitives.color.green[500],
+    'success-subtle': primitives.color.green[50],
+    
+    // Text
+    'text-primary': primitives.color.gray[900],
+    'text-secondary': primitives.color.gray[700],
+    'text-tertiary': primitives.color.gray[500],
+    
+    // Surfaces
+    'surface-base': '#FFFFFF',
+    'surface-raised': primitives.color.gray[50],
+    'surface-overlay': primitives.color.gray[100],
+    
+    // Borders
+    'border-default': primitives.color.gray[200],
+    'border-subtle': primitives.color.gray[100],
+    'border-focus': primitives.color.blue[500],
+  },
+  
+  spacing: primitives.spacing,
+  fontSize: primitives.fontSize,
+  fontWeight: primitives.fontWeight,
+  lineHeight: primitives.lineHeight,
+  borderRadius: primitives.borderRadius,
+  boxShadow: primitives.boxShadow,
+};
+```
+
+### Tailwind Config Integration
+
+Import tokens into `tailwind.config.js`:
+
+```javascript
+// tailwind.config.js
+const { semantic } = require('./tokens/semantic');
+
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  theme: {
+    extend: {
+      colors: semantic.colors,
+      spacing: semantic.spacing,
+      fontSize: semantic.fontSize,
+      fontWeight: semantic.fontWeight,
+      lineHeight: semantic.lineHeight,
+      borderRadius: semantic.borderRadius,
+      boxShadow: semantic.boxShadow,
+    },
+  },
+  plugins: [],
+};
+```
+
+Now you can use token-based utilities:
+
+```jsx
+<button className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-md">
+  Click me
+</button>
+```
+
+`bg-primary` pulls from your semantic tokens, not Tailwind's defaults.
+
+## Building Components with Token-Based Utilities
+
+### Button Component
+
+```jsx
+// Button.jsx
+import { cva } from 'class-variance-authority';
+
+const buttonVariants = cva(
+  // Base styles
+  'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-primary hover:bg-primary-hover active:bg-primary-active text-white',
+        danger: 'bg-danger hover:bg-danger-hover text-white',
+        outline: 'border border-border-default hover:bg-surface-raised text-text-primary',
+        ghost: 'hover:bg-surface-raised text-text-primary',
+      },
+      size: {
+        sm: 'px-4 py-2 text-sm',
+        md: 'px-6 py-3 text-base',
+        lg: 'px-8 py-4 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+);
+
+export function Button({ variant, size, children, className, ...props }) {
+  return (
+    <button className={buttonVariants({ variant, size, className })} {...props}>
+      {children}
+    </button>
+  );
+}
+```
+
+Usage:
+
+```jsx
+<Button>Primary</Button>
+<Button variant="danger">Delete</Button>
+<Button variant="outline" size="sm">Cancel</Button>
+```
+
+### Card Component
+
+```jsx
+// Card.jsx
+export function Card({ title, children, footer, hoverable, className }) {
+  return (
+    <div
+      className={`
+        bg-surface-base border border-border-default rounded-lg shadow-sm overflow-hidden
+        ${hoverable ? 'hover:shadow-md hover:border-border-focus cursor-pointer transition-all' : ''}
+        ${className || ''}
+      `}
+    >
+      {title && (
+        <div className="px-6 py-6 border-b border-border-default">
+          <h3 className="text-lg font-semibold text-text-primary m-0">{title}</h3>
+        </div>
+      )}
+      <div className="px-6 py-6">{children}</div>
+      {footer && (
+        <div className="px-6 py-4 bg-surface-raised border-t border-border-default">
+          {footer}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Input Component
+
+```jsx
+// Input.jsx
+export function Input({ label, error, helperText, className, ...props }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {label && (
+        <label className="text-sm font-medium text-text-primary">{label}</label>
+      )}
+      <input
+        className={`
+          px-3 py-3 text-base text-text-primary
+          bg-surface-base border rounded-md
+          transition-all
+          placeholder:text-text-tertiary
+          hover:border-border-focus
+          focus:outline-none focus:border-border-focus focus:ring-4 focus:ring-primary-subtle
+          disabled:bg-surface-raised disabled:cursor-not-allowed disabled:opacity-60
+          ${error ? 'border-danger focus:ring-danger-subtle' : 'border-border-default'}
+          ${className || ''}
+        `}
+        {...props}
+      />
+      {(error || helperText) && (
+        <span className={`text-xs ${error ? 'text-danger' : 'text-text-secondary'}`}>
+          {error || helperText}
+        </span>
+      )}
+    </div>
+  );
+}
+```
+
+## Advanced Token Patterns
+
+### Extending Tailwind with Custom Utilities
+
+Add project-specific utilities:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      // Custom utilities for containers
+      maxWidth: {
+        container: '1280px',
+      },
+      
+      // Custom z-index scale
+      zIndex: {
+        dropdown: '1000',
+        modal: '1200',
+        popover: '1300',
+        tooltip: '1400',
+      },
+      
+      // Animation tokens
+      transitionDuration: {
+        fast: '150ms',
+        base: '200ms',
+        slow: '300ms',
+      },
+    },
+  },
+};
+```
+
+Usage:
+
+```jsx
+<div className="max-w-container mx-auto px-4">
+  <div className="z-modal">Modal content</div>
+</div>
+```
+
+### Responsive Token Variants
+
+Tailwind handles responsive design through breakpoint prefixes. Define custom breakpoints:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  theme: {
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
+  },
+};
+```
+
+Use in components:
+
+```jsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {/* cards */}
+</div>
+```
+
+### Dark Mode with Semantic Tokens
+
+Define mode-specific tokens:
+
+```javascript
+// tokens/themes.js
+import { primitives } from './primitives';
+
+export const lightTheme = {
+  'text-primary': primitives.color.gray[900],
+  'text-secondary': primitives.color.gray[700],
+  'surface-base': '#FFFFFF',
+  'surface-raised': primitives.color.gray[50],
+  'border-default': primitives.color.gray[200],
+};
+
+export const darkTheme = {
+  'text-primary': primitives.color.gray[50],
+  'text-secondary': primitives.color.gray[300],
+  'surface-base': primitives.color.gray[900],
+  'surface-raised': primitives.color.gray[800],
+  'border-default': primitives.color.gray[700],
+};
+```
+
+Configure Tailwind for dark mode:
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  darkMode: 'class', // or 'media' for system preference
+  theme: {
+    extend: {
+      colors: {
+        'text-primary': 'rgb(var(--color-text-primary) / <alpha-value>)',
+        'text-secondary': 'rgb(var(--color-text-secondary) / <alpha-value>)',
+        'surface-base': 'rgb(var(--color-surface-base) / <alpha-value>)',
+        // ... more tokens
+      },
+    },
+  },
+};
+```
+
+Set CSS variables based on mode:
+
+```css
+/* globals.css */
+:root {
+  --color-text-primary: 17 24 39; /* gray-900 */
+  --color-text-secondary: 55 65 81; /* gray-700 */
+  --color-surface-base: 255 255 255;
+  --color-surface-raised: 249 250 251;
+  --color-border-default: 229 231 235;
+}
+
+.dark {
+  --color-text-primary: 249 250 251; /* gray-50 */
+  --color-text-secondary: 209 213 219; /* gray-300 */
+  --color-surface-base: 17 24 39; /* gray-900 */
+  --color-surface-raised: 31 41 55; /* gray-800 */
+  --color-border-default: 55 65 81; /* gray-700 */
+}
+```
+
+Toggle at runtime:
+
+```jsx
+function App() {
+  const [mode, setMode] = useState('light');
+  
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', mode === 'dark');
+  }, [mode]);
+  
+  return (
+    <button onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}>
+      Toggle Mode
+    </button>
+  );
+}
+```
+
+Components automatically adapt:
+
+```jsx
+<div className="bg-surface-base text-text-primary border border-border-default">
+  {/* light mode: white bg, dark text; dark mode: dark bg, light text */}
+</div>
+```
+
+### Custom Plugins for Token-Driven Components
+
+Create reusable component utilities with plugins:
+
+```javascript
+// tailwind.config.js
+const plugin = require('tailwindcss/plugin');
+
+module.exports = {
+  plugins: [
+    plugin(function({ addComponents, theme }) {
+      addComponents({
+        '.btn': {
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: `${theme('spacing.3')} ${theme('spacing.6')}`,
+          fontSize: theme('fontSize.base'),
+          fontWeight: theme('fontWeight.medium'),
+          borderRadius: theme('borderRadius.md'),
+          transition: 'all 150ms ease',
+        },
+        '.btn-primary': {
+          backgroundColor: theme('colors.primary'),
+          color: 'white',
+          '&:hover': {
+            backgroundColor: theme('colors.primary-hover'),
+          },
+        },
+        '.card': {
+          backgroundColor: theme('colors.surface-base'),
+          border: `1px solid ${theme('colors.border-default')}`,
+          borderRadius: theme('borderRadius.lg'),
+          padding: theme('spacing.6'),
+          boxShadow: theme('boxShadow.sm'),
+        },
+      });
+    }),
+  ],
+};
+```
+
+Usage:
+
+```jsx
+<button className="btn btn-primary">Click me</button>
+<div className="card">Content</div>
+```
+
+## Syncing Tokens Across Tools
+
+### Exporting from Design Tools
+
+Export tokens from Figma, Sketch, or Penpot as JSON:
+
+```json
+{
+  "color": {
+    "primary": {
+      "solid": { "value": "#3B82F6", "type": "color" }
+    }
+  },
+  "spacing": {
+    "4": { "value": "16px", "type": "dimension" }
+  }
+}
+```
+
+### Transforming for Tailwind
+
+Create a script to convert design tokens to Tailwind config:
+
+```javascript
+// scripts/generateTailwindTokens.js
+const fs = require('fs');
+const rawTokens = require('./design-tokens.json');
+
+function flatten(obj, prefix = '', result = {}) {
+  for (const [key, val] of Object.entries(obj)) {
+    const newKey = prefix ? `${prefix}-${key}` : key;
+    if (val.value !== undefined) {
+      result[newKey] = val.value;
+    } else {
+      flatten(val, newKey, result);
+    }
+  }
+  return result;
+}
+
+const tokens = {
+  colors: flatten(rawTokens.color),
+  spacing: flatten(rawTokens.spacing),
+  fontSize: flatten(rawTokens.fontSize),
+};
+
+fs.writeFileSync(
+  './tokens/generated.js',
+  `module.exports = ${JSON.stringify(tokens, null, 2)};`
+);
+```
+
+Import in Tailwind config:
+
+```javascript
+const tokens = require('./tokens/generated');
+
+module.exports = {
+  theme: {
+    extend: tokens,
+  },
+};
+```
+
+Tools like FramingUI can automate this, keeping design and code tokens in sync in real-time.
+
+## Real-World Example: Dashboard Layout
+
+```jsx
+// Dashboard.jsx
+import { Card } from './components/Card';
+import { Button } from './components/Button';
+
+export function Dashboard() {
+  return (
+    <div className="min-h-screen bg-surface-raised p-8">
+      <header className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-text-primary m-0">Dashboard</h1>
+        <Button>Export Report</Button>
+      </header>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card>
+          <div className="text-2xl font-semibold text-text-primary mb-1">
+            12,345
+          </div>
+          <div className="text-sm text-text-secondary">Total Users</div>
+        </Card>
+        
+        <Card>
+          <div className="text-2xl font-semibold text-text-primary mb-1">
+            $45,231
+          </div>
+          <div className="text-sm text-text-secondary">Revenue</div>
+        </Card>
+        
+        <Card>
+          <div className="text-2xl font-semibold text-text-primary mb-1">
+            89%
+          </div>
+          <div className="text-sm text-text-secondary">Satisfaction</div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+```
+
+Every spacing, color, and typography decision comes from tokens. Change `semantic.spacing[6]` and the entire dashboard updates.
+
+## Maintaining Token-Based Tailwind Config
+
+### Linting for Consistency
+
+Use `eslint-plugin-tailwindcss` to enforce patterns:
+
+```bash
+npm install -D eslint-plugin-tailwindcss
+```
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  plugins: ['tailwindcss'],
+  rules: {
+    'tailwindcss/no-custom-classname': 'warn',
+    'tailwindcss/no-contradicting-classname': 'error',
+  },
+};
+```
+
+### Documentation
+
+Document your token system:
+
+```markdown
+# Design Tokens
+
+## Colors
+- `primary`: Primary brand color
+- `primary-hover`: Primary hover state
+- `text-primary`: Primary text color
+
+## Spacing
+- `1`: 4px
+- `2`: 8px
+- `4`: 16px
+
+## Usage
+Use semantic tokens (`bg-primary`) instead of primitives (`bg-blue-500`).
+```
+
+### Versioning
+
+Track token changes in a changelog:
+
+```markdown
+# Changelog
+
+## v2.0.0
+- BREAKING: Renamed `blue` to `primary`
+- Added dark mode tokens
+- Updated spacing scale
+
+## v1.1.0
+- Added `danger` and `success` colors
+```
+
+## When to Use Tailwind with Custom Tokens
+
+Tailwind + tokens works well when:
+
+- You prefer utility-first styling
+- Your team is comfortable with class-based composition
+- You want a large ecosystem of plugins and community support
+- You need responsive design and dark mode out of the box
+
+Avoid this approach if:
+
+- You prefer component-scoped CSS (use Styled Components/Emotion)
+- You need zero-runtime performance with full type safety (use Vanilla Extract/Panda)
+- Your design system requires complex theming logic beyond Tailwind's capabilities
+
+Tailwind config as a token system gives you utility-first styling with full control over your design language.

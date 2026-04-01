@@ -1,0 +1,733 @@
+---
+title: "Integrating Design Tokens with Styled Components: A Complete Guide"
+description: "Learn how to structure, apply, and maintain design tokens in Styled Components for scalable, consistent UI development."
+date: "2026-04-02"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - styled-components
+  - css-in-js
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Styled Components gives you component-scoped CSS with full JavaScript power. But that flexibility becomes a liability when every component makes its own design decisions. You get `color: #3B82F6` in one file, `color: #2563EB` in another, and `color: blue` somewhere else — all meant to be "primary blue."
+
+Design tokens solve this by centralizing design decisions into a single source of truth. Instead of hardcoded values scattered across components, you reference semantic tokens that carry both meaning and implementation. This guide shows you how to integrate design tokens into Styled Components for consistent, maintainable styling at scale.
+
+## Why Styled Components Need Design Tokens
+
+### The Magic Number Problem
+
+Without tokens, Styled Components accumulate magic numbers:
+
+```jsx
+const Button = styled.button`
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  background: #3B82F6;
+  color: white;
+  
+  &:hover {
+    background: #2563EB;
+  }
+`;
+
+const Card = styled.div`
+  padding: 16px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+```
+
+Both use `8px` border radius. Both use similar padding scales. But the relationship isn't explicit. When you need to update spacing or corner rounding globally, you're hunting through every styled component.
+
+### ThemeProvider Isn't Enough on Its Own
+
+Styled Components' `ThemeProvider` gives you runtime theme switching, which is powerful. But passing an unstructured object doesn't guarantee consistency:
+
+```jsx
+const theme = {
+  primaryColor: '#3B82F6',
+  buttonPadding: '12px 24px',
+  cardPadding: '16px',
+  radius: '8px',
+};
+```
+
+This is better than hardcoding, but it's still arbitrary. Why is button padding different from card padding? What's the scale? Tokens bring structure to the theme.
+
+### Tokens Make Design Decisions Explicit
+
+A token-driven theme documents the system:
+
+```jsx
+const tokens = {
+  color: {
+    primary: {
+      solid: '#3B82F6',
+      hover: '#2563EB',
+    },
+    text: {
+      primary: '#111827',
+      secondary: '#6B7280',
+    },
+  },
+  spacing: {
+    2: '8px',
+    3: '12px',
+    4: '16px',
+    6: '24px',
+  },
+  radius: {
+    md: '8px',
+    lg: '12px',
+  },
+};
+```
+
+Now `spacing.4` has meaning. `color.primary.hover` is explicitly the hover state. The structure communicates intent.
+
+## Setting Up Token-Driven Theming
+
+### Option 1: Theme Object with Token Structure
+
+The simplest approach wraps your tokens in a theme object passed to `ThemeProvider`:
+
+```jsx
+// tokens.js
+export const tokens = {
+  color: {
+    primary: {
+      solid: '#3B82F6',
+      hover: '#2563EB',
+      active: '#1D4ED8',
+    },
+    surface: {
+      base: '#FFFFFF',
+      raised: '#F9FAFB',
+    },
+    border: {
+      default: '#E5E7EB',
+      focus: '#3B82F6',
+    },
+  },
+  spacing: {
+    1: '4px',
+    2: '8px',
+    3: '12px',
+    4: '16px',
+    6: '24px',
+    8: '32px',
+  },
+  fontSize: {
+    sm: '14px',
+    base: '16px',
+    lg: '18px',
+    xl: '20px',
+  },
+  fontWeight: {
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+  },
+  lineHeight: {
+    tight: 1.25,
+    normal: 1.5,
+    relaxed: 1.75,
+  },
+  radius: {
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    full: '9999px',
+  },
+  shadow: {
+    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+  },
+};
+```
+
+```jsx
+// App.jsx
+import { ThemeProvider } from 'styled-components';
+import { tokens } from './tokens';
+
+function App() {
+  return (
+    <ThemeProvider theme={tokens}>
+      {/* your app */}
+    </ThemeProvider>
+  );
+}
+```
+
+Now every styled component can access tokens via `props.theme`:
+
+```jsx
+const Button = styled.button`
+  padding: ${p => p.theme.spacing[3]} ${p => p.theme.spacing[6]};
+  font-size: ${p => p.theme.fontSize.base};
+  font-weight: ${p => p.theme.fontWeight.medium};
+  border-radius: ${p => p.theme.radius.md};
+  background: ${p => p.theme.color.primary.solid};
+  color: white;
+  
+  &:hover {
+    background: ${p => p.theme.color.primary.hover};
+  }
+  
+  &:active {
+    background: ${p => p.theme.color.primary.active};
+  }
+`;
+```
+
+### Option 2: CSS Custom Properties for Runtime Flexibility
+
+If you need runtime theme switching (light/dark mode, user themes), CSS custom properties let you update tokens without re-rendering:
+
+```jsx
+// createGlobalStyles.js
+import { createGlobalStyle } from 'styled-components';
+
+export const GlobalStyles = createGlobalStyle`
+  :root {
+    --color-primary-solid: ${p => p.theme.color.primary.solid};
+    --color-primary-hover: ${p => p.theme.color.primary.hover};
+    --spacing-2: ${p => p.theme.spacing[2]};
+    --spacing-3: ${p => p.theme.spacing[3]};
+    --spacing-4: ${p => p.theme.spacing[4]};
+    --radius-md: ${p => p.theme.radius.md};
+    --font-size-base: ${p => p.theme.fontSize.base};
+  }
+`;
+```
+
+Then reference CSS variables in components:
+
+```jsx
+const Button = styled.button`
+  padding: var(--spacing-3) var(--spacing-6);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-solid);
+  
+  &:hover {
+    background: var(--color-primary-hover);
+  }
+`;
+```
+
+This approach adds a layer of indirection but gives you instant theme switching.
+
+### Option 3: Import Tokens Directly (No ThemeProvider)
+
+If you don't need runtime theme switching, skip `ThemeProvider` and import tokens directly:
+
+```jsx
+import { tokens } from './tokens';
+
+const Button = styled.button`
+  padding: ${tokens.spacing[3]} ${tokens.spacing[6]};
+  background: ${tokens.color.primary.solid};
+  
+  &:hover {
+    background: ${tokens.color.primary.hover};
+  }
+`;
+```
+
+Simpler, but you lose the ability to change themes at runtime.
+
+## Structuring Tokens for Components
+
+### Semantic Tokens vs Primitive Tokens
+
+**Primitive tokens** are raw values:
+
+```jsx
+const primitives = {
+  blue500: '#3B82F6',
+  blue600: '#2563EB',
+  gray100: '#F3F4F6',
+  gray900: '#111827',
+};
+```
+
+**Semantic tokens** map primitives to usage:
+
+```jsx
+const semantic = {
+  color: {
+    primary: {
+      solid: primitives.blue500,
+      hover: primitives.blue600,
+    },
+    text: {
+      primary: primitives.gray900,
+      secondary: primitives.gray600,
+    },
+  },
+};
+```
+
+Use semantic tokens in components. This lets you change `blue500` to a different shade without touching component code.
+
+### Component-Specific Token Groups
+
+For complex components, group related tokens:
+
+```jsx
+const tokens = {
+  button: {
+    padding: {
+      sm: `${spacing[2]} ${spacing[4]}`,
+      md: `${spacing[3]} ${spacing[6]}`,
+      lg: `${spacing[4]} ${spacing[8]}`,
+    },
+    fontSize: {
+      sm: fontSize.sm,
+      md: fontSize.base,
+      lg: fontSize.lg,
+    },
+  },
+};
+```
+
+Then apply by variant:
+
+```jsx
+const Button = styled.button`
+  padding: ${p => p.theme.button.padding[p.size || 'md']};
+  font-size: ${p => p.theme.button.fontSize[p.size || 'md']};
+`;
+
+<Button size="lg">Large Button</Button>
+```
+
+## Practical Patterns for Token Usage
+
+### Building a Token-Driven Button
+
+```jsx
+import styled from 'styled-components';
+
+const StyledButton = styled.button`
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${p => p.theme.spacing[2]};
+  
+  /* Typography */
+  font-family: inherit;
+  font-size: ${p => p.theme.fontSize.base};
+  font-weight: ${p => p.theme.fontWeight.medium};
+  line-height: ${p => p.theme.lineHeight.tight};
+  
+  /* Spacing */
+  padding: ${p => p.theme.spacing[3]} ${p => p.theme.spacing[6]};
+  
+  /* Visual */
+  border: none;
+  border-radius: ${p => p.theme.radius.md};
+  background: ${p => p.theme.color.primary.solid};
+  color: white;
+  cursor: pointer;
+  transition: background 150ms ease;
+  
+  /* States */
+  &:hover:not(:disabled) {
+    background: ${p => p.theme.color.primary.hover};
+  }
+  
+  &:active:not(:disabled) {
+    background: ${p => p.theme.color.primary.active};
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid ${p => p.theme.color.border.focus};
+    outline-offset: 2px;
+  }
+`;
+
+export function Button({ children, ...props }) {
+  return <StyledButton {...props}>{children}</StyledButton>;
+}
+```
+
+### Building a Token-Driven Card
+
+```jsx
+const Card = styled.div`
+  background: ${p => p.theme.color.surface.base};
+  border: 1px solid ${p => p.theme.color.border.default};
+  border-radius: ${p => p.theme.radius.lg};
+  padding: ${p => p.theme.spacing[6]};
+  box-shadow: ${p => p.theme.shadow.sm};
+  
+  &:hover {
+    box-shadow: ${p => p.theme.shadow.md};
+  }
+`;
+
+const CardTitle = styled.h3`
+  margin: 0 0 ${p => p.theme.spacing[3]};
+  font-size: ${p => p.theme.fontSize.lg};
+  font-weight: ${p => p.theme.fontWeight.semibold};
+  color: ${p => p.theme.color.text.primary};
+`;
+
+const CardBody = styled.p`
+  margin: 0;
+  font-size: ${p => p.theme.fontSize.base};
+  line-height: ${p => p.theme.lineHeight.relaxed};
+  color: ${p => p.theme.color.text.secondary};
+`;
+
+export function ProductCard({ title, description }) {
+  return (
+    <Card>
+      <CardTitle>{title}</CardTitle>
+      <CardBody>{description}</CardBody>
+    </Card>
+  );
+}
+```
+
+### Responsive Tokens with Media Queries
+
+```jsx
+const tokens = {
+  spacing: {
+    container: {
+      mobile: '16px',
+      tablet: '32px',
+      desktop: '64px',
+    },
+  },
+  fontSize: {
+    heading: {
+      mobile: '24px',
+      desktop: '32px',
+    },
+  },
+};
+
+const Container = styled.div`
+  padding: ${p => p.theme.spacing.container.mobile};
+  
+  @media (min-width: 768px) {
+    padding: ${p => p.theme.spacing.container.tablet};
+  }
+  
+  @media (min-width: 1024px) {
+    padding: ${p => p.theme.spacing.container.desktop};
+  }
+`;
+
+const Heading = styled.h1`
+  font-size: ${p => p.theme.fontSize.heading.mobile};
+  
+  @media (min-width: 1024px) {
+    font-size: ${p => p.theme.fontSize.heading.desktop};
+  }
+`;
+```
+
+## TypeScript Integration
+
+Add type safety to prevent token reference errors:
+
+```typescript
+// tokens.ts
+export const tokens = {
+  color: {
+    primary: {
+      solid: '#3B82F6',
+      hover: '#2563EB',
+    },
+    text: {
+      primary: '#111827',
+      secondary: '#6B7280',
+    },
+  },
+  spacing: {
+    2: '8px',
+    3: '12px',
+    4: '16px',
+  },
+} as const;
+
+export type Theme = typeof tokens;
+```
+
+```typescript
+// styled.d.ts
+import 'styled-components';
+import { Theme } from './tokens';
+
+declare module 'styled-components' {
+  export interface DefaultTheme extends Theme {}
+}
+```
+
+Now you get autocomplete and type errors for invalid token paths:
+
+```tsx
+const Button = styled.button`
+  padding: ${p => p.theme.spacing[3]}; // ✅ valid
+  color: ${p => p.theme.color.primary.solid}; // ✅ valid
+  background: ${p => p.theme.color.primary.invalid}; // ❌ type error
+`;
+```
+
+## Dark Mode with Token Overrides
+
+Define light and dark token sets:
+
+```jsx
+const lightTokens = {
+  color: {
+    surface: {
+      base: '#FFFFFF',
+      raised: '#F9FAFB',
+    },
+    text: {
+      primary: '#111827',
+      secondary: '#6B7280',
+    },
+  },
+};
+
+const darkTokens = {
+  color: {
+    surface: {
+      base: '#1F2937',
+      raised: '#111827',
+    },
+    text: {
+      primary: '#F9FAFB',
+      secondary: '#D1D5DB',
+    },
+  },
+};
+
+function App() {
+  const [mode, setMode] = useState('light');
+  const theme = mode === 'light' ? lightTokens : darkTokens;
+  
+  return (
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
+      {/* app */}
+    </ThemeProvider>
+  );
+}
+```
+
+Components automatically adapt because they reference semantic tokens, not hardcoded colors.
+
+## Syncing Tokens with Design Tools
+
+If you're using Figma or another design tool, export tokens in a standard format and transform them for Styled Components:
+
+```json
+{
+  "color": {
+    "primary": {
+      "solid": { "value": "#3B82F6" },
+      "hover": { "value": "#2563EB" }
+    }
+  },
+  "spacing": {
+    "2": { "value": "8px" },
+    "3": { "value": "12px" }
+  }
+}
+```
+
+Transform script:
+
+```javascript
+// transformTokens.js
+const rawTokens = require('./tokens.json');
+
+function transform(obj) {
+  const result = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val.value !== undefined) {
+      result[key] = val.value;
+    } else {
+      result[key] = transform(val);
+    }
+  }
+  return result;
+}
+
+const tokens = transform(rawTokens);
+export { tokens };
+```
+
+This keeps design and code in sync. Tools like FramingUI can generate token files directly from design systems, eliminating manual conversion.
+
+## Linting and Validation
+
+Prevent hardcoded values with ESLint rules. Use `stylelint-styled-components` to catch magic numbers:
+
+```javascript
+// .stylelintrc.js
+module.exports = {
+  processors: ['stylelint-processor-styled-components'],
+  extends: ['stylelint-config-styled-components'],
+  rules: {
+    'color-no-hex': true, // disallow #3B82F6
+    'unit-disallowed-list': ['px'], // force token usage
+  },
+};
+```
+
+This forces developers to use theme tokens instead of arbitrary values.
+
+## Migration Strategy
+
+### Incremental Adoption
+
+You don't need to refactor everything at once. Start with new components:
+
+1. Set up `ThemeProvider` with tokens
+2. Write new components using `props.theme`
+3. Gradually migrate old components as you touch them
+
+### Codemods for Bulk Migration
+
+Use a codemod to replace common hardcoded values:
+
+```javascript
+// replaceHardcodedColors.js
+module.exports = function transformer(file, api) {
+  const j = api.jscodeshift;
+  const root = j(file.source);
+  
+  root.find(j.TemplateLiteral).forEach(path => {
+    let value = path.value.quasis[0].value.raw;
+    value = value.replace(/#3B82F6/g, '${p => p.theme.color.primary.solid}');
+    value = value.replace(/16px/g, '${p => p.theme.spacing[4]}');
+    path.value.quasis[0].value.raw = value;
+  });
+  
+  return root.toSource();
+};
+```
+
+Run it across your codebase to replace common patterns automatically.
+
+## Real-World Example: Dashboard Layout
+
+```jsx
+import styled from 'styled-components';
+
+const DashboardContainer = styled.div`
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+  background: ${p => p.theme.color.surface.base};
+`;
+
+const Sidebar = styled.aside`
+  background: ${p => p.theme.color.surface.raised};
+  border-right: 1px solid ${p => p.theme.color.border.default};
+  padding: ${p => p.theme.spacing[6]};
+`;
+
+const Main = styled.main`
+  padding: ${p => p.theme.spacing[8]};
+`;
+
+const MetricCard = styled.div`
+  background: ${p => p.theme.color.surface.base};
+  border: 1px solid ${p => p.theme.color.border.default};
+  border-radius: ${p => p.theme.radius.lg};
+  padding: ${p => p.theme.spacing[6]};
+  box-shadow: ${p => p.theme.shadow.sm};
+`;
+
+const MetricValue = styled.div`
+  font-size: ${p => p.theme.fontSize.xl};
+  font-weight: ${p => p.theme.fontWeight.semibold};
+  color: ${p => p.theme.color.text.primary};
+  margin-bottom: ${p => p.theme.spacing[2]};
+`;
+
+const MetricLabel = styled.div`
+  font-size: ${p => p.theme.fontSize.sm};
+  color: ${p => p.theme.color.text.secondary};
+`;
+
+export function Dashboard() {
+  return (
+    <DashboardContainer>
+      <Sidebar>
+        {/* navigation */}
+      </Sidebar>
+      <Main>
+        <MetricCard>
+          <MetricValue>1,234</MetricValue>
+          <MetricLabel>Active Users</MetricLabel>
+        </MetricCard>
+      </Main>
+    </DashboardContainer>
+  );
+}
+```
+
+Every spacing, color, and size decision comes from tokens. Change `theme.spacing[6]` globally and every component updates.
+
+## Common Pitfalls
+
+### Over-Abstracting Too Early
+
+Don't create tokens for every possible value. Start with spacing, color, typography, and radius. Add more as patterns emerge.
+
+### Naming Tokens After Values
+
+Bad: `blue500`, `spacing16px`  
+Good: `primary.solid`, `spacing[4]`
+
+Names should describe purpose, not implementation.
+
+### Skipping Semantic Tokens
+
+Mapping primitives to semantic tokens (`primary.solid` → `blue500`) lets you change the underlying color without updating components.
+
+### Forgetting Hover and Focus States
+
+Define tokens for interaction states upfront: `primary.hover`, `border.focus`, `surface.active`. Don't hardcode them later.
+
+## When to Use Styled Components + Tokens
+
+This approach works well when:
+
+- You want component-scoped styles with JavaScript logic
+- You need runtime theme switching
+- Your team is comfortable with CSS-in-JS
+- You're building a component library or design system
+
+If you need static extraction for zero-runtime performance, consider Vanilla Extract or Panda CSS (covered in separate guides). But for dynamic, component-driven apps, Styled Components with design tokens gives you both flexibility and consistency.
+
+---
+
+Design tokens turn Styled Components from a styling tool into a design system foundation. They centralize decisions, enforce consistency, and make global changes trivial. Start with a structured theme object, reference tokens in every component, and your UI becomes both flexible and predictable.

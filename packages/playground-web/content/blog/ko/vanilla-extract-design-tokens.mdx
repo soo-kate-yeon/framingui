@@ -1,0 +1,890 @@
+---
+title: "Zero-Runtime Design Tokens with Vanilla Extract"
+description: "Build type-safe, performant design systems using Vanilla Extract's build-time CSS generation and design token integration."
+date: "2026-04-02"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - vanilla-extract
+  - css-in-js
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Vanilla Extract delivers type-safe CSS with zero runtime overhead. Unlike Styled Components or Emotion, which generate styles in the browser, Vanilla Extract processes your styles at build time and outputs static CSS. You get TypeScript autocomplete, scoped class names, and predictable performance — all without shipping a styling library to users.
+
+Design tokens fit naturally into this model. Define tokens as TypeScript objects, reference them in style definitions, and Vanilla Extract compiles everything to optimized CSS. The result is a design system that's both developer-friendly and production-ready.
+
+This guide covers building a token-driven design system with Vanilla Extract, from setup through component creation and real-world patterns.
+
+## Why Vanilla Extract for Design Systems
+
+### Zero Runtime Cost
+
+Vanilla Extract runs at build time. Your JavaScript bundle contains no styling library, just class name references. The browser loads static CSS, which is faster to parse and render than runtime-generated styles.
+
+### TypeScript-First Design
+
+Vanilla Extract is written in TypeScript and designed for it. Theme tokens, variants, and responsive styles all have full type safety. Invalid token references cause build errors, not runtime bugs.
+
+### Scoped by Default
+
+Every style definition gets a unique class name. No global CSS pollution, no naming conflicts. Styles are scoped to components automatically.
+
+### Framework-Agnostic
+
+Vanilla Extract works with React, Vue, Svelte, or vanilla JavaScript. The output is standard CSS, which any framework can consume.
+
+### Optimized CSS Output
+
+Vanilla Extract deduplicates styles, generates atomic classes where beneficial, and produces minimal CSS bundles. You pay only for what you use.
+
+## Setting Up Vanilla Extract with Tokens
+
+### Installation
+
+```bash
+npm install @vanilla-extract/css @vanilla-extract/recipes
+```
+
+If using Vite:
+
+```bash
+npm install -D @vanilla-extract/vite-plugin
+```
+
+Vite config:
+
+```javascript
+// vite.config.js
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
+
+export default {
+  plugins: [vanillaExtractPlugin()],
+};
+```
+
+For Next.js, Remix, or other frameworks, check the [Vanilla Extract docs](https://vanilla-extract.style/documentation/integrations/) for integration guides.
+
+### Defining Token Schema
+
+Create a TypeScript file for your tokens:
+
+```typescript
+// tokens/primitives.ts
+export const primitives = {
+  color: {
+    blue: {
+      50: '#EFF6FF',
+      100: '#DBEAFE',
+      500: '#3B82F6',
+      600: '#2563EB',
+      700: '#1D4ED8',
+    },
+    gray: {
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      500: '#6B7280',
+      700: '#374151',
+      900: '#111827',
+    },
+    red: {
+      500: '#EF4444',
+      600: '#DC2626',
+    },
+    green: {
+      500: '#22C55E',
+    },
+  },
+  
+  spacing: {
+    0: '0',
+    1: '4px',
+    2: '8px',
+    3: '12px',
+    4: '16px',
+    6: '24px',
+    8: '32px',
+    12: '48px',
+  },
+  
+  fontSize: {
+    xs: '12px',
+    sm: '14px',
+    base: '16px',
+    lg: '18px',
+    xl: '20px',
+    '2xl': '24px',
+  },
+  
+  fontWeight: {
+    normal: 400,
+    medium: 500,
+    semibold: 600,
+    bold: 700,
+  },
+  
+  lineHeight: {
+    tight: 1.25,
+    normal: 1.5,
+    relaxed: 1.75,
+  },
+  
+  radius: {
+    none: '0',
+    sm: '4px',
+    md: '8px',
+    lg: '12px',
+    full: '9999px',
+  },
+  
+  shadow: {
+    sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+  },
+} as const;
+```
+
+The `as const` assertion makes types literal, so TypeScript knows `primitives.color.blue[500]` is exactly `"#3B82F6"`, not just `string`.
+
+### Semantic Token Layer
+
+Map primitives to usage contexts:
+
+```typescript
+// tokens/semantic.ts
+import { primitives } from './primitives';
+
+export const tokens = {
+  color: {
+    primary: {
+      solid: primitives.color.blue[500],
+      hover: primitives.color.blue[600],
+      active: primitives.color.blue[700],
+      subtle: primitives.color.blue[50],
+    },
+    
+    text: {
+      primary: primitives.color.gray[900],
+      secondary: primitives.color.gray[700],
+      tertiary: primitives.color.gray[500],
+    },
+    
+    surface: {
+      base: '#FFFFFF',
+      raised: primitives.color.gray[50],
+    },
+    
+    border: {
+      default: primitives.color.gray[200],
+      focus: primitives.color.blue[500],
+    },
+    
+    danger: {
+      solid: primitives.color.red[500],
+      hover: primitives.color.red[600],
+    },
+    
+    success: {
+      solid: primitives.color.green[500],
+    },
+  },
+  
+  spacing: primitives.spacing,
+  fontSize: primitives.fontSize,
+  fontWeight: primitives.fontWeight,
+  lineHeight: primitives.lineHeight,
+  radius: primitives.radius,
+  shadow: primitives.shadow,
+} as const;
+```
+
+### Creating a Theme Contract
+
+Vanilla Extract supports runtime theming via theme contracts. Define the shape of your theme:
+
+```typescript
+// tokens/theme.css.ts
+import { createTheme } from '@vanilla-extract/css';
+import { tokens } from './semantic';
+
+export const [themeClass, vars] = createTheme(tokens);
+```
+
+`vars` is a typed object with CSS variables for every token. `themeClass` is a class name you apply to enable the theme.
+
+Apply the theme in your app root:
+
+```jsx
+// App.jsx
+import { themeClass } from './tokens/theme.css';
+
+export function App() {
+  return (
+    <div className={themeClass}>
+      {/* your app */}
+    </div>
+  );
+}
+```
+
+Now every component can reference `vars`:
+
+```typescript
+// Button.css.ts
+import { style } from '@vanilla-extract/css';
+import { vars } from './tokens/theme.css';
+
+export const button = style({
+  padding: `${vars.spacing[3]} ${vars.spacing[6]}`,
+  fontSize: vars.fontSize.base,
+  fontWeight: vars.fontWeight.medium,
+  borderRadius: vars.radius.md,
+  backgroundColor: vars.color.primary.solid,
+  color: 'white',
+  border: 'none',
+  cursor: 'pointer',
+  
+  ':hover': {
+    backgroundColor: vars.color.primary.hover,
+  },
+  
+  ':active': {
+    backgroundColor: vars.color.primary.active,
+  },
+});
+```
+
+## Building Components with Tokens
+
+### Basic Button Component
+
+```typescript
+// Button.css.ts
+import { style } from '@vanilla-extract/css';
+import { recipe } from '@vanilla-extract/recipes';
+import { vars } from '../tokens/theme.css';
+
+export const button = recipe({
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: vars.spacing[2],
+    
+    fontFamily: 'inherit',
+    fontWeight: vars.fontWeight.medium,
+    lineHeight: vars.lineHeight.tight,
+    
+    border: 'none',
+    borderRadius: vars.radius.md,
+    cursor: 'pointer',
+    transition: 'all 150ms ease',
+    
+    ':disabled': {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+    },
+    
+    ':focus-visible': {
+      outline: `2px solid ${vars.color.border.focus}`,
+      outlineOffset: '2px',
+    },
+  },
+  
+  variants: {
+    variant: {
+      primary: {
+        backgroundColor: vars.color.primary.solid,
+        color: 'white',
+        
+        ':hover:not(:disabled)': {
+          backgroundColor: vars.color.primary.hover,
+        },
+        
+        ':active:not(:disabled)': {
+          backgroundColor: vars.color.primary.active,
+        },
+      },
+      
+      danger: {
+        backgroundColor: vars.color.danger.solid,
+        color: 'white',
+        
+        ':hover:not(:disabled)': {
+          backgroundColor: vars.color.danger.hover,
+        },
+      },
+      
+      outline: {
+        backgroundColor: 'transparent',
+        border: `1px solid ${vars.color.border.default}`,
+        color: vars.color.text.primary,
+        
+        ':hover:not(:disabled)': {
+          backgroundColor: vars.color.surface.raised,
+        },
+      },
+      
+      ghost: {
+        backgroundColor: 'transparent',
+        color: vars.color.text.primary,
+        
+        ':hover:not(:disabled)': {
+          backgroundColor: vars.color.surface.raised,
+        },
+      },
+    },
+    
+    size: {
+      sm: {
+        padding: `${vars.spacing[2]} ${vars.spacing[4]}`,
+        fontSize: vars.fontSize.sm,
+      },
+      
+      md: {
+        padding: `${vars.spacing[3]} ${vars.spacing[6]}`,
+        fontSize: vars.fontSize.base,
+      },
+      
+      lg: {
+        padding: `${vars.spacing[4]} ${vars.spacing[8]}`,
+        fontSize: vars.fontSize.lg,
+      },
+    },
+  },
+  
+  defaultVariants: {
+    variant: 'primary',
+    size: 'md',
+  },
+});
+```
+
+```tsx
+// Button.tsx
+import { button } from './Button.css';
+import type { RecipeVariants } from '@vanilla-extract/recipes';
+
+type ButtonVariants = RecipeVariants<typeof button>;
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, ButtonVariants {
+  children: React.ReactNode;
+}
+
+export function Button({ variant, size, children, className, ...props }: ButtonProps) {
+  return (
+    <button className={button({ variant, size })} {...props}>
+      {children}
+    </button>
+  );
+}
+```
+
+Usage:
+
+```tsx
+<Button>Primary</Button>
+<Button variant="danger">Delete</Button>
+<Button variant="outline" size="sm">Cancel</Button>
+```
+
+TypeScript autocomplete works for `variant` and `size`. Invalid values cause type errors.
+
+### Card Component
+
+```typescript
+// Card.css.ts
+import { style } from '@vanilla-extract/css';
+import { vars } from '../tokens/theme.css';
+
+export const card = style({
+  backgroundColor: vars.color.surface.base,
+  border: `1px solid ${vars.color.border.default}`,
+  borderRadius: vars.radius.lg,
+  boxShadow: vars.shadow.sm,
+  overflow: 'hidden',
+  transition: 'all 200ms ease',
+});
+
+export const cardHoverable = style({
+  cursor: 'pointer',
+  
+  ':hover': {
+    boxShadow: vars.shadow.md,
+    borderColor: vars.color.border.focus,
+  },
+});
+
+export const cardHeader = style({
+  padding: vars.spacing[6],
+  borderBottom: `1px solid ${vars.color.border.default}`,
+});
+
+export const cardTitle = style({
+  margin: 0,
+  fontSize: vars.fontSize.lg,
+  fontWeight: vars.fontWeight.semibold,
+  color: vars.color.text.primary,
+});
+
+export const cardBody = style({
+  padding: vars.spacing[6],
+});
+
+export const cardFooter = style({
+  padding: `${vars.spacing[4]} ${vars.spacing[6]}`,
+  backgroundColor: vars.color.surface.raised,
+  borderTop: `1px solid ${vars.color.border.default}`,
+});
+```
+
+```tsx
+// Card.tsx
+import * as styles from './Card.css';
+
+interface CardProps {
+  title?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  hoverable?: boolean;
+}
+
+export function Card({ title, children, footer, hoverable }: CardProps) {
+  return (
+    <div className={hoverable ? `${styles.card} ${styles.cardHoverable}` : styles.card}>
+      {title && (
+        <div className={styles.cardHeader}>
+          <h3 className={styles.cardTitle}>{title}</h3>
+        </div>
+      )}
+      <div className={styles.cardBody}>{children}</div>
+      {footer && <div className={styles.cardFooter}>{footer}</div>}
+    </div>
+  );
+}
+```
+
+### Input Component
+
+```typescript
+// Input.css.ts
+import { style } from '@vanilla-extract/css';
+import { recipe } from '@vanilla-extract/recipes';
+import { vars } from '../tokens/theme.css';
+
+export const wrapper = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: vars.spacing[2],
+});
+
+export const label = style({
+  fontSize: vars.fontSize.sm,
+  fontWeight: vars.fontWeight.medium,
+  color: vars.color.text.primary,
+});
+
+export const input = recipe({
+  base: {
+    padding: vars.spacing[3],
+    fontSize: vars.fontSize.base,
+    lineHeight: vars.lineHeight.normal,
+    color: vars.color.text.primary,
+    backgroundColor: vars.color.surface.base,
+    border: `1px solid ${vars.color.border.default}`,
+    borderRadius: vars.radius.md,
+    transition: 'all 150ms ease',
+    
+    '::placeholder': {
+      color: vars.color.text.tertiary,
+    },
+    
+    ':hover:not(:disabled)': {
+      borderColor: vars.color.border.focus,
+    },
+    
+    ':focus': {
+      outline: 'none',
+      borderColor: vars.color.border.focus,
+      boxShadow: `0 0 0 3px ${vars.color.primary.subtle}`,
+    },
+    
+    ':disabled': {
+      backgroundColor: vars.color.surface.raised,
+      cursor: 'not-allowed',
+      opacity: 0.6,
+    },
+  },
+  
+  variants: {
+    error: {
+      true: {
+        borderColor: vars.color.danger.solid,
+        
+        ':focus': {
+          boxShadow: `0 0 0 3px ${vars.color.danger.subtle}`,
+        },
+      },
+    },
+  },
+});
+
+export const helperText = recipe({
+  base: {
+    fontSize: vars.fontSize.xs,
+  },
+  
+  variants: {
+    error: {
+      true: {
+        color: vars.color.danger.solid,
+      },
+      false: {
+        color: vars.color.text.secondary,
+      },
+    },
+  },
+});
+```
+
+```tsx
+// Input.tsx
+import * as styles from './Input.css';
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+}
+
+export function Input({ label, error, helperText, ...props }: InputProps) {
+  return (
+    <div className={styles.wrapper}>
+      {label && <label className={styles.label}>{label}</label>}
+      <input className={styles.input({ error: !!error })} {...props} />
+      {(error || helperText) && (
+        <span className={styles.helperText({ error: !!error })}>
+          {error || helperText}
+        </span>
+      )}
+    </div>
+  );
+}
+```
+
+## Advanced Patterns
+
+### Responsive Styles with Breakpoints
+
+Define breakpoint tokens:
+
+```typescript
+// tokens/breakpoints.ts
+export const breakpoints = {
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
+};
+```
+
+Use with `@media` queries:
+
+```typescript
+import { style } from '@vanilla-extract/css';
+import { vars } from '../tokens/theme.css';
+import { breakpoints } from '../tokens/breakpoints';
+
+export const grid = style({
+  display: 'grid',
+  gap: vars.spacing[4],
+  gridTemplateColumns: '1fr',
+  
+  '@media': {
+    [`(min-width: ${breakpoints.md})`]: {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+    },
+    
+    [`(min-width: ${breakpoints.lg})`]: {
+      gridTemplateColumns: 'repeat(3, 1fr)',
+    },
+  },
+});
+```
+
+### Dark Mode with Theme Variants
+
+Define light and dark themes:
+
+```typescript
+// tokens/themes.css.ts
+import { createTheme } from '@vanilla-extract/css';
+import { primitives } from './primitives';
+
+const baseTokens = {
+  spacing: primitives.spacing,
+  fontSize: primitives.fontSize,
+  fontWeight: primitives.fontWeight,
+  radius: primitives.radius,
+};
+
+export const [lightTheme, vars] = createTheme({
+  ...baseTokens,
+  color: {
+    text: {
+      primary: primitives.color.gray[900],
+      secondary: primitives.color.gray[700],
+    },
+    surface: {
+      base: '#FFFFFF',
+      raised: primitives.color.gray[50],
+    },
+    border: {
+      default: primitives.color.gray[200],
+    },
+    primary: {
+      solid: primitives.color.blue[500],
+      hover: primitives.color.blue[600],
+    },
+  },
+});
+
+export const darkTheme = createTheme(vars, {
+  ...baseTokens,
+  color: {
+    text: {
+      primary: primitives.color.gray[50],
+      secondary: primitives.color.gray[300],
+    },
+    surface: {
+      base: primitives.color.gray[900],
+      raised: primitives.color.gray[800],
+    },
+    border: {
+      default: primitives.color.gray[700],
+    },
+    primary: {
+      solid: primitives.color.blue[500],
+      hover: primitives.color.blue[400],
+    },
+  },
+});
+```
+
+Toggle at runtime:
+
+```tsx
+import { lightTheme, darkTheme } from './tokens/themes.css';
+
+function App() {
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+  const themeClass = mode === 'light' ? lightTheme : darkTheme;
+  
+  return (
+    <div className={themeClass}>
+      <button onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}>
+        Toggle Mode
+      </button>
+      {/* app */}
+    </div>
+  );
+}
+```
+
+Components automatically adapt because they reference `vars`, which update based on the active theme class.
+
+### Sprinkles for Utility Classes
+
+Vanilla Extract Sprinkles generates atomic utility classes:
+
+```bash
+npm install @vanilla-extract/sprinkles
+```
+
+```typescript
+// tokens/sprinkles.css.ts
+import { defineProperties, createSprinkles } from '@vanilla-extract/sprinkles';
+import { vars } from './theme.css';
+
+const spaceProperties = defineProperties({
+  properties: {
+    padding: vars.spacing,
+    paddingTop: vars.spacing,
+    paddingBottom: vars.spacing,
+    paddingLeft: vars.spacing,
+    paddingRight: vars.spacing,
+    margin: vars.spacing,
+    marginTop: vars.spacing,
+    marginBottom: vars.spacing,
+    gap: vars.spacing,
+  },
+});
+
+const colorProperties = defineProperties({
+  properties: {
+    color: vars.color.text,
+    backgroundColor: vars.color.surface,
+  },
+});
+
+export const sprinkles = createSprinkles(spaceProperties, colorProperties);
+export type Sprinkles = Parameters<typeof sprinkles>[0];
+```
+
+Use in components:
+
+```tsx
+import { sprinkles } from '../tokens/sprinkles.css';
+
+<div className={sprinkles({ padding: 4, backgroundColor: 'raised' })}>
+  Content
+</div>
+```
+
+TypeScript autocomplete works for all properties and values.
+
+## Syncing with Design Tools
+
+Export tokens from Figma/Sketch as JSON:
+
+```json
+{
+  "color": {
+    "primary": {
+      "solid": { "value": "#3B82F6" }
+    }
+  }
+}
+```
+
+Transform for Vanilla Extract:
+
+```typescript
+// scripts/generateTokens.ts
+import fs from 'fs';
+import rawTokens from './design-tokens.json';
+
+function transform(obj: any): any {
+  const result: any = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val.value !== undefined) {
+      result[key] = val.value;
+    } else {
+      result[key] = transform(val);
+    }
+  }
+  return result;
+}
+
+const tokens = transform(rawTokens);
+
+fs.writeFileSync(
+  './src/tokens/generated.ts',
+  `export const tokens = ${JSON.stringify(tokens, null, 2)} as const;`
+);
+```
+
+FramingUI and similar tools can automate this workflow, keeping design and code tokens in sync.
+
+## Real-World Example: Dashboard
+
+```typescript
+// Dashboard.css.ts
+import { style } from '@vanilla-extract/css';
+import { vars } from '../tokens/theme.css';
+
+export const layout = style({
+  display: 'grid',
+  gap: vars.spacing[6],
+  padding: vars.spacing[8],
+  backgroundColor: vars.color.surface.raised,
+  minHeight: '100vh',
+});
+
+export const header = style({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
+export const title = style({
+  margin: 0,
+  fontSize: vars.fontSize['2xl'],
+  fontWeight: vars.fontWeight.bold,
+  color: vars.color.text.primary,
+});
+
+export const metricGrid = style({
+  display: 'grid',
+  gap: vars.spacing[4],
+  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+});
+
+export const metricValue = style({
+  fontSize: vars.fontSize['2xl'],
+  fontWeight: vars.fontWeight.semibold,
+  color: vars.color.text.primary,
+  marginBottom: vars.spacing[1],
+});
+
+export const metricLabel = style({
+  fontSize: vars.fontSize.sm,
+  color: vars.color.text.secondary,
+});
+```
+
+```tsx
+// Dashboard.tsx
+import * as styles from './Dashboard.css';
+import { Card } from './Card';
+import { Button } from './Button';
+
+export function Dashboard() {
+  return (
+    <div className={styles.layout}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Dashboard</h1>
+        <Button>Export Report</Button>
+      </header>
+      
+      <div className={styles.metricGrid}>
+        <Card>
+          <div className={styles.metricValue}>12,345</div>
+          <div className={styles.metricLabel}>Total Users</div>
+        </Card>
+        <Card>
+          <div className={styles.metricValue}>$45,231</div>
+          <div className={styles.metricLabel}>Revenue</div>
+        </Card>
+        <Card>
+          <div className={styles.metricValue}>89%</div>
+          <div className={styles.metricLabel}>Satisfaction</div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+```
+
+## When to Choose Vanilla Extract
+
+Use Vanilla Extract when:
+
+- Zero-runtime performance is a priority
+- You want TypeScript-first styling with autocomplete
+- You're building a component library or design system
+- You need framework-agnostic CSS output
+
+Avoid it if:
+
+- Your team prefers runtime theming flexibility (use Emotion/Styled Components)
+- You want utility-first styling without recipes (use Tailwind)
+- Build time complexity is a concern
+
+Vanilla Extract + design tokens gives you type-safe, performant styling with zero compromises.

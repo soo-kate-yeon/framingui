@@ -1,0 +1,872 @@
+---
+title: "Integrating Design Tokens with Panda CSS for Type-Safe Styling"
+description: "Build performant, token-driven UI with Panda CSS's build-time generation, type safety, and seamless design token integration."
+date: "2026-04-02"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - panda-css
+  - css-in-js
+  - design-system
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Panda CSS bridges utility-first CSS and component styling with build-time generation and full TypeScript support. Unlike Tailwind, which uses predefined utility classes, Panda generates styles on-demand from your design tokens and component patterns. Unlike runtime CSS-in-JS solutions, Panda extracts everything at build time for zero-runtime overhead.
+
+Design tokens are first-class in Panda. Your token schema becomes the source of truth for spacing, colors, typography, and other design primitives. Reference tokens in JSX or styled components, and Panda generates optimized CSS automatically. The result is type-safe, consistent styling with excellent developer experience and production performance.
+
+This guide shows you how to build a token-driven design system with Panda CSS, from configuration through component creation and advanced patterns.
+
+## Why Panda CSS for Design Systems
+
+### Build-Time CSS Generation
+
+Panda analyzes your code during build and generates only the CSS you actually use. No runtime style injection, no unused CSS in production. The browser loads static CSS, which is fast to parse and render.
+
+### Design Tokens as Configuration
+
+Panda's configuration file defines your tokens. Every color, spacing value, and typography setting becomes part of the API. You can't reference a token that doesn't exist — TypeScript catches errors before build time.
+
+### Type-Safe Styling API
+
+Panda generates TypeScript types from your config. Autocomplete works for every token, variant, and responsive value. Invalid values cause type errors, not runtime bugs or silent failures.
+
+### Flexible Patterns
+
+Use Panda's utility functions (`css`, `cx`) for one-off styles, `styled` for reusable components, or `cva` (class variance authority) for variant-based patterns. Mix and match as needed.
+
+### Framework Flexibility
+
+Panda works with React, Solid, Vue, Qwik, and Svelte. The output is framework-agnostic CSS and JavaScript utilities.
+
+## Setting Up Panda with Design Tokens
+
+### Installation and Initialization
+
+```bash
+npm install -D @pandacss/dev
+npx panda init
+```
+
+This creates `panda.config.ts` and a `styled-system` directory.
+
+### Configuring Design Tokens
+
+Edit `panda.config.ts` to define your token schema:
+
+```typescript
+// panda.config.ts
+import { defineConfig } from '@pandacss/dev';
+
+export default defineConfig({
+  // Paths to scan for Panda usage
+  include: ['./src/**/*.{js,jsx,ts,tsx}'],
+  exclude: [],
+  
+  // Output directory for generated files
+  outdir: 'styled-system',
+  
+  // Design tokens
+  theme: {
+    tokens: {
+      colors: {
+        // Primitives
+        blue: {
+          50: { value: '#EFF6FF' },
+          100: { value: '#DBEAFE' },
+          500: { value: '#3B82F6' },
+          600: { value: '#2563EB' },
+          700: { value: '#1D4ED8' },
+        },
+        gray: {
+          50: { value: '#F9FAFB' },
+          100: { value: '#F3F4F6' },
+          200: { value: '#E5E7EB' },
+          500: { value: '#6B7280' },
+          700: { value: '#374151' },
+          900: { value: '#111827' },
+        },
+        red: {
+          500: { value: '#EF4444' },
+          600: { value: '#DC2626' },
+        },
+        green: {
+          500: { value: '#22C55E' },
+        },
+      },
+      
+      spacing: {
+        0: { value: '0' },
+        1: { value: '4px' },
+        2: { value: '8px' },
+        3: { value: '12px' },
+        4: { value: '16px' },
+        6: { value: '24px' },
+        8: { value: '32px' },
+        12: { value: '48px' },
+      },
+      
+      fontSizes: {
+        xs: { value: '12px' },
+        sm: { value: '14px' },
+        base: { value: '16px' },
+        lg: { value: '18px' },
+        xl: { value: '20px' },
+        '2xl': { value: '24px' },
+      },
+      
+      fontWeights: {
+        normal: { value: 400 },
+        medium: { value: 500 },
+        semibold: { value: 600 },
+        bold: { value: 700 },
+      },
+      
+      lineHeights: {
+        tight: { value: 1.25 },
+        normal: { value: 1.5 },
+        relaxed: { value: 1.75 },
+      },
+      
+      radii: {
+        none: { value: '0' },
+        sm: { value: '4px' },
+        md: { value: '8px' },
+        lg: { value: '12px' },
+        full: { value: '9999px' },
+      },
+      
+      shadows: {
+        sm: { value: '0 1px 3px 0 rgba(0, 0, 0, 0.1)' },
+        base: { value: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)' },
+        md: { value: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' },
+      },
+    },
+    
+    // Semantic tokens (map to primitives)
+    semanticTokens: {
+      colors: {
+        primary: {
+          solid: { value: '{colors.blue.500}' },
+          hover: { value: '{colors.blue.600}' },
+          active: { value: '{colors.blue.700}' },
+          subtle: { value: '{colors.blue.50}' },
+        },
+        
+        text: {
+          primary: { value: '{colors.gray.900}' },
+          secondary: { value: '{colors.gray.700}' },
+          tertiary: { value: '{colors.gray.500}' },
+        },
+        
+        surface: {
+          base: { value: '#FFFFFF' },
+          raised: { value: '{colors.gray.50}' },
+        },
+        
+        border: {
+          default: { value: '{colors.gray.200}' },
+          focus: { value: '{colors.blue.500}' },
+        },
+        
+        danger: {
+          solid: { value: '{colors.red.500}' },
+          hover: { value: '{colors.red.600}' },
+        },
+        
+        success: {
+          solid: { value: '{colors.green.500}' },
+        },
+      },
+    },
+  },
+});
+```
+
+The `{colors.blue.500}` syntax references primitive tokens from semantic tokens, creating a layered system.
+
+### Generate Panda Utilities
+
+Run the Panda CLI to generate styling utilities:
+
+```bash
+npx panda codegen
+```
+
+This creates typed functions in `styled-system/` based on your token configuration.
+
+### Using Generated Utilities
+
+Import Panda utilities in components:
+
+```tsx
+import { css } from '../styled-system/css';
+
+function Button() {
+  return (
+    <button
+      className={css({
+        padding: '3 6', // references spacing tokens
+        fontSize: 'base',
+        fontWeight: 'medium',
+        borderRadius: 'md',
+        bg: 'primary.solid',
+        color: 'white',
+        
+        _hover: {
+          bg: 'primary.hover',
+        },
+      })}
+    >
+      Click me
+    </button>
+  );
+}
+```
+
+TypeScript autocompletes token names. Invalid tokens cause type errors.
+
+## Building Components with Panda
+
+### Button Component with `cva` (Class Variance Authority)
+
+Panda includes `cva` for variant-based components:
+
+```tsx
+// Button.tsx
+import { cva } from '../styled-system/css';
+
+const button = cva({
+  base: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '2',
+    
+    fontFamily: 'inherit',
+    fontWeight: 'medium',
+    lineHeight: 'tight',
+    
+    border: 'none',
+    borderRadius: 'md',
+    cursor: 'pointer',
+    transition: 'all 150ms ease',
+    
+    _disabled: {
+      opacity: 0.5,
+      cursor: 'not-allowed',
+    },
+    
+    _focusVisible: {
+      outline: '2px solid',
+      outlineColor: 'border.focus',
+      outlineOffset: '2px',
+    },
+  },
+  
+  variants: {
+    variant: {
+      primary: {
+        bg: 'primary.solid',
+        color: 'white',
+        
+        _hover: {
+          bg: 'primary.hover',
+        },
+        
+        _active: {
+          bg: 'primary.active',
+        },
+      },
+      
+      danger: {
+        bg: 'danger.solid',
+        color: 'white',
+        
+        _hover: {
+          bg: 'danger.hover',
+        },
+      },
+      
+      outline: {
+        bg: 'transparent',
+        border: '1px solid',
+        borderColor: 'border.default',
+        color: 'text.primary',
+        
+        _hover: {
+          bg: 'surface.raised',
+        },
+      },
+      
+      ghost: {
+        bg: 'transparent',
+        color: 'text.primary',
+        
+        _hover: {
+          bg: 'surface.raised',
+        },
+      },
+    },
+    
+    size: {
+      sm: {
+        padding: '2 4',
+        fontSize: 'sm',
+      },
+      
+      md: {
+        padding: '3 6',
+        fontSize: 'base',
+      },
+      
+      lg: {
+        padding: '4 8',
+        fontSize: 'lg',
+      },
+    },
+  },
+  
+  defaultVariants: {
+    variant: 'primary',
+    size: 'md',
+  },
+});
+
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'danger' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function Button({ variant, size, children, ...props }: ButtonProps) {
+  return (
+    <button className={button({ variant, size })} {...props}>
+      {children}
+    </button>
+  );
+}
+```
+
+Usage:
+
+```tsx
+<Button>Primary</Button>
+<Button variant="danger">Delete</Button>
+<Button variant="outline" size="sm">Cancel</Button>
+```
+
+### Card Component
+
+```tsx
+// Card.tsx
+import { css, cx } from '../styled-system/css';
+
+const cardBase = css({
+  bg: 'surface.base',
+  border: '1px solid',
+  borderColor: 'border.default',
+  borderRadius: 'lg',
+  boxShadow: 'sm',
+  overflow: 'hidden',
+  transition: 'all 200ms ease',
+});
+
+const cardHoverable = css({
+  cursor: 'pointer',
+  
+  _hover: {
+    boxShadow: 'md',
+    borderColor: 'border.focus',
+  },
+});
+
+const cardHeader = css({
+  padding: '6',
+  borderBottom: '1px solid',
+  borderColor: 'border.default',
+});
+
+const cardTitle = css({
+  margin: '0',
+  fontSize: 'lg',
+  fontWeight: 'semibold',
+  color: 'text.primary',
+});
+
+const cardBody = css({
+  padding: '6',
+});
+
+const cardFooter = css({
+  padding: '4 6',
+  bg: 'surface.raised',
+  borderTop: '1px solid',
+  borderColor: 'border.default',
+});
+
+interface CardProps {
+  title?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+  hoverable?: boolean;
+}
+
+export function Card({ title, children, footer, hoverable }: CardProps) {
+  return (
+    <div className={cx(cardBase, hoverable && cardHoverable)}>
+      {title && (
+        <div className={cardHeader}>
+          <h3 className={cardTitle}>{title}</h3>
+        </div>
+      )}
+      <div className={cardBody}>{children}</div>
+      {footer && <div className={cardFooter}>{footer}</div>}
+    </div>
+  );
+}
+```
+
+### Input Component
+
+```tsx
+// Input.tsx
+import { cva } from '../styled-system/css';
+
+const inputWrapper = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2',
+});
+
+const label = css({
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: 'text.primary',
+});
+
+const input = cva({
+  base: {
+    padding: '3',
+    fontSize: 'base',
+    lineHeight: 'normal',
+    color: 'text.primary',
+    bg: 'surface.base',
+    border: '1px solid',
+    borderColor: 'border.default',
+    borderRadius: 'md',
+    transition: 'all 150ms ease',
+    
+    _placeholder: {
+      color: 'text.tertiary',
+    },
+    
+    _hover: {
+      borderColor: 'border.focus',
+    },
+    
+    _focus: {
+      outline: 'none',
+      borderColor: 'border.focus',
+      boxShadow: '0 0 0 3px token(colors.primary.subtle)',
+    },
+    
+    _disabled: {
+      bg: 'surface.raised',
+      cursor: 'not-allowed',
+      opacity: 0.6,
+    },
+  },
+  
+  variants: {
+    error: {
+      true: {
+        borderColor: 'danger.solid',
+        
+        _focus: {
+          boxShadow: '0 0 0 3px token(colors.danger.subtle)',
+        },
+      },
+    },
+  },
+});
+
+const helperText = cva({
+  base: {
+    fontSize: 'xs',
+  },
+  
+  variants: {
+    error: {
+      true: {
+        color: 'danger.solid',
+      },
+      false: {
+        color: 'text.secondary',
+      },
+    },
+  },
+});
+
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
+}
+
+export function Input({ label, error, helperText: helper, ...props }: InputProps) {
+  return (
+    <div className={inputWrapper}>
+      {label && <label className={label}>{label}</label>}
+      <input className={input({ error: !!error })} {...props} />
+      {(error || helper) && (
+        <span className={helperText({ error: !!error })}>
+          {error || helper}
+        </span>
+      )}
+    </div>
+  );
+}
+```
+
+## Advanced Patterns
+
+### Responsive Design
+
+Panda supports responsive syntax natively:
+
+```tsx
+import { css } from '../styled-system/css';
+
+const grid = css({
+  display: 'grid',
+  gap: '4',
+  gridTemplateColumns: '1',
+  
+  md: {
+    gridTemplateColumns: '2',
+  },
+  
+  lg: {
+    gridTemplateColumns: '3',
+  },
+});
+
+<div className={grid}>{/* cards */}</div>
+```
+
+Define breakpoints in config:
+
+```typescript
+// panda.config.ts
+export default defineConfig({
+  theme: {
+    breakpoints: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+    },
+  },
+});
+```
+
+### Dark Mode with Semantic Tokens
+
+Panda supports conditional tokens for dark mode:
+
+```typescript
+// panda.config.ts
+export default defineConfig({
+  conditions: {
+    dark: '.dark &',
+  },
+  
+  theme: {
+    semanticTokens: {
+      colors: {
+        text: {
+          primary: {
+            value: {
+              base: '{colors.gray.900}',
+              _dark: '{colors.gray.50}',
+            },
+          },
+        },
+        
+        surface: {
+          base: {
+            value: {
+              base: '#FFFFFF',
+              _dark: '{colors.gray.900}',
+            },
+          },
+        },
+      },
+    },
+  },
+});
+```
+
+Apply dark mode by adding `.dark` class to root:
+
+```tsx
+function App() {
+  const [mode, setMode] = useState('light');
+  
+  return (
+    <div className={mode === 'dark' ? 'dark' : ''}>
+      <button onClick={() => setMode(mode === 'light' ? 'dark' : 'light')}>
+        Toggle Mode
+      </button>
+      {/* app */}
+    </div>
+  );
+}
+```
+
+All components automatically adapt because they reference semantic tokens.
+
+### Recipes for Complex Components
+
+For components with many variants, use recipes:
+
+```typescript
+// panda.config.ts
+export default defineConfig({
+  theme: {
+    recipes: {
+      button: {
+        base: {
+          display: 'inline-flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+        },
+        variants: {
+          variant: {
+            primary: { bg: 'primary.solid', color: 'white' },
+            outline: { border: '1px solid', borderColor: 'border.default' },
+          },
+          size: {
+            sm: { padding: '2 4', fontSize: 'sm' },
+            md: { padding: '3 6', fontSize: 'base' },
+          },
+        },
+      },
+    },
+  },
+});
+```
+
+Use in components:
+
+```tsx
+import { button } from '../styled-system/recipes';
+
+<button className={button({ variant: 'primary', size: 'md' })}>
+  Click me
+</button>
+```
+
+### Patterns for Layout Primitives
+
+Create reusable layout utilities:
+
+```tsx
+// layouts/Stack.tsx
+import { css } from '../styled-system/css';
+
+interface StackProps {
+  children: React.ReactNode;
+  gap?: string;
+  direction?: 'row' | 'column';
+}
+
+export function Stack({ children, gap = '4', direction = 'column' }: StackProps) {
+  return (
+    <div
+      className={css({
+        display: 'flex',
+        flexDirection: direction,
+        gap,
+      })}
+    >
+      {children}
+    </div>
+  );
+}
+```
+
+```tsx
+// layouts/Container.tsx
+import { css } from '../styled-system/css';
+
+export function Container({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className={css({
+        maxWidth: '1280px',
+        marginX: 'auto',
+        paddingX: '4',
+        
+        md: {
+          paddingX: '6',
+        },
+      })}
+    >
+      {children}
+    </div>
+  );
+}
+```
+
+## Syncing with Design Tools
+
+Export tokens from Figma as JSON:
+
+```json
+{
+  "color": {
+    "primary": {
+      "solid": { "value": "#3B82F6" }
+    }
+  }
+}
+```
+
+Transform for Panda:
+
+```typescript
+// scripts/generateTokens.ts
+import fs from 'fs';
+import rawTokens from './design-tokens.json';
+
+function transform(obj: any): any {
+  const result: any = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (val.value !== undefined) {
+      result[key] = { value: val.value };
+    } else {
+      result[key] = transform(val);
+    }
+  }
+  return result;
+}
+
+const tokens = transform(rawTokens);
+
+// Write to Panda config or separate file
+fs.writeFileSync(
+  './panda.tokens.json',
+  JSON.stringify(tokens, null, 2)
+);
+```
+
+Import into `panda.config.ts`:
+
+```typescript
+import tokens from './panda.tokens.json';
+
+export default defineConfig({
+  theme: {
+    tokens,
+  },
+});
+```
+
+FramingUI can automate this workflow, keeping design and code tokens in sync.
+
+## Real-World Example: Dashboard
+
+```tsx
+// Dashboard.tsx
+import { css } from '../styled-system/css';
+import { Card } from './Card';
+import { Button } from './Button';
+
+const layout = css({
+  display: 'grid',
+  gap: '6',
+  padding: '8',
+  bg: 'surface.raised',
+  minHeight: '100vh',
+});
+
+const header = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+});
+
+const title = css({
+  margin: '0',
+  fontSize: '2xl',
+  fontWeight: 'bold',
+  color: 'text.primary',
+});
+
+const metricGrid = css({
+  display: 'grid',
+  gap: '4',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+});
+
+const metricValue = css({
+  fontSize: '2xl',
+  fontWeight: 'semibold',
+  color: 'text.primary',
+  marginBottom: '1',
+});
+
+const metricLabel = css({
+  fontSize: 'sm',
+  color: 'text.secondary',
+});
+
+export function Dashboard() {
+  return (
+    <div className={layout}>
+      <header className={header}>
+        <h1 className={title}>Dashboard</h1>
+        <Button>Export Report</Button>
+      </header>
+      
+      <div className={metricGrid}>
+        <Card>
+          <div className={metricValue}>12,345</div>
+          <div className={metricLabel}>Total Users</div>
+        </Card>
+        <Card>
+          <div className={metricValue}>$45,231</div>
+          <div className={metricLabel}>Revenue</div>
+        </Card>
+        <Card>
+          <div className={metricValue}>89%</div>
+          <div className={metricLabel}>Satisfaction</div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+```
+
+All spacing, colors, and typography come from tokens. Change `theme.spacing[6]` in config and the entire dashboard updates.
+
+## When to Use Panda CSS
+
+Choose Panda when:
+
+- You want zero-runtime performance with type safety
+- Your design system is token-driven
+- You prefer declarative styling over utility classes
+- You need framework flexibility
+
+Avoid Panda if:
+
+- You prefer runtime theming (use Emotion/Styled Components)
+- You want a mature ecosystem with extensive plugins (use Tailwind)
+- Your team isn't comfortable with build-time tooling
+
+Panda CSS + design tokens gives you the best of both worlds: type-safe, performant styling with excellent DX.
