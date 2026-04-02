@@ -1,0 +1,553 @@
+---
+title: "Sharing Design Tokens Across a Monorepo"
+description: "Architecture patterns and tooling strategies for managing and sharing design tokens across multiple packages in a monorepo setup."
+date: "2026-04-03"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - monorepo
+  - architecture
+  - tooling
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Design tokens enable consistency across products. Monorepos enable code sharing across teams. Combining the two should be straightforward, but in practice, most teams struggle with token versioning, build coordination, and platform-specific transformations.
+
+This guide walks through practical architecture patterns for sharing design tokens in monorepos, covering everything from directory structure to build pipelines to cross-package consumption.
+
+## Why Monorepos Complicate Token Sharing
+
+In a single-repo setup, design tokens live in one place and get consumed by one app. Updating tokens means rebuilding one thing. In a monorepo, tokens might be consumed by a web app, a mobile app, a marketing site, and a documentation site — each with different build tools, styling frameworks, and token format requirements.
+
+Common pain points:
+
+**Version skew:** The web app uses token version 2.3.0 while the mobile app still references 2.1.0, causing visual inconsistencies across platforms.
+
+**Build order dependencies:** The component library can't build until tokens are built, but the build system doesn't enforce this ordering, causing sporadic failures.
+
+**Platform-specific transforms:** Web needs CSS variables, iOS needs Swift code, Android needs XML. Maintaining separate token files is error-prone; generating them requires build orchestration.
+
+**Change impact visibility:** A token change affects multiple packages, but there's no clear way to see which ones break or need updates.
+
+A well-designed token sharing strategy solves these problems through intentional structure and tooling.
+
+## Monorepo Structure for Tokens
+
+### Option 1: Dedicated Token Package
+
+The most common pattern is a dedicated `@yourcompany/tokens` package that all other packages depend on.
+
+```
+packages/
+├── tokens/                    # Source of truth
+│   ├── package.json
+│   ├── src/
+│   │   ├── tokens.json       # Platform-agnostic token definitions
+│   │   └── build.ts          # Build script for transformations
+│   ├── dist/
+│   │   ├── web.css           # CSS custom properties
+│   │   ├── web.js            # JavaScript object
+│   │   ├── ios.swift         # Swift constants
+│   │   └── android.xml       # Android resources
+│   └── tsconfig.json
+├── web-app/
+│   └── package.json          # depends on @yourcompany/tokens
+├── mobile-app/
+│   └── package.json          # depends on @yourcompany/tokens
+└── component-library/
+    └── package.json          # depends on @yourcompany/tokens
+```
+
+Benefits:
+- Single source of truth
+- Explicit versioning via package.json
+- Clear dependency graph
+
+Drawbacks:
+- Requires publish/install cycle in some monorepo setups
+- All consumers must update when tokens change
+
+### Option 2: Workspace Protocol with Build Task
+
+Use workspace protocol (`workspace:*`) to link packages without publishing, and rely on the monorepo task runner to build tokens before consumers.
+
+```json
+// packages/web-app/package.json
+{
+  "dependencies": {
+    "@yourcompany/tokens": "workspace:*"
+  }
+}
+```
+
+```json
+// turbo.json (Turborepo example)
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    }
+  }
+}
+```
+
+This ensures tokens build before anything that depends on them.
+
+### Option 3: Shared Tokens Directory with Code Generation
+
+For teams that want even tighter coupling, tokens can live in a shared directory and get generated into each package at build time.
+
+```
+shared/
+  └── tokens.json              # Single token file
+
+packages/
+  ├── web-app/
+  │   └── generated/
+  │       └── tokens.css       # Generated from shared/tokens.json
+  ├── mobile-app/
+  │   └── generated/
+  │       └── tokens.swift
+  └── component-library/
+      └── generated/
+          └── tokens.ts
+```
+
+Benefits:
+- No versioning complexity
+- Always in sync
+
+Drawbacks:
+- Requires custom codegen setup
+- Harder to manage breaking changes
+
+## Platform-Specific Token Transformations
+
+Different platforms need different token formats. The transformation layer should be automated and consistent.
+
+### Using Style Dictionary
+
+Style Dictionary is the standard tool for token transformation. It reads a platform-agnostic token file and outputs platform-specific code.
+
+```javascript
+// packages/tokens/build.js
+const StyleDictionary = require('style-dictionary');
+
+const sd = StyleDictionary.extend({
+  source: ['src/tokens.json'],
+  platforms: {
+    web: {
+      transformGroup: 'css',
+      buildPath: 'dist/',
+      files: [
+        {
+          destination: 'tokens.css',
+          format: 'css/variables',
+        },
+        {
+          destination: 'tokens.js',
+          format: 'javascript/es6',
+        },
+      ],
+    },
+    ios: {
+      transformGroup: 'ios',
+      buildPath: 'dist/',
+      files: [
+        {
+          destination: 'tokens.swift',
+          format: 'ios-swift/class.swift',
+          className: 'DesignTokens',
+        },
+      ],
+    },
+    android: {
+      transformGroup: 'android',
+      buildPath: 'dist/',
+      files: [
+        {
+          destination: 'tokens.xml',
+          format: 'android/resources',
+        },
+      ],
+    },
+  },
+});
+
+sd.buildAllPlatforms();
+```
+
+Run this as part of the tokens package build:
+
+```json
+// packages/tokens/package.json
+{
+  "scripts": {
+    "build": "node build.js"
+  }
+}
+```
+
+Now every time tokens change, running `npm run build` in the tokens package generates all platform-specific files.
+
+### Custom Transformations
+
+For formats Style Dictionary doesn't support, add custom transforms:
+
+```javascript
+StyleDictionary.registerTransform({
+  name: 'size/pxToRem',
+  type: 'value',
+  matcher: (token) => token.type === 'size',
+  transformer: (token) => {
+    const px = parseFloat(token.value);
+    return `${px / 16}rem`;
+  },
+});
+
+StyleDictionary.registerFormat({
+  name: 'typescript/design-tokens',
+  formatter: ({ dictionary }) => {
+    const tokens = dictionary.allTokens
+      .map(token => `  ${token.name}: '${token.value}',`)
+      .join('\n');
+    
+    return `export const tokens = {\n${tokens}\n} as const;\n`;
+  },
+});
+```
+
+Use these in your platform config:
+
+```javascript
+{
+  platforms: {
+    typescript: {
+      transforms: ['attribute/cti', 'name/cti/camel', 'size/pxToRem'],
+      buildPath: 'dist/',
+      files: [{
+        destination: 'tokens.ts',
+        format: 'typescript/design-tokens',
+      }],
+    },
+  },
+}
+```
+
+## Build Orchestration
+
+The tokens package must build before anything that depends on it. Monorepo task runners handle this automatically if configured correctly.
+
+### Turborepo
+
+```json
+// turbo.json
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false
+    }
+  }
+}
+```
+
+`^build` means "build all dependencies first." If `web-app` depends on `tokens`, Turborepo builds `tokens` before `web-app`.
+
+### Nx
+
+```json
+// nx.json
+{
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build"]
+    }
+  }
+}
+```
+
+Same semantics: dependencies build first.
+
+### pnpm Workspaces + Custom Script
+
+If you're not using a task runner, use a shell script to enforce build order:
+
+```bash
+#!/bin/bash
+# build.sh
+
+# Build tokens first
+pnpm --filter @yourcompany/tokens build
+
+# Build everything else
+pnpm --filter !@yourcompany/tokens build
+```
+
+## Consuming Tokens in Different Package Types
+
+### Web App (CSS Variables)
+
+```css
+/* packages/web-app/src/index.css */
+@import '@yourcompany/tokens/dist/tokens.css';
+
+.button {
+  background: var(--color-primary-solid);
+  padding: var(--spacing-3);
+}
+```
+
+### Component Library (TypeScript)
+
+```typescript
+// packages/component-library/src/Button.tsx
+import { tokens } from '@yourcompany/tokens';
+
+export function Button({ children }: { children: React.ReactNode }) {
+  return (
+    <button
+      style={{
+        background: tokens.color.primary.solid,
+        padding: tokens.spacing[3],
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+### Mobile App (Swift)
+
+```swift
+// packages/mobile-app/ViewController.swift
+import DesignTokens
+
+button.backgroundColor = DesignTokens.colorPrimarySolid
+button.contentEdgeInsets = UIEdgeInsets(
+  top: DesignTokens.spacing3,
+  left: DesignTokens.spacing3,
+  bottom: DesignTokens.spacing3,
+  right: DesignTokens.spacing3
+)
+```
+
+Each package consumes the same semantic tokens in platform-appropriate formats.
+
+## Versioning and Breaking Changes
+
+When tokens change, consuming packages need to know whether the change is safe or requires code updates.
+
+### Semantic Versioning
+
+Follow semver strictly:
+
+- **Patch (1.0.x):** Fix typos in token metadata, no value changes
+- **Minor (1.x.0):** Add new tokens, change token values (non-breaking visual changes)
+- **Major (x.0.0):** Remove tokens, rename tokens, change token structure
+
+This signals to consumers what level of review is required.
+
+### Migration Guides
+
+For major version bumps, provide migration documentation:
+
+```markdown
+# Migration: v2.0.0
+
+## Breaking Changes
+
+### Renamed Tokens
+
+- `color.brand.primary` → `color.primary.solid`
+- `spacing.small` → `spacing.2`
+
+## Migration Script
+
+Run the following codemod to automatically update references:
+
+\`\`\`bash
+npx @yourcompany/token-migrator 1.x → 2.0
+\`\`\`
+```
+
+### Automated Migration
+
+Provide a codemod for automated updates:
+
+```javascript
+// packages/tokens/migrations/v2.js
+module.exports = function transformer(file, api) {
+  const j = api.jscodeshift;
+  const root = j(file.source);
+
+  root
+    .find(j.MemberExpression, {
+      object: { name: 'tokens' },
+      property: { name: 'brand' },
+    })
+    .forEach(path => {
+      if (path.node.property.name === 'primary') {
+        path.node.object.property = j.identifier('primary');
+        path.node.property = j.identifier('solid');
+      }
+    });
+
+  return root.toSource();
+};
+```
+
+Run with:
+
+```bash
+npx jscodeshift -t packages/tokens/migrations/v2.js packages/web-app/src/**/*.tsx
+```
+
+## Change Impact Analysis
+
+Before merging token changes, you need to know which packages are affected.
+
+### Dependency Graph Visualization
+
+```bash
+# Turborepo
+npx turbo run build --graph
+
+# Nx
+npx nx graph
+```
+
+This shows which packages depend on tokens, helping you identify what needs review.
+
+### Automated Testing
+
+Run visual regression tests across all consuming packages:
+
+```json
+// turbo.json
+{
+  "pipeline": {
+    "test:visual": {
+      "dependsOn": ["^build"],
+      "outputs": ["__screenshots__/**"]
+    }
+  }
+}
+```
+
+```bash
+# After changing tokens
+turbo run test:visual
+```
+
+If any screenshots differ, the change has visual impact.
+
+### CI Enforcement
+
+Require approval from package owners when tokens change:
+
+```yaml
+# .github/CODEOWNERS
+packages/tokens/** @design-team @platform-team
+```
+
+Pull requests that touch tokens require review from teams that consume them.
+
+## Optimizing for Performance
+
+### Tree-Shaking Tokens
+
+If your token package is large, consumers might not want to import everything. Use named exports for tree-shaking:
+
+```typescript
+// packages/tokens/src/index.ts
+export { colorTokens } from './color';
+export { spacingTokens } from './spacing';
+export { typographyTokens } from './typography';
+
+// Consumer
+import { colorTokens } from '@yourcompany/tokens';
+```
+
+This avoids bundling unused tokens.
+
+### Runtime vs. Build-Time
+
+For web, CSS custom properties load at runtime. For better performance, inline token values at build time:
+
+```javascript
+// packages/web-app/postcss.config.js
+module.exports = {
+  plugins: {
+    'postcss-custom-properties': {
+      importFrom: '@yourcompany/tokens/dist/tokens.css',
+      preserve: false, // Inline values, remove variables
+    },
+  },
+};
+```
+
+This reduces runtime variable lookups at the cost of losing theme-switching capability.
+
+## Multi-Brand Token Strategy
+
+If your monorepo supports multiple brands, structure tokens hierarchically:
+
+```
+packages/tokens/src/
+  ├── core.json           # Shared primitives (spacing, radius, etc.)
+  ├── brand-a.json        # Brand A colors, typography
+  ├── brand-b.json        # Brand B colors, typography
+  └── build.ts
+```
+
+```javascript
+// build.ts
+const core = require('./core.json');
+const brandA = require('./brand-a.json');
+const brandB = require('./brand-b.json');
+
+StyleDictionary.extend({
+  source: [core, brandA],
+  platforms: { /* output for brand A */ },
+}).buildAllPlatforms();
+
+StyleDictionary.extend({
+  source: [core, brandB],
+  platforms: { /* output for brand B */ },
+}).buildAllPlatforms();
+```
+
+This produces separate token files per brand while sharing common definitions.
+
+## Example: Full Workflow
+
+1. Designer updates `packages/tokens/src/tokens.json`
+2. CI builds tokens package → generates `dist/tokens.css`, `dist/tokens.js`, etc.
+3. Dependent packages (`web-app`, `component-library`) rebuild automatically via `^build` dependency
+4. Visual regression tests run across all packages
+5. If tests pass, changes merge
+6. Consuming packages get updated tokens on next deploy
+
+All of this happens without manual coordination.
+
+## How FramingUI Simplifies Monorepo Token Sharing
+
+FramingUI is designed for monorepo setups from the ground up. Token packages come with pre-configured Style Dictionary transforms, build scripts integrate with Turborepo/Nx out of the box, and consuming packages import tokens via type-safe imports that provide autocomplete and validation.
+
+You define tokens once, and FramingUI handles all platform-specific transformations, versioning, and build orchestration. The architecture described in this guide is the default, not something you configure manually.
+
+---
+
+Sharing design tokens across a monorepo is straightforward once you treat tokens as a first-class package with explicit versioning, platform-specific builds, and enforced dependency ordering. The patterns in this guide scale from small two-package setups to enterprise monorepos with dozens of consuming packages.
+
+The key is to centralize token definitions, automate transformations, and let your build system enforce correctness. Do that, and tokens become a strength of your monorepo rather than a coordination burden.

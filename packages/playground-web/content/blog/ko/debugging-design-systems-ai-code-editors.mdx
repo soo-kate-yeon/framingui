@@ -1,0 +1,450 @@
+---
+title: "Debugging Design Systems in AI Code Editors"
+description: "Practical techniques for diagnosing and fixing design system integration issues when working with AI-powered code editors like Cursor and Claude Code."
+date: "2026-04-03"
+author:
+  name: "FramingUI Team"
+tags:
+  - ai-coding
+  - debugging
+  - design-system
+  - dx
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+AI code editors like Cursor, Claude Code, and Windsurf can generate components quickly. But when the output doesn't match your design system, debugging becomes harder than with manually written code. You're not just debugging logic — you're debugging the AI's understanding of your constraints.
+
+This guide covers practical techniques for diagnosing design system integration failures in AI-assisted workflows, fixing them efficiently, and preventing recurrence through better context management.
+
+## The Unique Challenge of AI-Generated Design System Bugs
+
+Traditional debugging assumes you understand the author's intent. With AI-generated code, intent is inferred from context. When a component uses the wrong color token or spacing value, the bug might be in the code, the context provided to the AI, or the design system documentation itself.
+
+Common failure modes:
+
+**Token hallucination:** AI generates plausible but nonexistent token names like `color.brand.primary` when your system uses `color.primary.solid`.
+
+**Hardcoded values:** AI falls back to arbitrary values (`#3B82F6`, `16px`) when it can't find the right token.
+
+**Incorrect token usage:** AI uses a valid token in the wrong context, like `color.text.primary` for a background.
+
+**Missing semantic tokens:** AI uses primitive tokens (`color.blue.600`) instead of semantic tokens (`color.primary.solid`).
+
+**Outdated patterns:** AI generates code based on old documentation that doesn't reflect recent system changes.
+
+The debugging process needs to identify not just *what's wrong*, but *why the AI got it wrong*.
+
+## Debugging Workflow: From Symptom to Root Cause
+
+### Step 1: Identify the Mismatch
+
+Start by running the generated component. Visual inspection usually reveals design system violations immediately:
+
+- Wrong colors
+- Inconsistent spacing
+- Incorrect typography
+- Missing shadows or borders
+- Broken responsive behavior
+
+For less obvious issues, use visual regression testing or design QA tools. If you're using Storybook, compare the component to reference implementations.
+
+### Step 2: Inspect the Generated Code
+
+Look for these red flags:
+
+**Hardcoded hex colors:**
+```typescript
+// ❌ AI fell back to arbitrary value
+<div style={{ background: '#3B82F6' }}>
+```
+
+**Arbitrary pixel values:**
+```typescript
+// ❌ Spacing not from design system
+<div style={{ padding: '14px 18px' }}>
+```
+
+**Nonexistent token references:**
+```typescript
+// ❌ Token doesn't exist in your system
+<Button color={tokens.color.brand.main} />
+```
+
+**Primitive instead of semantic tokens:**
+```typescript
+// ❌ Using color primitive instead of semantic token
+<div style={{ color: tokens.color.blue[600] }}>
+```
+
+### Step 3: Check What Context the AI Had
+
+The root cause is usually missing or stale context. Check:
+
+1. **Was the design token file included?** If you're using file references or MCP, verify the AI actually loaded token definitions.
+
+2. **Was component documentation provided?** If your system has custom component APIs, the AI needs that documentation in context.
+
+3. **Was the documentation up to date?** Stale docs cause the AI to generate patterns that worked in an older version of your system.
+
+Most AI editors let you see what files were included in context. Review that list.
+
+### Step 4: Trace the Token Reference Chain
+
+If the AI used a token but got it wrong, trace where it should have come from:
+
+```typescript
+// Generated code uses:
+<Button bg={tokens.button.primary.background} />
+
+// But your system defines:
+tokens.component.button.variant.primary.bg
+```
+
+This reveals a mismatch between the token schema the AI expected and your actual schema. Either your token file structure is different from what's documented, or the documentation is wrong.
+
+## Debugging Tools and Techniques
+
+### Token Validation Script
+
+Create a script that validates generated code against your token schema:
+
+```typescript
+// scripts/validate-tokens.ts
+import fs from 'fs';
+import { parse } from '@babel/parser';
+import traverse from '@babel/traverse';
+import tokens from '../tokens.json';
+
+function validateTokenReferences(filePath: string) {
+  const code = fs.readFileSync(filePath, 'utf-8');
+  const ast = parse(code, { sourceType: 'module', plugins: ['typescript', 'jsx'] });
+  
+  const errors: string[] = [];
+  
+  traverse(ast, {
+    MemberExpression(path) {
+      // Look for tokens.* references
+      if (path.node.object.name === 'tokens') {
+        const tokenPath = extractTokenPath(path.node);
+        if (!isValidToken(tokenPath, tokens)) {
+          errors.push(`Invalid token reference: ${tokenPath} at line ${path.node.loc.start.line}`);
+        }
+      }
+    },
+  });
+  
+  return errors;
+}
+
+function isValidToken(path: string, tokenObj: any): boolean {
+  const parts = path.split('.');
+  let current = tokenObj;
+  
+  for (const part of parts) {
+    if (!(part in current)) return false;
+    current = current[part];
+  }
+  
+  return true;
+}
+```
+
+Run this after AI generation to catch invalid token references immediately:
+
+```bash
+npm run validate-tokens src/components/NewComponent.tsx
+```
+
+### Design System Lint Rules
+
+Configure ESLint to flag design system violations:
+
+```javascript
+// .eslintrc.js
+module.exports = {
+  rules: {
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'Literal[value=/^#[0-9A-Fa-f]{6}$/]',
+        message: 'Use design tokens instead of hardcoded hex colors',
+      },
+      {
+        selector: 'Literal[value=/^\\d+px$/]',
+        message: 'Use spacing tokens instead of arbitrary pixel values',
+      },
+    ],
+  },
+};
+```
+
+This catches hardcoded values at lint time, not runtime.
+
+### Browser DevTools Token Inspector
+
+For runtime debugging, add a dev-only tool that highlights which tokens are applied to each element:
+
+```typescript
+// components/TokenInspector.tsx (dev only)
+export function TokenInspector() {
+  if (process.env.NODE_ENV !== 'development') return null;
+  
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (e.altKey) {
+        const element = e.target as HTMLElement;
+        const styles = window.getComputedStyle(element);
+        
+        // Extract CSS variable references
+        const tokenUsage = {
+          color: styles.color,
+          background: styles.backgroundColor,
+          padding: styles.padding,
+          // ... other properties
+        };
+        
+        console.log('Token usage:', tokenUsage);
+      }
+    };
+    
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+  
+  return null;
+}
+```
+
+Alt-click any element to see what tokens it's using (or should be using).
+
+### Diff Against Reference Implementation
+
+If you have a reference component that correctly uses your design system, diff the AI-generated code against it:
+
+```bash
+git diff --no-index reference/Button.tsx generated/Button.tsx
+```
+
+This highlights structural differences that reveal where the AI diverged from established patterns.
+
+## Fixing Common AI Generation Errors
+
+### Hallucinated Tokens
+
+**Symptom:** AI references tokens that don't exist.
+
+**Diagnosis:** Check if the token name is plausible but wrong (e.g., `color.brand.primary` instead of `color.primary.solid`).
+
+**Fix:** Update the prompt or context to include the actual token schema. If this happens repeatedly, the token naming in your system might be less intuitive than expected.
+
+**Prevention:** Include a token reference file in every AI session. Use MCP or file references to make tokens always available.
+
+### Primitive Token Leakage
+
+**Symptom:** AI uses `color.blue.600` instead of `color.primary.solid`.
+
+**Diagnosis:** The AI has access to primitive tokens but doesn't understand when to use semantic tokens.
+
+**Fix:** Explicitly document that primitive tokens should not be used directly. Add examples showing correct semantic token usage.
+
+**Prevention:** Structure token files so primitive tokens are in a separate namespace (e.g., `primitives.color.blue.600`) to make the distinction clearer.
+
+### Outdated Patterns
+
+**Symptom:** AI generates code using deprecated APIs or old token names.
+
+**Diagnosis:** Documentation or examples in context are stale.
+
+**Fix:** Update documentation. If you've migrated from one token system to another, make sure old examples are removed or marked as deprecated.
+
+**Prevention:** Version your design system documentation and ensure AI context always pulls the latest version.
+
+### Wrong Token Context
+
+**Symptom:** AI uses a text color token for a background, or vice versa.
+
+**Diagnosis:** Token names don't clearly indicate their intended use.
+
+**Fix:** Rename tokens to be more explicit (`color.text.primary` vs. `color.surface.primary`), or add usage documentation.
+
+**Prevention:** Use hierarchical token naming that embeds context (e.g., `component.button.variant.primary.bg` instead of `color.primary`).
+
+## Iterative Debugging with AI
+
+When fixing AI-generated code, you can use the AI itself to help debug:
+
+### Technique 1: Contextual Refinement
+
+Instead of manually fixing token references, prompt the AI to revise:
+
+```
+The component you generated uses hardcoded colors. 
+Revise it to use tokens from our design system.
+Here's the token file: [include tokens.json]
+```
+
+This often produces a corrected version faster than manual editing, and it teaches the AI the correct pattern for future generations.
+
+### Technique 2: Explain the Error
+
+Ask the AI to diagnose its own mistake:
+
+```
+You generated `color: tokens.brand.main` but our system doesn't have that token.
+Why did you choose that name, and what's the correct token in our system?
+```
+
+The AI's response can reveal whether the issue is missing context, ambiguous naming, or a gap in your documentation.
+
+### Technique 3: Differential Prompting
+
+Show the AI a correct example and ask it to apply the pattern:
+
+```
+Here's a correctly implemented Button component using our tokens.
+Now implement a Card component following the same token usage patterns.
+```
+
+This transfers the correct pattern without needing to articulate every rule explicitly.
+
+## Preventing Recurrence Through Better Context
+
+The most effective debugging is prevention. Once you've fixed an issue, encode the solution so the AI doesn't make the same mistake again.
+
+### Strategy 1: Maintain a Living Style Guide
+
+Create a `DESIGN_SYSTEM.md` file that gets included in every AI session:
+
+```markdown
+# Design System Guidelines
+
+## Token Usage Rules
+
+- NEVER use hardcoded colors or spacing values
+- ALWAYS use semantic tokens (e.g., `color.primary.solid`), not primitive tokens (e.g., `color.blue.600`)
+- For component-specific styling, use component tokens (e.g., `component.button.variant.primary.bg`)
+
+## Token Schema
+
+Our tokens follow this structure:
+- `color.{category}.{role}` (e.g., `color.text.primary`, `color.surface.elevated`)
+- `spacing.{scale}` (e.g., `spacing.2` = 8px, `spacing.4` = 16px)
+- `component.{name}.{variant}.{property}` (e.g., `component.button.variant.primary.bg`)
+
+## Common Mistakes to Avoid
+
+- ❌ `color.brand.primary` → ✅ `color.primary.solid`
+- ❌ `padding: 16px` → ✅ `padding: tokens.spacing.4`
+- ❌ `#3B82F6` → ✅ `tokens.color.primary.solid`
+```
+
+Include this file in your project root and reference it in AI prompts.
+
+### Strategy 2: Use TypeScript for Enforcement
+
+Make token misuse a compile error, not a runtime bug:
+
+```typescript
+// tokens.ts (generated from tokens.json)
+export const tokens = {
+  color: {
+    text: {
+      primary: '#0F172A' as const,
+      secondary: '#64748B' as const,
+    },
+    surface: {
+      default: '#FFFFFF' as const,
+      elevated: '#F8FAFC' as const,
+    },
+  },
+  spacing: {
+    1: '4px' as const,
+    2: '8px' as const,
+    3: '12px' as const,
+    4: '16px' as const,
+  },
+} as const;
+
+// Only allow valid token paths
+type TokenPath<T, K extends keyof T = keyof T> =
+  K extends string
+    ? T[K] extends Record<string, any>
+      ? `${K}.${TokenPath<T[K]>}`
+      : K
+    : never;
+
+export type ValidToken = TokenPath<typeof tokens>;
+
+// Usage:
+function useToken(path: ValidToken) {
+  // ... implementation
+}
+
+// ✅ Compiles
+useToken('color.text.primary');
+
+// ❌ Compile error
+useToken('color.brand.main');
+```
+
+Now the AI can't generate invalid token references without producing a type error.
+
+### Strategy 3: Automated Token Context via MCP
+
+If you're using Claude Code or Cursor with MCP support, set up an MCP server that provides token data on demand:
+
+```typescript
+// mcp-server/design-tokens.ts
+import { MCPServer } from '@anthropic/mcp-sdk';
+import tokens from '../tokens.json';
+
+const server = new MCPServer({
+  name: 'design-tokens',
+  version: '1.0.0',
+});
+
+server.tool('get_tokens', async () => {
+  return {
+    content: [{ type: 'text', text: JSON.stringify(tokens, null, 2) }],
+  };
+});
+
+server.tool('validate_token', async ({ path }: { path: string }) => {
+  const isValid = validateTokenPath(path, tokens);
+  return {
+    content: [{ type: 'text', text: isValid ? 'valid' : 'invalid' }],
+  };
+});
+```
+
+The AI can query tokens in real-time during generation, eliminating stale context issues.
+
+## When to Regenerate vs. Manually Fix
+
+After identifying a bug, you have two options: fix it manually or prompt the AI to regenerate.
+
+**Regenerate when:**
+- The error is systemic (wrong tokens throughout)
+- The component is simple enough to regenerate quickly
+- You want to teach the AI the correct pattern
+
+**Manually fix when:**
+- The error is localized to a few lines
+- The component has complex logic you don't want to re-review
+- Regeneration would require significant re-prompting
+
+In practice, a hybrid approach works best: manually fix the immediate bug, then update context/documentation to prevent recurrence, then regenerate the next component to verify the fix worked.
+
+## FramingUI's Approach to AI-Compatible Debugging
+
+FramingUI builds debugging support directly into its token architecture. Token schemas are designed to be machine-readable, component contracts are explicit and type-safe, and integration with AI editors includes built-in validation.
+
+You don't need to write custom lint rules or validation scripts — the framework enforces correct token usage through TypeScript types and provides runtime error messages that pinpoint exactly which token reference failed.
+
+---
+
+Debugging design systems in AI workflows is different from debugging handwritten code. The error isn't just in the code — it's in the context, the prompt, or the design system documentation. The techniques in this guide address all three layers, making AI-generated code as reliable as manually written code while maintaining the speed advantage that makes AI coding valuable.
+
+The key is to treat the AI as part of your system, not external to it. Build context management, validation, and guardrails that guide the AI toward correct patterns automatically.

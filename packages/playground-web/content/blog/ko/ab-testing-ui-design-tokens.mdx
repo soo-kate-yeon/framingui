@@ -1,0 +1,494 @@
+---
+title: "A/B Testing UI with Design Tokens"
+description: "How to implement A/B test variations using design tokens for fast iteration without hardcoding styles or creating component forks."
+date: "2026-04-03"
+author:
+  name: "FramingUI Team"
+tags:
+  - design-tokens
+  - ab-testing
+  - experimentation
+  - optimization
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+A/B testing UI changes usually means one of two approaches: duplicate the component and hardcode different styles, or add a variant prop that branches inside the component. Both create technical debt and slow down iteration.
+
+Design tokens provide a third option: define test variations as token overrides, inject them at runtime based on experiment assignment, and measure results without touching component code. This guide shows how to build that system.
+
+## Why Traditional A/B Testing Struggles with Design Systems
+
+The typical A/B test workflow looks like this:
+
+1. Product wants to test whether a blue CTA converts better than green
+2. Engineer creates a variant: `<Button color={variant === 'A' ? 'blue' : 'green'} />`
+3. Test runs, results come in
+4. If the test wins, hardcode the winning value
+5. If the test loses, remove the code
+
+This workflow has three problems:
+
+**It couples test logic to component implementation.** Every active test adds conditional logic to components. Tests that run for weeks accumulate, making components harder to reason about.
+
+**It hardcodes values that should be design system decisions.** What happens when the design system changes the shade of blue? Every active test needs manual updates.
+
+**It's slow to iterate.** Changing test values requires code changes, reviews, and deploys. Marketers and designers can't iterate independently.
+
+Token-driven A/B testing solves all three by treating test variations as data, not code.
+
+## Architecture Overview
+
+A token-based A/B test system has four parts:
+
+1. **Token overrides:** Variation-specific token values stored as data
+2. **Experiment configuration:** Defines which tokens to override for each variant
+3. **Token provider:** Injects the correct tokens based on user assignment
+4. **Component consumption:** Components use tokens normally, unaware of testing
+
+The key insight: components don't know they're being tested. They just consume tokens, and the token values change based on experiment assignment.
+
+## Defining Token Overrides
+
+Start with your base design tokens:
+
+```json
+// tokens.base.json
+{
+  "color": {
+    "cta": {
+      "background": "#2563EB",
+      "backgroundHover": "#1D4ED8",
+      "foreground": "#FFFFFF"
+    },
+    "surface": {
+      "default": "#FFFFFF",
+      "elevated": "#F9FAFB"
+    }
+  },
+  "spacing": {
+    "button": {
+      "padding": "12px 24px"
+    }
+  }
+}
+```
+
+Define experiment variations as token overrides:
+
+```json
+// experiments/cta-color-test.json
+{
+  "id": "cta-color-test",
+  "variants": {
+    "control": {},  // Use base tokens
+    "green-cta": {
+      "color.cta.background": "#10B981",
+      "color.cta.backgroundHover": "#059669"
+    },
+    "orange-cta": {
+      "color.cta.background": "#F59E0B",
+      "color.cta.backgroundHover": "#D97706"
+    }
+  }
+}
+```
+
+Each variant specifies only the tokens it changes. Everything else inherits from base.
+
+## Building the Token Provider
+
+The token provider merges base tokens with experiment overrides at runtime:
+
+```typescript
+// providers/TokenProvider.tsx
+import { createContext, useContext, useMemo } from 'react';
+import baseTokens from '../tokens.base.json';
+import experiments from '../experiments';
+
+interface TokenContextValue {
+  tokens: typeof baseTokens;
+  activeExperiments: Record<string, string>;
+}
+
+const TokenContext = createContext<TokenContextValue | null>(null);
+
+export function TokenProvider({
+  children,
+  userExperiments = {},
+}: {
+  children: React.ReactNode;
+  userExperiments?: Record<string, string>; // { experimentId: variantId }
+}) {
+  const tokens = useMemo(() => {
+    let mergedTokens = { ...baseTokens };
+
+    // Apply experiment overrides
+    Object.entries(userExperiments).forEach(([experimentId, variantId]) => {
+      const experiment = experiments[experimentId];
+      if (!experiment) return;
+
+      const overrides = experiment.variants[variantId];
+      if (!overrides) return;
+
+      // Deep merge overrides into tokens
+      mergedTokens = deepMerge(mergedTokens, overrides);
+    });
+
+    return mergedTokens;
+  }, [userExperiments]);
+
+  return (
+    <TokenContext.Provider value={{ tokens, activeExperiments: userExperiments }}>
+      {children}
+    </TokenContext.Provider>
+  );
+}
+
+export function useTokens() {
+  const context = useContext(TokenContext);
+  if (!context) throw new Error('useTokens must be used within TokenProvider');
+  return context.tokens;
+}
+
+function deepMerge(base: any, overrides: any): any {
+  // Simple deep merge implementation
+  const result = { ...base };
+  for (const key in overrides) {
+    if (typeof overrides[key] === 'object' && !Array.isArray(overrides[key])) {
+      result[key] = deepMerge(base[key] || {}, overrides[key]);
+    } else {
+      result[key] = overrides[key];
+    }
+  }
+  return result;
+}
+```
+
+## Integrating with Experiment Assignment
+
+Hook the token provider into your experiment platform (Optimizely, LaunchDarkly, GrowthBook, etc.):
+
+```typescript
+// app/layout.tsx
+import { TokenProvider } from './providers/TokenProvider';
+import { useExperiments } from './lib/experiments';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const experiments = useExperiments(); // { 'cta-color-test': 'green-cta' }
+
+  return (
+    <TokenProvider userExperiments={experiments}>
+      {children}
+    </TokenProvider>
+  );
+}
+```
+
+```typescript
+// lib/experiments.ts
+export function useExperiments() {
+  const userId = useUserId();
+  
+  // Integration with your experiment platform
+  const assignments = {
+    'cta-color-test': getExperimentVariant('cta-color-test', userId),
+    'pricing-layout-test': getExperimentVariant('pricing-layout-test', userId),
+  };
+
+  return assignments;
+}
+
+function getExperimentVariant(experimentId: string, userId: string): string {
+  // This would call your actual experiment service
+  // For demo purposes, simple hash-based assignment:
+  const hash = simpleHash(experimentId + userId);
+  const variants = ['control', 'variant-a', 'variant-b'];
+  return variants[hash % variants.length];
+}
+```
+
+Now every user gets experiment-specific tokens automatically.
+
+## Component Implementation
+
+Components consume tokens through hooks, unaware of experiments:
+
+```typescript
+// components/Button.tsx
+import { useTokens } from '../providers/TokenProvider';
+
+export function Button({ children }: { children: React.ReactNode }) {
+  const tokens = useTokens();
+
+  return (
+    <button
+      style={{
+        background: tokens.color.cta.background,
+        color: tokens.color.cta.foreground,
+        padding: tokens.spacing.button.padding,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+This button automatically renders with the assigned variant's colors. No conditional logic. No variant props.
+
+## CSS Variables Approach
+
+For better performance, inject tokens as CSS variables instead of JavaScript objects:
+
+```typescript
+// providers/TokenProvider.tsx
+export function TokenProvider({ children, userExperiments }: TokenProviderProps) {
+  const cssVariables = useMemo(() => {
+    const tokens = mergeTokensWithExperiments(baseTokens, userExperiments);
+    return flattenTokensToCSSVars(tokens);
+  }, [userExperiments]);
+
+  return (
+    <div style={cssVariables}>
+      {children}
+    </div>
+  );
+}
+
+function flattenTokensToCSSVars(tokens: any, prefix = ''): Record<string, string> {
+  const vars: Record<string, string> = {};
+  
+  for (const [key, value] of Object.entries(tokens)) {
+    const varName = `--${prefix}${prefix ? '-' : ''}${key}`;
+    
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      Object.assign(vars, flattenTokensToCSSVars(value, `${prefix}${prefix ? '-' : ''}${key}`));
+    } else {
+      vars[varName] = String(value);
+    }
+  }
+  
+  return vars;
+}
+```
+
+Then use CSS variables in components:
+
+```css
+/* components/Button.module.css */
+.button {
+  background: var(--color-cta-background);
+  color: var(--color-cta-foreground);
+  padding: var(--spacing-button-padding);
+}
+```
+
+This avoids re-rendering components when tokens change.
+
+## Multi-Variant Tests
+
+Some tests have more than two variants. The token system handles this naturally:
+
+```json
+// experiments/button-size-test.json
+{
+  "id": "button-size-test",
+  "variants": {
+    "control": {},
+    "compact": {
+      "spacing.button.padding": "8px 16px",
+      "font.button.size": "14px"
+    },
+    "large": {
+      "spacing.button.padding": "16px 32px",
+      "font.button.size": "18px"
+    },
+    "extra-large": {
+      "spacing.button.padding": "20px 40px",
+      "font.button.size": "20px"
+    }
+  }
+}
+```
+
+Assignment logic stays the same; the provider merges the assigned variant's tokens.
+
+## Testing Multiple Experiments Simultaneously
+
+Users can be in multiple experiments at once. Token overrides stack:
+
+```typescript
+const userExperiments = {
+  'cta-color-test': 'green-cta',        // Overrides color.cta.background
+  'button-size-test': 'large',          // Overrides spacing.button.padding
+  'typography-test': 'modern-serif',    // Overrides font.body.family
+};
+```
+
+The provider applies all overrides in order. If two experiments affect the same token, last one wins. To avoid conflicts, design experiments to affect orthogonal tokens.
+
+## Measuring Results
+
+Experiment platforms need to know which variant was shown. Store this in context:
+
+```typescript
+export function useActiveExperiments() {
+  const context = useContext(TokenContext);
+  return context?.activeExperiments || {};
+}
+```
+
+When logging events:
+
+```typescript
+// Track conversion
+function trackPurchase(amount: number) {
+  const experiments = useActiveExperiments();
+  
+  analytics.track('purchase', {
+    amount,
+    experiments, // { 'cta-color-test': 'green-cta' }
+  });
+}
+```
+
+Your analytics platform can then segment results by variant.
+
+## Gradual Rollout and Targeting
+
+Token-based tests support gradual rollout and user targeting:
+
+```typescript
+function getExperimentVariant(experimentId: string, userId: string, userProperties: any): string {
+  const experiment = experiments[experimentId];
+  
+  // Check targeting rules
+  if (!matchesTargeting(experiment.targeting, userProperties)) {
+    return 'control';
+  }
+  
+  // Check rollout percentage
+  const rolloutPercentage = experiment.rollout || 100;
+  const hash = simpleHash(experimentId + userId);
+  if ((hash % 100) >= rolloutPercentage) {
+    return 'control';
+  }
+  
+  // Assign to variant
+  const variants = Object.keys(experiment.variants);
+  return variants[hash % variants.length];
+}
+```
+
+This enables "test for 10% of users" or "test only for premium users" without changing component code.
+
+## Design System Governance
+
+Token-based testing doesn't bypass the design system — it extends it temporarily. Establish guardrails:
+
+**Review token overrides:** Experiment tokens should be reviewed by design system owners to ensure they don't break accessibility or brand guidelines.
+
+**Limit override scope:** Only allow overriding specific token categories (e.g., color and spacing, but not typography or layout).
+
+**Sunset experiments:** Winning variants get promoted to base tokens. Losing variants get cleaned up. Don't let experiment overrides accumulate indefinitely.
+
+## Advanced: Server-Side Token Injection
+
+For zero client-side flicker, inject experiment tokens server-side:
+
+```typescript
+// app/layout.tsx (Next.js App Router)
+import { cookies } from 'next/headers';
+import { TokenProvider } from './providers/TokenProvider';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const userId = cookies().get('user_id')?.value;
+  const experiments = getServerSideExperiments(userId);
+
+  return (
+    <TokenProvider userExperiments={experiments}>
+      {children}
+    </TokenProvider>
+  );
+}
+
+function getServerSideExperiments(userId?: string) {
+  if (!userId) return {};
+  
+  // Call experiment API server-side
+  return {
+    'cta-color-test': assignVariant('cta-color-test', userId),
+  };
+}
+```
+
+This ensures the first paint already has the correct variant tokens applied.
+
+## Performance Considerations
+
+**Token merging overhead:** Merging tokens on every render is expensive. Use `useMemo` to cache the result:
+
+```typescript
+const tokens = useMemo(() => 
+  mergeTokensWithExperiments(baseTokens, userExperiments),
+  [userExperiments]
+);
+```
+
+**CSS variable updates:** If you inject CSS variables, prefer setting them once at the root rather than per-component.
+
+**Bundle size:** Experiment definitions are small (just token overrides), but if you have many experiments, consider lazy-loading experiment configs.
+
+## Example: Full Flow
+
+1. **Designer proposes test:** "Try green CTA to improve conversions"
+2. **Engineer creates override file:**
+   ```json
+   {
+     "id": "cta-green-test",
+     "variants": {
+       "control": {},
+       "green": { "color.cta.background": "#10B981" }
+     }
+   }
+   ```
+3. **Experiment launches:** Platform assigns 50% of users to each variant
+4. **Token provider injects overrides:** Users in "green" variant see green buttons
+5. **Analytics track results:** Conversion rates segmented by variant
+6. **Test concludes:** If green wins, update base tokens. If it loses, delete override file.
+
+Zero component code changes. Zero test-specific logic in the UI layer.
+
+## How FramingUI Streamlines A/B Testing
+
+FramingUI includes built-in support for experiment token overrides. Define test variations in token files, and the framework handles merging, CSS variable injection, and type safety automatically.
+
+You get IDE autocomplete for experiment IDs and variants, compile-time validation that override tokens exist in the base schema, and integration with common experiment platforms out of the box.
+
+## When Not to Use Token-Based Testing
+
+Token overrides work well for **style variations** (colors, spacing, sizing). They don't work for:
+
+**Layout changes:** Reordering page sections, adding/removing elements
+**Copy changes:** Testing different headlines or CTAs
+**Behavioral changes:** Different form validation, interaction patterns
+
+For those, you still need component-level conditionals or feature flags. Token-based testing complements traditional A/B testing, not replaces it.
+
+## Common Pitfalls
+
+**Token conflict:** Two experiments override the same token. Solution: coordinate experiments or implement conflict detection.
+
+**Stale overrides:** Experiment files linger after tests end. Solution: automate cleanup or use expiration dates.
+
+**Type safety loss:** Token overrides are often JSON, losing TypeScript validation. Solution: generate types from experiment schemas.
+
+**Inconsistent assignment:** User sees variant A on one page, variant B on another. Solution: ensure experiment assignment is stable across sessions.
+
+---
+
+Token-based A/B testing separates what you're testing (design values) from how you implement it (components). This makes tests faster to create, safer to run, and easier to analyze.
+
+The architecture described here scales from simple color tests to complex multi-variant experiments across multiple surfaces. The key is treating experiment variations as data that flows through your design system, not code that branches inside components.

@@ -1,0 +1,465 @@
+---
+title: "Storybook + Design Tokens Integration Guide"
+description: "A practical guide to integrating design tokens with Storybook for consistent component documentation and development."
+date: "2026-04-03"
+author:
+  name: "FramingUI Team"
+tags:
+  - storybook
+  - design-tokens
+  - component-library
+  - tooling
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Storybook is the de facto standard for component development and documentation. Design tokens are the foundation of scalable design systems. Yet connecting the two in a way that keeps token updates synchronized with component stories remains surprisingly manual in most workflows.
+
+This guide walks through a practical setup where design tokens drive Storybook's theming, component controls, and visual documentation — eliminating the drift between your design system source of truth and your component showcase.
+
+## Why Integrate Tokens with Storybook
+
+The typical Storybook setup duplicates design values across multiple places: component code references tokens, but Storybook's theme config hardcodes colors and spacing. Stories define controls for variants, but the variant names and values are manually transcribed from the design system. Documentation shows color palettes through custom MDX, which goes stale as the system evolves.
+
+This creates three problems:
+
+**Drift:** Token changes require manual updates across stories, theme config, and documentation. The likelihood of missing one increases with system scale.
+
+**Inconsistent theming:** Storybook's preview doesn't match your production app because it uses different color and spacing values.
+
+**Lost design context:** Engineers viewing component stories see implementation but not the underlying token architecture. They don't know which spacing token to use or which color token matches their use case.
+
+Integrating tokens as the single source of truth for Storybook configuration solves all three.
+
+## Architecture Overview
+
+A well-integrated setup has four parts:
+
+1. **Token source:** Your design token definitions (JSON, YAML, TypeScript, or a platform like Style Dictionary)
+2. **Storybook theme:** Uses tokens to configure colors, typography, spacing in Storybook's UI
+3. **Component controls:** Token-driven controls that limit variant selection to valid system values
+4. **Token documentation:** Auto-generated MDX that shows token palettes, scales, and usage
+
+The flow is unidirectional: tokens → Storybook. Changes to token files propagate automatically through the stack.
+
+## Setting Up Token-Driven Theming
+
+Storybook's theming system accepts color and typography configuration through the `create` API. Instead of hardcoding values, we'll read from token files.
+
+### Step 1: Define Tokens
+
+Here's a minimal token file structure. Adjust based on your existing system.
+
+```json
+// tokens.json
+{
+  "color": {
+    "text": {
+      "primary": "#0F172A",
+      "secondary": "#64748B",
+      "inverted": "#FFFFFF"
+    },
+    "surface": {
+      "default": "#FFFFFF",
+      "elevated": "#F8FAFC",
+      "inverted": "#0F172A"
+    },
+    "border": {
+      "default": "#E2E8F0",
+      "focus": "#3B82F6"
+    }
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px"
+  },
+  "font": {
+    "size": {
+      "xs": "12px",
+      "sm": "14px",
+      "base": "16px",
+      "lg": "18px",
+      "xl": "20px"
+    },
+    "family": {
+      "sans": "'Inter', system-ui, sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    }
+  }
+}
+```
+
+### Step 2: Create Theme Adapter
+
+Convert tokens into Storybook's theme format:
+
+```typescript
+// .storybook/theme.ts
+import { create } from '@storybook/theming/create';
+import tokens from '../tokens.json';
+
+export const lightTheme = create({
+  base: 'light',
+  
+  // Brand
+  brandTitle: 'Your Design System',
+  brandUrl: 'https://yoursite.com',
+  
+  // Typography
+  fontBase: tokens.font.family.sans,
+  fontCode: tokens.font.family.mono,
+  
+  // Text colors
+  textColor: tokens.color.text.primary,
+  textInverseColor: tokens.color.text.inverted,
+  textMutedColor: tokens.color.text.secondary,
+  
+  // Toolbar colors
+  barTextColor: tokens.color.text.secondary,
+  barSelectedColor: tokens.color.border.focus,
+  barBg: tokens.color.surface.default,
+  
+  // Form colors
+  inputBg: tokens.color.surface.default,
+  inputBorder: tokens.color.border.default,
+  inputTextColor: tokens.color.text.primary,
+  inputBorderRadius: 4,
+  
+  // App colors
+  appBg: tokens.color.surface.default,
+  appContentBg: tokens.color.surface.elevated,
+  appBorderColor: tokens.color.border.default,
+  appBorderRadius: 4,
+});
+```
+
+### Step 3: Apply Theme in Config
+
+```typescript
+// .storybook/manager.ts
+import { addons } from '@storybook/manager-api';
+import { lightTheme } from './theme';
+
+addons.setConfig({
+  theme: lightTheme,
+});
+```
+
+Now Storybook's UI is driven by your token file. Change `tokens.json`, restart Storybook, and the theme updates.
+
+## Token-Driven Component Controls
+
+Storybook's controls allow users to toggle component props. By default, these are defined manually in story metadata. We can generate them from token schemas instead.
+
+### Example: Button Variants
+
+Assume you have a button component with size and variant props constrained to token-defined values:
+
+```typescript
+// Button.tsx
+export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
+
+interface ButtonProps {
+  size?: ButtonSize;
+  variant?: ButtonVariant;
+  children: React.ReactNode;
+}
+```
+
+Instead of hardcoding the controls:
+
+```typescript
+// Button.stories.tsx (manual approach)
+export default {
+  title: 'Components/Button',
+  component: Button,
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'], // manually duplicates types
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'outline', 'ghost'],
+    },
+  },
+};
+```
+
+Generate controls from token metadata:
+
+```json
+// tokens.json (extended with component semantics)
+{
+  "component": {
+    "button": {
+      "size": {
+        "sm": { "height": "32px", "padding": "8px 12px", "fontSize": "14px" },
+        "md": { "height": "40px", "padding": "12px 16px", "fontSize": "16px" },
+        "lg": { "height": "48px", "padding": "16px 24px", "fontSize": "18px" }
+      },
+      "variant": {
+        "primary": { "bg": "#3B82F6", "fg": "#FFFFFF" },
+        "secondary": { "bg": "#64748B", "fg": "#FFFFFF" },
+        "outline": { "bg": "transparent", "fg": "#3B82F6", "border": "#3B82F6" },
+        "ghost": { "bg": "transparent", "fg": "#64748B" }
+      }
+    }
+  }
+}
+```
+
+Then extract keys programmatically:
+
+```typescript
+// .storybook/controls.ts
+import tokens from '../tokens.json';
+
+export function getButtonControls() {
+  return {
+    size: {
+      control: 'select',
+      options: Object.keys(tokens.component.button.size),
+    },
+    variant: {
+      control: 'select',
+      options: Object.keys(tokens.component.button.variant),
+    },
+  };
+}
+```
+
+```typescript
+// Button.stories.tsx (token-driven)
+import { getButtonControls } from '../.storybook/controls';
+
+export default {
+  title: 'Components/Button',
+  component: Button,
+  argTypes: getButtonControls(),
+};
+```
+
+Now adding a new button variant means updating `tokens.json` only. Storybook controls update automatically.
+
+## Auto-Generating Token Documentation
+
+Storybook supports MDX for long-form documentation. We can generate token showcase pages programmatically.
+
+### Color Palette Page
+
+```typescript
+// scripts/generate-token-docs.ts
+import fs from 'fs';
+import tokens from '../tokens.json';
+
+function generateColorDocs() {
+  const colorGroups = Object.entries(tokens.color);
+  
+  const mdx = `
+import { ColorPalette, ColorItem } from '@storybook/blocks';
+
+# Color Tokens
+
+${colorGroups.map(([group, colors]) => `
+## ${group.charAt(0).toUpperCase() + group.slice(1)}
+
+<ColorPalette>
+${Object.entries(colors).map(([name, value]) => `
+  <ColorItem
+    title="${group}.${name}"
+    subtitle="${value}"
+    colors={{ ${name}: '${value}' }}
+  />
+`).join('')}
+</ColorPalette>
+`).join('')}
+`;
+
+  fs.writeFileSync('.storybook/docs/Colors.mdx', mdx);
+}
+
+generateColorDocs();
+```
+
+Run this script as part of your build or dev startup:
+
+```json
+// package.json
+{
+  "scripts": {
+    "storybook": "npm run generate-docs && storybook dev -p 6006",
+    "generate-docs": "tsx scripts/generate-token-docs.ts"
+  }
+}
+```
+
+The result is an auto-generated color documentation page that updates whenever tokens change.
+
+### Spacing Scale Documentation
+
+```typescript
+function generateSpacingDocs() {
+  const spacingEntries = Object.entries(tokens.spacing);
+  
+  const mdx = `
+# Spacing Tokens
+
+| Token | Value | Visual |
+|-------|-------|--------|
+${spacingEntries.map(([key, value]) => `
+| \`spacing.${key}\` | ${value} | <div style="width: ${value}; height: 16px; background: #3B82F6;"></div> |
+`).join('')}
+`;
+
+  fs.writeFileSync('.storybook/docs/Spacing.mdx', mdx);
+}
+```
+
+This produces a table showing spacing values and visual bars scaled to match.
+
+## Syncing Tokens Across Dev and Build
+
+Design tokens often live outside the Storybook config directory. Keep them in sync with a file watcher or build step.
+
+### Option 1: Symlink
+
+```bash
+ln -s ../design-tokens/tokens.json .storybook/tokens.json
+```
+
+Simple but doesn't work well in cross-platform or CI environments.
+
+### Option 2: Copy on Build
+
+```json
+// package.json
+{
+  "scripts": {
+    "prebuild": "cp ../design-tokens/tokens.json .storybook/tokens.json",
+    "build-storybook": "storybook build"
+  }
+}
+```
+
+Reliable but requires discipline to run prebuild before every Storybook invocation.
+
+### Option 3: Import Directly
+
+If your tokens are TypeScript or JSON in a shared package:
+
+```typescript
+// .storybook/theme.ts
+import tokens from '@yourcompany/design-tokens';
+```
+
+This is the cleanest if your monorepo or package structure supports it.
+
+## Handling Theme Switching
+
+If your system supports multiple themes (light/dark, brand variations), extend the integration to make themes switchable in Storybook.
+
+### Define Multiple Token Sets
+
+```json
+// tokens.light.json
+{ "color": { "surface": { "default": "#FFFFFF" } } }
+```
+
+```json
+// tokens.dark.json
+{ "color": { "surface": { "default": "#0F172A" } } }
+```
+
+### Create Theme Variants
+
+```typescript
+// .storybook/theme.ts
+import lightTokens from '../tokens.light.json';
+import darkTokens from '../tokens.dark.json';
+
+export const lightTheme = create({
+  base: 'light',
+  appBg: lightTokens.color.surface.default,
+  // ...
+});
+
+export const darkTheme = create({
+  base: 'dark',
+  appBg: darkTokens.color.surface.default,
+  // ...
+});
+```
+
+### Add Theme Switcher
+
+Use Storybook's `backgrounds` addon to toggle themes:
+
+```typescript
+// .storybook/preview.ts
+import { lightTheme, darkTheme } from './theme';
+
+export const parameters = {
+  backgrounds: {
+    default: 'light',
+    values: [
+      { name: 'light', value: lightTheme.appBg },
+      { name: 'dark', value: darkTheme.appBg },
+    ],
+  },
+};
+```
+
+For more control, add a custom toolbar item that switches both the Storybook UI theme and component theme context.
+
+## Practical Workflow Example
+
+Here's a realistic workflow scenario integrating tokens with Storybook:
+
+1. **Designer updates color tokens** in Figma and syncs to `tokens.json` via Tokens Studio or similar
+2. **CI pipeline runs** and regenerates Storybook theme and docs from `tokens.json`
+3. **Engineer opens Storybook** and sees updated color palette in documentation
+4. **Component controls reflect new values** if token variants changed
+5. **Preview environment updates** because Storybook theme matches production tokens
+
+This happens with zero manual intervention once the integration is set up.
+
+## Where FramingUI Simplifies This
+
+FramingUI approaches this integration as a first-class concern. Its token architecture is designed to export directly to Storybook theme format, controls are generated from token schemas out of the box, and documentation pages auto-generate on build.
+
+You define tokens once, and FramingUI handles propagation to Storybook, TypeScript types, and runtime styles. The integration described in this guide is built in rather than manually assembled.
+
+## Common Pitfalls
+
+**Token file format mismatches:** Storybook expects flat key-value pairs for some properties but nested objects for others. Normalize token structure before passing to `create()`.
+
+**Stale static builds:** If you build Storybook for deployment, ensure token files are copied or resolved at build time, not just dev time.
+
+**Missing type safety:** If tokens are JSON, there's no compile-time check that token keys match component props. Consider generating TypeScript types from tokens to catch drift earlier.
+
+**Overengineering controls:** Not every component prop needs token-driven controls. Use this pattern for design-system-constrained props (size, variant, color), not for arbitrary strings or callbacks.
+
+## Extending the Pattern
+
+Once token-Storybook integration is in place, several extensions become straightforward:
+
+**Visual regression testing:** Use Chromatic or Percy to snapshot component states. Token changes trigger visual diffs automatically.
+
+**Accessibility audits:** Generate a11y documentation showing color contrast ratios derived from token values.
+
+**Usage analytics:** Track which token values are most commonly used in stories to identify design system blind spots.
+
+**Design-dev handoff:** Share Storybook links with designers as the source of truth for implemented components, eliminating the "does this match Figma" conversation.
+
+---
+
+Storybook and design tokens solve adjacent problems: component isolation and design consistency. Integrating them properly turns two separate tools into a unified system where changes propagate automatically and documentation stays truthful by default.
+
+The setup cost is front-loaded but recovers itself the first time you change a token value and see it reflected everywhere without manual updates.

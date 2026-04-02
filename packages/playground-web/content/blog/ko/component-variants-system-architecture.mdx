@@ -1,0 +1,456 @@
+---
+title: "Building a Scalable Component Variants System"
+description: "How to architect component variant systems that scale from simple states to complex multi-axis configurations without becoming unmaintainable."
+date: "2026-04-03"
+author:
+  name: "FramingUI Team"
+tags:
+  - component-library
+  - design-system
+  - architecture
+  - variants
+category: "Guide"
+coverImage: ""
+published: true
+---
+
+Component libraries start simple. A button has a primary state and a secondary state. Then you need sizes. Then disabled states. Then loading states. Then icon positions. Before long, you have 72 possible button combinations and a props API that no one can remember.
+
+Most teams respond by adding more props, which creates combinatorial explosion. Or they flatten everything into a single `variant` enum with names like `primaryLargeWithIconLoading`, which is worse.
+
+This guide walks through a variant system architecture that scales from simple binary states to complex multi-dimensional components without collapsing into chaos.
+
+## What Variants Actually Represent
+
+Before talking about implementation, it's worth defining what variants are and are not.
+
+**Variants are design-system-defined visual states.** They're constrained options, not arbitrary customization. A button can be primary, secondary, or ghost. It cannot be "sort of primary but 3px more padding."
+
+**Variants compose orthogonally.** Size is independent of visual style. Visual style is independent of state (hover, disabled, loading). This independence is structural, not accidental.
+
+**Variants have semantic meaning.** `variant="primary"` communicates intent. `color="blue"` does not. The former maps to design language. The latter bypasses the system.
+
+When variant systems fail, it's usually because they violate one of these properties. Props proliferate because the system mixes design-controlled and user-controlled values. Combinatorial complexity explodes because orthogonal dimensions are conflated into a single axis.
+
+## Single-Axis Variants: The Starting Point
+
+The simplest variant system is a single enum that controls visual appearance.
+
+```typescript
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
+
+interface ButtonProps {
+  variant?: ButtonVariant;
+  children: React.ReactNode;
+}
+
+function Button({ variant = 'primary', children }: ButtonProps) {
+  return (
+    <button className={styles[variant]}>
+      {children}
+    </button>
+  );
+}
+```
+
+This works until you need sizes. The naive extension adds a second prop:
+
+```typescript
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+interface ButtonProps {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  children: React.ReactNode;
+}
+```
+
+Which creates two problems:
+
+**Naming collisions:** What happens when you need a "variant" at the component level and a "variant" for a nested part? Do you call it `buttonVariant` and `iconVariant`? Now you've lost naming consistency.
+
+**Unclear composition:** Do size and variant interact? Can all sizes work with all variants? The type system doesn't express this.
+
+## Multi-Axis Variants: CVA Pattern
+
+Variants become manageable when you model them as orthogonal axes that compose cleanly. The CVA (Class Variance Authority) pattern, popularized by libraries like `cva` and `tailwind-variants`, provides a structure for this.
+
+```typescript
+import { cva, type VariantProps } from 'class-variance-authority';
+
+const button = cva(
+  // base styles applied to all variants
+  'inline-flex items-center justify-center rounded font-medium transition',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-blue-600 text-white hover:bg-blue-700',
+        secondary: 'bg-gray-600 text-white hover:bg-gray-700',
+        outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50',
+        ghost: 'text-gray-700 hover:bg-gray-100',
+      },
+      size: {
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-base',
+        lg: 'h-12 px-6 text-lg',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'md',
+    },
+  }
+);
+
+type ButtonProps = VariantProps<typeof button> & {
+  children: React.ReactNode;
+};
+
+function Button({ variant, size, children }: ButtonProps) {
+  return <button className={button({ variant, size })}>{children}</button>;
+}
+```
+
+This structure separates **what varies** (the axes: variant and size) from **how it varies** (the values for each axis). The type system enforces that only valid combinations exist.
+
+## Compound Variants: Handling Interactions
+
+Sometimes variant combinations require special handling. A small ghost button needs different padding than a small primary button because the visual weight differs.
+
+CVA supports compound variants:
+
+```typescript
+const button = cva('base-styles', {
+  variants: {
+    variant: { /* ... */ },
+    size: { /* ... */ },
+  },
+  compoundVariants: [
+    {
+      variant: 'ghost',
+      size: 'sm',
+      className: 'px-2', // override default small padding for ghost
+    },
+    {
+      variant: 'outline',
+      size: 'lg',
+      className: 'border-3', // thicker border for large outlined buttons
+    },
+  ],
+  defaultVariants: { /* ... */ },
+});
+```
+
+Compound variants should be rare. If you find yourself writing many of them, it's a signal that your base variant definitions aren't orthogonal.
+
+## Token-Driven Variants
+
+Hardcoding class names in variant definitions couples your component library to your styling implementation. If you switch from Tailwind to vanilla CSS or a different framework, every variant definition breaks.
+
+The solution is to define variants in terms of design tokens, then map tokens to classes.
+
+```typescript
+// tokens.json
+{
+  "component": {
+    "button": {
+      "variant": {
+        "primary": {
+          "bg": "color.primary.solid",
+          "fg": "color.primary.fg",
+          "bgHover": "color.primary.solidHover"
+        },
+        "secondary": {
+          "bg": "color.secondary.solid",
+          "fg": "color.secondary.fg",
+          "bgHover": "color.secondary.solidHover"
+        }
+      },
+      "size": {
+        "sm": { "height": "size.control.sm", "padding": "spacing.2" },
+        "md": { "height": "size.control.md", "padding": "spacing.3" },
+        "lg": { "height": "size.control.lg", "padding": "spacing.4" }
+      }
+    }
+  }
+}
+```
+
+Then generate variant classes from tokens:
+
+```typescript
+// This can be codegen or runtime, depending on your system
+const buttonVariants = generateVariantsFromTokens(tokens.component.button);
+
+const button = cva('base', {
+  variants: buttonVariants,
+  defaultVariants: { variant: 'primary', size: 'md' },
+});
+```
+
+Now variant behavior is defined in `tokens.json`, not in component code. Adding a new variant means updating the token file and regenerating types, not touching component implementation.
+
+## Nested Variants: Component Parts
+
+Complex components have multiple parts, each with their own variants. Consider a card component with header, body, and footer sections.
+
+```typescript
+const card = cva('card-base', {
+  variants: {
+    elevation: {
+      flat: 'shadow-none',
+      raised: 'shadow-md',
+      floating: 'shadow-lg',
+    },
+    padding: {
+      none: 'p-0',
+      sm: 'p-4',
+      md: 'p-6',
+      lg: 'p-8',
+    },
+  },
+});
+
+const cardHeader = cva('card-header-base', {
+  variants: {
+    divider: {
+      true: 'border-b border-gray-200',
+      false: '',
+    },
+  },
+});
+
+const cardBody = cva('card-body-base');
+
+const cardFooter = cva('card-footer-base', {
+  variants: {
+    divider: {
+      true: 'border-t border-gray-200',
+      false: '',
+    },
+  },
+});
+```
+
+These can be exposed as separate components or as a single compound component with nested props:
+
+```typescript
+interface CardProps {
+  elevation?: 'flat' | 'raised' | 'floating';
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  header?: {
+    divider?: boolean;
+    children: React.ReactNode;
+  };
+  footer?: {
+    divider?: boolean;
+    children: React.ReactNode;
+  };
+  children: React.ReactNode;
+}
+
+function Card({ elevation, padding, header, footer, children }: CardProps) {
+  return (
+    <div className={card({ elevation, padding })}>
+      {header && (
+        <div className={cardHeader({ divider: header.divider })}>
+          {header.children}
+        </div>
+      )}
+      <div className={cardBody()}>{children}</div>
+      {footer && (
+        <div className={cardFooter({ divider: footer.divider })}>
+          {footer.children}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+This keeps variant logic encapsulated while allowing fine-grained control over each part.
+
+## State Variants vs. Interactive States
+
+It's tempting to model hover, focus, and active states as variants. Don't.
+
+```typescript
+// ❌ Don't do this
+type ButtonState = 'default' | 'hover' | 'focus' | 'active';
+```
+
+These are CSS pseudo-classes, not design system variants. They should be handled in stylesheets, not props.
+
+```css
+/* ✅ Do this */
+.button-primary {
+  background: var(--color-primary-solid);
+}
+.button-primary:hover {
+  background: var(--color-primary-solid-hover);
+}
+.button-primary:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+}
+```
+
+The exception is when you need to *force* a component into a visual state for documentation or testing purposes. In that case, use a separate `data-state` attribute, not a variant:
+
+```typescript
+<Button variant="primary" data-state="hover">Forced Hover</Button>
+```
+
+```css
+.button-primary[data-state="hover"] {
+  background: var(--color-primary-solid-hover);
+}
+```
+
+## Variant Slots: Advanced Composition
+
+Some components need different variant controls for different internal elements. A button with an icon might need independent size control for the icon and the text.
+
+```typescript
+const button = cva('button-base', {
+  variants: {
+    variant: { /* ... */ },
+    size: { /* ... */ },
+  },
+});
+
+const buttonIcon = cva('button-icon-base', {
+  variants: {
+    size: {
+      sm: 'w-4 h-4',
+      md: 'w-5 h-5',
+      lg: 'w-6 h-6',
+    },
+    position: {
+      left: 'mr-2',
+      right: 'ml-2',
+    },
+  },
+});
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  children: React.ReactNode;
+}
+
+function Button({ variant, size, icon, iconPosition = 'left', children }: ButtonProps) {
+  return (
+    <button className={button({ variant, size })}>
+      {icon && iconPosition === 'left' && (
+        <span className={buttonIcon({ size, position: 'left' })}>{icon}</span>
+      )}
+      {children}
+      {icon && iconPosition === 'right' && (
+        <span className={buttonIcon({ size, position: 'right' })}>{icon}</span>
+      )}
+    </button>
+  );
+}
+```
+
+This pattern is called **variant slots**. Each visual part of the component gets its own variant definition, and the component composes them based on props.
+
+## Type-Safe Variant Props
+
+TypeScript can enforce that only valid variant combinations are allowed at compile time.
+
+```typescript
+type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
+// Exclude invalid combinations
+type ValidButtonProps =
+  | { variant: 'primary'; size: 'sm' | 'md' | 'lg' }
+  | { variant: 'secondary'; size: 'sm' | 'md' | 'lg' }
+  | { variant: 'outline'; size: 'md' | 'lg' } // outline doesn't support 'sm'
+  | { variant: 'ghost'; size: 'sm' | 'md' };   // ghost doesn't support 'lg'
+
+interface ButtonProps extends ValidButtonProps {
+  children: React.ReactNode;
+}
+```
+
+This prevents invalid states at the type level. `<Button variant="outline" size="sm" />` produces a compile error.
+
+In practice, this level of constraint is rarely needed unless your design system has strong coupling between axes. Most systems benefit from keeping axes independent.
+
+## Documenting Variants
+
+Variant systems are only useful if engineers know what variants exist and when to use them. Auto-generate documentation from variant definitions.
+
+```typescript
+// scripts/generate-variant-docs.ts
+import { button } from './components/button';
+
+function documentVariants() {
+  const variantKeys = Object.keys(button.variants);
+  
+  variantKeys.forEach(axis => {
+    const values = Object.keys(button.variants[axis]);
+    console.log(`## ${axis}`);
+    values.forEach(value => {
+      console.log(`- \`${value}\``);
+    });
+  });
+}
+```
+
+Better yet, integrate with Storybook to show all combinations visually.
+
+```typescript
+// Button.stories.tsx
+export const AllVariants = () => (
+  <div className="grid gap-4">
+    {(['primary', 'secondary', 'outline', 'ghost'] as const).map(variant => (
+      <div key={variant} className="flex gap-2">
+        {(['sm', 'md', 'lg'] as const).map(size => (
+          <Button key={size} variant={variant} size={size}>
+            {variant} {size}
+          </Button>
+        ))}
+      </div>
+    ))}
+  </div>
+);
+```
+
+## Practical Constraints
+
+**Limit variant axes:** More than three orthogonal axes is a sign the component is too complex. Split it into multiple components or reconsider the abstraction.
+
+**Prefer composition over configuration:** Instead of a `layout` variant on a card component, compose layout components with card components.
+
+**Don't expose internal implementation variants:** If a variant exists only to support a specific internal state, don't make it a public prop. Use internal state or derived props instead.
+
+**Default to the most common case:** If 90% of usage is `variant="primary" size="md"`, make those the defaults. Reduce cognitive load for the common path.
+
+## How FramingUI Handles Variants
+
+FramingUI treats variants as a first-class concern in token architecture. Variant definitions live in token files, component code consumes them via generated utilities, and the type system enforces validity automatically.
+
+You define variant behavior once in tokens, and FramingUI generates the CVA config, TypeScript types, and documentation. The system scales from simple binary states to complex multi-axis configurations without requiring manual type definitions or class name management.
+
+## When Variants Aren't the Answer
+
+Not every difference between component instances should be a variant.
+
+**User content:** Text, images, and other content passed as children shouldn't be variants.
+
+**Behavior:** `onClick` handlers, form submission logic, and other behavior belongs in props, not variants.
+
+**One-off customization:** If a component needs a specific tweak for a single use case, use a prop or a wrapper component. Don't add a variant for it.
+
+Variants are for **design-system-level visual states**. Everything else is just props.
+
+---
+
+A well-architected variant system grows with your design system without requiring rewrites. The structure described here — orthogonal axes, token-driven definitions, type safety, and clear composition rules — has scaled from small component libraries to enterprise design systems.
+
+The key insight is that variants aren't just props. They're the API surface of your design system's visual language. Treat them accordingly.
