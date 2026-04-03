@@ -68,6 +68,7 @@ interface ApiKey {
   id: string;
   user_id: string;
   key_hash: string;
+  key_prefix: string;
   revoked_at: string | null;
   expires_at: string | null;
   last_used_at: string | null;
@@ -161,6 +162,7 @@ export async function GET(request: NextRequest) {
     }
 
     const apiKey = authHeader.substring(7); // "Bearer " 제거
+    const apiKeyPrefix = apiKey.substring(0, 12); // "tk_live_xxxx"
 
     // 2. Rate Limiting (API Key 기반, 분당 60회)
     // SECURITY-S3: Rate limiting으로 무차별 대입 공격 방지
@@ -216,7 +218,8 @@ export async function GET(request: NextRequest) {
     // 3. api_keys 테이블에서 해시 조회
     const { data: apiKeys, error: apiKeysError } = await supabase
       .from('api_keys')
-      .select('id, user_id, key_hash, revoked_at, expires_at, last_used_at')
+      .select('id, user_id, key_hash, key_prefix, revoked_at, expires_at, last_used_at')
+      .eq('key_prefix', apiKeyPrefix)
       .is('revoked_at', null) // revoked 되지 않은 키만
       .returns<ApiKey[]>();
 

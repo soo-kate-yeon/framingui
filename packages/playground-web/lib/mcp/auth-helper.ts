@@ -25,6 +25,7 @@ interface ApiKey {
   id: string;
   user_id: string;
   key_hash: string;
+  key_prefix: string;
   revoked_at: string | null;
   expires_at: string | null;
   last_used_at: string | null;
@@ -154,6 +155,7 @@ export async function authenticateMcpRequest(
   }
 
   const apiKey = authHeader.substring(7);
+  const apiKeyPrefix = apiKey.substring(0, 12); // "tk_live_xxxx"
 
   // 2. Rate Limiting
   const rateLimitResult = await rateLimitMcpVerify(apiKey);
@@ -209,7 +211,8 @@ export async function authenticateMcpRequest(
   // 6. API Key 조회 및 bcrypt 비교
   const { data: apiKeys, error: apiKeysError } = await supabase
     .from('api_keys')
-    .select('id, user_id, key_hash, revoked_at, expires_at, last_used_at')
+    .select('id, user_id, key_hash, key_prefix, revoked_at, expires_at, last_used_at')
+    .eq('key_prefix', apiKeyPrefix)
     .is('revoked_at', null)
     .returns<ApiKey[]>();
 

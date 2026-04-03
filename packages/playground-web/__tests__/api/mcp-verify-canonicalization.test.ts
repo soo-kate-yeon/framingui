@@ -62,21 +62,24 @@ describe('GET /api/mcp/verify canonicalization', () => {
       if (table === 'api_keys') {
         return {
           select: () => ({
-            is: () => ({
-              returns: () =>
-                Promise.resolve({
-                  data: [
-                    {
-                      id: 'key-1',
-                      user_id: 'user-1',
-                      key_hash: 'hashed',
-                      revoked_at: null,
-                      expires_at: null,
-                      last_used_at: null,
-                    },
-                  ],
-                  error: null,
-                }),
+            eq: () => ({
+              is: () => ({
+                returns: () =>
+                  Promise.resolve({
+                    data: [
+                      {
+                        id: 'key-1',
+                        user_id: 'user-1',
+                        key_hash: 'hashed',
+                        key_prefix: 'tk_live_aaaa',
+                        revoked_at: null,
+                        expires_at: null,
+                        last_used_at: null,
+                      },
+                    ],
+                    error: null,
+                  }),
+              }),
             }),
           }),
           update: () => ({

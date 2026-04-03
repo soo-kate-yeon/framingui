@@ -8,6 +8,7 @@ interface ApiKeyRow {
   id: string;
   user_id: string;
   key_hash: string;
+  key_prefix: string;
   revoked_at: string | null;
   expires_at: string | null;
 }
@@ -21,6 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const apiKey = authHeader.substring(7);
+    const apiKeyPrefix = apiKey.substring(0, 12); // "tk_live_xxxx"
     if (!apiKey.startsWith('tk_live_') || apiKey.length !== 72) {
       return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     }
@@ -41,7 +43,8 @@ export async function POST(request: NextRequest) {
 
     const { data: apiKeys, error: apiKeysError } = await supabase
       .from('api_keys')
-      .select('id, user_id, key_hash, revoked_at, expires_at')
+      .select('id, user_id, key_hash, key_prefix, revoked_at, expires_at')
+      .eq('key_prefix', apiKeyPrefix)
       .is('revoked_at', null)
       .returns<ApiKeyRow[]>();
 

@@ -6,6 +6,7 @@ const { mockCompare } = vi.hoisted(() => ({
 }));
 
 const mockReturns = vi.fn();
+const mockEq = vi.fn();
 const mockIs = vi.fn();
 const mockSelect = vi.fn();
 const mockFrom = vi.fn();
@@ -46,7 +47,8 @@ describe('POST /api/mcp/usage-events', () => {
       throw new Error(`Unexpected table: ${table}`);
     });
 
-    mockSelect.mockReturnValue({ is: mockIs });
+    mockSelect.mockReturnValue({ eq: mockEq });
+    mockEq.mockReturnValue({ is: mockIs });
     mockIs.mockReturnValue({ returns: mockReturns });
   });
 
@@ -59,6 +61,7 @@ describe('POST /api/mcp/usage-events', () => {
           id: 'key_1',
           user_id: 'user-1',
           key_hash: 'hash',
+          key_prefix: 'tk_live_aaaa',
           revoked_at: null,
           expires_at: null,
         },
@@ -108,6 +111,7 @@ describe('POST /api/mcp/usage-events', () => {
           id: 'key_1',
           user_id: 'user-1',
           key_hash: 'hash',
+          key_prefix: 'tk_live_aaaa',
           revoked_at: null,
           expires_at: null,
         },
