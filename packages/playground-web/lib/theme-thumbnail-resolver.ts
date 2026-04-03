@@ -17,6 +17,7 @@ import minimalWorkspace from './themes/minimal-workspace.json';
 import squareMinimalism from './themes/square-minimalism.json';
 import classicMagazine from './themes/classic-magazine.json';
 import boldLine from './themes/bold-line.json';
+import podcastAmbient from './themes/podcast-ambient.json';
 
 export interface ThumbnailVars {
   [key: string]: string;
@@ -158,6 +159,7 @@ const THEME_REGISTRY: Record<string, ThumbnailVars> = {
   'neutral-workspace': resolveTheme(neutralWorkspace),
   'minimal-workspace': resolveTheme(minimalWorkspace),
   'bold-line': resolveTheme(boldLine),
+  'podcast-ambient': resolveTheme(podcastAmbient),
 };
 
 /**
